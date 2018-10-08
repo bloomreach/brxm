@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-function hippoTreeTemplateDirective() {
-  'ngInject';
+import controller from './itemListing.controller';
+import template from './itemListing.html';
 
-  return {
-    require: '^hippoTree',
-    link: (scope, element, attrs, controller) => {
-      controller.renderTreeTemplate(scope, dom => element.replaceWith(dom));
-    },
-  };
-}
+const itemListingComponent = {
+  bindings: {
+    items: '=',
+    selectedItem: '=',
+  },
+  controller,
+  template,
+};
 
-export default hippoTreeTemplateDirective;
+export default itemListingComponent;

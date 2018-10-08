@@ -15,18 +15,20 @@
  */
 
 import uiTree from 'angular-ui-tree';
-import hippoTreeDirective from './tree.directive';
-import itemsRendererDirective from './itemsRenderer/itemsRenderer.directive';
-import hippoTreeTemplateDirective from './tree.template.directive';
+import hippoTreeComponent from './tree.component';
+import hippoTreeNodesComponent from './nodes.component';
+import hippoTreeNodeComponent from './node.component';
 import HippoTreeCtrl from './tree.controller';
+import HippoTreeNodeCtrl from './node.controller';
 
 const uiTreeModule = angular
   .module('hippo-cm.ui.tree', [
     uiTree,
   ])
-  .directive('hippoTree', hippoTreeDirective)
-  .directive('itemsRenderer', itemsRendererDirective)
-  .directive('hippoTreeTemplate', hippoTreeTemplateDirective)
-  .controller('HippoTreeCtrl', HippoTreeCtrl);
+  .component('hippoTree', hippoTreeComponent)
+  .component('hippoTreeNodes', hippoTreeNodesComponent)
+  .component('hippoTreeNode', hippoTreeNodeComponent)
+  .controller('HippoTreeCtrl', HippoTreeCtrl)
+  .controller('HippoTreeNodeCtrl', HippoTreeNodeCtrl);
 
 export default uiTreeModule;

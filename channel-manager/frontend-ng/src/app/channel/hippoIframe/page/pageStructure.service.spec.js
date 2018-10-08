@@ -240,9 +240,8 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-in-page');
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
-    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
-    expect(manageContentLink.getRootPath()).toBe('test-root-path');
+    expect(manageContentLink.getDocumentTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
     expect(manageContentLink.getParameterValue()).toBe('test-component-value');
     expect(manageContentLink.getPickerConfig()).toEqual({
@@ -253,6 +252,7 @@ describe('PageStructureService', () => {
       rootPath: 'test-component-picker-root-path',
       selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
     });
+    expect(manageContentLink.getRootPath()).toBe('test-root-path');
     expect(manageContentLink.isParameterValueRelativePath()).toBe(true);
   });
 
@@ -260,7 +260,7 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-with-absolute-path');
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
-    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
+    expect(manageContentLink.getDocumentTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
     expect(manageContentLink.getRootPath()).toBe('test-root-path');
     expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
@@ -980,7 +980,7 @@ describe('PageStructureService', () => {
           <!-- { "HST-Type": "CONTENT_LINK", "uuid": "new-content-in-container-vbox" } -->
         </p>
         <p id="new-manage-content-in-container-vbox">
-          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "templateQuery": "new-manage-content-in-container-vbox" } -->
+          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "documentTemplateQuery": "new-manage-content-in-container-vbox" } -->
         </p>
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
@@ -995,10 +995,10 @@ describe('PageStructureService', () => {
       expect(embeddedLinks.length).toBe(5);
       expect(embeddedLinks[0].getUuid()).toBe('menu-in-page');
       expect(embeddedLinks[1].getUuid()).toBe('content-in-page');
-      expect(embeddedLinks[2].getTemplateQuery()).toBe('new-test-document');
+      expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-test-document');
       expect(embeddedLinks[3].getUuid()).toBe('new-content-in-container-vbox');
       expect(embeddedLinks[3].getEnclosingElement()).toBe(newContainer);
-      expect(embeddedLinks[4].getTemplateQuery()).toBe('new-manage-content-in-container-vbox');
+      expect(embeddedLinks[4].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
       expect(embeddedLinks[4].getEnclosingElement()).toBe(newContainer);
       done();
     });

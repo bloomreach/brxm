@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import template from './subpageContent.html';
+import itemListingComponent from './itemListing.component';
+import PickerService from './picker.service';
+import PickerCtrl from './picker.controller';
+import uiTreeModule from '../tree/tree';
 
-function subpageContentDirective() {
-  'ngInject';
+const pickerModule = angular
+  .module('hippo-cm.channel.siteMenuEditor.picker', [
+    uiTreeModule.name,
+  ])
+  .component('itemListing', itemListingComponent)
+  .controller('PickerCtrl', PickerCtrl)
+  .service('PickerService', PickerService);
 
-  return {
-    restrict: 'E',
-    transclude: true,
-    template,
-  };
-}
-
-export default subpageContentDirective;
+export default pickerModule;

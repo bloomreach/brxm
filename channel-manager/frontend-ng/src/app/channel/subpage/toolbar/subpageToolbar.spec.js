@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,19 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SubpageToolbar', () => {
-  let $element;
-  let $scope;
-  let $rootScope;
   let $compile;
+  let $element;
+  let $rootScope;
+  let $scope;
   let $translate;
   let mode;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_) => {
-      $rootScope = _$rootScope_;
+    inject((_$compile_, _$rootScope_, _$translate_) => {
       $compile = _$compile_;
+      $rootScope = _$rootScope_;
       $translate = _$translate_;
     });
 

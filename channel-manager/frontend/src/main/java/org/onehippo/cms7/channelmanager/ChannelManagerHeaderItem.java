@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
     private ChannelManagerHeaderItem() {}
 
     @Override
-    public Iterable<? extends HeaderItem> getDependencies() {
+    public List<HeaderItem> getDependencies() {
         return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), ChannelEditorApiHeaderItem.get());
     }
 

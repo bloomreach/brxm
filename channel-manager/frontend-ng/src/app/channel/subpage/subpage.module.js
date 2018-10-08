@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import ListingCtrl from './listing.controller';
-import listingDirective from './listing.directive';
-import PickerService from './picker.service';
-import PickerCtrl from './picker.controller';
-import uiTreeModule from '../tree/tree';
+import subpageContentComponent from './content/subpageContent.component';
+import subpageToolbarComponent from './toolbar/subpageToolbar.component';
 
-const pickerModule = angular
-  .module('hippo-cm.channel.siteMenuEditor.picker', [
-    uiTreeModule.name,
-  ])
-  .controller('PickerCtrl', PickerCtrl)
-  .controller('ListingCtrl', ListingCtrl)
-  .service('PickerService', PickerService)
-  .directive('listing', listingDirective);
+const channelSubpageModule = angular
+  .module('hippo-cm.channel.subpage', [])
+  .component('subpageContent', subpageContentComponent)
+  .component('subpageToolbar', subpageToolbarComponent);
 
-export default pickerModule;
+export default channelSubpageModule;

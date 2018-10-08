@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-import template from './toolbar.html';
+import template from './nodes.template.html';
 
-function subpageToolbarDirective() {
-  'ngInject';
+const treeNodesComponent = {
+  require: {
+    hippoTree: '^^hippoTree',
+  },
+  bindings: {
+    items: '=',
+  },
+  template,
+};
 
-  return {
-    restrict: 'E',
-    scope: {
-      onBack: '&',
-      title: '@',
-    },
-    bindToController: {
-      mode: '@',
-    },
-    template,
-    controller: 'SubpageToolbarCtrl',
-    controllerAs: 'toolbar',
-  };
-}
-
-export default subpageToolbarDirective;
+export default treeNodesComponent;

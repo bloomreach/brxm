@@ -112,8 +112,5 @@ public class RichTextPicker<T extends RichTextEditorLink> extends ChannelEditorP
         public final void set(final Node node) {
         }
 
-        @Override
-        public final void release() {
-        }
     }
 }

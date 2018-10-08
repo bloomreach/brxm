@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import template from './itemsRenderer.html';
 
-function itemsRendererDirective() {
-  'ngInject';
+import controller from './subpageToolbar.controller';
+import template from './subpageToolbar.html';
 
-  return {
-    template,
-    restrict: 'A',
-  };
-}
+const subpageToolbarComponent = {
+  bindings: {
+    mode: '@',
+    onBack: '&',
+    title: '@',
+  },
+  controller,
+  template,
+};
 
-export default itemsRendererDirective;
+export default subpageToolbarComponent;

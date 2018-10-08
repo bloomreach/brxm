@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.6.0-openui-SNAPSHOT</version>
+    <version>13.0.0-openui-SNAPSHOT</version>
   </parent>
 
 
@@ -94,13 +94,6 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${lib.json.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-jquery</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -247,7 +240,6 @@
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
-                <include>${channel.editor.package}/plugins/colorfield/colorfield.js</include>
                 <include>${channel.editor.package}/plugins/floatingwindow/FloatingWindow.js</include>
                 <include>${channel.editor.package}/plugins/vtabs/VerticalTabPanel.js</include>
                 <include>${channel.editor.package}/ComponentVariants.js</include>
@@ -269,6 +261,28 @@
           <reuseForks>false</reuseForks>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>eu.somatik.serviceloader-maven-plugin</groupId>
+        <artifactId>serviceloader-maven-plugin</artifactId>
+        <version>1.1.0</version>
+        <configuration>
+          <services>
+            <!--
+            Register all implementations of Wicket's IInitializer so Wicket will instantiate them when the application
+            loads. Used to be done via wicket.properties file which was deprecated in Wicket 7.
+            See CMS-8034 and CHANNELMGR-2014.
+            -->
+            <param>org.apache.wicket.IInitializer</param>
+          </services>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

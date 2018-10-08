@@ -199,7 +199,6 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/colorfield/colorfield.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
         response.render(ChannelEditorHeaderItem.get());
     }
@@ -311,11 +310,6 @@ public class ChannelEditor extends ExtPanel {
                     final IEditorManager editorManager = (IEditorManager) service;
                     editorManager.unregisterOpenListener(EDITOR_OPEN_LISTENER);
                 }
-            }
-
-            @Override
-            public void updateService(final IClusterable service, final String name) {
-
             }
         }, editorManagerServiceId);
     }

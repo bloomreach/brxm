@@ -260,7 +260,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final String name = checkNotEmpty("name", newDocumentInfo.getName());
         final String slug = checkNotEmpty("slug", newDocumentInfo.getSlug());
-        final String templateQuery = checkNotEmpty("templateQuery", newDocumentInfo.getTemplateQuery());
+        final String documentTemplateQuery = checkNotEmpty("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
         final String documentTypeId = checkNotEmpty("documentTypeId", newDocumentInfo.getDocumentTypeId());
         final String rootPath = checkNotEmpty("rootPath", newDocumentInfo.getRootPath());
         final String defaultPath = newDocumentInfo.getDefaultPath();
@@ -282,7 +282,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
-            final String documentPath = folderWorkflow.add(templateQuery, documentTypeId, encodedSlug);
+            final String documentPath = folderWorkflow.add(documentTemplateQuery, documentTypeId, encodedSlug);
             log.debug("Created document {}", documentPath);
 
             final Node document = session.getNode(documentPath);
@@ -296,7 +296,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             return getCreatedDocument(handle, documentTypeId, locale);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
-                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), templateQuery, e);
+                    encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), documentTemplateQuery, e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }

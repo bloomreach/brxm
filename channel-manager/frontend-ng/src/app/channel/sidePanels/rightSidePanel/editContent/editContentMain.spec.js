@@ -138,6 +138,26 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
+      it('has closed the editor when the returned promise resolves', (done) => {
+        ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+
+        const deferredDiscard = $q.defer();
+        ContentEditor.discardChanges.and.returnValue(deferredDiscard.promise);
+
+        $ctrl.uiCanExit().then(() => {
+          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
+          expect(ContentEditor.discardChanges).toHaveBeenCalled();
+          expect(ContentEditor.close).toHaveBeenCalled();
+          done();
+        });
+
+        $scope.$digest();
+        expect(ContentEditor.close).not.toHaveBeenCalled();
+
+        deferredDiscard.reject();
+        $scope.$digest();
+      });
+
       it('fails when discarding changes is canceled', (done) => {
         ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
 

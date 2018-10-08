@@ -190,7 +190,7 @@ describe('DragDropService', () => {
     });
   });
 
-  it('shows a component\'s properties when a component receives a mouseup event', (done) => {
+  it('shows a component\'s properties when a component receives a mouseup event from the left mouse button', (done) => {
     loadIframeFixture(() => {
       spyOn(PageStructureService, 'showComponentProperties');
 
@@ -208,7 +208,9 @@ describe('DragDropService', () => {
         done();
       });
 
-      componentElement1.trigger('mouseup');
+      const mouseUp = $.Event('mouseup');
+      mouseUp.which = 1; // left mouse button, see https://api.jquery.com/event.which/
+      componentElement1.trigger(mouseUp);
     });
   });
 

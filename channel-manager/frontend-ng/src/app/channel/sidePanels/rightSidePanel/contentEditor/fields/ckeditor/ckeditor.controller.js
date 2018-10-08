@@ -78,10 +78,7 @@ class CKEditorController {
 
       // CKEditor has been replaced and instance is ready
       this.editor.on('instanceReady', () => {
-        this.editableElement = this.$element.find('.cke_editable');
-        this.editableElement.on('blur', ($event) => { this.blurEvent = $event; });
-        this.editor.on('blur', () => this.onEditorBlur(this.blurEvent));
-
+        this.editor.on('blur', $event => this.onEditorBlur($event));
         this.editor.on('dialogShow', () => {
           this.SharedSpaceToolbarService.isToolbarPinned = true;
         });
@@ -133,13 +130,13 @@ class CKEditorController {
   onEditorFocus() {
     this.$scope.$apply(() => {
       this.textAreaElement.addClass('focused');
-    });
 
-    this.onFocus({
-      $event: {
-        target: this.$element.find('.cke_editable'),
-        customFocus: () => this.editor.focus(),
-      },
+      this.onFocus({
+        $event: {
+          target: this.$element.find('.cke_editable'),
+          customFocus: () => this.editor.focus(),
+        },
+      });
     });
 
     if (!this.SharedSpaceToolbarService.isToolbarVisible) {
@@ -151,7 +148,9 @@ class CKEditorController {
   }
 
   onEditorBlur($event) {
-    this.onBlur({ $event });
+    this.$scope.$apply(() => {
+      this.onBlur({ $event });
+    });
 
     const relatedTarget = angular.element($event.relatedTarget);
     if (!this.FieldService.shouldPreserveFocus(relatedTarget) && this.SharedSpaceToolbarService.isToolbarPinned === false) {
