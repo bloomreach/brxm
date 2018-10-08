@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import controller from './hippoIframe.controller';
-
 describe('hippoIframeCtrl', () => {
   let $element;
   let $rootScope;
@@ -36,7 +34,7 @@ describe('hippoIframeCtrl', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      $controller,
+      $componentController,
       _$compile_,
       _$rootScope_,
       _$window_,
@@ -68,7 +66,7 @@ describe('hippoIframeCtrl', () => {
       spyOn(DragDropService, 'onDrop');
       onEditMenu = jasmine.createSpy('onEditMenu');
 
-      $ctrl = $controller(controller, {
+      $ctrl = $componentController('hippoIframe', {
         $element,
         CmsService,
         ContainerService,
