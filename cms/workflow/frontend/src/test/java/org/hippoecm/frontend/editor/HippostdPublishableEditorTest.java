@@ -25,6 +25,7 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.TestEditorContext;
 import org.hippoecm.frontend.editor.HippostdPublishableEditor.WorkflowState;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -65,11 +66,18 @@ public class HippostdPublishableEditorTest extends PluginTest {
         setupMocks();
     }
 
+    private void initializeBranchIdModel(String uuid) {
+        final BranchIdModel branchIdModel = new BranchIdModel(context, uuid);
+        branchIdModel.setInitialBranchInfo("master","core");
+
+    }
+
     private void setupMocks() throws RepositoryException {
         PowerMock.mockStatic(AbstractCmsEditor.class);
         PowerMock.mockStatic(HippostdPublishableEditor.class);
 
-        createDocument("document");
+        final String identifier = createDocument("document");
+        initializeBranchIdModel(identifier);
 
         model = new JcrNodeModel("/test/content/document");
         expect(AbstractCmsEditor.getMyName(anyObject())).andReturn("bah");
@@ -94,19 +102,22 @@ public class HippostdPublishableEditorTest extends PluginTest {
         super.tearDown();
     }
 
-    private void createDocument(final String name) throws RepositoryException {
+    private String createDocument(final String name) throws RepositoryException {
         final Map<String, String> pars = new MiniMap<>(1);
         pars.put("name", name);
         build(session, mount("/test/content", instantiate(CMS_TEST_DOCUMENT, pars)));
+        final Node node = session.getNode("/test/content/" + name);
+        return node.getIdentifier();
     }
 
     @Test(expected = EditorException.class)
     public void testEditorModelNT_VersionEditError() throws RepositoryException, EditorException {
         expect(HippostdPublishableEditor.getMode(anyObject())).andReturn(Mode.EDIT);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(new WorkflowState());
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(new WorkflowState());
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
+
         editor.getEditorModel();
     }
 
@@ -117,7 +128,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         final IModel<Node> draft = new JcrNodeModel("/test/content/document/draft");
         state.setDraft(draft);
         state.setHolder(true);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(state);
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
@@ -133,7 +144,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         final WorkflowState state = new WorkflowState();
         final IModel<Node> unpublished = new JcrNodeModel("/test/content/document/unpublished");
         state.setUnpublished(unpublished);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(state);
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
@@ -150,7 +161,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         final IModel<Node> published = new JcrNodeModel("/test/content/document/published");
         state.setUnpublished(null);
         state.setPublished(published);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(state);
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
@@ -168,7 +179,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         state.setUnpublished(null);
         state.setPublished(null);
         state.setDraft(draft);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(state);
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
@@ -181,7 +192,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
     @Test(expected = EditorException.class)
     public void testEditorModelCompareNotNtVersion() throws RepositoryException, EditorException {
         expect(HippostdPublishableEditor.getMode(anyObject())).andReturn(Mode.COMPARE);
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(new WorkflowState());
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(new WorkflowState());
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);
@@ -202,7 +213,7 @@ public class HippostdPublishableEditorTest extends PluginTest {
         final IModel<Node> published = new JcrNodeModel("/test/content/document/published");
         state.setPublished(published);
 
-        expect(HippostdPublishableEditor.getWorkflowState(anyObject())).andReturn(state);
+        expect(HippostdPublishableEditor.getWorkflowState(anyObject(),anyObject())).andReturn(state);
         replayAll();
 
         final HippostdPublishableEditor editor = new HippostdPublishableEditor(new TestEditorContext(), context, config, model);

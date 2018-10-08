@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.time.format.FormatStyle;
 import java.util.Calendar;
+import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -25,14 +26,16 @@ import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.addon.workflow.FeedbackStdWorkflow;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,7 +46,9 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -58,17 +63,20 @@ public class VersionWorkflowPlugin extends RenderPlugin {
     public VersionWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new StdWorkflow("info", "info") {
+        final String restoreToBranchId = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchId());
+        final String restoreToBranchName = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchName());
 
-            @Override
-            public String getSubMenu() {
-                return "info";
-            }
+        final String revisionBranchName = getRevisionBranchName();
 
-            @Override
-            protected IModel getTitle() {
-                return new StringResourceModel("created", this, null, new LoadableDetachableModel<String>() {
-
+        add(new FeedbackStdWorkflow("created-for", new StringResourceModel("created-for-branch", this, null,
+                new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return revisionBranchName;
+                    }
+                },
+                new LoadableDetachableModel<String>() {
+                    @Override
                     protected String load() {
                         try {
                             Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
@@ -84,14 +92,16 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                         }
                         return null;
                     }
+                }), new Model<>(Boolean.TRUE)
+        ));
 
-                });
-            }
-
-            @Override
-            protected void invoke() {
-            }
-        });
+        add(new FeedbackStdWorkflow("restoreto", new StringResourceModel("restore-to", this, null,
+                new LoadableDetachableModel<String>() {
+                    @Override
+                    protected String load() {
+                        return restoreToBranchName;
+                    }
+                }), new Model<>(Boolean.TRUE)));
 
         add(new StdWorkflow("restore", new StringResourceModel("restore", this, null), getModel()) {
 
@@ -135,15 +145,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 DocumentWorkflow documentWorkflow = model.getWorkflow();
 
                 Version versionNode = (Version) frozenNode.getParent();
-                Calendar calendar = versionNode.getCreated();
                 // create a revision to prevent loss of content from unpublished.
-                documentWorkflow.version();
-                Document doc = documentWorkflow.obtainEditableInstance();
-                try {
-                    documentWorkflow.versionRestoreTo(calendar, doc);
-                } finally {
-                    doc = documentWorkflow.commitEditableInstance();
-                }
+                final Document doc = documentWorkflow.restoreVersionToBranch(versionNode, restoreToBranchId);
 
                 JcrNodeModel previewModel = new JcrNodeModel(session.getNodeByIdentifier(doc.getIdentity()));
                 IEditorManager editorMgr = getEditorManager();
@@ -190,6 +193,35 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 return null;
             }
         });
+    }
+
+    private String getRevisionBranchName() {
+        try {
+            return JcrUtils.getStringProperty(getModel().getNode(), HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "Core");
+        } catch (RepositoryException e) {
+            log.error("Exception while trying to get property", e);
+            return "Core";
+        }
+    }
+
+
+    private String getBranchInfo(final IPluginContext context, final Function<BranchIdModel, String> function) {
+
+        try {
+            final DocumentWorkflow documentWorkflow = getDocumentWorkflow();
+            final BranchIdModel branchIdModel = new BranchIdModel(context, documentWorkflow.getNode().getIdentifier());
+            if (branchIdModel == null) {
+                throw new IllegalStateException("Expected a branchIdModel");
+            }
+            return function.apply(branchIdModel);
+        } catch (RepositoryException e) {
+            log.error("Could not get branch id or name", e);
+            throw new RuntimeException("Repository Exception happened", e);
+        }
+    }
+
+    private DocumentWorkflow getDocumentWorkflow() {
+        return getModel().getWorkflow();
     }
 
     @Override

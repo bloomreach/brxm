@@ -35,8 +35,14 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.branch.BranchHandle;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATESUMMARY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
 
 /**
  * Standard attributes of a hippostd:publishable document. Figures out what CSS classes, summary
@@ -104,24 +110,24 @@ public class StateIconAttributes implements IObservable, IDetachable {
     }
 
     private void loadAttributes(final Node node) throws RepositoryException {
-        Node document = null;
+        Node unpublishedVariant = null;
         NodeType primaryType = null;
         boolean isHistoric = false;
         if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             NodeIterator docs = node.getNodes(node.getName());
             while (docs.hasNext()) {
-                document = docs.nextNode();
-                primaryType = document.getPrimaryNodeType();
-                if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                    String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                unpublishedVariant = docs.nextNode();
+                primaryType = unpublishedVariant.getPrimaryNodeType();
+                if (unpublishedVariant.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                    String state = unpublishedVariant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                     if ("unpublished".equals(state)) {
                         break;
                     }
                 }
             }
         } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-            document = node;
-            primaryType = document.getPrimaryNodeType();
+            unpublishedVariant = node;
+            primaryType = unpublishedVariant.getPrimaryNodeType();
         } else if (node.isNodeType("nt:version")) {
             isHistoric = true;
             Node frozen = node.getNode("jcr:frozenNode");
@@ -129,39 +135,67 @@ public class StateIconAttributes implements IObservable, IDetachable {
             NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
             primaryType = ntMgr.getNodeType(primary);
             if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                document = frozen;
+                unpublishedVariant = frozen;
             }
         }
-        if (document != null) {
+        if (unpublishedVariant != null) {
             if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
-                    || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
+                    || unpublishedVariant.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
 
-                final Property stateProperty = document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY);
+                final Property stateProperty = unpublishedVariant.getProperty(HIPPOSTD_STATESUMMARY);
 
-                final String state = stateProperty.getString();
+                final String state = getState(unpublishedVariant);
                 cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
                 final JcrPropertyModel stateSummaryModel = new JcrPropertyModel(stateProperty);
                 final IModel<String> stateModel = new JcrPropertyValueModel<>(stateSummaryModel);
                 final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
                 final TypeTranslator typeTranslator = new TypeTranslator(nodeTypeModel);
-                summary = typeTranslator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
+                summary = typeTranslator.getValueName(HIPPOSTD_STATESUMMARY, stateModel).getObject();
 
                 icons = getStateIcons(state);
 
-                observable.setTarget(new JcrNodeModel(document));
+                observable.setTarget(new JcrNodeModel(unpublishedVariant));
             }
         }
     }
 
+    private String getState(Node unpublishedVariant) throws RepositoryException {
+
+        final Node handle = unpublishedVariant.getParent();
+        if (!handle.isNodeType(NT_HIPPO_VERSION_INFO)) {
+            // For performance reasons avoid creating a branch handle if it is not necessary.
+            return unpublishedVariant.getProperty(HIPPOSTD_STATESUMMARY).getString();
+        }
+
+        final BranchHandle masterBranchHandle = getMasterBranchHandle(handle);
+        if (!masterBranchHandle.isLiveAvailable()) {
+            return "new";
+        }
+        if (masterBranchHandle.isModified()) {
+            return "changed";
+        }
+        return "live";
+    }
+
+    private BranchHandle getMasterBranchHandle(final Node handleNode) throws RepositoryException {
+        final DocumentHandle documentHandle = new DocumentHandle(handleNode);
+        try {
+            documentHandle.initialize();
+            return documentHandle.getBranchHandle();
+        } catch (WorkflowException e) {
+            throw new RepositoryException(e.getMessage(), e);
+        }
+    }
+
     private Icon[] getStateIcons(final String state) {
-        switch(state) {
+        switch (state) {
             case "new":
-                return new Icon[] {Icon.MINUS_CIRCLE, Icon.EMPTY};
+                return new Icon[]{Icon.MINUS_CIRCLE, Icon.EMPTY};
             case "live":
-                return new Icon[] {Icon.CHECK_CIRCLE, Icon.EMPTY};
+                return new Icon[]{Icon.CHECK_CIRCLE, Icon.EMPTY};
             case "changed":
-                return new Icon[] {Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
+                return new Icon[]{Icon.CHECK_CIRCLE, Icon.EXCLAMATION_TRIANGLE};
             default:
                 log.info("No icon available for document state '{}'", state);
                 return null;
