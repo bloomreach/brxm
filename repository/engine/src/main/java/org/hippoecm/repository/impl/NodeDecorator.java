@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -105,56 +105,6 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
             super.remove();
         } finally {
             ((SessionDecorator)getSession()).postMountEnabled(true);
-        }
-    }
-
-    /**
-     * internal function to access the display name for a normal, Version or VersionHistory node.
-     * @param node the <em>underlying</em> node
-     * @return a symbolic name of the node
-     */
-    static String getDisplayName(Node node) throws RepositoryException {
-        //if (node.hasProperty(HippoNodeType.HIPPO_UUID) && node.hasProperty(HippoNodeType.HIPPO_SEARCH)) {
-        if (node.hasProperty(HippoNodeType.HIPPO_SEARCH)) {
-
-            // just return the resultset
-            if (node.getName().equals(HippoNodeType.HIPPO_RESULTSET)) {
-                return HippoNodeType.HIPPO_RESULTSET;
-            }
-
-            // the last search is the current one
-            Value[] searches = node.getProperty(HippoNodeType.HIPPO_SEARCH).getValues();
-            if (searches.length == 0) {
-                return node.getName();
-            }
-            String search = searches[searches.length-1].getString();
-
-            // check for search seperator
-            if (search.indexOf("#") == -1) {
-                return node.getName();
-            }
-
-            // check for sql parameter '?'
-            String xpath = search.substring(search.indexOf("#")+1);
-            if (xpath.indexOf('?') == -1) {
-                return node.getName();
-            }
-
-            // construct query
-            xpath = xpath.substring(0,xpath.indexOf('?')) + node.getName() + xpath.substring(xpath.indexOf('?')+1);
-
-            Query query = node.getSession().getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
-
-            // execute
-            QueryResult result = query.execute();
-            RowIterator iter = result.getRows();
-            if (iter.hasNext()) {
-                return iter.nextRow().getValues()[0].getString();
-            } else {
-                return node.getName();
-            }
-        } else {
-            return node.getName();
         }
     }
 

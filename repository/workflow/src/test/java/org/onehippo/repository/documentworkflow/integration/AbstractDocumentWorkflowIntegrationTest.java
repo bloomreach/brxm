@@ -71,6 +71,7 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
         document.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
         document.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
+        document.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
     }
 
     protected DocumentWorkflow getDocumentWorkflow(final Node handle) throws RepositoryException {

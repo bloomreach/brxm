@@ -17,26 +17,67 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import java.util.Date;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
+import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_REQUEST;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_PUBLISHED;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
+import static org.onehippo.repository.util.JcrConstants.JCR_VERSION_HISTORY;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowIntegrationTest {
 
     @Test
     public void publishPublishesDocument() throws Exception {
         assumeTrue(!isLive());
+
+        assertFalse(handle.isNodeType(NT_HIPPO_VERSION_INFO));
+
+        assertEquals("unpublished", JcrUtils.getStringProperty(document, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"preview"} , JcrUtils.getMultipleStringProperty(document, HIPPO_AVAILABILITY, null));
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.publish();
         assertTrue("Document not live after publication", isLive());
+        final Node preview = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED).get();
+        assertEquals("unpublished", JcrUtils.getStringProperty(preview, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"preview"} , JcrUtils.getMultipleStringProperty(preview, HIPPO_AVAILABILITY, null));
+
+        final Node live = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED).get();
+        assertEquals("published", JcrUtils.getStringProperty(live, HIPPOSTD_STATE, null));
+        assertArrayEquals(new String[]{"live"} , JcrUtils.getMultipleStringProperty(live, HIPPO_AVAILABILITY, null));
+
+        assertTrue(preview.isNodeType(MIX_VERSIONABLE));
+        assertFalse(live.isNodeType(MIX_VERSIONABLE));
+
+        assertTrue("Publication should lead to a jcr version checkin, and after that the handle node should have " +
+                "information about the version history node.", handle.isNodeType(NT_HIPPO_VERSION_INFO));
+        assertEquals(handle.getProperty(HIPPO_VERSION_HISTORY_PROPERTY).getString(), preview.getProperty(JCR_VERSION_HISTORY).getNode().getIdentifier());
+
+        final VersionHistory versionHistory = session.getWorkspace().getVersionManager().getVersionHistory(preview.getPath());
+
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_PUBLISHED));
+        assertTrue(versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED));
+
+        assertTrue("After publication, expected master-published and master-unpublished both point to the last checked in version",
+                versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_PUBLISHED).isSame(versionHistory.getVersionByLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)));
     }
 
     @Test
@@ -75,7 +116,7 @@ public class DocumentWorkflowPublicationTest extends AbstractDocumentWorkflowInt
             @Override
             public void execute() throws Exception {
                 assertFalse("Document still live after depublication", isLive());
-                assertFalse("Depublication did not create a new version", oldVersion.isSame(getBaseVersion()));
+                assertTrue("Depublication should not create a version", oldVersion.isSame(getBaseVersion()));
                 assertFalse("Still a request pending", containsRequest());
             }
         }, 10);

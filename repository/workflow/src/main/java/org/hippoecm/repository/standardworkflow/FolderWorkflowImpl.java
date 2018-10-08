@@ -693,17 +693,20 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(NT_HANDLE)) {
-            Node handle = subject.addNode(targetName, NT_HANDLE);
-            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            Node targetHandle = subject.addNode(targetName, NT_HANDLE);
+            targetHandle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
-            Node document = copyDocument(targetName, Collections.emptyMap(), source, handle);
+            Node document = copyDocument(targetName, Collections.emptyMap(), source, targetHandle);
 
-            renameChildDocument(handle);
+            renameChildDocument(targetHandle);
+            removeBranchRelatedMixins(targetHandle);
             rootSession.save();
             return new Document(document);
         } else {
-            renameChildDocument(JcrUtils.copy(source, targetName, subject));
-            subject.save();
+            final Node target = JcrUtils.copy(source, targetName, subject);
+            renameChildDocument(target);
+            removeBranchRelatedMixins(target);
+            rootSession.save();
             return new Document(subject.getNode(targetName));
         }
     }
@@ -776,15 +779,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node source = offspring.getNode(rootSession);
         if (folder.isSame(destination)) {
             //throw new WorkflowException("Cannot copy document to same folder, use duplicate instead");
-            return duplicate(source, targetName);
+            final Document copy = duplicate(source, targetName);
+            return copy;
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            return ((EmbedWorkflow)workflowContext.getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
+            final Document copy = ((EmbedWorkflow) workflowContext.getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
+            return copy;
         }
         return null;
     }
 
-    public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public Document copyTo(Document sourceFolder, Document offspring, String targetName, Map<String,String> arguments) throws WorkflowException, RepositoryException {
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         final Session subjectSession = workflowContext.getSubjectSession();
@@ -798,6 +803,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             throw new WorkflowException("Cannot copy document when document with same name exists");
         }
         Node source = offspring.getNode(rootSession);
+        Document copy;
         if (!folder.isCheckedOut()) {
             folder.checkout();
         }
@@ -807,14 +813,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
-
-            folder.save();
-            return new Document(document);
+            removeBranchRelatedMixins(handle);
+            copy = new Document(document);
         } else {
-            renameChildDocument(JcrUtils.copy(source, targetName, folder));
-            folder.save();
-            return new Document(folder.getNode(targetName));
+            final Node target = JcrUtils.copy(source, targetName, folder);
+            renameChildDocument(target);
+            removeBranchRelatedMixins(target);
+            copy = new Document(folder.getNode(targetName));
         }
+        rootSession.save();
+        return copy;
     }
 
     protected Node copyDocument(String targetName, Map<String, String> arguments, Node source, Node handle)
@@ -890,6 +898,39 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
         return result;
+    }
+
+    private void removeBranchRelatedMixins(Node source) throws RepositoryException {
+        if (source.isNodeType(HippoNodeType.NT_HANDLE)) {
+            try {
+                removeVersionInfoMixin(source);
+                removeBranchInfoMixins(source);
+            } catch (RepositoryException e) {
+                log.warn("Could not removeBranchRelatedMixins %s or %s mixin and related properties", HippoNodeType.HIPPO_MIXIN_BRANCH_INFO, HippoNodeType.NT_HIPPO_VERSION_INFO);
+            }
+        } else {
+            for (Node child : new NodeIterable(source.getNodes())) {
+                removeBranchRelatedMixins(child);
+            }
+        }
+    }
+
+    private void removeBranchInfoMixins(final Node handle) throws RepositoryException {
+        final NodeIterator nodes = handle.getNodes(handle.getName());
+        while (nodes.hasNext()) {
+            final Node variant = nodes.nextNode();
+            if (variant.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO)) {
+                variant.getProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID).remove();
+                variant.getProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME).remove();
+                variant.removeMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+            }
+        }
+    }
+
+    private void removeVersionInfoMixin(final Node handle) throws RepositoryException {
+        if (handle.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO)) {
+            handle.removeMixin(HippoNodeType.NT_HIPPO_VERSION_INFO);
+        }
     }
 
 }

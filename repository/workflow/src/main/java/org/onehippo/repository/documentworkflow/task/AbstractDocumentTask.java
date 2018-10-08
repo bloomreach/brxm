@@ -79,6 +79,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         Arrays.sort(PROTECTED_MIXINS);
     }
 
+
     private DocumentHandle documentHandle;
     private WorkflowContext workflowContext;
 

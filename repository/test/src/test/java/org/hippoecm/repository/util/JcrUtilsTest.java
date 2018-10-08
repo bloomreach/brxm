@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,12 +20,15 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class JcrUtilsTest extends RepositoryTestCase {
@@ -169,4 +172,78 @@ public class JcrUtilsTest extends RepositoryTestCase {
             assertTrue(expected.getMessage().equals("No applicable child node definition"));
         }
     }
+
+    @Test
+    public void testCopyFolderExcludesBranchRelatedMixins() throws RepositoryException {
+
+        final Node doc = session.getNode("/test/doc");
+        doc.addMixin(HippoNodeType.NT_HIPPO_VERSION_INFO);
+        doc.setProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY, "test");
+        doc.setProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[]{"master", "test"});
+
+        doc.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+        doc.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "test");
+        doc.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "test");
+        session.save();
+
+        final Node test2Node = JcrUtils.copy(session.getNode("/test"), "test2", session.getRootNode());
+        session.save();
+
+        final Node srcDoc = session.getNode("/test/doc");
+        assertThat(srcDoc.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY), is(true));
+        assertThat(srcDoc.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME), is(true));
+
+        final Node copiedDoc = session.getNode("/test2/doc");
+        assertThat(copiedDoc.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY), is(false));
+        assertThat(copiedDoc.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME), is(false));
+
+        test2Node.remove();
+        session.save();
+    }
+
+    @Test
+    public void testCopyNodeExcludesBranchRelatedMixins() throws RepositoryException {
+
+        final Node doc = session.getNode("/test/doc");
+        doc.addMixin(HippoNodeType.NT_HIPPO_VERSION_INFO);
+        doc.setProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY, "test");
+        doc.setProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[]{"master", "test"});
+
+        doc.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+        doc.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "test");
+        doc.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "test");
+        session.save();
+
+        final Node doc2 = doc.getParent().addNode("doc2", HippoNodeType.NT_HANDLE);
+        JcrUtils.copyTo(doc, doc2);
+        session.save();
+
+        final Node srcDoc = session.getNode("/test/doc");
+        assertThat(srcDoc.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY), is(true));
+        assertThat(srcDoc.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID), is(true));
+        assertThat(srcDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME), is(true));
+
+        final Node copiedDoc = session.getNode("/test/doc2");
+        assertThat(copiedDoc.isNodeType(HippoNodeType.NT_HIPPO_VERSION_INFO), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_BRANCHES_PROPERTY), is(false));
+        assertThat(copiedDoc.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID), is(false));
+        assertThat(copiedDoc.hasProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME), is(false));
+
+        copiedDoc.remove();
+        session.save();
+    }
+
 }

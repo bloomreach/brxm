@@ -15,19 +15,22 @@
  */
 package org.onehippo.repository.documentworkflow.integration;
 
+import java.rmi.RemoteException;
+
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -35,12 +38,12 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
-import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
 public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegrationTest {
@@ -54,6 +57,17 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
 
     @Test
     public void firstEditOfPublishedOnlyDocumentCreatesInitialVersion() throws Exception {
+        firstEditOfPublishedOnlyDocumentAssertions();
+    }
+
+    @Test
+    public void firstEditOfPublishedOnlyDocumentWithoutAvailabilityCreatesInitialVersion() throws Exception {
+        document.getProperty(HIPPO_AVAILABILITY).remove();
+        session.save();
+    }
+
+
+    private void firstEditOfPublishedOnlyDocumentAssertions() throws RepositoryException, WorkflowException, RemoteException {
         Node variant = getVariant(PUBLISHED);
 
         assertNull(variant);
@@ -65,13 +79,16 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         }
         // change unpublished only variant into published only variant
         variant.setProperty(HIPPOSTD_STATE, PUBLISHED);
+        if (document.hasProperty(HIPPO_AVAILABILITY)) {
+            document.setProperty(HIPPO_AVAILABILITY, new String[]{"live"});
+        }
         session.save();
         VersionManager versionManager = session.getWorkspace().getVersionManager();
         try {
             // this should now fail
             versionManager.getVersionHistory(variant.getPath());
-        }
-        catch (UnsupportedRepositoryOperationException e) {
+            fail("versionManager.getVersionHistory should had failed");
+        } catch (UnsupportedRepositoryOperationException e) {
             // expected because published variant (now) should no longer be versioned.
         }
         variant = getVariant(PUBLISHED);
@@ -115,6 +132,35 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         DocumentWorkflow workflow = getDocumentWorkflow(handle);
         workflow.requestPublication();
         assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+    }
+
+    @Test
+    public void can_edit_branch_with_pending_request_for_master() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        workflow.requestPublication();
+        assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+        workflow.branch("foo", "Foo");
+
+        assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
+        assertTrue((Boolean) workflow.hints("foo").get("obtainEditableInstance"));
+
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.obtainEditableInstance();
+            fail("Obtain Editable Instance should not be allowed");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined", e.getMessage());
+        }
+        workflow.obtainEditableInstance("foo");
+    }
+
+    @Test
+    public void obtain_editable_instance_fails_for_non_existing_branch() throws Exception {
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        try (Log4jInterceptor ignore = Log4jInterceptor.onAll().deny().build()) {
+            workflow.obtainEditableInstance("foo");
+        } catch (WorkflowException e) {
+            assertEquals("Cannot invoke workflow documentworkflow action obtainEditableInstance: action not allowed or undefined", e.getMessage());
+        }
     }
 
     @Test

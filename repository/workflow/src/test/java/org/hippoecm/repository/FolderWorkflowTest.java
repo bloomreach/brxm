@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,28 +16,22 @@
 package org.hippoecm.repository;
 
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.Function;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -53,6 +47,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -60,6 +63,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.Assume.assumeTrue;
+import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 public class FolderWorkflowTest extends RepositoryTestCase {
 
@@ -267,7 +271,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     @Test
     public void testReorderFolder() throws RepositoryException, WorkflowException, RemoteException {
-        Map<String, String> nodes = new HashMap<String, String>();
+        Map<String, String> nodes = new HashMap<>();
 
         Node node = root.addNode("f","hippostd:folder");
         node.addMixin("mix:versionable");
@@ -301,7 +305,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
          * foo      noot
          * bar      zorro
          */
-        List<String> newOrder = new LinkedList<String>();
+        List<String> newOrder = new LinkedList<>();
         newOrder.add("aap");
         newOrder.add("bar[2]");
         newOrder.add("foo");
@@ -375,6 +379,126 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void when_targetDocumentHandleHasVersionInfoMixin_destinationShouldNotHaveVersionInfoMixin() throws RepositoryException, RemoteException, WorkflowException {
+        final String mixin = HippoNodeType.NT_HIPPO_VERSION_INFO;
+        final boolean hasVersionInfoMixin = createDestination().isNodeType(mixin);
+        assertFalse(String.format("The %s mixin should be removed when copying a node", mixin), hasVersionInfoMixin);
+    }
+
+
+    @Test
+    public void when_targetDocumentHandleHasBranchesProperty_destinationShouldNotHaveBranchesProperty() throws RepositoryException, RemoteException, WorkflowException {
+        final String property = HippoNodeType.HIPPO_BRANCHES_PROPERTY;
+        final boolean hasBranchesProperty = createDestination().hasProperty(property);
+        assertFalse(String.format("The %s property should be removed when copying a node", property), hasBranchesProperty);
+    }
+
+    @Test
+    public void when_targetDocumentHandleHasVersionHistoryProperty_destinationShouldNotHaveVersionHistoryProperty() throws RepositoryException, RemoteException, WorkflowException {
+        final String property = HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+        final boolean hasBranchesProperty = createDestination().hasProperty(property);
+        assertFalse(String.format("The %s property should be removed when copying a node", property), hasBranchesProperty);
+    }
+
+
+    @Test
+    public void when_targetDocumentVariantsHaveBranchInfoMixin_destinationShouldNotHaveBranchInfoMixin() throws RepositoryException, RemoteException, WorkflowException {
+        final String mixin = HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
+        Function<Node, Boolean> assertion = variant -> {
+            try {
+                return variant.isNodeType(mixin);
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+            return true;
+        };
+        final Boolean oneOfTheVariantsHaveAInfoMixin = getVariants().stream().map(assertion).reduce((curr, acc) -> acc || curr).orElse(false);
+        assertFalse(String.format("None of the variants of the destination node of copy action should have the %s mixin", mixin), oneOfTheVariantsHaveAInfoMixin);
+    }
+
+    @Test
+    public void when_targetDocumentVariantsHaveBranchIdProperty_destinationShouldNotHaveBranchIdProperty() throws RepositoryException, RemoteException, WorkflowException {
+        String property = HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+        Function<Node, Boolean> assertion = variant -> {
+            try {
+                return variant.hasProperty("hippo:branchId");
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+            return true;
+        };
+        final Boolean oneOfTheVariantsHaveAInfoMixin = getVariants().stream().map(assertion).reduce((curr, acc) -> acc || curr).orElse(true);
+        assertFalse(String.format("None of the variants of the destination node of copy action should have the %s property", property), oneOfTheVariantsHaveAInfoMixin);
+    }
+
+
+    @Test
+    public void when_targetDocumentVariantsHaveBranchNameProperty_destinationShouldNotHaveBranchNameProperty() throws RepositoryException, RemoteException, WorkflowException {
+        final String property = HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+        Function<Node, Boolean> assertion = variant -> {
+            try {
+                return variant.hasProperty(property);
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+            return true;
+        };
+        final Boolean oneOfTheVariantsHaveAInfoMixin = getVariants().stream().map(assertion).reduce((curr, acc) -> acc || curr).orElse(true);
+        assertFalse(String.format("None of the variants of the destination node of copy action should have the %s property", property), oneOfTheVariantsHaveAInfoMixin);
+    }
+
+    private Set<Node> getVariants() throws RepositoryException, WorkflowException, RemoteException {
+        Node destination = createDestination();
+        final NodeIterator documentWithBranchInformation = destination.getNodes();
+        Set<Node> variants = new HashSet<>();
+        while (documentWithBranchInformation.hasNext()) {
+            variants.add(documentWithBranchInformation.nextNode());
+        }
+        return variants;
+    }
+
+    private Node createDestination() throws RepositoryException, WorkflowException, RemoteException {
+        final Node folder = session.getNode("/test/aap");
+        Node handle = createDocumentWithBranches(folder);
+        session.save();
+        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", this.node);
+        Document copy = workflow.copy(new Document(handle), new Document(this.node), "dc");
+        return copy.getNode(session);
+    }
+
+    private Node createDocumentWithBranches(final Node folder) throws RepositoryException {
+        Node handle = folder.addNode("documentWithBranchInformation", HippoNodeType.NT_HANDLE);
+        Node publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
+        Node unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
+        publishedVariant.addMixin("hippo:branchInfo");
+        publishedVariant.setProperty("hippo:branchId", "branch1");
+        publishedVariant.setProperty("hippo:branchName", "Branch One");
+        unpublishedVariant.addMixin("hippo:branchInfo");
+        unpublishedVariant.setProperty("hippo:branchId", "branch1");
+        unpublishedVariant.setProperty("hippo:branchName", "Branch One");
+        handle.addMixin("hippo:versionInfo");
+        handle.setProperty("hippo:branches", new String[]{"branch1", "branch2"});
+        session.save();
+        return handle;
+    }
+
+    private Node addVariant(Node handle, String state) throws RepositoryException {
+        Node variant = handle.addNode(handle.getName(), HippoNodeType.NT_DOCUMENT);
+        variant.addMixin(HIPPOSTDPUBWF_DOCUMENT);
+        variant.addMixin(MIX_VERSIONABLE);
+        variant.addMixin(NT_RELAXED);
+        variant.setProperty(HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        variant.setProperty(HIPPOSTDPUBWF_CREATED_BY, "testuser");
+        variant.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        variant.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "testuser");
+        variant.setProperty(HIPPOSTD_STATE, UNPUBLISHED);
+        variant.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
+        variant.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
+        return variant;
+    }
+
+    @Test
     public void testCopyDocumentToDifferentFolder() throws RepositoryException, RemoteException, WorkflowException {
         Node originalDocument = createDocument();
 
@@ -387,9 +511,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertEquals(CONTENT_ON_COPY, copyNode.getProperty("hippostd:content").getString());
     }
 
-    private Node createDocument() throws PathNotFoundException, RepositoryException, ItemExistsException,
-            VersionException, ConstraintViolationException, LockException, AccessDeniedException,
-            ReferentialIntegrityException, InvalidItemStateException, NoSuchNodeTypeException {
+    private Node createDocument() throws RepositoryException {
         Node source = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document");
         Node originalHandle = JcrUtils.copy(source, "d", node);
         Node originalDocument = originalHandle.getNode("new-document");
@@ -400,8 +522,8 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     private static void createDirectories(Session session, WorkflowManager manager, Node node, Random random, int numiters)
         throws RepositoryException, WorkflowException, RemoteException {
-        Vector<String> paths = new Vector<String>();
-        Vector<String> worklog = new Vector<String>();
+        Vector<String> paths = new Vector<>();
+        Vector<String> worklog = new Vector<>();
         for(int itercount=0; itercount<numiters; ++itercount) {
             int parentIndex = (paths.size() > 0 ? random.nextInt(paths.size()) : -1);
             String parentPath;
@@ -415,7 +537,6 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             }
             session.refresh(false);
             FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", parent);
-            FolderWorkflow folderWorkflow = workflow;
             assertNotNull(workflow);
             Map<String,Set<String>> types = workflow.list();
             assertNotNull(types);
@@ -456,11 +577,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
                 WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
                 Node test = session.getRootNode().getNode(node.getPath().substring(1));
                 createDirectories(session, manager, node, new Random(seed), niters);
-            } catch(RepositoryException ex) {
-                concurrentError = ex;
-            } catch(WorkflowException ex) {
-                concurrentError = ex;
-            } catch(RemoteException ex) {
+            } catch(RepositoryException | WorkflowException | RemoteException ex) {
                 concurrentError = ex;
             }
         }

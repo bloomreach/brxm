@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemNotFoundException;
@@ -40,6 +43,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.repository.util.JcrConstants;
 
 import static javax.jcr.observation.Event.NODE_ADDED;
@@ -54,6 +58,15 @@ import static javax.jcr.observation.Event.PROPERTY_REMOVED;
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
  */
 public class JcrUtils {
+
+    /**
+     * Some properties of the following mixins  depend on data that is stored in version history. Since version history
+     * is not copied the mixins and it's properties must also not be copied.
+     */
+    private static final Set<String> PROTECTED_MIXINS = Stream.of(
+            HippoNodeType.NT_HIPPO_VERSION_INFO,
+            HippoNodeType.HIPPO_MIXIN_BRANCH_INFO
+    ).collect(Collectors.toSet());
 
 
     public static final int ALL_EVENTS = NODE_ADDED | NODE_REMOVED | NODE_MOVED
@@ -124,7 +137,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static String getStringProperty(Node baseNode, String relPath, String defaultValue) throws RepositoryException {
@@ -143,7 +156,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the enum value of a string property at <code>relPath</code> from <code>baseNode</code> or
-     *         <code>defaultValue</code> if no such property exists or property doesn't have any enum value
+     * <code>defaultValue</code> if no such property exists or property doesn't have any enum value
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static <E extends Enum<E>> E getEnumProperty(Node baseNode, String relPath, E defaultValue) throws RepositoryException {
@@ -163,7 +176,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the multiple string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static String[] getMultipleStringProperty(final Node baseNode, final String relPath, final String[] defaultValue) throws RepositoryException {
@@ -187,7 +200,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the long property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Long getLongProperty(Node baseNode, String relPath, Long defaultValue) throws RepositoryException {
@@ -206,7 +219,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the double property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Double getDoubleProperty(Node baseNode, String relPath, Double defaultValue) throws RepositoryException {
@@ -225,7 +238,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the boolean property value at <code>relPath</code> from <code>baseNode</code> or
-     *         <code>defaultValue</code> if no such property exists
+     * <code>defaultValue</code> if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Boolean getBooleanProperty(Node baseNode, String relPath, Boolean defaultValue) throws RepositoryException {
@@ -244,7 +257,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the date property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Calendar getDateProperty(Node baseNode, String relPath, Calendar defaultValue) throws RepositoryException {
@@ -263,7 +276,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the decimal property value at <code>relPath</code> from <code>baseNode</code> or
-     *         <code>defaultValue</code> if no such property exists
+     * <code>defaultValue</code> if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static BigDecimal getDecimalProperty(Node baseNode, String relPath, BigDecimal defaultValue) throws RepositoryException {
@@ -282,7 +295,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the binary property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Binary getBinaryProperty(Node baseNode, String relPath, Binary defaultValue) throws RepositoryException {
@@ -301,7 +314,7 @@ public class JcrUtils {
      * @param relPath      relative path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the node property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
-     *         if no such property exists
+     * if no such property exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Node getNodeProperty(Node baseNode, String relPath, Node defaultValue) throws RepositoryException {
@@ -321,7 +334,7 @@ public class JcrUtils {
      * @param absPath      absolute path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the string property value at <code>absPath</code> or <code>defaultValue</code> if no such property
-     *         exists
+     * exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static String getStringProperty(Session session, String absPath, String defaultValue) throws RepositoryException {
@@ -357,7 +370,7 @@ public class JcrUtils {
      * @param absPath      absolute path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the double property value at <code>absPath</code> or <code>defaultValue</code> if no such property
-     *         exists
+     * exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Double getDoubleProperty(Session session, String absPath, Double defaultValue) throws RepositoryException {
@@ -376,7 +389,7 @@ public class JcrUtils {
      * @param absPath      absolute path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the boolean property value at <code>absPath</code> or <code>defaultValue</code> if no such property
-     *         exists
+     * exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Boolean getBooleanProperty(Session session, String absPath, Boolean defaultValue) throws RepositoryException {
@@ -412,7 +425,7 @@ public class JcrUtils {
      * @param absPath      absolute path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the decimal property value at <code>absPath</code> or <code>defaultValue</code> if no such property
-     *         exists
+     * exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static BigDecimal getDecimalProperty(Session session, String absPath, BigDecimal defaultValue) throws RepositoryException {
@@ -431,7 +444,7 @@ public class JcrUtils {
      * @param absPath      absolute path to the property to get
      * @param defaultValue default value to return when the property does not exist
      * @return the binary property value at <code>absPath</code> or <code>defaultValue</code> if no such property
-     *         exists
+     * exists
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Binary getBinaryProperty(Session session, String absPath, Binary defaultValue) throws RepositoryException {
@@ -466,7 +479,7 @@ public class JcrUtils {
      * @param baseNode existing node that should be the base for the relative path
      * @param relPath  relative path to the property to get
      * @return the property at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such property
-     *         exists.
+     * exists.
      * @throws RepositoryException in case of exception accessing the Repository
      */
     public static Property getPropertyIfExists(Node baseNode, String relPath) throws RepositoryException {
@@ -502,7 +515,7 @@ public class JcrUtils {
      * @return the created node
      * @throws RepositoryException
      * @throws IllegalArgumentException if srcNode is same as destParentNode or destParentNode is a descendant of srcNode
-     * or destAbsPath is the root node path.
+     *                                  or destAbsPath is the root node path.
      */
     public static Node copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
         if (destAbsPath.equals("/")) {
@@ -545,7 +558,7 @@ public class JcrUtils {
         if (isAncestor(srcNode, destParentNode)) {
             throw new IllegalArgumentException("Destination parent node cannot be descendant of source node");
         }
-        final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode);
+        final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode, PROTECTED_MIXINS);
         final NodeInfo nodeInfo = new NodeInfo(srcNode);
         final NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeType(), nodeInfo.getMixinTypes());
         chain.startNode(newInfo);
@@ -561,7 +574,7 @@ public class JcrUtils {
      * @param srcNode  the node to copy
      * @param destNode the node that the contents of srcNode will be copied to
      * @throws RepositoryException
-     * @throws IllegalArgumentException  if scrNode is same as destNode or destNode is a descendant of srcNode
+     * @throws IllegalArgumentException if scrNode is same as destNode or destNode is a descendant of srcNode
      */
     public static void copyTo(final Node srcNode, Node destNode) throws RepositoryException {
         if (srcNode.isSame(destNode)) {
@@ -570,14 +583,14 @@ public class JcrUtils {
         if (isAncestor(srcNode, destNode)) {
             throw new IllegalArgumentException("Destination node cannot be descendant of source node");
         }
-        copyTo(srcNode, new OverwritingCopyHandler(destNode));
+        copyTo(srcNode, new OverwritingCopyHandler(destNode, PROTECTED_MIXINS));
     }
 
     /**
      * Copies {@link Node} {@code srcNode} to {@code destNode} with a {@code handler} to rewrite content if necessary.
      *
-     * @param srcNode  the node to copy
-     * @param chain the handler that intercepts node and property creation, can be null
+     * @param srcNode the node to copy
+     * @param chain   the handler that intercepts node and property creation, can be null
      * @throws RepositoryException
      */
     public static Node copyTo(Node srcNode, final CopyHandler chain) throws RepositoryException {
