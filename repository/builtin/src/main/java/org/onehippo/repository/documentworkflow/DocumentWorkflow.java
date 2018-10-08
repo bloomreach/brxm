@@ -447,7 +447,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @param historic the date of the version of this document to restore from
      * @param target the target document to restore to
      *
-     * @return the updated target document
+     * @return the updated target document (variant)
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the

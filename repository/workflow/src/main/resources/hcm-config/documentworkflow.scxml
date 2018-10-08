@@ -578,6 +578,7 @@
              Note: this uses custom/manual copying of the version contents, unlike the restoreVersion operation below -->
         <transition event="versionRestoreTo">
           <hippo:versionRestoreTo historic="_event.data?.date" variant="unpublished" target="_event.data?.target"/>
+          <hippo:result value="unpublished"/>
         </transition>
 
         <!-- target-less transition to restore a specific document version from the event payload provided parameter date.
@@ -603,6 +604,7 @@
           <!-- after the restore, the newly restored unpublished variant for branch 'x' needs to be versioned to make
                sure that the 'x-unpublished' label points to the right version -->
           <hippo:version variant="unpublished"/>
+          <hippo:result value="unpublished"/>
         </transition>
       </state>
 
