@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import template from './listing.html';
+import controller from './tree.controller';
+import template from './tree.template.html';
 
-function listingDirective() {
-  'ngInject';
+const treeComponent = {
+  bindings: {
+    options: '=',
+    items: '=',
+    selectable: '=',
+    selectedItem: '=',
+    draggable: '=',
+  },
+  transclude: true,
+  controller,
+  controllerAs: 'hippoTree',
+  template,
+};
 
-  return {
-    restrict: 'A',
-    bindToController: {
-      selectedItem: '=',
-      selectedDocument: '=',
-    },
-    template,
-    controller: 'ListingCtrl',
-    controllerAs: 'listing',
-  };
-}
-
-export default listingDirective;
+export default treeComponent;

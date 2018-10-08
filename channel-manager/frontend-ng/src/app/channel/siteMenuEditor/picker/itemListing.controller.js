@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-class ListingCtrl {
-  selectDocument(document) {
-    this.selectedDocument = document;
+class ItemListingCtrl {
+  selectItem(item) {
+    this.selectedItem = item;
   }
 
   _getDocumentStatusIcon(item) {
@@ -41,8 +41,10 @@ class ListingCtrl {
   }
 
   getItemIcon(item) {
-    return item.type === 'folder' ? 'folder-closed' : this._getDocumentStatusIcon(item);
+    return item.type === 'folder'
+      ? 'folder-closed'
+      : this._getDocumentStatusIcon(item);
   }
 }
 
-export default ListingCtrl;
+export default ItemListingCtrl;
