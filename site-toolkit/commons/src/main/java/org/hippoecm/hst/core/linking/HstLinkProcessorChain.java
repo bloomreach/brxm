@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.linking;
+package org.hippoecm.hst.core.linking;
 
 import java.util.List;
 

@@ -45,8 +45,9 @@ import org.slf4j.LoggerFactory;
 public class ChannelServiceImpl implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
-    private HstModelRegistryImpl hstModelRegistry;
-    private PreviewDecorator previewDecorator;
+
+    private final HstModelRegistryImpl hstModelRegistry;
+    private final PreviewDecorator previewDecorator;
 
     public ChannelServiceImpl(final HstModelRegistryImpl hstModelRegistry, final PreviewDecorator previewDecorator) {
         this.hstModelRegistry = hstModelRegistry;
@@ -54,7 +55,18 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<Channel> getChannels(final Session userSession, final String cmsHost) {
+    // TODO replace 'cmsHost' with host group
+    public List<Channel> getLiveChannels(final Session userSession, final String cmsHost) {
+        return doGetChannels(userSession, cmsHost, false);
+    }
+
+    @Override
+    // TODO replace 'cmsHost' with host group
+    public List<Channel> getPreviewChannels(final Session userSession, final String cmsHost) {
+        return doGetChannels(userSession, cmsHost, true);
+    }
+
+    private List<Channel> doGetChannels(final Session userSession, final String cmsHost, final boolean preview) {
         final Map<String, Channel> channels = new HashMap<>();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
@@ -75,9 +87,14 @@ public class ChannelServiceImpl implements ChannelService {
                     continue;
                 }
 
-                final Mount previewMount = previewDecorator.decorateMountAsPreview(mount);
+                final Mount useMount;
+                if (preview) {
+                    useMount = previewDecorator.decorateMountAsPreview(mount);
+                } else {
+                    useMount = mount;
+                }
 
-                final Channel channel = previewMount.getChannel();
+                final Channel channel = useMount.getChannel();
                 if (channel == null) {
                     log.debug("No channel present for mount '{}'", mount);
                     continue;

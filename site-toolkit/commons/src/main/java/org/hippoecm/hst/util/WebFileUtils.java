@@ -22,8 +22,6 @@ import org.onehippo.cms7.services.webfiles.WebFilesService;
 
 public class WebFileUtils {
 
-    public static final String DEFAULT_BUNDLE_NAME = "site";
-
     public static String getBundleName(HstRequestContext requestContext) {
         final Mount reqMount = requestContext.getResolvedMount().getMount();
         String bundleName = reqMount.getContextPath();

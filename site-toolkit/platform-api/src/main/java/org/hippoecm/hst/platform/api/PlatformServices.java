@@ -21,6 +21,8 @@ public interface PlatformServices {
 
     ChannelService getChannelService();
 
+    MountService getMountService();
+
     DocumentService getDocumentService();
 
 }

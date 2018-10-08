@@ -15,16 +15,21 @@
  */
 package org.hippoecm.hst.jaxrs.services;
 
+import java.util.List;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
@@ -40,7 +45,7 @@ public abstract class AbstractJaxrsSpringTestCase
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractJaxrsSpringTestCase.class);
     
-    protected ComponentManager componentManager;
+    protected SpringComponentManager componentManager;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -54,14 +59,20 @@ public abstract class AbstractJaxrsSpringTestCase
         containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
         componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
+
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
+        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+        if (!addonModuleDefinitions.isEmpty()) {
+            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+        }
+
         componentManager.setServletContext(servletContext);
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
 
-        final HstModelRegistry modelRegistry = componentManager.getComponent(HstModelRegistry.class);
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         modelRegistry.registerHstModel("/site", componentManager, true);
     }
 
