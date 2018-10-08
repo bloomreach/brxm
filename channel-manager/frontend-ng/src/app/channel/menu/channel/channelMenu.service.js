@@ -174,23 +174,30 @@ class ChannelMenuService extends MenuService {
   }
 
   _publish() {
-    this._closeEditors().then(() => {
-      this.ChannelService.publishOwnChanges()
-        .then(() => {
-          this.CmsService.publish('channel-changed-in-angular');
-          this.HippoIframeService.reload();
-        })
-        .catch((response) => {
-          response = response || {};
-
-          this.$log.info(response.message);
-          this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
-        });
-    });
+    this._closeEditors()
+      .then(() => this._executePublish());
   }
 
   _closeEditors() {
     return this.EditComponentService.stopEditing();
+  }
+
+  _executePublish() {
+    return this.ChannelService.publishOwnChanges()
+      .then(() => this._onChannelChanged())
+      .catch(response => this._handleError('ERROR_CHANGE_PUBLICATION_FAILED', response));
+  }
+
+  _onChannelChanged() {
+    this.CmsService.publish('channel-changed-in-angular');
+    this.HippoIframeService.reload();
+  }
+
+  _handleError(errorKey, error = {}) {
+    if (error.message) {
+      this.$log.error(error.message);
+    }
+    this.FeedbackService.showError(errorKey, error.data);
   }
 
   _reject() {
@@ -211,25 +218,12 @@ class ChannelMenuService extends MenuService {
   }
 
   _discardChanges() {
-    this._closeEditors().then(() => {
-      this._confirmDiscard().then(() => {
-        this.ChannelService.discardOwnChanges()
-          .then(() => {
-            this.CmsService.publish('channel-changed-in-angular');
-            this.HippoIframeService.reload();
-            this.SiteMapService.load(this.ChannelService.getSiteMapId());
-          })
-          .catch((response) => {
-            response = response || {};
-
-            this.$log.info(response.message);
-            this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
-          });
-      });
-    });
+    this._closeEditors()
+      .then(() => this._confirmDiscardChanges())
+      .then(() => this._executeDiscardChanges());
   }
 
-  _confirmDiscard() {
+  _confirmDiscardChanges() {
     const channel = this.ChannelService.getChannel();
     let content = this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE', { channelName: channel.name });
 
@@ -250,34 +244,44 @@ class ChannelMenuService extends MenuService {
     return this.DialogService.show(confirm);
   }
 
+  _executeDiscardChanges() {
+    return this.ChannelService.discardOwnChanges()
+      .then(() => {
+        this._onChannelChanged();
+        this.SiteMapService.load(this.ChannelService.getSiteMapId());
+      })
+      .catch(response => this._handleError('ERROR_CHANGE_DISCARD_FAILED', response));
+  }
+
   // Delete
   _isChannelDeletionAvailable() {
     return this.SessionService.canDeleteChannel();
   }
 
   _deleteChannel() {
-    this._closeEditors().then(() => {
-      this._confirmDelete()
-        .then(() => {
-          this._showDeleteProgress();
-          this.ChannelService.deleteChannel()
-            .then(() => {
-              this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
-              this.CmsService.publish('channel-deleted');
-            })
-            .catch((response) => {
-              this._hideDeleteProgress();
-              if (response && response.error === 'CHILD_MOUNT_EXISTS') {
-                this._showElaborateFeedback(response, 'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS');
-              } else {
-                this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_DELETE_FAILED');
-              }
-            });
-        });
-    });
+    this._closeEditors()
+      .then(() => this._confirmDeleteChannel())
+      .then(() => this._executeDeleteChannel());
   }
 
-  _confirmDelete() {
+  _executeDeleteChannel() {
+    this._showDeleteProgress();
+    this.ChannelService.deleteChannel()
+      .then(() => {
+        this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
+        this.CmsService.publish('channel-deleted');
+      })
+      .catch((response) => {
+        this._hideDeleteProgress();
+        if (response && response.error === 'CHILD_MOUNT_EXISTS') {
+          this._showElaborateFeedback(response, 'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS');
+        } else {
+          this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_DELETE_FAILED');
+        }
+      });
+  }
+
+  _confirmDeleteChannel() {
     const confirm = this.DialogService.confirm()
       .title(this.$translate.instant('CONFIRM_DELETE_CHANNEL_TITLE', {
         channel: this.ChannelService.getName(),
