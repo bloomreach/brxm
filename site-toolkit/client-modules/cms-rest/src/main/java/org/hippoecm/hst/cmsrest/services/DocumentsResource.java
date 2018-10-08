@@ -36,6 +36,9 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
+
 public class DocumentsResource extends BaseResource implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
@@ -53,12 +56,24 @@ public class DocumentsResource extends BaseResource implements DocumentService {
     }
 
     public ChannelDocumentDataset getChannels(String uuid) {
+        return getChannels(uuid, MASTER_BRANCH_ID);
+    }
 
+    @Override
+    public ChannelDocumentDataset getChannels(final String uuid, final String branchId) {
         final ChannelDocumentDataset dataset = new ChannelDocumentDataset();
 
         HstRequestContext requestContext = RequestContextProvider.get();
 
-        documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
+        if (!MASTER_BRANCH_ID.equals(branchId)) {
+            // use a specific branch to find the right channel documents (this attribute is used in downstream projects)
+            // to select a specific branch from CompositeHstSiteImpl
+            // TODO in version 13 for hst-platform we need to come up with something else since then there will be no
+            // TODO request context (possibly)
+            requestContext.setAttribute(RENDER_BRANCH_ID, branchId);
+        }
+
+        documentContextAugmenters.forEach(dca -> dca.apply(requestContext, uuid));
 
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
@@ -78,7 +93,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
             }
 
             if (!channelFilter.apply(channel)) {
-                log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
+                log.info("Skipping channel '{}' because filtered out by channel filters", channel);
                 continue;
             }
 
@@ -114,6 +129,7 @@ public class DocumentsResource extends BaseResource implements DocumentService {
 
         dataset.setChannelDocuments(channelDocuments);
         return dataset;
+
     }
 
     public String getUrl(final String uuid, final String type) {
