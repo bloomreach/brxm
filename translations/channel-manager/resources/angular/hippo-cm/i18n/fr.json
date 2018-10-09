@@ -196,7 +196,6 @@
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "Le composant n'a pas pu être mis à jour: le conteneur est verrouillé par '{{lockedBy}}'",
   "TITLE_REQUIRED": "Vous devez saisir un titre.",
   "VIEWPORT_DESKTOP": "Bureau",
-  "CORE": "Noyau",
   "ERROR_CHANNEL_SWITCH_FAILED": "Le passage au canal de destination a échoué",
   "FIELD_REQUIRED": "Ce champ est obligatoire",
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "Le composant '{{component}}' n'a pas pu être supprimé: le conteneur est verrouillé par '{{lockedBy}}'",

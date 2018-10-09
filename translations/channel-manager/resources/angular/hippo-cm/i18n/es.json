@@ -198,7 +198,6 @@
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "No se puede actualizar el componente: el contenedor está bloqueado por '{{lockedBy}}'",
   "TITLE_REQUIRED": "Se requiere título",
   "VIEWPORT_DESKTOP": "Escritorio",
-  "CORE": "Núcleo",
   "ERROR_CHANNEL_SWITCH_FAILED": "No se pudo cambiar a canal de destino",
   "FIELD_REQUIRED": "Este campo es obligatorio",
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "No se puede eliminar '{{component}}': el contenedor está bloqueado por '{{lockedBy}}'",

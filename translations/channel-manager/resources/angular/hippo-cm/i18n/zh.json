@@ -198,7 +198,6 @@
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "不能更新组件：该容器已经被'{{lockedBy}}'锁定",
   "TITLE_REQUIRED": "标题为必填项",
   "VIEWPORT_DESKTOP": "桌面",
-  "CORE": "核心",
   "ERROR_CHANNEL_SWITCH_FAILED": "切换至目标通道失败",
   "FIELD_REQUIRED": "此字段是必填字段",
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "不能删除'{{component}}'：该容器已经被'{{lockedBy}}'锁定",

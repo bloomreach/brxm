@@ -198,7 +198,6 @@
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "{{component}}' kan niet worden geüpdatet, de container is in gebruik bij '{{lockedBy}}'",
   "TITLE_REQUIRED": "Het geven van een titel is verplicht.",
   "VIEWPORT_DESKTOP": "Desktop",
-  "CORE": "Core",
   "ERROR_CHANNEL_SWITCH_FAILED": "Het is niet gelukt over te schakelen naar het doelchannel",
   "FIELD_REQUIRED": "Dit is een verplicht veld.",
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "{{component}}' kan niet worden geüpdatet, de container is in gebruik bij '{{lockedBy}}'",
