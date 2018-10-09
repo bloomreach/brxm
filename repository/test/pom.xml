@@ -194,6 +194,7 @@
                   <goal>verify</goal>
                 </goals>
                 <configuration>
+                  <reuseForks>false</reuseForks>
                   <includes>
                     <include>**/MirrorTest.java</include>
                     <include>**/FacetedNavigationConcurrencyTest.java</include>
