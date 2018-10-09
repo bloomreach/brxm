@@ -336,11 +336,6 @@ public class PageModelApiMount implements ContextualizableMount {
     }
 
     @Override
-    public List<String> getCmsLocations() {
-        return parent.getCmsLocations();
-    }
-
-    @Override
     public Map<String, String> getResponseHeaders() {
         return parent.getResponseHeaders();
     }

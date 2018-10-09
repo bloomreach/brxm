@@ -401,7 +401,7 @@ public class ChannelManagerImpl implements ChannelManager {
      * hence we can get hold of the cms host group via the current HstRequestContext
      */
     private String getHostGroupNameFromContext() throws ChannelException {
-        final String cmsHostGroupName = RequestContextProvider.get().getResolvedMount().getMount().getVirtualHost().getHostGroupName();
+        final String cmsHostGroupName = RequestContextProvider.get().getVirtualHost().getHostGroupName();
         if (StringUtils.isEmpty(cmsHostGroupName)) {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
         }

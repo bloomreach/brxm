@@ -307,7 +307,7 @@
     <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="targetMethod" value="addHstConfigurationAugmenter"/>
     <property name="arguments">
-      <bean class="org.hippoecm.hst.core.hosting.CustomMountAndVirtualCmsHostAugmenter">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.hosting.CustomMountAndVirtualCmsHostAugmenter">
         <property name="mountName" value="_rp"/>
         <property name="mountType" value="composer"/>
         <property name="mountNamedPipeline" value="ComposerPipeline"/>

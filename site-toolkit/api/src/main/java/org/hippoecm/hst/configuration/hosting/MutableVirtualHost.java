@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.util.List;
-
 public interface MutableVirtualHost extends VirtualHost {
 
     /**
@@ -32,10 +30,5 @@ public interface MutableVirtualHost extends VirtualHost {
      * @throws IllegalArgumentException if the <code>portMount</code> could not be added
      */
     void addPortMount(MutablePortMount portMount) throws IllegalArgumentException;
-
-    /**
-     * @return the cms location(s) (fully qualified URL) or empty list if not configured
-     */
-    List<String> getCmsLocations();
 
 }

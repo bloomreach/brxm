@@ -33,28 +33,26 @@ public interface ChannelService {
 	 * List all managed channels, identified by their channel IDs
 	 *
 	 * @param userSession - the jcr session of the current user
-	 * @param cmsHost the host over which the cms is accessed
+	 * @param hostGroup the host group for which the channels should be returned
 	 * @return {@link List} of {@link Channel}s of all available live channels, empty list otherwise. Also note that
 	 * a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 */
-	// TODO replace 'cmsHost' with host group
-	List<Channel> getLiveChannels(Session userSession, String cmsHost);
+	List<Channel> getLiveChannels(Session userSession, String hostGroup);
 
 
 	/**
 	 * List all managed channels, identified by their channel IDs
 	 *
 	 * @param userSession - the jcr session of the current user
-	 * @param cmsHost the host over which the cms is accessed
+	 * @param hostGroup the host group for which the channels should be returned
 	 * @return {@link List} of {@link Channel}s of all available preview channels, empty list otherwise. Note that if for
 	 * a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version is returned and
 	 * otherwise the live. Also note that a clone of the {@link Channel} objects of the
 	 * {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 */
-	// TODO replace 'cmsHost' with host group
-	List<Channel> getPreviewChannels(Session userSession, String cmsHost);
+	List<Channel> getPreviewChannels(Session userSession, String hostGroup);
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id
@@ -78,11 +76,11 @@ public interface ChannelService {
     /**
      * Retrieve a {@link ResourceBundle} converted to {@link Properties} of {@link Channel} identified by an Id
 	 *
-	 * @param cmsHost the host over which the cms is accessed
+	 * @param hostGroup the host group for which the resource values should be fetched
      * @param channelId - {@link Channel} id
      * @param language - {@link Locale} language
      * @return {@link Properties} equivalent of a {@link Channel}'s {@link ResourceBundle}
      */
-    Properties getChannelResourceValues(String cmsHost, String channelId, String language) throws ChannelException;
+    Properties getChannelResourceValues(String hostGroup, String channelId, String language) throws ChannelException;
 
 }

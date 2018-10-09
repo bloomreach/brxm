@@ -414,7 +414,7 @@
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms
-// multiple comma separated urls are supported
+// Deprecated: Not used any more
 - hst:cmslocation (string)
 - hst:defaultport (long)
 + * (hst:virtualhost)

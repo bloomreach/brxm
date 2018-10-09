@@ -29,14 +29,14 @@ public interface DocumentService {
      *
      *
      * @param userSession - the jcr session for the current user
-     * @param cmsHost the host over which the cms is accessed
+     * @param hostGroup the host group to use the channels from
      * @param uuid the identifier of the document
      *
      * @return a list of 'channel documents' that provide information about all channels the document is part of,
      * or an empty list if the identifier is unknown or the document is not part of any channel.
      *
      */
-    List<ChannelDocument> getChannels(Session userSession, String cmsHost, String uuid);
+    List<ChannelDocument> getChannels(Session userSession, String hostGroup, String uuid);
 
     /**
      * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
@@ -50,7 +50,7 @@ public interface DocumentService {
      * equally well suited canonical content path and an equal number of types, we use a random one.
      *
      * @param userSession - the jcr session for the current user
-     * @param cmsHost the host over which the cms is accessed
+     * @param hostGroup the host group to use the channels from
      * @param uuid the identifier of the document
      * @param type the type of the mounts that can be used to generate a link to the document. When null or empty,
      * the value 'live' is used.
@@ -58,6 +58,6 @@ public interface DocumentService {
      * @return a fully qualified link to the document, or an empty string if no link could be created.
      *
      */
-    String getUrl(Session userSession, String cmsHost, String uuid, String type);
+    String getUrl(Session userSession, String hostGroup, String uuid, String type);
 
 }

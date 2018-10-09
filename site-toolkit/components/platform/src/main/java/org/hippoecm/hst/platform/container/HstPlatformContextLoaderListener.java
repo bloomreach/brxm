@@ -73,4 +73,5 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         hstModelRegistry.destroy();
         hstModelRegistry.setRepository(null);
     }
+
 }

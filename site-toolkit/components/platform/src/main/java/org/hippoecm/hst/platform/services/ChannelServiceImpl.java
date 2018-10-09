@@ -55,31 +55,28 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    // TODO replace 'cmsHost' with host group
-    public List<Channel> getLiveChannels(final Session userSession, final String cmsHost) {
-        return doGetChannels(userSession, cmsHost, false);
+    public List<Channel> getLiveChannels(final Session userSession, final String hostGroup) {
+        return doGetChannels(userSession, hostGroup, false);
     }
 
     @Override
-    // TODO replace 'cmsHost' with host group
-    public List<Channel> getPreviewChannels(final Session userSession, final String cmsHost) {
-        return doGetChannels(userSession, cmsHost, true);
+    public List<Channel> getPreviewChannels(final Session userSession, final String hostGroup) {
+        return doGetChannels(userSession, hostGroup, true);
     }
 
-    private List<Channel> doGetChannels(final Session userSession, final String cmsHost, final boolean preview) {
+    private List<Channel> doGetChannels(final Session userSession, final String hostGroup, final boolean preview) {
+
+        if (hostGroup == null) {
+            throw new IllegalArgumentException("Host group is not allowed to be null");
+        }
+
         final Map<String, Channel> channels = new HashMap<>();
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
 
-            String hostGroupNameForCmsHost = ResourceUtil.getHostGroupNameForCmsHost(virtualHosts, cmsHost);
-
-            if (hostGroupNameForCmsHost == null) {
-                log.info("Cannot match cms host '{}' for hst virtualhosts for context path '{}'", cmsHost, virtualHosts.getContextPath());
-                continue;
-            }
-            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupNameForCmsHost);
+            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
             for (Mount mount : mountsByHostGroup) {
 
                 if (mount.isPreview()) {
@@ -141,15 +138,15 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Properties getChannelResourceValues(final String cmsHost, final String channelId, final String language) throws ChannelException {
+    public Properties getChannelResourceValues(final String hostGroup, final String channelId, final String language) throws ChannelException {
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
-            final Channel channel = virtualHosts.getChannelById(cmsHost, channelId);
+            final Channel channel = virtualHosts.getChannelById(hostGroup, channelId);
             if (channel != null){
                 return InformationObjectsBuilder.buildResourceBundleProperties(virtualHosts.getResourceBundle(channel, new Locale(language)));
             }
         }
-        throw new ChannelException(String.format("Cannot find channel for id '%s' and for cms host '%s'", channelId, cmsHost));
+        throw new ChannelException(String.format("Cannot find channel for id '%s' and for host group '%s'", channelId, hostGroup));
 
     }
 

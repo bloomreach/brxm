@@ -51,7 +51,7 @@ public class DocumentServiceImpl implements DocumentService  {
 //        documentContextAugmenters.add(documentContextAugmenter);
 //    }
 
-    public List<ChannelDocument> getChannels(final Session userSession, final String cmsHost, final String uuid) {
+    public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid) {
 
         final List<ChannelDocument> channelDocuments = new ArrayList<>();
 
@@ -66,7 +66,7 @@ public class DocumentServiceImpl implements DocumentService  {
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
             // TODO HSTTWO-4362 add #createAllAvailableCanonicals method without request context
-            List<HstLink> canonicalLinks = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, null, cmsHost);
+            List<HstLink> canonicalLinks = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, null, hostGroup);
 
             for (HstLink link : canonicalLinks) {
                 final Mount linkMount = link.getMount();
@@ -112,12 +112,12 @@ public class DocumentServiceImpl implements DocumentService  {
         return channelDocuments;
     }
 
-    public String getUrl(final Session userSession, final String cmsHost, final String uuid, final String type) {
+    public String getUrl(final Session userSession, final String hostGroup, final String uuid, final String type) {
 
         // TODO HSTTWO-4359 toUrlForm requires HstRequestContext but we do not have one....what to do?
         HstRequestContext requestContext = RequestContextProvider.get();
 
-        HstLink bestLink = getBestLink(userSession, cmsHost, uuid, type);
+        HstLink bestLink = getBestLink(userSession, hostGroup, uuid, type);
         return bestLink.toUrlForm(requestContext, true);
 
     }
@@ -126,7 +126,7 @@ public class DocumentServiceImpl implements DocumentService  {
      * returns best link for uuid & type combination and <code>null</code> if no node for uuid or no link can be made
      * method package private for unit testing
      */
-    HstLink getBestLink(final Session userSession, final String cmsHost, final String uuid, final String type) {
+    private HstLink getBestLink(final Session userSession, final String hostGroup, final String uuid, final String type) {
         Node handle = ResourceUtil.getNode(userSession, uuid);
         if (handle == null) {
             return null;
@@ -135,13 +135,13 @@ public class DocumentServiceImpl implements DocumentService  {
         // TODO HSTTWO-4362 add #createAllAvailableCanonicals method without request context
         List<HstLink> canonicalLinks = new ArrayList<>();
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
-            final List<HstLink> allAvailableCanonicals = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, type, cmsHost);
+            final List<HstLink> allAvailableCanonicals = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, type, hostGroup);
             canonicalLinks.addAll(allAvailableCanonicals);
         }
 
         if (canonicalLinks.isEmpty()) {
             log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
-                    new Object[]{type, uuid, cmsHost});
+                    new Object[]{type, uuid, hostGroup});
 
             return null;
         }

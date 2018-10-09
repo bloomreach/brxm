@@ -474,11 +474,6 @@ public interface Mount {
     String [] getDefaultResourceBundleIds();
 
     /**
-     * @return the cms location(s) (fully qualified URL) or empty list if not configured
-     */
-    List<String> getCmsLocations();
-
-    /**
      * <p>
      *     Return a non-null unmodifiable map of the configuration values of HTTP Response headers which should be set
      *     in any responses by the requests on this. They keys from the returned map are the header names.

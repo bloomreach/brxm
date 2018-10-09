@@ -223,8 +223,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private String[] defaultSiteMapItemHandlerIds;
 
-    private List<String> cmsLocations;
-
     private Map<String, String> parameters;
 
     private volatile HstSiteMapMatcher matcher;
@@ -491,8 +489,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.defaultResourceBundleIds =  virtualHost.getDefaultResourceBundleIds();
         }
 
-        this.cmsLocations = ((VirtualHostService)virtualHost).getCmsLocations();
-
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS)) {
             defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
         } else if (parent != null) {
@@ -519,6 +515,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         try {
             if (mountPoint == null) {
                 log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());
+                ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
             } else if (!mountPoint.startsWith("/")) {
                 throw new ModelLoadingException("Mount at '" + mount.getValueProvider().getPath() + "' has an invalid mountPoint '" + mountPoint + "'. A mount point is absolute and must start with a '/'");
             } else if (!isMapped()) {
@@ -609,7 +606,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             if (childMountServices.containsKey(pageModelApi)) {
                 log.info("Skipping automatic resource api for path '{}' below mount '{}' because it has an explicitly " +
                         "configured mount with the same path.", pageModelApi, this);
-            }else if (pageModelApi.contains("/")) {
+            } else if (pageModelApi.contains("/")) {
                 log.error("Incorrect configured page model api value '{}'. / is not allowed in the path element",
                         pageModelApi);
             } else {
@@ -825,10 +822,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public boolean isVersionInPreviewHeader() {
         return versionInPreviewHeader;
-    }
-
-    public List<String> getCmsLocations() {
-        return cmsLocations;
     }
 
     public String getNamedPipeline(){

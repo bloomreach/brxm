@@ -386,11 +386,6 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
-        public List<String> getCmsLocations() {
-            return delegatee.getCmsLocations();
-        }
-
-        @Override
         public String toString() {
             StringBuilder builder = new StringBuilder("MountAsPreviewDecorator for Mount [");
             builder.append(delegatee.toString());

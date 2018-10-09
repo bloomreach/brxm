@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.platform.configuration.hosting;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,9 +53,7 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -298,24 +294,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 throw new ModelLoadingException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
             }
 
-            List<String> validCmsLocations = new ArrayList<>();
-            String[] cmsLocations = StringUtils.split(hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION), " ,\t\f\r\n");
-            if(cmsLocations == null) {
-                log.warn("VirtualHostGroup '{}' does not have a property hst:cmslocation configured.", hostGroupNode.getValueProvider().getName());
-            } else {
-                for (String cmsLocation : cmsLocations) {
-                    cmsLocation = cmsLocation.toLowerCase();
-                    try {
-                        URI testLocation = new URI(cmsLocation);
-                        log.info("Cms host location for hostGroup '{}' is '{}'", hostGroupNode.getValueProvider().getName(), testLocation.getHost());
-                        validCmsLocations.add(cmsLocation);
-                    } catch (URISyntaxException e) {
-                        log.warn("'{}' is an invalid cmsLocation. cms location can't be used and skipped for hostGroup '{}'", cmsLocation, hostGroupNode.getValueProvider().getName());
-                    }
-                }
-
-            }
-
             int defaultPort = 0;
             Long longDefaultPort = hostGroupNode.getValueProvider().getLong(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT);
             if (longDefaultPort == null) {
@@ -329,8 +307,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
                 try {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null,
-                            hostGroupNode.getValueProvider().getName(),
-                            validCmsLocations , defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
+                            hostGroupNode.getValueProvider().getName() , defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ModelLoadingException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
