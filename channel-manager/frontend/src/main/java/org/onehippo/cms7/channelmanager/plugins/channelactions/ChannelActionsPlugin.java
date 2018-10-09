@@ -39,7 +39,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
@@ -50,7 +49,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
-import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.api.beans.ChannelDocument;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -62,6 +60,8 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 @SuppressWarnings({"deprecation", "serial"})
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
@@ -141,18 +141,12 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         return UserSession.get().getJcrSession();
     }
 
-    // TODO CHANNELMGR-1949 Should we improve how to get the CMS HOST? Can't we store it somewhere in the cluster settings instead
-    // TODO CHANNELMGR-1949 of having to take it from the request (now we can only use this code if we have an http request)
-    private String getCmsHost() {
-        final HttpServletRequest httpServletRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        return RequestUtils.getFarthestRequestHost(httpServletRequest);
-    }
 
 
     private MarkupContainer createMenu(final String documentUuid) {
 
         final List<ChannelDocument> channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
-                .getDocumentService().getChannels(getUserJcrSession(), getCmsHost(), documentUuid);
+                .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid);
         channelDocuments.sort(getChannelDocumentComparator());
 
         final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<>();

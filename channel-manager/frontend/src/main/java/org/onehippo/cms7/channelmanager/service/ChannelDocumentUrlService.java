@@ -17,18 +17,17 @@ package org.onehippo.cms7.channelmanager.service;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.hst.platform.api.PlatformServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 /**
  * Returns the fully qualified, canonical URL to a document in a channel of a certain type (preview, live,
@@ -61,13 +60,6 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
         context.registerService(this, serviceId);
     }
 
-    // TODO CHANNELMGR-1949 Should we improve how to get the CMS HOST? Can't we store it somewhere in the cluster settings instead
-    // TODO CHANNELMGR-1949 of having to take it from the request (now we can only use this code if we have an http request)
-    private String getCmsHost() {
-        final HttpServletRequest httpServletRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        return RequestUtils.getFarthestRequestHost(httpServletRequest);
-    }
-
     private javax.jcr.Session getUserJcrSession() {
         return UserSession.get().getJcrSession();
     }
@@ -88,7 +80,7 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
         }
 
         return HippoServiceRegistry.getService(PlatformServices.class).getDocumentService()
-                .getUrl(getUserJcrSession(), getCmsHost(), uuid, type);
+                .getUrl(getUserJcrSession(), getHostGroup(), uuid, type);
     }
 
     private String getUuidOfHandle(Node documentNode) {

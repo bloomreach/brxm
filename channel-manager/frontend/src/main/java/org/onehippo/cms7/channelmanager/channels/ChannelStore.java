@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
@@ -46,7 +45,6 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.PlatformServices;
@@ -57,13 +55,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
+
+import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 /**
  * Channel JSON Store.
@@ -437,16 +436,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private Properties fetchChannelResources(final Channel channel) throws ChannelException {
         log.info("Fetching i18n resources for channel '{}'", channel.getId());
         final String locale = Session.get().getLocale().toString();
-
-        final String cmsHost = getCmsHost();
-        return getChannelService().getChannelResourceValues(cmsHost, channel.getId(), locale);
-    }
-
-    // TODO CHANNELMGR-1949 Should we improve how to get the CMS HOST? Can't we store it somewhere in the cluster settings instead
-    // TODO CHANNELMGR-1949 of having to take it from the request (now we can only use this code if we have an http request)
-    private String getCmsHost() {
-        final HttpServletRequest httpServletRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        return RequestUtils.getFarthestRequestHost(httpServletRequest);
+        return getChannelService().getChannelResourceValues(getHostGroup(), channel.getId(), locale);
     }
 
     public void update() {
@@ -469,7 +459,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     protected void loadChannels() {
 
-        final List<Channel> channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getCmsHost());
+        final List<Channel> channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
         channels = channelList.stream().collect(Collectors.toMap(Channel::getId, Function.identity()));
 
     }
