@@ -29,9 +29,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <repo.path>${project.build.directory}/storage</repo.path>
     <repo.config />
-    <surefire.forkmode>once</surefire.forkmode>
     <db.host />
     <db.port />
     <db.name />
@@ -144,9 +142,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>${surefire.forkmode}</forkMode>
           <systemPropertyVariables>
-            <repo.path>${repo.path}</repo.path>
             <repo.config>${repo.config}</repo.config>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
             <db.host>${db.host}</db.host>

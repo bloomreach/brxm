@@ -127,7 +127,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>always</forkMode>
+          <!-- Tests don't play well with repository that isn't cleaned up by a full JVM restart -->
+          <reuseForks>false</reuseForks>
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>

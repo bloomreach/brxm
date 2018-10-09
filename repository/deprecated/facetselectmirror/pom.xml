@@ -111,9 +111,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <forkMode>once</forkMode>
+            <!--<forkMode>once</forkMode>-->
             <systemPropertyVariables>
-              <repo.path>${repo.path}</repo.path>
+              <!--<repo.path>${repo.path}</repo.path>-->
               <repo.config>${repo.config}</repo.config>
               <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
             </systemPropertyVariables>
