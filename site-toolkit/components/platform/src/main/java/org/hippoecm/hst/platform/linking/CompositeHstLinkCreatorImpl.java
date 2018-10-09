@@ -44,7 +44,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         this.hstLinkCreator = hstLinkCreator;
     }
 
-    public HstLinkCreator getSimpleHstLinkCreator() {
+    public HstLinkCreator getLocalHstLinkCreator() {
         return hstLinkCreator;
     }
 
@@ -112,7 +112,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
 
             firstMount.ifPresent(m -> {
                 //Invoke simple link creator
-                final HstLinkCreator hstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getSimpleHstLinkCreator();
+                final HstLinkCreator hstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getLocalHstLinkCreator();
                 hstLinks.addAll(hstLinkCreator.createAllAvailableCanonicals(node, m, mountType, hostGroupName));
             });
         }
@@ -214,7 +214,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
 
             firstMount.ifPresent(m -> {
                 //Invoke simple link creator
-                final HstLinkCreator hstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getSimpleHstLinkCreator();
+                final HstLinkCreator hstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getLocalHstLinkCreator();
                 hstLinks.addAll(hstLinkCreator.createAll(node, m, hostGroupName, type, true));
             });
         }

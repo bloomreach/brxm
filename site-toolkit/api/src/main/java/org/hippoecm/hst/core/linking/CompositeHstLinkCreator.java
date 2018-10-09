@@ -24,5 +24,5 @@ public interface CompositeHstLinkCreator extends HstLinkCreator {
      * Get local HstLinkCreator instance
      * @return {@link org.hippoecm.hst.core.linking.HstLinkCreator}
      */
-    HstLinkCreator getSimpleHstLinkCreator();
+    HstLinkCreator getLocalHstLinkCreator();
 }
