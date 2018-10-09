@@ -679,14 +679,14 @@ describe('ComponentEditorService', () => {
     });
 
     describe('with valid data', () => {
-      it('saves the data when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
+      it('resolves with "SAVE" when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
         spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
         spyOn(PageStructureService, 'renderComponent');
         DialogService.show.and.returnValue($q.resolve('SAVE'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
-          .then(() => {
-            expect(ComponentEditor.save).toHaveBeenCalled();
+          .then((action) => {
+            expect(action).toBe('SAVE');
             expect(DialogService.alert).not.toHaveBeenCalled();
             expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
             done();
@@ -694,13 +694,14 @@ describe('ComponentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+      it('redraws the component when the dialog resolves with "DISCARD"', (done) => {
         spyOn(PageStructureService, 'renderComponent');
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
-          .then(() => {
+          .then((action) => {
+            expect(action).toBe('DISCARD');
             expect(PageStructureService.renderComponent).toHaveBeenCalled();
             expect(ComponentEditor.save).not.toHaveBeenCalled();
             done();
