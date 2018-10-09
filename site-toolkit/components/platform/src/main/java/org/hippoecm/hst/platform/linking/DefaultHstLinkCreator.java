@@ -21,7 +21,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -48,13 +47,10 @@ import org.hippoecm.hst.core.linking.RewriteContextException;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,11 +150,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return linkResolver.resolveAll(type, hostGroupName);
     }
 
+    public List<HstLink> createAll(final Node node, final Mount mount,
+                                   final String hostGroupName, final String type, final boolean crossMount) {
+        final HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
+        if (!crossMount) {
+            linkResolver.resolverProperties.tryOtherMounts = false;
+        }
+        return linkResolver.resolveAll(type, hostGroupName);
+    }
+
     public HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem,
             boolean fallback) {
         return this.create(node, requestContext, preferredItem, fallback, false);
     }
-    
+
     public HstLink create(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem,
             boolean fallback, boolean navigationStateful) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
@@ -200,6 +205,12 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName) {
         HstLinkResolver linkResolver = new HstLinkResolver(node, requestContext);
+        return linkResolver.resolveAllCanonicals(type, hostGroupName);
+    }
+
+    @Override
+    public List<HstLink> createAllAvailableCanonicals(Node node, Mount mount, String type, String hostGroupName) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
         return linkResolver.resolveAllCanonicals(type, hostGroupName);
     }
 
@@ -708,13 +719,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     type = rewriteMount.getType();
                 }
 
-                List<Mount> candidateMounts = new ArrayList<>();
-                if(hostGroupName == null) {
-                    candidateMounts.addAll(findAllCandidateMounts(rewriteMount, rewritePath,
-                            rewriteMount.getVirtualHost().getHostGroupName(), type));
-                } else {
-                    candidateMounts.addAll(findAllCandidateMounts(rewriteMount, rewritePath, hostGroupName, type));
-                }
+                hostGroupName = hostGroupName != null ? hostGroupName : rewriteMount.getVirtualHost().getHostGroupName();
+
+                List<Mount> candidateMounts = new ArrayList<>(findAllCandidateMounts(rewriteMount, rewritePath,
+                        hostGroupName, type));
 
                 if(candidateMounts.size() == 0) {
                     log.info("There is no Mount available that is suited to linkrewrite '{}'. Return empty list for canonicalLinks..", rewritePath);
@@ -895,14 +903,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
             final String hostGroup = hostGroupName == null ? virtualHost.getHostGroupName() : hostGroupName;
             final List<Mount> mountsForHostGroup = new ArrayList<>(virtualHosts.getMountsByHostGroup(hostGroup));
-
-            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            assert hstModelRegistry != null;
-            final List<HstModel> hstModels = hstModelRegistry.getHstModels()
-                    .stream().filter(m -> m.getHstLinkCreator() != DefaultHstLinkCreator.this)
-                    .collect(Collectors.toList());
-
-            hstModels.stream().map(hstModel -> hstModel.getVirtualHosts().getMountsByHostGroup(hostGroup)).forEach(mountsForHostGroup::addAll);
 
             if (CollectionUtils.isEmpty(mountsForHostGroup)) {
                 log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");

@@ -158,6 +158,17 @@ public interface HstLinkCreator {
      */
     List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type, String hostGroupName);
 
+    /**
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup <code>hostGroupName</code>
+     * and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>
+     * @param node
+     * @param mount the {@link Mount}
+     * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of
+     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belong to
+     * @return the {@link List} of all available canonical links where at least one of the  {@link Mount#getTypes()} are equal to <code>type</code>
+     * @see #createCanonical(Node, HstRequestContext)
+     */
+    List<HstLink> createAllAvailableCanonicals(Node node, Mount mount, String type, String hostGroupName);
 
     /**
      * <p>Expert: Rewrite a jcr <code>node</code> to a {@link HstLink} with respect to the <code>mount</code>. Note that this HstLink creation does only take into account the
@@ -337,6 +348,20 @@ public interface HstLinkCreator {
      */
     List<HstLink> createAll(Node node, HstRequestContext requestContext, String hostGroupName, String type, boolean crossMount);
 
+    /**
+     * Rewrite a jcr Node to a List of {@link HstLink}s
+     * @param node
+     * @param mount the {@link org.hippoecm.hst.configuration.hosting.Mount}
+     * @param hostGroupName The hostGroupName that the {@link HstLink}s their {@link Mount}s should belong to
+     * @param type the type that should be contained in the {@link Mount#getTypes()} where the {@link Mount} is the
+     *             mount belonging to the returned {@link HstLink}. If <code>type</code> is <code>null</code>, the type
+     *             of the {@link org.hippoecm.hst.configuration.hosting.Mount} is used.
+     * @param crossMount if <code>true</code> also mounts not belonging to the current site are tried.
+     * @return the List of {@link HstLink}s for this jcr Node or empty list when non found. The returned List is sorted by
+     * first the {@link HstLink}s with the shortest path (in number of slashes) and if there are links with equal number of slashes,
+     * return lexically sorted on path
+     */
+    List<HstLink> createAll(final Node node, final Mount mount, final String hostGroupName, final String type, final boolean crossMount);
 
     /**
      * @return a link that can be used for page not found links for <code>mount</code>

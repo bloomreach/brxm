@@ -22,9 +22,6 @@ import java.util.function.BiPredicate;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -35,6 +32,7 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
+import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
@@ -44,18 +42,22 @@ import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCach
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.linking.CompositeHstLinkCreatorImpl;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
-import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
 import org.hippoecm.hst.platform.linking.containers.DefaultResourceContainer;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
 import org.hippoecm.hst.platform.linking.resolvers.HippoResourceLocationResolver;
 import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
 import org.hippoecm.hst.platform.services.channel.ContentBasedChannelFilter;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class HstModelImpl implements PlatformHstModel {
 
@@ -92,10 +94,12 @@ public class HstModelImpl implements PlatformHstModel {
         hstSiteMapMatcher = new BasicHstSiteMapMatcher();
         configureSiteMapMatcher();
 
-        DefaultHstLinkCreator defaultHstLinkCreator = new DefaultHstLinkCreator();
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+
+        final DefaultHstLinkCreator defaultHstLinkCreator = new DefaultHstLinkCreator();
         configureHstLinkCreator(defaultHstLinkCreator, websiteComponentManager);
 
-        this.hstLinkCreator = defaultHstLinkCreator;
+        this.hstLinkCreator = new CompositeHstLinkCreatorImpl(modelRegistry, defaultHstLinkCreator);
 
         channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
 
