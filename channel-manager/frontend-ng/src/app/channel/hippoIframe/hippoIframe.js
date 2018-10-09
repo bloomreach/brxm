@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import hippoIframe from './hippoIframe.directive';
-import HippoIframeCtrl from './hippoIframe.controller';
+import hippoIframeComponent from './hippoIframe.component';
 import ContainerService from './container/container.service';
 import DragDropService from './dragDrop/dragDrop.service';
 import HippoIframeService from './hippoIframe.service';
@@ -32,8 +31,7 @@ const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     PageModule.name,
   ])
-  .controller('hippoIframeCtrl', HippoIframeCtrl)
-  .directive('hippoIframe', hippoIframe)
+  .component('hippoIframe', hippoIframeComponent)
   .service('ContainerService', ContainerService)
   .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)

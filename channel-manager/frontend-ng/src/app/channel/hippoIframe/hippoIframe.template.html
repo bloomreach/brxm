@@ -16,14 +16,14 @@
 
 <!-- The gray background behind the channel. Visible when the viewport is constrained. -->
 <div class="channel-iframe-canvas"
-     ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
+     ng-class="{'iframe-lifted': $ctrl.isIframeLifted()}">
 
   <!-- Glues the iframe and Dragula mirror container on top of each other. Needed to position the mirror correctly. -->
   <div class="channel-iframe-sheet">
 
     <!-- Renders the channel -->
     <iframe class="qa-view"
-            ng-src="{{ iframe.getSrc() }}">
+            ng-src="{{ $ctrl.getSrc() }}">
     </iframe>
 
     <!-- Contains the Dragula mirror rendered in the app so the mirror is also visible outside the iframe borders. -->
