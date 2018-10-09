@@ -67,6 +67,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -90,10 +91,8 @@ public class MountResource extends AbstractConfigResource {
     private ChannelHelper channelHelper;
     private SiteMapHelper siteMapHelper;
     private SiteMenuHelper siteMenuHelper;
+    private TemplateHelper templateHelper;
     private PagesHelper pagesHelper;
-    private ReorderHelper reorderHelper = new ReorderHelper();
-
-    private LockHelper lockHelper = new LockHelper();
 
     public void setSiteMapHelper(final SiteMapHelper siteMapHelper) {
         this.siteMapHelper = siteMapHelper;
@@ -109,6 +108,10 @@ public class MountResource extends AbstractConfigResource {
 
     public void setChannelHelper(ChannelHelper channelHelper) {
         this.channelHelper = channelHelper;
+    }
+
+    public void setTemplateHelper(TemplateHelper templateHelper) {
+        this.templateHelper = templateHelper;
     }
 
     @GET
@@ -379,6 +382,7 @@ public class MountResource extends AbstractConfigResource {
             siteMapHelper.publishChanges(userIds);
             pagesHelper.publishChanges(userIds);
             siteMenuHelper.publishChanges(userIds);
+            templateHelper.publishChanges(userIds);
 
             final ChannelEvent event = new ChannelEventImpl(getPageComposerContextService().getEditingPreviewChannel(),
                     requestContext, ChannelEvent.ChannelEventType.PUBLISH,
@@ -526,6 +530,7 @@ public class MountResource extends AbstractConfigResource {
             siteMapHelper.discardChanges(userIds);
             pagesHelper.discardChanges(userIds);
             siteMenuHelper.discardChanges(userIds);
+            templateHelper.discardChanges(userIds);
 
             final ChannelEventImpl event = new ChannelEventImpl(
                     getPageComposerContextService().getEditingPreviewChannel(), requestContext,

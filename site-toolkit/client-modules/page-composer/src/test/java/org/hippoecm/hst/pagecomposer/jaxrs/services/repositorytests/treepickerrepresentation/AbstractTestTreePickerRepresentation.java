@@ -105,7 +105,6 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
     }
 
     protected HippoDocumentResource createHippoDocumentResource() {
-        MountResource mountResource = AbstractMountResourceTest.createResource();
         final HippoDocumentResource hippoDocumentResource = new HippoDocumentResource();
         hippoDocumentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
         return hippoDocumentResource;
@@ -113,7 +112,6 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
 
     protected SiteMapResource createSiteMapResource() {
 
-        MountResource mountResource = AbstractMountResourceTest.createResource();
         final PagesHelper pagesHelper = new PagesHelper();
         pagesHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
         final SiteMapHelper siteMapHelper = new SiteMapHelper();
@@ -129,7 +127,6 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
 
     protected SiteMapItemResource createSiteMapItemResource() {
 
-        MountResource mountResource = AbstractMountResourceTest.createResource();
         final PagesHelper pagesHelper = new PagesHelper();
         pagesHelper.setPageComposerContextService(mountResource.getPageComposerContextService());
         final SiteMapHelper siteMapHelper = new SiteMapHelper();

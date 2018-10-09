@@ -53,6 +53,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 
@@ -61,14 +62,11 @@ import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTest {
 
-    protected MountResource mountResource;
-
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
-        mountResource = AbstractMountResourceTest.createResource();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 
@@ -106,7 +104,9 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/newsoverview");
 
         session.save();
+
         createPreviewWithSiteMapWorkspace("localhost", "");
+
     }
 
     @After

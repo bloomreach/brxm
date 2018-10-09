@@ -124,6 +124,7 @@ public class PagesHelper extends AbstractHelper {
     public Node copy(final Session session, final String targetPageName, final HstComponentConfiguration sourcePage,
                      final Mount sourceMount, final Mount targetMount)
             throws RepositoryException {
+
         Node newPageNode = create(session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()),
                 targetPageName, sourcePage, false, getWorkspacePath(targetMount) + "/" + NODENAME_HST_PAGES);
 
@@ -178,7 +179,7 @@ public class PagesHelper extends AbstractHelper {
             final Node referencedNode = session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier());
             final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(referencedNode);
             final String configurationRelativePath = getConfigurationRelativePath(configurationRelativePathSegments);
-            String targetWorkspacePath = targetSite.getConfigurationPath() + "/hst:workspace";
+            final String targetWorkspacePath = targetSite.getConfigurationPath() + "/hst:workspace";
             final String targetAbsolutePath = targetWorkspacePath + "/" + configurationRelativePath;
             if (session.nodeExists(targetAbsolutePath)) {
                 log.debug("Target reference '{}' exists already in '{}'. Most likely it was not yet part of the model before. " +
@@ -190,10 +191,16 @@ public class PagesHelper extends AbstractHelper {
             if (!session.nodeExists(mainConfigNodePath)) {
                 session.getNode(targetWorkspacePath).addNode(mainConfigNodeName);
             }
-            // try to acquire the lock first
-            final Node mainConfigNode = session.getNode(mainConfigNodePath);
-            lockHelper.acquireSimpleLock(mainConfigNode, 0L);
+            // also add the main config node to live if needed!
+            if (targetWorkspacePath.contains("-preview")) {
+                final String liveTargetWorkspacePath = targetSite.getConfigurationPath().replace("-preview", "") + "/hst:workspace";
+                final String liveMainConfigNodePath = liveTargetWorkspacePath + "/" + mainConfigNodeName;
+                if (!session.nodeExists(liveMainConfigNodePath)) {
+                    session.getNode(liveTargetWorkspacePath).addNode(mainConfigNodeName);
+                }
+            }
 
+            final Node mainConfigNode = session.getNode(mainConfigNodePath);
             // copy the first missing node
             Node currentNode = mainConfigNode;
             for (int i = 1; i < configurationRelativePathSegments.size(); i++) {
@@ -207,6 +214,9 @@ public class PagesHelper extends AbstractHelper {
 
                     final Node copy = JcrUtils.copy(session, sourcePath,
                             targetWorkspacePath + "/" + existingRelativePath + "/" + configurationRelativePathSegments.get(i));
+
+                    lockHelper.acquireSimpleLock(copy, 0L);
+
                     // repeat the same reference checking for the copied node
                     checkReferencesRecursive(copy, sourceSite, targetSite, checkedNodes);
                 }
@@ -239,18 +249,12 @@ public class PagesHelper extends AbstractHelper {
             return;
         }
         // targetReference is present in preview, but not in live. We need to check whether the current user also owns the
-        // lock on the 'main config node'. Otherwise, it implies someone else has the lock, in which case, this action cannot
+        // lock on the 'target node'. Otherwise, it implies someone else has the lock, in which case, this action cannot
         // be completed (because if this user would publish, the live still wouldn't have the referenced node)
+        lockHelper.acquireLock(session.getNode(absPreviewPath), 0L);
 
-        final List<String> configurationRelativePathSegments = getConfigurationRelativePathSegments(session.getNode(absPreviewPath));
-        // if current user does not own the lock, the acquireSimpleLock will throw an exception which also should be the case
-        // if the lock is not owned on the main config node
-        final String mainConfigNodeName = configurationRelativePathSegments.get(0);
-        final String mainConfigNodePath = targetSite.getConfigurationPath() + "/" + mainConfigNodeName;
-        final Node mainConfigNode = session.getNode(mainConfigNodePath);
-        lockHelper.acquireSimpleLock(mainConfigNode, 0L);
-        log.debug("reference '{}' is already present in preview configuration and the lock on '{}' is also owned.",
-                absPreviewPath, mainConfigNodePath);
+        log.debug("reference '{}' is already present in preview configuration and the lock is also owned.",
+                absPreviewPath);
         return;
     }
 

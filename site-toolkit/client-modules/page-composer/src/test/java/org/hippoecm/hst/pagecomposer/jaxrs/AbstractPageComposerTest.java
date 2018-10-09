@@ -51,6 +51,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
@@ -101,6 +102,9 @@ public class AbstractPageComposerTest {
         }
     });
 
+    protected MountResource mountResource;
+
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
@@ -123,6 +127,9 @@ public class AbstractPageComposerTest {
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
+
+        mountResource =  componentManager.getComponent("org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource",
+                "org.hippoecm.hst.pagecomposer");
 
         final HstModelProvider hstModelProvider = componentManager.getComponent(HstModelProvider.class.getName());
         hstModelProvider.setContextPath(CONTEXT_PATH);

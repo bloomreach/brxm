@@ -52,15 +52,12 @@ import static org.junit.Assert.assertFalse;
 
 public abstract class AbstractMenuResourceTest extends AbstractPageComposerTest {
 
-    protected MountResource mountResource;
     protected SiteMenuHelper siteMenuHelper;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-
-        mountResource = AbstractMountResourceTest.createResource();
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
 

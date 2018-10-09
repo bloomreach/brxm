@@ -21,44 +21,14 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
-import org.hippoecm.hst.site.HstServices;
 import org.junit.Before;
 
 public abstract class AbstractMountResourceTest extends AbstractPageComposerTest {
-
-    protected MountResource mountResource;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        mountResource = createResource();
-    }
-
-    public static MountResource createResource() {
-        MountResource resource = new MountResource();
-        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
-        resource.setPageComposerContextService(pageComposerContextService);
-        final ChannelHelper channelHelper = new ChannelHelper();
-        channelHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setChannelHelper(channelHelper);
-        final SiteMapHelper siteMapHelper = new SiteMapHelper();
-        siteMapHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setSiteMapHelper(siteMapHelper);
-        final PagesHelper pagesHelper = new PagesHelper();
-        pagesHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setPagesHelper(pagesHelper);
-        final SiteMenuHelper siteMenuHelper = new SiteMenuHelper();
-        siteMenuHelper.setPageComposerContextService(pageComposerContextService);
-        resource.setSiteMenuHelper(siteMenuHelper);
-        resource.setComponentManager(HstServices.getComponentManager());
-        return resource;
     }
 
     protected void mockNewRequest(Session jcrSession, String host, String pathInfo) throws Exception {

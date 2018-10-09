@@ -55,14 +55,15 @@ public class LockHelper {
      * recursively unlocks <code>configNode</code> and/or any descendant
      */
     public void unlock(final Node configNode) throws RepositoryException {
+        log.info("Removing lock for '{}' since node or ancestor gets published", configNode.getPath());
         if (configNode.isNodeType(MIXINTYPE_HST_EDITABLE)) {
-            log.info("Removing lock for '{}' since node or ancestor gets published", configNode.getPath());
             configNode.removeMixin(MIXINTYPE_HST_EDITABLE);
-        } else if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
+        }
+        if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             configNode.getProperty(GENERAL_PROPERTY_LOCKED_BY).remove();
-            if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
-                configNode.getProperty(GENERAL_PROPERTY_LOCKED_ON).remove();
-            }
+        }
+        if (configNode.hasProperty(GENERAL_PROPERTY_LOCKED_ON)) {
+            configNode.getProperty(GENERAL_PROPERTY_LOCKED_ON).remove();
         }
         for (Node child : new NodeIterable(configNode.getNodes())) {
             unlock(child);
