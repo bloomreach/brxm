@@ -191,10 +191,26 @@ describe('EditComponentService', () => {
     });
   });
 
-  it('transitions to the parent state when editing is stopped', () => {
+  it('resolves without a transition to the parent state when editing is stopped while editor is not open', (done) => {
     spyOn($state, 'go');
-    EditComponentService.stopEditing();
-    expect($state.go).toHaveBeenCalledWith('^');
+    EditComponentService.stopEditing()
+      .then(() => {
+        expect($state.go).not.toHaveBeenCalled();
+        done();
+      });
+    $rootScope.$digest();
+  });
+
+  it('transitions to the parent state when editing is stopped while editor is open', (done) => {
+    spyOn($state, 'go').and.callThrough();
+    editComponent();
+
+    EditComponentService.stopEditing()
+      .then(() => {
+        expect($state.go).toHaveBeenCalledWith('^');
+        done();
+      });
+    $rootScope.$digest();
   });
 
   it('ignores erroneous calls and logs a warning', () => {
