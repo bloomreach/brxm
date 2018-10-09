@@ -291,8 +291,7 @@ class ComponentEditorService {
         switch (action) {
           case 'SAVE':
             if (isValid) {
-              return this.save()
-                .then(() => action); // let caller know that changes have been saved
+              return this.$q.resolve(action); // let caller know that changes should saved
             }
             return this._alertFieldErrors()
               .then(() => this.$q.reject());
@@ -300,7 +299,7 @@ class ComponentEditorService {
             this.PageStructureService.renderComponent(this.component.id);
             return this.$q.resolve(action);
           default:
-            return this.$q.resolve(action); // let caller know that changes have not been saved
+            return this.$q.resolve(action); // let caller know that changes should not be saved
         }
       });
   }
