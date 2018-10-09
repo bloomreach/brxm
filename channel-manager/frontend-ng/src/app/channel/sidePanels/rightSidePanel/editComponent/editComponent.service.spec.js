@@ -152,6 +152,14 @@ describe('EditComponentService', () => {
 
       expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     });
+
+    it('stops editing when opening the  component editor fails', () => {
+      spyOn(EditComponentService, 'stopEditing');
+      ComponentEditor.open.and.returnValue($q.reject());
+      editComponent();
+
+      expect(EditComponentService.stopEditing).toHaveBeenCalled();
+    });
   });
 
   describe('sync preview', () => {

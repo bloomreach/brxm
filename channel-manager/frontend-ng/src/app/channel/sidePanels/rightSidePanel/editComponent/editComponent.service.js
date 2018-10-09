@@ -109,7 +109,7 @@ class EditComponentService {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
       })
-      .catch(e => console.error('Failed to load component', properties, e));
+      .catch(() => this.stopEditing());
   }
 
   _showDefaultTitle() {
