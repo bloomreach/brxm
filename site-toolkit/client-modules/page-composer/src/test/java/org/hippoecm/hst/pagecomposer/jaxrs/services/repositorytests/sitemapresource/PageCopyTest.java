@@ -37,6 +37,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapPageRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.Utilities;
@@ -431,7 +432,12 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
     @Test
     public void page_copy_cross_channel_copies_missing_referenced_pages_as_well() throws Exception {
         moveTemplatesFromCommonToUnitTestProject();
+
         session.save();
+
+        // wait for jcr events
+        Thread.sleep(100);
+
         // hst:pages/newsoverview is not available in subsite (because of movePagesFromCommonToUnitTestProject)
         // hence when copying the 'news' page, we'd expect hst:pages/standardoverview to be added to the subsite.
         crossChannelCopyNewsOverview(MountAction.PUBLISH);
@@ -440,6 +446,10 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
      public void discard_after_page_copy_cross_channel_removes_added_referenced_pages_as_well() throws Exception {
         moveTemplatesFromCommonToUnitTestProject();
         session.save();
+
+        // wait for jcr events
+        Thread.sleep(100);
+
         // hst:pages/newsoverview is not available in subsite (because of movePagesFromCommonToUnitTestProject)
         // hence when copying the 'news' page, we'd expect hst:pages/standardoverview to be added to the subsite.
         crossChannelCopyNewsOverview(MountAction.DISCARD);

@@ -46,6 +46,7 @@ import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundExceptio
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -65,7 +66,7 @@ import static org.hippoecm.hst.channelmanager.security.SecurityModel.CHANNEL_WEB
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 
 @Path("/rep:root/")
-public class RootResource extends AbstractConfigResource {
+public class RootResource extends AbstractConfigResource implements ComponentManagerAware {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private boolean isCrossChannelPageCopySupported;
@@ -84,8 +85,6 @@ public class RootResource extends AbstractConfigResource {
 
     @Override
     public void setComponentManager(ComponentManager componentManager) {
-        super.setComponentManager(componentManager);
-
         final ContainerConfiguration config = componentManager.getContainerConfiguration();
         isCrossChannelPageCopySupported = config.getBoolean("cross.channel.page.copy.supported", false);
     }

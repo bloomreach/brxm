@@ -18,9 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -36,121 +34,33 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.HstFilter;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
-import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
-import org.hippoecm.hst.site.container.SpringComponentManager;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.cms7.services.context.HippoWebappContext;
-import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.mock.web.MockServletContext;
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
-import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
-public class AbstractFullRequestCycleTest {
+public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
-    private static final String CONTEXT_PATH = "/site";
-    private static final String PLATFORM_CONTEXT_PATH = "/cms";
 
-    protected SpringComponentManager siteComponentManager;
-    protected SpringComponentManager platformComponentManager;
-    protected HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
-        public String getContextPath() {
-            return CONTEXT_PATH;
-        }
-    });
-
-    protected HippoWebappContext platformWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
-        public String getContextPath() {
-            return PLATFORM_CONTEXT_PATH;
-        }
-    });
     protected static ObjectMapper mapper = new ObjectMapper();
 
     protected Filter filter;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        //Enable legacy project structure mode (without extensions)
-        System.setProperty("use.hcm.sites", "false");
-    }
 
     @Before
     public void setUp() throws Exception {
 
-        MockServletContext platformServletContext = new MockServletContext() {
-            public String getContextPath() {
-                return PLATFORM_CONTEXT_PATH;
-            }
-
-            public ClassLoader getClassLoader() {
-                return AbstractFullRequestCycleTest.class.getClassLoader();
-            }
-        };
-
-        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
-
-        platformWebappContext = new HippoWebappContext(CMS, platformServletContext);
-        HippoWebappContextRegistry.get().register(platformWebappContext);
-        platformServletContext.setContextPath(PLATFORM_CONTEXT_PATH);
-
-        final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
-        platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
-        platformComponentManager = new SpringComponentManager(platformConfiguration);
-        platformComponentManager.setConfigurationResources(getConfigurations());
-        platformComponentManager.setServletContext(platformServletContext);
-
-        platformComponentManager.setAddonModuleDefinitions(addonModuleDefinitions);
-
-        platformComponentManager.initialize();
-        platformComponentManager.start();
-
-        HstServices.setComponentManager(platformComponentManager);
-
+        super.setUp();
 
         filter = platformComponentManager.getComponent(HstFilter.class.getName());
-
-        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel(PLATFORM_CONTEXT_PATH, platformComponentManager, true);
-
-        final PropertiesConfiguration configuration = new PropertiesConfiguration();
-        configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
-        siteComponentManager = new SpringComponentManager(configuration);
-        siteComponentManager.setConfigurationResources(getConfigurations());
-
-        HippoWebappContextRegistry.get().register(siteWebappContext);
-        siteComponentManager.setServletContext(siteWebappContext.getServletContext());
-
-
-        final List<ModuleDefinition> filteredModules = addonModuleDefinitions.stream().filter(moduleDefinition ->
-                !moduleDefinition.getName().equals("org.hippoecm.hst.pagecomposer")
-                        && !moduleDefinition.getName().equals("org.hippoecm.hst.platform")
-                        && !moduleDefinition.getName().equals("org.hippoecm.hst.platform.test"))
-                .collect(Collectors.toList());
-
-        siteComponentManager.setAddonModuleDefinitions(filteredModules);
-
-        siteComponentManager.initialize();
-        siteComponentManager.start();
-
-        modelRegistry.registerHstModel(CONTEXT_PATH, siteComponentManager, true);
 
         // assert admin has hippo:admin privilege
         Session admin = createSession("admin", "admin");
@@ -164,18 +74,6 @@ public class AbstractFullRequestCycleTest {
         editor.logout();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        siteComponentManager.stop();
-        siteComponentManager.close();
-        platformComponentManager.stop();
-        platformComponentManager.close();
-        HippoWebappContextRegistry.get().unregister(siteWebappContext);
-        HippoWebappContextRegistry.get().unregister(platformWebappContext);
-        HstServices.setComponentManager(null);
-        ModifiableRequestContextProvider.clear();
-
-    }
 
     protected String[] getConfigurations() {
         String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";

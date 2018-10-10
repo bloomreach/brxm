@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,20 +40,14 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractConfigResource implements ComponentManagerAware {
+public class AbstractConfigResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
     private PageComposerContextService pageComposerContextService;
-    private ComponentManager componentManager;
 
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
-    }
-
-    @Override
-    public void setComponentManager(ComponentManager componentManager) {
-        this.componentManager = componentManager;
     }
 
     public PageComposerContextService getPageComposerContextService() {
@@ -184,7 +178,7 @@ public class AbstractConfigResource implements ComponentManagerAware {
         if (log.isDebugEnabled()) {
             log.warn(e.toString(), e);
         } else {
-            log.warn(e.toString());
+            log.warn(e.toString(), e);
         }
         return error(e.getMessage());
     }

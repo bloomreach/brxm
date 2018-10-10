@@ -1,0 +1,136 @@
+/*
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.pagecomposer.jaxrs;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
+import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.springframework.mock.web.MockServletContext;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
+
+public abstract class AbstractComponentManagerTest {
+
+    protected static final String CONTEXT_PATH = "/site";
+    protected static final String PLATFORM_CONTEXT_PATH = "/cms";
+
+    protected SpringComponentManager siteComponentManager;
+    protected SpringComponentManager platformComponentManager;
+    protected HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return CONTEXT_PATH;
+        }
+    });
+
+    protected HippoWebappContext platformWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return PLATFORM_CONTEXT_PATH;
+        }
+    });
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
+
+
+    @Before
+    public void setUp() throws Exception {
+        MockServletContext platformServletContext = new MockServletContext() {
+            public String getContextPath() {
+                return PLATFORM_CONTEXT_PATH;
+            }
+
+            public ClassLoader getClassLoader() {
+                return AbstractFullRequestCycleTest.class.getClassLoader();
+            }
+        };
+
+        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
+
+        platformWebappContext = new HippoWebappContext(CMS, platformServletContext);
+        HippoWebappContextRegistry.get().register(platformWebappContext);
+        platformServletContext.setContextPath(PLATFORM_CONTEXT_PATH);
+
+        final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
+        platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
+        platformComponentManager = new SpringComponentManager(platformConfiguration);
+        platformComponentManager.setConfigurationResources(getConfigurations());
+        platformComponentManager.setServletContext(platformServletContext);
+
+        platformComponentManager.setAddonModuleDefinitions(addonModuleDefinitions);
+
+        platformComponentManager.initialize();
+        platformComponentManager.start();
+
+        HstServices.setComponentManager(platformComponentManager);
+
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.registerHstModel(PLATFORM_CONTEXT_PATH, platformComponentManager, true);
+
+        final PropertiesConfiguration configuration = new PropertiesConfiguration();
+        configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
+        siteComponentManager = new SpringComponentManager(configuration);
+        siteComponentManager.setConfigurationResources(getConfigurations());
+
+        HippoWebappContextRegistry.get().register(siteWebappContext);
+        siteComponentManager.setServletContext(siteWebappContext.getServletContext());
+
+
+        final List<ModuleDefinition> filteredModules = addonModuleDefinitions.stream().filter(moduleDefinition ->
+                !moduleDefinition.getName().equals("org.hippoecm.hst.pagecomposer")
+                        && !moduleDefinition.getName().equals("org.hippoecm.hst.platform")
+                        && !moduleDefinition.getName().equals("org.hippoecm.hst.platform.test"))
+                .collect(Collectors.toList());
+
+        siteComponentManager.setAddonModuleDefinitions(filteredModules);
+
+        siteComponentManager.initialize();
+        siteComponentManager.start();
+
+        modelRegistry.registerHstModel(CONTEXT_PATH, siteComponentManager, true);
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        siteComponentManager.stop();
+        siteComponentManager.close();
+        platformComponentManager.stop();
+        platformComponentManager.close();
+        HippoWebappContextRegistry.get().unregister(siteWebappContext);
+        HippoWebappContextRegistry.get().unregister(platformWebappContext);
+        HstServices.setComponentManager(null);
+        ModifiableRequestContextProvider.clear();
+    }
+
+    abstract protected String[] getConfigurations();
+}

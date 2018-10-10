@@ -43,17 +43,14 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.AbstractMountResourceTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 
@@ -200,7 +197,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
         siteMapResource.setSiteMapHelper(siteMapHelper);
         siteMapResource.setValidatorFactory(new ValidatorFactory());
 
-        siteMapResource.setComponentManager(HstServices.getComponentManager());
         return siteMapResource;
     }
 

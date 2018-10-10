@@ -181,16 +181,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         super.invoke(requestContext, request, response);
     }
 
-    private static class HstModelSnapshot implements PlatformHstModel {
+    public static class HstModelSnapshot implements PlatformHstModel {
 
         private final PlatformHstModel delegatee;
         private PreviewDecorator previewDecorator;
         private VirtualHosts cache;
 
-        private HstModelSnapshot(final PlatformHstModel delegatee) {
+        public HstModelSnapshot(final PlatformHstModel delegatee) {
             this.delegatee = delegatee;
         }
-        private HstModelSnapshot(final PlatformHstModel delegatee, final PreviewDecorator previewDecorator) {
+        public HstModelSnapshot(final PlatformHstModel delegatee, final PreviewDecorator previewDecorator) {
             this.delegatee = delegatee;
             this.previewDecorator = previewDecorator;
         }
