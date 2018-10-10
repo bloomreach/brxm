@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const MOUSE_LEFT = 1;
+
 class resizeHandleController {
   constructor($element) {
     'ngInject';
@@ -22,45 +24,63 @@ class resizeHandleController {
   }
 
   $onInit() {
-    this.add = this.handlePosition === 'left';
-    this.handle.addClass(this.handlePosition === 'left' ? 'left' : 'right');
-    this._registerEvents(this.element);
+    this.isInversed = this.handlePosition === 'left';
+    this.handle
+      .addClass(this.handlePosition === 'left' ? 'left' : 'right')
+      .on('mousedown', this._onMouseDown.bind(this));
   }
 
-  _registerEvents(manipulatedElement) {
-    this.handle.on('mousedown', (mouseDownEvent) => {
-      this.maxWidth = Math.floor($('body').width() / 2);
+  _resize(newWidth) {
+    if (newWidth === this.element.width()) {
+      return;
+    }
 
-      const initialX = mouseDownEvent.pageX;
-      const initialWidth = manipulatedElement.width();
+    this.element.css('width', newWidth);
+    this.onResize({ newWidth });
+  }
 
-      const mask = this._createMask();
-      mask.on('mousemove', (moveEvent) => {
-        const diff = initialX - moveEvent.pageX;
-        let newWidth = this.add ? initialWidth + diff : initialWidth - diff;
+  _onMouseDown(event) {
+    if (event.which !== MOUSE_LEFT) {
+      return;
+    }
 
-        if (newWidth < this.minWidth) newWidth = this.minWidth;
-        if (newWidth > this.maxWidth) newWidth = this.maxWidth;
+    event.preventDefault();
 
-        if (newWidth !== manipulatedElement.width()) {
-          manipulatedElement.css('width', newWidth);
-          this.onResize({ newWidth });
-        }
-      });
+    this.offset = event.pageX;
+    this.initialWidth = this.element.width();
+    this.maxWidth = Math.floor($('body').width() / 2);
 
-      mask.on('mouseup', () => {
-        mask.hide();
-        mask.off('mousemove');
-        mask.off('mouseup');
-        mask.remove();
-      });
+    this._createMask();
+  }
 
-      mask.show();
-    });
+  _onMouseMove(event) {
+    if (!event.buttons) {
+      this._removeMask();
+
+      return;
+    }
+
+    const diff = event.pageX - this.offset;
+    let newWidth = this.isInversed ? this.initialWidth - diff : this.initialWidth + diff;
+    newWidth = Math.max(newWidth, this.minWidth);
+    newWidth = Math.min(newWidth, this.maxWidth);
+
+    this._resize(newWidth);
   }
 
   _createMask() {
-    return $('<div class="resize-handle-mask"></div>').appendTo('body');
+    this.mask = $('<div class="resize-handle-mask"></div>')
+      .on('mousemove', this._onMouseMove.bind(this))
+      .on('mouseup', this._removeMask.bind(this))
+      .show()
+      .appendTo('body');
+  }
+
+  _removeMask() {
+    this.mask.hide()
+      .off('mousemove')
+      .off('mouseup')
+      .remove();
   }
 }
 
