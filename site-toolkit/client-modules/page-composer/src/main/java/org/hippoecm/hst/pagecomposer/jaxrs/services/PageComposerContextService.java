@@ -79,7 +79,6 @@ public class PageComposerContextService {
 
     public String getRenderingMountId() {
 
-        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
         final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
         final String renderingMountId = (String) cmsSessionContext.getContextPayload().get(CMS_REQUEST_RENDERING_MOUNT_ID);
@@ -91,7 +90,6 @@ public class PageComposerContextService {
 
     public void removeRenderingMountId() {
 
-        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
         final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
         cmsSessionContext.getContextPayload().remove(CMS_REQUEST_RENDERING_MOUNT_ID);
@@ -100,7 +98,6 @@ public class PageComposerContextService {
 
     public boolean isRenderingMountSet() {
 
-        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
         final HttpSession httpSession = getRequestContext().getServletRequest().getSession();
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
         return cmsSessionContext.getContextPayload().get(CMS_REQUEST_RENDERING_MOUNT_ID) != null;

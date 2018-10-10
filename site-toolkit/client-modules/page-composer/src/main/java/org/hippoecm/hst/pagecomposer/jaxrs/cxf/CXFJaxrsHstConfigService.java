@@ -142,7 +142,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             if (node.isNodeType(NODETYPE_HST_MOUNT)) {
                 final HttpSession httpSession = requestContext.getServletRequest().getSession();
                 CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-                // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
                 cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
             }
 

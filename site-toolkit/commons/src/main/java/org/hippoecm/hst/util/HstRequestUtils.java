@@ -17,6 +17,7 @@ package org.hippoecm.hst.util;
 
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -251,10 +252,13 @@ public class HstRequestUtils {
         HttpSession session = request.getSession(false);
         if (session != null) {
 
-            // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
             final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
             if (cmsSessionContext != null) {
-                return (String) cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
+                final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+                if (contextPayload == null) {
+                    return null;
+                }
+                return (String) contextPayload.get(ContainerConstants.RENDERING_HOST);
             }
         }
         return null;

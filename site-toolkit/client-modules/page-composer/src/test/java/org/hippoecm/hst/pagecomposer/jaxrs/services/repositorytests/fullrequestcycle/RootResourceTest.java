@@ -83,7 +83,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./keepalive", null, "GET");
 
-        final MockHttpServletResponse response = render(requestResponse, admin);
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
 
         final String restResponse = response.getContentAsString();
         assertTrue(StringUtils.isNotEmpty(restResponse));
@@ -101,7 +101,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-        final MockHttpServletResponse response = render(requestResponse, admin);
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
         assertEquals(SC_FORBIDDEN, response.getStatus());
     }
 
@@ -115,7 +115,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-        final MockHttpServletResponse response = render(requestResponse, admin);
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
         assertEquals(SC_NOT_FOUND, response.getStatus());
     }
 
@@ -129,7 +129,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-        final MockHttpServletResponse response = render(requestResponse, admin);
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
         assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
 
     }
@@ -149,7 +149,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
             SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-            final MockHttpServletResponse response = render(requestResponse, admin);
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
             assertEquals(SC_BAD_REQUEST, response.getStatus());
 
             final String restResponse = response.getContentAsString();
@@ -181,7 +181,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
-            final MockHttpServletResponse response = render(requestResponse, admin);
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
             assertEquals(SC_OK, response.getStatus());
 
             // assert 'unittestsubproject' configurations are gone
@@ -221,7 +221,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/subinheritingconfig"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
-            final MockHttpServletResponse response = render(requestResponse, admin);
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
             assertEquals(SC_OK, response.getStatus());
 
             assertFalse(session.nodeExists("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite"));
@@ -262,7 +262,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
-            final MockHttpServletResponse response = render(requestResponse, admin);
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
             assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
 
         } finally {
@@ -284,7 +284,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
                         "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
 
                 SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-                final MockHttpServletResponse response = render(requestResponse, admin);
+                final MockHttpServletResponse response = render(null, requestResponse, admin);
                 assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
 
                 Object renderVariant = requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT);
@@ -296,7 +296,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
                         "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
 
                 SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-                final MockHttpServletResponse response = render(requestResponse, admin);
+                final MockHttpServletResponse response = render(null, requestResponse, admin);
                 assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
                 assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
             }

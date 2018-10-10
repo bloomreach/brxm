@@ -471,7 +471,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         if (requestContext.getResolvedMount().getMount().isExplicit() &&
                 (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource())) {
 
-            // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
             final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
             if (cmsSessionContext == null) {
                 // no cms

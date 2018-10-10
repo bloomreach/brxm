@@ -154,6 +154,10 @@ public class AbstractPageComposerTest {
 
         createHstConfigBackup(session);
 
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.registerHstModel(CONTEXT_PATH, componentManager, true);
+
+
     }
 
     @After
@@ -166,7 +170,7 @@ public class AbstractPageComposerTest {
         session.logout();
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.unregisterHstModel("/site");
+        modelRegistry.unregisterHstModel("/cms");
 
         this.componentManager.stop();
         this.componentManager.close();
@@ -228,7 +232,7 @@ public class AbstractPageComposerTest {
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
 
-        final HstModel hstModel = modelRegistry.getHstModel("/site");
+        final HstModel hstModel = modelRegistry.getHstModel("/cms");
 
         //new CXFJaxrsHstConfigService.HstModelSnapshot((PlatformHstModel) hstModel);
         final HstModel liveHstModelSnapshot =
@@ -273,8 +277,8 @@ public class AbstractPageComposerTest {
         mockRequest.setServerName(host);
         mockRequest.addHeader("Host", hostAndPort);
         mockRequest.setPathInfo(pathInfo);
-        mockRequest.setContextPath("/site");
-        mockRequest.setRequestURI("/site" + pathInfo);
+        mockRequest.setContextPath("/cms");
+        mockRequest.setRequestURI("/cms" + pathInfo);
 
         if (queryString != null) {
             mockRequest.setQueryString(queryString);
@@ -337,6 +341,7 @@ public class AbstractPageComposerTest {
         public Object get(final String key) {
             return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
         }
+
     }
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url, final HstMutableRequestContext requestContext) throws ContainerException {

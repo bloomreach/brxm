@@ -46,7 +46,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
 
     @Test
     public void assert_unittestproject_channel_locked_setup() throws Exception {
-        HstManager manager = componentManager.getComponent(HstManager.class);
+        HstManager manager = siteComponentManager.getComponent(HstManager.class);
         Channel unittestproject = manager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject");
         assertTrue(unittestproject.isConfigurationLocked());
     }
@@ -58,7 +58,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
         session.getNode("/hst:hst/hst:configurations/unittestproject").setProperty(CONFIGURATION_PROPERTY_LOCKED, false);
         session.save();
         session.logout();
-        HstManager manager = componentManager.getComponent(HstManager.class);
+        HstManager manager = siteComponentManager.getComponent(HstManager.class);
         Channel unittestproject = manager.getVirtualHosts().getChannels("dev-localhost").get("unittestproject");
         assertFalse(unittestproject.isConfigurationLocked());
     }

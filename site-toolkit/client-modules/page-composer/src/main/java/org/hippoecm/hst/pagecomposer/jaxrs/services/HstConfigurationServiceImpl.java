@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -50,17 +48,11 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
 
     public static final String PREVIEW_SUFFIX = "-preview";
 
-    private final String configurationsRootPath;
-
-    public HstConfigurationServiceImpl(final String configurationsRootPath) {
-        this.configurationsRootPath = configurationsRootPath;
-    }
-
     @Override
     public void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
         final Node configNode = getConfiguration(session, configurationPath);
         deletePreviewConfiguration(session, configurationPath);
-        if (hasDescendant(session, configNode.getName())) {
+        if (hasDescendant(configNode.getName(), configNode.getParent())) {
             throw new HstConfigurationException("The configuration node is inherited by others");
         }
         configNode.remove();
@@ -129,7 +121,7 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
 
 
     private Node getConfiguration(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
-        validateConfigurationPathArg(configurationPath);
+        validateConfigurationPathArg(configurationPath, session);
 
         final Node configurationNode = session.getNode(configurationPath);
         if (!configurationNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
@@ -140,20 +132,14 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
         return configurationNode;
     }
 
-    private NodeIterator getConfigurations(final Session session) throws RepositoryException {
-        final Node configurationsRootNode = session.getNode(this.configurationsRootPath);
-        return configurationsRootNode.getNodes();
-    }
+    private boolean hasDescendant(final String configId, final Node configurationsNode) throws RepositoryException {
 
-    private boolean hasDescendant(final Session session, final String configId) throws RepositoryException {
-        final NodeIterator configNodes = getConfigurations(session);
-
-        while (configNodes.hasNext()) {
-            final Node configNode = configNodes.nextNode();
+        for (Node configNode : new NodeIterable(configurationsNode.getNodes())) {
             if (inheritsFrom(configNode, configId)) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -186,18 +172,15 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
         return false;
     }
 
-    private void validateConfigurationPathArg(final String configurationPath) {
+    private void validateConfigurationPathArg(final String configurationPath, final Session session) {
         if (StringUtils.isBlank(configurationPath)) {
             throw new IllegalArgumentException("configurationPath must not be blank");
-        }
-
-        if (!configurationPath.startsWith(configurationsRootPath)) {
-            throw new IllegalArgumentException("configurationPath must start with '" + configurationsRootPath + "'");
         }
 
         if (configurationPath.endsWith(PREVIEW_SUFFIX)) {
             throw new IllegalArgumentException("configurationPath must not end with '" + PREVIEW_SUFFIX + "'");
         }
+
     }
 
 }
