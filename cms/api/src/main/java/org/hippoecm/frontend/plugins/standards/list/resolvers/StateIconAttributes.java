@@ -17,21 +17,18 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.Observable;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -83,6 +80,7 @@ public class StateIconAttributes implements IObservable, IDetachable {
         return icons;
     }
 
+    @Override
     public void detach() {
         loaded = false;
 
@@ -142,16 +140,12 @@ public class StateIconAttributes implements IObservable, IDetachable {
             if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
                     || unpublishedVariant.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
 
-                final Property stateProperty = unpublishedVariant.getProperty(HIPPOSTD_STATESUMMARY);
-
                 final String state = getState(unpublishedVariant);
                 cssClass = StateIconAttributeModifier.PREFIX + (isHistoric ? "prev-" : "") + state;
 
-                final JcrPropertyModel stateSummaryModel = new JcrPropertyModel(stateProperty);
-                final IModel<String> stateModel = new JcrPropertyValueModel<>(stateSummaryModel);
                 final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
                 final TypeTranslator typeTranslator = new TypeTranslator(nodeTypeModel);
-                summary = typeTranslator.getValueName(HIPPOSTD_STATESUMMARY, stateModel).getObject();
+                summary = typeTranslator.getValueName(HIPPOSTD_STATESUMMARY, Model.of(state)).getObject();
 
                 icons = getStateIcons(state);
 
@@ -202,14 +196,17 @@ public class StateIconAttributes implements IObservable, IDetachable {
         }
     }
 
+    @Override
     public void setObservationContext(IObservationContext<? extends IObservable> context) {
         observable.setObservationContext(context);
     }
 
+    @Override
     public void startObservation() {
         observable.startObservation();
     }
 
+    @Override
     public void stopObservation() {
         observable.stopObservation();
     }
