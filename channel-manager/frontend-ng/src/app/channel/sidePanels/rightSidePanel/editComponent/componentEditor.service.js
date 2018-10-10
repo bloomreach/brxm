@@ -210,7 +210,7 @@ class ComponentEditorService {
   }
 
   getComponentId() {
-    return this.component ? this.component.id : undefined;
+    return this.component && this.component.id;
   }
 
   getComponentName() {
