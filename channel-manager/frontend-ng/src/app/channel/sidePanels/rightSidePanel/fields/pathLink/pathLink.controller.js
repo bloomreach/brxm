@@ -36,16 +36,16 @@ class PathLinkController extends NodeLinkController {
 
   openLinkPicker() {
     return this.PickerService.pickPath(this.config.linkpicker, this.ngModel.$modelValue)
-      .then(({ path, displayValue }) => this._onPathPicked(path, displayValue))
+      .then(({ path, displayName }) => this._onPathPicked(path, displayName))
       .catch(() => this._focusSelectButton());
   }
 
-  _onPathPicked(path, displayValue) {
+  _onPathPicked(path, displayName) {
     if (this.linkPicked) {
       this._focusSelectButton();
     }
     this.linkPicked = true;
-    this.displayName = displayValue;
+    this.displayName = displayName;
     this.ngModel.$setViewValue(path);
   }
 

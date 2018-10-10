@@ -26,7 +26,7 @@ class PickerService {
    * @param pickerConfig the configuration properties for the path picker dialog
    * @param currentPath the current path value (a string), can be undefined
    * @returns {*} a promise that resolves to the picked path and its display value,
-   *          as an object with two properties: { path, displayValue }. The promise
+   *          as an object with two properties: { path, displayName }. The promise
    *          is rejected when picking is canceled.
    */
   pickPath(pickerConfig, currentPath) {

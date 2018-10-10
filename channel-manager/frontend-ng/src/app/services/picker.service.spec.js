@@ -44,11 +44,11 @@ describe('PickerService', () => {
     it('resolves the returned promise with the picked path', (done) => {
       const promise = PickerService.pickPath({}, '/test');
       const onSuccess = CmsService.publish.calls.mostRecent().args[3];
-      onSuccess({ path: '/pickedPath', displayValue: 'Picked Display Value' });
+      onSuccess({ path: '/pickedPath', displayName: 'Picked Path' });
 
-      promise.then(({ path, displayValue }) => {
+      promise.then(({ path, displayName }) => {
         expect(path).toBe('/pickedPath');
-        expect(displayValue).toBe('Picked Display Value');
+        expect(displayName).toBe('Picked Path');
         done();
       });
       $rootScope.$digest();

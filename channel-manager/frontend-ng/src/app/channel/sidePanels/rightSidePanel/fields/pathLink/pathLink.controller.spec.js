@@ -114,7 +114,7 @@ describe('pathLinkController', () => {
     });
 
     it('updates the view when a path has been picked', (done) => {
-      PickerService.pickPath.and.returnValue($q.resolve({ path: 'some/path', displayValue: 'path pretty name' }));
+      PickerService.pickPath.and.returnValue($q.resolve({ path: 'some/path', displayName: 'path pretty name' }));
       spyOn($ctrl, '_focusSelectButton');
 
       $ctrl.openLinkPicker().then(() => {

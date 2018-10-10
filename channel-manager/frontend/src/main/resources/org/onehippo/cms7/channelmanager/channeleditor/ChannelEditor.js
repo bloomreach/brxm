@@ -228,9 +228,9 @@
       );
     },
 
-    _onPathPicked: function(path, displayValue) {
+    _onPathPicked: function(path, displayName) {
       if (this.pathPickerSuccessCallback) {
-        this.pathPickerSuccessCallback({ path: path, displayValue: displayValue });
+        this.pathPickerSuccessCallback({ path: path, displayName: displayName });
       }
     },
 
