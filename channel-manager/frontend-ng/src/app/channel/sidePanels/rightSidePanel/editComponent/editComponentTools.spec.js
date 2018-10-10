@@ -23,13 +23,13 @@ describe('EditComponentToolsCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
-    inject(($controller, _$q_, _$rootScope_) => {
+    inject(($componentController, _$q_, _$rootScope_) => {
       $rootScope = _$rootScope_;
 
       EditComponentService = jasmine.createSpyObj('EditComponentService', ['stopEditing']);
 
       const $scope = $rootScope.$new();
-      $ctrl = $controller('editComponentToolsCtrl', {
+      $ctrl = $componentController('editComponentTools', {
         $scope,
         EditComponentService,
       });

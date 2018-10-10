@@ -27,6 +27,7 @@ class EditComponentMainCtrl {
   constructor(
     $log,
     $q,
+    $scope,
     $translate,
     ChannelService,
     CmsService,
@@ -34,11 +35,13 @@ class EditComponentMainCtrl {
     EditComponentService,
     FeedbackService,
     HippoIframeService,
+    OverlayService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$q = $q;
+    this.$scope = $scope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -46,6 +49,15 @@ class EditComponentMainCtrl {
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.OverlayService = OverlayService;
+  }
+
+  $onInit() {
+    this._overrrideSelectDocumentHandler();
+  }
+
+  $onDestroy() {
+    this._restoreSelectDocumentHandler();
   }
 
   getPropertyGroups() {
@@ -152,6 +164,22 @@ class EditComponentMainCtrl {
         .catch(this.$q.reject);
     }
     return this.$q.resolve();
+  }
+
+  _overrrideSelectDocumentHandler() {
+    this.defaultSelectDocumentHandler = this.OverlayService.onSelectDocument(this._onSelectDocument.bind(this));
+  }
+
+  _restoreSelectDocumentHandler() {
+    this.OverlayService.onSelectDocument(this.defaultSelectDocumentHandler);
+  }
+
+  _onSelectDocument(component, parameterName, parameterValue, pickerConfig, parameterBasePath) {
+    if (this.ComponentEditor.getComponentId() === component.getId()) {
+      this.$scope.$broadcast('edit-component:select-document', parameterName);
+    } else {
+      this.defaultSelectDocumentHandler(component, parameterName, parameterValue, pickerConfig, parameterBasePath);
+    }
   }
 }
 

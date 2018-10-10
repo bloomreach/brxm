@@ -20,7 +20,6 @@ import 'angular-mocks';
 describe('HstComponentService', () => {
   let $q;
   let $rootScope;
-  let $window;
   let ChannelService;
   let ConfigService;
   let HstComponentService;
@@ -28,13 +27,6 @@ describe('HstComponentService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
-
-    inject((_$window_) => {
-      $window = _$window_;
-    });
-
-    spyOn($window.APP_TO_CMS, 'publish').and.callThrough();
-    spyOn($window.CMS_TO_APP, 'subscribe').and.callThrough();
   });
 
   beforeEach(() => {
@@ -45,77 +37,6 @@ describe('HstComponentService', () => {
       ConfigService = _ConfigService_;
       HstService = _HstService_;
       HstComponentService = _HstComponentService_;
-    });
-  });
-
-  describe('interaction with the CMS through the "path-picked" event', () => {
-    it('subscribes to the CMS event "path-picked" upon construction', () => {
-      expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function));
-    });
-
-    it('responds to callbacks with id "component-path-picker"', () => {
-      const pathPickedHandler = spyOn(HstComponentService, 'pathPickedHandler');
-
-      $window.CMS_TO_APP.publish('path-picked', 'random-id', '/path/picked');
-      expect(pathPickedHandler).not.toHaveBeenCalled();
-
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path/picked');
-      expect(pathPickedHandler).toHaveBeenCalledWith('/path/picked');
-      expect(HstComponentService.pathPickedHandler).toBe(angular.noop);
-    });
-
-    it('resets the pathPickedHandler after a successful callback', () => {
-      HstComponentService.pathPickedHandler = () => {};
-
-      $window.CMS_TO_APP.publish('path-picked', 'random-id');
-      expect(HstComponentService.pathPickedHandler).not.toBe(angular.noop);
-
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker');
-      expect(HstComponentService.pathPickedHandler).toBe(angular.noop);
-    });
-  });
-
-  describe('pickPath', () => {
-    let pickPathPromise;
-
-    beforeEach(() => {
-      pickPathPromise = HstComponentService.pickPath('id', 'variant', 'name', 'value', 'pickerConfig', 'basePath');
-    });
-
-    it('publishes a "show-path-picker" event to the CMS application', () => {
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', 'value', 'pickerConfig');
-    });
-
-    it('sets the picked path when the pathPickedHandler is invoked', () => {
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
-
-      HstComponentService.pathPickedHandler('selected-path');
-      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('id', 'variant', 'name', 'selected-path', 'basePath');
-    });
-
-    it('returns a promise that is resolved after the picked path is set', (done) => {
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
-
-      expect(pickPathPromise).toBeDefined();
-      pickPathPromise.then(() => {
-        done();
-      });
-
-      HstComponentService.pathPickedHandler('selected-path');
-      $rootScope.$digest();
-    });
-
-    it('returns a promise that is rejected if setting the picked path fails', (done) => {
-      const errorResponse = {};
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject(errorResponse));
-
-      pickPathPromise.catch((response) => {
-        expect(response).toEqual(errorResponse);
-        done();
-      });
-
-      HstComponentService.pathPickedHandler('selected-path');
-      $rootScope.$digest();
     });
   });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PickerService', () => {
+describe('InternalLinkPickerService', () => {
   let $q;
   let $rootScope;
   let HstService;
   let DialogService;
-  let PickerService;
+  let InternalLinkPickerService;
 
   const testData = {
     items: [
@@ -35,12 +35,12 @@ describe('PickerService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _PickerService_, _DialogService_, _HstService_) => {
+    inject((_$q_, _$rootScope_, _DialogService_, _HstService_, _InternalLinkPickerService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      PickerService = _PickerService_;
-      HstService = _HstService_;
       DialogService = _DialogService_;
+      HstService = _HstService_;
+      InternalLinkPickerService = _InternalLinkPickerService_;
     });
 
     spyOn(HstService, 'doGet');
@@ -48,7 +48,7 @@ describe('PickerService', () => {
   });
 
   it('load initial data', (done) => {
-    PickerService.loadDataForLink('root').then((pickerType) => {
+    InternalLinkPickerService.loadDataForLink('root').then((pickerType) => {
       expect(pickerType).toBe('testPickerType');
       done();
     });
@@ -58,8 +58,8 @@ describe('PickerService', () => {
   });
 
   it('load initial data for link', (done) => {
-    PickerService.loadDataForLink('root', 'link').then(() => {
-      expect(PickerService.getTree()[0]).toEqual(testData);
+    InternalLinkPickerService.loadDataForLink('root', 'link').then(() => {
+      expect(InternalLinkPickerService.getTree()[0]).toEqual(testData);
       done();
     });
 
@@ -72,7 +72,7 @@ describe('PickerService', () => {
       id: 'itemA',
       items: [],
     };
-    PickerService.getData(item).then(() => {
+    InternalLinkPickerService.getData(item).then(() => {
       expect(item.items).toEqual(testData.items);
       done();
     });
@@ -85,7 +85,7 @@ describe('PickerService', () => {
     const dialogCfg = { customProperty: true };
     spyOn(DialogService, 'show');
     DialogService.show.and.returnValue($q.when(dialogCfg));
-    PickerService.show(dialogCfg);
+    InternalLinkPickerService.show(dialogCfg);
     expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining(dialogCfg));
   });
 });

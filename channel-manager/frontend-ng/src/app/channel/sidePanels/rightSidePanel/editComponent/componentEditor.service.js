@@ -211,6 +211,10 @@ class ComponentEditorService {
       .then(() => this.close());
   }
 
+  getComponentId() {
+    return this.component && this.component.id;
+  }
+
   getComponentName() {
     if (this.component) {
       return this.component.label;

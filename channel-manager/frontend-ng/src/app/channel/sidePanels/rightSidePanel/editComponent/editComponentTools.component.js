@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-function editComponentConfig($stateProvider) {
-  'ngInject';
+import controller from './editComponentTools.controller';
+import template from './editComponentTools.html';
 
-  $stateProvider.state({
-    name: 'hippo-cm.channel.edit-component',
-    params: {
-      properties: {},
-    },
-    views: {
-      main: {
-        component: 'editComponentMain',
-      },
-      tools: {
-        component: 'editComponentTools',
-      },
-    },
-  });
-}
+const editComponentToolsComponent = {
+  controller,
+  template,
+};
 
-export default editComponentConfig;
+export default editComponentToolsComponent;

@@ -21,10 +21,12 @@ describe('Property field component', () => {
   let $componentController;
   let $ctrl;
   let $log;
-  let $window;
+  let $rootScope;
+  let $q;
   let ChannelService;
   let ConfigService;
   let PathService;
+  let PickerService;
 
   const originalChannelInfoDescription = {
     propertyDefinitions: {
@@ -64,18 +66,25 @@ describe('Property field component', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
+
     inject((
       _$componentController_,
       _$log_,
+      _$q_,
       _$rootScope_,
-      _$window_,
       _ChannelService_,
       _ConfigService_,
       _PathService_,
     ) => {
       $componentController = _$componentController_;
       $log = _$log_;
-      $window = _$window_;
+      $rootScope = _$rootScope_;
+      $q = _$q_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       PathService = _PathService_;
@@ -236,95 +245,77 @@ describe('Property field component', () => {
     expect($ctrl.readOnly).toBe(true);
   });
 
-  it('can open a link picker for JcrPath fields', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{
-          type: 'JcrPath',
-          pickerConfiguration: 'testPickerConfiguration',
-          pickerInitialPath: 'testInitialPath',
-          isRelative: 'testIsRelative',
-          pickerRemembersLastVisited: 'testRemembersLastVisited',
-          pickerRootPath: 'testRootPath',
-          pickerSelectableNodeTypes: ['testNodeType'],
-        }],
-      },
-    };
-    spyOn($window.APP_TO_CMS, 'publish');
-    initComponentController();
-
-    $ctrl.showPathPicker();
-
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
-      configuration: 'testPickerConfiguration',
-      initialPath: 'testInitialPath',
-      isRelativePath: 'testIsRelative',
-      remembersLastVisited: 'testRemembersLastVisited',
-      rootPath: 'testRootPath',
-      selectableNodeTypes: ['testNodeType'],
+  describe('showPathPicker', () => {
+    beforeEach(() => {
+      PickerService.pickPath.and.returnValue($q.resolve({ path: '/picked/path' }));
     });
-  });
 
-  it('uses a channel\'s content root path as the default value of the picker\'s root path', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{ type: 'JcrPath' }],
-      },
-    };
-    spyOn($window.APP_TO_CMS, 'publish');
-    spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
-    initComponentController();
+    it('can open a link picker', () => {
+      channelInfoDescription.propertyDefinitions = {
+        testField: {
+          annotations: [{
+            type: 'JcrPath',
+            pickerConfiguration: 'testPickerConfiguration',
+            pickerInitialPath: 'testInitialPath',
+            isRelative: 'testIsRelative',
+            pickerRemembersLastVisited: 'testRemembersLastVisited',
+            pickerRootPath: 'testRootPath',
+            pickerSelectableNodeTypes: ['testNodeType'],
+          }],
+        },
+      };
+      initComponentController();
 
-    $ctrl.showPathPicker();
+      $ctrl.showPathPicker();
+      $rootScope.$digest();
 
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
-      configuration: undefined,
-      initialPath: undefined,
-      isRelativePath: undefined,
-      remembersLastVisited: undefined,
-      rootPath: 'testChannelContentRootPath',
-      selectableNodeTypes: undefined,
+      expect(PickerService.pickPath).toHaveBeenCalledWith({
+        configuration: 'testPickerConfiguration',
+        initialPath: 'testInitialPath',
+        isRelativePath: 'testIsRelative',
+        remembersLastVisited: 'testRemembersLastVisited',
+        rootPath: 'testRootPath',
+        selectableNodeTypes: ['testNodeType'],
+      }, 'testValue');
     });
-  });
 
-  it('updates the value to the picked path', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{ type: 'JcrPath' }],
-      },
-    };
-    initComponentController();
+    it('uses a channel\'s content root path as the default value of the picker\'s root path', () => {
+      channelInfoDescription.propertyDefinitions = {
+        testField: {
+          annotations: [{ type: 'JcrPath' }],
+        },
+      };
+      spyOn(ChannelService, 'getContentRootPath').and.returnValue('testChannelContentRootPath');
+      initComponentController();
 
-    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path');
+      $ctrl.showPathPicker();
+      $rootScope.$digest();
 
-    expect($ctrl.value).toEqual('/picked/path');
-  });
+      expect(PickerService.pickPath).toHaveBeenCalledWith({
+        configuration: undefined,
+        initialPath: undefined,
+        isRelativePath: undefined,
+        remembersLastVisited: undefined,
+        rootPath: 'testChannelContentRootPath',
+        selectableNodeTypes: undefined,
+      }, 'testValue');
+    });
 
-  it('ignores the picked value of other JcrPath fields', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{ type: 'JcrPath' }],
-      },
-    };
-    initComponentController();
+    it('updates the value to the picked path', (done) => {
+      channelInfoDescription.propertyDefinitions = {
+        testField: {
+          annotations: [{ type: 'JcrPath' }],
+        },
+      };
+      initComponentController();
 
-    $window.CMS_TO_APP.publish('path-picked', 'otherField', '/picked/path');
-
-    expect($ctrl.value).toEqual('testValue');
-  });
-
-  it('does not update the picked value anymore when the scope has been destroyed', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{ type: 'JcrPath' }],
-      },
-    };
-    initComponentController();
-
-    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/one');
-    $ctrl.$onDestroy();
-    $window.CMS_TO_APP.publish('path-picked', 'testField', '/picked/path/two');
-    expect($ctrl.value).toEqual('/picked/path/one');
+      $ctrl.showPathPicker()
+        .then(() => {
+          expect($ctrl.value).toEqual('/picked/path');
+          done();
+        });
+      $rootScope.$digest();
+    });
   });
 
   it('by default renders the hippogallery:thumbnail variant for an ImageSetPath field', () => {
@@ -382,35 +373,5 @@ describe('Property field component', () => {
     initComponentController();
 
     expect($ctrl.getImageVariantPath().includes('testpath')).toBe(false);
-  });
-
-  it('can open a link picker for ImageSetPath fields', () => {
-    channelInfoDescription.propertyDefinitions = {
-      testField: {
-        annotations: [{
-          type: 'ImageSetPath',
-          previewVariant: 'example:customimagevariant',
-          pickerConfiguration: 'testPickerConfiguration',
-          pickerInitialPath: 'testInitialPath',
-          pickerRemembersLastVisited: 'testRemembersLastVisited',
-          pickerSelectableNodeTypes: ['testNodeType'],
-        }],
-      },
-    };
-    ConfigService.cmsLocation = $j('<a href="https://www.example.com/cms?1&path=/content/documents/example"></a>')[0];
-    spyOn($window.APP_TO_CMS, 'publish');
-
-    initComponentController();
-
-    $ctrl.showPathPicker();
-
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'testField', 'testValue', {
-      configuration: 'testPickerConfiguration',
-      initialPath: 'testInitialPath',
-      isRelativePath: undefined,
-      remembersLastVisited: 'testRemembersLastVisited',
-      rootPath: undefined,
-      selectableNodeTypes: ['testNodeType'],
-    });
   });
 });

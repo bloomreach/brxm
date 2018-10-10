@@ -17,9 +17,9 @@
 import componentEditorService from './componentEditor.service';
 import componentFieldsComponent from './componentFields/componentFields.component';
 import editComponentConfig from './editComponent.config';
-import editComponentMainCtrl from './editComponentMain.controller';
+import editComponentMainComponent from './editComponentMain.component';
 import editComponentService from './editComponent.service';
-import editComponentToolsCtrl from './editComponentTools.controller';
+import editComponentToolsComponent from './editComponentTools.component';
 import propertyGroupComponent from './propertyGroup/propertyGroup.component';
 
 const editComponentModule = angular
@@ -27,8 +27,8 @@ const editComponentModule = angular
   .config(editComponentConfig)
   .service('ComponentEditor', componentEditorService)
   .service('EditComponentService', editComponentService)
-  .controller('editComponentMainCtrl', editComponentMainCtrl)
-  .controller('editComponentToolsCtrl', editComponentToolsCtrl)
+  .component('editComponentMain', editComponentMainComponent)
+  .component('editComponentTools', editComponentToolsComponent)
   .component('componentFields', componentFieldsComponent)
   .component('propertyGroup', propertyGroupComponent);
 

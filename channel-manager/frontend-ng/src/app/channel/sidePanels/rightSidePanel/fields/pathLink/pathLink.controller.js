@@ -17,49 +17,36 @@
 import NodeLinkController from '../nodeLink/nodeLink.controller';
 
 class PathLinkController extends NodeLinkController {
-  constructor($element, $scope, $timeout, CmsService) {
+  constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
-    super($element, $scope, $timeout, CmsService);
+    super($element, $scope, $timeout, PickerService);
   }
 
   $onInit() {
-    super.$onInit();
-
-    this.CmsService.subscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.subscribe('path-cancelled', this._onPathCancelled, this);
+    this.$scope.$on('edit-component:select-document', (event, parameterName) => this._onSelectDocument(parameterName));
   }
 
-  $onDestroy() {
-    this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
-    this.CmsService.unsubscribe('path-cancelled', this._onPathCancelled, this);
+  _onSelectDocument(parameterName) {
+    if (this.name === parameterName) {
+      this.ngModel.$setTouched();
+      this.openLinkPicker();
+    }
   }
 
   openLinkPicker() {
-    this.CmsService.publish('show-path-picker', this.name, this.ngModel.$modelValue, this.config.linkpicker);
+    return this.PickerService.pickPath(this.config.linkpicker, this.ngModel.$modelValue)
+      .then(({ path, displayName }) => this._onPathPicked(path, displayName))
+      .catch(() => this._focusSelectButton());
   }
 
-  _onPathPicked(field, path, displayValue) {
-    if (field !== this.name) {
-      return;
+  _onPathPicked(path, displayName) {
+    if (this.linkPicked) {
+      this._focusSelectButton();
     }
-
-    this.$scope.$apply(() => {
-      if (this.linkPicked) {
-        this._focusSelectButton();
-      }
-      this.linkPicked = true;
-      this.displayName = displayValue;
-      this.ngModel.$setViewValue(path);
-    });
-  }
-
-  _onPathCancelled(field) {
-    if (field !== this.name) {
-      return;
-    }
-
-    this._focusSelectButton();
+    this.linkPicked = true;
+    this.displayName = displayName;
+    this.ngModel.$setViewValue(path);
   }
 
   blur($event) {

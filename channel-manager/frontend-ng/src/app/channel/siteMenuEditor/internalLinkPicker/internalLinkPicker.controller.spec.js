@@ -19,11 +19,11 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('PickerCtrl', () => {
+describe('InternalLinkPickerCtrl', () => {
   let $mdDialog;
   let $q;
   let $rootScope;
-  let PickerService;
+  let InternalLinkPickerService;
   let getCtrl;
   let testData;
   let testPickerTypes;
@@ -53,19 +53,19 @@ describe('PickerCtrl', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
 
-      PickerService = jasmine.createSpyObj('PickerService', [
+      InternalLinkPickerService = jasmine.createSpyObj('InternalLinkPickerService', [
         'loadDataForLink',
         'getData',
         'getTree',
       ]);
 
       getCtrl = (pickerTypes, initialLink, data = [testData], loadDataForLinkFake = () => $q.resolve('typeB')) => {
-        PickerService.getTree.and.returnValue(data);
-        PickerService.loadDataForLink.and.callFake(loadDataForLinkFake);
+        InternalLinkPickerService.getTree.and.returnValue(data);
+        InternalLinkPickerService.loadDataForLink.and.callFake(loadDataForLinkFake);
 
-        const ctrl = $controller('PickerCtrl', {
+        const ctrl = $controller('InternalLinkPickerCtrl', {
           $scope: $rootScope.$new(),
-          PickerService,
+          InternalLinkPickerService,
           locals: { pickerTypes, initialLink },
         });
         $rootScope.$digest();
@@ -80,7 +80,7 @@ describe('PickerCtrl', () => {
 
   it('should load initial data of first pickerType when created', () => {
     getCtrl(testPickerTypes);
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
   });
 
   it('should select the first root item if none is set with initialLink', () => {
@@ -94,7 +94,7 @@ describe('PickerCtrl', () => {
     testData.items[1].items[0].selected = true;
 
     const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', [testData]);
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
     expect(PickerCtrl.selectedItem).toBeDefined();
     expect(PickerCtrl.selectedItem).toEqual(testData.items[1]);
     expect(PickerCtrl.selectedDocument).toBeDefined();
@@ -116,9 +116,9 @@ describe('PickerCtrl', () => {
       return $q.resolve(pickerTypeId);
     });
 
-    expect(PickerService.loadDataForLink.calls.count()).toBe(2);
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
+    expect(InternalLinkPickerService.loadDataForLink.calls.count()).toBe(2);
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
     expect(PickerCtrl.selectedItem).toBeDefined();
     expect(PickerCtrl.selectedItem).toEqual(testDataWithSelected.items[1]);
     expect(PickerCtrl.selectedDocument).toBeDefined();
@@ -138,10 +138,10 @@ describe('PickerCtrl', () => {
       return $q.resolve(pickerTypeId);
     });
 
-    expect(PickerService.loadDataForLink.calls.count()).toBe(3);
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
-    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
+    expect(InternalLinkPickerService.loadDataForLink.calls.count()).toBe(3);
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB', 'item2-1');
+    expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
 
     expect(PickerCtrl.selectedItem).toBeDefined();
     expect(PickerCtrl.selectedItem).toEqual(testData);
@@ -152,12 +152,12 @@ describe('PickerCtrl', () => {
     it('should (re)load initial data when switching picker types', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       PickerCtrl.changePickerType();
-      expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB');
-      PickerService.loadDataForLink.calls.reset();
+      expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB');
+      InternalLinkPickerService.loadDataForLink.calls.reset();
 
       PickerCtrl.pickerType = testPickerTypes[0];
       PickerCtrl.changePickerType();
-      expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
+      expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
     });
 
     it('should reset the selected document when switching picker types', () => {
@@ -216,7 +216,7 @@ describe('PickerCtrl', () => {
 
       PickerCtrl.treeOptions.toggleItem(item);
 
-      expect(PickerService.getData).toHaveBeenCalledWith(item);
+      expect(InternalLinkPickerService.getData).toHaveBeenCalledWith(item);
     });
 
     it('should load child items when item is selected', () => {
@@ -225,7 +225,7 @@ describe('PickerCtrl', () => {
 
       PickerCtrl.treeOptions.selectItem(item);
 
-      expect(PickerService.getData).toHaveBeenCalledWith(item);
+      expect(InternalLinkPickerService.getData).toHaveBeenCalledWith(item);
     });
 
     it('should only select item if it is selectable', () => {
