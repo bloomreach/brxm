@@ -16,14 +16,18 @@
 
 describe('hippoIframeCtrl', () => {
   let $element;
+  let $q;
   let $rootScope;
   let $window;
   let CmsService;
   let ContainerService;
   let DragDropService;
+  let FeedbackService;
   let HippoIframeService;
+  let HstComponentService;
   let OverlayService;
   let PageStructureService;
+  let PickerService;
   let RenderingService;
   let SpaService;
   let ViewportService;
@@ -33,9 +37,20 @@ describe('hippoIframeCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
+    HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('FeedbackService', FeedbackService);
+      $provide.value('HstComponentService', HstComponentService);
+      $provide.value('PickerService', PickerService);
+    });
+
     inject((
       $componentController,
       _$compile_,
+      _$q_,
       _$rootScope_,
       _$window_,
       _CmsService_,
@@ -48,6 +63,7 @@ describe('hippoIframeCtrl', () => {
       _SpaService_,
       _ViewportService_,
     ) => {
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
@@ -63,6 +79,7 @@ describe('hippoIframeCtrl', () => {
       $element = angular.element('<div></div>');
 
       spyOn(OverlayService, 'onEditMenu');
+      spyOn(OverlayService, 'onSelectDocument');
       spyOn(DragDropService, 'onDrop');
       onEditMenu = jasmine.createSpy('onEditMenu');
 
@@ -245,5 +262,63 @@ describe('hippoIframeCtrl', () => {
     const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
     callback('menu-uuid');
     expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
+  });
+
+  describe('onSelectDocument', () => {
+    let component;
+    let pickerConfig;
+    let onSelectDocument;
+
+    beforeEach(() => {
+      component = {
+        getId: () => 'componentId',
+        getLabel: () => 'componentLabel',
+        getRenderVariant: () => 'hippo-default',
+      };
+      pickerConfig = {};
+      onSelectDocument = OverlayService.onSelectDocument.calls.mostRecent().args[0];
+    });
+
+    it('can pick a path and update the component', (done) => {
+      PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
+      HstComponentService.setPathParameter.and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'renderComponent');
+
+      onSelectDocument(component, 'parameterName', '/base/currentPath', pickerConfig, '/base')
+        .then(() => {
+          expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, '/base/currentPath');
+          expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
+            'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
+          );
+          expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId');
+          expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+            componentName: 'componentLabel',
+          });
+
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('can pick a path but fail to update the component', (done) => {
+      const errorData = {};
+      PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
+      HstComponentService.setPathParameter.and.returnValue($q.reject({ data: errorData }));
+      spyOn(HippoIframeService, 'reload');
+
+      onSelectDocument(component, 'parameterName', '/base/currentPath', pickerConfig, '/base')
+        .then(() => {
+          expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, '/base/currentPath');
+          expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
+            'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
+          );
+          expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(errorData, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+            jasmine.any(Object), { componentName: 'componentLabel' });
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+
+          done();
+        });
+      $rootScope.$digest();
+    });
   });
 });
