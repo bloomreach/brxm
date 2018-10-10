@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-cmsPipeline( skipITs: true )
+cmsPipeline( skipITs: true, mavenForkCount: '1' )
+
