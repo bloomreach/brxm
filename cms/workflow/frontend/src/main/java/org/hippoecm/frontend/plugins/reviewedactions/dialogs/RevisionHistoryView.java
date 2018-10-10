@@ -27,7 +27,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -36,7 +35,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.plugins.reviewedactions.list.resolvers.StateIconAttributes;
@@ -49,11 +47,8 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +107,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         add(dataTable);
 
         add(CssClass.append(new LoadableDetachableModel<String>() {
+            @Override
             protected String load() {
                 return getRevisions().isEmpty() ? "hippo-empty" : "";
             }
@@ -136,6 +132,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     /**
      * Gets a {@link org.hippoecm.frontend.plugins.standards.list.TableDefinition} whichs contains all columns and
      * information needed for the view.
+     *
      * @return the {@link org.hippoecm.frontend.plugins.standards.list.TableDefinition} with all data
      */
     protected TableDefinition<Revision> getTableDefinition() {
@@ -143,7 +140,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         return new TableDefinition<>(Arrays.asList(
                 getTimeColumn(),
                 getUserColumn(),
-                getStateColumn(),
                 getLabelsColumn(),
                 getNameColumn()));
     }
@@ -165,31 +161,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     private ListColumn<Revision> getUserColumn() {
         return getColumn("history-user", "user",
                 revision -> new StateIconAttributes((JcrNodeModel) revision.getDocument()).getLastModifiedBy());
-    }
-
-    /**
-     * Returns a {@link org.hippoecm.frontend.plugins.standards.list.ListColumn} containing the state information.
-     */
-    private ListColumn<Revision> getStateColumn() {
-        ListColumn<Revision> column = new ListColumn<>(Model.of(getString("history-state")), "state");
-        column.setRenderer(EmptyRenderer.getInstance());
-        column.setAttributeModifier(new AbstractListAttributeModifier<Revision>() {
-            @Override
-            public AttributeModifier[] getCellAttributeModifiers(IModel<Revision> model) {
-                Revision revision = model.getObject();
-                StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
-                AttributeModifier[] attributes = new AttributeModifier[2];
-                attributes[0] = CssClass.append(new PropertyModel<>(attrs, "cssClass"));
-                attributes[1] = TitleAttribute.append(new PropertyModel<>(attrs, "summary"));
-                return attributes;
-            }
-
-            @Override
-            public AttributeModifier[] getColumnAttributeModifiers() {
-                return new AttributeModifier[] { CssClass.append("icon-16") };
-            }
-        });
-        return column;
     }
 
     /**
@@ -259,10 +230,12 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
     }
 
 
+    @Override
     public int getPageSize() {
         return 7;
     }
 
+    @Override
     public int getViewSize() {
         return 5;
     }
