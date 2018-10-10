@@ -40,7 +40,7 @@ class resizeHandleController {
   }
 
   _onMouseDown(event) {
-    if (MOUSE_LEFT !== event.which) {
+    if (event.which !== MOUSE_LEFT) {
       return;
     }
 
