@@ -132,26 +132,28 @@ class HippoIframeCtrl {
 
   _selectDocument(component, parameterName, parameterValue, pickerConfig, parameterBasePath) {
     return this.PickerService.pickPath(pickerConfig, parameterValue)
-      .then(({ path }) => {
-        const componentId = component.getId();
-        const componentName = component.getLabel();
-        const componentVariant = component.getRenderVariant();
+      .then(({ path }) => this._onPathPicked(component, parameterName, path, parameterBasePath));
+  }
 
-        return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
-          .then(() => {
-            this.PageStructureService.renderComponent(componentId);
-            this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
-          })
-          .catch((response) => {
-            const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
-            const defaultErrorParams = { componentName };
-            const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+  _onPathPicked(component, parameterName, path, parameterBasePath) {
+    const componentId = component.getId();
+    const componentName = component.getLabel();
+    const componentVariant = component.getRenderVariant();
 
-            this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+    return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
+      .then(() => {
+        this.PageStructureService.renderComponent(componentId);
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      })
+      .catch((response) => {
+        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+        const defaultErrorParams = { componentName };
+        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
 
-            // probably the container got locked by another user, so reload the page to show new locked containers
-            this.HippoIframeService.reload();
-          });
+        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+
+        // probably the container got locked by another user, so reload the page to show new locked containers
+        this.HippoIframeService.reload();
       });
   }
 }
