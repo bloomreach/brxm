@@ -33,7 +33,7 @@ describe('EditComponentMainCtrl', () => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     inject((
-      $controller,
+      $componentController,
       $rootScope,
       _$log_,
       _$q_,
@@ -68,7 +68,7 @@ describe('EditComponentMainCtrl', () => {
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
       $scope = $rootScope.$new();
-      $ctrl = $controller('editComponentMainCtrl as $ctrl', {
+      $ctrl = $componentController('editComponentMain', {
         $scope,
         ChannelService,
         CmsService,

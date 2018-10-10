@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-function editComponentConfig($stateProvider) {
-  'ngInject';
+import controller from './editComponentMain.controller';
+import template from './editComponentMain.html';
 
-  $stateProvider.state({
-    name: 'hippo-cm.channel.edit-component',
-    params: {
-      properties: {},
-    },
-    views: {
-      main: {
-        component: 'editComponentMain',
-      },
-      tools: {
-        component: 'editComponentTools',
-      },
-    },
-  });
-}
+const editComponentMainComponent = {
+  controller,
+  template,
+  bindings: {
+    // trick to render 'flex' and 'layout' attributes on the edit-component-main
+    // element so Angular Material applies the right layout
+    flex: '@',
+    layout: '@',
+  },
+};
 
-export default editComponentConfig;
+export default editComponentMainComponent;
