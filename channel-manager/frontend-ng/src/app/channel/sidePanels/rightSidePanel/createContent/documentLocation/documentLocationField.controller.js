@@ -88,7 +88,7 @@ class DocumentLocationFieldController {
 
   openPicker() {
     this.PickerService.pickPath(this.pickerConfig, this.pickerPath)
-      .then(path => this.onPathPicked(path))
+      .then(({ path }) => this.onPathPicked(path))
       .catch(() => this.onPathCanceled());
     this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
   }
