@@ -577,7 +577,7 @@ describe('OverlayService', () => {
       $rootScope.$digest();
 
       expect(selectDocumentHandler).toHaveBeenCalledWith(
-        jasmine.any(Object), 'manage-content-component-parameter', undefined, jasmine.any(Object), ''
+        jasmine.any(Object), 'manage-content-component-parameter', undefined, jasmine.any(Object), '',
       );
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
 

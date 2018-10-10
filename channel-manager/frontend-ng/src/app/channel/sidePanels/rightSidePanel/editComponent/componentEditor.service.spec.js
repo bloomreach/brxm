@@ -174,6 +174,18 @@ describe('ComponentEditorService', () => {
     });
   });
 
+  describe('getComponentId', () => {
+    it('returns the component identifier if component is set', () => {
+      openComponentEditor(['propertyData']);
+
+      expect(ComponentEditor.getComponentId()).toBe('componentId');
+    });
+
+    it('returns undefined if component is not set', () => {
+      expect(ComponentEditor.getComponentId()).toBeUndefined();
+    });
+  });
+
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
       openComponentEditor();

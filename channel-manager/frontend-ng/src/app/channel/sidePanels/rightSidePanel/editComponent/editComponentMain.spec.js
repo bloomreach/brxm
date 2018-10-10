@@ -25,6 +25,7 @@ describe('EditComponentMainCtrl', () => {
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
+  let OverlayService;
 
   let $ctrl;
   let form;
@@ -57,6 +58,7 @@ describe('EditComponentMainCtrl', () => {
         'confirmSaveOrDiscardChanges',
         'deleteComponent',
         'discardChanges',
+        'getComponentId',
         'getComponentName',
         'getPropertyGroups',
         'isKilled',
@@ -66,6 +68,7 @@ describe('EditComponentMainCtrl', () => {
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+      OverlayService = jasmine.createSpyObj('OverlayService', ['onSelectDocument']);
 
       $scope = $rootScope.$new();
       $ctrl = $componentController('editComponentMain', {
@@ -76,12 +79,53 @@ describe('EditComponentMainCtrl', () => {
         EditComponentService,
         FeedbackService,
         HippoIframeService,
+        OverlayService,
       });
 
       form = jasmine.createSpyObj('form', ['$setPristine']);
       $ctrl.form = form;
 
       $scope.$digest();
+    });
+  });
+
+  describe('handling of select-document clicks in the overlay', () => {
+    let defaultOnSelectDocument;
+    let onSelectDocument;
+    let component;
+
+    beforeEach(() => {
+      defaultOnSelectDocument = jasmine.createSpy('oldHandler');
+      OverlayService.onSelectDocument.and.returnValue(defaultOnSelectDocument);
+
+      $ctrl.$onInit();
+      onSelectDocument = OverlayService.onSelectDocument.calls.mostRecent().args[0];
+
+      component = jasmine.createSpyObj('component', ['getId']);
+    });
+
+    it('broadcasts an event when a document is selected for the currently edited component', () => {
+      component.getId.and.returnValue('1');
+      ComponentEditor.getComponentId.and.returnValue('1');
+      spyOn($scope, '$broadcast');
+
+      onSelectDocument(component, 'parameterName');
+
+      expect($scope.$broadcast).toHaveBeenCalledWith('edit-component:select-document', 'parameterName');
+    });
+
+    it('invokes the default behavior when a document is selected for a component that is not being edited', () => {
+      component.getId.and.returnValue('1');
+      ComponentEditor.getComponentId.and.returnValue('2');
+
+      onSelectDocument(component, 'parameterName', '/base/currentPath', {}, '/base');
+
+      expect(defaultOnSelectDocument).toHaveBeenCalledWith(component, 'parameterName', '/base/currentPath', {}, '/base');
+    });
+
+    it('restores the default behavior when destroyed', () => {
+      $ctrl.$onDestroy();
+      expect(OverlayService.onSelectDocument).toHaveBeenCalledWith(defaultOnSelectDocument);
     });
   });
 

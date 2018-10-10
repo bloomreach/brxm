@@ -43,6 +43,7 @@ describe('pathLinkController', () => {
     });
 
     ngModel = jasmine.createSpyObj('ngModel', [
+      '$setTouched',
       '$setViewValue',
       '$modelValue',
     ]);
@@ -71,6 +72,35 @@ describe('pathLinkController', () => {
       expect($ctrl.config).toEqual(config);
       expect($ctrl.displayName).toEqual('TestDisplayName');
       expect($ctrl.ngModel.$modelValue).toEqual('model-value');
+    });
+
+    it('registers a listener for the edit-component:select-document event', () => {
+      spyOn($scope, '$on');
+      $ctrl.$onInit();
+      expect($scope.$on).toHaveBeenCalledWith('edit-component:select-document', jasmine.any(Function));
+    });
+  });
+
+  describe('edit-component:select-document listener', () => {
+    let onSelectDocument;
+
+    beforeEach(() => {
+      spyOn($scope, '$on');
+      spyOn($ctrl, 'openLinkPicker');
+
+      $ctrl.$onInit();
+      onSelectDocument = $scope.$on.calls.mostRecent().args[1];
+    });
+
+    it('opens the link picker when the parameter name matches', () => {
+      onSelectDocument('event', 'TestField');
+      expect(ngModel.$setTouched).toHaveBeenCalled();
+      expect($ctrl.openLinkPicker).toHaveBeenCalled();
+    });
+
+    it('does not open the link picker when the parameter name does not match', () => {
+      onSelectDocument('event', 'AnotherField');
+      expect($ctrl.openLinkPicker).not.toHaveBeenCalled();
     });
   });
 

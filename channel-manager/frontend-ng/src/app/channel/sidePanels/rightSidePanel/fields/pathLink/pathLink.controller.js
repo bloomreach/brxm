@@ -23,6 +23,17 @@ class PathLinkController extends NodeLinkController {
     super($element, $scope, $timeout, PickerService);
   }
 
+  $onInit() {
+    this.$scope.$on('edit-component:select-document', (event, parameterName) => this._onSelectDocument(parameterName));
+  }
+
+  _onSelectDocument(parameterName) {
+    if (this.name === parameterName) {
+      this.ngModel.$setTouched();
+      this.openLinkPicker();
+    }
+  }
+
   openLinkPicker() {
     return this.PickerService.pickPath(this.config.linkpicker, this.ngModel.$modelValue)
       .then(({ path, displayValue }) => this._onPathPicked(path, displayValue))
