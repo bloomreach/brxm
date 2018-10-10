@@ -25,7 +25,7 @@ const nodeLinkComponent = {
     ariaLabel: '@',
     config: '<',
     disabled: '<?',
-    displayName: '<',
+    displayName: '=',
     hint: '<',
     index: '<',
     isRequired: '<',

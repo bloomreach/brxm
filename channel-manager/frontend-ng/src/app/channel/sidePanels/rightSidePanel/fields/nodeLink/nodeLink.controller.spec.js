@@ -158,9 +158,9 @@ describe('nodeLinkController', () => {
       $ctrl.blur(event);
 
       expect($ctrl.hasFocus).toBe(true);
-      expect(onBlur).toHaveBeenCalledWith(event);
-
+      
       $timeout.flush();
+      expect(onBlur).toHaveBeenCalledWith(event);
       expect($ctrl.hasFocus).toBe(false);
     });
 

@@ -57,8 +57,8 @@ class nodeLinkController {
   blur($event) {
     this.blurPromise = this.$timeout(() => {
       this.hasFocus = false;
+      this.onBlur($event);
     }, 10);
-    this.onBlur($event);
   }
 
   focus($event) {

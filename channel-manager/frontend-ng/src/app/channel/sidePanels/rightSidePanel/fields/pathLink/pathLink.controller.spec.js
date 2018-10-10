@@ -19,6 +19,7 @@ describe('pathLinkController', () => {
   let $ctrl;
   let $q;
   let $scope;
+  let $timeout;
   let PickerService;
   let config;
   let ngModel;
@@ -34,9 +35,10 @@ describe('pathLinkController', () => {
       $provide.value('PickerService', PickerService);
     });
 
-    inject((_$componentController_, _$q_, _$rootScope_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
       $componentController = _$componentController_;
       $q = _$q_;
+      $timeout = _$timeout_;
       $scope = _$rootScope_.$new();
     });
 
@@ -129,6 +131,7 @@ describe('pathLinkController', () => {
 
     it('should forward blur event', () => {
       $ctrl.blur('event');
+      $timeout.flush();
       expect($ctrl.onBlur).toHaveBeenCalledWith('event');
     });
 

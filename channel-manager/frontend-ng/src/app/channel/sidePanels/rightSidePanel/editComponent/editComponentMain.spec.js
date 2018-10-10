@@ -318,12 +318,26 @@ describe('EditComponentMainCtrl', () => {
 
     describe('when save or discard changes is resolved', () => {
       beforeEach(() => {
-        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
         ComponentEditor.component = { id: 'componentId' };
+        spyOn($ctrl, 'save');
       });
 
-      it('closes the component editor ', (done) => {
+      it('calls save and closes the component editor when save is resolved', (done) => {
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
+
         $ctrl.uiCanExit().then(() => {
+          expect($ctrl.save).not.toHaveBeenCalled();
+          expect(ComponentEditor.close).toHaveBeenCalled();
+          done();
+        });
+        $scope.$digest();
+      });
+
+      it('does not save and closes the component editor when discard changes is resolved', (done) => {
+        ComponentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
+
+        $ctrl.uiCanExit().then(() => {
+          expect($ctrl.save).not.toHaveBeenCalled();
           expect(ComponentEditor.close).toHaveBeenCalled();
           done();
         });

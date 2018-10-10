@@ -142,7 +142,14 @@ class EditComponentMainCtrl {
 
   _saveOrDiscardChanges() {
     if (this._isFormDirty()) {
-      return this.ComponentEditor.confirmSaveOrDiscardChanges(this._isFormValid());
+      return this.ComponentEditor.confirmSaveOrDiscardChanges(this._isFormValid())
+        .then((action) => {
+          if (action === 'SAVE') {
+            return this.save();
+          }
+          return this.$q.resolve();
+        })
+        .catch(this.$q.reject);
     }
     return this.$q.resolve();
   }

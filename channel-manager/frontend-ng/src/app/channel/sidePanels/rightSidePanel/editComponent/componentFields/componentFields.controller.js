@@ -36,12 +36,8 @@ class ComponentFieldsCtrl {
       });
   }
 
-  focusPrimitive() {
-    this.hasFocus = true;
-  }
-
-  blurPrimitive() {
-    delete this.hasFocus;
+  blur(property) {
+    this.ComponentEditor.setDefaultIfValueIsEmpty(property);
   }
 }
 

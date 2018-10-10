@@ -24,6 +24,8 @@ describe('ComponentEditorService', () => {
   let PageStructureService;
 
   let testData;
+  const emptyValues = [undefined, null, ''];
+  const testValues = emptyValues.concat('test');
 
   function openComponentEditor(properties) {
     HstComponentService.getProperties.and.returnValue($q.resolve({ properties }));
@@ -151,7 +153,7 @@ describe('ComponentEditorService', () => {
     });
 
     it('stores the editor data', () => {
-      const properties = ['propertyData'];
+      const properties = [{ name: 'test-property' }];
       openComponentEditor(properties);
 
       expect(ComponentEditor.channel).toBe(testData.channel);
@@ -164,8 +166,7 @@ describe('ComponentEditorService', () => {
 
   describe('reopening the editor', () => {
     it('opens the editor for the component is was opened for originally', () => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
 
       spyOn(ComponentEditor, 'open').and.returnValue($q.resolve());
       ComponentEditor.reopen();
@@ -175,7 +176,7 @@ describe('ComponentEditorService', () => {
 
   describe('getComponentName', () => {
     it('returns the component label if component is set', () => {
-      openComponentEditor(['propertyData']);
+      openComponentEditor();
 
       expect(ComponentEditor.getComponentName()).toBe('componentLabel');
     });
@@ -291,24 +292,119 @@ describe('ComponentEditorService', () => {
       expect(groups.length).toBe(3);
       expectGroup(groups[0], null, 2, false);
     });
+  });
 
-    it('uses the property\'s defaultValue if it is defined/not-null/not-empty and the property value is null', () => {
-      openComponentEditor([
-        { value: null },
-        { value: null, defaultValue: null },
-        { value: null, defaultValue: '' },
-        { value: null, defaultValue: 'defaultValue' },
-        { value: '', defaultValue: 'defaultValue' },
-        { value: false, defaultValue: true },
-      ]);
+  describe('setDefaultIfValueIsEmpty', () => {
+    it('does not error if property does not exist', () => {
+      try {
+        ComponentEditor.setDefaultIfValueIsEmpty();
+        ComponentEditor.setDefaultIfValueIsEmpty(null);
+      } catch (e) {
+        fail();
+      }
+    });
+
+    it('sets the property value if it is empty and the default value is not empty', () => {
+      emptyValues.forEach((emptyValue) => {
+        const property = { value: emptyValue, defaultValue: 'defaultValue' };
+        ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+        expect(property.value).toBe('defaultValue');
+      });
+    });
+
+    it('does not change the property value if the default value is empty', () => {
+      testValues.forEach((value) => {
+        emptyValues.forEach((defaultValue) => {
+          const property = { value, defaultValue };
+          ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+          expect(property.value).toBe(value);
+        });
+      });
+    });
+
+    it('sets the display value for "linkpicker" fields if it is empty and default display value is not empty', () => {
+      emptyValues.forEach((emptyValue) => {
+        const property = { displayValue: emptyValue, defaultDisplayValue: 'default-display-value', type: 'linkpicker' };
+        ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+        expect(property.displayValue).toBe('default-display-value');
+      });
+    });
+
+    it('does not change the display value for "linkpicker" fields if the default display value is empty', () => {
+      testValues.forEach((value) => {
+        emptyValues.forEach((emptyValue) => {
+          const property = {
+            displayValue: value,
+            defaultDisplayValue: emptyValue,
+            type: 'linkpicker',
+          };
+          ComponentEditor.setDefaultIfValueIsEmpty(property);
+
+          expect(property.displayValue).toBe(value);
+        });
+      });
+    });
+  });
+
+  describe('handling of the default value when opening the component editor', () => {
+    it('tries to set the default value for each non-hidden property', () => {
+      spyOn(ComponentEditor, 'setDefaultIfValueIsEmpty');
+
+      openComponentEditor();
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).not.toHaveBeenCalled();
+
+      openComponentEditor([{ hiddenInChannelManager: true }]);
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).not.toHaveBeenCalled();
+
+      openComponentEditor([{}, {}]);
+      expect(ComponentEditor.setDefaultIfValueIsEmpty).toHaveBeenCalledTimes(2);
+    });
+
+    function loadProperty(property) {
+      openComponentEditor([property]);
 
       const fields = ComponentEditor.getPropertyGroups()[0].fields;
-      expect(fields[0].value).toBe(null);
-      expect(fields[1].value).toBe(null);
-      expect(fields[2].value).toBe(null);
-      expect(fields[3].value).toBe('defaultValue');
-      expect(fields[4].value).toBe('');
-      expect(fields[5].value).toBe(false);
+      const field = fields[0];
+      return {
+        andExpect: fieldName => expect(field[fieldName]),
+      };
+    }
+
+    describe('checkbox fields', () => {
+      const onValues = [true, 'true', 1, '1', 'on', 'On', 'ON'];
+      const offValues = [false, 'false', 0, '0', 'off', 'Off', 'OFF'];
+      const type = 'checkbox';
+
+      it('defaults to "off" for checkbox fields', () => {
+        testValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('value').toBe('off'));
+      });
+
+      it('normalizes value to "on" and "off"', () => {
+        onValues.forEach(value => loadProperty({ value, type }).andExpect('value').toBe('on'));
+        offValues.forEach(value => loadProperty({ value, type }).andExpect('value').toBe('off'));
+      });
+
+      it('normalizes defaultValue to "on" and "off"', () => {
+        onValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('defaultValue').toBe('on'));
+        offValues.forEach(defaultValue => loadProperty({ defaultValue, type }).andExpect('defaultValue').toBe('off'));
+      });
+    });
+
+    describe('linkpicker fields', () => {
+      const type = 'linkpicker';
+
+      it('sets the default display value for "linkpicker" fields to the last segment of a path if the default value is set and differs from the value', () => {
+        loadProperty({ defaultValue: 'a', type }).andExpect('defaultDisplayValue').toBe('a');
+        loadProperty({ defaultValue: '/a/b/c', type }).andExpect('defaultDisplayValue').toBe('c');
+      });
+
+      it('does not change the default display value if default value is empty', () => {
+        emptyValues.forEach(defaultValue => loadProperty({ defaultValue, defaultDisplayValue: 'default-display-value', type })
+          .andExpect('defaultDisplayValue').toBe('default-display-value'));
+      });
     });
   });
 
@@ -379,16 +475,19 @@ describe('ComponentEditorService', () => {
       spyOn(PageStructureService, 'renderComponent').and.returnValue($q.resolve());
       const properties = [
         { name: 'a', value: 'value-a' },
-        { name: 'b', value: 'value-b' },
-        { name: 'c', value: 'value-c', hiddenInChannelManager: true },
+        { name: 'b', value: '' },
+        { name: 'c', value: '', defaultValue: 'value-c' },
+        { name: 'd', value: 'value-d', hiddenInChannelManager: true },
       ];
       openComponentEditor(properties);
+      properties[1].value = 'value-b';
 
       ComponentEditor.updatePreview().then(() => {
         expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId', {
           a: 'value-a',
           b: 'value-b',
           c: 'value-c',
+          d: 'value-d',
         });
         done();
       });
@@ -418,20 +517,25 @@ describe('ComponentEditorService', () => {
 
       const properties = [
         { name: 'a', value: 'value-a' },
-        { name: 'b', value: 'value-b' },
+        { name: 'b', value: '' },
+        { name: 'c', value: '', defaultValue: 'value-c' },
       ];
       openComponentEditor(properties);
+      properties[1].value = 'value-b';
 
       ComponentEditor.save();
 
-      expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', { a: 'value-a', b: 'value-b' });
+      expect(HstComponentService.setParameters).toHaveBeenCalledWith('componentId', 'componentVariant', {
+        a: 'value-a',
+        b: 'value-b',
+        c: 'value-c',
+      });
     });
   });
 
   describe('delete component functions', () => {
     beforeEach(() => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
     });
 
     it('calls the hst component service for deleteComponent', () => {
@@ -497,8 +601,7 @@ describe('ComponentEditorService', () => {
 
   describe('discard changes functions', () => {
     beforeEach(() => {
-      const properties = ['propertyData'];
-      openComponentEditor(properties);
+      openComponentEditor();
     });
 
     it('calls the dialog service to confirm', () => {
@@ -576,14 +679,14 @@ describe('ComponentEditorService', () => {
     });
 
     describe('with valid data', () => {
-      it('saves the data when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
+      it('resolves with "SAVE" when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
         spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
         spyOn(PageStructureService, 'renderComponent');
         DialogService.show.and.returnValue($q.resolve('SAVE'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
-          .then(() => {
-            expect(ComponentEditor.save).toHaveBeenCalled();
+          .then((action) => {
+            expect(action).toBe('SAVE');
             expect(DialogService.alert).not.toHaveBeenCalled();
             expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
             done();
@@ -591,13 +694,14 @@ describe('ComponentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
+      it('redraws the component when the dialog resolves with "DISCARD"', (done) => {
         spyOn(PageStructureService, 'renderComponent');
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
-          .then(() => {
+          .then((action) => {
+            expect(action).toBe('DISCARD');
             expect(PageStructureService.renderComponent).toHaveBeenCalled();
             expect(ComponentEditor.save).not.toHaveBeenCalled();
             done();
