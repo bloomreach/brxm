@@ -152,7 +152,7 @@ describe('nodeLinkController', () => {
       $ctrl.blur(event);
 
       expect($ctrl.hasFocus).toBe(true);
-      
+
       $timeout.flush();
       expect(onBlur).toHaveBeenCalledWith(event);
       expect($ctrl.hasFocus).toBe(false);
