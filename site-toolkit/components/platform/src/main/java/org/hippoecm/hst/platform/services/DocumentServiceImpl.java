@@ -17,6 +17,7 @@ package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -63,51 +64,57 @@ public class DocumentServiceImpl implements DocumentService  {
             return channelDocuments;
         }
 
-        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+        final Optional<HstModel> firstModel = hstModelRegistry.getModels().values().stream()
+                .filter(m -> m.getVirtualHosts().getMountsByHostGroup(hostGroup).size() > 0).findFirst();
 
-            // TODO HSTTWO-4362 add #createAllAvailableCanonicals method without request context
-            List<HstLink> canonicalLinks = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, null, hostGroup);
+        firstModel.ifPresent(model -> {
 
-            for (HstLink link : canonicalLinks) {
-                final Mount linkMount = link.getMount();
-                final Channel channel = linkMount.getChannel();
+            final Optional<Mount> mountCandidate = model.getVirtualHosts().getMountsByHostGroup(hostGroup).stream().findFirst();
+            mountCandidate.ifPresent(mount -> {
+                List<HstLink> canonicalLinks = model.getHstLinkCreator().createAllAvailableCanonicals(handle, mount, null, hostGroup);
 
-                if (channel == null) {
-                    log.debug("Skipping link for mount '{}' since it does not have a channel", linkMount.getName());
-                    continue;
-                }
+                for (HstLink link : canonicalLinks) {
+                    final Mount linkMount = link.getMount();
+                    final Channel channel = linkMount.getChannel();
 
-                // TODO HSTTWO-4359 support channelFilter in a different way?
+                    if (channel == null) {
+                        log.debug("Skipping link for mount '{}' since it does not have a channel", linkMount.getName());
+                        continue;
+                    }
+
+                    // TODO HSTTWO-4359 support channelFilter in a different way?
 //            if (!channelFilter.apply(channel)) {
 //                log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
 //                continue;
 //            }
 
-                ChannelDocument document = new ChannelDocument();
-                document.setChannelId(channel.getId());
-                document.setChannelName(channel.getName());
-                document.setBranchId(channel.getBranchId());
-                document.setBranchOf(channel.getBranchOf());
-                if (StringUtils.isNotEmpty(link.getPath())) {
-                    document.setPathInfo("/" + link.getPath());
-                } else {
-                    document.setPathInfo(StringUtils.EMPTY);
+                    ChannelDocument document = new ChannelDocument();
+                    document.setChannelId(channel.getId());
+                    document.setChannelName(channel.getName());
+                    document.setBranchId(channel.getBranchId());
+                    document.setBranchOf(channel.getBranchOf());
+                    if (StringUtils.isNotEmpty(link.getPath())) {
+                        document.setPathInfo("/" + link.getPath());
+                    } else {
+                        document.setPathInfo(StringUtils.EMPTY);
+                    }
+                    document.setMountPath(link.getMount().getMountPath());
+                    document.setHostName(link.getMount().getVirtualHost().getHostName());
+
+
+                    document.setContextPath(link.getMount().getContextPath());
+
+                    // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
+
+                    // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
+                    document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+
+                    channelDocuments.add(document);
+
                 }
-                document.setMountPath(link.getMount().getMountPath());
-                document.setHostName(link.getMount().getVirtualHost().getHostName());
+            });
 
-
-                document.setContextPath(link.getMount().getContextPath());
-
-                // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
-
-                // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
-                document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
-
-                channelDocuments.add(document);
-
-            }
-        }
+        });
 
         return channelDocuments;
     }
@@ -132,12 +139,14 @@ public class DocumentServiceImpl implements DocumentService  {
             return null;
         }
 
-        // TODO HSTTWO-4362 add #createAllAvailableCanonicals method without request context
         List<HstLink> canonicalLinks = new ArrayList<>();
-        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
-            final List<HstLink> allAvailableCanonicals = hstModel.getHstLinkCreator().createAllAvailableCanonicals(handle, null, type, hostGroup);
-            canonicalLinks.addAll(allAvailableCanonicals);
-        }
+
+        final Optional<HstModel> firstModel = hstModelRegistry.getModels().values().stream()
+                .filter(m -> m.getVirtualHosts().getMountsByHostGroup(hostGroup).size() > 0).findFirst();
+        firstModel.ifPresent(model -> {
+            final Optional<Mount> mountCandidate = model.getVirtualHosts().getMountsByHostGroup(hostGroup).stream().findFirst();
+            mountCandidate.ifPresent(mount -> canonicalLinks.addAll(model.getHstLinkCreator().createAllAvailableCanonicals(handle, mount, null, hostGroup)));
+        });
 
         if (canonicalLinks.isEmpty()) {
             log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
