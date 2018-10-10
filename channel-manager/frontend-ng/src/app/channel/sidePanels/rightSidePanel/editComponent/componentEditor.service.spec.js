@@ -20,6 +20,8 @@ describe('ComponentEditorService', () => {
   let $translate;
   let ComponentEditor;
   let DialogService;
+  let FeedbackService;
+  let HippoIframeService;
   let HstComponentService;
   let PageStructureService;
 
@@ -46,6 +48,8 @@ describe('ComponentEditorService', () => {
       _$translate_,
       _ComponentEditor_,
       _DialogService_,
+      _FeedbackService_,
+      _HippoIframeService_,
       _HstComponentService_,
       _PageStructureService_,
     ) => {
@@ -54,6 +58,8 @@ describe('ComponentEditorService', () => {
       $translate = _$translate_;
       ComponentEditor = _ComponentEditor_;
       DialogService = _DialogService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
       PageStructureService = _PageStructureService_;
     });
@@ -161,6 +167,19 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container).toBe(testData.container);
       expect(ComponentEditor.page).toBe(testData.page);
       expect(ComponentEditor.properties).toBe(properties);
+    });
+
+    it('reloads the page and shows a message when retrieving properties returns an error', () => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HippoIframeService, 'reload');
+
+      HstComponentService.getProperties.and.returnValue($q.reject());
+
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 

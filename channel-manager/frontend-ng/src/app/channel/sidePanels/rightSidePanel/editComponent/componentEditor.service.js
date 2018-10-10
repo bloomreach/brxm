@@ -22,13 +22,14 @@ const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 const isEmpty = str => str === undefined || str === null || str === '';
 
 class ComponentEditorService {
-  constructor($q, $translate, DialogService, FeedbackService, HstComponentService, PageStructureService) {
+  constructor($q, $translate, DialogService, FeedbackService, HippoIframeService, HstComponentService, PageStructureService) {
     'ngInject';
 
     this.$q = $q;
     this.$translate = $translate;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
 
@@ -41,7 +42,7 @@ class ComponentEditorService {
 
     return this.HstComponentService.getProperties(component.id, component.variant)
       .then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
-      .catch(response => this._onLoadFailure(response));
+      .catch(() => this._onLoadFailure());
   }
 
   getPropertyGroups() {
@@ -61,9 +62,10 @@ class ComponentEditorService {
     this.propertyGroups = this._groupProperties(this.properties);
   }
 
-  _onLoadFailure(response) {
-    this._clearData();
-    console.error('TODO: implement ComponentEditorService._onLoadFailure', response);
+  _onLoadFailure() {
+    this.FeedbackService.showError('ERROR_UPDATE_COMPONENT');
+    this.HippoIframeService.reload();
+    return this.$q.reject();
   }
 
   _onStructureChange() {
