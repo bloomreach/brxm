@@ -103,7 +103,7 @@ class EditComponentMainCtrl {
           .then(() => {
             this.ChannelService.recordOwnChange();
             this.HippoIframeService.reload();
-            this.EditComponentService.stopEditing();
+            this.EditComponentService.killEditor();
           })
           .catch((error) => {
             const messageParameters = error.parameterMap;

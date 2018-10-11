@@ -449,7 +449,7 @@ describe('EditComponentMainCtrl', () => {
       beforeEach(() => {
         ComponentEditor.deleteComponent.and.returnValue($q.resolve());
         ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
-        spyOn(EditComponentService, 'stopEditing');
+        spyOn(EditComponentService, 'killEditor');
 
         $ctrl.deleteComponent();
         $scope.$digest();
@@ -467,8 +467,8 @@ describe('EditComponentMainCtrl', () => {
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
 
-      it('closes the component editor', () => {
-        expect(EditComponentService.stopEditing).toHaveBeenCalled();
+      it('kills the component editor', () => {
+        expect(EditComponentService.killEditor).toHaveBeenCalled();
       });
     });
 
