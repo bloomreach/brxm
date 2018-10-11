@@ -108,7 +108,6 @@ public class HstModelImpl implements PlatformHstModel {
         final String contentRoot = websiteContainerConfiguration.getString("channel.manager.contentRoot", ChannelManagerImpl.DEFAULT_CONTENT_ROOT);
         channelManager = new ChannelManagerImpl(this, invalidationMonitor.getEventPathsInvalidator(), hstNodeLoadingCache, contentRoot);
 
-        // TODO add the channelManagerEventListeners??
     }
 
     public void destroy() throws RepositoryException {
