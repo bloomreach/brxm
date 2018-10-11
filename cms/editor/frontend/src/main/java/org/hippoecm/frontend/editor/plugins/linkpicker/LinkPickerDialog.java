@@ -54,15 +54,14 @@ public class LinkPickerDialog extends Dialog<String> {
 
     public LinkPickerDialog(final IPluginContext context, final IPluginConfig config, final IModel<String> model) {
         super(model);
-        setSize(DialogConstants.LARGE);
-        setResizable(true);
 
         this.context = context;
         this.config = config;
 
         setOutputMarkupId(true);
-
         setCssClass("hippo-dialog-picker");
+        setSize(DialogConstants.LARGE);
+        setResizable(true);
 
         final NodePickerControllerSettings settings = NodePickerControllerSettings.fromPluginConfig(config);
         controller = new NodePickerController(context, settings) {
