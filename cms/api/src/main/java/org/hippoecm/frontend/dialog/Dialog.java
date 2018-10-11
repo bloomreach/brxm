@@ -36,13 +36,14 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
     private IValueMap properties;
 
     private String cssClass;
+    private boolean resizable = false;
+
     private String titleKey = "dialog.title";
     private IModel<?> titleModel;
     private IModel<String> title;
 
     private ScriptAction<ModelType> cancelAction;
     private ScriptAction<ModelType> closeAction;
-    private boolean resizable = false;
 
     public Dialog() {
         this(null);
