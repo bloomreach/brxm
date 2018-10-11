@@ -80,7 +80,6 @@ class OverlayService {
 
   _onLoad() {
     this.iframeWindow = this.iframeJQueryElement[0].contentWindow;
-
     this._initOverlay();
 
     this.observer = new MutationSummary({
@@ -95,6 +94,7 @@ class OverlayService {
   }
 
   _onUnload() {
+    delete this.iframeWindow;
     this.$rootScope.$apply(() => {
       this.observer.disconnect();
       delete this.overlay;
@@ -521,8 +521,10 @@ class OverlayService {
 
     // Include scroll position since coordinates are relative to page but rect is relative to viewport.
     // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
+    if (this.iframeWindow) {
+      left += this.iframeWindow.pageXOffset;
+      top += this.iframeWindow.pageYOffset;
+    }
 
     return {
       top,
