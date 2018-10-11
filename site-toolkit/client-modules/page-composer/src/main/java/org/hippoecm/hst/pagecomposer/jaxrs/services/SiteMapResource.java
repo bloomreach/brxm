@@ -201,7 +201,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getNameValidator(siteMapItem.getName()))
-                .add(validatorFactory.getPathInfoValidator(siteMapItem, null, siteMapHelper))
+                .add(validatorFactory.getPathInfoValidator(getPageComposerContextService(), siteMapItem, null, siteMapHelper))
                 .add(new NotNullValidator(siteMapItem.getName(), ClientError.ITEM_NO_NAME));
         if (siteMapItem.getParentId() != null) {
             preValidatorBuilder.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(),
@@ -260,7 +260,7 @@ public class SiteMapResource extends AbstractConfigResource {
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getPrototypePageValidator(siteMapItem.getComponentConfigurationId()))
                 .add(validatorFactory.getNameValidator(siteMapItem.getName()))
-                .add(validatorFactory.getPathInfoValidator(siteMapItem, parentId, siteMapHelper));
+                .add(validatorFactory.getPathInfoValidator(getPageComposerContextService(), siteMapItem, parentId, siteMapHelper));
 
         if (parentId != null) {
             preValidators.add(validatorFactory.getConfigurationExistsValidator(parentId, siteMapHelper));
@@ -294,7 +294,7 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
                 .add(validatorFactory.getNameValidator(targetName))
-                .add(validatorFactory.getNamePathInfoValidator(targetName))
+                .add(validatorFactory.getNamePathInfoValidator(getPageComposerContextService(), targetName))
                 .add(validatorFactory.getConfigurationExistsValidator(siteMapItemUUID, siteMapHelper));
 
 
@@ -304,11 +304,12 @@ public class SiteMapResource extends AbstractConfigResource {
                                          targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                              .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, siteMapHelper));
             } else {
-                // validate targetSiteMapItemUUID is located in preview workspapce sitemap
+                // validate targetSiteMapItemUUID is located in preview workspace sitemap
                 preValidators.add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(mountId),
                                         targetSiteMapItemUUID, HstNodeTypes.NODETYPE_HST_SITEMAPITEM))
                            // validate that the 'targetSiteMapItemUUID' is currently part of the hst model
-                           .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper));
+                           .add(validatorFactory.getConfigurationExistsValidator(targetSiteMapItemUUID, mountId, siteMapHelper))
+                           .add(validatorFactory.getTargetMountIsPartOfEditingMountHstModel(getMount(mountId), getPageComposerContextService().getEditingMount()));
             }
         }
 

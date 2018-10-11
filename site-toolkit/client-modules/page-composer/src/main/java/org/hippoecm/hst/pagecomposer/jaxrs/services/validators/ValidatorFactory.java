@@ -63,8 +63,9 @@ public class ValidatorFactory {
         return new NodePathPrefixValidator(nodePathPrefix, liveAllowed, id, requiredNodeType);
     }
 
-    public Validator getSiteMenuItemRepresentationValidator(final Predicate<String> uriValidator, final SiteMenuItemRepresentation representation) {
-        return new SiteMenuItemRepresentationValidator(uriValidator, representation);
+    public Validator getSiteMenuItemRepresentationValidator(final PageComposerContextService pageComposerContextService,
+                                                            final Predicate<String> uriValidator, final SiteMenuItemRepresentation representation) {
+        return new SiteMenuItemRepresentationValidator(pageComposerContextService, uriValidator, representation);
     }
 
     public Validator getConfigurationExistsValidator(final String id, final SiteMapHelper siteMapHelper) {
@@ -96,14 +97,15 @@ public class ValidatorFactory {
         return new NameValidator(name);
     }
 
-    public Validator getNamePathInfoValidator(String name) {
-        return new NamePathInfoValidator(name);
+    public Validator getNamePathInfoValidator(final PageComposerContextService pageComposerContextService, String name) {
+        return new NamePathInfoValidator(pageComposerContextService, name);
     }
 
-    public Validator getPathInfoValidator(final SiteMapItemRepresentation siteMapItem,
+    public Validator getPathInfoValidator(final PageComposerContextService pageComposerContextService,
+                                          final SiteMapItemRepresentation siteMapItem,
                                           final String parentId,
                                           final SiteMapHelper siteMapHelper) {
-        return new SiteMapItemBasedPathInfoValidator(siteMapItem, parentId, siteMapHelper);
+        return new SiteMapItemBasedPathInfoValidator(pageComposerContextService, siteMapItem, parentId, siteMapHelper);
     }
 
     public Validator getItemNotSameOrDescendantOfValidator(final String validateUUID, final String targetUUID) {
@@ -114,13 +116,19 @@ public class ValidatorFactory {
         return new HasNoChildMountNodeValidator(mounts);
     }
 
+    public Validator getTargetMountIsPartOfEditingMountHstModel(final Mount mount, final Mount editingMount) {
+        return new BelongToSameModelValidator(mount, editingMount);
+    }
+
     private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {
 
         private final SiteMapItemRepresentation siteMapItem;
         private final String parentId;
         private final SiteMapHelper siteMapHelper;
 
-        private SiteMapItemBasedPathInfoValidator(final SiteMapItemRepresentation siteMapItem, final String parentId, final SiteMapHelper siteMapHelper) {
+        private SiteMapItemBasedPathInfoValidator(final PageComposerContextService pageComposerContextService,
+                                                  final SiteMapItemRepresentation siteMapItem, final String parentId, final SiteMapHelper siteMapHelper) {
+            super(pageComposerContextService);
             this.siteMapItem = siteMapItem;
             this.parentId = parentId;
             this.siteMapHelper = siteMapHelper;
@@ -152,7 +160,8 @@ public class ValidatorFactory {
     private static final class NamePathInfoValidator extends AbstractPathInfoValidator {
 
         private final String name;
-        private NamePathInfoValidator(final String name) {
+        private NamePathInfoValidator(final PageComposerContextService pageComposerContextService, final String name) {
+            super(pageComposerContextService);
             this.name = name;
         }
 

@@ -21,6 +21,7 @@ import com.google.common.base.Predicate;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
@@ -29,10 +30,14 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType.SITEMAPITEM;
 
 public class SiteMenuItemRepresentationValidator implements Validator {
 
+    private PageComposerContextService pageComposerContextService;
     private final Predicate<String> uriValidator;
     private final SiteMenuItemRepresentation representation;
 
-    public SiteMenuItemRepresentationValidator(Predicate<String> uriValidator, SiteMenuItemRepresentation representation) {
+    public SiteMenuItemRepresentationValidator(final PageComposerContextService pageComposerContextService,
+            final Predicate<String> uriValidator,
+                                               final SiteMenuItemRepresentation representation) {
+        this.pageComposerContextService = pageComposerContextService;
         this.uriValidator = uriValidator;
         this.representation = representation;
     }
@@ -44,7 +49,7 @@ public class SiteMenuItemRepresentationValidator implements Validator {
         if (linkType == EXTERNAL && !uriValidator.apply(link)) {
             throw new ClientException(link + " is not valid", ClientError.INVALID_URL);
         } else if (linkType == SITEMAPITEM) {
-            new PathInfoValidator(link).validate(requestContext);
+            new PathInfoValidator(pageComposerContextService, link).validate(requestContext);
         }
     }
 }

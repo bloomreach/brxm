@@ -107,7 +107,9 @@
     <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
   </bean>
 
-  <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl"/>
+  <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+  </bean>
 
   <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
     <property name="validatorFactory" ref="validatiorFactory"/>

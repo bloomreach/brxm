@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.repository.util.JcrUtils;
@@ -47,6 +48,11 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationServiceImpl.class);
 
     public static final String PREVIEW_SUFFIX = "-preview";
+    private PageComposerContextService pageComposerContextService;
+
+    public HstConfigurationServiceImpl(final PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
+    }
 
     @Override
     public void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
@@ -70,9 +76,12 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     }
 
     private void deleteBranches(final HstRequestContext requestContext, final Channel master) throws RepositoryException, HstConfigurationException {
-        VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
-        String hostGroupName = virtualHost.getHostGroupName();
-        Map<String, Channel> channels = virtualHost.getVirtualHosts().getChannels(hostGroupName);
+
+        // we only need to check for branches WITHIN the HstModel of the channel that is current being removed!
+        final VirtualHost virtualHost = pageComposerContextService.getEditingMount().getVirtualHost();
+        final VirtualHosts virtualHosts = virtualHost.getVirtualHosts();
+
+        Map<String, Channel> channels = virtualHosts.getChannels(virtualHost.getHostGroupName());
         List<Channel> branches = channels.values().stream()
                 // only the live channels since #delete(session, channel) will also delete the preview
                 .filter(channel -> !channel.isPreview() && master.getId().equals(channel.getBranchOf()))

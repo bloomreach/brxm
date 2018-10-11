@@ -77,6 +77,9 @@ public class HstModelImpl implements PlatformHstModel {
     private volatile VirtualHosts virtualHosts;
     private BiPredicate<Session, Channel> channelFilter;
 
+    private final String[] hstFilterPrefixExclusions;
+    private final String[] hstFilterSuffixExclusions;
+
     private InvalidationMonitor invalidationMonitor;
 
     public HstModelImpl(final Session session,
@@ -107,6 +110,10 @@ public class HstModelImpl implements PlatformHstModel {
 
         final String contentRoot = websiteContainerConfiguration.getString("channel.manager.contentRoot", ChannelManagerImpl.DEFAULT_CONTENT_ROOT);
         channelManager = new ChannelManagerImpl(this, invalidationMonitor.getEventPathsInvalidator(), hstNodeLoadingCache, contentRoot);
+
+        final HstManager websiteHstManager = websiteComponentManager.getComponent(HstManager.class);
+        hstFilterPrefixExclusions = websiteHstManager.getHstFilterPrefixExclusions();
+        hstFilterSuffixExclusions = websiteHstManager.getHstFilterSuffixExclusions();
 
     }
 
@@ -142,6 +149,8 @@ public class HstModelImpl implements PlatformHstModel {
                     Thread.currentThread().setContextClassLoader(platformClassloader);
                 }
                 final VirtualHostsService virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
+                virtualHosts.setHstFilterPrefixExclusions(hstFilterPrefixExclusions);
+                virtualHosts.setHstFilterSuffixExclusions(hstFilterSuffixExclusions);
                 augment(virtualHosts);
 
                 this.virtualHosts = virtualHosts;

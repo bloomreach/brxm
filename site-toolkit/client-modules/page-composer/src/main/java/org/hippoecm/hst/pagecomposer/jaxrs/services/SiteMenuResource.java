@@ -108,7 +108,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 .add(getDefaultMenuModificationValidator())
                 .add(validatorFactory.getNotNullValidator(newMenuItem.getName(), ClientError.ITEM_NO_NAME))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), parentId, null))
-                .add(validatorFactory.getSiteMenuItemRepresentationValidator(uriValidator, newMenuItem))
+                .add(validatorFactory.getSiteMenuItemRepresentationValidator(getPageComposerContextService(), uriValidator, newMenuItem))
                 .build();
         return tryExecute(() -> {
             final Session session = getPageComposerContextService().getRequestContext().getSession();
@@ -129,7 +129,7 @@ public class SiteMenuResource extends AbstractConfigResource {
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNotNullValidator(modifiedItem.getName(), ClientError.ITEM_NO_NAME))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationWorkspacePath(), modifiedItem.getId(), null))
-                .add(validatorFactory.getSiteMenuItemRepresentationValidator(uriValidator, modifiedItem))
+                .add(validatorFactory.getSiteMenuItemRepresentationValidator(getPageComposerContextService(), uriValidator, modifiedItem))
                 .build();
         return tryExecute(() -> {
             final Session session = getPageComposerContextService().getRequestContext().getSession();

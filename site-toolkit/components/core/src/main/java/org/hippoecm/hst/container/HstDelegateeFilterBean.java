@@ -193,8 +193,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 return;
             }
 
+
+            VirtualHosts vHosts = hstManager.getVirtualHosts();
+
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if ((containerRequest.getPathSuffix() == null && hstManager.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
+            if ((containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
                 log.info("'{}' part of excluded paths for hst request matching.", containerRequest);
                 chain.doFilter(request, response);
                 return;
@@ -205,7 +208,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             // This info is on the virtual host.
             String hostName = getFarthestRequestHost(containerRequest);
 
-            VirtualHosts vHosts = hstManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest, hostName));
 
             String ip = getFarthestRemoteAddr(containerRequest);
             if (vHosts.isDiagnosticsEnabled(ip)) {
@@ -554,6 +556,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
      * we do never allow a stale model for cms sso logged in users as they need to see changes directly in the
      * channel manager
      */
+    // TODO remove, not supported any more
     private boolean isStaleConfigurationAllowedForRequest(final HttpServletRequest request, String hostName) {
         HttpSession session = request.getSession(false);
         if (session == null) {

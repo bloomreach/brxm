@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,12 +27,9 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representExpandedParentTree;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representRequestContentNode;
@@ -73,14 +69,9 @@ public class HippoDocumentResource extends AbstractConfigResource {
                 if (StringUtils.isEmpty(siteMapItemRefIdOrPath)) {
                     representation = representRequestContentNode(getPageComposerContextService());
                 } else {
-                    // find first the mount for current request
-                    HttpSession session = getPageComposerContextService().getRequestContext().getServletRequest().getSession();
-                    // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
-                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
-                    final String renderingHost = (String)cmsSessionContext.getContextPayload().get(ContainerConstants.RENDERING_HOST);
-                    final VirtualHost virtualHost = getPageComposerContextService().getRequestContext().getResolvedMount().getMount().getVirtualHost();
                     final Mount editingMount = getPageComposerContextService().getEditingMount();
-                    final ResolvedMount resolvedMount = virtualHost.getVirtualHosts().matchMount(renderingHost, null, editingMount.getMountPath());
+                    final ResolvedMount resolvedMount = editingMount.getVirtualHost().getVirtualHosts()
+                            .matchMount(editingMount.getVirtualHost().getHostName(), editingMount.getMountPath());
                     representation = representExpandedParentTree(getPageComposerContextService(),resolvedMount,  siteMapItemRefIdOrPath);
                 }
                 return ok("Folder loaded successfully", representation);

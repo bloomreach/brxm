@@ -20,6 +20,7 @@ import com.google.common.base.Predicate;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
@@ -44,7 +45,7 @@ public class SiteMenuItemRepresentationValidatorTest {
         this.externalLinkValidator = createNiceMock(Predicate.class);
         this.representation = createNiceMock(SiteMenuItemRepresentation.class);
 
-        this.validator = new SiteMenuItemRepresentationValidator(externalLinkValidator, representation);
+        this.validator = new SiteMenuItemRepresentationValidator(new PageComposerContextService(), externalLinkValidator, representation);
     }
 
     @Test

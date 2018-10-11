@@ -46,7 +46,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventImpl;
@@ -63,7 +62,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ChannelHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.PagesHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuHelper;
@@ -165,7 +163,7 @@ public class MountResource extends AbstractConfigResource {
         if (mountId == null) {
             mount = getPageComposerContextService().getEditingMount();
         } else {
-            mount = RequestContextProvider.get().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+            mount = getPageComposerContextService().getEditingMount().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
         }
         if (mount == null) {
             String msg = String.format("Could not find a Mount for identifier + '%s'", mountId);

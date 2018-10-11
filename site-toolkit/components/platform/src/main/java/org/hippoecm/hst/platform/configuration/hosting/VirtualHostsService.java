@@ -173,6 +173,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private final Map<String, Blueprint> blueprints = new HashMap<>();
     private boolean bluePrintsPrototypeChecked;
+    private String[] hstFilterPrefixExclusions;
+    private String[] hstFilterSuffixExclusions;
 
     public VirtualHostsService(final String contextPath, final ContainerConfiguration websiteContainerConfiguration, final HstNodeLoadingCache hstNodeLoadingCache,
                                final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
@@ -331,6 +333,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
         log.info("VirtualHostsService loading took '{}' ms.", String.valueOf(System.currentTimeMillis() - start));
     }
 
+    public void setHstFilterPrefixExclusions(final String[] hstFilterPrefixExclusions) {
+        this.hstFilterPrefixExclusions = hstFilterPrefixExclusions;
+    }
+
+    public void setHstFilterSuffixExclusions(final String[] hstFilterSuffixExclusions) {
+        this.hstFilterSuffixExclusions = hstFilterSuffixExclusions;
+    }
+
     private void loadChannelsMap() {
         for (String hostGroupName : getHostGroupNames()) {
             if (!channelsByHostGroup.containsKey(hostGroupName)) {
@@ -409,11 +419,24 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
     }
 
-    // TODO HSTTWO-4355 get rid of the hstManager !!!
     public boolean isHstFilterExcludedPath(String pathInfo) {
-        // TODO HSTTWO-4355 fix
+        if (hstFilterPrefixExclusions != null) {
+            for(String excludePrefix : hstFilterPrefixExclusions) {
+                if(pathInfo.startsWith(excludePrefix)) {
+                    log.debug("pathInfo '{}' is excluded by init parameter containing excludePrefix '{}'", pathInfo, excludePrefix);
+                    return true;
+                }
+            }
+        }
+        if (hstFilterSuffixExclusions != null) {
+            for(String excludeSuffix : hstFilterSuffixExclusions) {
+                if(pathInfo.endsWith(excludeSuffix)) {
+                    log.debug("pathInfo '{}' is excluded by init parameter containing excludeSuffix '{}'", pathInfo, excludeSuffix);
+                    return true;
+                }
+            }
+        }
         return false;
-        // return hstManager.isHstFilterExcludedPath(pathInfo);
     }
 
     @Override
@@ -988,4 +1011,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         return null;
     }
+
+
 }

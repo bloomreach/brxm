@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,18 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 
 final class PathInfoValidator extends AbstractPathInfoValidator {
 
     private final String pathInfo;
 
-    public PathInfoValidator(final String pathInfo) {
+    public PathInfoValidator(final PageComposerContextService pageComposerContextService, final String pathInfo) {
+        super(pageComposerContextService);
         this.pathInfo = pathInfo == null ? "" : pathInfo;
     }
+
 
     @Override
     protected String getPathInfo() throws ClientException {

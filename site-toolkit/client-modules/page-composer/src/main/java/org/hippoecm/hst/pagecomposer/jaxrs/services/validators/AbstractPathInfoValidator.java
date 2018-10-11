@@ -20,12 +20,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.XSSUrlFilter;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,11 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractPathInfoValidator implements Validator {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractPathInfoValidator.class);
+    private PageComposerContextService pageComposerContextService;
+
+    public AbstractPathInfoValidator(final PageComposerContextService pageComposerContextService) {
+        this.pageComposerContextService = pageComposerContextService;
+    }
 
     /**
      * Depending on the implementation in the concrete class it will either return the path info or throw a validation
@@ -71,20 +76,15 @@ abstract class AbstractPathInfoValidator implements Validator {
             throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
-        HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+
+
         // the excluding of paths must be done against 'decoded' path info since for example info can now be
         // test%40test while the excluding is test@test
         try {
             final String decodedPathInfo = URLDecoder.decode(info, encoding);
 
-            if (hstManager.isHstFilterExcludedPath(decodedPathInfo)) {
-                String msg = String.format("PathInfo '%s' cannot be used because it is skipped through web.xml prefix or postfix " +
-                        "exclusions.", info);
-                log.info(msg);
-                throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
-            }
-
-            if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(decodedPathInfo)) {
+            final VirtualHosts virtualHosts = pageComposerContextService.getEditingMount().getVirtualHost().getVirtualHosts();
+            if (virtualHosts.isHstFilterExcludedPath(decodedPathInfo)) {
                 String msg = String.format("PathInfo '%s' cannot be used because it is skipped through prefix or postfix " +
                         "exclusions on /hst:hst/hst:hosts configuration.", info);
                 log.info(msg);

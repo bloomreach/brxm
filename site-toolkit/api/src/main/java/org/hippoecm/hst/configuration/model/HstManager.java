@@ -51,13 +51,20 @@ public interface HstManager {
      *
      * @param pathInfo
      * @return true when the path must be excluded for matching to a host.
+     * @deprecated since 13.0.0 : use {@link VirtualHosts#isHstFilterExcludedPath(String)}
      */
+    @Deprecated
     boolean isHstFilterExcludedPath(String pathInfo);
 
     /**
      * Returns the request path suffix delimiter.
 c     */
     String getPathSuffixDelimiter();
+
+    String[] getHstFilterPrefixExclusions();
+
+    String[] getHstFilterSuffixExclusions();
+
 
     /**
      * @return the contextPath of the current webapp

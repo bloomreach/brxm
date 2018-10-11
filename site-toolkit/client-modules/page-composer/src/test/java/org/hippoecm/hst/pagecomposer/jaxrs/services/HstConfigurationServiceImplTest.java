@@ -55,7 +55,7 @@ public class HstConfigurationServiceImplTest {
         final Node hstRoot = rootNode.addNode("hst:hst", "hst:hst");
         configurationsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS, HstNodeTypes.NODETYPE_HST_CONFIGURATIONS);
 
-        hstConfigurationService = new HstConfigurationServiceImpl();
+        hstConfigurationService = new HstConfigurationServiceImpl(new PageComposerContextService());
     }
 
     @Test

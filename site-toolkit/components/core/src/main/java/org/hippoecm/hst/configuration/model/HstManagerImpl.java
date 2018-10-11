@@ -153,6 +153,14 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.hstFilterSuffixExclusions = hstFilterSuffixExclusions;
     }
 
+    public String[] getHstFilterPrefixExclusions() {
+        return hstFilterPrefixExclusions;
+    }
+
+    public String[] getHstFilterSuffixExclusions() {
+        return hstFilterSuffixExclusions;
+    }
+
     public String getContextPath() {
         return servletContext.getContextPath();
     }
@@ -162,25 +170,10 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.staleConfigurationSupported = staleConfigurationSupported;
     }
 
+    @Deprecated
     @Override
     public boolean isHstFilterExcludedPath(final String pathInfo) {
-        if (hstFilterPrefixExclusions != null) {
-            for(String excludePrefix : hstFilterPrefixExclusions) {
-                if(pathInfo.startsWith(excludePrefix)) {
-                    log.debug("pathInfo '{}' is excluded by init parameter containing excludePrefix '{}'", pathInfo, excludePrefix);
-                    return true;
-                }
-            }
-        }
-        if (hstFilterSuffixExclusions != null) {
-            for(String excludeSuffix : hstFilterSuffixExclusions) {
-                if(pathInfo.endsWith(excludeSuffix)) {
-                    log.debug("pathInfo '{}' is excluded by init parameter containing excludeSuffix '{}'", pathInfo, excludeSuffix);
-                    return true;
-                }
-            }
-        }
-        return false;
+        return hstModelProvider.getHstModel().getVirtualHosts().isHstFilterExcludedPath(pathInfo);
     }
 
 //    private void asynchronousBuild() {

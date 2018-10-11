@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.jcr.RepositoryException;
@@ -26,8 +27,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BaseChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -35,6 +34,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.platform.api.ChannelEventBus;
+import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
@@ -48,6 +48,9 @@ public class AbstractConfigResource {
 
     public void setPageComposerContextService(PageComposerContextService pageComposerContextService) {
         this.pageComposerContextService = pageComposerContextService;
+    }
+    public PlatformServices getPlatformServices() {
+        return HippoServiceRegistry.getService(PlatformServices.class);
     }
 
     public PageComposerContextService getPageComposerContextService() {
@@ -213,8 +216,20 @@ public class AbstractConfigResource {
         return getPreviewConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
     }
 
+    /**
+     * @param mountId
+     * @return the {@link Mount} for {@code mountId} which can be a mount of a different webapp compared to the currently
+     * being edited mount. If no mount for {@code mountId} found, return null
+     */
+    protected Mount getMount(final String mountId) {
+        final Map<String, Mount> previewMounts = getPlatformServices().getMountService()
+                .getPreviewMounts(pageComposerContextService.getRequestContext().getVirtualHost().getHostGroupName());
+
+        return previewMounts.get(mountId);
+    }
+
     protected String getPreviewConfigurationWorkspacePath(final String mountId) {
-        final Mount mount = pageComposerContextService.getRequestContext().getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
+        final Mount mount = getMount(mountId);
         if (mount == null || !mount.getHstSite().hasPreviewConfiguration()) {
             final String msg = String.format("Cannot find for id '%s' or the mount exists but does not have a preview configuration.", mountId);
             throw new IllegalArgumentException(msg);
