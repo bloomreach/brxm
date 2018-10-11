@@ -37,20 +37,6 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml" />
 
-  <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.integration.IntegrationHstManagerImpl">
-    <property name="hstModelMutex" ref="hstModelMutex"/>
-    <property name="hstEventsDispatcher" ref="hstEventsDispatcher"/>
-    <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/>
-    <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
-    <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
-    <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
-    <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
-    <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
-    <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
-    <property name="pageCache" ref="pageCache"/>
-    <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
-  </bean>
-
   <!--
     we only need an event listener for the hst configuration
   -->

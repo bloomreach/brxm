@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,12 +25,13 @@ import javax.jcr.observation.EventListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.jackrabbit.spi.Event;
-import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.repository.HippoRepository;
@@ -42,7 +43,7 @@ import org.springframework.mock.web.MockServletContext;
 public class AbstractHstIntegrationTest {
 
     protected SpringComponentManager componentManager;
-    protected IntegrationHstManagerImpl hstManager;
+    protected HstManagerImpl hstManager;
     protected HstURLFactory hstURLFactory;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstEventsCollector hstEventsCollector;

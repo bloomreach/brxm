@@ -82,22 +82,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 	public void setUp() throws Exception {
 		super.setUp();
 		this.hstManager = getComponent(HstManager.class.getName());
-		((HstManagerImpl)hstManager).setStaleConfigurationSupported(true);
 		this.channelManager = getComponent(ChannelManager.class.getName());
-	}
-
-	@Test
-	public void testHstManagerASynchronousFirstLoad() throws Exception {
-		// even though async, if the model is not built before, the async built is sync
-		final VirtualHosts asyncVirtualHosts = hstManager.getVirtualHosts(true);
-		assertNotNull(asyncVirtualHosts);
-	}
-
-	@Test
-	public void testHstManagerASynchronousFirstLoadAfterEvent() throws Exception {
-		// even though async, if the model is not built before, the async built is sync
-		final VirtualHosts asyncVirtualHosts = hstManager.getVirtualHosts(true);
-		assertNotNull(asyncVirtualHosts);
 	}
 
 	@Test
@@ -109,51 +94,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 					@Override
 					public Object call() throws Exception {
 						return hstManager.getVirtualHosts();
-					}
-				});
-			}
-			final Collection<Future<Object>> futures = executeAllJobs(jobs, 50);
-			VirtualHosts current = null;
-			for (Future<Object> future : futures) {
-				if (!future.isDone()) {
-					fail("unfinished jobs");
-				}
-				VirtualHosts next = (VirtualHosts)future.get();
-				if (current == null) {
-					current = next;
-					continue;
-				}
-				assertTrue(current == next);
-			}
-		} catch (AssertionError e) {
-			throw e;
-		} catch (Throwable e) {
-			fail(e.toString());
-		}
-	}
-
-	@Test
-	public void testConcurrentHstManagerSynchronousAndAsynchronousLoad() throws Exception {
-		try {
-			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(100);
-			final Random random = new Random();
-			for (int i = 0; i < 100; i++) {
-				final boolean allowStale;
-				Job randomJob = enumJobs[random.nextInt(2)];
-				switch (randomJob) {
-					case GET_VIRTUALHOSTS_SYNC:
-						allowStale = false;
-						break;
-					case GET_VIRTUALHOSTS_ASYNC:
-						allowStale = true;
-						break;
-					default :
-						allowStale = false;
-				}
-				jobs.add(new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						return hstManager.getVirtualHosts(allowStale);
 					}
 				});
 			}
@@ -203,7 +143,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 				invalidator.eventPaths(pathsToBeChanged);
 
 				// ASYNC load
-				final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
+				final VirtualHosts asyncHosts = hstManager.getVirtualHosts();
 				String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost",  "").getMount().getProperty(TEST_PROP);
 				// SYNC load
 				final VirtualHosts syncHosts = hstManager.getVirtualHosts();
@@ -240,7 +180,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 
 	@Test
 	@Ignore("Review this")
-	public void testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges() throws Exception {
+	public void testConcurrentModelLoadAndChannelManagerWithConfigChanges() throws Exception {
 		populateSessions(2);
 		Node mountNode = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -268,15 +208,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 							@Override
 							public Boolean call() throws Exception {
 								hstManager.getVirtualHosts();
-								return Boolean.TRUE;
-							}
-						});
-						break;
-					case GET_VIRTUALHOSTS_ASYNC:
-						jobs.add(new Callable<Object>() {
-							@Override
-							public Boolean call() throws Exception {
-								hstManager.getVirtualHosts(true);
 								return Boolean.TRUE;
 							}
 						});
@@ -328,7 +259,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
 									result.testPropAfterChange = nextVal;
 									// ASYNC load
-									final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
+									final VirtualHosts asyncHosts = hstManager.getVirtualHosts();
 									result.testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost",  "").getMount().getProperty(TEST_PROP);
 									// SYNC load
 									final VirtualHosts syncHosts = hstManager.getVirtualHosts();

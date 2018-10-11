@@ -68,7 +68,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
         String matchingIgnoredPrefix = null;
         // check whether the requestPath starts with the cmsPreviewPrefix path: If so, first strip this prefix off and append it later to the resolvedMountPath
 
-        // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
         if(!StringUtils.isEmpty(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
             if (path.equals(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
                 matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
