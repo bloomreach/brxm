@@ -10,8 +10,13 @@
       "locales" : null
     },
     "hippo:types.hipposys:Label/jcr:name" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "hippo:types.hipposys:Boolean/jcr:name" : {
       "status" : "CLEAN",
