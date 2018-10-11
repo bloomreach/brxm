@@ -259,7 +259,7 @@ class ComponentEditorService {
   }
 
   discardChanges() {
-    return this.reopen().finally(() => this.PageStructureService.renderComponent(this.component.id));
+    return this.HippoIframeService.reload();
   }
 
   reopen() {
@@ -302,7 +302,7 @@ class ComponentEditorService {
             return this._alertFieldErrors()
               .then(() => this.$q.reject());
           case 'DISCARD':
-            this.PageStructureService.renderComponent(this.component.id);
+            this.discardChanges();
             return this.$q.resolve(action);
           default:
             return this.$q.resolve(action); // let caller know that changes should not be saved
