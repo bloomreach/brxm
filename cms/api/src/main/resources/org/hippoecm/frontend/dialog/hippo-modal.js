@@ -25,14 +25,6 @@
 (function () {
   "use strict";
   var
-    region,
-    pickerList,
-    pickerListDetails,
-    pickerListDatatable,
-    minimumDialogWidth,
-    minimumDialogHeight,
-    deltaWidth,
-    deltaHeight,
     defaultExpansion = 1,
     oppositeExpansion = -1,
     _super = {};
@@ -131,60 +123,14 @@
   };
 
   Wicket.Window.prototype.resize = function (object, deltaX, deltaY, method, widthExpansion, heightExpansion) {
-    this.calculateDimensions(widthExpansion * deltaX, heightExpansion * deltaY);
-    method.apply(this, [object, widthExpansion * deltaWidth, heightExpansion * deltaHeight]);
-    this.readComponents();
-    this.resizePickerList();
-    this.resizePickerListDatatable();
-  };
-
-  Wicket.Window.prototype.getInitialDimensions = function () {
-    minimumDialogHeight = Wicket.Window.current.settings.height;
-    minimumDialogWidth = Wicket.Window.current.settings.width;
-  };
-
-  Wicket.Window.prototype.calculateDimensions = function (deltaX, deltaY) {
-    deltaHeight = (Wicket.Window.current.height + deltaY < minimumDialogHeight) ? 0 : deltaY;
-    deltaWidth = (Wicket.Window.current.width + deltaX < minimumDialogWidth) ? 0 : deltaX;
-  };
-
-  Wicket.Window.prototype.readComponents = function () {
-    YAHOO.util.Dom.getElementBy(function (el) {
-      pickerListDatatable = YAHOO.hippo.WidgetManager.getWidget(el.id);
-    }, 'table', Wicket.Window.current.right);
-    if (pickerListDatatable != null) {
-      pickerListDetails = YAHOO.util.Dom.getAncestorBy(pickerListDatatable.el, function (node) {
-        return YAHOO.lang.isValue(node.className) && node.className === 'hippo-picker-list-details';
-      });
-      pickerList = pickerListDetails.parentElement;
-      region = YAHOO.util.Dom.getRegion(pickerListDetails);
+    if (!this.resizer) {
+      return;
     }
-  };
 
-  Wicket.Window.prototype.resizePickerList = function () {
-    if (pickerList != null && pickerListDetails != null) {
-      pickerList.style.height = pickerList.clientHeight + deltaHeight + 'px';
-      pickerListDetails.style.height = pickerListDetails.clientHeight + deltaHeight + 'px';
-    }
-  };
+    var delta = this.resizer.calculateDelta(widthExpansion * deltaX, heightExpansion * deltaY);
+    method.apply(this, [object, widthExpansion * delta.width, heightExpansion * delta.height]);
 
-  Wicket.Window.prototype.resizePickerListDatatable = function () {
-    if (region != null && pickerListDatatable != null) {
-      pickerListDatatable.resize({
-        wrap: {
-          w: region.width,
-          h: region.height
-        }
-      });
-    }
-  };
-
-  Wicket.Window.prototype.restoreDatatableHeight = function () {
-    this.readComponents();
-    if (pickerList != null && pickerListDetails != null) {
-      pickerListDetails.style.height = pickerList.clientHeight + 'px';
-    }
-    this.resizePickerListDatatable();
+    this.resizer.resize(delta);
   };
 
   Wicket.Window.prototype.bindInit = function () {
@@ -204,6 +150,8 @@
 
     _super.bindClean.apply(this, arguments);
 
+    this.resizer = null;
+
     //unregister window resize listener
     if (YAHOO.util.Event) {
       YAHOO.util.Event.removeListener(window, 'resize', this.onWindowResize);
@@ -218,10 +166,14 @@
 
   Wicket.Window.prototype.show = function () {
     _super.show.apply(this, arguments);
+
     if (this.settings.titleTooltip !== null) {
       this.captionText.setAttribute('title', this.settings.titleTooltip);
     }
-    this.getInitialDimensions();
+
+    if (this.settings.resizable) {
+      this.resizer = new WicketWindowResizer();
+    }
   };
 
   Wicket.Window.prototype.toggleFullscreen = function () {
@@ -337,5 +289,92 @@
 
   //Simply refresh if the user wants to
   Wicket.Window.unloadConfirmation = false;
+
+  function getChildByClassName(parent, className) {
+    var children;
+    if (!parent) {
+      return null;
+    }
+
+    children = parent.getElementsByClassName(className);
+    if (children.length === 0) {
+      return null;
+    }
+
+    return children[0];
+  }
+
+  function WicketWindowResizer() {
+    this.initialWidth = Wicket.Window.current.settings.width;
+    this.initialHeight = this.getCurrentHeight();
+  }
+
+  WicketWindowResizer.prototype.getCurrentHeight = function () {
+    if (Wicket.Window.current.settings.height !== null) {
+      return Wicket.Window.current.settings.height;
+    }
+
+    // in this case, the dialog is configured with height=auto so we need to calculate it ourselves
+    return YAHOO.util.Dom.getRegion(Wicket.Window.current.content).height;
+  };
+
+  WicketWindowResizer.prototype.calculateDelta = function (deltaX, deltaY) {
+    return {
+      height: (this.getCurrentHeight() + deltaY < this.initialHeight) ? 0 : deltaY,
+      width: (Wicket.Window.current.width + deltaX < this.initialWidth) ? 0 : deltaX,
+    };
+  };
+
+  WicketWindowResizer.prototype.resize = function (delta) {
+    this.readComponents();
+    this.resizePickerList(delta);
+    this.resizePickerListDatatable();
+  };
+
+  WicketWindowResizer.prototype.readComponents = function () {
+    var pickerListTableElement;
+
+    this.picker = getChildByClassName(Wicket.Window.current.right, 'hippo-picker');
+    if (!this.picker) {
+      return;
+    }
+
+    this.pickerList = getChildByClassName(this.picker, 'hippo-picker-list-details');
+    if (!this.pickerList) {
+      return;
+    }
+
+    pickerListTableElement = this.pickerList.querySelector('table');
+    if (pickerListTableElement) {
+      this.pickerListWidget = YAHOO.hippo.WidgetManager.getWidget(pickerListTableElement.id);
+    }
+  };
+
+  WicketWindowResizer.prototype.resizePickerList = function (delta) {
+    if (this.picker !== null && this.pickerList !== null) {
+      this.picker.style.height = this.picker.clientHeight + delta.height + 'px';
+      this.pickerList.style.height = this.pickerList.clientHeight + delta.height + 'px';
+    }
+  };
+
+  WicketWindowResizer.prototype.resizePickerListDatatable = function () {
+    var region;
+
+    if (this.pickerList === null || this.pickerListWidget === null) {
+      return;
+    }
+
+    region = YAHOO.util.Dom.getRegion(this.pickerList);
+    if (region === null) {
+      return;
+    }
+
+    this.pickerListWidget.resize({
+      wrap: {
+        w: region.width,
+        h: region.height
+      }
+    });
+  };
 
 }());
