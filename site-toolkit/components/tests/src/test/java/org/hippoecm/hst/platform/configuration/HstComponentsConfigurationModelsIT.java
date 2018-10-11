@@ -103,16 +103,16 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         // instance won't be shared)
         removePagePrototypeFromConfig(session);
 
-        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
-        ResolvedMount mount8 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub2");
-        ResolvedMount mount9 = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
-        ResolvedMount mount10 = hstManager.getVirtualHosts().matchMount("localhost:8081", "/site", "/");
-        ResolvedMount mount11 = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/preview");
+        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
+        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test",  "/");
+        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
+        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1");
+        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1/subsub1");
+        ResolvedMount mount8 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub2");
+        ResolvedMount mount9 = hstManager.getVirtualHosts().matchMount("localhost",  "/");
+        ResolvedMount mount10 = hstManager.getVirtualHosts().matchMount("localhost:8081",  "/");
+        ResolvedMount mount11 = hstManager.getVirtualHosts().matchMount("localhost",  "/preview");
 
         assertNotSame(mount1, mount2);
         assertNotSame(mount1, mount4);
@@ -122,8 +122,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         // which in turn points to '/hst:hst/hst:configurations/unittestsubproject' which inherits
         // all pages, components and catalogs from unittestcommon, *but* has its own hst:pages/homepage,
         // its model cannot be shared with the one from only the unittestcommon
-        ResolvedMount mountWithDiffHstCompServ1 = hstManager.getVirtualHosts().matchMount("sub.unit.test", "/site", "/");
-        ResolvedMount mountWithDiffHstCompServ2 = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
+        ResolvedMount mountWithDiffHstCompServ1 = hstManager.getVirtualHosts().matchMount("sub.unit.test",  "/");
+        ResolvedMount mountWithDiffHstCompServ2 = hstManager.getVirtualHosts().matchMount("localhost",  "/subsite");
 
         final HstSite hstSite1 = mount1.getMount().getHstSite();
         final HstSite hstSite2 = mount2.getMount().getHstSite();
@@ -173,8 +173,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
     public void testReloadOnlyChangedHstComponentsConfigurations() throws Exception {
         removePagePrototypeFromConfig(session);
 
-        final ResolvedMount mountBefore1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountBefore2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
+        final ResolvedMount mountBefore1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/");
+        final ResolvedMount mountBefore2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
 
         final HstSite hstSiteBefore1 = mountBefore1.getMount().getHstSite();
         final HstSite hstSiteBefore2 = mountBefore2.getMount().getHstSite();
@@ -196,8 +196,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
 
-        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
+        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
 
         final HstSite hstSiteAfter1 = mountAfter1.getMount().getHstSite();
         final HstSite hstSiteAfter2 = mountAfter2.getMount().getHstSite();
@@ -225,8 +225,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         invalidator.eventPaths(pathsToBeChanged);
 
         // now we expect the same instance again from cache
-        final ResolvedMount mountSecondAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountSecondAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
+        final ResolvedMount mountSecondAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mountSecondAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
 
         final HstSite hstSiteSecondAfter1 = mountSecondAfter1.getMount().getHstSite();
         final HstSite hstSiteSecondAfter2 = mountSecondAfter2.getMount().getHstSite();
@@ -252,8 +252,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         invalidator.eventPaths(pathsToBeChanged);
 
         // now we expect still the same instance again from cache as only sitemenus has changed
-        final ResolvedMount mountThirdAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountThirdAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
+        final ResolvedMount mountThirdAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mountThirdAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
 
         final HstSite hstSiteThirdAfter1 = mountThirdAfter1.getMount().getHstSite();
         final HstSite hstSiteThirdAfter2 = mountThirdAfter2.getMount().getHstSite();
@@ -274,12 +274,12 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
     @Test
     public void testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll() throws Exception {
-        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
+        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/");
+        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/");
+        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test",  "/");
+        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/");
+        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/sub1");
+        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1/subsub1");
 
         HstComponentsConfiguration service1 = mount1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service2 = mount2.getMount().getHstSite().getComponentsConfiguration();
@@ -299,12 +299,12 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         Thread.sleep(100);
         invalidator.eventPaths(pathsToBeChanged);
 
-        ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mountAfter4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mountAfter5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mountAfter6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mountAfter7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
+        ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/");
+        ResolvedMount mountAfter4 = hstManager.getVirtualHosts().matchMount("preview.unit.test",  "/");
+        ResolvedMount mountAfter5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/");
+        ResolvedMount mountAfter6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/sub1");
+        ResolvedMount mountAfter7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/sub1/subsub1");
 
         HstComponentsConfiguration serviceAfter1 = mountAfter1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration serviceAfter2 = mountAfter2.getMount().getHstSite().getComponentsConfiguration();
@@ -327,12 +327,12 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         session.save();
         Thread.sleep(100);
 
-        ResolvedMount mountAgain1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mountAgain2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mountAgain4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mountAgain5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mountAgain6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mountAgain7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
+        ResolvedMount mountAgain1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/");
+        ResolvedMount mountAgain2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
+        ResolvedMount mountAgain4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/");
+        ResolvedMount mountAgain5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/");
+        ResolvedMount mountAgain6 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1");
+        ResolvedMount mountAgain7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/sub1/subsub1");
 
         HstComponentsConfiguration serviceAgain1 = mountAgain1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration serviceAgain2 = mountAgain2.getMount().getHstSite().getComponentsConfiguration();
@@ -352,12 +352,12 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
     @Test
     public void testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll() throws Exception {
-        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
+        ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/");
+        ResolvedMount mount4 = hstManager.getVirtualHosts().matchMount("preview.unit.test",  "/");
+        ResolvedMount mount5 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
+        ResolvedMount mount6 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1");
+        ResolvedMount mount7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/sub1/subsub1");
 
         HstComponentsConfiguration service1 = mount1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration service2 = mount2.getMount().getHstSite().getComponentsConfiguration();
@@ -376,12 +376,12 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
 
-        ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
-        ResolvedMount mountAfter4 = hstManager.getVirtualHosts().matchMount("preview.unit.test", "/site", "/");
-        ResolvedMount mountAfter5 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/");
-        ResolvedMount mountAfter6 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1");
-        ResolvedMount mountAfter7 = hstManager.getVirtualHosts().matchMount("www.unit.partial", "/site", "/sub1/subsub1");
+        ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
+        ResolvedMount mountAfter4 = hstManager.getVirtualHosts().matchMount("preview.unit.test",  "/");
+        ResolvedMount mountAfter5 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
+        ResolvedMount mountAfter6 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1");
+        ResolvedMount mountAfter7 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/sub1/subsub1");
 
         HstComponentsConfiguration serviceAfter1 = mountAfter1.getMount().getHstSite().getComponentsConfiguration();
         HstComponentsConfiguration serviceAfter2 = mountAfter2.getMount().getHstSite().getComponentsConfiguration();

@@ -86,7 +86,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
 
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -187,7 +187,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -236,7 +236,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -311,7 +311,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -370,7 +370,7 @@ public class SiteMapItemHandlerIT extends AbstractTestConfigurations {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());

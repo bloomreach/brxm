@@ -41,7 +41,7 @@ public class MountServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void test_mount_properties_return_immutable_list() throws Exception {
-        final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
+        final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final List<String> propertyNames = resolvedMount.getMount().getPropertyNames();
         assertTrue(propertyNames instanceof ImmutableList);
     }
@@ -57,8 +57,8 @@ public class MountServiceIT extends AbstractTestConfigurations {
                      - hst:namedpipeline = CustomPipeline
          */
 
-        final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount subResolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/custompipeline");
+        final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount subResolvedMount = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/custompipeline");
         // subResolvedMount inherits mountpoint from parent
         assertEquals(resolvedMount.getMount().getMountPoint(), subResolvedMount.getMount().getMountPoint());
 

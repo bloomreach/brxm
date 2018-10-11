@@ -47,7 +47,7 @@ public class HstDefaultSiteMapLoginIT extends AbstractTestConfigurations {
 
     @Test
     public void default_sitemap_item_login() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/login/form");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/login/form");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/login/form");
 
         assertEquals("login/_any_",HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));

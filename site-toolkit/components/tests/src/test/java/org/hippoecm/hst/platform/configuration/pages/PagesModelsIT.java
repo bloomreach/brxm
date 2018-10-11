@@ -74,7 +74,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
     @Test
     public void test_unittestcommon_pages_without_workspace_pages() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             assertTrue(hstComponentConfiguration.isInherited());
@@ -87,7 +87,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestproject/hst:pages");
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
@@ -105,7 +105,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages");
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
@@ -129,7 +129,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
@@ -164,7 +164,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
 
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             if (hstComponentConfiguration.getCanonicalStoredLocation().startsWith("/hst:hst/hst:configurations/unittestcommon/")) {
@@ -192,7 +192,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:pages");
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         for (HstComponentConfiguration hstComponentConfiguration : hstSite.getComponentsConfiguration().getComponentConfigurations().values()) {
             assertTrue(hstComponentConfiguration.isInherited());
@@ -363,7 +363,7 @@ public class PagesModelsIT extends AbstractTestConfigurations {
         standardBody.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         assertNotNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage"));
         assertNotNull(hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/standardoverview/body"));

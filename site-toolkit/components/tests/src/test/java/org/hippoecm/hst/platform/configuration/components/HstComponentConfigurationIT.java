@@ -67,7 +67,7 @@ public class HstComponentConfigurationIT extends AbstractTestConfigurations {
         contactPage.setProperty("hst:parameternameprefixes", new String[]{"", "professional"});
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstComponentConfiguration contactPageConfig = hstSite.getComponentsConfiguration().getComponentConfiguration("hst:pages/contactpage");
         assertNotNull(contactPageConfig);

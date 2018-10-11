@@ -119,7 +119,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -169,14 +169,14 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
 
                 setHstServletPath(containerRequest, mount);
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
 
                 final ResolvedMount resolvedMount = vhosts.matchMount(hstContainerURL.getHostName(),
-                        hstContainerURL.getContextPath(), hstContainerURL.getRequestPath());
+                        hstContainerURL.getRequestPath());
                 ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
 
                 assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
@@ -213,7 +213,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
 
             setHstServletPath(containerRequest, mount);
             assertTrue("We expect the mount to return true for version in preview header", mount.getMount().isVersionInPreviewHeader());
@@ -244,7 +244,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest), containerRequest.getContextPath(),
+            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
                     HstRequestUtils.getRequestPath(containerRequest));
 
             setHstServletPath(containerRequest, mount);
@@ -294,7 +294,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
                 ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -337,7 +337,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -373,7 +373,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount resolvedMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, resolvedMount);
             assertEquals("The matching ignored prefix should equal the default", "_cmsinternal", resolvedMount.getMatchingIgnoredPrefix());
             assertEquals("The resolved mount path should not contain the matching ignored prefix", "", resolvedMount.getResolvedMountPath());
@@ -409,7 +409,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount resolvedMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, resolvedMount);
             // assert we now have a LIVE Mount
             assertFalse("We should have a LIVE mount", resolvedMount.getMount().isPreview());
@@ -451,7 +451,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -506,7 +506,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             // requestCustom
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequestCustom),
-                    containerRequestCustom.getContextPath(), HstRequestUtils.getRequestPath(containerRequestCustom));
+                    HstRequestUtils.getRequestPath(containerRequestCustom));
             setHstServletPath(containerRequestCustom, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequestCustom, response, mount);
             ResolvedSiteMapItem customResolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -516,7 +516,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             // requestGeneral
             ResolvedMount mountGeneral = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequestGeneral),
-                    containerRequestGeneral.getContextPath(), HstRequestUtils.getRequestPath(containerRequestGeneral));
+                    HstRequestUtils.getRequestPath(containerRequestGeneral));
             setHstServletPath(containerRequestGeneral, mountGeneral);
             HstContainerURL hstContainerURL2 = hstURLFactory.getContainerURLProvider().parseURL(containerRequestGeneral, response, mountGeneral);
             ResolvedSiteMapItem generalResolvedSiteMapItem = mountGeneral.matchSiteMapItem(hstContainerURL2.getPathInfo());
@@ -555,7 +555,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             // since the requestURI is empty, we expect a fallback to the configured homepage:
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -587,7 +587,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -621,7 +621,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             // since the requestURI is empty, we expect a fallback to the configured homepage:
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             assertTrue("The mount for /preview/services should return that it is not mounted ", !mount.getMount().isMapped());
             assertNull("An not mounted Mount should have a HstSite that is null", mount.getMount().getHstSite());
@@ -658,7 +658,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             // since the requestURI is empty, we expect a fallback to the configured homepage:
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             assertFalse("For port 7979 we do not have a configured a portmount, and thus we should get a mount that is live ", mount.getMount().isPreview());
 
@@ -705,7 +705,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
         // since the requestURI is empty, we expect a fallback to the configured homepage:
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(liveContainerRequest),
-                liveContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(liveContainerRequest));
+                HstRequestUtils.getRequestPath(liveContainerRequest));
         setHstServletPath(liveContainerRequest, mount);
 
         assertFalse("Port 80 should match to a live mount", mount.getMount().isPreview());
@@ -713,7 +713,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
         // since the requestURI is empty, we expect a fallback to the configured homepage:
         ResolvedMount prevMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewContainerRequest),
-                previewContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(previewContainerRequest));
+                HstRequestUtils.getRequestPath(previewContainerRequest));
         setHstServletPath(previewContainerRequest, prevMount);
         assertTrue("Port 8081 should match to a preview mount", prevMount.getMount().isPreview());
         assertEquals("Wrong content path for the preview mount", "/unittestcontent/documents/unittestproject", prevMount.getMount().getContentPath());
@@ -746,7 +746,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             // since the requestURI is empty, we expect a fallback to the configured homepage:
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
             assertTrue("For port 8081 we do not have a configured a portmount, and thus we should get a mount that is preview ", mount.getMount().isPreview());
 
@@ -810,12 +810,12 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             ResolvedMount mount = hstModel2.getVirtualHosts().matchMount(HstRequestUtils.getFarthestRequestHost(containerRequestSite2),
-                    containerRequestSite2.getContextPath(), HstRequestUtils.getRequestPath(containerRequestSite2));
+                    HstRequestUtils.getRequestPath(containerRequestSite2));
             setHstServletPath(containerRequestSite2, mount);
             assertTrue("As the contextPath '/site2' matches the configured one of Mount 'intranet', we expect the Mount to have the name 'intranet'", mount.getMount().getName().equals("intranet"));
 
             mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequestSite),
-                    containerRequestSite.getContextPath(), HstRequestUtils.getRequestPath(containerRequestSite));
+                    HstRequestUtils.getRequestPath(containerRequestSite));
             setHstServletPath(containerRequestSite2, mount);
             assertTrue("As the contextPath '/mywrongpath' does not match the configured one of Mount 'intranet', we expect a fallback to the Mount hst:root ", mount.getMount().getName().equals("hst:root"));
 
@@ -870,7 +870,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(liveContainerRequest),
-                    liveContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(liveContainerRequest));
+                    HstRequestUtils.getRequestPath(liveContainerRequest));
             setHstServletPath(liveContainerRequest, mount);
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(liveContainerRequest, response, mount);
             ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -883,7 +883,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             setRequestInfo(liveRequest, "/site", "/foo");
             final HstContainerRequestImpl newLiveContainerRequest = new HstContainerRequestImpl(liveRequest, hstSitesManager.getPathSuffixDelimiter());
             mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(newLiveContainerRequest),
-                    newLiveContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(newLiveContainerRequest));
+                    HstRequestUtils.getRequestPath(newLiveContainerRequest));
             setHstServletPath(newLiveContainerRequest, mount);
             hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(newLiveContainerRequest, response, mount);
             resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -895,7 +895,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
             previewContainerRequest.setRequestURI("/site/foo");
             mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewContainerRequest),
-                    previewContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(previewContainerRequest));
+                    HstRequestUtils.getRequestPath(previewContainerRequest));
             setHstServletPath(previewContainerRequest, mount);
             hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(previewContainerRequest, response, mount);
             resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
@@ -910,7 +910,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
 
 
             mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(newPreviewContainerRequest),
-                    newPreviewContainerRequest.getContextPath(), HstRequestUtils.getRequestPath(newPreviewContainerRequest));
+                    HstRequestUtils.getRequestPath(newPreviewContainerRequest));
             setHstServletPath(newPreviewContainerRequest, mount);
             // The custompipeline Mount also has hst:versioninpreviewheader = false
             assertFalse("The mount for custompipeline should return false for version in preview header but returned true",
@@ -943,7 +943,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
 
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -984,7 +984,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -1029,7 +1029,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -1065,7 +1065,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         try {
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                    containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                    HstRequestUtils.getRequestPath(containerRequest));
             setHstServletPath(containerRequest, mount);
 
             HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -1108,7 +1108,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             try {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                        HstRequestUtils.getRequestPath(containerRequest));
                 setHstServletPath(containerRequest, mount);
 
                 HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);

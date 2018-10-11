@@ -80,8 +80,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Test
     public void componentsConfigurationLoadedLazilyAndInstancesShared() throws Exception {
         // both hosts below have a mount that results in the same configuration path
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -97,7 +97,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void previewSiteComponentsConfigurationLoadedLazilyAndInstancesShared() throws Exception {
-        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
+        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
 
         final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
@@ -116,7 +116,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Test
     public void previewSiteComponentsConfigurationNotLoadedForCurrentHostGroupIfNoPreviewChannel() throws Exception {
 
-        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
 
         final HstSiteService hstSite = (HstSiteService) mount.getHstSite();
@@ -144,7 +144,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         try {
             createHstConfigBackup(session);
             {
-                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
                 final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
                 // since we do not have a preview yet, previewChannel and live channel should have the same #getId, though
                 // there instances are different
@@ -166,7 +166,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             invalidator.eventPaths(pathsToBeChanged);
 
             {
-                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
                 final ContextualizableMount mount = (ContextualizableMount) resMount.getMount();
                 assertNotSame("Since there is *a* preview, the preview channel instance should NOT be same as the live channel" +
                         " instance", mount.getPreviewChannel(), mount.getChannel());
@@ -198,8 +198,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void componentsConfigurationLoadedLazilyUnlessPresentInCache() throws Exception {
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -222,8 +222,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         // we now invalidate the hst:hosts node by an explicit event
         invalidator.eventPaths(new String[]{"/hst:hst/hst:hosts"});
 
-        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         assertNotSame(mountAfter1, mount1);
         assertNotSame(mountAfter2, mount2);
@@ -252,8 +252,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Test
     public void sitemapLoadedLazily() throws Exception {
 
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -277,8 +277,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void locationMapLoadedLazily() throws Exception {
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -302,8 +302,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void siteMapItemHandlersLoadedLazilyAndInstancesShared() throws Exception {
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -323,8 +323,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
     @Test
     public void siteMapItemHandlersLoadedLazilyUnlessPresentInCache() throws Exception {
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -347,8 +347,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         // we now invalidate the hst:hosts node by an explicit event
         invalidator.eventPaths(new String[]{"/hst:hst/hst:hosts"});
 
-        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mountAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mountAfter2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         assertNotSame(mountAfter1, mount1);
         assertNotSame(mountAfter2, mount2);
@@ -376,8 +376,8 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     @Test
     public void sitemenusLoadedLazily() throws Exception {
 
-        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
-        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test", "/site", "/");
+        final ResolvedMount mount1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
+        final ResolvedMount mount2 = hstManager.getVirtualHosts().matchMount("m.unit.test",  "/");
 
         final HstSiteService hstSite1 = (HstSiteService) mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService) mount2.getMount().getHstSite();
@@ -501,7 +501,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
             // nonetheless because the mount can have valid child mounts
             try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(MountService.class).build()) {
-                final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/unittestproject-branchid-000");
+                final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost",  "/unittestproject-branchid-000");
                 assertNull(resolvedMount.getMount().getHstSite());
                 // assert we had a warning about incorrectly configured channel
                 assertTrue(interceptor.messages().anyMatch(m -> m.contains("Configured Mount '/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/unittestproject-branchid-000' is incorrect")));
@@ -572,7 +572,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             ModifiableRequestContextProvider.set(ctx);
 
-            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "");
+            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost",  "");
             Channel channel = resolvedMount.getMount().getChannel();
             assertSame(channel, resolvedMount.getMount().getHstSite().getChannel());
             assertSame("Expected that the branch channel would be matched returned due to custom channel mngr hst site provider",
@@ -611,7 +611,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             // now assert that the resolved mount for unittestproject-branchid-000 has a HstSite that is null because
             // a hst:site is not allowed to point to a branch. Note that the mount 'unittestproject-branchid-000' is added
             // nonetheless because the mount can have valid child mounts
-            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "");
+            final ResolvedMount resolvedMount = hstManager.getVirtualHosts().matchMount("localhost",  "");
             Channel channel = resolvedMount.getMount().getChannel();
             assertSame(channel, resolvedMount.getMount().getHstSite().getChannel());
 

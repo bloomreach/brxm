@@ -577,9 +577,15 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             return delegatee.isHstFilterExcludedPath(pathInfo);
         }
 
+        @Deprecated
         @Override
         public ResolvedMount matchMount(final String hostName, final String contextPath, final String requestPath) throws MatchException {
-            final ResolvedMount resolvedMount = delegatee.matchMount(hostName, contextPath, requestPath);
+            return matchMount(hostName, requestPath);
+        }
+
+        @Override
+        public ResolvedMount matchMount(final String hostName, final String requestPath) throws MatchException {
+            final ResolvedMount resolvedMount = delegatee.matchMount(hostName, requestPath);
             return decoratedResolvedMount(resolvedMount);
         }
 
@@ -784,9 +790,15 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             return new PreviewDecoratedVirtualHost(delegatee.getVirtualHost());
         }
 
+        @Deprecated
         @Override
         public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
-            final ResolvedMount resolvedMount = delegatee.matchMount(contextPath, requestPath);
+            return matchMount(requestPath);
+        }
+
+        @Override
+        public ResolvedMount matchMount(final String requestPath) throws MatchException {
+            final ResolvedMount resolvedMount = delegatee.matchMount(requestPath);
             return decoratedResolvedMount(resolvedMount);
         }
     }

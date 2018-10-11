@@ -85,7 +85,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
     @Test
     public void test_plain_sitemap_without_workspace_sitemap() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertTrue(siteMap instanceof CanonicalInfo);
@@ -114,7 +114,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
 
@@ -142,7 +142,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
 
@@ -180,7 +180,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
 
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
 
@@ -211,7 +211,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/news");
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
 
@@ -244,7 +244,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/home");
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
 
@@ -261,7 +261,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
         saveSession();
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertNull(siteMap.getSiteMapItem("home"));
@@ -426,7 +426,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
     @Test
     public void marked_deleted_nodes_are_part_of_hst_model_but_ignored_while_matching() throws Exception {
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         ResolvedSiteMapItem matchedItemForHomePage = mount.matchSiteMapItem("/");
         ResolvedSiteMapItem matchedItemForNewsFoo = mount.matchSiteMapItem("/news/foo");
         assertEquals("home", matchedItemForHomePage.getHstSiteMapItem().getId());
@@ -445,7 +445,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         saveSession();
         invalidator.eventPaths(pathsToBeChanged);
 
-        mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertNotNull(siteMap.getSiteMapItem("home"));
@@ -467,7 +467,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         news.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
         saveSession();
 
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
         final HstSite hstSite = mount.getMount().getHstSite();
         final HstSiteMap siteMap = hstSite.getSiteMap();
         assertTrue(siteMap.getSiteMapItem("news").isMarkedDeleted());

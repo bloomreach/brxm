@@ -180,7 +180,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                HstRequestUtils.getRequestPath(containerRequest));
 
         setHstServletPath(containerRequest, mount);
         return hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
@@ -188,7 +188,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getRequestPath());
         return resolvedMount.matchSiteMapItem(url.getPathInfo());
     }
 

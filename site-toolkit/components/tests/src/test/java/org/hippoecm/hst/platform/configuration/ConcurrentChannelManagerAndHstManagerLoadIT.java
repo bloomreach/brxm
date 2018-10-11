@@ -204,10 +204,10 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 
 				// ASYNC load
 				final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
-				String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
+				String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost",  "").getMount().getProperty(TEST_PROP);
 				// SYNC load
 				final VirtualHosts syncHosts = hstManager.getVirtualHosts();
-				String testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
+				String testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost",  "").getMount().getProperty(TEST_PROP);
 
 				assertTrue("Expectation failed in run '"+i+"' : Expected value was '"+nextVal+"' but found" +
 						" value was '"+testPropOfSyncLoadedHosts+"'. ",testPropOfSyncLoadedHosts.equals(nextVal));
@@ -329,10 +329,10 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 									result.testPropAfterChange = nextVal;
 									// ASYNC load
 									final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
-									result.testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
+									result.testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost",  "").getMount().getProperty(TEST_PROP);
 									// SYNC load
 									final VirtualHosts syncHosts = hstManager.getVirtualHosts();
-									result.testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost","/site", "").getMount().getProperty(TEST_PROP);
+									result.testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost", "").getMount().getProperty(TEST_PROP);
 
 									return result;
 								}

@@ -87,7 +87,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // mount2 inherits it via unittestsubproject from /unittestcommon
         final String mainUnitTestProjectMenuIdentifier;
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertEquals(1, unitTestProjectMenus.size());
@@ -101,7 +101,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         final String mainUnitTestSubProjectMenuIdentifier;
 
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/subsite");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestSubProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertEquals(1, unitTestSubProjectMenus.size());
@@ -124,7 +124,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
 
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertEquals(1, unitTestProjectMenus.size());
@@ -161,7 +161,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
@@ -188,7 +188,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         saveSession();
         // unittestproject sitemenu 'footer' should now be loaded from 'hst:workspace' but 'main' not from workspace
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertEquals(2, unitTestProjectMenus.values().size());
@@ -235,7 +235,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // nothing changed to own unittestproject sitemenu : BECAUSE IT HAS OWN sitemenus IT DOES NOT INHERIT FROM 'common workspace' the
         // 'footer; item
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
@@ -255,7 +255,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         // subproject should NOT have the menu from inherited hst:workspace even though it has NO own hst:sitemenu : by default,
         // hst:workspace is not inherited
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/subsite");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestSubProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertTrue(unitTestSubProjectMenus.values().isEmpty());
@@ -274,7 +274,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         // unittestproject sitemenu should now be loaded from 'hst:workspace'
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
@@ -299,7 +299,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
 
         // unittestproject sitemenu should now be loaded from 'unittestproject/hst:workspace'
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
@@ -325,7 +325,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
 
         {
-            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/");
+            ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/");
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             assertTrue(unitTestProjectMenus.values().isEmpty());
@@ -335,7 +335,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
     @Test
     public void test_workspace_and_non_workspace_menu_duplicate_nodes_skips_workspace_nodes() throws Exception {
 
-        ResolvedMount beforeMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
+        ResolvedMount beforeMount = hstManager.getVirtualHosts().matchMount("localhost", "/subsite");
         final HstSite beforeSite = beforeMount.getMount().getHstSite();
         final Map<String,HstSiteMenuConfiguration> beforeMenus = beforeSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
 
@@ -351,7 +351,7 @@ public class HstMenuModelsIT extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
 
         // reloading and them fetching menu again should result in exact same menu as before
-        ResolvedMount afterMount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/subsite");
+        ResolvedMount afterMount = hstManager.getVirtualHosts().matchMount("localhost",  "/subsite");
         final HstSite afterSite = afterMount.getMount().getHstSite();
         final Map<String,HstSiteMenuConfiguration> afterMenus = afterSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
 

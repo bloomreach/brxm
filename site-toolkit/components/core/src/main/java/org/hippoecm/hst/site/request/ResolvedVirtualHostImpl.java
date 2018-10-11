@@ -49,36 +49,42 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
         return virtualHost;
     }
 
+    @Deprecated
+    @Override
     public ResolvedMount matchMount(String contextPath, String requestPath) throws MatchException {
-        
+        return matchMount(requestPath);
+    }
+
+    @Override
+    public ResolvedMount matchMount(final String requestPath) throws MatchException {
         if(portMount.getRootMount() == null) {
-            log.error("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber())); 
+            log.error("Virtual Host '{}' for portnumber '{}' is not (correctly) mounted: We cannot return a ResolvedMount. Return null", virtualHost.getHostName(), String.valueOf(portMount.getPortNumber()));
             return null;
         }
-        
+
         // strip leading and trailing slashes
         String path = PathUtils.normalizePath(requestPath);
-        
+
         String matchingIgnoredPrefix = null;
         // check whether the requestPath starts with the cmsPreviewPrefix path: If so, first strip this prefix off and append it later to the resolvedMountPath
 
         // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
         if(!StringUtils.isEmpty(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
-           if (path.equals(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
-               matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
-               path = "";
-           } else if (path.startsWith(virtualHost.getVirtualHosts().getCmsPreviewPrefix() + "/")){
-               matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
-               path = path.substring(virtualHost.getVirtualHosts().getCmsPreviewPrefix().length() +1);
-           }
+            if (path.equals(virtualHost.getVirtualHosts().getCmsPreviewPrefix())) {
+                matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
+                path = "";
+            } else if (path.startsWith(virtualHost.getVirtualHosts().getCmsPreviewPrefix() + "/")){
+                matchingIgnoredPrefix = virtualHost.getVirtualHosts().getCmsPreviewPrefix();
+                path = path.substring(virtualHost.getVirtualHosts().getCmsPreviewPrefix().length() +1);
+            }
         }
-        
+
         String[] requestPathSegments = path.split("/");
 
         int position = 0;
-        
+
         Mount mount = portMount.getRootMount();
-        
+
         while(position < requestPathSegments.length) {
             if(mount.getChildMount(requestPathSegments[position]) != null) {
                 mount = mount.getChildMount(requestPathSegments[position]);
@@ -89,12 +95,6 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
             position++;
         }
 
-        if (!contextPath.equals(mount.getContextPath())) {
-            log.info("Context path '{}' from the mount '{}' does not match the context path '{}' from the request.",
-                    mount.getContextPath(), mount, contextPath);
-            return null;
-        }
-
         // reconstruct the prefix that needs to be stripped of from the request because it belongs to the Mount
         // we thus create the resolvedPathInfoPrefix
         StringBuilder builder = new StringBuilder();
@@ -102,10 +102,10 @@ public class ResolvedVirtualHostImpl implements ResolvedVirtualHost {
             builder.insert(0,requestPathSegments[--position]).insert(0,"/");
         }
         String resolvedMountPath = builder.toString();
-        
+
         ResolvedMount resolvedMount = new ResolvedMountImpl(mount, this , resolvedMountPath, matchingIgnoredPrefix, portMount.getPortNumber());
         log.debug("Found ResolvedMount is '{}' and the mount prefix for it is :", resolvedMount.getResolvedMountPath());
-        
+
         return resolvedMount;
     }
 }

@@ -45,7 +45,7 @@ public class HstDefaultSiteWebMapFilesIT extends AbstractTestConfigurations {
 
     @Test
     public void default_sitemap_item_web_files() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/webfiles/534635623/styles/style.css");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost",  "/webfiles/534635623/styles/style.css");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/webfiles/534635623/styles/style.css");
 
         assertEquals("webfiles/_default_/_any_", HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));

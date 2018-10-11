@@ -291,14 +291,14 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
 
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                HstRequestUtils.getRequestPath(containerRequest));
         setHstServletPath(containerRequest, mount);
         return hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
     }
 
     public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getRequestPath());
         final Mount decorated = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());
         ((MutableResolvedMount) resolvedMount).setMount(decorated);
         return resolvedMount.matchSiteMapItem(url.getPathInfo());

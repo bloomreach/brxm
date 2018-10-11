@@ -481,7 +481,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     }
 
+    @Deprecated
     public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
+        return matchMount(hostName, requestPath);
+    }
+
+
+    public ResolvedMount matchMount(String hostName, String requestPath) throws MatchException {
         Task matchingTask = null;
         try {
             if (HDC.isStarted()) {
@@ -490,7 +496,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
             ResolvedMount resolvedMount = null;
             if(resolvedVirtualHost != null) {
-                resolvedMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
+                resolvedMount  = resolvedVirtualHost.matchMount(requestPath);
             }
             return resolvedMount;
         } finally {

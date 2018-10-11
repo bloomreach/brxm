@@ -31,21 +31,25 @@ public interface ResolvedVirtualHost {
     VirtualHost getVirtualHost();
 
     /**
-     * <p> This method tries to match the current {@link ResolvedVirtualHost} for
-     * contextPath and requestPath to a flyweight {@link ResolvedMount}.
-     * If {@link org.hippoecm.hst.configuration.hosting.Mount#getContentPath()} ()} returns a non-null value,
-     * the {@link Mount} can only match for the request if the {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     * is equal to {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()}. Note that the ROOT.war matches
-     * to a {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()} equal to empty String. When {@link
-     * Mount#getContextPath()} returns <code>null</code> the {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     * is ignored for matching. </p>
-     *
      * @param contextPath the contextPath of the {@link javax.servlet.http.HttpServletRequest}
      * @param requestPath
      * @return the {@link ResolvedMount} for this hstContainerUrl or <code>null</code> when it can not be matched to a
      *         {@link Mount}
      * @throws MatchException
+     * @deprecated since 13.0.0. Use {@link #matchMount(String)} instead. The {@code contextPath} is not used any more
      */
     ResolvedMount matchMount(String contextPath, String requestPath)  throws MatchException;
+
+
+    /**
+     * <p> This method tries to match the current {@link ResolvedVirtualHost} for the requestPath to a
+     * flyweight {@link ResolvedMount}.
+     *
+     * @param requestPath
+     * @return the {@link ResolvedMount} for this hstContainerUrl or <code>null</code> when it can not be matched to a
+     *         {@link Mount}
+     * @throws MatchException
+     */
+    ResolvedMount matchMount(String requestPath)  throws MatchException;
     
 }

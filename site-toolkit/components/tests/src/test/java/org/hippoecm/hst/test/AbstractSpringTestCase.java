@@ -225,7 +225,7 @@ public abstract class AbstractSpringTestCase
         requestContext.setServletRequest(request);
         requestContext.setServletResponse(response);
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
-        ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
+        ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), HstRequestUtils.getRequestPath(request));
         requestContext.setResolvedMount(mount);
         // now we can parse the url *with* a RESOLVED_MOUNT which is needed!        
         HstURLFactory factory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());

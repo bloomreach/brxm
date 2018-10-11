@@ -61,7 +61,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
 
     @Test
     public void test_hstManager_basic() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         assertNotNull(mount);
         final HstSite hstSite = mount.getMount().getHstSite();
         assertNotNull(hstSite);
@@ -78,7 +78,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             backupHstConfig(remoteSession);
             // first load model
             final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
-            ResolvedMount resMount = virtualHosts.matchMount("www.unit.test", "/site", "/");
+            ResolvedMount resMount = virtualHosts.matchMount("www.unit.test",  "/");
             assertEquals("www.unit.test", resMount.getMount().getVirtualHost().getHostName());
 
             assertEquals(0, hstManager.getMarkStaleCounter());
@@ -96,7 +96,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             assertFalse(localSession.nodeExists("/hst:hst/hst:hosts/testgroup"));
             // since we removed the hostname "www.unit.test" which is part of the 'testgroup' we now expect
             // the default (localhost) hostname to be matched
-            ResolvedMount resMountAfter = hstManager.getVirtualHosts().matchMount("www.unit.test", "/site", "/");
+            ResolvedMount resMountAfter = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
             assertEquals(1, hstManager.getMarkStaleCounter());
             assertEquals("localhost", resMountAfter.getMount().getVirtualHost().getHostName());
 
@@ -132,7 +132,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 // first load model
                 final VirtualHosts hostsBefore = hstManager.getVirtualHosts();
                 {
-                    ContextualizableMount mount = (ContextualizableMount)hostsBefore.matchMount("localhost", "/site", "/").getMount();
+                    ContextualizableMount mount = (ContextualizableMount)hostsBefore.matchMount("localhost", "/").getMount();
                     assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                     validateMount(mount, false);
@@ -157,7 +157,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 assertFalse(hostsAfter == hostsBefore);
 
                 {
-                    ContextualizableMount mount = (ContextualizableMount) hostsAfter.matchMount("localhost", "/site", "/").getMount();
+                    ContextualizableMount mount = (ContextualizableMount) hostsAfter.matchMount("localhost",  "/").getMount();
                     validateMount(mount, true);
                     validatePreviewConfiguration(mount, true);
                     // clean up preview again
@@ -300,7 +300,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             // first load model
             VirtualHosts currentHosts = hstManager.getVirtualHosts();
             {
-                ContextualizableMount mount = (ContextualizableMount)currentHosts.matchMount("localhost", "/site", "/").getMount();
+                ContextualizableMount mount = (ContextualizableMount)currentHosts.matchMount("localhost",  "/").getMount();
                 assertEquals("/hst:hst/hst:configurations/unittestproject/hst:channel", mount.getChannel().getChannelPath());
 
                 validateMount(mount, false);

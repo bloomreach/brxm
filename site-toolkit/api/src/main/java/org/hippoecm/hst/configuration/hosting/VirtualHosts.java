@@ -50,24 +50,28 @@ public interface VirtualHosts {
     boolean isHstFilterExcludedPath(String pathInfo);
 
     /**
-     * <p> This method tries to match a hostName, contextPath and requestPath to a flyweight {@link ResolvedMount}. It
+     * @throws MatchException
+     * @deprecated Since 13.0.0. Use {@link #matchMount(String, String)} instead. The {@code contextPath is not used any
+     * more in 13.0.0.
+     */
+    @Deprecated
+    ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException;
+
+    /**
+     * <p> This method tries to match a hostName and requestPath to a flyweight {@link ResolvedMount}. It
      * does so, by first trying to match the correct {@link ResolvedVirtualHost}. If it does find a {@link
      * ResolvedVirtualHost}, the match is delegated to {@link ResolvedVirtualHost#matchMount(String, String)}, which
      * returns the {@link ResolvedMount}. If somewhere in the chain a match cannot be made, <code>null</code> will be
-     * returned. If {@link org.hippoecm.hst.configuration.hosting.Mount#getContentPath()} ()} returns a non-null value,
-     * the {@link Mount} can only match for the request if the {@link javax.servlet.http.HttpServletRequest#getContextPath()}
-     * is equal to {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()}. Note that the ROOT.war matches
-     * to a {@link org.hippoecm.hst.configuration.hosting.Mount#getContextPath()} equal to empty String.
+     * returned.
      * </p>
      *
      * @param hostName
-     * @param contextPath the contextPath of the {@link javax.servlet.http.HttpServletRequest}
      * @param requestPath
      * @return the {@link ResolvedMount} for this hstContainerUrl or <code>null</code> when it can not be matched to a
      *         {@link Mount}
      * @throws MatchException
      */
-    ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException;
+    ResolvedMount matchMount(String hostName, String requestPath) throws MatchException;
 
     /**
      * <p>

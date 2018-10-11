@@ -213,7 +213,7 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                containerRequest.getContextPath(), HstRequestUtils.getRequestPath(containerRequest));
+                HstRequestUtils.getRequestPath(containerRequest));
 
         if (mount.getMatchingIgnoredPrefix() != null) {
             containerRequest.setServletPath("/" + mount.getMatchingIgnoredPrefix() + mount.getResolvedMountPath());
@@ -271,7 +271,7 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
         final HstManager hstManager = siteComponentManager.getComponent(HstManager.class.getName());
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getContextPath(), url.getRequestPath());
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getRequestPath());
         final PreviewDecorator previewDecorator = platformComponentManager.getComponent(PreviewDecorator.class);
 
         final Mount decorated = previewDecorator.decorateMountAsPreview(resolvedMount.getMount());

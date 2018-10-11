@@ -551,8 +551,14 @@ public class HstLinkImpl implements HstLink {
                     return mount.getVirtualHost();
                 }
 
+                @Deprecated
                 @Override
                 public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
+                    return resolvedMountForLink;
+                }
+
+                @Override
+                public ResolvedMount matchMount(final String requestPath) throws MatchException {
                     return resolvedMountForLink;
                 }
 

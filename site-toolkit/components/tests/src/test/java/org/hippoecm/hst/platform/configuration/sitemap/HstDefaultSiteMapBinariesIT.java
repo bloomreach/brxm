@@ -48,7 +48,7 @@ public class HstDefaultSiteMapBinariesIT extends AbstractTestConfigurations {
 
     @Test
     public void default_sitemap_item_binaries() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/site", "/binaries/content/assets/themes/css/green.css");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "/binaries/content/assets/themes/css/green.css");
         final ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem("/binaries/content/assets/themes/css/green.css");
 
         assertEquals("binaries/_any_", HstSiteMapUtils.getPath(resolvedSiteMapItem.getHstSiteMapItem()));
