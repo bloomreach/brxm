@@ -649,30 +649,13 @@ describe('ComponentEditorService', () => {
       expect(result).toBe(showPromise);
     });
 
-    it('reopens the component to discard changes', () => {
-      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
-      ComponentEditor.discardChanges();
-      expect(ComponentEditor.reopen).toHaveBeenCalled();
-    });
-
-    it('redraws the component when discarding changes succeeded', () => {
-      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'renderComponent');
+    it('reloads the page', () => {
+      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
 
       ComponentEditor.discardChanges();
       $rootScope.$digest();
 
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
-    });
-
-    it('redraws the component when discarding changes failed', () => {
-      spyOn(ComponentEditor, 'open').and.returnValue($q.reject());
-      spyOn(PageStructureService, 'renderComponent');
-
-      ComponentEditor.discardChanges();
-      $rootScope.$digest();
-
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith(testData.component.id);
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 
@@ -725,15 +708,15 @@ describe('ComponentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('redraws the component when the dialog resolves with "DISCARD"', (done) => {
-        spyOn(PageStructureService, 'renderComponent');
+      it('discards the changes when the dialog resolves with "DISCARD"', (done) => {
+        spyOn(ComponentEditor, 'discardChanges');
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
           .then((action) => {
             expect(action).toBe('DISCARD');
-            expect(PageStructureService.renderComponent).toHaveBeenCalled();
+            expect(ComponentEditor.discardChanges).toHaveBeenCalled();
             expect(ComponentEditor.save).not.toHaveBeenCalled();
             done();
           });
@@ -764,14 +747,14 @@ describe('ComponentEditorService', () => {
         $rootScope.$digest();
       });
 
-      it('redraws the component when the dialog resolves with "DISCARD" and does not save', (done) => {
-        spyOn(PageStructureService, 'renderComponent');
+      it('discards the changes when the dialog resolves with "DISCARD" and does not save', (done) => {
+        spyOn(ComponentEditor, 'discardChanges');
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(false)
           .then(() => {
-            expect(PageStructureService.renderComponent).toHaveBeenCalled();
+            expect(ComponentEditor.discardChanges).toHaveBeenCalled();
             expect(ComponentEditor.save).not.toHaveBeenCalled();
             done();
           });
