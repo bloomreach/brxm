@@ -70,11 +70,6 @@ c     */
      * @return the contextPath of the current webapp
      */
     String getContextPath();
-    
-    /**
-     * @return the {@link List} of {@link HstConfigurationAugmenter}s and empty list if no providers available.
-     */
-    List<HstConfigurationAugmenter> getHstConfigurationAugmenters();
 
     /**
      * marks that the hst model is dirty

@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
@@ -175,9 +176,17 @@ public class HstModelImpl implements PlatformHstModel {
     }
 
     private void augment(final VirtualHostsService virtualHosts) throws ContainerException {
-        List<HstConfigurationAugmenter> configurationAugmenters = websiteComponentManager.getComponent(HstManager.class).getHstConfigurationAugmenters();
-        for (HstConfigurationAugmenter configurationAugmenter : configurationAugmenters) {
-            configurationAugmenter.augment(virtualHosts);
+
+        try {
+            List<HstConfigurationAugmenter> configurationAugmenters =
+                    websiteComponentManager.getComponent("org.hippoecm.hst.pagecomposer.jaxrs.customMountAndVirtualCmsHostAugmenters",
+                            "org.hippoecm.hst.pagecomposer");
+
+            for (HstConfigurationAugmenter configurationAugmenter : configurationAugmenters) {
+                configurationAugmenter.augment(virtualHosts);
+            }
+        } catch (ModuleNotFoundException e) {
+            log.debug("Currently loaded model does not have the page composer (host augmenters)");
         }
     }
 

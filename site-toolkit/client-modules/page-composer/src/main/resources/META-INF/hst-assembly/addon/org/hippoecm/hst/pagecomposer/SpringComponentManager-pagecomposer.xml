@@ -301,16 +301,16 @@
     </property>
   </bean>
 
-  <bean class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
-    <constructor-arg value="java.lang.Void" />
-    <property name="targetObject" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-    <property name="targetMethod" value="addHstConfigurationAugmenter"/>
-    <property name="arguments">
-      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.hosting.CustomMountAndVirtualCmsHostAugmenter">
-        <property name="mountName" value="_rp"/>
-        <property name="mountType" value="composer"/>
-        <property name="mountNamedPipeline" value="ComposerPipeline"/>
-      </bean>
+  <!-- Custom channel manager event listeners in the following may be overriden in their project specific assembly. -->
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.customMountAndVirtualCmsHostAugmenters" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.hosting.CustomMountAndVirtualCmsHostAugmenter">
+          <property name="mountName" value="_rp"/>
+          <property name="mountType" value="composer"/>
+          <property name="mountNamedPipeline" value="ComposerPipeline"/>
+        </bean>
+      </list>
     </property>
   </bean>
 

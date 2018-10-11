@@ -124,19 +124,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         return hstModelProvider.getHstModel().getHstSiteMapMatcher();
     }
 
-    @Override
-    public List<HstConfigurationAugmenter> getHstConfigurationAugmenters() {
-        return hstConfigurationAugmenters;
-    }
-
-    /**
-     * Adds <code>hstConfigurationProvider</code> to {@link #hstConfigurationAugmenters}
-     * @param augmenter
-     */
-    public void addHstConfigurationAugmenter(HstConfigurationAugmenter augmenter) {
-        hstConfigurationAugmenters.add(augmenter);
-    }
-    
     public String getPathSuffixDelimiter() {
         return pathSuffixDelimiter;
     }
