@@ -738,6 +738,8 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
 
         moveTemplatesFromCommonToUnitTestProject();
         session.save();
+        // some time for the jcr events to arrive
+        Thread.sleep(100);
         crossChannelCopyNewsOverview(MountAction.NOOP);
         final String previewWorkspacePagesPath = "/hst:hst/hst:configurations/unittestsubproject-preview/hst:workspace/hst:pages";
         assertTrue(session.nodeExists(previewWorkspacePagesPath+ "/copy"));
