@@ -29,6 +29,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -43,6 +44,7 @@ public class PageComposerContextService {
 
     public static final String LIVE_EDITING_HST_MODEL_ATTR = PageComposerContextService.class.getName() + ".live";
     public static final String PREVIEW_EDITING_HST_MODEL_ATTR = PageComposerContextService.class.getName() + ".preview";
+    public static final String  EDITING_HST_MODEL_LINK_CREATOR_ATTR = PageComposerContextService.class.getName() + ".linkcreator";
 
     public HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
@@ -149,6 +151,10 @@ public class PageComposerContextService {
             throw new IllegalStateException(msg);
         }
         return mount;
+    }
+
+    public HstLinkCreator getEditingMountLinkCreator() {
+        return (HstLinkCreator) getRequestContext().getAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR);
     }
 
     /**

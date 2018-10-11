@@ -33,7 +33,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
@@ -184,10 +183,8 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
             setType(Type.FOLDER.getName());
         }
 
-
-        final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
-        final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
-
+        // get link creator for mount that is currently viewed in the channel mgr
+        final HstLinkCreator linkCreator =  pageComposerContextService.getEditingMountLinkCreator();
         final Mount editingMount = pageComposerContextService.getEditingMount();
         final HstLink hstLink = linkCreator.create(node, editingMount);
         if (isFolder(node) && ((HstSiteMapItemService)hstLink.getHstSiteMapItem()).getExtension() != null ) {

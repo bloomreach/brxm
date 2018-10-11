@@ -69,6 +69,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDERING_HOST;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 import static org.onehippo.cms7.services.cmscontext.CmsSessionContext.SESSION_KEY;
 
 public class AbstractPageComposerTest extends AbstractComponentManagerTest {
@@ -167,8 +170,9 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
         final PlatformHstModel liveHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModel);
         final PlatformHstModel previewHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
 
-        requestContext.setAttribute(PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
-        requestContext.setAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
+        requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
+        requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
+        requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
 
         requestContext.getServletRequest().setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ModifiableRequestContextProvider.set(requestContext);

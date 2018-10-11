@@ -100,7 +100,6 @@ public class AbstractTestTreePickerRepresentation extends AbstractPageComposerTe
     protected void mockNewRequest(Session jcrSession, String host, String pathInfo, final String requestConfigContentIdentifier) throws Exception {
         final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(host, pathInfo);
          ((HstMutableRequestContext) ctx).setSession(jcrSession);
-        ((HstMutableRequestContext) ctx).setLinkCreator(HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName()));
         ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, requestConfigContentIdentifier);
     }
 

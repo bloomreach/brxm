@@ -39,7 +39,6 @@ public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
     public void setUp() throws Exception {
         super.setUp();
         this.objectConverter = getObjectConverter();
-        // TODO link creator cannot be fetched via spring component any more
         this.linkCreator = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site").getHstLinkCreator();
         this.hstManager = getComponent(HstManager.class.getName());
     }

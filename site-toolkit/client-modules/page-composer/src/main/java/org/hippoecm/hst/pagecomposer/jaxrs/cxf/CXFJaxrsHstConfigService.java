@@ -51,6 +51,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_MOUNT;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 
 public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
@@ -119,12 +122,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             // instead of for the contextPath for the current request
             final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
             final PlatformHstModel liveHstModel = (PlatformHstModel)hstModelRegistry.getHstModel(contextPath);
+            if (liveHstModel == null) {
+                throw new IllegalArgumentException(String.format("Cannot find an hst model for context path '%s'", contextPath));
+            }
+            requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
 
             final PlatformHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
             final PlatformHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
 
-            requestContext.setAttribute(PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
-            requestContext.setAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
+            requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
+            requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
 
 
             // we need the HST configuration user jcr session since some CMS user sessions (for example authors) typically
