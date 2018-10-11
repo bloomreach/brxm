@@ -24,24 +24,38 @@
  */
 (function () {
   "use strict";
-  var region, pickerList, pickerListDetails, pickerListDatatable,
-    minimumDialogWidth, minimumDialogHeight, deltaWidth, deltaHeight, defaultExpansion = 1, oppositeExpansion = -1,
-    oldWindowInitialize, oldWindowBindInit, oldWindowBindClean, oldShow,
-    oldOnResizeBottomRight, oldOnResizeBottomLeft, oldOnResizeBottom, oldOnResizeLeft, oldOnResizeRight,
-    oldOnResizeTopRight, oldOnResizeTopLeft, oldOnResizeTop;
+  var
+    region,
+    pickerList,
+    pickerListDetails,
+    pickerListDatatable,
+    minimumDialogWidth,
+    minimumDialogHeight,
+    deltaWidth,
+    deltaHeight,
+    defaultExpansion = 1,
+    oppositeExpansion = -1,
+    _super = {};
 
-  oldOnResizeBottomRight = Wicket.Window.prototype.onResizeBottomRight;
-  oldOnResizeBottomLeft = Wicket.Window.prototype.onResizeBottomLeft;
-  oldOnResizeBottom = Wicket.Window.prototype.onResizeBottom;
-  oldOnResizeLeft = Wicket.Window.prototype.onResizeLeft;
-  oldOnResizeRight = Wicket.Window.prototype.onResizeRight;
-  oldOnResizeTopRight = Wicket.Window.prototype.onResizeTopRight;
-  oldOnResizeTopLeft = Wicket.Window.prototype.onResizeTopLeft;
-  oldOnResizeTop = Wicket.Window.prototype.onResizeTop;
+  [
+   'initialize',
+   'bindInit',
+   'bindClean',
+   'show',
+   'onResizeBottomRight',
+   'onResizeBottomLeft',
+   'onResizeBottom',
+   'onResizeLeft',
+   'onResizeRight',
+   'onResizeTopRight',
+   'onResizeTopLeft',
+   'onResizeTop'
+  ].forEach(function(property) {
+    _super[property] = Wicket.Window.prototype[property];
+  });
 
-  oldWindowInitialize = Wicket.Window.prototype.initialize;
   Wicket.Window.prototype.initialize = function () {
-    oldWindowInitialize.apply(this, arguments);
+    _super.initialize.apply(this, arguments);
     this.settings.isFullscreen = false;
 
     this.event = {
@@ -77,42 +91,42 @@
   };
 
   Wicket.Window.prototype.onResizeLeft = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, 0, oldOnResizeLeft, oppositeExpansion, defaultExpansion);
+    this.resize(object, deltaX, 0, _super.onResizeLeft, oppositeExpansion, defaultExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeTop = function (object, deltaX, deltaY) {
-    this.resize(object, 0, deltaY, oldOnResizeTop, defaultExpansion, oppositeExpansion);
+    this.resize(object, 0, deltaY, _super.onResizeTop, defaultExpansion, oppositeExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeRight = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, 0, oldOnResizeRight, defaultExpansion, defaultExpansion);
+    this.resize(object, deltaX, 0, _super.onResizeRight, defaultExpansion, defaultExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeBottom = function (object, deltaX, deltaY) {
-    this.resize(object, 0, deltaY, oldOnResizeBottom, defaultExpansion, defaultExpansion);
+    this.resize(object, 0, deltaY, _super.onResizeBottom, defaultExpansion, defaultExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeTopLeft = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, deltaY, oldOnResizeTopLeft, oppositeExpansion, oppositeExpansion);
+    this.resize(object, deltaX, deltaY, _super.onResizeTopLeft, oppositeExpansion, oppositeExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeTopRight = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, deltaY, oldOnResizeTopRight, defaultExpansion, oppositeExpansion);
+    this.resize(object, deltaX, deltaY, _super.onResizeTopRight, defaultExpansion, oppositeExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeBottomRight = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, deltaY, oldOnResizeBottomRight, defaultExpansion, defaultExpansion);
+    this.resize(object, deltaX, deltaY, _super.onResizeBottomRight, defaultExpansion, defaultExpansion);
     return this.res;
   };
 
   Wicket.Window.prototype.onResizeBottomLeft = function (object, deltaX, deltaY) {
-    this.resize(object, deltaX, deltaY, oldOnResizeBottomLeft, oppositeExpansion, defaultExpansion);
+    this.resize(object, deltaX, deltaY, _super.onResizeBottomLeft, oppositeExpansion, defaultExpansion);
     return this.res;
   };
 
@@ -173,9 +187,8 @@
     this.resizePickerListDatatable();
   };
 
-  oldWindowBindInit = Wicket.Window.prototype.bindInit;
   Wicket.Window.prototype.bindInit = function () {
-    oldWindowBindInit.apply(this, arguments);
+    _super.bindInit.apply(this, arguments);
 
     //register window resize listener
     if (YAHOO.util.Event) {
@@ -183,14 +196,13 @@
     }
   };
 
-  oldWindowBindClean = Wicket.Window.prototype.bindClean;
   Wicket.Window.prototype.bindClean = function () {
     //HippoAjax cleanup hook.
     if (YAHOO.hippo.HippoAjax) {
       YAHOO.hippo.HippoAjax.cleanupElement(this.window);
     }
 
-    oldWindowBindClean.apply(this, arguments);
+    _super.bindClean.apply(this, arguments);
 
     //unregister window resize listener
     if (YAHOO.util.Event) {
@@ -204,9 +216,8 @@
     this.event.resizeFullScreen.unsubscribeAll();
   };
 
-  oldShow = Wicket.Window.prototype.show;
   Wicket.Window.prototype.show = function () {
-    oldShow.apply(this, arguments);
+    _super.show.apply(this, arguments);
     if (this.settings.titleTooltip !== null) {
       this.captionText.setAttribute('title', this.settings.titleTooltip);
     }
