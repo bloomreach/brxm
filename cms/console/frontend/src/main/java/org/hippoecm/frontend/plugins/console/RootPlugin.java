@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class RootPlugin extends RenderPlugin {
 
         add(new Label("pageTitle", getPageTitle(config)));
 
-        final String faviconPath = config.getString("favicon.path", "console-red.ico");
+        final String faviconPath = config.getString("favicon.path", "console-red.png");
         add(new ResourceLink("faviconLink", new PackageResourceReference(RootPlugin.class, faviconPath)));
     }
 
