@@ -259,7 +259,7 @@ class ComponentEditorService {
   }
 
   discardChanges() {
-    return this.HippoIframeService.reload();
+    return this.HippoIframeService.reload().then(this.reopen());
   }
 
   reopen() {
