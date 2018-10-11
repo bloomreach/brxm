@@ -649,8 +649,25 @@ describe('ComponentEditorService', () => {
       expect(result).toBe(showPromise);
     });
 
-    it('reloads the page', () => {
+    it('reopens the component editor to discard changes', () => {
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
+      ComponentEditor.discardChanges();
+      expect(ComponentEditor.reopen).toHaveBeenCalled();
+    });
+
+    it('reloads the page when discarding changes succeeded', () => {
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'reopen').and.returnValue($q.resolve());
+
+      ComponentEditor.discardChanges();
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('reloads the page when discarding changes failed', () => {
+      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
+      spyOn(ComponentEditor, 'open').and.returnValue($q.reject());
 
       ComponentEditor.discardChanges();
       $rootScope.$digest();
