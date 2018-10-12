@@ -78,6 +78,9 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     private void deleteBranches(final HstRequestContext requestContext, final Channel master) throws RepositoryException, HstConfigurationException {
 
         // we only need to check for branches WITHIN the HstModel of the channel that is current being removed!
+        // this happens to work, since deleting a channel is always done after opening a channel! If however we'd support
+        // deleting a channel from the channel mgr overview, we'd not have the channel open (editing mount be null) and
+        // below would fail. For now it works
         final VirtualHost virtualHost = pageComposerContextService.getEditingMount().getVirtualHost();
         final VirtualHosts virtualHosts = virtualHost.getVirtualHosts();
 

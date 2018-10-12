@@ -211,6 +211,11 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
         }
 
+        // delete channel happens to occur always when you have a channel open hence below works
+        // since org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl.getChannel() uses
+        // getEditingPreviewVirtualHosts(). However if we'd support deleting a channel from the channel mgr overview,
+        // below would not work and we'd need similar logic to getChannel() above using the model registry and the
+        // contextPath header!
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
             final Session session = hstRequestContext.getSession();
