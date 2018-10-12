@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
@@ -36,6 +37,7 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.junit.Assert.assertThat;
 
@@ -77,11 +79,14 @@ public class LockHelperTest {
 
         expect(node.isNodeType(MIXINTYPE_HST_EDITABLE)).andReturn(false);
         expect(node.getNodes()).andReturn(nodeIterator);
+        expect(node.getPath()).andStubReturn("/foo");
         expect(nodeIterator.hasNext()).andReturn(true).andReturn(false);
         expect(nodeIterator.next()).andReturn(child);
 
         expect(child.isNodeType(MIXINTYPE_HST_EDITABLE)).andReturn(false);
         expect(child.getNodes()).andReturn(nodeIterator);
+        expect(child.getPath()).andStubReturn("/foo/bar");
+        expect(child.hasProperty(eq(GENERAL_PROPERTY_LOCKED_ON))).andStubReturn(false);
         expect(nodeIterator.hasNext()).andReturn(false);
 
         expect(node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)).andReturn(false).anyTimes();
