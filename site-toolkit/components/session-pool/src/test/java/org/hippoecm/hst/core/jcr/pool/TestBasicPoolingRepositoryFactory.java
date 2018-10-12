@@ -76,6 +76,7 @@ public class TestBasicPoolingRepositoryFactory {
         Session session = poolRepository.login();
         assertNotNull(session);
         session.logout();
+        poolRepository.close();
     }
 
     private void assertPoolProperties(Map<String, String> expectedPropMap, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
