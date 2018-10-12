@@ -404,7 +404,7 @@ public class SiteMenuResourceTest {
         expect(validatorFactory.getHasPreviewConfigurationValidator(pageComposerContextService)).andReturn(validator).anyTimes();
         expect(validatorFactory.getNodePathPrefixValidator(anyObject(String.class), anyObject(String.class), anyObject(String.class))).andReturn(validator).anyTimes();
         expect(validatorFactory.getNotNullValidator(anyObject(), anyObject(ClientError.class))).andReturn(validator).anyTimes();
-        expect(validatorFactory.getSiteMenuItemRepresentationValidator(new PageComposerContextService(), anyObject(Predicate.class), anyObject(SiteMenuItemRepresentation.class))).andReturn(validator).anyTimes();
+        expect(validatorFactory.getSiteMenuItemRepresentationValidator(anyObject(PageComposerContextService.class), anyObject(Predicate.class), anyObject(SiteMenuItemRepresentation.class))).andReturn(validator).anyTimes();
         expect(validatorFactory.getVoidValidator()).andReturn(validator).anyTimes();
         validator.validate(anyObject(HstRequestContext.class));
         expectLastCall().anyTimes();

@@ -32,6 +32,7 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.HstValueType;
@@ -44,9 +45,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
 import org.powermock.api.easymock.PowerMock;
@@ -57,6 +61,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static com.jayway.restassured.http.ContentType.JSON;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -107,6 +112,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
         rootResource.setChannelService(channelService);
 
+
         final Config config = createDefaultConfig(JsonPojoMapperProvider.class)
                 .addServerSingleton(rootResource)
                 .addServerSingleton(helper);
@@ -130,7 +136,8 @@ public class RootResourceTest extends AbstractResourceTest {
                 .andReturn(channelInfoDescription);
         replay(channelService);
 
-        when()
+        given()
+                .header("hostGroup", "dev-localhost")
                 .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=nl")
                 .then()
                 .statusCode(200)
@@ -145,6 +152,7 @@ public class RootResourceTest extends AbstractResourceTest {
                         "i18nResources['field2']", equalTo("Field 2"),
                         "lockedBy", equalTo("tester"),
                         "editable", equalTo(Boolean.TRUE));
+
 
         verify(channelService);
     }
@@ -186,7 +194,8 @@ public class RootResourceTest extends AbstractResourceTest {
                 .andReturn(channelInfoDescription);
         replay(channelService);
 
-        when()
+        given()
+                .header("hostGroup", "dev-localhost")
                 .get(MOCK_REST_PATH + "channels/channel-foo/info")
                 .then()
                 .statusCode(200)
@@ -202,7 +211,9 @@ public class RootResourceTest extends AbstractResourceTest {
                 .andThrow(new ChannelException("unknown error"));
         replay(channelService);
 
-        when()
+
+        given()
+                .header("hostGroup", "dev-localhost")
                 .get(MOCK_REST_PATH + "channels/channel-foo/info?locale=en")
                 .then()
                 .statusCode(500)
@@ -222,7 +233,9 @@ public class RootResourceTest extends AbstractResourceTest {
         expectLastCall();
         replay(channelService);
 
+
         given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .body(channelFoo)
                 .when()
@@ -242,12 +255,13 @@ public class RootResourceTest extends AbstractResourceTest {
         channelFoo.setProperties(properties);
 
         final Capture<Channel> capturedArgument = EasyMock.newCapture();
-        channelService.saveChannel(eq(mockSession), eq("channel-foo"), capture(capturedArgument), "dev-localhost");
+        channelService.saveChannel(eq(mockSession), eq("channel-foo"), capture(capturedArgument), eq("dev-localhost"));
         expectLastCall().andThrow(new IllegalStateException("something is wrong"));
 
         replay(channelService);
 
         given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .body(channelFoo)
                 .when()
@@ -261,30 +275,50 @@ public class RootResourceTest extends AbstractResourceTest {
 
     @Test
     public void cannot_get_non_existent_channel() throws ChannelException {
-        expect(channelService.getChannel("channel-foo", "dev-localhost")).andThrow(new ChannelNotFoundException("channel-foo"));
-        replay(channelService);
 
-        when()
-                .get(MOCK_REST_PATH + "channels/channel-foo")
-                .then()
-                .statusCode(404);
+        final VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
+        expect(virtualHosts.getChannelById(eq("dev-localhost"), eq("channel-non-existing"))).andStubReturn(null);
 
-        verify(channelService);
+        final HstModel hstModel = createNiceMock(HstModel.class);
+
+        final HstModelRegistry hstModelRegistry = createNiceMock(HstModelRegistry.class);
+        expect(hstModelRegistry.getHstModel(eq("/site"))).andStubReturn(hstModel);
+        expect(hstModel.getVirtualHosts()).andStubReturn(virtualHosts);
+
+        EasyMock.replay(virtualHosts, hstModel, hstModelRegistry);
+
+        try {
+            HippoServiceRegistry.register(hstModelRegistry, HstModelRegistry.class);
+
+            given()
+                    .header("contextPath", "/site")
+                    .header("hostGroup", "dev-localhost")
+                    .get(MOCK_REST_PATH + "channels/channel-non-existing")
+                    .then()
+                    .statusCode(404);
+
+        } finally {
+            HippoServiceRegistry.unregister(hstModelRegistry, HstModelRegistry.class);
+        }
+
+        EasyMock.verify(virtualHosts, hstModel, hstModelRegistry);
     }
 
     @Test
     public void delete_channel_will_strip_preview_suffix_of_channelId() throws ChannelException {
+
         EasyMock.expect(channelService.getChannel("channel-foi", "dev-localhost")).andThrow(new ChannelNotFoundException("channel-foi"));
         EasyMock.replay(channelService);
 
-        given()
+       given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .when()
                 .delete(MOCK_REST_PATH + "channels/channel-foi-preview")
                 .then()
                 .statusCode(404);
 
-        EasyMock.verify(channelService);
+       EasyMock.verify(channelService);
     }
 
     @Test
@@ -311,6 +345,7 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService, rootResource);
 
         given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .when()
                 .delete(MOCK_REST_PATH + "channels/channel-foo")
@@ -353,6 +388,7 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .when()
                 .delete(MOCK_REST_PATH + "channels/channel-foo")
@@ -379,6 +415,7 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
+                .header("hostGroup", "dev-localhost")
                 .contentType(JSON)
                 .when()
                 .delete(MOCK_REST_PATH + "channels/channel-foo")
