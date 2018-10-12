@@ -604,7 +604,7 @@ public class Main extends PluginApplication {
 
     @Override
     public ResourceReference getPluginApplicationFavIconReference() {
-        return new PackageResourceReference(Main.class, "hippo-" + getPluginApplicationName() + ".ico");
+        return new PackageResourceReference(Main.class, getPluginApplicationName() + "-icon.png");
     }
 
     @Override
