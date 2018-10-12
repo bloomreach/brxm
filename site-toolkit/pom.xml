@@ -685,7 +685,6 @@
     <module>client-modules</module>
     <module>dependencies</module>
     <module>sandbox</module>
-    <module>integration</module>
   </modules>
 
   <profiles>
