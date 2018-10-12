@@ -49,7 +49,7 @@ public class LoginPlugin extends RenderPlugin {
     public static final String TERMS_AND_CONDITIONS_LINK = "https://www.bloomreach.com/en/about/privacy";
 
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
-            Url.parse("skin/images/hippo-cms.ico"));
+            Url.parse("skin/images/cms-icon.png"));
 
     private static final String EDITION = "edition";
     private static final String AUTOCOMPLETE = "signin.form.autocomplete";
