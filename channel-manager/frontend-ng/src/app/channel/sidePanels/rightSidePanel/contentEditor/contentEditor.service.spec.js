@@ -39,6 +39,7 @@ describe('ContentEditorService', () => {
 
     expect(ContentEditor.getDocument()).toEqual(testDocument);
     expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
+    expect(ContentEditor.getDocumentDisplayName()).toEqual('Test');
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();
     expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     expect(ContentEditor.isEditing()).toBe(true);
@@ -73,6 +74,7 @@ describe('ContentEditorService', () => {
     };
     testDocument = {
       id: 'test',
+      displayName: 'Test',
       info: {
         type: {
           id: 'ns:testdocument',
@@ -239,6 +241,7 @@ describe('ContentEditorService', () => {
           },
           linkToContentEditor: true,
         });
+        expect(ContentEditor.getDocumentDisplayName()).toEqual('Display Name');
       });
 
       it('opens a document with pending invalid changes in the editable document', () => {
@@ -830,6 +833,7 @@ describe('ContentEditorService', () => {
   function expectClear() {
     expect(ContentEditor.getDocument()).toBeUndefined();
     expect(ContentEditor.getDocumentId()).toBeUndefined();
+    expect(ContentEditor.getDocumentDisplayName()).toBeUndefined();
     expect(ContentEditor.getDocumentType()).toBeUndefined();
     expect(ContentEditor.getError()).toBeUndefined();
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();

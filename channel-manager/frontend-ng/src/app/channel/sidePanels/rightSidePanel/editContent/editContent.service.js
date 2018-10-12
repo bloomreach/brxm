@@ -65,15 +65,18 @@ class EditContentService {
   }
 
   _showDefaultTitle() {
-    const defaultTitle = this.$translate.instant('EDIT_CONTENT');
-    this.RightSidePanelService.setTitle(defaultTitle);
+    this.RightSidePanelService.clearContext();
+
+    const documentLabel = this.$translate.instant('DOCUMENT');
+    this.RightSidePanelService.setTitle(documentLabel);
   }
 
   _showDocumentTitle() {
-    // when there's no document, the error's messageParams contain a 'displayName' property
-    const document = this.ContentEditor.getDocument() || this.ContentEditor.getError().messageParams;
-    const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
-    this.RightSidePanelService.setTitle(documentTitle);
+    const documentLabel = this.$translate.instant('DOCUMENT');
+    this.RightSidePanelService.setContext(documentLabel);
+
+    const documentName = this.ContentEditor.getDocumentDisplayName();
+    this.RightSidePanelService.setTitle(documentName);
   }
 
   _onCloseChannel() {

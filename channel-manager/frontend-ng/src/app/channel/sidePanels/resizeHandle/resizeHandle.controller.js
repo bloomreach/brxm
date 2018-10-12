@@ -17,10 +17,11 @@
 const MOUSE_LEFT = 1;
 
 class resizeHandleController {
-  constructor($element) {
+  constructor($element, $window) {
     'ngInject';
 
     this.handle = $element;
+    this.$window = $window;
   }
 
   $onInit() {
@@ -68,10 +69,16 @@ class resizeHandleController {
     this._resize(newWidth);
   }
 
+  _onMouseUp() {
+    this._removeMask();
+    // Trigger hiding/showing pagination handles of md-tabs
+    this.$window.dispatchEvent(new Event('resize'));
+  }
+
   _createMask() {
     this.mask = $('<div class="resize-handle-mask"></div>')
       .on('mousemove', this._onMouseMove.bind(this))
-      .on('mouseup', this._removeMask.bind(this))
+      .on('mouseup', this._onMouseUp.bind(this))
       .show()
       .appendTo('body');
   }

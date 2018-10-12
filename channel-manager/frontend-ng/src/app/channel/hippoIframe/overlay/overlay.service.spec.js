@@ -27,16 +27,20 @@ describe('OverlayService', () => {
   let DomService;
   let EditContentService;
   let ExperimentStateService;
-  let FeedbackService;
-  let HippoIframeService;
-  let HstComponentService;
   let HstCommentsProcessorService;
   let MarkupService;
   let OverlayService;
   let PageStructureService;
+  let PickerService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
+
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
 
     inject((
       _$q_,
@@ -47,9 +51,6 @@ describe('OverlayService', () => {
       _DomService_,
       _EditContentService_,
       _ExperimentStateService_,
-      _FeedbackService_,
-      _HippoIframeService_,
-      _HstComponentService_,
       _HstCommentsProcessorService_,
       _MarkupService_,
       _OverlayService_,
@@ -63,9 +64,6 @@ describe('OverlayService', () => {
       DomService = _DomService_;
       EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
-      FeedbackService = _FeedbackService_;
-      HippoIframeService = _HippoIframeService_;
-      HstComponentService = _HstComponentService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -564,79 +562,35 @@ describe('OverlayService', () => {
     });
   });
 
-  it('can pick a path and update the component', (done) => {
+  it('can select a document', (done) => {
+    const selectDocumentHandler = jasmine.createSpy('selectDocumentHander');
+    OverlayService.onSelectDocument(selectDocumentHandler);
     ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
-    spyOn(PageStructureService, 'renderComponent');
-    spyOn(FeedbackService, 'showNotification');
+    spyOn(CmsService, 'reportUsageStatistic');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
       const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
-      pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      pickPathButton.click();
       $rootScope.$digest();
 
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('bbbb');
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'component B',
-      });
+      expect(selectDocumentHandler).toHaveBeenCalledWith(
+        jasmine.any(Object), 'manage-content-component-parameter', undefined, jasmine.any(Object), '',
+      );
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
 
       done();
     });
   });
 
-  it('can pick a path but fail to update the component', (done) => {
-    ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showErrorResponse');
-    spyOn(HippoIframeService, 'reload');
+  it('can (re)register a select-document-handler', () => {
+    const selectDocumentHandler1 = jasmine.createSpy('selectDocumentHander1');
+    const selectDocumentHandler2 = jasmine.createSpy('selectDocumentHander2');
 
-    loadIframeFixture(() => {
-      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
-      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
-      expectNoPropagatedClicks();
-      pickPathButton.click();
-
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
-      $rootScope.$digest();
-
-      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
-        jasmine.any(Object), { componentName: 'component B' });
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-
-      done();
-    });
-  });
-
-  it('can pick a path and update a specific component variant', (done) => {
-    ChannelService.isEditable = () => true;
-
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
-    spyOn(PageStructureService, 'renderComponent');
-    spyOn(FeedbackService, 'showNotification');
-
-    loadIframeFixture(() => {
-      const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
-      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-main');
-      expectNoPropagatedClicks();
-      pickPathButton.click();
-
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
-      $rootScope.$digest();
-
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('component-with-experiment');
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'Component with experiment',
-      });
-
-      done();
-    });
+    expect(OverlayService.onSelectDocument(selectDocumentHandler1)).toBe(angular.noop);
+    expect(OverlayService.onSelectDocument(selectDocumentHandler2)).toBe(selectDocumentHandler1);
   });
 
   it('does not throw an error when calling edit menu handler if not set', (done) => {

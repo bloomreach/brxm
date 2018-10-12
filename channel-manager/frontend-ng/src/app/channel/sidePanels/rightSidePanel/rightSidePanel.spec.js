@@ -30,7 +30,7 @@ describe('RightSidePanel', () => {
   let sideNavElement;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel');
 
     inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
@@ -76,9 +76,23 @@ describe('RightSidePanel', () => {
   it('knows the title', () => {
     RightSidePanelService.setTitle('test title');
     expect($ctrl.getTitle()).toEqual('test title');
+    expect($ctrl.getTooltip()).toEqual('test title');
+
+    RightSidePanelService.setTitle('title', 'tooltip');
+    expect($ctrl.getTitle()).toEqual('title');
+    expect($ctrl.getTooltip()).toEqual('tooltip');
 
     RightSidePanelService.clearTitle();
     expect($ctrl.getTitle()).toEqual('');
+    expect($ctrl.getTooltip()).toEqual('');
+  });
+
+  it('knows the context', () => {
+    RightSidePanelService.setContext('test context');
+    expect($ctrl.getContext()).toEqual('test context');
+
+    RightSidePanelService.clearContext();
+    expect($ctrl.getContext()).toEqual('');
   });
 
   it('sets full screen mode on and off', () => {

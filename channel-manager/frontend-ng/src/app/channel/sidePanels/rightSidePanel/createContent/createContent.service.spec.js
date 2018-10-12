@@ -35,7 +35,7 @@ describe('CreateContentService', () => {
     ContentService = jasmine.createSpyObj('ContentService', ['_send']);
     ContentService._send.and.returnValue(Promise.resolve());
 
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading', 'setTitle']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setTitle', 'startLoading', 'stopLoading']);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
@@ -95,6 +95,7 @@ describe('CreateContentService', () => {
     CreateContentService.start(config);
     $rootScope.$digest();
 
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
@@ -118,6 +119,7 @@ describe('CreateContentService', () => {
     CreateContentService.start(config);
     $rootScope.$digest();
 
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);

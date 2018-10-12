@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-import imageLinkComponent from './imageLink/imageLink.component';
-import nodeLinkComponent from './nodeLink/nodeLink.component';
-import documentFieldsComponent from './documentFields/documentFields.component';
-import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import choiceFieldComponent from './choiceField/choiceField.component';
-import compoundFieldComponent from './compoundField/compoundField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
-import dateFieldModule from './dateField/dateField.module';
-import collapse from './collapse/collapse.directive';
+import compoundFieldComponent from './compoundField/compoundField.component';
+import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
+import imageLinkComponent from './imageLink/imageLink.component';
+import primitiveFieldComponent from './primitiveField/primitiveField.component';
+
 import './fields.scss';
 
 const fieldsModule = angular
-  .module('hippo-cm.channel.fieldsModule', [
+  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields', [
     ckeditorModule,
-    dateFieldModule,
   ])
-  .component('documentFields', documentFieldsComponent)
-  .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
-  .component('imageLink', imageLinkComponent)
-  .component('nodeLink', nodeLinkComponent)
   .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse)
+  .component('documentFields', documentFieldsComponent)
+  .component('imageLink', imageLinkComponent)
+  .component('primitiveField', primitiveFieldComponent)
   .service('FieldService', fieldService);
 
 export default fieldsModule.name;

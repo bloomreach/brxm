@@ -22,9 +22,12 @@ class HippoIframeCtrl {
     CmsService,
     ContainerService,
     DragDropService,
+    FeedbackService,
     HippoIframeService,
+    HstComponentService,
     OverlayService,
     PageStructureService,
+    PickerService,
     RenderingService,
     SpaService,
     ViewportService,
@@ -36,9 +39,12 @@ class HippoIframeCtrl {
     this.CmsService = CmsService;
     this.ContainerService = ContainerService;
     this.DragDropService = DragDropService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.HstComponentService = HstComponentService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
+    this.PickerService = PickerService;
     this.RenderingService = RenderingService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
@@ -56,6 +62,8 @@ class HippoIframeCtrl {
     this.OverlayService.onEditMenu((menuUuid) => {
       this.onEditMenu({ menuUuid });
     });
+
+    this.OverlayService.onSelectDocument(this._selectDocument.bind(this));
 
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
     this.ViewportService.init(sheetJQueryElement);
@@ -120,6 +128,33 @@ class HippoIframeCtrl {
 
   isIframeLifted() {
     return this.HippoIframeService.isIframeLifted;
+  }
+
+  _selectDocument(component, parameterName, parameterValue, pickerConfig, parameterBasePath) {
+    return this.PickerService.pickPath(pickerConfig, parameterValue)
+      .then(({ path }) => this._onPathPicked(component, parameterName, path, parameterBasePath));
+  }
+
+  _onPathPicked(component, parameterName, path, parameterBasePath) {
+    const componentId = component.getId();
+    const componentName = component.getLabel();
+    const componentVariant = component.getRenderVariant();
+
+    return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
+      .then(() => {
+        this.PageStructureService.renderComponent(componentId);
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+      })
+      .catch((response) => {
+        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+        const defaultErrorParams = { componentName };
+        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+
+        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+
+        // probably the container got locked by another user, so reload the page to show new locked containers
+        this.HippoIframeService.reload();
+      });
   }
 }
 

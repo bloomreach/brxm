@@ -29,7 +29,7 @@ describe('PrimitiveField', () => {
   ];
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
     inject((_$componentController_, _$rootScope_, _FieldService_) => {
       $componentController = _$componentController_;

@@ -28,9 +28,9 @@ describe('EditContentService', () => {
     angular.mock.module('hippo-cm');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getError', 'kill', 'open',
+      'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getDocumentDisplayName', 'getError', 'kill', 'open',
     ]);
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading', 'setTitle']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
@@ -58,10 +58,10 @@ describe('EditContentService', () => {
     $rootScope.$digest();
   }
 
-  function editLockedDocument(documentId, error) {
+  function editLockedDocument(documentId, displayName) {
     ContentEditor.open.and.returnValue($q.resolve());
     ContentEditor.getDocument.and.returnValue(undefined);
-    ContentEditor.getError.and.returnValue(error);
+    ContentEditor.getDocumentDisplayName.and.returnValue(displayName);
 
     EditContentService.startEditing(documentId);
     $rootScope.$digest();
@@ -73,28 +73,25 @@ describe('EditContentService', () => {
     };
     editDocument(document);
 
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_CONTENT');
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', document);
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_DOCUMENT');
+    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
   it('starts editing a locked document', () => {
     const documentId = '42';
-    const error = {
-      messageParams: {
-        displayName: 'Locked document',
-      },
-    };
-    editLockedDocument(documentId, error);
+    const displayName = 'Locked document';
+    editLockedDocument(documentId, displayName);
 
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_CONTENT');
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(ContentEditor.open).toHaveBeenCalledWith(documentId);
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', error.messageParams);
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_DOCUMENT');
+    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Locked document');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 

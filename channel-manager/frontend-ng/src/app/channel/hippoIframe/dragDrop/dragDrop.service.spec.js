@@ -19,12 +19,12 @@ import 'angular-mocks';
 
 describe('DragDropService', () => {
   let $q;
-  let DragDropService;
-  let PageStructureService;
   let ChannelService;
-  let DomService;
   let ConfigService;
-
+  let DomService;
+  let DragDropService;
+  let EditComponentService;
+  let PageStructureService;
   let iframe;
   let canvas;
 
@@ -38,18 +38,20 @@ describe('DragDropService', () => {
 
     inject((
       _$q_,
-      _DragDropService_,
-      _PageStructureService_,
       _ChannelService_,
-      _DomService_,
       _ConfigService_,
+      _DomService_,
+      _DragDropService_,
+      _EditComponentService_,
+      _PageStructureService_,
     ) => {
       $q = _$q_;
-      DragDropService = _DragDropService_;
-      PageStructureService = _PageStructureService_;
       ChannelService = _ChannelService_;
-      DomService = _DomService_;
       ConfigService = _ConfigService_;
+      DomService = _DomService_;
+      DragDropService = _DragDropService_;
+      EditComponentService = _EditComponentService_;
+      PageStructureService = _PageStructureService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -192,7 +194,7 @@ describe('DragDropService', () => {
 
   it('shows a component\'s properties when a component receives a mouseup event from the left mouse button', (done) => {
     loadIframeFixture(() => {
-      spyOn(PageStructureService, 'showComponentProperties');
+      spyOn(EditComponentService, 'startEditing');
 
       const mockedMouseDownEvent = {
         clientX: 100,
@@ -204,7 +206,7 @@ describe('DragDropService', () => {
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
 
       componentElement1.on('mouseup', () => {
-        expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component1);
+        expect(EditComponentService.startEditing).toHaveBeenCalledWith(component1);
         done();
       });
 
@@ -270,6 +272,8 @@ describe('DragDropService', () => {
     beforeEach(() => {
       dropHandler = jasmine.createSpy('onDropHandler');
       DragDropService.onDrop(dropHandler);
+
+      spyOn(EditComponentService, 'syncPreview');
     });
 
     it('is called when a component is dropped', (done) => {
@@ -278,12 +282,13 @@ describe('DragDropService', () => {
       loadIframeFixture(() => {
         expect(DragDropService.dropping = false);
 
-        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined);
-
-        expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
-        expect(DragDropService.dropping = false);
-
-        done();
+        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined)
+          .then(() => {
+            expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
+            expect(EditComponentService.syncPreview).toHaveBeenCalled();
+            expect(DragDropService.dropping = false);
+            done();
+          });
       });
     });
 
@@ -293,12 +298,13 @@ describe('DragDropService', () => {
       loadIframeFixture(() => {
         expect(DragDropService.dropping = false);
 
-        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined);
-
-        expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
-        expect(DragDropService.dropping = false);
-
-        done();
+        DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement(), undefined)
+          .catch(() => {
+            expect(dropHandler).toHaveBeenCalledWith(component1, container2, undefined);
+            expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
+            expect(DragDropService.dropping = false);
+            done();
+          });
       });
     });
 
