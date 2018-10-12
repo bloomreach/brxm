@@ -26,11 +26,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,11 +41,13 @@ import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
 
 import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMETER_PREFIX;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -68,8 +72,16 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         expect(mount.getContextPath()).andReturn("site");
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
         expect(hstRequestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
-        Object[] mocks = new Object[]{hstRequestContext, resolvedMount, mount};
-        replay(mocks);
+
+        final PlatformHstModel hstModel = createNiceMock(PlatformHstModel.class);
+        final VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
+        expect(hstRequestContext.getAttribute(eq(PREVIEW_EDITING_HST_MODEL_ATTR))).andStubReturn(hstModel);
+
+        expect(hstModel.getVirtualHosts()).andStubReturn(virtualHosts);
+        expect(virtualHosts.getContextPath()).andStubReturn("/site");
+
+        replay(hstRequestContext, hstModel, virtualHosts, resolvedMount, mount);
+
         ModifiableRequestContextProvider.set(hstRequestContext);
 
         //   create:
@@ -85,9 +97,10 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
     }
 
     @After
-    public void tearDown()  {
+    public void tearDown() {
         ModifiableRequestContextProvider.clear();
     }
+
 
     @Test
     public void no_template_variants() throws RepositoryException {
