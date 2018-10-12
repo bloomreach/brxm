@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.hippoecm.hst.rest.custom;
+package org.hippoecm.hst.pagecomposer.jaxrs.serializer;
 
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
