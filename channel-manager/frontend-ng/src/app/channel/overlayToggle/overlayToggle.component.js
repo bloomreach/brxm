@@ -23,9 +23,10 @@ const modeToggleComponent = {
   controller,
   bindings: {
     name: '@',
-    state: '=',
     disabled: '<',
-    defaultState: '=',
+    state: '<',
+    onStateChange: '&',
+    defaultState: '<',
     iconName: '@?',
     iconSvg: '@?',
     tooltip: '@?',

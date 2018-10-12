@@ -31,15 +31,13 @@ class OverlayToggleController {
   setState(state) {
     this.state = state;
     this.localStorageService.set(this.storageKey, this.state);
+    this.onStateChange({ state });
   }
 
   loadPersistentState() {
-    let state = this.localStorageService.get(this.storageKey);
-    if (this.localStorageService.get(this.storageKey) == null) {
-      state = this.defaultState;
-    }
-
-    this.setState(state);
+    const state = this.localStorageService.get(this.storageKey);
+    this.state = state || this.defaultState;
+    this.onStateChange({ state });
   }
 }
 
