@@ -101,8 +101,15 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-        assertEquals(SC_FORBIDDEN, response.getStatus());
+        Session session = createSession("admin", "admin");
+        try {
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+
+            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
+            assertEquals(SC_FORBIDDEN, response.getStatus());
+        } finally {
+            session.logout();
+        }
     }
 
     @Test
@@ -129,9 +136,16 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-        assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
 
+        Session session = createSession("admin", "admin");
+        try {
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+
+            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
+            assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        } finally {
+            session.logout();
+        }
     }
 
     @Test
@@ -149,7 +163,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
             SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
             assertEquals(SC_BAD_REQUEST, response.getStatus());
 
             final String restResponse = response.getContentAsString();
@@ -181,7 +196,9 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
-            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite").getIdentifier();
+
+            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
             assertEquals(SC_OK, response.getStatus());
 
             // assert 'unittestsubproject' configurations are gone
@@ -221,7 +238,9 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/subinheritingconfig"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
-            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite").getIdentifier();
+
+            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
             assertEquals(SC_OK, response.getStatus());
 
             assertFalse(session.nodeExists("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite"));
@@ -262,8 +281,16 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestsubproject"));
             assertTrue(session.nodeExists("/hst:hst/hst:sites/unittestsubproject"));
 
+
             final MockHttpServletResponse response = render(null, requestResponse, admin);
             assertEquals(SC_INTERNAL_SERVER_ERROR, response.getStatus());
+
+            final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite").getIdentifier();
+            final RequestResponseMock requestResponse2 = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestsubproject", null, "DELETE");
+
+            final MockHttpServletResponse response2 = render(mountId, requestResponse2, admin);
+            assertEquals(SC_FORBIDDEN, response2.getStatus());
 
         } finally {
             session.logout();
@@ -296,7 +323,10 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
                         "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
 
                 SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-                final MockHttpServletResponse response = render(null, requestResponse, admin);
+
+                final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+
+                final MockHttpServletResponse response = render(mountId, requestResponse, admin);
                 assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
                 assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
             }
