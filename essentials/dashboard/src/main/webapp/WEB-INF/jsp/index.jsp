@@ -47,7 +47,7 @@
   <script src="${pageContext.request.contextPath}/dashboard/api/services.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/dashboard/api/directives.js?v=${project.version}"></script>
 
-  <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
+  <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.png" type="image/png"/>
   <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
 </head>
 <body id="container"  ng-cloak>
