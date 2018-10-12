@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class modeToggleController {
+class OverlayToggleController {
   constructor(
     localStorageService,
   ) {
@@ -43,4 +43,4 @@ class modeToggleController {
   }
 }
 
-export default modeToggleController;
+export default OverlayToggleController;
