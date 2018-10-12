@@ -39,12 +39,11 @@
         </div>
         {{ $ctrl.getTitle() }}
       </md-truncate>
-      
-      <md-button class="md-icon-button btn-fullwidth qa-rightsidepanel-fullwidth"
-                 aria-label="{{ ::'FULL_WIDTH' | translate }}"
-                 ng-click="$ctrl.setFullWidth(true)"
-                 ng-show="!$ctrl.isFullWidth"
-                 title="{{ ::'FULL_WIDTH' | translate }}">
+      <md-button class="md-icon-button btn-full-screen qa-rightsidepanel-full-screen"
+                 aria-label="{{ ::'FULL_SIZE' | translate }}"
+                 ng-click="$ctrl.setFullScreen(true)"
+                 ng-show="!$ctrl.isFullScreen()"
+                 title="{{ ::'FULL_SIZE' | translate }}">
         <md-icon md-svg-icon="maximize-sidepanel"></md-icon>
       </md-button>
       <md-button class="md-icon-button btn-normal-screen qa-rightsidepanel-normal-screen"

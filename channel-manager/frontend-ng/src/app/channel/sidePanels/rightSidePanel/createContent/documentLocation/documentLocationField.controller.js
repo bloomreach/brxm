@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-const PICKER_CALLBACK_ID = 'document-location-callback-id';
-
 class DocumentLocationFieldController {
   constructor(
     $element,
     ChannelService,
     CmsService,
-    Step1Service,
     FeedbackService,
+    PickerService,
+    Step1Service,
   ) {
     'ngInject';
 
     this.$element = $element;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-    this.Step1Service = Step1Service;
     this.FeedbackService = FeedbackService;
+    this.PickerService = PickerService;
+    this.Step1Service = Step1Service;
   }
 
   $onInit() {
@@ -59,14 +59,6 @@ class DocumentLocationFieldController {
       const path = this.rootPath + (this.defaultPath ? `/${this.defaultPath}` : '');
       this.setPath(path);
     }
-
-    this.CmsService.subscribe('path-picked', this.onPathPicked, this);
-    this.CmsService.subscribe('path-cancelled', this.onPathCancelled, this);
-  }
-
-  $onDestroy() {
-    this.CmsService.unsubscribe('path-picked', this.onPathPicked, this);
-    this.CmsService.unsubscribe('path-cancelled', this.onPathCancelled, this);
   }
 
   setPath(path) {
@@ -95,31 +87,29 @@ class DocumentLocationFieldController {
   }
 
   openPicker() {
-    this.CmsService.publish('show-path-picker', PICKER_CALLBACK_ID, this.pickerPath, this.pickerConfig);
+    this.PickerService.pickPath(this.pickerConfig, this.pickerPath)
+      .then(({ path }) => this.onPathPicked(path))
+      .catch(() => this.onPathCanceled());
     this.CmsService.reportUsageStatistic('DocumentLocationPicker (create content panel)');
   }
 
-  onPathPicked(callbackId, path) {
-    if (callbackId === PICKER_CALLBACK_ID) {
-      if (!path.startsWith('/')) {
-        path = `/${path}`;
+  onPathPicked(path) {
+    if (!path.startsWith('/')) {
+      path = `/${path}`;
+    }
+    if (!path.startsWith(this.initialPickerPath)) {
+      this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.initialPickerPath, path });
+    } else {
+      if (!this.rootPath) {
+        this.rootPath = path;
       }
-      if (!path.startsWith(this.initialPickerPath)) {
-        this.FeedbackService.showError('ERROR_DOCUMENT_LOCATION_NOT_ALLOWED', { root: this.initialPickerPath, path });
-      } else {
-        if (!this.rootPath) {
-          this.rootPath = path;
-        }
-        this.setPath(path);
-      }
+      this.setPath(path);
     }
   }
 
-  onPathCancelled(callbackId) {
-    if (callbackId === PICKER_CALLBACK_ID) {
-      // focus this field again so keypresses will reach Angular Material instead of the parent window
-      this.$element.find('.input-overlay').focus();
-    }
+  onPathCanceled() {
+    // focus this field again so keypresses will reach Angular Material instead of the parent window
+    this.$element.find('.input-overlay').focus();
   }
 }
 

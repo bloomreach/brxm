@@ -64,7 +64,7 @@ describe('PageMenuService', () => {
 
   const getItem = name => PageMenuService.menu.items.find(item => item.name === name);
 
-  function doInject () {
+  function doInject() {
     inject((
       _$q_,
       _$rootScope_,
@@ -374,7 +374,6 @@ describe('PageMenuService', () => {
         expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-new');
       });
     });
-
   });
 
   describe('for authors', () => {

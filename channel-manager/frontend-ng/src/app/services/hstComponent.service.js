@@ -14,36 +14,13 @@
  * limitations under the License.
  */
 
-const PATH_PICKER_CALLBACK_ID = 'component-path-picker';
-
 class HstComponentService {
-  constructor($q, ChannelService, CmsService, HstService) {
+  constructor(ChannelService, ConfigService, HstService) {
     'ngInject';
 
-    this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.HstService = HstService;
-
-    this.pathPickedHandler = angular.noop;
-
-    this.CmsService.subscribe('path-picked', (callbackId, path) => {
-      if (callbackId === PATH_PICKER_CALLBACK_ID) {
-        this.pathPickedHandler(path);
-        this.pathPickedHandler = angular.noop;
-      }
-    });
-  }
-
-  pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, basePath) {
-    const deferred = this.$q.defer();
-    this.pathPickedHandler = (path) => {
-      this.setPathParameter(componentId, componentVariant, parameterName, path, basePath)
-        .then(() => deferred.resolve())
-        .catch(err => deferred.reject(err));
-    };
-    this.CmsService.publish('show-path-picker', PATH_PICKER_CALLBACK_ID, parameterValue, pickerConfig);
-    return deferred.promise;
   }
 
   setPathParameter(componentId, componentVariant, parameterName, parameterValue, basePath = '') {
@@ -60,15 +37,27 @@ class HstComponentService {
   }
 
   setParameter(componentId, componentVariant, parameterName, parameterValue) {
-    const params = {};
-    params[parameterName] = parameterValue;
+    return this.setParameters(componentId, componentVariant, { [parameterName]: parameterValue });
+  }
 
+  setParameters(componentId, componentVariant, parameters) {
     // The component variant can contain special characters (@, [, ", etc.). Since it is used as a path element
     // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
     const encodedVariant = encodeURIComponent(componentVariant);
 
-    return this.HstService.doPutForm(params, componentId, encodedVariant)
+    return this.HstService.doPutForm(parameters, componentId, encodedVariant)
       .then(() => this.ChannelService.recordOwnChange());
+  }
+
+  getProperties(componentId, componentVariant) {
+    // The component variant can contain special characters (@, [, ", etc.). Since it is used as a path element
+    // in the backend call, it must be URI-encoded to be parsed correctly by the backend.
+    const encodedVariant = encodeURIComponent(componentVariant);
+    return this.HstService.doGet(componentId, encodedVariant, this.ConfigService.locale);
+  }
+
+  deleteComponent(containerId, componentId) {
+    return this.HstService.doDelete(containerId, componentId);
   }
 }
 

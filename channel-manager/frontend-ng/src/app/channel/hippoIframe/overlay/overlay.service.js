@@ -35,9 +35,7 @@ class OverlayService {
     DomService,
     EditContentService,
     ExperimentStateService,
-    FeedbackService,
     HippoIframeService,
-    HstComponentService,
     MaskService,
     PageStructureService,
   ) {
@@ -52,14 +50,12 @@ class OverlayService {
     this.DomService = DomService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
-    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.HstComponentService = HstComponentService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     this.editMenuHandler = angular.noop;
-    this.pathPickedHandler = angular.noop;
+    this.selectDocumentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
@@ -74,6 +70,12 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
+  }
+
+  onSelectDocument(callback) {
+    const previousHandler = this.selectDocumentHandler;
+    this.selectDocumentHandler = callback;
+    return previousHandler;
   }
 
   _onLoad() {
@@ -432,7 +434,7 @@ class OverlayService {
         id: 'select-document',
         mainIcon: searchSvg,
         optionIcon: searchSvg,
-        callback: () => this._pickPath(config),
+        callback: () => this._selectDocument(config),
         tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
@@ -575,32 +577,15 @@ class OverlayService {
     this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
-  _pickPath(config) {
-    const component = config.containerItem;
-    const componentId = component.getId();
-    const componentName = component.getLabel();
-    const componentVariant = component.getRenderVariant();
-    const parameterBasePath = config.parameterBasePath;
-    const parameterName = config.parameterName;
-    const parameterValue = config.parameterValue;
-    const pickerConfig = config.pickerConfig;
-
+  _selectDocument(config) {
+    this.selectDocumentHandler(
+      config.containerItem,
+      config.parameterName,
+      config.parameterValue,
+      config.pickerConfig,
+      config.parameterBasePath,
+    );
     this.CmsService.reportUsageStatistic('PickContentButton');
-    this.HstComponentService.pickPath(componentId, componentVariant, parameterName, parameterValue, pickerConfig, parameterBasePath)
-      .then(() => {
-        this.PageStructureService.renderComponent(component.getId());
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
-      })
-      .catch((response) => {
-        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
-        const defaultErrorParams = { componentName };
-        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
-
-        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
-
-        // probably the container got locked by another user, so reload the page to show new locked containers
-        this.HippoIframeService.reload();
-      });
   }
 
   _linkButtonTransition(element) {

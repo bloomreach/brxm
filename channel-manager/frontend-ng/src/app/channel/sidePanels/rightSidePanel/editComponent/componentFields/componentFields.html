@@ -1,0 +1,115 @@
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License")
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<md-input-container
+  ng-repeat="componentField in $ctrl.fields track by $index"
+  ng-switch="::componentField.type"
+  class="md-block qa-component-field component-field-type-{{ ::componentField.type }}"
+>
+
+  <label ng-if="componentField.type !== 'checkbox'">{{ ::componentField.label }}</label>
+
+  <input
+    ng-switch-when="textfield"
+    aria-label="{{ ::componentField.label }}"
+    name="{{ ::componentField.name }}"
+    ng-blur="$ctrl.blur(componentField)"
+    ng-change="$ctrl.valueChanged()"
+    ng-disabled="$ctrl.readOnly"
+    ng-model="componentField.value"
+    ng-required="::componentField.required"
+  />
+
+  <div ng-switch-when="checkbox">
+    <md-checkbox
+      class="md-primary"
+      name="{{ ::componentField.name }}"
+      ng-change="$ctrl.valueChanged()"
+      ng-disabled="$ctrl.readOnly"
+      ng-false-value="'off'"
+      ng-model="componentField.value"
+      ng-true-value="'on'"
+    >
+      {{ ::componentField.label }}
+    </md-checkbox>
+  </div>
+
+  <div ng-switch-when="numberfield">
+    <input
+      class="md-primary"
+      name="{{ ::componentField.name }}"
+      ng-blur="$ctrl.blur($event)"
+      ng-change="$ctrl.valueChanged()"
+      ng-disabled="$ctrl.readOnly"
+      ng-focus="$ctrl.form[componentField.name].$setTouched()"
+      ng-model="componentField.value"
+      ng-pattern="/^(-\d)?\d*$/"
+      ng-required="::componentField.required"
+      type="text"
+    />
+    <div ng-messages="$ctrl.form[componentField.name].$error">
+      <div ng-message="pattern">
+        {{ 'ERROR_FIELD_LONG_PATTERN' | translate }}
+      </div>
+    </div>
+  </div>
+
+  <md-select
+    ng-switch-when="combo"
+    aria-label="{{ ::componentField.name }}"
+    name="{{ ::componentField.name }}"
+    ng-change="$ctrl.valueChanged()"
+    ng-disabled="$ctrl.readOnly"
+    ng-model="componentField.value"
+    ng-required="::componentField.required"
+  >
+    <md-option
+      ng-repeat="dropDownValue in componentField.dropDownListValues"
+      value="{{ dropDownValue }}"
+    >
+      {{ componentField.dropDownListDisplayValues[$index] }}
+    </md-option>
+  </md-select>
+
+  <date-field
+    ng-switch-when="datefield"
+    class="md-primary"
+    disabled="$ctrl.readOnly"
+    field-type="{ displayName: componentField.label, required: componentField.required, type: 'DATE_ONLY' }"
+    name="::componentField.name"
+    on-field-blur="$ctrl.blur(componentField)"
+    ng-change="$ctrl.valueChanged()"
+    ng-model="componentField.value"
+  >
+  </date-field>
+
+  <path-link
+    ng-switch-when="linkpicker"
+    aria-label="{{ ::componentField.label }}"
+    config="::componentField.pickerConfig"
+    disabled="$ctrl.readOnly"
+    display-name="componentField.displayValue"
+    is-required="::componentField.required"
+    name="{{ ::componentField.name }}"
+    on-blur="$ctrl.blur(componentField)"
+    ng-change="$ctrl.valueChanged()"
+    ng-model="componentField.value"
+  >
+  </path-link>
+
+  <div ng-switch-default>
+    {{componentField.name}} - UNKNOWN TYPE: {{ ::componentField.type }}
+  </div>
+</md-input-container>

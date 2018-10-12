@@ -15,13 +15,13 @@
  */
 
 class ImageLinkController {
-  constructor($element, $scope, $timeout, CmsService) {
+  constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
     this.$element = $element;
     this.$scope = $scope;
     this.$timeout = $timeout;
-    this.CmsService = CmsService;
+    this.PickerService = PickerService;
   }
 
   $onInit() {
@@ -77,23 +77,20 @@ class ImageLinkController {
 
   openImagePicker() {
     const uuid = this.ngModel.$modelValue;
-    this.CmsService.publish('show-image-picker', this.config.imagepicker, { uuid },
-      image => this._onImagePicked(image),
-      () => this.setFocus(),
-    );
+    return this.PickerService.pickImage(this.config.imagepicker, { uuid })
+      .then(image => this._onImagePicked(image))
+      .catch(() => this.setFocus());
   }
 
   _onImagePicked(image) {
-    this.$scope.$apply(() => {
-      // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during rendering.
-      // Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
-      if (this.imagePicked) {
-        this._focusClearButton();
-      }
-      this.imagePicked = true;
-      this.url = image.url;
-      this.ngModel.$setViewValue(image.uuid);
-    });
+    // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during rendering.
+    // Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
+    if (this.imagePicked) {
+      this._focusClearButton();
+    }
+    this.imagePicked = true;
+    this.url = image.url;
+    this.ngModel.$setViewValue(image.uuid);
   }
 
   _hasImage() {

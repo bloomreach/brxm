@@ -28,6 +28,7 @@ import HippoGlobal from './hippoGlobal.service';
 import HstComponentService from './hstComponent.service';
 import HstService from './hst.service';
 import PathService from './path.service';
+import PickerService from './picker.service';
 import ProjectService from './project.service';
 import SessionService from './session.service';
 import SiteMapItemService from './siteMapItem.service';
@@ -50,6 +51,7 @@ const servicesModule = angular
   .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
   .service('PathService', PathService)
+  .service('PickerService', PickerService)
   .service('ProjectService', ProjectService)
   .service('SessionService', SessionService)
   .service('SiteMapItemService', SiteMapItemService)

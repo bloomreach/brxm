@@ -27,6 +27,7 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
+    EditComponentService,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -39,6 +40,7 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
+    this.EditComponentService = EditComponentService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;
@@ -199,7 +201,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.PageStructureService.showComponentProperties(component);
+      this.EditComponentService.startEditing(component);
       this._digestIfNeeded();
     }
   }
@@ -293,7 +295,8 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
+    return this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
+      .then(() => this.EditComponentService.syncPreview())
       .finally(() => {
         this.dropping = false;
       });

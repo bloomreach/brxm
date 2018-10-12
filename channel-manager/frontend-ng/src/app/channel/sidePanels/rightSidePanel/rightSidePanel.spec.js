@@ -19,7 +19,6 @@ describe('RightSidePanel', () => {
   let $q;
   let $rootScope;
   let $state;
-  let $stateRegistry;
   let $timeout;
   let $transitions;
   let $window;
@@ -32,14 +31,13 @@ describe('RightSidePanel', () => {
   let sideNavElement;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$stateRegistry_, _$timeout_, _$transitions_, _$window_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _$window_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
-      $stateRegistry = _$stateRegistry_;
       $timeout = _$timeout_;
       $transitions = _$transitions_;
       $window = _$window_;
