@@ -56,6 +56,9 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -71,7 +74,6 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private boolean isCrossChannelPageCopySupported;
 
-    // TODO get rid of this channel service! We already have one, see org.hippoecm.hst.platform.api.ChannelService
     private ChannelService channelService;
     private SecurityModel securityModel;
 
@@ -130,10 +132,18 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getChannel(@HeaderParam("hostGroup") final String hostGroup,
+    public Response getChannel(@HeaderParam("contextPath") final String contextPath,
+                               @HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
         try {
-            final Channel channel = getPageComposerContextService().getEditingPreviewVirtualHosts().getChannelById(hostGroup, channelId);
+
+            HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final HstModel hstModel = hstModelRegistry.getHstModel(contextPath);
+
+            if (hstModel == null) {
+                throw new IllegalArgumentException(String.format("No HST Model present for context path '%s'", contextPath));
+            }
+            final Channel channel = hstModel.getVirtualHosts().getChannelById(hostGroup, channelId);
             if (channel == null) {
                 throw new ChannelNotFoundException(channelId);
             }
