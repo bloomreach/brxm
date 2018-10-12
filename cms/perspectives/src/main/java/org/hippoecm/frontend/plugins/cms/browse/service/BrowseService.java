@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.cms.browse.service;
 
 import java.util.Iterator;
-import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -41,18 +40,13 @@ import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
-import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
  * An implementation of IBrowseService that also exposes the document model service.
@@ -84,10 +78,12 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             folderService.init(context);
             context.registerService(new IObserver() {
 
+                @Override
                 public IObservable getObservable() {
                     return collectionModel;
                 }
 
+                @Override
                 public void onEvent(final Iterator events) {
                     if (collectionModel.getObject() != null) {
                         folderService.updateModel(collectionModel.getObject().getFolder());
@@ -141,6 +137,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      * Use the supplied model of a Node (or Version) to set folder and document models.
      * When a Version is supplied from the version storage, the physical node is used.
      */
+    @Override
     public void browse(final IModel<Node> model) {
         final IModel<Node> document = getHandleOrFolder(model);
         if (document.getObject() == null) {
@@ -199,6 +196,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         documentService.updateModel(model.getObject().getCollection().getFolder());
     }
 
+    @Override
     public void detach() {
         documentService.detach();
     }
@@ -216,7 +214,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                         final Node docNode = node.getSession().getNodeByIdentifier(uuid);
                         if (docNode.getDepth() > 0) {
                             final Node parent = docNode.getParent();
-                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (parent.isNodeType(NT_HANDLE)) {
                                 return new JcrNodeModel(parent);
                             }
                         }
@@ -235,7 +233,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                     }
                 } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     final Node parent = node.getParent();
-                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (parent.isNodeType(NT_HANDLE)) {
                         return new JcrNodeModel(parent);
                     }
                 }
@@ -279,22 +277,11 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                 return model;
             }
             try {
-                final Node handle = getHandle(node);
-                final BranchIdModel branchIdModel = new BranchIdModel(context, handle.getIdentifier());
-                if (!branchIdModel.isDefined()) {
-                    log.debug("Initializing branch id model for identifier:{}", handle.getIdentifier());
-                    branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, null);
-                    final String[] branches = JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_BRANCHES_PROPERTY, new String[0]);
-                    if (Stream.of(branches).noneMatch(MASTER_BRANCH_ID::equals)) {
-                        final Node variant = getDocumentVariantNode(node, UNPUBLISHED)
-                                .orElseGet(() -> getDocumentVariantNode(node, PUBLISHED).orElse(null));
-                        if (variant != null) {
-                            final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
-                            final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, null);
-                            branchIdModel.setBranchInfo(branchId, branchName);
-                        }
-                    }
+                if (!node.isNodeType(NT_HANDLE) || node.isNodeType(NT_DOCUMENT)) {
+                    return model;
                 }
+                final Node handle = getHandle(node);
+                final BranchIdModel branchIdModel = BranchIdModel.initialize(context, handle);
                 final String currentBranchId = branchIdModel.getBranchId();
                 log.debug("Current branch id:{}", currentBranchId);
                 if (isFrozenNode(node)) {

@@ -18,20 +18,33 @@ package org.hippoecm.frontend.model;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BranchIdModel implements IModel<IModelReference<Pair<String,String>>> {
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.PUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
+import static org.hippoecm.repository.util.WorkflowUtils.getDocumentVariantNode;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
-    private static final Pair<String,String> UNDEFINED_BRANCH_INFO = new ImmutablePair<>("undefined", "undefined");
-    private static final  Logger log = LoggerFactory.getLogger(BranchIdModel.class);
+public class BranchIdModel implements IModel<IModelReference<Pair<String, String>>> {
+
+    private static final Pair<String, String> UNDEFINED_BRANCH_INFO = new ImmutablePair<>("undefined", "undefined");
+    private static final Logger log = LoggerFactory.getLogger(BranchIdModel.class);
 
     private IModelReference<Pair<String, String>> branchIdModelReference;
 
@@ -50,12 +63,12 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     }
 
     @Override
-    public IModelReference<Pair<String,String>> getObject() {
+    public IModelReference<Pair<String, String>> getObject() {
         return branchIdModelReference;
     }
 
     @Override
-    public void setObject(final IModelReference<Pair<String,String>> object) {
+    public void setObject(final IModelReference<Pair<String, String>> object) {
         this.branchIdModelReference = object;
     }
 
@@ -67,7 +80,7 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
         return isDefined() ? getBranchInfo().getRight() : "core";
     }
 
-    public Pair<String,String> getBranchInfo() {
+    public Pair<String, String> getBranchInfo() {
         return branchIdModelReference.getModel().getObject();
     }
 
@@ -77,7 +90,7 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     }
 
     public void setInitialBranchInfo(final String branchId, final String branchName) {
-        if (UNDEFINED_BRANCH_INFO  == branchIdModelReference.getModel().getObject()) {
+        if (UNDEFINED_BRANCH_INFO == branchIdModelReference.getModel().getObject()) {
             log.debug("Setting initial branch id and name to :{}, {}", branchId, branchName);
             setBranchInfo(branchId, branchName);
         }
@@ -96,19 +109,40 @@ public class BranchIdModel implements IModel<IModelReference<Pair<String,String>
     public void detach() {
     }
 
+    public static BranchIdModel initialize(IPluginContext context, Node documentHandleNode) throws RepositoryException {
+        Objects.requireNonNull(context);
+        Objects.requireNonNull(documentHandleNode);
+        if (!documentHandleNode.isNodeType(NT_HANDLE)) {
+            throw new IllegalArgumentException("Node with id '" + documentHandleNode.getIdentifier() + "' is not of type " + NT_HANDLE);
+        }
+        final BranchIdModel branchIdModel = new BranchIdModel(context, documentHandleNode.getIdentifier());
+        if (!branchIdModel.isDefined()) {
+            log.debug("Initializing branch id model for identifier:{}", documentHandleNode.getIdentifier());
+            branchIdModel.setInitialBranchInfo(MASTER_BRANCH_ID, "Core");
+            final Node variant = getDocumentVariantNode(documentHandleNode, UNPUBLISHED)
+                    .orElseGet(() -> getDocumentVariantNode(documentHandleNode, PUBLISHED).orElse(null));
+            if (variant != null && variant.isNodeType(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO)) {
+                final String branchId = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_ID, MASTER_BRANCH_ID);
+                final String branchName = JcrUtils.getStringProperty(variant, HIPPO_PROPERTY_BRANCH_NAME, "");
+                branchIdModel.setBranchInfo(branchId, branchName);
+            }
+        }
+        return branchIdModel;
+    }
+
     @SuppressWarnings("unchecked")
-    private IModelReference<Pair<String,String>> getOrCreateModelReference(IPluginContext context, String referenceModelIdentifier) {
+    private IModelReference<Pair<String, String>> getOrCreateModelReference(IPluginContext context, String referenceModelIdentifier) {
         return Optional
                 .ofNullable(getBranchIdModelReference(context, referenceModelIdentifier))
                 .orElseGet(() -> createBranchIdModelReference(context, referenceModelIdentifier));
     }
 
-    private IModelReference<Pair<String,String>> getBranchIdModelReference(final IPluginContext context, final String referenceModelIdentifier) {
+    private IModelReference<Pair<String, String>> getBranchIdModelReference(final IPluginContext context, final String referenceModelIdentifier) {
         log.debug("Getting model reference for a model contain the branchId for identifier:{}", referenceModelIdentifier);
-        return (IModelReference<Pair<String,String>>) context.getService(referenceModelIdentifier, IModelReference.class);
+        return (IModelReference<Pair<String, String>>) context.getService(referenceModelIdentifier, IModelReference.class);
     }
 
-    private IModelReference<Pair<String,String>> createBranchIdModelReference(final IPluginContext context, final String referenceModelIdentifier) {
+    private IModelReference<Pair<String, String>> createBranchIdModelReference(final IPluginContext context, final String referenceModelIdentifier) {
         log.debug("Creating model reference for a model containing the branchId for identifier:{}", referenceModelIdentifier);
         ModelReference<Pair<String, String>> modelReference = new ModelReference<>(referenceModelIdentifier, new Model<>(UNDEFINED_BRANCH_INFO));
         modelReference.init(context);
