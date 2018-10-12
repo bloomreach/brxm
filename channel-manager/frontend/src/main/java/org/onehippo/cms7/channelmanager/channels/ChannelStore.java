@@ -405,7 +405,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
     }
 
-    private javax.jcr.Session getUserJcrSession() {
+    javax.jcr.Session getUserJcrSession() {
         return UserSession.get().getJcrSession();
     }
 
@@ -460,7 +460,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected void loadChannels() {
 
         final List<Channel> channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
-        channels = channelList.stream().collect(Collectors.toMap(Channel::getId, Function.identity()));
+        channels = channelList.stream().map(channel -> {
+            if (StringUtils.isEmpty(channel.getType())) {
+                channel.setType(DEFAULT_TYPE);
+            }
+            return channel;
+        }).collect(Collectors.toMap(Channel::getId, Function.identity()));
 
     }
 
