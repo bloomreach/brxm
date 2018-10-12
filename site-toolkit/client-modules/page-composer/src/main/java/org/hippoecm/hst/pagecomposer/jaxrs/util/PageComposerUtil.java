@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.util.ParametersInfoAnnotationUtils;
@@ -39,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
 
 public class PageComposerUtil {
 
@@ -90,7 +92,11 @@ public class PageComposerUtil {
     public static <T, R> R executeWithWebsiteClassLoader(final Function<T,R> function, final T input) {
         final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            final HstModel websiteHstModel = (HstModel) RequestContextProvider.get().getAttribute(PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR);
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            if (requestContext == null) {
+                return function.apply(input);
+            }
+            final HstModel websiteHstModel = (HstModel) requestContext.getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
 
             final String contextPath = websiteHstModel.getVirtualHosts().getContextPath();
             final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(contextPath);
