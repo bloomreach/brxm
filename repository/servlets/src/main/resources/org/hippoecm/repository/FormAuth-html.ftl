@@ -18,11 +18,11 @@
 
 ${response.setContentType("text/html;charset=UTF-8")}
 
-
 <html>
 <head>
-    <title>BloomReach Repository Browser - Login</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>BloomReach Repository Browser - Login</title>
+  <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAgCAYAAAAFQMh/AAAAAXNSR0IArs4c6QAAA8BJREFUSA3FV0loU1EUPe9n6GA6WMRKVLSK81Bx2Dgg1C50oTvFhVJE0UWXrsSVC0EQQURwKQiCKAgudKN1UaqoWEoHh+KAY6XUFtMxSZt8z/nJ10y12pJ44fT9f+/Lvffd6f0aTEbPe0oRCq+leD0QXwGY+YAd5FoJGyXkF8PwCQjz7xifB/jcQ3yFZb+C5e3AnEUvsMZEycsik8Zp+RREZPwwbHs3+VsJf5r8X1+MGaOuZhjrLkp817F1oZxzKGG46TNPEz3PE+2n915X6KV0e0UxNpcXoTZQhJWzfKj0elBOQbnHwgTPOxiLY3Aijr5oDJ0jUbQPRdESGsPLkXFXjbtGYMxVlPhPywGDpg8bYcce0miFu0Pr0WAZzi6pQnXRLz9SxVM+tw5GcOJ1H1qHIul7DVPh9e4wePDuGY1uSZUGPAahnTWwTHomUvf8zfPDgVHsavuWvdWYWxa5qzMlwzEbBzp78XY0K1yZW3O+27aN+/2jaOz+nlNO5iqdeJgnnjXZjtqA/3eOS5ljn4UKr4UyN8fMr/Ls5HiYOR6O4HEojK+R2GQq2Rima8oEtjvK1BFDkyuahkSh/i9kwdivC27ZRjcNexo5dZjnApExvfDhlIW6mqeAtZYJv82sx/Nm3mDcGSC+0nXYufSNGlXt9NIx2PR+EUdcA6t8D51gb9ueGTqiqnwMC/cQt66hfklvUh/bCWgm9hE/kszE8qS/HCOhDXxZz0tiOR2ZT6eC9Ho2ecXORZG4JMb4Hib6icQlYbNuvLwkAv52bA6Okp9KC/hyRQzlVz84REzZXtwzXSrmDxsJXRSdUiLDut4EzTdeFqgjioiZUikVMG24TMiga6dToZbhXJNL4esiOohuIhHGRErc8Or3OkkJUUUECd50WEUwRU79+LhmUpd+qJEUyJTk+b1Lk6stz0ZyqXdssmJ5R/6Ov5uHfK2alNXyRuGuJC4SCnu+DKrdzhCqB4dSPwLKyDlC3CS0caZOqEuuEQcJFaFLm3RaVe1e4qPLTa6SLSZUnUqHqlVVmxggCc/lmFvhctStfIVTer8QmSR9l8RUOwmnCCnNF82j4nOEPsKyBoi8v0E0EDrhTKmGCo4Tdwh9R7mp++MA4T70EgrZdAdIlZTkIGeADFKgoiokdWiAtBTSYtLWI61KupLtxj/fazNt/RrRGuQniQ9Evgy/ou5jhNo0ixT6euIC0U5MENN1RG3zjDhLbCPSKKf1lB1+Pi8j1BZKyVxC/2PprtYkklNhQkb0BaMuEN4lIcdz0k/hdpmlzPxT8gAAAABJRU5ErkJggg==" rel="icon" type="image/png" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style type="text/css">
       h3 {margin:2px}
       table.params {font-size:small}
