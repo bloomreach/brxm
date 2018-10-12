@@ -22,7 +22,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
  *     <li>numberfield</li>
  *     <li>checkbox</li>
  *     <li>datefield</li>
- *     <li>colorfield : see also {@link Color}</li>
  * </ul>
  * ParameterType.UNKNOWN will result in xtype "textfield"
  */
@@ -47,7 +45,6 @@ public enum ParameterType {
            null),
     BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null),
     DATE("datefield", new Class[]{Date.class, Calendar.class}, null),
-    COLOR("colorfield", new Class[]{String.class}, Color.class),
     JCR_PATH("linkpicker", new Class[]{String.class}, JcrPath.class),
     UNKNOWN("textfield", null, null);
 
@@ -103,5 +100,4 @@ public enum ParameterType {
         }
         return ParameterType.UNKNOWN;
     }
-
 }

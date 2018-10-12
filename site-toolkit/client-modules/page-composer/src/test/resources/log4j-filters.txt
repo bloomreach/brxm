@@ -1,5 +1,5 @@
 #
-#  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ Channel 'channel-foo' not found
 Could not load switch template resource bundle
 Cannot delete configuration node
 Could not create a preview configuration
+Ignoring duplicate parameter 'parameter' in field group
+Ignoring unknown parameter 'nosuchparameter' in field group
 Missing properties 'manage.changes.privileges'
 cancel channel delete
 Failed to delete channel

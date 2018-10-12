@@ -123,6 +123,7 @@
           <systemPropertyVariables>
             <repo.path>${project.build.directory}</repo.path>
           </systemPropertyVariables>
+          <runOrder>alphabetical</runOrder>
         </configuration>
       </plugin>
     </plugins>
