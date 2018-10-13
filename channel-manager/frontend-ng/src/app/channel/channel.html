@@ -44,7 +44,7 @@
            layout
            layout-align="end center">
         <overlay-toggle name="components"
-                        disabled="!$ctrl.isComponentsOverlayEnabled"
+                        channel="$ctrl.channel"
                         default-state="false"
                         state="$ctrl.isComponentsOverlayDisplayed"
                         on-state-change="$ctrl.isComponentsOverlayDisplayed = state"
@@ -55,7 +55,7 @@
         </overlay-toggle>
 
         <overlay-toggle name="content"
-                        disabled="!$ctrl.isContentOverlayEnabled"
+                        channel="$ctrl.channel"
                         default-state="true"
                         state="$ctrl.isContentOverlayDisplayed"
                         on-state-change="$ctrl.isContentOverlayDisplayed = state"
