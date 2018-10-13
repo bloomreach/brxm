@@ -16,16 +16,33 @@
 
 class OverlayToggleController {
   constructor(
+    ProjectService,
     localStorageService,
   ) {
     'ngInject';
 
+    this.ProjectService = ProjectService;
     this.localStorageService = localStorageService;
   }
 
   $onInit() {
     this.storageKey = `channelManager.overlays.${this.name}`;
-    this.loadPersistentState();
+    this.initiateOverlay();
+  }
+
+  $onChanges() {
+    this.initiateOverlay();
+  }
+
+  initiateOverlay() {
+    if (this.ProjectService.isBranch() && !this.ProjectService.isEditingAllowed(this.name)) {
+      this.disabled = true;
+      this.state = false;
+      this.onStateChange({ state: false });
+    } else {
+      this.disabled = false;
+      this.loadPersistentState();
+    }
   }
 
   setState(state) {

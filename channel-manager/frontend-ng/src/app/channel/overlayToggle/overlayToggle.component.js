@@ -22,8 +22,8 @@ const modeToggleComponent = {
   template,
   controller,
   bindings: {
+    channel: '<',
     name: '@',
-    disabled: '<',
     state: '<',
     onStateChange: '&',
     defaultState: '<',

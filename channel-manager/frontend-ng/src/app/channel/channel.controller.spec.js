@@ -29,7 +29,6 @@ describe('ChannelController', () => {
   let HippoIframeService;
   let PageMetaDataService;
   let OverlayService;
-  let ProjectService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -43,7 +42,6 @@ describe('ChannelController', () => {
       _ChannelService_,
       _CmsService_,
       _OverlayService_,
-      _ProjectService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
@@ -53,7 +51,6 @@ describe('ChannelController', () => {
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
       OverlayService = _OverlayService_;
-      ProjectService = _ProjectService_;
 
       spyOn(ChannelService, 'clearChannel');
       spyOn(ChannelService, 'hasChannel');
@@ -212,26 +209,6 @@ describe('ChannelController', () => {
 
     $ctrl.isSidePanelFullScreen('left');
     expect(SidePanelService.isFullScreen).toHaveBeenCalledWith('left');
-  });
-
-  it('should delegate isContentOverlayEnabled to ProjectService', () => {
-    let toggle = false;
-    spyOn(ProjectService, 'isContentOverlayEnabled').and.callFake(() => {
-      toggle = !toggle;
-      return toggle;
-    });
-    expect($ctrl.isContentOverlayEnabled).toBeTruthy();
-    expect($ctrl.isContentOverlayEnabled).toBeFalsy();
-  });
-
-  it('should delegate isComponentsOverlayEnabled to ProjectService', () => {
-    let toggle = false;
-    spyOn(ProjectService, 'isComponentsOverlayEnabled').and.callFake(() => {
-      toggle = !toggle;
-      return toggle;
-    });
-    expect($ctrl.isComponentsOverlayEnabled).toBeTruthy();
-    expect($ctrl.isComponentsOverlayEnabled).toBeFalsy();
   });
 
   describe('reload-page event from ExtJS', () => {
