@@ -24,7 +24,7 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './target/ui-extension.d.ts',
+      main: './target/classes/ui-extension.d.ts',
       out: 'ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
@@ -41,7 +41,7 @@ module.exports = {
     extensions: ['.ts'],
   },
   output: {
-    path: path.resolve(__dirname, 'target'),
+    path: path.resolve(__dirname, 'target/classes'),
     libraryTarget: 'commonjs',
     filename: 'ui-extension.js',
   },
