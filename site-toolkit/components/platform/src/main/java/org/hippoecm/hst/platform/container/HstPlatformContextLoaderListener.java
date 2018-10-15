@@ -57,11 +57,11 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         //                   for now doing required wiring inline here, using the provided Repository but also temporarily
         //                   (mis?)using the hstconfigreader.delegating credentials from registering hst sites (see HstModelRegistryImpl)
         hstModelRegistry.setRepository(repositoryService);
-        hstModelRegistry.init();
         platformServices.setHstModelRegistry(hstModelRegistry);
         platformServices.setPreviewDecorator(previewDecorator);
-        platformServices.init();
         configureHstSite(hstModelRegistry);
+        platformServices.init();
+        hstModelRegistry.init();
     }
 
     @Override
