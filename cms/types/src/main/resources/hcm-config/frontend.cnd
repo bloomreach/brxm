@@ -50,14 +50,14 @@
 
 [frontend:clusterlist] > frontend:clusterfolder orderable
 
-[frontend:uiextension]
+[frontend:uiExtension]
 - frontend:config (string)
 - frontend:displayName (string) mandatory
 - frontend:extensionPoint (string) = 'pageSidePanel' mandatory < 'pageSidePanel'
 - frontend:url (string) mandatory
 
-[frontend:uiextensions] orderable
-+ * (frontend:uiextension) multiple
+[frontend:uiExtensions] orderable
++ * (frontend:uiExtension) multiple
 
 [frontend:application] > nt:base
 - frontend:saveonexit (boolean)
@@ -67,7 +67,7 @@
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
-+ frontend:uiextensions (frontend:uiextensions)
++ frontend:uiExtensions (frontend:uiExtensions)
 
 [frontend:workflow] > hipposys:workflow
 + frontend:renderer (nt:base)
