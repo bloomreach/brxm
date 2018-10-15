@@ -436,7 +436,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private Properties fetchChannelResources(final Channel channel) throws ChannelException {
         log.info("Fetching i18n resources for channel '{}'", channel.getId());
         final String locale = Session.get().getLocale().toString();
-        return getChannelService().getChannelResourceValues(getHostGroup(), channel.getId(), locale);
+        try {
+            return getChannelService().getChannelResourceValues(getHostGroup(), channel.getId(), locale);
+        } catch (IllegalStateException e) {
+            log.info("Cannot get channel resources: {}", e.getMessage());
+            return new Properties();
+        }
     }
 
     public void update() {
@@ -459,7 +464,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     protected void loadChannels() {
 
-        final List<Channel> channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
+        List<Channel> channelList;
+        try {
+            channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
+        } catch (IllegalStateException e) {
+            log.info("Cannot get channels : {}", e.getMessage());
+            channelList = Collections.emptyList();
+        }
         channels = channelList.stream().map(channel -> {
             if (StringUtils.isEmpty(channel.getType())) {
                 channel.setType(DEFAULT_TYPE);

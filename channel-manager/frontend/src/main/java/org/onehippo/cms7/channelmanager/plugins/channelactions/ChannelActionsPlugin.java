@@ -145,8 +145,15 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
     private MarkupContainer createMenu(final String documentUuid) {
 
-        final List<ChannelDocument> channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
-                .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid);
+        List<ChannelDocument> channelDocuments;
+
+        try {
+            channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
+                    .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid);
+        } catch (IllegalStateException e) {
+            log.info("Cannot get channels for document: {}", e.getMessage());
+            channelDocuments = new ArrayList<>();
+        }
         channelDocuments.sort(getChannelDocumentComparator());
 
         final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<>();

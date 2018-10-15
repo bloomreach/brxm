@@ -79,8 +79,13 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
             return null;
         }
 
-        return HippoServiceRegistry.getService(PlatformServices.class).getDocumentService()
-                .getUrl(getUserJcrSession(), getHostGroup(), uuid, type);
+        try {
+            return HippoServiceRegistry.getService(PlatformServices.class).getDocumentService()
+                    .getUrl(getUserJcrSession(), getHostGroup(), uuid, type);
+        } catch (IllegalStateException e) {
+            log.info("Cannot get document URL: '{}'", e.getMessage());
+            return null;
+        }
     }
 
     private String getUuidOfHandle(Node documentNode) {
