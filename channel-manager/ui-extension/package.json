@@ -1,13 +1,13 @@
 {
   "name": "@bloomreach/ui-extension",
   "version": "13.0.0",
-  "description": "Bloomreach DXP OpenUI SDK ",
+  "description": "BloomReach OpenUI SDK ",
   "keywords": [
     "bloomreach",
     "sdk",
     "openui"
   ],
-  "author": "Hippo B.V.",
+  "author": "BloomReach B.V.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
