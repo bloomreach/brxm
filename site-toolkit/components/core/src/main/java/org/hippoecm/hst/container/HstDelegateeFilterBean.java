@@ -64,11 +64,14 @@ import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
 
+import static java.lang.Boolean.TRUE;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
@@ -85,6 +88,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private final static String FILTER_DONE_KEY = "filter.done_"+HstDelegateeFilterBean.class.getName();
 
     public static final String AUTORELOAD_PATHINFO = "/autoreload";
+
+    private static final String HST_MODE_QUERYSTRING_ATTR = "HstMode";
+    private static final String SKIP_HST_SESSION_ATTR = HstDelegateeFilterBean.class.getName() + ".SkipHstMode";
 
     private ServletContext servletContext;
 
@@ -153,6 +159,27 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
+        final HttpServletRequest req = (HttpServletRequest)request;
+        final HttpServletResponse res = (HttpServletResponse)response;
+
+        HttpSession session = req.getSession(false);
+
+        final String contextPath = req.getContextPath();
+
+        final HippoWebappContext hippoWebappContext = HippoWebappContextRegistry.get().getContext(contextPath);
+        if (hippoWebappContext == null) {
+            throw new IllegalStateException(String.format("No registered HST webapp for contextPath '%s'. Cannot handle " +
+                    "request. ", contextPath));
+        }
+
+        if (hippoWebappContext.getType() == HippoWebappContext.Type.CMS) {
+            if (skipHst(req, session)) {
+                log.debug("Skipping HST Processing for CMS webapp");
+                chain.doFilter(request, response);
+                return;
+            }
+        }
+
         if (request.getAttribute(ContainerConstants.HST_RESET_FILTER) != null) {
             request.removeAttribute(FILTER_DONE_KEY);
             request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
@@ -163,10 +190,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             return;
         }
 
-        HttpServletRequest req = (HttpServletRequest)request;
-        HttpServletResponse res = (HttpServletResponse)response;
 
-        HttpSession session = req.getSession(false);
         final boolean isJaasLoginAttempt = session != null
                 && session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null
                 && session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"));
@@ -176,7 +200,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             return;
         }
 
-        request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
+        request.setAttribute(FILTER_DONE_KEY, TRUE);
 
         boolean requestContextSetToProvider = false;
 
@@ -237,7 +261,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
              */
             if (isJaasLoginAttempt) {
                 // we are dealing with client side redirect from the container after JAAS login. This redirect typically
-                // fails in case of proxy taking care of the context path in front of the application.
+                // fails in case of proxy taking care of the hippoWebappContext path in front of the application.
                 // hence we need another redirect.
                 String resourceURL = (String)session.getAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
                 session.removeAttribute(HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
@@ -265,7 +289,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 requestContext.setFullyQualifiedURLs(true);
             }
 
-            // sets up the current thread's active request context object.
+            // sets up the current thread's active request hippoWebappContext object.
             initializeResourceLifecycleManagements();
             modifiableRequestContextProvider.set(requestContext);
 
@@ -293,9 +317,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                                 }
                                 Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
                                 if (decoratedMount == undecoratedMount) {
-                                    log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", undecoratedMount.getMountPoint());
+                                    log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
                                 } else {
-                                    log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
+                                    log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
                                 }
                                 ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
                             } else {
@@ -441,7 +465,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
         finally {
             request.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            // clears up the current thread's active request context object.
+            // clears up the current thread's active request hippoWebappContext object.
             if (requestContextSetToProvider) {
                 disposeHstRequestContext();
                 modifiableRequestContextProvider.clear();
@@ -451,6 +475,29 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 HDC.cleanUp();
             }
         }
+    }
+
+    private boolean skipHst(final HttpServletRequest req, HttpSession session) {
+
+        if (req.getParameter(HST_MODE_QUERYSTRING_ATTR) != null) {
+            final Boolean hstMode = Boolean.valueOf(req.getParameter(HST_MODE_QUERYSTRING_ATTR));
+            if (hstMode) {
+                if (session != null && session.getAttribute(SKIP_HST_SESSION_ATTR) != null) {
+                    session.removeAttribute(SKIP_HST_SESSION_ATTR);
+                }
+            } else {
+                // hst should be skipped
+                if (session == null) {
+                    session = req.getSession(true);
+                }
+                session.setAttribute(SKIP_HST_SESSION_ATTR, TRUE);
+            }
+        }
+
+        if (session != null && TRUE.equals(session.getAttribute(SKIP_HST_SESSION_ATTR))) {
+            return true;
+        }
+        return false;
     }
 
     private void finishMatchingPhase(final HstMutableRequestContext requestContext) {
