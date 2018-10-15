@@ -457,9 +457,13 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         // for a submount if container resource requests are also involved
         // also, we should not set the CMS_REQUEST_RENDERING_MOUNT_ID in case the mount turns out to be an auto-appended
         // mount, like the pagemodelapi mount : Those mounts are typically used for some processing but not for setting
-        // which mount (channel) is currently open in the channel mngr
-        if (requestContext.getResolvedMount().getMount().isExplicit() &&
+        // which mount (channel) is currently open in the channel mngr. And finally, we should not (re)set the
+        // CMS_REQUEST_RENDERING_MOUNT_ID in case the resolved mount is for a mount that does not have a channel
+
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        if (mount.isExplicit() && mount.getHstSite().getChannel() != null &&
                 (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource())) {
+
             session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
             session.setAttribute(ContainerConstants.RENDERING_HOST, requestContext.getRenderHost());
         }
