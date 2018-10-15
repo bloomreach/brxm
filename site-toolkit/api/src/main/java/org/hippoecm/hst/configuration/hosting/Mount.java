@@ -217,16 +217,13 @@ public interface Mount {
     int getPort();
 
     /**
-     * <p> Returns the contextpath (webapp) for this {@link Mount}. A request can only be matched to this {@link Mount}
-     * if the request its {@link javax.servlet.http.HttpServletRequest#getContextPath()} is equal to this contextpath.
-     * </p>
      * <p>
-     *     This method will never return {@code null}
+     *     Returns the contextpath (webapp) for this {@link Mount}.
      * </p>
      *
      * @return the contextpath (webapp) for this {@link Mount}. The contextpath for the ROOT application must be an
      * empty String. If non-empty, a path starting with a "/" character but that does not end with a "/" character must
-     * be returned.
+     * be returned. This method never returns {@code null}
      */
     String getContextPath();
 

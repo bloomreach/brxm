@@ -239,7 +239,7 @@ public class HstSiteService implements HstSite {
                     url.append(mount.getPort());
                 }
             }
-            if (virtualHost.isContextPathInUrl() && mount.getContextPath() != null) {
+            if (virtualHost.isContextPathInUrl()) {
                 url.append(mount.getContextPath());
             }
             if (StringUtils.isNotEmpty(mountPath)) {
