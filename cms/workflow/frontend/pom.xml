@@ -72,7 +72,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-workflow</artifactId>
       <version>${hippo.repository.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
