@@ -67,7 +67,7 @@
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
-+ frontend:uiExtensions (frontend:uiExtensions)
++ 'ui-extensions' (frontend:uiExtensions) = 'frontend:uiExtensions'
 
 [frontend:workflow] > hipposys:workflow
 + frontend:renderer (nt:base)
