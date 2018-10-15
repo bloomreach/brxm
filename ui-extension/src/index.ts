@@ -1,4 +1,4 @@
-export class Extension {
+export class UiExtension {
   test() {
     return 'test';
   }

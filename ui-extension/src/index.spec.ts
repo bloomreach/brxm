@@ -1,9 +1,9 @@
-import { Extension } from './index';
+import { UiExtension } from './index';
 
-let extension: Extension;
+let extension: UiExtension;
 
 beforeEach(() => {
-  extension = new Extension();
+  extension = new UiExtension();
 });
 
 it('should return test', () => {
