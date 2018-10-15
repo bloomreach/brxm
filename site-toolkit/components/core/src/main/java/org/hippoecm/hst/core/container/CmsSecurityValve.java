@@ -26,27 +26,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
-import org.onehippo.cms7.services.context.HippoWebappContext;
-import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
+import static org.hippoecm.hst.util.HstRequestUtils.getCmsBaseURL;
 
 /**
  * <p>
@@ -224,23 +216,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         // we know that the current request is over the current cms host. We need to match the current host to the
         // platform hst model to find out whether to include the platform context path or not
 
-        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
-        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
-
-        final HstModel platformHstModel = getPlatformHstModel();
-
-        final ResolvedVirtualHost resolvedCmsHost = platformHstModel.getVirtualHosts().matchVirtualHost(farthestRequestHost);
-        if (resolvedCmsHost == null) {
-            throw new IllegalStateException(String.format("Could not match cms host '%s' in platform hst model", farthestRequestHost));
-        }
-
-        final String cmsLocation;
-        final VirtualHost cmsVHost = resolvedCmsHost.getVirtualHost();
-        if (cmsVHost.isContextPathInUrl() && isNotEmpty(cmsVHost.getContextPath())) {
-            cmsLocation = farthestRequestScheme + "://" + farthestRequestHost + cmsVHost.getContextPath();
-        } else {
-            cmsLocation =  farthestRequestScheme + "://" + farthestRequestHost;
-        }
+        final String cmsLocation = getCmsBaseURL(servletRequest);
         final String destinationPath = createDestinationPath(servletRequest, requestContext);
 
         final StringBuilder authUrl = new StringBuilder(cmsLocation);
@@ -252,20 +228,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             authUrl.append("&cmsCSID=").append(cmsContextServiceId);
         }
         return authUrl.toString();
-    }
-
-    private static HstModel getPlatformHstModel() {
-
-        HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        for (HstModel hstModel : hstModelRegistry.getHstModels()) {
-            final String contextPath = hstModel.getVirtualHosts().getContextPath();
-            final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(contextPath);
-            if (context.getType() == HippoWebappContext.Type.CMS || context.getType() == HippoWebappContext.Type.PLATFORM) {
-                return hstModel;
-            }
-
-        }
-        throw new IllegalStateException("Channel Manager is only available when there is a cms or platform hst model");
     }
 
     private static String createDestinationPath(final HttpServletRequest servletRequest, final HstRequestContext requestContext) {

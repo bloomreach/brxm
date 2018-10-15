@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import static org.hippoecm.hst.site.HstServices.getComponentManager;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -38,8 +36,17 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
 /**
  * HST Request Utils
@@ -689,6 +696,54 @@ public class HstRequestUtils {
         }
 
         return forwardedForHeaderNames;
+    }
+
+    /**
+     * <p>
+     *     Returns the cms base URL, for example https://cms.example.org or https://cms.example.org/cms. The
+     *     {@code cmsHostServletRequest} can be a request to <strong>any</strong> webapp (/site, /intranet, /cms) as long
+     *     as the request is using the host name for the cms, eg https://cms.example.org/site. This utility method then
+     *     finds out via the hst:platform model whether the context path '/cms' should be present in the base URL or not
+     * </p>
+     *
+     * @param cmsHostServletRequest a request that uses the cms host in the client. Note the request can still be for
+     *                              a site webapp to load a site in the channel mgr, however, as long as the request is
+     *                              using the hostname that the cms runs on
+     * @return
+     */
+    public static String getCmsBaseURL(final HttpServletRequest cmsHostServletRequest) {
+        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(cmsHostServletRequest);
+        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(cmsHostServletRequest, false);
+
+        final HstModel platformHstModel = getPlatformHstModel();
+
+        final ResolvedVirtualHost resolvedCmsHost = platformHstModel.getVirtualHosts().matchVirtualHost(farthestRequestHost);
+        if (resolvedCmsHost == null) {
+            throw new IllegalStateException(String.format("Could not match cms host '%s' in platform hst model", farthestRequestHost));
+        }
+
+        final String cmsLocation;
+        final VirtualHost cmsVHost = resolvedCmsHost.getVirtualHost();
+        if (cmsVHost.isContextPathInUrl() && isNotEmpty(cmsVHost.getContextPath())) {
+            cmsLocation = farthestRequestScheme + "://" + farthestRequestHost + cmsVHost.getContextPath();
+        } else {
+            cmsLocation =  farthestRequestScheme + "://" + farthestRequestHost;
+        }
+        return cmsLocation;
+    }
+
+    private static HstModel getPlatformHstModel() {
+
+        HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        for (HstModel hstModel : hstModelRegistry.getHstModels()) {
+            final String contextPath = hstModel.getVirtualHosts().getContextPath();
+            final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(contextPath);
+            if (context.getType() == HippoWebappContext.Type.CMS || context.getType() == HippoWebappContext.Type.PLATFORM) {
+                return hstModel;
+            }
+
+        }
+        throw new IllegalStateException("Platform hst model is not available");
     }
 
 }
