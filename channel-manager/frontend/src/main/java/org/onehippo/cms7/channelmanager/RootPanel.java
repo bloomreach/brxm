@@ -34,8 +34,6 @@ import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
-import org.onehippo.cms7.services.context.HippoWebappContext;
-import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -88,9 +86,6 @@ public class RootPanel extends ExtPanel {
     private String composerRestMountPath;
 
     @ExtProperty
-    private final String[] contextPaths;
-
-    @ExtProperty
     private boolean showBreadcrumbInitially = false;
 
     @Override
@@ -140,14 +135,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.add(this.blueprintStore);
         add(channelManagerCard);
 
-        // TODO CHANNELMGR-1705 is contextPaths property still really needed? Is it needed in this way?
-        contextPaths = HippoWebappContextRegistry.get().getEntries()
-                .filter(sh -> sh.getServiceObject().getType() == HippoWebappContext.Type.SITE)
-                .map(sh -> sh.getServiceObject().getServletContext().getContextPath())
-                .toArray(String[]::new);
-
-        // channel editor
-        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
+        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture);
         add(channelEditor);
 
         // folder picker

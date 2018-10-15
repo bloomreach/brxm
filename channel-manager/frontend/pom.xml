@@ -228,7 +228,6 @@
                 <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
                 <include>${channel.manager.package}/ExtStoreFuture.js</include>
                 <include>${channel.manager.package}/BreadcrumbToolbar.js</include>
-                <include>${channel.manager.package}/Pinger.js</include>
                 <include>${channel.manager.package}/RootPanel.js</include>
                 <include>${channel.manager.package}/BlueprintListPanel.js</include>
                 <include>${channel.manager.package}/ChannelFormPanel.js</include>
