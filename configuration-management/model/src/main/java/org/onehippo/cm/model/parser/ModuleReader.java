@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -30,7 +31,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.onehippo.cm.model.impl.SiteImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.serializer.ModuleContext;
@@ -92,16 +92,17 @@ public class ModuleReader {
         return moduleContext;
     }
 
-    public ModuleContext readReplacement(final Path moduleDescriptorPath, final ConfigurationModelImpl comparisonModel)
-            throws IOException, ParserException {
-        final ModuleImpl module = readDescriptor(moduleDescriptorPath, null);
+    public ModuleContext readReplacement(final Path moduleDescriptorPath, final ConfigurationModelImpl comparisonModel,
+                                         final String siteName) throws IOException, ParserException {
+        final ModuleImpl module = readDescriptor(moduleDescriptorPath, siteName);
 
-        // if there was already a matching module in the comparisonModule, use the extension info from that one
-        comparisonModel.getModulesStream().filter(Predicate.isEqual(module)).findFirst()
-                .ifPresent(comparisonModule -> {
-            module.getProject().getGroup().setSite(new SiteImpl(comparisonModule.getSiteName()));
-            module.setHstRoot(comparisonModule.getHstRoot());
-        });
+        // if there was already a matching module in the comparisonModule, use the hst root info from that one
+        final Optional<ModuleImpl> existingModule = comparisonModel.getModulesStream().filter(Predicate.isEqual(module)).findFirst();
+        if (siteName != null) {
+            existingModule.ifPresent(comparisonModule -> {
+                module.setHstRoot(comparisonModule.getHstRoot());
+            });
+        }
 
         final ModuleContext moduleContext = new ModuleContext(module, moduleDescriptorPath);
         readModule(module, moduleContext, true);
