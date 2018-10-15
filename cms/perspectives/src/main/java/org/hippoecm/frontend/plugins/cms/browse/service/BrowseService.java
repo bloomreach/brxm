@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.service;
 
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -26,6 +24,7 @@ import javax.jcr.Value;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
@@ -41,9 +40,13 @@ import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection.Match;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
  * An implementation of IBrowseService that also exposes the document model service.
@@ -59,60 +62,13 @@ import org.slf4j.LoggerFactory;
 public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable {
 
     private static final Logger log = LoggerFactory.getLogger(BrowseService.class);
-
-    private class DocumentModelService extends ModelReference<Node> {
-
-        DocumentModelService(final IPluginConfig config) {
-            super(config.getString("model.document"), new JcrNodeModel((Node) null));
-        }
-
-        public void updateModel(final IModel<Node> model) {
-            super.setModel(model);
-        }
-
-        @Override
-        public void setModel(final IModel<Node> model) {
-            if (model == null) {
-                throw new IllegalArgumentException("invalid model null");
-            }
-            if (model.getObject() == null) {
-                updateModel(model);
-            } else {
-                browse(model);
-            }
-        }
-    }
-
-    private class FolderModelService extends ModelReference<Node> {
-
-        FolderModelService(final IPluginConfig config) {
-            super(config.getString("model.folder"), new JcrNodeModel((Node) null));
-        }
-
-        public void updateModel(final IModel<Node> model) {
-            super.setModel(model);
-        }
-
-        @Override
-        public void setModel(final IModel<Node> model) {
-            if (model == null) {
-                throw new IllegalArgumentException("invalid model null");
-            }
-            if (model.getObject() == null) {
-                updateModel(model);
-            } else {
-                browse(model);
-            }
-        }
-    }
-
     private final DocumentCollectionModel collectionModel;
     private final DocumentModelService documentService;
     private final BrowserSections sections;
     private FolderModelService folderService;
 
     public BrowseService(final IPluginContext context, final IPluginConfig config, final JcrNodeModel document) {
-        documentService = new DocumentModelService(config);
+        documentService = new DocumentModelService(config, context);
         documentService.init(context);
 
         collectionModel = new DocumentCollectionModel(null);
@@ -122,10 +78,12 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             folderService.init(context);
             context.registerService(new IObserver() {
 
+                @Override
                 public IObservable getObservable() {
                     return collectionModel;
                 }
 
+                @Override
                 public void onEvent(final Iterator events) {
                     if (collectionModel.getObject() != null) {
                         folderService.updateModel(collectionModel.getObject().getFolder());
@@ -143,7 +101,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             }
         });
 
-        final List<String> extensions = Arrays.asList(config.getStringArray("sections"));
+        final String[] extensions = config.getStringArray("sections");
         for (final String extension : extensions) {
             context.registerTracker(new ServiceTracker<IBrowserSection>(IBrowserSection.class) {
 
@@ -163,6 +121,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         }
         context.registerService(this, config.getString(IBrowseService.BROWSER_ID, BrowseService.class.getName()));
 
+
         browse(document);
     }
 
@@ -178,11 +137,13 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      * Use the supplied model of a Node (or Version) to set folder and document models.
      * When a Version is supplied from the version storage, the physical node is used.
      */
+    @Override
     public void browse(final IModel<Node> model) {
         final IModel<Node> document = getHandleOrFolder(model);
         if (document.getObject() == null) {
             return;
         }
+
         Match closestMatch = null;
         String closestName = null;
         // Get the match for the active section
@@ -235,6 +196,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         documentService.updateModel(model.getObject().getCollection().getFolder());
     }
 
+    @Override
     public void detach() {
         documentService.detach();
     }
@@ -252,7 +214,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                         final Node docNode = node.getSession().getNodeByIdentifier(uuid);
                         if (docNode.getDepth() > 0) {
                             final Node parent = docNode.getParent();
-                            if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (parent.isNodeType(NT_HANDLE)) {
                                 return new JcrNodeModel(parent);
                             }
                         }
@@ -271,7 +233,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                     }
                 } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                     final Node parent = node.getParent();
-                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (parent.isNodeType(NT_HANDLE)) {
                         return new JcrNodeModel(parent);
                     }
                 }
@@ -280,6 +242,108 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
             }
         }
         return model;
+    }
+
+    private class DocumentModelService extends ModelReference<Node> {
+
+
+        private final IPluginContext context;
+
+        DocumentModelService(final IPluginConfig config, final IPluginContext context) {
+            super(config.getString("model.document"), new JcrNodeModel((Node) null));
+            this.context = context;
+        }
+
+        public void updateModel(final IModel<Node> model) {
+            super.setModel(updateModelForFrozenNodeWithCurrentBranchId(model));
+        }
+
+        @Override
+        public void setModel(final IModel<Node> model) {
+            if (model == null) {
+                throw new IllegalArgumentException("invalid model null");
+            }
+            if (model.getObject() == null) {
+                updateModel(model);
+            } else {
+                browse(updateModelForFrozenNodeWithCurrentBranchId(model));
+            }
+        }
+
+
+        private IModel<Node> updateModelForFrozenNodeWithCurrentBranchId(final IModel<Node> model) {
+            final Node node = model.getObject();
+            if (node == null){
+                return model;
+            }
+            try {
+                if (!node.isNodeType(NT_HANDLE) || node.isNodeType(NT_DOCUMENT)) {
+                    return model;
+                }
+                final Node handle = getHandle(node);
+                final BranchIdModel branchIdModel = BranchIdModel.initialize(context, handle);
+                final String currentBranchId = branchIdModel.getBranchId();
+                log.debug("Current branch id:{}", currentBranchId);
+                if (isFrozenNode(node)) {
+                    final DocumentVariant documentVariant = new DocumentVariant(node);
+                    final String frozenBranchId = documentVariant.getBranchId();
+                    log.debug("Branch id of frozen node:{} is {}", handle.getPath(), frozenBranchId);
+                    if (branchIdModel.isDefined() && currentBranchId.equals(frozenBranchId)) {
+                        log.debug("The documentModel(handle:{}) contains a frozen node:{} that has the same branchId as" +
+                                        " the current branch id: {}, updating the documentModel with the associated handle."
+                                , currentBranchId);
+                        return new JcrNodeModel(handle);
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.warn(e.getMessage(), e);
+            }
+            return model;
+        }
+
+        private Node getHandle(final Node node) throws RepositoryException {
+            return isFrozenNode(node) ? getVersionHandle(node) : node;
+        }
+
+        private Node getVersionHandle(final Node frozenNode) {
+            try {
+                final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
+                final Node variant = frozenNode.getSession().getNodeByIdentifier(uuid);
+                return variant.getParent();
+            } catch (final RepositoryException e) {
+               log.warn(e.getMessage(), e);
+               return frozenNode;
+            }
+        }
+
+        private boolean isFrozenNode(final Node node) throws RepositoryException {
+            return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
+        }
+
+
+    }
+
+    private class FolderModelService extends ModelReference<Node> {
+
+        FolderModelService(final IPluginConfig config) {
+            super(config.getString("model.folder"), new JcrNodeModel((Node) null));
+        }
+
+        public void updateModel(final IModel<Node> model) {
+            super.setModel(model);
+        }
+
+        @Override
+        public void setModel(final IModel<Node> model) {
+            if (model == null) {
+                throw new IllegalArgumentException("invalid model null");
+            }
+            if (model.getObject() == null) {
+                updateModel(model);
+            } else {
+                browse(model);
+            }
+        }
     }
 
 }
