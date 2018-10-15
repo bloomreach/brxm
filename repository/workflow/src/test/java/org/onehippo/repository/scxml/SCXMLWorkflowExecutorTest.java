@@ -26,15 +26,15 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
  * SCXMLWorkflowExecutorTest
- * */
+ */
 public class SCXMLWorkflowExecutorTest {
 
     private static final String SCXML_TEST =
@@ -71,8 +71,9 @@ public class SCXMLWorkflowExecutorTest {
                     "  <final id=\"terminated\"/>\n" +
                     "</scxml>";
 
-    private MockRepositorySCXMLRegistry registry;
-    private SCXMLExecutorFactory factory;
+    private static MockRepositorySCXMLRegistry registry;
+    private static SCXMLExecutorFactory factory;
+
 
     @Before
     public void before() throws Exception {
@@ -123,8 +124,7 @@ public class SCXMLWorkflowExecutorTest {
         try {
             workflowExecutor.triggerAction("foo");
             fail("triggerAction foo should have failed");
-        }
-        catch (WorkflowException e) {
+        } catch (WorkflowException e) {
             assertEquals("Workflow scxml not started", e.getMessage());
         }
         workflowExecutor.start();
@@ -152,8 +152,7 @@ public class SCXMLWorkflowExecutorTest {
         try {
             workflowExecutor.triggerAction("foo");
             fail("triggerAction foo should have failed");
-        }
-        catch (WorkflowException e) {
+        } catch (WorkflowException e) {
             assertEquals("Workflow scxml not started", e.getMessage());
         }
     }
@@ -189,8 +188,7 @@ public class SCXMLWorkflowExecutorTest {
         try {
             workflowExecutor.triggerAction("hello", payload);
             fail("triggerAction on a terminated workflow should have failed");
-        }
-        catch (WorkflowException e) {
+        } catch (WorkflowException e) {
             assertEquals("Workflow scxml already terminated", e.getMessage());
         }
         // simple reset

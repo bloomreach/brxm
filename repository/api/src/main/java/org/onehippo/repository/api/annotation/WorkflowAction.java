@@ -43,4 +43,6 @@ public @interface WorkflowAction {
      * @return true if the workflow action can potentially make changes to the session.
      */
     public boolean mutates() default true;
+
+
 }

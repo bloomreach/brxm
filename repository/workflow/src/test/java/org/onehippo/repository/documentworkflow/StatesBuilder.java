@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,18 @@ public class StatesBuilder {
     public static String STATE_TERMINATEABLE = "terminateable";
     public static String STATE_NO_COPY = "no-copy";
     public static String STATE_COPYABLE = "copyable";
+    public static String STATE_BRANCHABLE = "branchable";
+    public static String STATE_NO_BRANCHABLE = "no-branchable";
+    public static String STATE_NO_CHECKOUT_BRANCH = "no-checkout-branch";
+    public static String STATE_CAN_CHECKOUT_BRANCH = "can-checkout-branch";
+    public static String STATE_NO_REMOVE_BRANCH = "no-remove-branch";
+    public static String STATE_CAN_REMOVE_BRANCH = "can-remove-branch";
+    public static String STATE_NO_REINTEGRATE_BRANCH = "no-reintegrate-branch";
+    public static String STATE_CAN_REINTEGRATE_BRANCH = "can-reintegrate-branch";
+    public static String STATE_NO_PUBLISH_BRANCH = "no-publish-branch";
+    public static String STATE_CAN_PUBLISH_BRANCH = "can-publish-branch";
+    public static String STATE_NO_DEPUBLISH_BRANCH = "no-depublish-branch";
+    public static String STATE_CAN_DEPUBLISH_BRANCH = "can-depublish-branch";
     public static String STATE_LOGEVENT = "logEvent";
 
     private TreeSet<String> states = new TreeSet<>();
@@ -138,4 +150,61 @@ public class StatesBuilder {
         states.add(STATE_LOGEVENT);
         return this;
     }
+
+    public StatesBuilder branchable() {
+        states.add(STATE_BRANCHABLE);
+        return this;
+    }
+
+    public StatesBuilder noBranchable() {
+        states.add(STATE_NO_BRANCHABLE);
+        return this;
+    }
+
+    public StatesBuilder noCheckoutBranch() {
+        states.add(STATE_NO_CHECKOUT_BRANCH);
+        return this;
+    }
+    public StatesBuilder canCheckoutBranch() {
+        states.add(STATE_CAN_CHECKOUT_BRANCH);
+        return this;
+    }
+
+    public StatesBuilder noRemoveBranch() {
+        states.add(STATE_NO_REMOVE_BRANCH);
+        return this;
+    }
+    public StatesBuilder canRemoveBranch() {
+        states.add(STATE_CAN_REMOVE_BRANCH);
+        return this;
+    }
+
+    public StatesBuilder noReintegrateBranch() {
+        states.add(STATE_NO_REINTEGRATE_BRANCH);
+        return this;
+    }
+    public StatesBuilder canReintegrateBranch() {
+        states.add(STATE_CAN_REINTEGRATE_BRANCH);
+        return this;
+    }
+
+    public StatesBuilder noPublishBranch() {
+        states.add(STATE_NO_PUBLISH_BRANCH);
+        return this;
+    }
+    public StatesBuilder canPublishBranch() {
+        states.add(STATE_CAN_PUBLISH_BRANCH);
+        return this;
+    }
+
+    public StatesBuilder noDepublishBranch() {
+        states.add(STATE_NO_DEPUBLISH_BRANCH);
+        return this;
+    }
+    public StatesBuilder canDepublishBranch() {
+        states.add(STATE_CAN_DEPUBLISH_BRANCH);
+        return this;
+    }
+
+
 }
