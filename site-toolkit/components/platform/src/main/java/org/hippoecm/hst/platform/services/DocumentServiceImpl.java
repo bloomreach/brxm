@@ -125,6 +125,9 @@ public class DocumentServiceImpl implements DocumentService  {
         HstRequestContext requestContext = RequestContextProvider.get();
 
         HstLink bestLink = getBestLink(userSession, hostGroup, uuid, type);
+        if (bestLink == null) {
+            return StringUtils.EMPTY;
+        }
         return bestLink.toUrlForm(requestContext, true);
 
     }
