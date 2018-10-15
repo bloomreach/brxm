@@ -144,6 +144,10 @@ class Step2Service {
     }
     return false;
   }
+
+  closeEditor(messageKey, messageParams) {
+    return this.ContentEditor.confirmClose(messageKey, messageParams);
+  }
 }
 
 export default Step2Service;
