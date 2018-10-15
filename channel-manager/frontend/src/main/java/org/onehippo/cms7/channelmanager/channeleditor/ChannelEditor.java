@@ -236,7 +236,7 @@ public class ChannelEditor extends ExtPanel {
     private JSONArray loadExtensions() {
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
         final UiExtensionValidator validator = new ChannelEditorUiExtensionValidator();
-        final List<UiExtension> extensions = loader.loadCmsExtensions()
+        final List<UiExtension> extensions = loader.loadUiExtensions()
                 .stream()
                 .filter(validator::validate)
                 .collect(Collectors.toList());

@@ -18,8 +18,7 @@ package org.onehippo.cms7.channelmanager.extensions;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * The point of a UI extension, i.e. the thing in the UI that the extension knows something about
- * and can reason with.
+ * The UI extension point: the place in the UI where the extension will be shown.
  */
 public enum UiExtensionPoint {
 

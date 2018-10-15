@@ -115,10 +115,10 @@ class IframeExtensionCtrl {
     }
 
     try {
-      const extensionPointName = this.extension.extensionPoint;
+      const extensionPoint = this.extension.extensionPoint;
       const contextData = this.context;
       this.iframeWindow.BR_EXTENSION.onContextChanged({
-        extensionPoint: extensionPointName,
+        extensionPoint,
         data: contextData,
       });
     } catch (e) {

@@ -28,7 +28,10 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.FrontendNodeType.*;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DISPLAY_NAME;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_EXTENSION_POINT;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
+import static org.hippoecm.frontend.FrontendNodeType.UI_EXTENSIONS_CONFIG_PATH;
 
 public class JcrUiExtensionLoader implements UiExtensionLoader {
 
@@ -41,7 +44,7 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
     }
 
     @Override
-    public Set<UiExtension> loadCmsExtensions() {
+    public Set<UiExtension> loadUiExtensions() {
         try {
             return readExtensions();
         } catch (RepositoryException e) {

@@ -47,7 +47,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         // - prevents XSS (no quotes, HTML, etc.)
         // - keeps it simple
         if (!StringUtils.isAlphanumeric(id)) {
-            log.warn("Ignoring UI extensions '{}': extension IDs must be alphanumeric.", id);
+            log.warn("Ignoring UI extension '{}': extension IDs must be alphanumeric.", id);
             return false;
         }
 
@@ -58,7 +58,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         final String displayName = extension.getDisplayName();
 
         if (StringUtils.isBlank(displayName)) {
-            log.warn("Ignoring UI extensions '{}': no display name provided.", extension.getId());
+            log.warn("Ignoring UI extension '{}': no display name provided.", extension.getId());
             return false;
         }
 
@@ -72,7 +72,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
             final List<String> contextNames = Arrays.stream(UiExtensionPoint.values())
                     .map(UiExtensionPoint::getLowerCase)
                     .collect(Collectors.toList());
-            log.warn("Ignoring UI extensions '{}': context unknown. Valid contexts are: {}.",
+            log.warn("Ignoring UI extension '{}': context unknown. Valid contexts are: {}.",
                     extension.getId(), contextNames);
             return false;
         }
@@ -84,7 +84,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         final String url = extension.getUrl();
 
         if (StringUtils.isBlank(url)) {
-            log.warn("Ignoring UI extensions '{}': no URL provided.", extension.getId());
+            log.warn("Ignoring UI extension '{}': no URL provided.", extension.getId());
             return false;
         }
 

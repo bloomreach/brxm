@@ -31,10 +31,14 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DISPLAY_NAME;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_EXTENSION_POINT;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
+import static org.hippoecm.frontend.FrontendNodeType.NT_UI_EXTENSION;
+import static org.hippoecm.frontend.FrontendNodeType.NT_UI_EXTENSIONS;
+import static org.hippoecm.frontend.FrontendNodeType.UI_EXTENSIONS_NODE_NAME;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
-import static org.hippoecm.frontend.FrontendNodeType.*;
 
 public class JcrUiExtensionLoaderTest {
 
@@ -57,14 +61,14 @@ public class JcrUiExtensionLoaderTest {
 
     @Test
     public void noConfigNode() {
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertTrue(extensions.isEmpty());
     }
 
     @Test
     public void zeroExtensions() throws RepositoryException {
         createConfigNode();
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertTrue(extensions.isEmpty());
     }
 
@@ -76,7 +80,7 @@ public class JcrUiExtensionLoaderTest {
         extensionNode.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
         extensionNode.setProperty(FRONTEND_URL, "/extensions/extension-one");
 
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertThat(extensions.size(), equalTo(1));
 
         final UiExtension extension = extensions.iterator().next();
@@ -100,7 +104,7 @@ public class JcrUiExtensionLoaderTest {
         extensionNode2.setProperty(FRONTEND_DISPLAY_NAME, "Extension Two");
         extensionNode2.setProperty(FRONTEND_URL, "/extensions/extension-two");
 
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertThat(extensions.size(), equalTo(2));
 
         final Iterator<UiExtension> iterator = extensions.iterator();
@@ -125,7 +129,7 @@ public class JcrUiExtensionLoaderTest {
         configNode.addNode("extension1", NT_UI_EXTENSION);
         configNode.addNode("extension1", NT_UI_EXTENSION);
 
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertThat(extensions.size(), equalTo(1));
     }
 
@@ -134,7 +138,7 @@ public class JcrUiExtensionLoaderTest {
         final MockNode configNode = createConfigNode();
         configNode.addNode("extension1", NT_UI_EXTENSION);
 
-        final UiExtension extension = loader.loadCmsExtensions().iterator().next();
+        final UiExtension extension = loader.loadUiExtensions().iterator().next();
         assertThat(extension.getExtensionPoint(), equalTo(null));
         assertThat(extension.getDisplayName(), equalTo("extension1"));
         assertThat(extension.getUrl(), equalTo(null));
@@ -147,7 +151,7 @@ public class JcrUiExtensionLoaderTest {
         replay(brokenSession);
 
         loader = new JcrUiExtensionLoader(brokenSession);
-        final Set<UiExtension> extensions = loader.loadCmsExtensions();
+        final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertTrue(extensions.isEmpty());
 
         verify(brokenSession);

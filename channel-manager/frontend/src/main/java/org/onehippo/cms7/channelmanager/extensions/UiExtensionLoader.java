@@ -25,6 +25,6 @@ public interface UiExtensionLoader {
     /**
      * @return all available UI extensions.
      */
-    Set<UiExtension> loadCmsExtensions();
+    Set<UiExtension> loadUiExtensions();
 
 }

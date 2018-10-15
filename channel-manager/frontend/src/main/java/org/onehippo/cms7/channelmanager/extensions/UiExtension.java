@@ -31,18 +31,11 @@ public interface UiExtension {
     String getDisplayName();
 
     /**
-     * @return the extension point for this extension, i.e. the thing in the CMS this extension knows something
-     * about and can reason with.
+     * @return the extension point for this extension.
      */
     UiExtensionPoint getExtensionPoint();
 
     /**
-     * The URL that loads the extension.
-     * <p>
-     * When the extension runs on the origin of the CMS: if the CMS runs at https://localhost:8080/cms, and the URL path
-     * is "/site/_cmsinternal/myextension", the CMS will load the extension via a GET request to
-     * https://localhost:8080/site/_cmsinternal/myextension.
-     *
      * @return the URL that loads the extension.
      */
     String getUrl();
