@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>4.6.0</version>
+  <version>4.6.1-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
