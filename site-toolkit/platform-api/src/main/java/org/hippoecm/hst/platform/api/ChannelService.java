@@ -37,6 +37,7 @@ public interface ChannelService {
 	 * @return {@link List} of {@link Channel}s of all available live channels, empty list otherwise. Also note that
 	 * a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
+	 * @throws IllegalArgumentException if {@code userSession} or {@code hostGroup} is {@code null}
 	 */
 	List<Channel> getLiveChannels(Session userSession, String hostGroup);
 
@@ -51,6 +52,7 @@ public interface ChannelService {
 	 * otherwise the live. Also note that a clone of the {@link Channel} objects of the
 	 * {@link org.hippoecm.hst.platform.model.HstModel} are returned to
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
+	 * @throws IllegalArgumentException if {@code userSession} or {@code hostGroup} is {@code null}
 	 */
 	List<Channel> getPreviewChannels(Session userSession, String hostGroup);
 

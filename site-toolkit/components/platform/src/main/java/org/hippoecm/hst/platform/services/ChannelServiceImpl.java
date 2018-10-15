@@ -66,8 +66,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     private List<Channel> doGetChannels(final Session userSession, final String hostGroup, final boolean preview) {
 
-        if (hostGroup == null) {
-            throw new IllegalArgumentException("Host group is not allowed to be null");
+        if (hostGroup == null || userSession == null) {
+            throw new IllegalArgumentException("User session and host group are not allowed to be null");
         }
 
         final Map<String, Channel> channels = new HashMap<>();
