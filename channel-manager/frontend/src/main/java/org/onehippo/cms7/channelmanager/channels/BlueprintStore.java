@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.platform.api.PlatformServices;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -92,8 +93,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         return data;
     }
 
+    /**
+     * @return the {@link List} of blueprints for which the current user is authorized to use them to create a new channel
+     */
     public List<Blueprint> getBlueprints() {
-        return HippoServiceRegistry.getService(PlatformServices.class).getBlueprintService().getBlueprints();
+        return HippoServiceRegistry.getService(PlatformServices.class)
+                .getBlueprintService().getBlueprints(UserSession.get().getJcrSession());
     }
 
 

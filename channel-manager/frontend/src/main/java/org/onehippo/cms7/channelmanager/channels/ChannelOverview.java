@@ -33,11 +33,6 @@ public class ChannelOverview extends ExtPanel {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelOverview.class);
 
-    private ChannelStore store;
-
-    @ExtProperty
-    private boolean canModifyChannels;
-
     @ExtProperty
     @SuppressWarnings("unused")
     private boolean blueprintsAvailable;
@@ -46,10 +41,6 @@ public class ChannelOverview extends ExtPanel {
                            final String composerRestMountPath,
                            final ExtStoreFuture channelStoreFuture,
                            boolean blueprintsAvailable) {
-        this.store = (ChannelStore) channelStoreFuture.getStore();
-
-        canModifyChannels = store.canModifyChannels();
-        log.info("Current user is allowed to modify channels: {}", canModifyChannels);
 
         this.blueprintsAvailable = blueprintsAvailable;
         log.info("Blueprints for new channels are available: {}", blueprintsAvailable);

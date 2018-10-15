@@ -396,11 +396,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
-    public boolean canModifyChannels() {
-        return getChannelService()
-                .canUserModifyChannels(getUserJcrSession());
-    }
-
     private ChannelService getChannelService() {
         return HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
     }
