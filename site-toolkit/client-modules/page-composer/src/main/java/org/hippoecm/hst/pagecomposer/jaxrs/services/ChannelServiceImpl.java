@@ -67,7 +67,6 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.get
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getPreviewHstModel;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getRequestContext;
 
-// TODO HSTTWO-4365 get rid of this, use org.hippoecm.hst.platform.api.ChannelService instead
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
