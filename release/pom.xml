@@ -58,7 +58,7 @@
     <hippo.services.webfiles.version>4.6.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>1.6.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.6.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>1.6.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>1.6.0</hippo.testutils.version>
     <hippo.l10n-tooling.version>2.6.0-SNAPSHOT</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
