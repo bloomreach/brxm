@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
+
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
@@ -23,6 +26,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.annotation.WorkflowAction;
+import org.onehippo.repository.branch.BranchConstants;
 
 /**
  * This interface is available as work-flow interface on documents which implement a default flow how to edit the documents.
@@ -35,7 +39,7 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 public interface EditableWorkflow extends Workflow {
 
     /**
-     * Request this editable copy of the document.
+     * Request the editable copy of the {@link BranchConstants#MASTER_BRANCH_ID} document.
      * @return A reference to the document that may actually be modified, and should either be committed or disposed.
      * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
@@ -44,6 +48,20 @@ public interface EditableWorkflow extends Workflow {
      */
     public Document obtainEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     *
+     * @param branchId
+     * @return
+     * @throws WorkflowException
+     * @throws MappingException
+     * @throws RepositoryException
+     * @throws RemoteException
+     */
+    Document obtainEditableInstance(String branchId)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
 
     /**
      * Persists editable copy of the document, the editable variant of the document is no longer available after this call.
@@ -84,4 +102,15 @@ public interface EditableWorkflow extends Workflow {
     @WorkflowAction(loggable = false)
     public boolean isModified()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     * Same as for {@link #hints()} (which returns hints for master) only now the hints for a specific {@code branchId}
+     * </p>
+     *
+     * @param branchId the branch to request the hints for.
+     * @see #hints()
+     */
+    @WorkflowAction(loggable = false, mutates = false)
+    Map<String, Serializable> hints(String branchId) throws WorkflowException, RemoteException, RepositoryException;
 }

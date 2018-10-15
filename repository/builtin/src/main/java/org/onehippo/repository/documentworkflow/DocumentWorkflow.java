@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
@@ -34,6 +35,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.WorkflowUtils;
 
 /**
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
@@ -77,6 +79,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
     @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     @Override
     Map<String, Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
+
 
     // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
 
@@ -218,10 +221,17 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
+     * @see #copy(Document, String, String) copy(destination, newName, branchId) where branchId will be 'master'
+     */
+    void copy(Document destination, String newName)
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
      * Copy this document to a specific target document folder with a new name
      *
      * @param destination the target document folder
      * @param newName the name for the copied document
+     * @param branchId the branch to copy
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException    indicates that the work-flow call failed because of configuration problems
@@ -230,8 +240,8 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    void copy(Document destination, String newName)
-            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+    void copy(Document destination, String newName, String branchId)
+            throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Move this document to a specific target document folder with a new name
@@ -437,7 +447,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @param historic the date of the version of this document to restore from
      * @param target the target document to restore to
      *
-     * @return the updated target document
+     * @return the updated target document (variant)
      *
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
@@ -447,6 +457,20 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      */
     Document versionRestoreTo(Calendar historic, Document target)
             throws WorkflowException, RepositoryException, RemoteException;
+
+    /**
+     * <p>
+     *     Restores the {@code version} to the unpublished variant for branch with id {@code branchId}. If the current
+     *     unpublished variant is not for {@code branchId}, first the branch for {@code branchId} will be checked out
+     * </p>
+     * @param version the {@link Version} to restore
+     * @param branchId the id of the branch to restore to
+     * @return the restored document (unpublished variant)
+     * @throws WorkflowException if there does not exist a branch for {@code branchId} or some other workflow exception happens
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     */
+    Document restoreVersionToBranch(Version version, final String branchId) throws WorkflowException, RepositoryException;
 
     /**
      * Lists the available historic versions of this document.  A historic version is created using the {@link
@@ -464,7 +488,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     SortedMap<Calendar, Set<String>> listVersions()
             throws WorkflowException, RepositoryException, RemoteException;
 
@@ -481,7 +505,7 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
      *                             repository
      */
-    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false)
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
     Document retrieveVersion(Calendar historic)
             throws WorkflowException, RepositoryException, RemoteException;
 
@@ -500,6 +524,154 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      */
     void unlock()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     *
+     * @return The {@link Set} of branches in version history
+     *
+     * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
+     */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
+    Set<String> listBranches() throws WorkflowException;
+
+    /**
+     * <p>
+     *     Branches this document. During branching the following will happen
+     *     <ol>
+     *         <li>
+     *             The current preview will be versioned into version history. If the current preview is for a branchId
+     *             x, the x-preview version label will be moved to the newly created version. If the current preview is
+     *             for core, the core-preview version label will be moved to the newly created version.
+     *         </li>
+     *         <li>
+     *             The preview will be marked to be for branch {@code branchId}. If the {@code branchId} is equal to
+     *             'core', the result will be that the branch information is removed from the preview.
+     *         </li>
+     *     </ol>
+     * </p>
+     * @param branchId the id of the branch that will be stored on the document variant
+     * @param branchName the name that will be stored on the document variant for the branch
+     * @return {@link Document} wrapping the workspace preview node variant
+     * @throws WorkflowException In case the {@code branchId} already exists or branching is not allowed in the current
+     *                           document state
+     */
+    Document branch(String branchId, String branchName) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Returns a {@link Document} for the combination {@code branchId} and {@code variant} or {@code null} if the
+     *     {@code state} does not exist for {@code branchId}. The {@code branchId} is allowed to be 'master' in which
+     *     the non-branch {@link Document} is returned if present.
+     * </p>
+     * @param branchId the id of the branch to get the {@link Document} for
+     * @param state the {@link WorkflowUtils.Variant} that is requested
+     * @return a {@link Document} where the backing {@link javax.jcr.Node} is for the {@code branchId} and {@code state}
+     * or {@code null} in case the {@code state} is not available for {@code branchId}. The {@link javax.jcr.Node} can
+     * be a state below the handle <em>or</em> a frozenNode from version history.
+     * @throws WorkflowException If there is no branch for {@code branchId}
+     */
+    @org.onehippo.repository.api.annotation.WorkflowAction(loggable = false, mutates = false)
+    Document getBranch(String branchId, WorkflowUtils.Variant state) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Removes the branch for {@code branchId} if it exists and throws a {@link WorkflowException} if it doesn't exist.
+     * </p>
+     * <p>
+     *     Removing a branch is possible even when another branch is being edited, unless the branch for {@code branchId}
+     *     is being edited.
+     * </p>
+     * <p>
+     *     If the current <em>unpublished</em> variant is for the branch to be removed, then first the unpublished will
+     *     be versioned, then from the unpublished the branch info will be removed and version history the labels for
+     *     the branch will be removed, and then the core branch or any other branch if core does not exist is checked
+     *     out, see {@link #checkoutBranch(String)}.
+     * </p>
+     * <p>
+     *     If {@code branchId} is published (either as variant or in version history), this method will throw a
+     *     WorkflowException.
+     * </p>
+     * @param branchId the {@code branchId} to remove
+     * @return {@link Document} wrapping the workspace preview node variant
+     * @throws WorkflowException in case {@code branchId} does not exist or when removeBranch
+     *                            is not allowed in the current document state
+     */
+    void removeBranch(String branchId) throws WorkflowException;
+
+    /**
+     * Tries to restore from version history the version with label '${branchId}-preview' and throws a {@link WorkflowException}
+     * if no such version exists. Before a version from version history is restored, the preview gets versioned.
+     *
+     *  @param branchId the {@code branchId} of the branch to checkout
+     *  @return {@link Document} wrapping the workspace preview node variant
+     *  @throws WorkflowException In case the {@code branchId} does not exist in version history or when checkoutBranch
+     *                            is not allowed in the current document state
+     */
+    Document checkoutBranch(String branchId) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Reintegrates the branch for {@code branchId}. Assume someone invokes {@code #reintegrateBranch('foo', true)}.
+     *     As a result, the following happens
+     *     <ol>
+     *         <li>
+     *             the 'foo-preview' version of the document gets published. Note that if the preview variant below the
+     *             handle does not belong to project 'foo', first a checkout of 'foo' will be done (replacing the
+     *             current preview) and then the preview will be published. This scenario is allowed EVEN when someone
+     *             is editing the document:Assume an author is editing the branch 'bar'. In that case, the reintegrate
+     *             won't touch the draft, and as a result, the author can continue working on the draft and won't notice
+     *             that the preview might have changed. After saving the draft, the preview becomes again for branch
+     *             'bar'.
+     *         </li>
+     *         <li>
+     *             the new labels 'pre-reintegrate-core-live-x' and 'pre-reintegrate-core-preview-x' in version history
+     *             will point to the core-live and core-preview labels before the reintegrate
+     *             (x is a incremental counter for every reintegrate on this document). If there is no core-live present,
+     *             the value of x in pre-reintegrate-core-live-x can contain gaps, for example jumping from 2 to 4.
+     *             We add these extra labels to make sure that IF core-preview or live had changes which were not part of
+     *             the reintegrate, these changes can always be found back in version history
+     *          </li>
+     *         <li>
+     *             after the 'foo' version has been put live, the core-preview and core-live labels will be moved to
+     *            'foo-preview' version.
+     *         </li>
+     *         <li>
+     *             at the end, the branch 'foo' will be removed via {@link #removeBranch(String)}
+     *         </li>
+     *     </ol>
+     * </p>
+     * @param branchId the {@code branchId} to branch to reintegrate
+     * @param publish {@code true} if the document also needs to be (re)published as part of the reintegrate
+     * @throws WorkflowException if there is no branch for {@code branchId}
+     */
+    void reintegrateBranch(String branchId, boolean publish) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Publishes the branch for {@code branchId}. Note that publishing a branch can have as result that a published
+     *     variant is created, but, if it already exists, can also result in only a marker in version history that the
+     *     specific branch is live.
+     * </p>
+     * @param branchId the id of the branch to publish
+     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@code branchId} is
+     * equal to 'master' which is not allowed to be published as branch or in case the right unpublished version does not
+     * exist
+     */
+    void publishBranch(String branchId) throws WorkflowException;
+
+    /**
+     * <p>
+     *     Depublishes the branch for {@code branchId}. If there is no published version for {@code branchId}, a
+     *     workflow exception is thrown. If you want to avoid a workflow exception, first check via
+     *     {@link #getBranch(String, WorkflowUtils.Variant)} whether the published version for {@code branchId} exists
+     *
+     * </p>
+     * @param branchId the id of the branch to publish
+     * @throws WorkflowException in case there does not exist a branch for {@code branchId} or when {@code branchId} is
+     * equal to 'master' which is not allowed to be depublished as branch or in case the right published version does not
+     * exist
+     */
+    void depublishBranch(String branchId) throws WorkflowException;
 
     /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}

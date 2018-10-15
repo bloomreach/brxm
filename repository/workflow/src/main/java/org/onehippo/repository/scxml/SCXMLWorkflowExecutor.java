@@ -202,6 +202,13 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
     }
 
     /**
+     * @see #start(String) with branchId {@code null}
+     */
+    public Object start()  throws WorkflowException {
+        return start(null);
+    }
+
+    /**
      * Starts or re-starts the SCXML state machine through {@link SCXMLExecutor#go}.
      * <p>
      * Starting the state machine is not possible if the state machine is terminated.
@@ -214,15 +221,16 @@ public class SCXMLWorkflowExecutor<T extends SCXMLWorkflowContext, V extends SCX
      * Optionally, the state machine might have set a result in the {@link SCXMLWorkflowContext#getResult()}, which
      * for convenience is also returned directly by this method.
      * </p>
+     * @param branchId which can be null
      * @return {@link SCXMLWorkflowContext#getResult()} if there's no exception.
      */
-    public Object start() throws WorkflowException {
+    public Object start(final String branchId) throws WorkflowException {
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
         context.initialize();
         if (data != null) {
-            data.initialize();
+            data.initialize(branchId);
         }
         getSCXMLExecutor().getRootContext().set(SCXMLWorkflowContext.SCXML_CONTEXT_KEY, context);
         getSCXMLExecutor().getRootContext().set(SCXMLWorkflowData.SCXML_CONTEXT_KEY, data);

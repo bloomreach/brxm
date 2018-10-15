@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@ import javax.jcr.nodetype.NodeType;
 public class OverwritingCopyHandler extends DefaultCopyHandler {
 
     private int depth;
+
+    public OverwritingCopyHandler(final Node node, final Set<String> protectedMixinNames) throws RepositoryException {
+        super(node, protectedMixinNames);
+    }
 
     public OverwritingCopyHandler(final Node destNode) throws RepositoryException {
         super(destNode);
@@ -79,6 +83,7 @@ public class OverwritingCopyHandler extends DefaultCopyHandler {
     protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
         Set<String> mixinSet = new TreeSet<>();
         Collections.addAll(mixinSet, nodeInfo.getMixinNames());
+        mixinSet.removeAll(getProtectedMixinNames());
         for (NodeType nodeType : node.getMixinNodeTypes()) {
             final String mixinName = nodeType.getName();
             if (!mixinSet.contains(mixinName)) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
     }
 
     public static DocumentWorkflowAction checkModified() {
-        return new DocumentWorkflowAction("checkModified");
+        return new DocumentWorkflowAction("checkModified", false);
     }
 
     public static DocumentWorkflowAction obtainEditableInstance() {
@@ -102,24 +102,67 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return new DocumentWorkflowAction("restoreVersion");
     }
 
+    public static DocumentWorkflowAction restoreVersionToBranch() {
+        return new DocumentWorkflowAction("restoreVersionToBranch");
+    }
+
     public static DocumentWorkflowAction listVersions() {
-        return new DocumentWorkflowAction("listVersions");
+        return new DocumentWorkflowAction("listVersions", false);
     }
 
     public static DocumentWorkflowAction retrieveVersion() {
         return new DocumentWorkflowAction("retrieveVersion");
     }
 
+    public static DocumentWorkflowAction listBranches() {
+        return new DocumentWorkflowAction("listBranches", false);
+    }
+
+    public static DocumentWorkflowAction branch() {
+        return new DocumentWorkflowAction("branch");
+    }
+    public static DocumentWorkflowAction getBranch() {
+        return new DocumentWorkflowAction("getBranch", false);
+    }
+
+    public static DocumentWorkflowAction checkoutBranch() {
+        return new DocumentWorkflowAction("checkoutBranch");
+    }
+
+    public static DocumentWorkflowAction reintegrateBranch() {
+        return new DocumentWorkflowAction("reintegrateBranch");
+    }
+
+    public static DocumentWorkflowAction publishBranch() {
+        return new DocumentWorkflowAction("publishBranch");
+    }
+
+    public static DocumentWorkflowAction depublishBranch() {
+        return new DocumentWorkflowAction("depublishBranch");
+    }
+
+    public static DocumentWorkflowAction removeBranch() {
+        return new DocumentWorkflowAction("removeBranch");
+    }
+
     public static DocumentWorkflowAction none() {
-        return new DocumentWorkflowAction("None");
+        return new DocumentWorkflowAction("None", false);
     }
 
     private final String action;
+    private boolean mutates;
     private String requestIdentifier;
     private final Map<String, Object> eventPayload = new HashMap<>();
 
     public DocumentWorkflowAction(final String action) {
         this.action = action;
+        // default is mutates true
+        this.mutates = true;
+    }
+
+    public DocumentWorkflowAction(final String action, final boolean mutates) {
+        this.action = action;
+        this.mutates = mutates;
     }
 
     public String getRequestIdentifier() {
@@ -150,6 +193,10 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         return action;
     }
 
+    public boolean isMutates() {
+        return mutates;
+    }
+
     public enum DocumentPayloadKey implements PayloadKey {
         TARGET_DATE("targetDate"),
         NAME("name"),
@@ -157,7 +204,12 @@ public class DocumentWorkflowAction implements ActionAware, WorkflowAction {
         DATE("date"),
         TARGET_DOCUMENT("target"),
         REQUEST("request"),
-        REASON("reason");
+        REASON("reason"),
+        BRANCH_ID("branchId"),
+        VERSION("version"),
+        BRANCH_NAME("branchName"),
+        STATE("state"),
+        ;
 
         private final String key;
 

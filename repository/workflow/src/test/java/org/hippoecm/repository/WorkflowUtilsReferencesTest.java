@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.util;
+package org.hippoecm.repository;
 
 import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -78,7 +79,7 @@ public class WorkflowUtilsReferencesTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp(false);
         final Node root = session.getRootNode();
         root.addNode("test");
         build(content, session);

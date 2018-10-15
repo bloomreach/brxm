@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
@@ -92,6 +91,9 @@ public class VersionRestoreToTask extends AbstractDocumentTask {
             }
             property.remove();
         }
+        // The version node might not contain this mixin, so we have to remove it first. It will be put back together
+        // with it's (mandatory) properties by the DefaultCopyHandler if the version node has the mixin.
+        node.removeMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
     }
 
     public Document getTarget() {

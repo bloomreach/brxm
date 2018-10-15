@@ -73,7 +73,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.jackrabbit.version>2.16.2-h2</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.16.2-h3-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.configuration-management.version>13.0.0-hst-platform-SNAPSHOT</hippo.configuration-management.version>
     <hippo.commons.version>13.0.0-hst-platform-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>13.0.0-hst-platform-SNAPSHOT</hippo.services.version>
@@ -93,12 +93,12 @@
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-collections4.version>4.1</commons-collections4.version>
-    <tika.version>1.18</tika.version>
+    <tika.version>1.19.1</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
     <!-- The pdfbox version we use is different from the current version used by tika.
          Typically these should be the same but currently we need a newer pdfbox.
          As soon as Tika 'catches' up with the latest pdfbox, they should preferrably be kept in sync again. -->
-    <pdfbox.version>2.0.11</pdfbox.version>
+    <pdfbox.version>2.0.12</pdfbox.version>
     <quartz.version>2.2.1</quartz.version>
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>3.4</easymock.version>
@@ -112,6 +112,7 @@
     <postgresql.version>42.1.4</postgresql.version>
     <oracle.version>12.2.0.1</oracle.version>
     <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+    <assertj.version>3.8.0</assertj.version>
   </properties>
 
   <scm>
@@ -140,7 +141,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>once</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
           <systemPropertyVariables>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
@@ -468,6 +468,12 @@
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

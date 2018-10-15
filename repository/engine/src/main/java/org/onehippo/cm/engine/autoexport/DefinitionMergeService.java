@@ -48,6 +48,7 @@ import javax.jcr.Session;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.JcrContentExporter;
@@ -161,9 +162,9 @@ public class DefinitionMergeService {
 
         // preprocess config mapping paths to moduleMapping objects
         // note: this is very similar to the old auto-export EventProcessor init
-        for (Map.Entry<String, Collection<String>> entry : autoExportConfig.getModules().entrySet()) {
-            String modulePath = entry.getKey();
-            Collection<String> repositoryPaths = entry.getValue();
+        for (Map.Entry<String, Pair<String, Collection<String>>> entry : autoExportConfig.getModules().entrySet()) {
+            final String modulePath = entry.getKey();
+            final Collection<String> repositoryPaths = entry.getValue().getRight();
             ModuleMapping mapping = new ModuleMapping(modulePath, repositoryPaths);
             if (repositoryPaths.contains("/")) {
                 defaultModuleMapping = mapping;

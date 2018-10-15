@@ -283,7 +283,7 @@ public final class WorkflowUtils {
             this.state = state;
         }
 
-        private String getState() {
+        public String getState() {
             return state;
         }
     }
