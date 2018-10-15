@@ -34,9 +34,15 @@ public interface FrontendNodeType {
     String NT_CLUSTERFOLDER = "frontend:clusterfolder";
     String NT_APPLICATION = "frontend:application";
     String NT_WORKFLOW = "frontend:workflow";
-    String NT_UI_EXTENSTION = "frontend:uiExtension";
-    String NT_UI_EXTENSTIONS = "frontend:uiExtensions";
+    String NT_UI_EXTENSION = "frontend:uiExtension";
+    String NT_UI_EXTENSIONS = "frontend:uiExtensions";
     String NT_USER = "frontend:user";
+
+    //--- Frontend Node Names ---//
+    String UI_EXTENSIONS_NODE_NAME = "ui-extensions";
+
+    //--- Frontend Config Paths ---//
+    String UI_EXTENSIONS_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/" + UI_EXTENSIONS_NODE_NAME;
 
     //--- Frontend Item Names ---//
     String FRONTEND_SERVICES = "frontend:services";
