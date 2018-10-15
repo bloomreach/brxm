@@ -138,9 +138,11 @@ public class Blueprint {
 	}
 
     /**
-     * Get prototype {@link Channel}
+     * Get prototype {@link Channel} which is never {@code null}. The returned {@link Channel} does also never
+	 * return {@link null} for {@link Channel#getContextPath()}
      * 
-     * @return The prototype {@link Channel}
+     * @return The prototype {@link Channel} which is never {@code null}. The returned {@link Channel} does also never
+	 * return {@link null} for {@link Channel#getContextPath()}
      */
     public Channel getPrototypeChannel() {
         return prototypeChannel;
@@ -173,4 +175,16 @@ public class Blueprint {
         this.path = path;
     }
 
+	@Override
+	public String toString() {
+		return "Blueprint{" +
+				"hasContentPrototype=" + hasContentPrototype +
+				", id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", description='" + description + '\'' +
+				", contentRoot='" + contentRoot + '\'' +
+				", prototypeChannel=" + prototypeChannel +
+				", path='" + path + '\'' +
+				'}';
+	}
 }

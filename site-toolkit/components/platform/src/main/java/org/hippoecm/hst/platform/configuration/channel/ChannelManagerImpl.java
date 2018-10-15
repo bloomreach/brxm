@@ -227,17 +227,6 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
-    @Override
-    public synchronized boolean canUserModifyChannels(final Session session) {
-        try {
-            return session.hasPermission(hstNodeLoadingCache.getRootPath() + "/accesstest", Session.ACTION_ADD_NODE);
-        } catch (RepositoryException e) {
-            log.error("Repository error when determining channel manager access", e);
-        }
-
-        return false;
-    }
-
     /**
      * @return created contentRootNode or <code>null</code> when no content has been created as part of the channel creation. Note that if there has been
      * created content, this content also already has been persisted as it is created through workflow. In case of a later

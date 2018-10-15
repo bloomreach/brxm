@@ -60,11 +60,5 @@ public interface ChannelManager {
      */
     void save(final Session session, final String hostGroupName, final Channel channel) throws ChannelException;
 
-    /**
-     * Can the current session create or modify channels.
-     *
-     * @return true when the user can create a channel, false otherwise
-     */
-    boolean canUserModifyChannels(final Session session);
 
 }

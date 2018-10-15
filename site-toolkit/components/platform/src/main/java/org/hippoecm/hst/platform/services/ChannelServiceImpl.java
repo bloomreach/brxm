@@ -131,13 +131,6 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public boolean canUserModifyChannels(final Session userSession) {
-        return true;
-        // TODO HSTTWO-4359  FIX this check
-        // return channelManager.canUserModifyChannels();
-    }
-
-    @Override
     public Properties getChannelResourceValues(final String hostGroup, final String channelId, final String language) throws ChannelException {
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
