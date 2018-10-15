@@ -43,7 +43,7 @@
 
     <hippo.jackrabbit.version>2.16.2-h2</hippo.jackrabbit.version>
 
-    <hippo.configuration-management.version>1.6.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.configuration-management.version>1.6.0</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.6.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.6.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>4.6.0</hippo.commons.version>
