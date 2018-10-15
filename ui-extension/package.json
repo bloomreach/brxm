@@ -20,10 +20,6 @@
     "test": "jest",
     "codecov": "codecov"
   },
-  "engines": {
-    "node": ">=6.4.0",
-    "npm": ">=5.7.1"
-  },
   "jest": {
     "testEnvironment": "node",
     "coverageDirectory": "./coverage",
