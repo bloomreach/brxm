@@ -24,22 +24,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates that a {@link CmsExtension} can be used in the Channel Editor.
+ * Validates that a {@link UiExtension} can be used in the Channel Editor.
  * Validation errors will be logged as warnings.
  */
-public class ChannelEditorExtensionValidator implements CmsExtensionValidator {
+public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
 
-    private static final Logger log = LoggerFactory.getLogger(ChannelEditorExtensionValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(ChannelEditorUiExtensionValidator.class);
 
     @Override
-    public boolean validate(final CmsExtension extension) {
+    public boolean validate(final UiExtension extension) {
         return validateId(extension)
                 && validateDisplayName(extension)
                 && validateContext(extension)
                 && validateUrlPath(extension);
     }
 
-    private boolean validateId(final CmsExtension extension) {
+    private boolean validateId(final UiExtension extension) {
         final String id = extension.getId();
 
         // only allow alphanumeric IDs
@@ -47,32 +47,32 @@ public class ChannelEditorExtensionValidator implements CmsExtensionValidator {
         // - prevents XSS (no quotes, HTML, etc.)
         // - keeps it simple
         if (!StringUtils.isAlphanumeric(id)) {
-            log.warn("Ignoring CMS extension '{}': extension IDs must be alphanumeric.", id);
+            log.warn("Ignoring UI extensions '{}': extension IDs must be alphanumeric.", id);
             return false;
         }
 
         return true;
     }
 
-    private boolean validateDisplayName(final CmsExtension extension) {
+    private boolean validateDisplayName(final UiExtension extension) {
         final String displayName = extension.getDisplayName();
 
         if (StringUtils.isBlank(displayName)) {
-            log.warn("Ignoring CMS extension '{}': no display name provided.", extension.getId());
+            log.warn("Ignoring UI extensions '{}': no display name provided.", extension.getId());
             return false;
         }
 
         return true;
     }
 
-    private boolean validateContext(final CmsExtension extension) {
-        final CmsExtensionContext context = extension.getContext();
+    private boolean validateContext(final UiExtension extension) {
+        final UiExtensionPoint context = extension.getContext();
 
         if (context == null) {
-            final List<String> contextNames = Arrays.stream(CmsExtensionContext.values())
-                    .map(CmsExtensionContext::getLowerCase)
+            final List<String> contextNames = Arrays.stream(UiExtensionPoint.values())
+                    .map(UiExtensionPoint::getLowerCase)
                     .collect(Collectors.toList());
-            log.warn("Ignoring CMS extension '{}': context unknown. Valid contexts are: {}.",
+            log.warn("Ignoring UI extensions '{}': context unknown. Valid contexts are: {}.",
                     extension.getId(), contextNames);
             return false;
         }
@@ -80,11 +80,11 @@ public class ChannelEditorExtensionValidator implements CmsExtensionValidator {
         return true;
     }
 
-    private boolean validateUrlPath(final CmsExtension extension) {
+    private boolean validateUrlPath(final UiExtension extension) {
         final String urlPath = extension.getUrlPath();
 
         if (StringUtils.isBlank(urlPath)) {
-            log.warn("Ignoring CMS extension '{}': no URL path provided.", extension.getId());
+            log.warn("Ignoring UI extensions '{}': no URL path provided.", extension.getId());
             return false;
         }
 

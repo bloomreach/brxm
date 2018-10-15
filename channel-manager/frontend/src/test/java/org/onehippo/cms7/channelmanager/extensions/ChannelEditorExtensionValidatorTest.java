@@ -23,11 +23,11 @@ import static org.junit.Assert.assertTrue;
 
 public class ChannelEditorExtensionValidatorTest {
 
-    private ChannelEditorExtensionValidator validator;
+    private ChannelEditorUiExtensionValidator validator;
 
     @Before
     public void setUp() {
-        validator = new ChannelEditorExtensionValidator();
+        validator = new ChannelEditorUiExtensionValidator();
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ChannelEditorExtensionValidatorTest {
 
     @Test
     public void validateContext() {
-        assertTrue(isValidContext(CmsExtensionContext.PAGESIDEPANEL));
+        assertTrue(isValidContext(UiExtensionPoint.PAGESIDEPANEL));
         assertFalse(isValidContext(null));
     }
 
@@ -77,26 +77,26 @@ public class ChannelEditorExtensionValidatorTest {
     }
 
     private boolean isValidId(final String id) {
-        return validator.validate(extension(id, id, CmsExtensionContext.PAGESIDEPANEL, "extensions/" + id));
+        return validator.validate(extension(id, id, UiExtensionPoint.PAGESIDEPANEL, "extensions/" + id));
     }
 
     private boolean isValidDisplayName(final String displayName) {
-        return validator.validate(extension("test", displayName, CmsExtensionContext.PAGESIDEPANEL, "extensions/test"));
+        return validator.validate(extension("test", displayName, UiExtensionPoint.PAGESIDEPANEL, "extensions/test"));
     }
 
-    private boolean isValidContext(final CmsExtensionContext context) {
+    private boolean isValidContext(final UiExtensionPoint context) {
         return validator.validate(extension("test", "Test", context, "extensions/test"));
     }
 
     private boolean isValidUrlPath(final String urlPath) {
-        return validator.validate(extension("test", "Test", CmsExtensionContext.PAGESIDEPANEL, urlPath));
+        return validator.validate(extension("test", "Test", UiExtensionPoint.PAGESIDEPANEL, urlPath));
     }
 
-    private CmsExtension extension(final String id,
-                                   final String displayName,
-                                   final CmsExtensionContext context,
-                                   final String urlPath) {
-        final CmsExtensionBean extension = new CmsExtensionBean();
+    private UiExtension extension(final String id,
+                                  final String displayName,
+                                  final UiExtensionPoint context,
+                                  final String urlPath) {
+        final UiExtensionBean extension = new UiExtensionBean();
         extension.setId(id);
         extension.setDisplayName(displayName);
         extension.setContext(context);

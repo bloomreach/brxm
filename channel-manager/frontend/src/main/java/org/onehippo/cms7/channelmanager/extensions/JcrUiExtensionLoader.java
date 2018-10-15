@@ -30,37 +30,37 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.frontend.FrontendNodeType.*;
 
-public class JcrCmsExtensionLoader implements CmsExtensionLoader {
+public class JcrUiExtensionLoader implements UiExtensionLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrCmsExtensionLoader.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrUiExtensionLoader.class);
 
     private final Session session;
 
-    public JcrCmsExtensionLoader(final Session session) {
+    public JcrUiExtensionLoader(final Session session) {
         this.session = session;
     }
 
     @Override
-    public Set<CmsExtension> loadCmsExtensions() {
+    public Set<UiExtension> loadCmsExtensions() {
         try {
             return readExtensions();
         } catch (RepositoryException e) {
-            log.warn("Could not load CMS extensions", e);
+            log.warn("Could not load UI extensions", e);
             return Collections.emptySet();
         }
     }
 
-    private Set<CmsExtension> readExtensions() throws RepositoryException {
+    private Set<UiExtension> readExtensions() throws RepositoryException {
         if (!session.nodeExists(UI_EXTENSIONS_CONFIG_PATH)) {
             return Collections.emptySet();
         }
 
         final NodeIterator extensionNodes = session.getNode(UI_EXTENSIONS_CONFIG_PATH).getNodes();
-        final Set<CmsExtension> extensions = new LinkedHashSet<>();
+        final Set<UiExtension> extensions = new LinkedHashSet<>();
 
         while (extensionNodes.hasNext()) {
             final Node extensionNode = extensionNodes.nextNode();
-            final CmsExtension extension = readExtension(extensionNode);
+            final UiExtension extension = readExtension(extensionNode);
             if (extensions.contains(extension)) {
                 log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.", extension.getId());
             } else {
@@ -71,8 +71,8 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
         return extensions;
     }
 
-    private CmsExtension readExtension(final Node extensionNode) throws RepositoryException {
-        final CmsExtensionBean extension = new CmsExtensionBean();
+    private UiExtension readExtension(final Node extensionNode) throws RepositoryException {
+        final UiExtensionBean extension = new UiExtensionBean();
 
         final String extensionId = extensionNode.getName();
         extension.setId(extensionId);
@@ -87,14 +87,14 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
         return extension;
     }
 
-    private Optional<CmsExtensionContext> readContext(final Node extensionNode) throws RepositoryException {
+    private Optional<UiExtensionPoint> readContext(final Node extensionNode) throws RepositoryException {
         final Optional<String> optionalProperty = readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
 
         if (optionalProperty.isPresent()) {
             try {
-                return Optional.of(CmsExtensionContext.valueOf(optionalProperty.get().toUpperCase()));
+                return Optional.of(UiExtensionPoint.valueOf(optionalProperty.get().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                log.warn("Cannot convert '{}' to a CMS extension context", optionalProperty.get(), e);
+                log.warn("Cannot convert '{}' to a UI extension context", optionalProperty.get(), e);
             }
         }
         return Optional.empty();

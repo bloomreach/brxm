@@ -18,10 +18,10 @@ package org.onehippo.cms7.channelmanager.extensions;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * The context of a CMS extension, i.e. the thing in the CMS that the extension knows something about
+ * The point of a UI extension, i.e. the thing in the UI that the extension knows something about
  * and can reason with.
  */
-public enum CmsExtensionContext {
+public enum UiExtensionPoint {
 
     PAGESIDEPANEL;
 

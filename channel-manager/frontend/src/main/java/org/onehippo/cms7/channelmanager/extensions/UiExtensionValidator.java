@@ -15,16 +15,15 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.Set;
-
 /**
- * Loads CMS extensions.
+ * Checks that the system can use a UI extension.
  */
-public interface CmsExtensionLoader {
+public interface UiExtensionValidator {
 
     /**
-     * @return all available CMS extensions.
+     * @param extension the extension to check
+     * @return whether the system can use the extension or not.
      */
-    Set<CmsExtension> loadCmsExtensions();
+    boolean validate(UiExtension extension);
 
 }

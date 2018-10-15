@@ -49,11 +49,11 @@ import org.onehippo.cms7.channelmanager.channeleditor.pickers.ImagePicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
-import org.onehippo.cms7.channelmanager.extensions.ChannelEditorExtensionValidator;
-import org.onehippo.cms7.channelmanager.extensions.CmsExtension;
-import org.onehippo.cms7.channelmanager.extensions.CmsExtensionLoader;
-import org.onehippo.cms7.channelmanager.extensions.CmsExtensionValidator;
-import org.onehippo.cms7.channelmanager.extensions.JcrCmsExtensionLoader;
+import org.onehippo.cms7.channelmanager.extensions.ChannelEditorUiExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.UiExtension;
+import org.onehippo.cms7.channelmanager.extensions.UiExtensionLoader;
+import org.onehippo.cms7.channelmanager.extensions.UiExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,9 +234,9 @@ public class ChannelEditor extends ExtPanel {
     }
 
     private JSONArray loadExtensions() {
-        final CmsExtensionLoader loader = new JcrCmsExtensionLoader(UserSession.get().getJcrSession());
-        final CmsExtensionValidator validator = new ChannelEditorExtensionValidator();
-        final List<CmsExtension> extensions = loader.loadCmsExtensions()
+        final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
+        final UiExtensionValidator validator = new ChannelEditorUiExtensionValidator();
+        final List<UiExtension> extensions = loader.loadCmsExtensions()
                 .stream()
                 .filter(validator::validate)
                 .collect(Collectors.toList());

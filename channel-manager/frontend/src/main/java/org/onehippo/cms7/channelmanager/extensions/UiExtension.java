@@ -18,7 +18,7 @@ package org.onehippo.cms7.channelmanager.extensions;
 /**
  * An extension of the CMS.
  */
-public interface CmsExtension {
+public interface UiExtension {
 
     /**
      * @return identifier of the extension. Must be unique across all extensions.
@@ -34,7 +34,7 @@ public interface CmsExtension {
      * @return the context supported by this extension, i.e. the thing in the CMS this extension knows something
      * about and can reason with.
      */
-    CmsExtensionContext getContext();
+    UiExtensionPoint getContext();
 
     /**
      * The URL path that loads the extension over the origin of the CMS.

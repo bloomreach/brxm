@@ -15,12 +15,12 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-class CmsExtensionBean implements CmsExtension {
+class UiExtensionBean implements UiExtension {
 
     private String id;
     private String displayName;
     private String urlPath;
-    private CmsExtensionContext context;
+    private UiExtensionPoint context;
 
     @Override
     public String getId() {
@@ -50,11 +50,11 @@ class CmsExtensionBean implements CmsExtension {
     }
 
     @Override
-    public CmsExtensionContext getContext() {
+    public UiExtensionPoint getContext() {
         return context;
     }
 
-    public void setContext(final CmsExtensionContext context) {
+    public void setContext(final UiExtensionPoint context) {
         this.context = context;
     }
 
@@ -67,7 +67,7 @@ class CmsExtensionBean implements CmsExtension {
             return false;
         }
 
-        final CmsExtensionBean that = (CmsExtensionBean) o;
+        final UiExtensionBean that = (UiExtensionBean) o;
 
         return id.equalsIgnoreCase(that.id);
     }
