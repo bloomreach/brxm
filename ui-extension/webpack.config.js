@@ -8,8 +8,8 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './target/index.d.ts',
-      out: 'index.d.ts',
+      main: './target/ui-extension.d.ts',
+      out: 'ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
     }));
@@ -18,7 +18,7 @@ class DtsBundlePlugin {
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.ts',
+  entry: './src/ui-extension.ts',
   target: 'node',
   context: __dirname,
   resolve: {
@@ -27,7 +27,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'target'),
     libraryTarget: 'commonjs',
-    filename: 'index.js',
+    filename: 'ui-extension.js',
   },
   module: {
     rules: [
