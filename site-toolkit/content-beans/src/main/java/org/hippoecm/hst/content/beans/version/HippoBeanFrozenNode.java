@@ -1,32 +1,30 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.service.jcr;
+package org.hippoecm.hst.content.beans.version;
 
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
-import org.hippoecm.hst.service.Service;
+import javax.jcr.Node;
 
-/**
- * @deprecated since 12.6 -- should not be used and has no replacement
- */
-@Deprecated
-public interface JCRService extends Service {
-    
+import org.hippoecm.repository.api.HippoNode;
+
+public interface HippoBeanFrozenNode extends HippoNode {
+
     /**
-     * @return JCRValueProvider giving access to the underlying jcr backed data
+     * Returns the backing wrapped frozen node.
+     * @return
      */
-    JCRValueProvider getValueProvider();
-    
+    Node getFrozenNode();
+
 }
