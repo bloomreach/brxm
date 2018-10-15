@@ -13,8 +13,8 @@
     "type": "git",
     "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
   },
-  "main": "target/index.js",
-  "types": "target/index.d.ts",
+  "main": "target/ui-extension.js",
+  "types": "target/ui-extension.d.ts",
   "scripts": {
     "build": "webpack --config=webpack.config.js",
     "test": "jest",

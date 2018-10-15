@@ -1,4 +1,4 @@
-import { UiExtension } from './index';
+import { UiExtension } from './ui-extension';
 
 let extension: UiExtension;
 
