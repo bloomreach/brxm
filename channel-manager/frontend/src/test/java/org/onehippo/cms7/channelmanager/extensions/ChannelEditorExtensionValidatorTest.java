@@ -61,7 +61,7 @@ public class ChannelEditorExtensionValidatorTest {
 
     @Test
     public void validateContext() {
-        assertTrue(isValidContext(CmsExtensionContext.PAGE));
+        assertTrue(isValidContext(CmsExtensionContext.PAGESIDEPANEL));
         assertFalse(isValidContext(null));
     }
 
@@ -77,11 +77,11 @@ public class ChannelEditorExtensionValidatorTest {
     }
 
     private boolean isValidId(final String id) {
-        return validator.validate(extension(id, id, CmsExtensionContext.PAGE, "extensions/" + id));
+        return validator.validate(extension(id, id, CmsExtensionContext.PAGESIDEPANEL, "extensions/" + id));
     }
 
     private boolean isValidDisplayName(final String displayName) {
-        return validator.validate(extension("test", displayName, CmsExtensionContext.PAGE, "extensions/test"));
+        return validator.validate(extension("test", displayName, CmsExtensionContext.PAGESIDEPANEL, "extensions/test"));
     }
 
     private boolean isValidContext(final CmsExtensionContext context) {
@@ -89,7 +89,7 @@ public class ChannelEditorExtensionValidatorTest {
     }
 
     private boolean isValidUrlPath(final String urlPath) {
-        return validator.validate(extension("test", "Test", CmsExtensionContext.PAGE, urlPath));
+        return validator.validate(extension("test", "Test", CmsExtensionContext.PAGESIDEPANEL, urlPath));
     }
 
     private CmsExtension extension(final String id,

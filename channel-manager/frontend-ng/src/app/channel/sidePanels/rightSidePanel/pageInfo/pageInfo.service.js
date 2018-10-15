@@ -46,7 +46,7 @@ class PageInfoService {
   }
 
   _registerPageExtensionStates() {
-    this.ExtensionService.getExtensions('page').forEach((pageExtension) => {
+    this.ExtensionService.getExtensions('pagesidepanel').forEach((pageExtension) => {
       this.$stateRegistry.register({
         name: `hippo-cm.channel.page-info.${pageExtension.id}`,
         params: {
@@ -110,7 +110,7 @@ class PageInfoService {
   }
 
   _loadFirstPageExtension() {
-    const pageExtensions = this.ExtensionService.getExtensions('page');
+    const pageExtensions = this.ExtensionService.getExtensions('pagesidepanel');
     const pageUrl = this._getPageUrl();
     this.$state.go(`hippo-cm.channel.page-info.${pageExtensions[0].id}`, { pageUrl });
   }

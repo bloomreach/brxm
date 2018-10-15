@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum CmsExtensionContext {
 
-    PAGE;
+    PAGESIDEPANEL;
 
     @JsonValue
     public String getLowerCase() {

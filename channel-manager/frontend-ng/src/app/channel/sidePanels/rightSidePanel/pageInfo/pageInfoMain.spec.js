@@ -41,7 +41,7 @@ describe('pageInfoMainCtrl', () => {
 
     $ctrl.$onInit();
 
-    expect(ExtensionService.getExtensions).toHaveBeenCalledWith('page');
+    expect(ExtensionService.getExtensions).toHaveBeenCalledWith('pagesidepanel');
     expect($ctrl.extensions).toEqual(extensions);
   });
 

@@ -28,12 +28,9 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrCmsExtensionLoader implements CmsExtensionLoader {
+import static org.hippoecm.frontend.FrontendNodeType.*;
 
-    private static final String CMS_EXTENSION_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/extensions";
-    private static final String CMS_EXTENSION_CONTEXT = "context";
-    private static final String CMS_EXTENSION_DISPLAY_NAME = "displayName";
-    private static final String CMS_EXTENSION_URL_PATH = "urlPath";
+public class JcrCmsExtensionLoader implements CmsExtensionLoader {
 
     private static final Logger log = LoggerFactory.getLogger(JcrCmsExtensionLoader.class);
 
@@ -54,11 +51,11 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
     }
 
     private Set<CmsExtension> readExtensions() throws RepositoryException {
-        if (!session.nodeExists(CMS_EXTENSION_CONFIG_PATH)) {
+        if (!session.nodeExists(UI_EXTENSIONS_CONFIG_PATH)) {
             return Collections.emptySet();
         }
 
-        final NodeIterator extensionNodes = session.getNode(CMS_EXTENSION_CONFIG_PATH).getNodes();
+        final NodeIterator extensionNodes = session.getNode(UI_EXTENSIONS_CONFIG_PATH).getNodes();
         final Set<CmsExtension> extensions = new LinkedHashSet<>();
 
         while (extensionNodes.hasNext()) {
@@ -82,16 +79,16 @@ public class JcrCmsExtensionLoader implements CmsExtensionLoader {
 
         readContext(extensionNode).ifPresent(extension::setContext);
 
-        final String displayName = readProperty(extensionNode, CMS_EXTENSION_DISPLAY_NAME).orElse(extensionId);
+        final String displayName = readProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
         extension.setDisplayName(displayName);
 
-        readProperty(extensionNode, CMS_EXTENSION_URL_PATH).ifPresent(extension::setUrlPath);
+        readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrlPath);
 
         return extension;
     }
 
     private Optional<CmsExtensionContext> readContext(final Node extensionNode) throws RepositoryException {
-        final Optional<String> optionalProperty = readProperty(extensionNode, CMS_EXTENSION_CONTEXT);
+        final Optional<String> optionalProperty = readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
 
         if (optionalProperty.isPresent()) {
             try {

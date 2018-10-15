@@ -34,6 +34,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import static org.hippoecm.frontend.FrontendNodeType.*;
+
 public class JcrCmsExtensionLoaderTest {
 
     private JcrCmsExtensionLoader loader;
@@ -50,7 +52,7 @@ public class JcrCmsExtensionLoaderTest {
                 .addNode("hippo:configuration", "hipposys:configuration")
                 .addNode("hippo:frontend", "hipposys:applicationfolder")
                 .addNode("cms", "nt:unstructured")
-                .addNode("extensions", "nt:unstructured");
+                .addNode(UI_EXTENSIONS_NODE_NAME, NT_UI_EXTENSIONS);
     }
 
     @Test
@@ -69,17 +71,17 @@ public class JcrCmsExtensionLoaderTest {
     @Test
     public void singleExtension() throws RepositoryException {
         final MockNode configNode = createConfigNode();
-        final MockNode extensionNode = configNode.addNode("extension1", "nt:unstructured");
-        extensionNode.setProperty("context", "page");
-        extensionNode.setProperty("displayName", "Extension One");
-        extensionNode.setProperty("urlPath", "/extensions/extension-one");
+        final MockNode extensionNode = configNode.addNode("extension1", NT_UI_EXTENSION);
+        extensionNode.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
+        extensionNode.setProperty(FRONTEND_URL, "/extensions/extension-one");
 
         final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertThat(extensions.size(), equalTo(1));
 
         final CmsExtension extension = extensions.iterator().next();
         assertThat(extension.getId(), equalTo("extension1"));
-        assertThat(extension.getContext(), equalTo(CmsExtensionContext.PAGE));
+        assertThat(extension.getContext(), equalTo(CmsExtensionContext.PAGESIDEPANEL));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
         assertThat(extension.getUrlPath(), equalTo("/extensions/extension-one"));
     }
@@ -88,15 +90,15 @@ public class JcrCmsExtensionLoaderTest {
     public void multipleExtensions() throws RepositoryException {
         final MockNode configNode = createConfigNode();
 
-        final MockNode extensionNode1 = configNode.addNode("extension1", "nt:unstructured");
-        extensionNode1.setProperty("context", "page");
-        extensionNode1.setProperty("displayName", "Extension One");
-        extensionNode1.setProperty("urlPath", "/extensions/extension-one");
+        final MockNode extensionNode1 = configNode.addNode("extension1", NT_UI_EXTENSION);
+        extensionNode1.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode1.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
+        extensionNode1.setProperty(FRONTEND_URL, "/extensions/extension-one");
 
-        final MockNode extensionNode2 = configNode.addNode("extension2", "nt:unstructured");
-        extensionNode2.setProperty("context", "page");
-        extensionNode2.setProperty("displayName", "Extension Two");
-        extensionNode2.setProperty("urlPath", "/extensions/extension-two");
+        final MockNode extensionNode2 = configNode.addNode("extension2", NT_UI_EXTENSION);
+        extensionNode2.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode2.setProperty(FRONTEND_DISPLAY_NAME, "Extension Two");
+        extensionNode2.setProperty(FRONTEND_URL, "/extensions/extension-two");
 
         final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertThat(extensions.size(), equalTo(2));
@@ -105,13 +107,13 @@ public class JcrCmsExtensionLoaderTest {
 
         final CmsExtension extension1 = iterator.next();
         assertThat(extension1.getId(), equalTo("extension1"));
-        assertThat(extension1.getContext(), equalTo(CmsExtensionContext.PAGE));
+        assertThat(extension1.getContext(), equalTo(CmsExtensionContext.PAGESIDEPANEL));
         assertThat(extension1.getDisplayName(), equalTo("Extension One"));
         assertThat(extension1.getUrlPath(), equalTo("/extensions/extension-one"));
 
         final CmsExtension extension2 = iterator.next();
         assertThat(extension2.getId(), equalTo("extension2"));
-        assertThat(extension2.getContext(), equalTo(CmsExtensionContext.PAGE));
+        assertThat(extension2.getContext(), equalTo(CmsExtensionContext.PAGESIDEPANEL));
         assertThat(extension2.getDisplayName(), equalTo("Extension Two"));
         assertThat(extension2.getUrlPath(), equalTo("/extensions/extension-two"));
     }
@@ -120,8 +122,8 @@ public class JcrCmsExtensionLoaderTest {
     public void extensionsMustHaveUniqueID() throws RepositoryException {
         final MockNode configNode = createConfigNode();
 
-        configNode.addNode("extension1", "nt:unstructured");
-        configNode.addNode("extension1", "nt:unstructured");
+        configNode.addNode("extension1", NT_UI_EXTENSION);
+        configNode.addNode("extension1", NT_UI_EXTENSION);
 
         final Set<CmsExtension> extensions = loader.loadCmsExtensions();
         assertThat(extensions.size(), equalTo(1));
@@ -130,7 +132,7 @@ public class JcrCmsExtensionLoaderTest {
     @Test
     public void defaultValues() throws RepositoryException {
         final MockNode configNode = createConfigNode();
-        configNode.addNode("extension1", "nt:unstructured");
+        configNode.addNode("extension1", NT_UI_EXTENSION);
 
         final CmsExtension extension = loader.loadCmsExtensions().iterator().next();
         assertThat(extension.getContext(), equalTo(null));
