@@ -36,8 +36,8 @@ describe('ExtensionService', () => {
   });
 
   describe('hasExtensions', () => {
-    it('knows when there are any extensions with certain context', () => {
-      ConfigService.extensions = [{ context: 'a' }, { context: 'b' }];
+    it('knows when there are any extensions with a certain extensionPoint', () => {
+      ConfigService.extensions = [{ extensionPoint: 'a' }, { extensionPoint: 'b' }];
       expect(ExtensionService.hasExtensions('a')).toBe(true);
       expect(ExtensionService.hasExtensions('b')).toBe(true);
       expect(ExtensionService.hasExtensions('c')).toBe(false);
@@ -55,10 +55,10 @@ describe('ExtensionService', () => {
   });
 
   describe('getExtensions', () => {
-    it('returns all extensions with a certain context', () => {
-      const extension1 = { id: '1', context: 'a' };
-      const extension2 = { id: '2', context: 'b' };
-      const extension3 = { id: '3', context: 'a' };
+    it('returns all extensions with a certain extensionPoint', () => {
+      const extension1 = { id: '1', extensionPoint: 'a' };
+      const extension2 = { id: '2', extensionPoint: 'b' };
+      const extension3 = { id: '3', extensionPoint: 'a' };
 
       ConfigService.extensions = [extension1, extension2, extension3];
 

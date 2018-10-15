@@ -53,7 +53,7 @@ class IframeExtensionCtrl {
   }
 
   getExtensionUrl() {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.urlPath);
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.url);
 
     // The current location should be the default value for the second parameter of the URL() constructor,
     // but Chrome needs it explicitly otherwise it will throw an error.
@@ -115,10 +115,10 @@ class IframeExtensionCtrl {
     }
 
     try {
-      const contextName = this.extension.context;
+      const extensionPointName = this.extension.extensionPoint;
       const contextData = this.context;
       this.iframeWindow.BR_EXTENSION.onContextChanged({
-        context: contextName,
+        extensionPoint: extensionPointName,
         data: contextData,
       });
     } catch (e) {

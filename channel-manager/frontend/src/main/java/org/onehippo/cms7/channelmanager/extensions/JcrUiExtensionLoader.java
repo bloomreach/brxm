@@ -77,12 +77,12 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         final String extensionId = extensionNode.getName();
         extension.setId(extensionId);
 
-        readContext(extensionNode).ifPresent(extension::setContext);
+        readContext(extensionNode).ifPresent(extension::setExtensionPoint);
 
         final String displayName = readProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
         extension.setDisplayName(displayName);
 
-        readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrlPath);
+        readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
 
         return extension;
     }

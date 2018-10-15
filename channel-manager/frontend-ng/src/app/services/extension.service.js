@@ -21,16 +21,16 @@ class ExtensionService {
     this.ConfigService = ConfigService;
   }
 
-  hasExtensions(context) {
+  hasExtensions(extensionPoint) {
     if (this.ConfigService.extensions) {
-      return this.ConfigService.extensions.some(extension => extension.context === context);
+      return this.ConfigService.extensions.some(extension => extension.extensionPoint === extensionPoint);
     }
     return false;
   }
 
-  getExtensions(context) {
+  getExtensions(extensionPoint) {
     if (this.ConfigService.extensions) {
-      return this.ConfigService.extensions.filter(extension => extension.context === context);
+      return this.ConfigService.extensions.filter(extension => extension.extensionPoint === extensionPoint);
     }
     return [];
   }

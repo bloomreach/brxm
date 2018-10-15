@@ -16,7 +16,7 @@
 package org.onehippo.cms7.channelmanager.extensions;
 
 /**
- * An extension of the CMS.
+ * A UI Extension of the CMS.
  */
 public interface UiExtension {
 
@@ -31,19 +31,20 @@ public interface UiExtension {
     String getDisplayName();
 
     /**
-     * @return the context supported by this extension, i.e. the thing in the CMS this extension knows something
+     * @return the extension point for this extension, i.e. the thing in the CMS this extension knows something
      * about and can reason with.
      */
-    UiExtensionPoint getContext();
+    UiExtensionPoint getExtensionPoint();
 
     /**
-     * The URL path that loads the extension over the origin of the CMS.
+     * The URL that loads the extension.
+     * <p>
+     * When the extension runs on the origin of the CMS: if the CMS runs at https://localhost:8080/cms, and the URL path
+     * is "/site/_cmsinternal/myextension", the CMS will load the extension via a GET request to
+     * https://localhost:8080/site/_cmsinternal/myextension.
      *
-     * For example: if the CMS runs at https://localhost:8080/cms, and the URL path is "/site/_cmsinternal/myextension",
-     * the CMS will load the extension via a GET request to https://localhost:8080/site/_cmsinternal/myextension.
-     *
-     * @return the URL path that loads the extension. Must start with a slash.
+     * @return the URL that loads the extension.
      */
-    String getUrlPath();
+    String getUrl();
 
 }

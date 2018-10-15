@@ -19,8 +19,8 @@ class UiExtensionBean implements UiExtension {
 
     private String id;
     private String displayName;
-    private String urlPath;
-    private UiExtensionPoint context;
+    private String url;
+    private UiExtensionPoint extensionPoint;
 
     @Override
     public String getId() {
@@ -41,21 +41,21 @@ class UiExtensionBean implements UiExtension {
     }
 
     @Override
-    public String getUrlPath() {
-        return urlPath;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUrlPath(final String urlPath) {
-        this.urlPath = urlPath;
+    public void setUrl(final String url) {
+        this.url = url;
     }
 
     @Override
-    public UiExtensionPoint getContext() {
-        return context;
+    public UiExtensionPoint getExtensionPoint() {
+        return extensionPoint;
     }
 
-    public void setContext(final UiExtensionPoint context) {
-        this.context = context;
+    public void setExtensionPoint(final UiExtensionPoint extensionPoint) {
+        this.extensionPoint = extensionPoint;
     }
 
     @Override

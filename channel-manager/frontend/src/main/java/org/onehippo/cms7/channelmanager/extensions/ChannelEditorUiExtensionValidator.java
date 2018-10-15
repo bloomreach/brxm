@@ -36,7 +36,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         return validateId(extension)
                 && validateDisplayName(extension)
                 && validateContext(extension)
-                && validateUrlPath(extension);
+                && validateUrl(extension);
     }
 
     private boolean validateId(final UiExtension extension) {
@@ -66,7 +66,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
     }
 
     private boolean validateContext(final UiExtension extension) {
-        final UiExtensionPoint context = extension.getContext();
+        final UiExtensionPoint context = extension.getExtensionPoint();
 
         if (context == null) {
             final List<String> contextNames = Arrays.stream(UiExtensionPoint.values())
@@ -80,11 +80,11 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         return true;
     }
 
-    private boolean validateUrlPath(final UiExtension extension) {
-        final String urlPath = extension.getUrlPath();
+    private boolean validateUrl(final UiExtension extension) {
+        final String url = extension.getUrl();
 
-        if (StringUtils.isBlank(urlPath)) {
-            log.warn("Ignoring UI extensions '{}': no URL path provided.", extension.getId());
+        if (StringUtils.isBlank(url)) {
+            log.warn("Ignoring UI extensions '{}': no URL provided.", extension.getId());
             return false;
         }
 

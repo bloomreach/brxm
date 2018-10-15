@@ -81,9 +81,9 @@ public class JcrUiExtensionLoaderTest {
 
         final UiExtension extension = extensions.iterator().next();
         assertThat(extension.getId(), equalTo("extension1"));
-        assertThat(extension.getContext(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
-        assertThat(extension.getUrlPath(), equalTo("/extensions/extension-one"));
+        assertThat(extension.getUrl(), equalTo("/extensions/extension-one"));
     }
 
     @Test
@@ -107,15 +107,15 @@ public class JcrUiExtensionLoaderTest {
 
         final UiExtension extension1 = iterator.next();
         assertThat(extension1.getId(), equalTo("extension1"));
-        assertThat(extension1.getContext(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension1.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
         assertThat(extension1.getDisplayName(), equalTo("Extension One"));
-        assertThat(extension1.getUrlPath(), equalTo("/extensions/extension-one"));
+        assertThat(extension1.getUrl(), equalTo("/extensions/extension-one"));
 
         final UiExtension extension2 = iterator.next();
         assertThat(extension2.getId(), equalTo("extension2"));
-        assertThat(extension2.getContext(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension2.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
         assertThat(extension2.getDisplayName(), equalTo("Extension Two"));
-        assertThat(extension2.getUrlPath(), equalTo("/extensions/extension-two"));
+        assertThat(extension2.getUrl(), equalTo("/extensions/extension-two"));
     }
 
     @Test
@@ -135,9 +135,9 @@ public class JcrUiExtensionLoaderTest {
         configNode.addNode("extension1", NT_UI_EXTENSION);
 
         final UiExtension extension = loader.loadCmsExtensions().iterator().next();
-        assertThat(extension.getContext(), equalTo(null));
+        assertThat(extension.getExtensionPoint(), equalTo(null));
         assertThat(extension.getDisplayName(), equalTo("extension1"));
-        assertThat(extension.getUrlPath(), equalTo(null));
+        assertThat(extension.getUrl(), equalTo(null));
     }
 
     @Test
