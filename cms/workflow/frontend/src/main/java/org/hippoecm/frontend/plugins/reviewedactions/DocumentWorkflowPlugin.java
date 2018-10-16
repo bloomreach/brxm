@@ -38,6 +38,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -224,7 +225,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 String nodeName = getNodeNameCodec(document, folder).encode(name);
 
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.copy(new Document(folder), nodeName);
+                workflow.copy(new Document(folder), nodeName, getBranchIdModel().getBranchId());
 
                 JcrNodeModel resultModel = new JcrNodeModel(folder.getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
