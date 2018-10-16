@@ -41,7 +41,6 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
-import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -55,10 +54,12 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationE
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.hippoecm.hst.platform.api.PlatformServices;
 import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +73,15 @@ public class ChannelServiceImpl implements ChannelService {
 
     private ValidatorFactory validatorFactory;
     private HstConfigurationService hstConfigurationService;
+    private org.hippoecm.hst.platform.api.ChannelService channelService;
+
+    private void init() {
+        channelService = HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
+    }
 
     @Override
-    public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException {
+    public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup)
+            throws ChannelException, RepositoryException {
         try {
             final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
             final Class<? extends ChannelInfo> channelInfoClass = virtualHosts.getChannelInfoClass(hostGroup, channelId);
@@ -106,7 +113,7 @@ public class ChannelServiceImpl implements ChannelService {
             final String lockedBy = getChannelLockedBy(virtualHosts, channelId, hostGroup);
             final boolean editable = isChannelSettingsEditable(virtualHosts, channelId, hostGroup);
             return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy, editable);
-        } catch (ChannelException e) {
+        } catch (ChannelException | RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
             } else {
@@ -276,8 +283,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     private Map<String, String> getLocalizedResources(final VirtualHosts virtualHosts, final String channelId,
-                                                      final String language, final String hostGroup) throws ChannelException {
-        final ResourceBundle resourceBundle = virtualHosts.getResourceBundle(getChannel(channelId, hostGroup), new Locale(language));
+                                                      final String language, final String hostGroup) throws ChannelException, RepositoryException {
+        final ResourceBundle resourceBundle = virtualHosts.getResourceBundle(getChannel(RequestContextProvider.get().getSession(), channelId, hostGroup), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
         }
@@ -287,12 +294,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String channelId, final String hostGroup) throws ChannelException {
-        final Channel channel = getEditingPreviewVirtualHosts().getChannelById(hostGroup, channelId);
-        if (channel == null) {
-            throw new ChannelNotFoundException(channelId);
-        }
-        return channel;
+    public Channel getChannel(final Session session, final String channelId, final String hostGroup) throws ChannelException {
+
+        return channelService.getPreviewChannel(session, channelId, hostGroup);
+
     }
 
     @Override
@@ -331,6 +336,8 @@ public class ChannelServiceImpl implements ChannelService {
         if (StringUtils.isBlank(mountId)) {
             throw new IllegalArgumentException("MountId argument must not be blank");
         }
+        // below assumes the correct preview virtual hosts model is fetched...
+        // requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
         final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
         final List<Mount> mounts = virtualHosts.getMountsByHostGroup(hostGroup);
         return mounts.stream()
@@ -341,8 +348,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public boolean canChannelBeDeleted(final String channelId, final String hostGroup) throws ChannelException {
-        return canChannelBeDeleted(getChannel(channelId, hostGroup));
+    public boolean canChannelBeDeleted(final String channelId, final String hostGroup) throws ChannelException, RepositoryException {
+        return canChannelBeDeleted(getChannel(RequestContextProvider.get().getSession(), channelId, hostGroup));
     }
 
     @Override
@@ -478,4 +485,6 @@ public class ChannelServiceImpl implements ChannelService {
     public void setHstConfigurationService(final HstConfigurationService hstConfigurationService) {
         this.hstConfigurationService = hstConfigurationService;
     }
+
+
 }

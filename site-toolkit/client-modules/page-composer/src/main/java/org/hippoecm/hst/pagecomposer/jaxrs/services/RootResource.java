@@ -156,9 +156,10 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             locale = Locale.ENGLISH.getLanguage();
         }
         try {
-            final ChannelInfoDescription channelInfoDescription = channelService.getChannelInfoDescription(channelId, locale, hostGroup);
+            final ChannelInfoDescription channelInfoDescription =
+                    channelService.getChannelInfoDescription(channelId, locale, hostGroup);
             return Response.ok().entity(channelInfoDescription).build();
-        } catch (ChannelException e) {
+        } catch (ChannelException | RepositoryException e) {
             final String error = "Could not get channel setting information";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
@@ -198,15 +199,10 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             channelId = StringUtils.removeEnd(channelId, PREVIEW_SUFFIX);
         }
 
-        // delete channel happens to occur always when you have a channel open hence below works
-        // since org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl.getChannel() uses
-        // getEditingPreviewVirtualHosts(). However if we'd support deleting a channel from the channel mgr overview,
-        // below would not work and we'd need similar logic to getChannel() above using the model registry and the
-        // contextPath header!
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
             final Session session = hstRequestContext.getSession();
-            final Channel channel = channelService.getChannel(channelId, hostGroup);
+            final Channel channel = channelService.getChannel(RequestContextProvider.get().getSession(), channelId, hostGroup);
             final List<Mount> mountsOfChannel = channelService.findMounts(channel);
 
             channelService.preDeleteChannel(session, channel, mountsOfChannel);
@@ -256,7 +252,6 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
 
-        // HSTTWO-4365 TODO below does not get the correct channel and does not check for the correct webapp (platform at this moment!)
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId, hostGroup);
         final boolean isConfigurationLocked = isConfigurationLocked(mountId, hostGroup);
         try {

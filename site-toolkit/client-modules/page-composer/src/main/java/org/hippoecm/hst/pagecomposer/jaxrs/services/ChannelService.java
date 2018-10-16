@@ -30,17 +30,22 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 
 public interface ChannelService {
 
-    ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException;
+    ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale, final String hostGroup) throws ChannelException, RepositoryException;
 
-    Channel getChannel(String channelId, final String hostGroup) throws ChannelException;
+    Channel getChannel(Session session, String channelId, final String hostGroup) throws ChannelException;
 
     void saveChannel(Session session, String channelId, Channel channel, final String hostGroup) throws RepositoryException, ChannelException;
 
+    /**
+     * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
+     * cross channel page copy which is not supported over cross webapp
+     * @return the List of {@link Channel}s of the *single* webapp for which currently a channel is rendered in the channel mgr
+     */
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches, boolean skipConfigurationLocked, final String hostGroup);
 
     Optional<Channel> getChannelByMountId(final String mountId, final String hostGroup);
 
-    boolean canChannelBeDeleted(String channelId, final String hostGroup) throws ChannelException;
+    boolean canChannelBeDeleted(String channelId, final String hostGroup) throws ChannelException, RepositoryException;
 
     boolean canChannelBeDeleted(Channel channel);
 

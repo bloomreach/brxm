@@ -111,7 +111,7 @@
     <constructor-arg ref="pageComposerContextService"/>
   </bean>
 
-  <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
+  <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl" init-method="init">
     <property name="validatorFactory" ref="validatiorFactory"/>
     <property name="hstConfigurationService" ref="hstConfigurationService"/>
   </bean>

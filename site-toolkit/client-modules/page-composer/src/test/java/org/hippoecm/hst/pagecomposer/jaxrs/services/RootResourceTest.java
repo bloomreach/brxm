@@ -120,7 +120,7 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void can_get_channel_info_description() throws ChannelException {
+    public void can_get_channel_info_description() throws ChannelException, RepositoryException {
         final Map<String, String> i18nResources = new HashMap<>();
         i18nResources.put("field1", "Field 1");
         i18nResources.put("field2", "Field 2");
@@ -181,7 +181,7 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void can_get_channel_info_description_with_default_locale() throws ChannelException {
+    public void can_get_channel_info_description_with_default_locale() throws ChannelException, RepositoryException {
         final Map<String, String> i18nResources = new HashMap<>();
         i18nResources.put("field1", "Field 1");
         final List<FieldGroupInfo> fieldGroups = new ArrayList<>();
@@ -206,7 +206,7 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void cannot_get_channelsettings_information_when_sever_has_error() throws ChannelException {
+    public void cannot_get_channelsettings_information_when_sever_has_error() throws ChannelException, RepositoryException {
         expect(channelService.getChannelInfoDescription("channel-foo", "en", "dev-localhost"))
                 .andThrow(new ChannelException("unknown error"));
         replay(channelService);
@@ -305,9 +305,9 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void delete_channel_will_strip_preview_suffix_of_channelId() throws ChannelException {
+    public void delete_channel_will_strip_preview_suffix_of_channelId() throws ChannelException, RepositoryException {
 
-        EasyMock.expect(channelService.getChannel("channel-foi", "dev-localhost")).andThrow(new ChannelNotFoundException("channel-foi"));
+        EasyMock.expect(channelService.getChannel(mockSession, "channel-foi", "dev-localhost")).andThrow(new ChannelNotFoundException("channel-foi"));
         EasyMock.replay(channelService);
 
        given()
@@ -329,7 +329,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
         final Channel channelFoo = new Channel("channel-foo");
 
-        EasyMock.expect(channelService.getChannel("channel-foo", "dev-localhost")).andReturn(channelFoo);
+        EasyMock.expect(channelService.getChannel(mockSession,"channel-foo", "dev-localhost")).andReturn(channelFoo);
         EasyMock.expect(channelService.findMounts(channelFoo)).andReturn(mountsOfChannel);
 
         channelService.preDeleteChannel(mockSession, channelFoo, mountsOfChannel);
@@ -368,7 +368,7 @@ public class RootResourceTest extends AbstractResourceTest {
         final Mount mockMount = EasyMock.createMock(Mount.class);
         final Channel channelFoo = new Channel("channel-foo");
 
-        EasyMock.expect(channelService.getChannel("channel-foo", "dev-localhost")).andReturn(channelFoo);
+        EasyMock.expect(channelService.getChannel(mockSession, "channel-foo", "dev-localhost")).andReturn(channelFoo);
         channelService.preDeleteChannel(mockSession, channelFoo, Arrays.asList(mockMount));
         expectLastCall();
 
@@ -409,7 +409,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
     @Test
     public void cannot_delete_non_existent_channel() throws ChannelException, RepositoryException {
-        EasyMock.expect(channelService.getChannel("channel-foo", "dev-localhost"))
+        EasyMock.expect(channelService.getChannel(mockSession, "channel-foo", "dev-localhost"))
                 .andThrow(new ChannelNotFoundException("channel-foo"));
 
         replay(channelService);
