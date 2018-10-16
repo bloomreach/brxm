@@ -18,6 +18,8 @@ class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
+    $sce,
+    $scope,
     $window,
     ChannelService,
     ConfigService,
@@ -30,6 +32,8 @@ class IframeExtensionCtrl {
 
     this.$element = $element;
     this.$log = $log;
+    this.$sce = $sce;
+    this.$scope = $scope;
     this.$window = $window;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
@@ -37,6 +41,8 @@ class IframeExtensionCtrl {
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
     this.PathService = PathService;
+
+    this.$scope.trustedSource = resource => this.$sce.trustAsResourceUrl(resource);
   }
 
   $onInit() {
@@ -53,13 +59,18 @@ class IframeExtensionCtrl {
   }
 
   getExtensionUrl() {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.url);
+    if (this.extension.url.startsWith('/')) {
+      const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.url);
+      // The current location should be the default value for the second parameter of the URL() constructor,
+      // but Chrome needs it explicitly otherwise it will throw an error.
+      const url = new URL(path, this.$window.location.origin);
+      url.searchParams.append('antiCache', this.ConfigService.antiCache);
+      return url.pathname + url.search;
+    }
 
-    // The current location should be the default value for the second parameter of the URL() constructor,
-    // but Chrome needs it explicitly otherwise it will throw an error.
-    const url = new URL(path, this.$window.location.origin);
+    const url = new URL(this.extension.url);
     url.searchParams.append('antiCache', this.ConfigService.antiCache);
-    return url.pathname + url.search;
+    return url.href;
   }
 
   $onChanges(params) {
