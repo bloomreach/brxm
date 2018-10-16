@@ -1,0 +1,57 @@
+{
+  "name": "@bloomreach/ui-extension",
+  "version": "13.0.0",
+  "description": "BloomReach OpenUI SDK ",
+  "keywords": [
+    "bloomreach",
+    "sdk",
+    "openui"
+  ],
+  "author": "BloomReach B.V.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
+  },
+  "main": "target/ui-extension.js",
+  "types": "target/ui-extension.d.ts",
+  "scripts": {
+    "build": "webpack --config=webpack.config.js",
+    "test": "jest",
+    "codecov": "codecov"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "./coverage",
+    "collectCoverage": true,
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfigFile": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/?(*.)spec.ts"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^23.0",
+    "codecov": "^3.0",
+    "dts-bundle": "^0.7",
+    "jest": "^23.0",
+    "js-beautify": "^1.0",
+    "ts-jest": "^23.0",
+    "ts-loader": "^5.0",
+    "tslint": "^5.0",
+    "tslint-config-airbnb": "^5.0",
+    "typescript": "^3.0",
+    "webpack": "^4.0",
+    "webpack-cli": "^3.0"
+  }
+}

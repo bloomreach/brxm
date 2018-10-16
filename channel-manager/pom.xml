@@ -298,9 +298,12 @@
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
 
+                <exclude>ui-extension/.*</exclude>
+
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>ui-extension/coverage/**/*</exclude>
                 <exclude>**/target/**/*</exclude>
 
                 <!-- repository content XML -->
