@@ -22,13 +22,9 @@ def cmsDependenciesPomFile = new File(cmsDependenciesModuleDir, pomFile)
 def repositoryDataDir = Paths.get(projectLocation).resolve("repository-data")
 
 def appModuleDescriptorFile = repositoryDataDir.resolve("application")
-        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile()
 def devModuleDescriptorFile = repositoryDataDir.resolve("development")
-        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
-def siteModuleDescriptorFile = repositoryDataDir.resolve("site")
-        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
-def webfilesModuleDescriptorFile = repositoryDataDir.resolve("webfiles")
-        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile();
+        .resolve("src").resolve("main").resolve("resources").resolve(hcmModuleFilename).toFile()
 
 def afterGroup = 'after: hippo-cms'
 if (property == null) {
@@ -72,6 +68,7 @@ if (property == null) {
     </dependency>"""
     replacePlaceHolder(cmsDependenciesPomFile, cmsDependenciesMarker, cmdDepText)
 
+    //Extra project core dependencies should depend on main project
     afterGroup = "after: $parentArtifactId"
 
     //remove repository-data/application configuration & security yaml definitions as they've been already defined at
@@ -84,8 +81,6 @@ if (property == null) {
 
 replacePlaceHolder(appModuleDescriptorFile, groupAfterMarker, afterGroup)
 replacePlaceHolder(devModuleDescriptorFile, groupAfterMarker, afterGroup)
-replacePlaceHolder(siteModuleDescriptorFile, groupAfterMarker, afterGroup)
-replacePlaceHolder(webfilesModuleDescriptorFile, groupAfterMarker, afterGroup)
 
 private static void replacePlaceHolder(File file, String marker, String text) {
     def fileContent = file.getText('UTF-8').replace(marker, text)
