@@ -46,6 +46,7 @@ describe('iframeExtension', () => {
       displayName: 'Test',
       extensionPoint: 'testExtensionPoint',
       url: 'testUrl',
+      config: 'testConfig',
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
@@ -193,6 +194,12 @@ describe('iframeExtension', () => {
           const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
           publicApi.refreshPage();
           expect(HippoIframeService.reload).toHaveBeenCalled();
+        });
+
+        it('provides config to the extension', () => {
+          triggerIframeLoad();
+          const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
+          expect(publicApi.config).toBe('testConfig');
         });
 
         it('calls the BR_EXTENSION.onContextChanged function', () => {

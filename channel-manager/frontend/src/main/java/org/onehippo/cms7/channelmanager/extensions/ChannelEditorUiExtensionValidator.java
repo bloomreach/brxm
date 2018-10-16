@@ -35,7 +35,7 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
     public boolean validate(final UiExtension extension) {
         return validateId(extension)
                 && validateDisplayName(extension)
-                && validateContext(extension)
+                && validateExtensionPoint(extension)
                 && validateUrl(extension);
     }
 
@@ -65,15 +65,15 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
         return true;
     }
 
-    private boolean validateContext(final UiExtension extension) {
-        final UiExtensionPoint context = extension.getExtensionPoint();
+    private boolean validateExtensionPoint(final UiExtension extension) {
+        final UiExtensionPoint extensionPoint = extension.getExtensionPoint();
 
-        if (context == null) {
-            final List<String> contextNames = Arrays.stream(UiExtensionPoint.values())
+        if (extensionPoint == null) {
+            final List<String> extensionPointNames = Arrays.stream(UiExtensionPoint.values())
                     .map(UiExtensionPoint::getLowerCase)
                     .collect(Collectors.toList());
-            log.warn("Ignoring UI extension '{}': context unknown. Valid contexts are: {}.",
-                    extension.getId(), contextNames);
+            log.warn("Ignoring UI extension '{}': extensionPoint unknown. Valid extensionPoints are: {}.",
+                    extension.getId(), extensionPointNames);
             return false;
         }
 
