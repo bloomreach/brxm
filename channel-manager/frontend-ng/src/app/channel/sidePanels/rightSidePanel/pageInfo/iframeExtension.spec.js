@@ -133,17 +133,34 @@ describe('iframeExtension', () => {
           extension.url = '/testUrl?customParam=X';
           expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&antiCache=42');
         });
+
+        it('works when the extension URL path does not start with a slash', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          extension.url = 'testUrl';
+          expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?antiCache=42');
+        });
+
+        it('works when the extension URL path contains dots', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          extension.url = '../testUrl';
+          expect($ctrl.getExtensionUrl()).toEqual('/testUrl?antiCache=42');
+        });
       });
 
       describe('for extensions from a different origin', () => {
         it('works for URLs without parameters', () => {
           extension.url = 'http://www.bloomreach.com';
-          expect($ctrl.getExtensionUrl()).toEqual('http://www.bloomreach.com/?antiCache=42');
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?antiCache=42');
         });
 
         it('works for URLs with parameters', () => {
           extension.url = 'http://www.bloomreach.com?customParam=X';
-          expect($ctrl.getExtensionUrl()).toEqual('http://www.bloomreach.com/?customParam=X&antiCache=42');
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&antiCache=42');
+        });
+
+        it('works for HTTPS URLs', () => {
+          extension.url = 'https://www.bloomreach.com';
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?antiCache=42');
         });
       });
     });

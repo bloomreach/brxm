@@ -33,7 +33,6 @@ class IframeExtensionCtrl {
     this.$element = $element;
     this.$log = $log;
     this.$sce = $sce;
-    this.$scope = $scope;
     this.$window = $window;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
@@ -41,8 +40,6 @@ class IframeExtensionCtrl {
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
     this.PathService = PathService;
-
-    this.$scope.trustedSource = resource => this.$sce.trustAsResourceUrl(resource);
   }
 
   $onInit() {
@@ -59,18 +56,29 @@ class IframeExtensionCtrl {
   }
 
   getExtensionUrl() {
-    if (this.extension.url.startsWith('/')) {
-      const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.url);
-      // The current location should be the default value for the second parameter of the URL() constructor,
-      // but Chrome needs it explicitly otherwise it will throw an error.
-      const url = new URL(path, this.$window.location.origin);
-      url.searchParams.append('antiCache', this.ConfigService.antiCache);
-      return url.pathname + url.search;
+    if (this._isAbsoluteUrl(this.extension.url)) {
+      return this._getTrustedAbsoluteUrl(this.extension.url);
     }
+    return this._getUrlRelativeToCmsLocation(this.extension.url);
+  }
 
-    const url = new URL(this.extension.url);
+  _isAbsoluteUrl(url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  _getTrustedAbsoluteUrl(extensionUrl) {
+    const url = new URL(extensionUrl);
     url.searchParams.append('antiCache', this.ConfigService.antiCache);
-    return url.href;
+    return this.$sce.trustAsResourceUrl(url.href);
+  }
+
+  _getUrlRelativeToCmsLocation(extensionUrl) {
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), extensionUrl);
+    // The current location should be the default value for the second parameter of the URL() constructor,
+    // but Chrome needs it explicitly otherwise it will throw an error.
+    const url = new URL(path, this.$window.location.origin);
+    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    return url.pathname + url.search;
   }
 
   $onChanges(params) {
