@@ -3,6 +3,10 @@ import java.nio.file.Paths
 final String propertiesMarker = '<!-- PROPERTIES_MARKER -->'
 final String groupAfterMarker = '<!-- GROUP_AFTER -->'
 final String cmsDependenciesMarker = '<!-- PARENT_PROJECT_DEPENDENCIES -->'
+
+final String mainSiteProfilerMarkerStart = '<!-- MAIN_SITE_PROFILE_MARKER_START -->'
+final String mainSiteProfilerMarkerEnd = '<!-- MAIN_SITE_PROFILE_MARKER_END -->'
+
 final String pomFile = 'pom.xml'
 final String hcmModuleFilename = "hcm-module.yaml"
 
