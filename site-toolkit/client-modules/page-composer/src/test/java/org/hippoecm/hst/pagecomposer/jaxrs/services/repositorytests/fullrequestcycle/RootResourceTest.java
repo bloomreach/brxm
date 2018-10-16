@@ -68,33 +68,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void keepalive_root_resource_as_admin() throws Exception {
-        final SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-        assertions(admin);
-    }
-
-    @Test
-    public void keepalive_root_resource_as_webmaster() throws Exception {
-        final SimpleCredentials admin = new SimpleCredentials("editor", "editor".toCharArray());
-        assertions(admin);
-    }
-
-    private void assertions(final SimpleCredentials admin) throws IOException, ServletException {
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./keepalive", null, "GET");
-
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-
-        final String restResponse = response.getContentAsString();
-        assertTrue(StringUtils.isNotEmpty(restResponse));
-
-        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
-        assertEquals(Boolean.TRUE, responseMap.get("success"));
-        assertEquals("OK", responseMap.get("message"));
-        assertEquals(null, responseMap.get("errorCode"));
-    }
-
-    @Test
     public void remove_channel_not_allowed_if_not_hippo_admin_role_fails() throws Exception {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "DELETE");
