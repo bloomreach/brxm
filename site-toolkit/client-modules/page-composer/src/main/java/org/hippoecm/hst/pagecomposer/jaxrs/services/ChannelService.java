@@ -37,9 +37,6 @@ public interface ChannelService {
     void saveChannel(Session session, String channelId, Channel channel, final String hostGroup) throws RepositoryException, ChannelException;
 
     /**
-     * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
-     * cross channel page copy which is not supported over cross webapp
-     * @return the List of {@link Channel}s of the *single* webapp for which currently a channel is rendered in the channel mgr
      */
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches, boolean skipConfigurationLocked, final String hostGroup);
 
