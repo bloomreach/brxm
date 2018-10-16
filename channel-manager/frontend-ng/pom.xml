@@ -69,24 +69,28 @@
           </execution>
         </executions>
       </plugin>
-        <plugin>
-            <artifactId>maven-clean-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>ng-clean</id>
-              </execution>
-            </executions>
-            <configuration>
-                <filesets>
-                    <fileset>
-                        <directory>.cache</directory>
-                        <directory>coverage</directory>
-                        <directory>node_modules</directory>
-                        <followSymlinks>false</followSymlinks>
-                    </fileset>
-                </filesets>
-            </configuration>
-        </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>ng-clean</id>
+          </execution>
+        </executions>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>.cache</directory>
+            </fileset>
+            <fileset>
+              <directory>coverage</directory>
+            </fileset>
+            <fileset>
+              <directory>node_modules</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -121,9 +125,10 @@
             <configuration>
               <filesets>
                 <fileset>
-                  <directory>cache</directory>
+                  <directory>.cache</directory>
+                </fileset>
+                <fileset>
                   <directory>coverage</directory>
-                  <followSymlinks>false</followSymlinks>
                 </fileset>
               </filesets>
             </configuration>
