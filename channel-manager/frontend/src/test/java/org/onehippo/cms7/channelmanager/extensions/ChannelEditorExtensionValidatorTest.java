@@ -23,11 +23,11 @@ import static org.junit.Assert.assertTrue;
 
 public class ChannelEditorExtensionValidatorTest {
 
-    private ChannelEditorExtensionValidator validator;
+    private ChannelEditorUiExtensionValidator validator;
 
     @Before
     public void setUp() {
-        validator = new ChannelEditorExtensionValidator();
+        validator = new ChannelEditorUiExtensionValidator();
     }
 
     @Test
@@ -61,46 +61,46 @@ public class ChannelEditorExtensionValidatorTest {
 
     @Test
     public void validateContext() {
-        assertTrue(isValidContext(CmsExtensionContext.PAGE));
+        assertTrue(isValidContext(UiExtensionPoint.PAGESIDEPANEL));
         assertFalse(isValidContext(null));
     }
 
     @Test
-    public void validateUrlPath() {
-        assertTrue(isValidUrlPath("extensions"));
-        assertTrue(isValidUrlPath("extensions/my-extension"));
-        assertTrue(isValidUrlPath("../extensions"));
+    public void validateUrl() {
+        assertTrue(isValidUrl("extensions"));
+        assertTrue(isValidUrl("extensions/my-extension"));
+        assertTrue(isValidUrl("../extensions"));
 
-        assertFalse(isValidUrlPath(null));
-        assertFalse(isValidUrlPath(""));
-        assertFalse(isValidUrlPath(" "));
+        assertFalse(isValidUrl(null));
+        assertFalse(isValidUrl(""));
+        assertFalse(isValidUrl(" "));
     }
 
     private boolean isValidId(final String id) {
-        return validator.validate(extension(id, id, CmsExtensionContext.PAGE, "extensions/" + id));
+        return validator.validate(extension(id, id, UiExtensionPoint.PAGESIDEPANEL, "extensions/" + id));
     }
 
     private boolean isValidDisplayName(final String displayName) {
-        return validator.validate(extension("test", displayName, CmsExtensionContext.PAGE, "extensions/test"));
+        return validator.validate(extension("test", displayName, UiExtensionPoint.PAGESIDEPANEL, "extensions/test"));
     }
 
-    private boolean isValidContext(final CmsExtensionContext context) {
+    private boolean isValidContext(final UiExtensionPoint context) {
         return validator.validate(extension("test", "Test", context, "extensions/test"));
     }
 
-    private boolean isValidUrlPath(final String urlPath) {
-        return validator.validate(extension("test", "Test", CmsExtensionContext.PAGE, urlPath));
+    private boolean isValidUrl(final String url) {
+        return validator.validate(extension("test", "Test", UiExtensionPoint.PAGESIDEPANEL, url));
     }
 
-    private CmsExtension extension(final String id,
-                                   final String displayName,
-                                   final CmsExtensionContext context,
-                                   final String urlPath) {
-        final CmsExtensionBean extension = new CmsExtensionBean();
+    private UiExtension extension(final String id,
+                                  final String displayName,
+                                  final UiExtensionPoint context,
+                                  final String url) {
+        final UiExtensionBean extension = new UiExtensionBean();
         extension.setId(id);
         extension.setDisplayName(displayName);
-        extension.setContext(context);
-        extension.setUrlPath(urlPath);
+        extension.setExtensionPoint(context);
+        extension.setUrl(url);
         return extension;
     }
 }

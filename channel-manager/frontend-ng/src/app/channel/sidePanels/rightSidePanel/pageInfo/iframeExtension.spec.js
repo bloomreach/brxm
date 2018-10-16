@@ -44,8 +44,8 @@ describe('iframeExtension', () => {
     extension = {
       id: 'test',
       displayName: 'Test',
-      context: 'testContext',
-      urlPath: 'testUrlPath',
+      extensionPoint: 'testExtensionPoint',
+      url: 'testUrl',
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
@@ -118,18 +118,18 @@ describe('iframeExtension', () => {
 
       it('works when the CMS location has a context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath?antiCache=42');
+        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?antiCache=42');
       });
 
       it('works when the CMS location has no context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/');
-        expect($ctrl.getExtensionUrl()).toEqual('/testUrlPath?antiCache=42');
+        expect($ctrl.getExtensionUrl()).toEqual('/testUrl?antiCache=42');
       });
 
       it('works when the extension URL path contains search parameters', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        extension.urlPath = 'testUrlPath?customParam=X';
-        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrlPath?customParam=X&antiCache=42');
+        extension.url = 'testUrl?customParam=X';
+        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&antiCache=42');
       });
     });
 
@@ -198,7 +198,7 @@ describe('iframeExtension', () => {
         it('calls the BR_EXTENSION.onContextChanged function', () => {
           triggerIframeLoad();
           expect(iframeWindow.BR_EXTENSION.onContextChanged).toHaveBeenCalledWith({
-            context: 'testContext',
+            extensionPoint: 'testExtensionPoint',
             data: {
               foo: 1,
             },
@@ -270,7 +270,7 @@ describe('iframeExtension', () => {
           isFirstChange = false;
           $ctrl.$onChanges({ context: changedContext });
           expect(iframeWindow.BR_EXTENSION.onContextChanged).toHaveBeenCalledWith({
-            context: 'testContext',
+            extensionPoint: 'testExtensionPoint',
             data: {
               foo: 2,
             },

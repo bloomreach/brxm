@@ -18,13 +18,13 @@ package org.onehippo.cms7.channelmanager.extensions;
 import java.util.Set;
 
 /**
- * Loads CMS extensions.
+ * Loads UI extensions.
  */
-public interface CmsExtensionLoader {
+public interface UiExtensionLoader {
 
     /**
-     * @return all available CMS extensions.
+     * @return all available UI extensions.
      */
-    Set<CmsExtension> loadCmsExtensions();
+    Set<UiExtension> loadUiExtensions();
 
 }

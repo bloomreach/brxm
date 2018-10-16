@@ -15,15 +15,17 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
- * Checks that the system can use a CMS extension.
+ * The UI extension point: the place in the UI where the extension will be shown.
  */
-public interface CmsExtensionValidator {
+public enum UiExtensionPoint {
 
-    /**
-     * @param extension the extension to check
-     * @return whether the system can use the extension or not.
-     */
-    boolean validate(CmsExtension extension);
+    PAGESIDEPANEL;
 
+    @JsonValue
+    public String getLowerCase() {
+        return this.name().toLowerCase();
+    }
 }
