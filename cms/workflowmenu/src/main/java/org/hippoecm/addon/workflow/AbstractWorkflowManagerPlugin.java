@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,14 +21,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
@@ -38,7 +35,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
-import org.apache.wicket.model.IModel;
+import org.hippoecm.addon.workflow.categories.CategoriesBuilderImpl;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.editor.IFormService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -49,13 +46,15 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
+import org.hippoecm.frontend.service.categories.CategoriesBuilder;
+import org.hippoecm.frontend.service.categories.CategoriesService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +64,10 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
 
     static final Logger log = LoggerFactory.getLogger(AbstractWorkflowManagerPlugin.class);
 
-    public static final String OBSERVATION = "workflow.observation";
-    public static final String CATEGORIES = "workflow.categories";
-    public static final String VERSION_CATEGORIES = "workflow.version.categories";
-    public static final String MENU_ORDER = "workflow.menuorder";
+    public static final String OBSERVATION_KEY = "workflow.observation";
+    public static final String CATEGORIES_KEY = "workflow.categories";
+    public static final String VERSION_CATEGORIES_KEY = "workflow.version.categories";
+    public static final String MENU_ORDER_KEY = "workflow.menuorder";
 
     private Set<NodeObserver> observers;
     private PluginController plugins;
@@ -77,11 +76,13 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
     private String[] menuOrder;
     protected AbstractView view;
 
+    private final CategoriesBuilder categoriesBuilder;
+
     protected AbstractWorkflowManagerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        if (config.get(CATEGORIES) != null) {
-            categories = config.getStringArray(CATEGORIES);
+        if (config.get(CATEGORIES_KEY) != null) {
+            categories = config.getStringArray(CATEGORIES_KEY);
             if (log.isDebugEnabled()) {
                 final StringBuilder sb = new StringBuilder("workflow showing categories");
                 for (String category : categories) {
@@ -92,24 +93,24 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             }
         } else {
             categories = new String[]{};
-            log.warn("No categories ({}) defined", CATEGORIES);
+            log.warn("No categories ({}) defined", CATEGORIES_KEY);
         }
 
-        if (config.get(MENU_ORDER) != null) {
-            menuOrder = config.getStringArray(MENU_ORDER);
+        if (config.get(MENU_ORDER_KEY) != null) {
+            menuOrder = config.getStringArray(MENU_ORDER_KEY);
         } else {
             menuOrder = categories;
         }
 
-        if (config.get(VERSION_CATEGORIES) != null) {
-            versionCategories = config.getStringArray(VERSION_CATEGORIES);
+        if (config.get(VERSION_CATEGORIES_KEY) != null) {
+            versionCategories = config.getStringArray(VERSION_CATEGORIES_KEY);
         } else {
             versionCategories = categories;
         }
 
         IServiceReference serviceReference = context.getReference(this);
         plugins = new PluginController(context, config, serviceReference.getServiceId());
-        if (config.getAsBoolean(OBSERVATION, true)) {
+        if (config.getAsBoolean(OBSERVATION_KEY, true)) {
             observers = new HashSet<>();
         }
 
@@ -121,6 +122,8 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
             });
         }});
         add(new EmptyPanel("menu"));
+        final CategoriesService service = HippoServiceRegistry.getService(CategoriesService.class);
+        categoriesBuilder = Optional.ofNullable(service).map(CategoriesService::getBuilder).orElse(new CategoriesBuilderImpl());
     }
 
     protected boolean isObserving() {
@@ -153,11 +156,8 @@ abstract class AbstractWorkflowManagerPlugin extends RenderPlugin<Node> {
         List<Panel> list = new LinkedList<>();
         for (Node node : nodeSet) {
             try {
-                if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
-                    list.addAll(buildPanelsForCategories(menu, node, versionCategories));
-                } else {
-                    list.addAll(buildPanelsForCategories(menu, node, categories));
-                }
+                boolean useVersionCategories = categoriesBuilder.config(config).context(getPluginContext()).node(node).useVersionCategories();
+                list.addAll(buildPanelsForCategories(menu, node, useVersionCategories ? versionCategories : categories));
             } catch (RepositoryException ex) {
                 log.error("Error setting up workflow menu", ex);
             }

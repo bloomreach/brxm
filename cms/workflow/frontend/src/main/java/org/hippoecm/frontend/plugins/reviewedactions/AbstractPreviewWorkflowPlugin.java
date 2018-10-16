@@ -24,14 +24,13 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.migrate.StringResourceModelMigration;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -49,18 +48,33 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private static final long serialVersionUID = 1L;
 
-    private final StdWorkflow infoAction;
-    private final StdWorkflow infoEditAction;
+
     private final StdWorkflow editAction;
     private final Map<String, Serializable> info;
+
+    @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
+    private String inUseBy;
 
     protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(HippoStdNodeType.NT_PUBLISHABLESUMMARY));
         info = getHints();
+        inUseBy = getHint("inUseBy");
+        add(new StdWorkflow("infoEdit", "infoEdit") {
 
-        infoAction = new StdWorkflow("info", "info") {
+            /**
+             * Gets whether this component and any children are visible.
+             * <p>
+             * WARNING: this method can be called multiple times during a request. If you override this method, it is a good
+             * idea to keep it cheap in terms of processing. Alternatively, you can call {@link #setVisible(boolean)}.
+             * <p>
+             *
+             * @return True if component and any children are visible
+             */
+            @Override
+            public boolean isVisible() {
+                return StringUtils.isNotEmpty(inUseBy);
+            }
 
             @Override
             public String getSubMenu() {
@@ -69,8 +83,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-                        new PropertyModel<>(AbstractPreviewWorkflowPlugin.this, "stateSummary"));
+                return StringResourceModelMigration.of("in-use-by", this, null,
+                        new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
             }
 
             @Override
@@ -78,17 +92,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 // The infoEdit workflow only shows feedback based on the hints.
                 // It does not show any dialog.
             }
+        });
 
-            @Override
-            public boolean isVisible() {
-                // Show the workflow status of the document, except when it is live (in that case,
-                // no user action is required anymore).
-                return !"live".equals(getStateSummary());
-            }
-        };
-        add(infoAction);
-        infoEditAction = getInfoEditAction();
-        add(infoEditAction);
 
         editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this), getModel()) {
 
@@ -105,7 +110,8 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected String execute(Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                Document docRef = workflow.obtainEditableInstance();
+                String branchId = getBranchIdModel().getBranchId();
+                Document docRef = workflow.obtainEditableInstance(branchId);
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
                 Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
@@ -122,13 +128,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 }
                 return null;
             }
+
         };
         add(editAction);
-
         hideInvalidActions();
     }
-
-
 
     @SuppressWarnings("unused")  // used by a PropertyModel
     public String getStateSummary() {
@@ -148,17 +152,14 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
     private void hideInvalidActions() {
         hideIfNotAllowed(info, "obtainEditableInstance", editAction);
-        hideOrDisable(info, "status", infoAction);
     }
 
-    protected final String getHint(final String key){
+    protected final String getHint(final String key) {
         final Serializable serializable = info.get(key);
         if (serializable instanceof String) {
             return (String) serializable;
         }
         return StringUtils.EMPTY;
     }
-
-    protected abstract StdWorkflow getInfoEditAction();
 
 }
