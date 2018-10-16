@@ -16,15 +16,19 @@
 
 class AddToProjectController {
   constructor(
+    $uiRouterGlobals,
     CmsService,
-    ContentEditor,
+    EditContentService,
     ProjectService,
   ) {
     'ngInject';
 
+    this.$uiRouterGlobals = $uiRouterGlobals;
     this.CmsService = CmsService;
-    this.ContentEditor = ContentEditor;
+    this.EditContentService = EditContentService;
     this.ProjectService = ProjectService;
+
+    ProjectService.beforeChange('addToProject', () => this.close());
   }
 
   getSelectedProject() {
@@ -32,11 +36,13 @@ class AddToProjectController {
   }
 
   addDocumentToProject() {
-    const documentId = this.ContentEditor.getDocumentId();
     this.CmsService.reportUsageStatistic('AddToProjectVisualEditor');
+    const documentId = this.$uiRouterGlobals.params.documentId;
+    this.EditContentService.branchAndEditDocument(documentId);
+  }
 
-    this.ProjectService.associateWithProject(documentId)
-      .then(() => this.ContentEditor.open(documentId));
+  close() {
+    this.EditContentService.stopEditing();
   }
 }
 

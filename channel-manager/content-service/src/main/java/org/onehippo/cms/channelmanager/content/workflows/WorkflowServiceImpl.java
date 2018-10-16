@@ -26,6 +26,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
+import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -45,19 +46,20 @@ public class WorkflowServiceImpl implements WorkflowService {
 
     @Override
     public void executeDocumentWorkflowAction(final String uuid, final String action, final Session session,
-                                              final Map<String, Serializable> contextPayload) throws ErrorWithPayloadException {
+                                              final String branchId) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
+        final Map<String, Serializable> hints = HintsUtils.getHints(documentWorkflow, branchId);
 
         if (isRequestPendingAction(action)) {
             final Node requestNode = getRequestNode(handle);
-            if (actionIsNotAvailable(documentWorkflow, action, requestNode, uuid)) {
+            if (actionIsNotAvailable(action, requestNode, uuid, hints)) {
                 log.info("Workflow request action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
             executeDocumentWorkflowAction(uuid, getIdentifier(requestNode), documentWorkflow, action);
         } else {
-            if (!EditingUtils.isActionAvailable(documentWorkflow, action)) {
+            if (!EditingUtils.isActionAvailable(action, hints)) {
                 log.info("Workflow action '{}' is not available for document '{}'", action, uuid);
                 throw new ForbiddenException(new ErrorInfo(Reason.WORKFLOW_ACTION_NOT_AVAILABLE));
             }
@@ -116,10 +118,10 @@ public class WorkflowServiceImpl implements WorkflowService {
         return requestNode;
     }
 
-    private static boolean actionIsNotAvailable(final DocumentWorkflow documentWorkflow, final String action, final Node requestNode, final String uuid) throws ErrorWithPayloadException {
+    private static boolean actionIsNotAvailable(final String action, final Node requestNode, final String uuid, final Map<String, Serializable> hints) throws ErrorWithPayloadException {
         if (requestNode != null) {
             try {
-                return !EditingUtils.isRequestActionAvailable(documentWorkflow, action, requestNode.getIdentifier());
+                return !EditingUtils.isRequestActionAvailable(action, requestNode.getIdentifier(), hints);
             } catch (RepositoryException e) {
                 log.warn("Unexpected error when retrieving node identifier.", e);
                 throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
@@ -145,4 +147,5 @@ public class WorkflowServiceImpl implements WorkflowService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
+
 }

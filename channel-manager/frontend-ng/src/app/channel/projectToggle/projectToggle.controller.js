@@ -27,7 +27,6 @@ class ProjectToggleController {
   }
 
   $onInit() {
-    this.core = this.ProjectService.core;
     this.getProjects();
   }
 
@@ -40,10 +39,8 @@ class ProjectToggleController {
   }
 
   set selectedProject(selectedProject) {
-    if (selectedProject.id !== this.ProjectService.selectedProject.id) {
-      this.ProjectService.updateSelectedProject(selectedProject.id);
-      this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch');
-    }
+    this.ProjectService.updateSelectedProject(selectedProject.id)
+      .then(() => this.CmsService.reportUsageStatistic('CMSChannelsProjectSwitch'));
   }
 }
 

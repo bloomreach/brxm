@@ -28,7 +28,7 @@ describe('EditContentService', () => {
     angular.mock.module('hippo-cm');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getDocumentDisplayName', 'getError', 'kill', 'open',
+      'confirmClose', 'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getDocumentDisplayName', 'getError', 'kill', 'open',
     ]);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
 
@@ -98,7 +98,7 @@ describe('EditContentService', () => {
   it('stops editing', () => {
     spyOn($state, 'go');
     EditContentService.stopEditing();
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
   });
 
   describe('other editor opened', () => {
@@ -114,7 +114,7 @@ describe('EditContentService', () => {
       $window.CMS_TO_APP.publish('kill-editor', '42');
 
       expect(ContentEditor.kill).toHaveBeenCalled();
-      expect($state.go).toHaveBeenCalledWith('^');
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
     });
 
     it('does not kill an open editor for another document', () => {
@@ -134,19 +134,17 @@ describe('EditContentService', () => {
     });
   });
 
-  it('confirms save or discard changes in the open editor when the channel is closed', () => {
+  it('confirms closing the open editor when the channel is closed', () => {
     const document = {
       id: '42',
     };
     editDocument(document);
-    ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+    ContentEditor.confirmClose.and.returnValue($q.resolve());
 
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
-    expect(ContentEditor.discardChanges).toHaveBeenCalled();
-    expect(ContentEditor.close).toHaveBeenCalled();
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect($state.$current.name).toBe('hippo-cm');
   });
 
@@ -155,15 +153,12 @@ describe('EditContentService', () => {
       id: '42',
     };
     editDocument(document);
-    ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+    ContentEditor.confirmClose.and.returnValue($q.reject());
 
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
-    expect(ContentEditor.discardChanges).not.toHaveBeenCalled();
-    expect(ContentEditor.close).not.toHaveBeenCalled();
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
 });
-

@@ -82,7 +82,6 @@ class ChannelCtrl {
   }
 
   get isContentOverlayDisplayed() {
-    this.OverlayService.showContentOverlay(this.OverlayService.isContentOverlayDisplayed && this.ProjectService.isContentOverlayEnabled());
     return this.OverlayService.isContentOverlayDisplayed;
   }
 
@@ -91,8 +90,6 @@ class ChannelCtrl {
   }
 
   get isComponentsOverlayDisplayed() {
-    this.OverlayService
-      .showComponentsOverlay(this.OverlayService.isComponentsOverlayDisplayed && this.ProjectService.isComponentsOverlayEnabled());
     return this.OverlayService.isComponentsOverlayDisplayed;
   }
 

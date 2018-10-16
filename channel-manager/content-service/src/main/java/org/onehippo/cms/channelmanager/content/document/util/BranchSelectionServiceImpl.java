@@ -12,18 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-import './addToProject.scss';
-import controller from './addToProject.controller';
-import template from './addToProject.html';
+package org.onehippo.cms.channelmanager.content.document.util;
 
-const addToProjectComponent = {
-  bindings: {
-    onClose: '&',
-  },
-  controller,
-  template,
-};
+import java.io.Serializable;
+import java.util.Map;
 
-export default addToProjectComponent;
+import org.onehippo.repository.branch.BranchConstants;
+
+/**
+ * Provides the default implementation of the interface, which is used if the module configuration property
+ * branchSelectionClass is not present.
+ */
+public class BranchSelectionServiceImpl implements BranchSelectionService {
+
+    @Override
+    public String getSelectedBranchId(final Map<String, Serializable> contextPayload) {
+        return BranchConstants.MASTER_BRANCH_ID;
+    }
+}

@@ -15,12 +15,27 @@
  */
 
 class EditContentService {
-  constructor($state, $transitions, $translate, CmsService, ContentEditor, RightSidePanelService) {
+  constructor(
+    $q,
+    $state,
+    $transitions,
+    $translate,
+    CmsService,
+    ConfigService,
+    ContentEditor,
+    ContentService,
+    ProjectService,
+    RightSidePanelService,
+  ) {
     'ngInject';
 
+    this.$q = $q;
     this.$state = $state;
     this.$translate = $translate;
+    this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
+    this.ContentService = ContentService;
+    this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
@@ -35,22 +50,61 @@ class EditContentService {
     CmsService.subscribe('kill-editor', (documentId) => {
       this._stopEditingDocument(documentId);
     });
+
+    ProjectService.beforeChange('editContent', () => this._beforeSwitchProject());
+  }
+
+  _isEditingDocument() {
+    return this.$state.$current.name === 'hippo-cm.channel.edit-content';
   }
 
   _stopEditingDocument(documentId) {
-    if (this.$state.$current.name === 'hippo-cm.channel.edit-content'
-      && this.ContentEditor.getDocumentId() === documentId) {
+    if (this._isEditingDocument() && this.ContentEditor.getDocumentId() === documentId) {
       this.ContentEditor.kill();
       this.stopEditing();
     }
   }
 
+  _beforeSwitchProject() {
+    if (this._isEditingDocument()) {
+      const projectName = this.ProjectService.selectedProject.name;
+      return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_PROJECT_SWITCH', { projectName })
+        .then(() => this.stopEditing());
+    }
+    return this.$q.resolve();
+  }
+
   startEditing(documentId) {
+    if (!this.ConfigService.projectsEnabled) {
+      this.editDocument(documentId);
+    } else {
+      const selectedProjectId = this.ProjectService.selectedProject.id;
+      this.ContentService.getDocument(documentId, selectedProjectId).then(
+        (document) => {
+          if (selectedProjectId && document.branchId !== selectedProjectId) {
+            // set the title
+            const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
+            this.RightSidePanelService.setTitle(documentTitle);
+            this.$state.go('hippo-cm.channel.add-to-project', { documentId });
+          } else {
+            this.editDocument(documentId);
+          }
+        },
+      );
+    }
+  }
+
+  branchAndEditDocument(documentId) {
+    this.ContentService.branchDocument(documentId)
+      .then(() => this.editDocument(documentId));
+  }
+
+  editDocument(documentId) {
     this.$state.go('hippo-cm.channel.edit-content', { documentId });
   }
 
   stopEditing() {
-    this.$state.go('^');
+    this.$state.go('hippo-cm.channel');
   }
 
   _loadDocument(documentId) {
@@ -80,9 +134,7 @@ class EditContentService {
   }
 
   _onCloseChannel() {
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_CLOSE_CHANNEL')
-      .then(() => this.ContentEditor.discardChanges())
-      .then(() => this.ContentEditor.close());
+    return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_CLOSE_CHANNEL');
   }
 }
 
