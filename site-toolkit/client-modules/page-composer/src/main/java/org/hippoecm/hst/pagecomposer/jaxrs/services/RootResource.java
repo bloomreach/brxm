@@ -247,9 +247,9 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
         HttpSession session = servletRequest.getSession(true);
 
 
-        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
         final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
+
         contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
         contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
@@ -297,7 +297,6 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
 
-        // TODO HSTTWO-4374 can we share this information cleaner between platform webapp and site webapps?
         CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
         final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
         contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
