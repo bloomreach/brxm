@@ -96,6 +96,7 @@ class IframeExtensionCtrl {
         refreshPage: () => {
           this.HippoIframeService.reload();
         },
+        config: this.extension.config,
       };
       this.iframeWindow.BR_EXTENSION.onInit(publicApi);
     } catch (e) {
