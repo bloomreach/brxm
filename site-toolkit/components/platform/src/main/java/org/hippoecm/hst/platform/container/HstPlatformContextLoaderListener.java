@@ -59,8 +59,8 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         hstModelRegistry.setRepository(repositoryService);
         platformServices.setHstModelRegistry(hstModelRegistry);
         platformServices.setPreviewDecorator(previewDecorator);
-        configureHstSite(hstModelRegistry);
         platformServices.init();
+        configureHstSite(hstModelRegistry);
         hstModelRegistry.init();
     }
 
