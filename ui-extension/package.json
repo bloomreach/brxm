@@ -17,8 +17,7 @@
   "types": "target/ui-extension.d.ts",
   "scripts": {
     "build": "webpack --config=webpack.config.js",
-    "test": "jest",
-    "codecov": "codecov"
+    "test": "jest"
   },
   "jest": {
     "testEnvironment": "node",
@@ -49,7 +48,6 @@
     "@babel/preset-env": "^7.0",
     "@types/jest": "^23.0",
     "babel-loader": "^8.0",
-    "codecov": "^3.0",
     "dts-bundle": "^0.7",
     "jest": "^23.0",
     "js-beautify": "^1.0",
