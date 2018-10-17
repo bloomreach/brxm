@@ -228,6 +228,7 @@
     <module>frontend</module>
     <module>frontend-ng</module>
     <module>repository</module>
+    <module>ui-extension</module>
   </modules>
 
   <scm>
