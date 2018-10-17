@@ -23,8 +23,8 @@
         init-method="init"
         destroy-method="destroy"/>
 
-  <bean id="org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactories"
-        class="org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactoriesImpl"
+  <bean id="org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactories"
+        class="org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactoriesImpl"
         init-method="init"
         destroy-method="destroy"/>
 

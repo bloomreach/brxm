@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.configuration.sitemapitemhandler;
+package org.hippoecm.hst.platform.container.sitemapitemhandler;
 
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;

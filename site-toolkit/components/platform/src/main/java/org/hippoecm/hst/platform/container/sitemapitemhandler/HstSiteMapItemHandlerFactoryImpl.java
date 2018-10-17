@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.configuration.sitemapitemhandler;
+package org.hippoecm.hst.platform.container.sitemapitemhandler;
 
 import javax.servlet.ServletContext;
 
@@ -22,8 +22,6 @@ import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.site.request.SiteMapItemHandlerConfigurationImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HstSiteMapItemHandlerFactoryImpl

@@ -44,9 +44,9 @@ import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCach
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
-import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactories;
-import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl;
-import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl;
+import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactories;
+import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl;
+import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl;
 import org.hippoecm.hst.platform.linking.CompositeHstLinkCreatorImpl;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
