@@ -28,9 +28,9 @@ describe('EditContentService', () => {
     angular.mock.module('hippo-cm');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getError', 'kill', 'open',
+      'confirmClose', 'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getDocumentDisplayName', 'getError', 'kill', 'open',
     ]);
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading', 'setTitle']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
@@ -58,10 +58,10 @@ describe('EditContentService', () => {
     $rootScope.$digest();
   }
 
-  function editLockedDocument(documentId, error) {
+  function editLockedDocument(documentId, displayName) {
     ContentEditor.open.and.returnValue($q.resolve());
     ContentEditor.getDocument.and.returnValue(undefined);
-    ContentEditor.getError.and.returnValue(error);
+    ContentEditor.getDocumentDisplayName.and.returnValue(displayName);
 
     EditContentService.startEditing(documentId);
     $rootScope.$digest();
@@ -73,35 +73,32 @@ describe('EditContentService', () => {
     };
     editDocument(document);
 
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_CONTENT');
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', document);
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_DOCUMENT');
+    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
   it('starts editing a locked document', () => {
     const documentId = '42';
-    const error = {
-      messageParams: {
-        displayName: 'Locked document',
-      },
-    };
-    editLockedDocument(documentId, error);
+    const displayName = 'Locked document';
+    editLockedDocument(documentId, displayName);
 
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_CONTENT');
+    expect(RightSidePanelService.clearContext).toHaveBeenCalled();
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
     expect(ContentEditor.open).toHaveBeenCalledWith(documentId);
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', error.messageParams);
-    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('EDIT_DOCUMENT');
+    expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+    expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Locked document');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
   });
 
   it('stops editing', () => {
     spyOn($state, 'go');
     EditContentService.stopEditing();
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
   });
 
   describe('other editor opened', () => {
@@ -117,7 +114,7 @@ describe('EditContentService', () => {
       $window.CMS_TO_APP.publish('kill-editor', '42');
 
       expect(ContentEditor.kill).toHaveBeenCalled();
-      expect($state.go).toHaveBeenCalledWith('^');
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
     });
 
     it('does not kill an open editor for another document', () => {
@@ -137,19 +134,17 @@ describe('EditContentService', () => {
     });
   });
 
-  it('confirms save or discard changes in the open editor when the channel is closed', () => {
+  it('confirms closing the open editor when the channel is closed', () => {
     const document = {
       id: '42',
     };
     editDocument(document);
-    ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+    ContentEditor.confirmClose.and.returnValue($q.resolve());
 
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
-    expect(ContentEditor.discardChanges).toHaveBeenCalled();
-    expect(ContentEditor.close).toHaveBeenCalled();
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect($state.$current.name).toBe('hippo-cm');
   });
 
@@ -158,15 +153,12 @@ describe('EditContentService', () => {
       id: '42',
     };
     editDocument(document);
-    ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+    ContentEditor.confirmClose.and.returnValue($q.reject());
 
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
-    expect(ContentEditor.discardChanges).not.toHaveBeenCalled();
-    expect(ContentEditor.close).not.toHaveBeenCalled();
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
 });
-

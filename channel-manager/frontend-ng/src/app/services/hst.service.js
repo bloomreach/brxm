@@ -160,11 +160,7 @@ class HstService {
     return this.doPost(null, containerId, catalogComponent.id);
   }
 
-  removeHstComponent(containerId, componentId) {
-    return this._callHst('DELETE', containerId, [componentId]);
-  }
-
-  updateHstComponent(containerId, containerRepresentation) {
+  updateHstContainer(containerId, containerRepresentation) {
     return this._callHst('PUT', containerId, [], containerRepresentation);
   }
 }

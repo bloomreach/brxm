@@ -18,51 +18,51 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageStructureService', () => {
-  let PageStructureService;
-  let PageMetaDataService;
+  let $document;
+  let $log;
+  let $rootScope;
+  let $q;
+
   let ChannelService;
+  let FeedbackService;
+  let HippoIframeService;
+  let HstComponentService;
   let HstService;
   let MarkupService;
-  let HippoIframeService;
-  let FeedbackService;
-  let MaskService;
-  let $document;
-  let $q;
-  let $log;
-  let $window;
-  let $rootScope;
+  let PageMetaDataService;
+  let PageStructureService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe.page');
 
     inject((
+      _$document_,
+      _$log_,
       _$q_,
       _$rootScope_,
-      _$log_,
-      _$document_,
       _$window_,
-      _PageStructureService_,
-      _PageMetaDataService_,
       _ChannelService_,
+      _EditComponentService_,
+      _FeedbackService_,
+      _HippoIframeService_,
+      _HstComponentService_,
       _HstService_,
       _MarkupService_,
-      _HippoIframeService_,
-      _FeedbackService_,
-      _MaskService_,
+      _PageMetaDataService_,
+      _PageStructureService_,
     ) => {
+      $document = _$document_;
+      $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $log = _$log_;
-      $document = _$document_;
-      $window = _$window_;
-      PageStructureService = _PageStructureService_;
-      PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
+      HstComponentService = _HstComponentService_;
       HstService = _HstService_;
       MarkupService = _MarkupService_;
-      HippoIframeService = _HippoIframeService_;
-      FeedbackService = _FeedbackService_;
-      MaskService = _MaskService_;
+      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -240,9 +240,8 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-in-page');
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
-    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
-    expect(manageContentLink.getRootPath()).toBe('test-root-path');
+    expect(manageContentLink.getDocumentTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
     expect(manageContentLink.getParameterValue()).toBe('test-component-value');
     expect(manageContentLink.getPickerConfig()).toEqual({
@@ -253,6 +252,7 @@ describe('PageStructureService', () => {
       rootPath: 'test-component-picker-root-path',
       selectableNodeTypes: ['test-node-type-1', 'test-node-type-2'],
     });
+    expect(manageContentLink.getRootPath()).toBe('test-root-path');
     expect(manageContentLink.isParameterValueRelativePath()).toBe(true);
   });
 
@@ -260,7 +260,7 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-with-absolute-path');
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
-    expect(manageContentLink.getTemplateQuery()).toBe('new-test-document');
+    expect(manageContentLink.getDocumentTemplateQuery()).toBe('new-test-document');
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
     expect(manageContentLink.getRootPath()).toBe('test-root-path');
     expect(manageContentLink.getParameterName()).toBe('test-component-parameter');
@@ -409,14 +409,14 @@ describe('PageStructureService', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(''));
 
     PageStructureService.removeComponentById('aaaa');
 
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
   });
 
@@ -427,12 +427,12 @@ describe('PageStructureService', () => {
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'unknown', parameterMap: {} }));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.reject({ error: 'unknown', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT',
       jasmine.objectContaining({ component: 'component A' }));
@@ -447,12 +447,12 @@ describe('PageStructureService', () => {
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
+    expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('container-vbox', 'aaaa');
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
       jasmine.objectContaining({ component: 'component A' }));
@@ -464,12 +464,12 @@ describe('PageStructureService', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
-    spyOn(HstService, 'removeHstComponent').and.returnValue($q.when([]));
+    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
 
     PageStructureService.removeComponentById('unknown-component');
     $rootScope.$digest();
 
-    expect(HstService.removeHstComponent).not.toHaveBeenCalled();
+    expect(HstComponentService.deleteComponent).not.toHaveBeenCalled();
   });
 
   it('returns a container by iframe element', () => {
@@ -480,70 +480,6 @@ describe('PageStructureService', () => {
 
     expect(container).not.toBeNull();
     expect(container.getId()).toEqual('container-no-markup');
-  });
-
-  it('triggers an event to show the component properties dialog', () => {
-    const componentElement = jasmine.createSpyObj(['getId', 'getLabel', 'getLastModified']);
-    componentElement.getId.and.returnValue('testId');
-    componentElement.getLabel.and.returnValue('testLabel');
-    componentElement.getLastModified.and.returnValue(12345);
-    componentElement.container = jasmine.createSpyObj(['isDisabled', 'isInherited']);
-    componentElement.container.isDisabled.and.returnValue(true);
-    componentElement.container.isInherited.and.returnValue(false);
-
-    spyOn(ChannelService, 'getChannel').and.returnValue({
-      contextPath: '/testContextPath',
-      mountId: 'testMountId',
-    });
-
-    spyOn(PageMetaDataService, 'get').and.returnValue({
-      testMetaData: 'foo',
-    });
-
-    spyOn(MaskService, 'mask');
-    spyOn($window.APP_TO_CMS, 'publish');
-
-    PageStructureService.showComponentProperties(componentElement);
-
-    expect(MaskService.mask).toHaveBeenCalled();
-    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
-      channel: {
-        contextPath: '/testContextPath',
-        mountId: 'testMountId',
-      },
-      component: {
-        id: 'testId',
-        label: 'testLabel',
-        lastModified: 12345,
-      },
-      container: {
-        isDisabled: true,
-        isInherited: false,
-      },
-      page: {
-        testMetaData: 'foo',
-      },
-    });
-  });
-
-  it('ignores erroneous calls to showComponentProperties', () => {
-    spyOn($log, 'warn');
-    spyOn(MaskService, 'mask');
-    spyOn($window.APP_TO_CMS, 'publish');
-
-    PageStructureService.showComponentProperties(undefined);
-
-    expect($log.warn).toHaveBeenCalled();
-    expect(MaskService.mask).not.toHaveBeenCalled();
-    expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
-  });
-
-  it('removes the mask when the component properties dialog is closed', () => {
-    spyOn(MaskService, 'unmask');
-
-    $window.CMS_TO_APP.publish('hide-component-properties');
-
-    expect(MaskService.unmask).toHaveBeenCalled();
   });
 
   it('shows the default error message when failed to add a new component from catalog', () => {
@@ -764,13 +700,39 @@ describe('PageStructureService', () => {
   });
 
   it('gracefully handles requests to re-render an unknown component', () => {
-    spyOn($log, 'warn');
     spyOn(MarkupService, 'fetchComponentMarkup');
 
     PageStructureService.renderComponent('unknown-component');
 
-    expect($log.warn).toHaveBeenCalled();
     expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
+  });
+
+  it('shows an error message and reloads the page when a component has been deleted', (done) => {
+    spyOn(PageStructureService, 'getComponentById').and.returnValue({});
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
+    spyOn(HippoIframeService, 'reload');
+    spyOn(FeedbackService, 'showError');
+
+    PageStructureService.renderComponent('componentId').catch(() => {
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+      expect(FeedbackService.showError).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('does nothing if markup for a component cannot be retrieved but status is not 404', (done) => {
+    spyOn(PageStructureService, 'getComponentById').and.returnValue({});
+    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({}));
+    spyOn(HippoIframeService, 'reload');
+    spyOn(FeedbackService, 'showError');
+
+    PageStructureService.renderComponent('componentId').then(() => {
+      expect(HippoIframeService.reload).not.toHaveBeenCalled();
+      expect(FeedbackService.showError).not.toHaveBeenCalled();
+      done();
+    });
+    $rootScope.$digest();
   });
 
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
@@ -980,7 +942,7 @@ describe('PageStructureService', () => {
           <!-- { "HST-Type": "CONTENT_LINK", "uuid": "new-content-in-container-vbox" } -->
         </p>
         <p id="new-manage-content-in-container-vbox">
-          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "templateQuery": "new-manage-content-in-container-vbox" } -->
+          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "documentTemplateQuery": "new-manage-content-in-container-vbox" } -->
         </p>
       </div>
       <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
@@ -995,10 +957,10 @@ describe('PageStructureService', () => {
       expect(embeddedLinks.length).toBe(5);
       expect(embeddedLinks[0].getUuid()).toBe('menu-in-page');
       expect(embeddedLinks[1].getUuid()).toBe('content-in-page');
-      expect(embeddedLinks[2].getTemplateQuery()).toBe('new-test-document');
+      expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-test-document');
       expect(embeddedLinks[3].getUuid()).toBe('new-content-in-container-vbox');
       expect(embeddedLinks[3].getEnclosingElement()).toBe(newContainer);
-      expect(embeddedLinks[4].getTemplateQuery()).toBe('new-manage-content-in-container-vbox');
+      expect(embeddedLinks[4].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
       expect(embeddedLinks[4].getEnclosingElement()).toBe(newContainer);
       done();
     });
@@ -1121,13 +1083,13 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getContainers()[0];
       const componentA = container.getComponents()[0];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
 
       PageStructureService.moveComponent(componentA, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1141,13 +1103,13 @@ describe('PageStructureService', () => {
       const componentA = container.getComponents()[0];
       const componentB = container.getComponents()[1];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
 
       PageStructureService.moveComponent(componentB, container, componentA);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1162,15 +1124,15 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent');
+      spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container1)).toEqual(['aaaa', 'bbbb']);
       expect(componentIds(container2)).toEqual([]);
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(componentIds(container1)).toEqual(['bbbb']);
       expect(componentIds(container2)).toEqual(['aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
@@ -1184,13 +1146,13 @@ describe('PageStructureService', () => {
       const container = PageStructureService.getContainers()[0];
       const component = container.getComponents()[0];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValue($q.reject());
+      spyOn(HstService, 'updateHstContainer').and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1206,14 +1168,14 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValues($q.reject(), $q.resolve());
+      spyOn(HstService, 'updateHstContainer').and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1229,14 +1191,14 @@ describe('PageStructureService', () => {
       const component = container1.getComponents()[0];
       const container2 = PageStructureService.getContainers()[1];
 
-      spyOn(HstService, 'updateHstComponent').and.returnValues($q.resolve(), $q.reject());
+      spyOn(HstService, 'updateHstContainer').and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');
 
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstComponent).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
+      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });

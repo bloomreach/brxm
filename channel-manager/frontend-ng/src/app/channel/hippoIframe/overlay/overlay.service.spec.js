@@ -27,16 +27,20 @@ describe('OverlayService', () => {
   let DomService;
   let EditContentService;
   let ExperimentStateService;
-  let FeedbackService;
-  let HippoIframeService;
-  let HstComponentService;
   let HstCommentsProcessorService;
   let MarkupService;
   let OverlayService;
   let PageStructureService;
+  let PickerService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
+
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('PickerService', PickerService);
+    });
 
     inject((
       _$q_,
@@ -47,9 +51,6 @@ describe('OverlayService', () => {
       _DomService_,
       _EditContentService_,
       _ExperimentStateService_,
-      _FeedbackService_,
-      _HippoIframeService_,
-      _HstComponentService_,
       _HstCommentsProcessorService_,
       _MarkupService_,
       _OverlayService_,
@@ -63,9 +64,6 @@ describe('OverlayService', () => {
       DomService = _DomService_;
       EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
-      FeedbackService = _FeedbackService_;
-      HippoIframeService = _HippoIframeService_;
-      HstComponentService = _HstComponentService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -558,85 +556,41 @@ describe('OverlayService', () => {
       createContentButton.click();
 
       const config = CreateContentService.start.calls.mostRecent().args[0];
-      expect(config.templateQuery).toBe('manage-content-template-query');
+      expect(config.documentTemplateQuery).toBe('manage-content-document-template-query');
 
       done();
     });
   });
 
-  it('can pick a path and update the component', (done) => {
+  it('can select a document', (done) => {
+    const selectDocumentHandler = jasmine.createSpy('selectDocumentHander');
+    OverlayService.onSelectDocument(selectDocumentHandler);
     ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
-    spyOn(PageStructureService, 'renderComponent');
-    spyOn(FeedbackService, 'showNotification');
+    spyOn(CmsService, 'reportUsageStatistic');
 
     loadIframeFixture(() => {
       const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
       const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
       expectNoPropagatedClicks();
-      pickPathButton.click();
 
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
+      pickPathButton.click();
       $rootScope.$digest();
 
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('bbbb');
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'component B',
-      });
+      expect(selectDocumentHandler).toHaveBeenCalledWith(
+        jasmine.any(Object), 'manage-content-component-parameter', undefined, jasmine.any(Object), '',
+      );
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
 
       done();
     });
   });
 
-  it('can pick a path but fail to update the component', (done) => {
-    ChannelService.isEditable = () => true;
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showErrorResponse');
-    spyOn(HippoIframeService, 'reload');
+  it('can (re)register a select-document-handler', () => {
+    const selectDocumentHandler1 = jasmine.createSpy('selectDocumentHander1');
+    const selectDocumentHandler2 = jasmine.createSpy('selectDocumentHander2');
 
-    loadIframeFixture(() => {
-      const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
-      const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
-      expectNoPropagatedClicks();
-      pickPathButton.click();
-
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('bbbb', 'hippo-default',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
-      $rootScope.$digest();
-
-      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
-        jasmine.any(Object), { componentName: 'component B' });
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-
-      done();
-    });
-  });
-
-  it('can pick a path and update a specific component variant', (done) => {
-    ChannelService.isEditable = () => true;
-
-    spyOn(HstComponentService, 'pickPath').and.returnValue($q.resolve());
-    spyOn(PageStructureService, 'renderComponent');
-    spyOn(FeedbackService, 'showNotification');
-
-    loadIframeFixture(() => {
-      const overlayElementScenario7 = iframe('.hippo-overlay-element-manage-content-link')[6];
-      const pickPathButton = $(overlayElementScenario7).find('.hippo-fab-main');
-      expectNoPropagatedClicks();
-      pickPathButton.click();
-
-      expect(HstComponentService.pickPath).toHaveBeenCalledWith('component-with-experiment', '@1517391925$["and",{"country":"thenetherlands-1440145311193"}]',
-        'manage-content-component-parameter', undefined, jasmine.any(Object), '');
-      $rootScope.$digest();
-
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('component-with-experiment');
-      expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-        componentName: 'Component with experiment',
-      });
-
-      done();
-    });
+    expect(OverlayService.onSelectDocument(selectDocumentHandler1)).toBe(angular.noop);
+    expect(OverlayService.onSelectDocument(selectDocumentHandler2)).toBe(selectDocumentHandler1);
   });
 
   it('does not throw an error when calling edit menu handler if not set', (done) => {
@@ -699,7 +653,7 @@ describe('OverlayService', () => {
     it('returns correct configuration out of config object', () => {
       const config = { // each property should be filled with the method that will extract the data from the HST comment
         documentUuid: true,
-        templateQuery: true,
+        documentTemplateQuery: true,
         parameterName: true,
       };
       const buttons = OverlayService._getButtons(config);
@@ -709,7 +663,7 @@ describe('OverlayService', () => {
     });
 
     describe('_initManageContentConfig', () => {
-      function mockManageContentConfig(uuid = false, templateQuery = false, parameterName = false, locked = false) {
+      function mockManageContentConfig(uuid = false, documentTemplateQuery = false, parameterName = false, locked = false) {
         const enclosing = {
           isLocked: () => locked,
         };
@@ -720,7 +674,7 @@ describe('OverlayService', () => {
           getParameterValue: () => null,
           getPickerConfig: () => null,
           getRootPath: () => null,
-          getTemplateQuery: () => templateQuery,
+          getDocumentTemplateQuery: () => documentTemplateQuery,
           getUuid: () => uuid,
           isParameterValueRelativePath: () => false,
         };
@@ -730,7 +684,7 @@ describe('OverlayService', () => {
       it('does not filter out config properties when channel is editable', () => {
         const config = mockManageContentConfig(true, true, true);
         expect(config.documentUuid).toBe(true);
-        expect(config.templateQuery).toBe(true);
+        expect(config.documentTemplateQuery).toBe(true);
         expect(config.parameterName).toBe(true);
       });
 
@@ -744,12 +698,12 @@ describe('OverlayService', () => {
           expect(config.parameterName).not.toBeDefined();
         });
 
-        it('filters out property templateQuery when documentUuid is set', () => {
+        it('filters out property documentTemplateQuery when documentUuid is set', () => {
           let config = mockManageContentConfig(false, true);
-          expect(config.templateQuery).toBeDefined();
+          expect(config.documentTemplateQuery).toBeDefined();
 
           config = mockManageContentConfig(true, true);
-          expect(config.templateQuery).not.toBeDefined();
+          expect(config.documentTemplateQuery).not.toBeDefined();
         });
 
         it('filters all properties when parameterName is set but documentId is not', () => {
@@ -757,9 +711,9 @@ describe('OverlayService', () => {
           expect(config).toEqual({});
         });
 
-        it('does not filter templateQuery when parameterName and documentId are not set', () => {
+        it('does not filter documentTemplateQuery when parameterName and documentId are not set', () => {
           const config = mockManageContentConfig(false, true);
-          expect(config.templateQuery).toBe(true);
+          expect(config.documentTemplateQuery).toBe(true);
         });
       });
     });
@@ -984,7 +938,7 @@ describe('OverlayService', () => {
       it('Scenario 1', () => {
         const config = {
           documentUuid: true,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: false,
         };
 
@@ -996,7 +950,7 @@ describe('OverlayService', () => {
       it('Scenario 2', () => {
         const config = {
           documentUuid: false,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: false,
         };
 
@@ -1008,7 +962,7 @@ describe('OverlayService', () => {
       it('Scenario 3', () => {
         const config = {
           documentUuid: true,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: false,
         };
 
@@ -1021,7 +975,7 @@ describe('OverlayService', () => {
       it('Scenario 4', () => {
         const config = {
           documentUuid: true,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: true,
         };
 
@@ -1034,7 +988,7 @@ describe('OverlayService', () => {
       it('Scenario 5', () => {
         const config = {
           documentUuid: false,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: true,
         };
 
@@ -1047,7 +1001,7 @@ describe('OverlayService', () => {
       it('Scenario 6', () => {
         const config = {
           documentUuid: true,
-          templateQuery: true,
+          documentTemplateQuery: true,
           parameterName: true,
         };
 
@@ -1061,7 +1015,7 @@ describe('OverlayService', () => {
       it('Scenario 7', () => {
         const config = {
           documentUuid: false,
-          templateQuery: false,
+          documentTemplateQuery: false,
           parameterName: true,
         };
 

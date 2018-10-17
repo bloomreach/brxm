@@ -26,32 +26,28 @@ class PageStructureService {
     $log,
     $q,
     ChannelService,
-    CmsService,
     FeedbackService,
     HippoIframeService,
     HstCommentsProcessorService,
+    HstComponentService,
     HstService,
     MarkupService,
-    MaskService,
     PageMetaDataService,
   ) {
     'ngInject';
 
-    // Injected
     this.$log = $log;
     this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
+    this.HstComponentService = HstComponentService;
     this.HstService = HstService;
     this.MarkupService = MarkupService;
-    this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
 
     this.changeListeners = [];
-    this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
     this.clearParsedElements();
   }
 
@@ -211,7 +207,7 @@ class PageStructureService {
 
     if (component) {
       const oldContainer = component.getContainer();
-      return this.HstService.removeHstComponent(oldContainer.getId(), componentId)
+      return this.HstComponentService.deleteComponent(oldContainer.getId(), componentId)
         .then(() => {
           this._onAfterRemoveComponent();
           return oldContainer;
@@ -244,34 +240,6 @@ class PageStructureService {
     return this.containers.find(container => container.getBoxElement().is(containerIFrameElement));
   }
 
-  showComponentProperties(componentElement) {
-    if (!componentElement) {
-      this.$log.warn('Problem opening the component properties dialog: no component provided.');
-      return;
-    }
-
-    this.MaskService.mask();
-
-    const channel = this.ChannelService.getChannel();
-
-    this.CmsService.publish('show-component-properties', {
-      channel: {
-        contextPath: channel.contextPath,
-        mountId: channel.mountId,
-      },
-      component: {
-        id: componentElement.getId(),
-        label: componentElement.getLabel(),
-        lastModified: componentElement.getLastModified(),
-      },
-      container: {
-        isDisabled: componentElement.container.isDisabled(),
-        isInherited: componentElement.container.isInherited(),
-      },
-      page: this.PageMetaDataService.get(),
-    });
-  }
-
   printParsedElements() {
     this.containers.forEach((container, index) => {
       this.$log.debug(`Container ${index}`, container);
@@ -290,24 +258,30 @@ class PageStructureService {
   renderComponent(componentId, propertiesMap = {}) {
     let component = this.getComponentById(componentId);
     if (component) {
-      this.MarkupService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        // re-fetch component because a parallel renderComponent call may have updated the component's markup
-        component = this.getComponentById(componentId);
+      return this.MarkupService.fetchComponentMarkup(component, propertiesMap)
+        .then((response) => {
+          // re-fetch component because a parallel renderComponent call may have updated the component's markup
+          component = this.getComponentById(componentId);
 
-        const newMarkup = response.data;
-        const updatedComponent = this._updateComponent(component, newMarkup);
+          const newMarkup = response.data;
+          const updatedComponent = this._updateComponent(component, newMarkup);
 
-        if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
-          this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
-          this.HippoIframeService.reload();
-        }
-      });
-      // TODO handle error
-      // show error message that component rendering failed.
-      // can we use the toast for this? the component properties dialog is open at this moment...
-    } else {
-      this.$log.warn(`Cannot render unknown component '${componentId}'`);
+          if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
+            this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
+            this.HippoIframeService.reload();
+          }
+        })
+        .catch((response) => {
+          if (response.status === 404) {
+            // component being edited is removed (by someone else), reload the page
+            this.HippoIframeService.reload();
+            this.FeedbackService.showError('FEEDBACK_NOT_FOUND_MESSAGE');
+            return this.$q.reject();
+          }
+          return this.$q.resolve();
+        });
     }
+    return this.$q.resolve();
   }
 
   /**
@@ -430,7 +404,7 @@ class PageStructureService {
   }
 
   _storeContainer(container) {
-    return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
+    return this.HstService.updateHstContainer(container.getId(), container.getHstRepresentation());
   }
 
   renderNewComponentInContainer(newComponentId, container) {

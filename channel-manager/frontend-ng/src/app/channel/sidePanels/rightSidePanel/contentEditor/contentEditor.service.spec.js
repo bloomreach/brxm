@@ -39,6 +39,7 @@ describe('ContentEditorService', () => {
 
     expect(ContentEditor.getDocument()).toEqual(testDocument);
     expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
+    expect(ContentEditor.getDocumentDisplayName()).toEqual('Test');
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();
     expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     expect(ContentEditor.isEditing()).toBe(true);
@@ -73,6 +74,7 @@ describe('ContentEditorService', () => {
     };
     testDocument = {
       id: 'test',
+      displayName: 'Test',
       info: {
         type: {
           id: 'ns:testdocument',
@@ -239,6 +241,7 @@ describe('ContentEditorService', () => {
           },
           linkToContentEditor: true,
         });
+        expect(ContentEditor.getDocumentDisplayName()).toEqual('Display Name');
       });
 
       it('opens a document with pending invalid changes in the editable document', () => {
@@ -662,6 +665,44 @@ describe('ContentEditorService', () => {
     });
   });
 
+  describe('confirm close', () => {
+    beforeEach(() => {
+      testDocument.displayName = 'Test';
+      ContentEditor.document = testDocument;
+
+      spyOn(ContentEditor, 'confirmSaveOrDiscardChanges');
+      spyOn(ContentEditor, 'discardChanges');
+      spyOn(ContentEditor, 'close');
+    });
+
+    it('confirms save/discard changes, the discards the editable instance and closes the editor', () => {
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve());
+      ContentEditor.discardChanges.and.returnValue($q.resolve());
+
+      const key = 'messageKey';
+      const params = {};
+      ContentEditor.confirmClose(key, params);
+      $rootScope.$digest();
+
+      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params);
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
+      expect(ContentEditor.close).toHaveBeenCalled();
+    });
+
+    it('does not discards the editable instance or closes the editor with the confirmation is cancelled', () => {
+      ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
+
+      const key = 'messageKey';
+      const params = {};
+      ContentEditor.confirmClose(key, params);
+      $rootScope.$digest();
+
+      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith(key, params);
+      expect(ContentEditor.discardChanges).not.toHaveBeenCalled();
+      expect(ContentEditor.close).not.toHaveBeenCalled();
+    });
+  });
+
   describe('confirm save or discard changes', () => {
     beforeEach(() => {
       testDocument.displayName = 'Test';
@@ -682,6 +723,21 @@ describe('ContentEditorService', () => {
         expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
         expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('accepts additional parameters for the message in the dialog', (done) => {
+      ContentEditor.markDocumentDirty();
+      DialogService.show.and.returnValue($q.resolve());
+      ContentService.saveDocument.and.returnValue($q.resolve(testDocument));
+
+      ContentEditor.confirmSaveOrDiscardChanges('TEST_MESSAGE_KEY', { foo: 'bar' }).then(() => {
+        expect($translate.instant).toHaveBeenCalledWith('TEST_MESSAGE_KEY', {
+          documentName: 'Test',
+          foo: 'bar',
+        });
         done();
       });
       $rootScope.$digest();
@@ -830,6 +886,7 @@ describe('ContentEditorService', () => {
   function expectClear() {
     expect(ContentEditor.getDocument()).toBeUndefined();
     expect(ContentEditor.getDocumentId()).toBeUndefined();
+    expect(ContentEditor.getDocumentDisplayName()).toBeUndefined();
     expect(ContentEditor.getDocumentType()).toBeUndefined();
     expect(ContentEditor.getError()).toBeUndefined();
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();

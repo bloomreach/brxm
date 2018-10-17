@@ -133,6 +133,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-workflow</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-utilities</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
@@ -273,7 +279,6 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- 3rd-party licenses -->
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/*</exclude>
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/*</exclude>
                 <exclude>frontend-ng/src/images/html/clear.svg</exclude>
                 <exclude>frontend-ng/src/images/html/plus.svg</exclude>

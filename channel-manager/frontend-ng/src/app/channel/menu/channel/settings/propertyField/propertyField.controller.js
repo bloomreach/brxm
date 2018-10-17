@@ -23,15 +23,14 @@ const WIDGET_TYPES = {
 };
 
 class PropertyFieldCtrl {
-  constructor($log, $scope, ChannelService, CmsService, ConfigService, PathService) {
+  constructor($log, ChannelService, ConfigService, PathService, PickerService) {
     'ngInject';
 
     this.$log = $log;
-    this.$scope = $scope;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
+    this.PickerService = PickerService;
   }
 
   $onInit() {
@@ -48,21 +47,7 @@ class PropertyFieldCtrl {
     this.qaClass = this._getQaClass();
     this.required = this.definition && this.definition.isRequired;
 
-    if (this._isPickerField()) {
-      this.CmsService.subscribe('path-picked', this._onPathPicked, this);
-    }
-
     this._onLoadDropDownValues();
-  }
-
-  $onDestroy() {
-    if (this._isPickerField()) {
-      this.CmsService.unsubscribe('path-picked', this._onPathPicked, this);
-    }
-  }
-
-  _isPickerField() {
-    return this.type === 'ImageSetPath' || this.type === 'JcrPath';
   }
 
   getImageVariantPath() {
@@ -77,21 +62,19 @@ class PropertyFieldCtrl {
   }
 
   showPathPicker() {
-    this.CmsService.publish('show-path-picker', this.field, this.value, {
+    const pickerConfig = {
       configuration: this.annotation.pickerConfiguration,
       initialPath: this.annotation.pickerInitialPath,
       isRelativePath: this.annotation.isRelative,
       remembersLastVisited: this.annotation.pickerRemembersLastVisited,
       rootPath: this.annotation.pickerRootPath || this.ChannelService.getContentRootPath(),
       selectableNodeTypes: this.annotation.pickerSelectableNodeTypes,
-    });
-  }
+    };
 
-  _onPathPicked(field, path) {
-    if (this.field === field) {
-      this.getSetPath(path);
-      this.$scope.$digest();
-    }
+    return this.PickerService.pickPath(pickerConfig, this.value)
+      .then(({ path }) => {
+        this.getSetPath(path);
+      });
   }
 
   getSetPath(...args) {

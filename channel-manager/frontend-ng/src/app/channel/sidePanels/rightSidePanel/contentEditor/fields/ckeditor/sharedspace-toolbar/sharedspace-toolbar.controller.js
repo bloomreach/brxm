@@ -15,11 +15,12 @@
  */
 
 class SharedSpaceToolbar {
-  constructor($rootScope, $element, SharedSpaceToolbarService) {
+  constructor($element, $log, $rootScope, SharedSpaceToolbarService) {
     'ngInject';
 
-    this.$rootScope = $rootScope;
     this.$element = $element;
+    this.$log = $log;
+    this.$rootScope = $rootScope;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
     this.showBottomToolbar = null;
   }
@@ -28,7 +29,11 @@ class SharedSpaceToolbar {
     this.isVisible = this.isVisible === true;
     this.SharedSpaceToolbarService.registerTriggerCallback(this.setToolbarVisible.bind(this));
     this.sharedSpaceElement = this.$element.find('.ckeditor-shared-space');
-    this.rightSidePanelContent = $('.rightSidePanel-content');
+    this.ckeditorContainer = this.$element.siblings('md-content').first();
+
+    if (this.ckeditorContainer.length === 0) {
+      this.$log.warn('SharedspaceToolbar: cannot find md-content sibling element');
+    }
 
     this.sharedSpaceElement.css('display', 'none');
   }
@@ -57,7 +62,7 @@ class SharedSpaceToolbar {
     this.$element.animate({ maxHeight: state === true ? toolbarHeight : 0 }, animateOptions);
     this.sharedSpaceElement.animate({ top: state === true ? 0 : `-${toolbarHeight}px` }, animateOptions);
 
-    this.rightSidePanelContent.animate({ scrollTop: scrollValue }, animateOptions);
+    this.ckeditorContainer.animate({ scrollTop: scrollValue }, animateOptions);
   }
 }
 

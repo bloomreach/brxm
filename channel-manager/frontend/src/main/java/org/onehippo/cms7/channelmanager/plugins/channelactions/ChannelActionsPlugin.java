@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
@@ -44,6 +43,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 @SuppressWarnings({"deprecation", "serial"})
 public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> {
@@ -84,7 +85,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
                         DocumentWorkflow workflow = (DocumentWorkflow) workflowManager.getWorkflow(model.getObject());
-                        if (Boolean.TRUE.equals(workflow.hints().get("previewAvailable"))) {
+                        final String branchId = new BranchIdModel(getPluginContext(), node.getIdentifier()).getBranchId();
+                        if (Boolean.TRUE.equals(workflow.hints(branchId).get("previewAvailable"))) {
                             addMenuDescription(model);
                         }
                     }
@@ -144,12 +146,19 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
 
     private MarkupContainer createMenu(final String documentUuid) {
+        final String branchId;
+        final BranchIdModel branchIdModel = new BranchIdModel(getPluginContext(), documentUuid);
+        if (branchIdModel == null) {
+            branchId = MASTER_BRANCH_ID;
+        } else {
+            branchId = branchIdModel.getBranchId();
+        }
 
         List<ChannelDocument> channelDocuments;
 
         try {
             channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
-                    .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid);
+                    .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid, branchId);
         } catch (IllegalStateException e) {
             log.info("Cannot get channels for document: {}", e.getMessage());
             channelDocuments = new ArrayList<>();

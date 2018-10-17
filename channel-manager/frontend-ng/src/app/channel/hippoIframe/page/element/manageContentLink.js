@@ -56,8 +56,8 @@ class ManageContentLink extends EmbeddedLink {
     return this.metaData.rootPath;
   }
 
-  getTemplateQuery() {
-    return this.metaData.templateQuery;
+  getDocumentTemplateQuery() {
+    return this.metaData.documentTemplateQuery;
   }
 }
 

@@ -19,7 +19,7 @@ describe('field service', () => {
   let ContentService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
     inject((_$timeout_, _FieldService_, _ContentService_) => {
       $timeout = _$timeout_;

@@ -20,6 +20,7 @@ describe('RenderingService', () => {
   let ChannelService;
   let DomService;
   let DragDropService;
+  let EditComponentService;
   let HippoIframeService;
   let HstCommentsProcessorService;
   let OverlayService;
@@ -36,6 +37,12 @@ describe('RenderingService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    EditComponentService = jasmine.createSpyObj('EditComponentService', ['syncPreview']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('EditComponentService', EditComponentService);
+    });
 
     inject((
       _$q_,
@@ -89,6 +96,7 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
+      expect(EditComponentService.syncPreview).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -103,6 +111,7 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
+      expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -117,6 +126,7 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
+      expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 

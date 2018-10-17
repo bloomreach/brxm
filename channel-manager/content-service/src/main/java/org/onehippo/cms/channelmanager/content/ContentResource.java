@@ -25,7 +25,6 @@ import java.util.function.Function;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -43,12 +42,13 @@ import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.util.BranchSelectionService;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.folder.FoldersService;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
-import org.onehippo.cms.channelmanager.content.templatequery.TemplateQueryService;
+import org.onehippo.cms.channelmanager.content.templatequery.DocumentTemplateQueryService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
@@ -66,22 +66,32 @@ public class ContentResource {
     private final DocumentsService documentService;
     private final WorkflowService workflowService;
     private final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService;
+    private final BranchSelectionService branchSelectionService;
 
     public ContentResource(final SessionRequestContextProvider userSessionProvider,
                            final DocumentsService documentsService,
                            final WorkflowService workflowService,
-                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService) {
+                           final Function<HttpServletRequest, Map<String, Serializable>> contextPayloadService,
+                           final BranchSelectionService branchSelectionService) {
         this.sessionRequestContextProvider = userSessionProvider;
         this.documentService = documentsService;
         this.workflowService = workflowService;
         this.contextPayloadService = contextPayloadService;
+        this.branchSelectionService = branchSelectionService;
+    }
+
+    @POST
+    @Path("documents/{documentId}/branch")
+    public Response branchDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+        return executeTask(servletRequest, Status.OK,
+                (session, locale) -> documentService.branchDocument(id, session, locale, getBranchId(servletRequest)));
     }
 
     @POST
     @Path("documents/{documentId}/editable")
     public Response obtainEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.obtainEditableDocument(id, session, locale, getPayload(servletRequest)));
+                (session, locale) -> documentService.obtainEditableDocument(id, session, locale, getBranchId(servletRequest)));
     }
 
     @PUT
@@ -90,7 +100,7 @@ public class ContentResource {
                                            final Document document,
                                            @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale, getPayload(servletRequest)));
+                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale, getBranchId(servletRequest)));
     }
 
     @PUT
@@ -100,7 +110,7 @@ public class ContentResource {
                                         final List<FieldValue> fieldValues,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getPayload(servletRequest));
+            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getBranchId(servletRequest));
             return null;
         });
     }
@@ -109,17 +119,20 @@ public class ContentResource {
     @Path("documents/{documentId}/editable")
     public Response discardEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.discardEditableDocument(id, session, locale, getPayload(servletRequest));
+            documentService.discardEditableDocument(id, session, locale, getBranchId(servletRequest));
             return null;
         });
     }
 
-    // for easy debugging:
     @GET
-    @Path("documents/{documentId}")
-    public Response getPublishedDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documents/{documentId}/{branchId}")
+    public Response getDocument(
+            @PathParam("documentId") final String id,
+            @PathParam("branchId") final String branchId,
+            @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.getPublished(id, session, locale));
+                (session, locale) -> documentService.getDocument(id, branchId, session, locale)
+        );
     }
 
     @GET
@@ -138,10 +151,10 @@ public class ContentResource {
     }
 
     @GET
-    @Path("templatequery/{documentId}")
-    public Response getTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
+    @Path("documenttemplatequery/{documentId}")
+    public Response getDocumentTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> TemplateQueryService.get().getTemplateQuery(id, session, locale));
+                (session, locale) -> DocumentTemplateQueryService.get().getDocumentTemplateQuery(id, session, locale));
     }
 
     @GET
@@ -163,14 +176,14 @@ public class ContentResource {
     public Response updateDocumentNames(@PathParam("documentId") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateDocumentNames(id, document, session));
+                (session, locale) -> documentService.updateDocumentNames(id, document, session, getBranchId(servletRequest)));
     }
 
     @DELETE
     @Path("documents/{documentId}")
     public Response deleteDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.deleteDocument(id, session, locale);
+            documentService.deleteDocument(id, session, locale, getBranchId(servletRequest));
             return null;
         });
     }
@@ -181,7 +194,7 @@ public class ContentResource {
                                                   @PathParam("action") final String action,
                                                   @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            workflowService.executeDocumentWorkflowAction(documentId, action, session, getPayload(servletRequest));
+            workflowService.executeDocumentWorkflowAction(documentId, action, session, getBranchId(servletRequest));
             return null;
         });
     }
@@ -216,8 +229,8 @@ public class ContentResource {
         }
     }
 
-    private Map<String, Serializable> getPayload(HttpServletRequest servletRequest) {
-        return contextPayloadService.apply(servletRequest);
+    private String getBranchId(HttpServletRequest servletRequest) {
+        return branchSelectionService.getSelectedBranchId(contextPayloadService.apply(servletRequest));
     }
 
     @FunctionalInterface

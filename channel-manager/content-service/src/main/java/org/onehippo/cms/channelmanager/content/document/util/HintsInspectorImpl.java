@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -37,31 +38,40 @@ import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionFalse;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.isHintActionTrue;
 
-
+/**
+ * Provides the default implementation of the interface, which is used if the module configuration property
+ * hintsInspectorClass is not present.
+ */
 public class HintsInspectorImpl implements HintsInspector {
 
     private static final String HINT_IN_USE_BY = "inUseBy";
     private static final String HINT_REQUESTS = "requests";
 
     private static final Logger log = LoggerFactory.getLogger(HintsInspectorImpl.class);
+    private static final ErrorInfo NOT_BRANCHEABLE = new ErrorInfo(ErrorInfo.Reason.NOT_BRANCHEABLE);
 
     @Override
-    public boolean canObtainEditableDocument(Map<String, Serializable> hints) {
+    public Optional<ErrorInfo> canBranchDocument(final String branchId, final Map<String, Serializable> hints, Set<String> existingBranches) {
+        return Optional.of(NOT_BRANCHEABLE);
+    }
+
+    @Override
+    public boolean canObtainEditableDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canUpdateDocument(Map<String, Serializable> hints) {
+    public boolean canUpdateDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     @Override
-    public boolean canDisposeEditableDocument(Map<String, Serializable> hints) {
+    public boolean canDisposeEditableDocument(final String branchId, Map<String, Serializable> hints) {
         return isHintActionTrue(hints, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
     @Override
-    public Optional<ErrorInfo> determineEditingFailure(final Map<String, Serializable> hints, final Session session) {
+    public Optional<ErrorInfo> determineEditingFailure(final String branchId, final Map<String, Serializable> hints, final Session session) {
         if (hints.containsKey(HINT_IN_USE_BY)) {
             final Map<String, Serializable> params = new HashMap<>();
             final String userId = (String) hints.get(HINT_IN_USE_BY);

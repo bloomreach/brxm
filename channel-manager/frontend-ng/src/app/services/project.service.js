@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-
 class ProjectService {
   constructor(
     $http,
@@ -31,13 +30,14 @@ class ProjectService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
 
-    this.listeners = [];
-    this.core = {
-      id: 'master',
-      name: $translate.instant('CORE'),
+    this.beforeChangeListeners = new Map();
+    this.afterChangeListeners = new Map();
+    this.projects = [];
+    this.masterId = 'master';
+
+    this.selectedProject = {
+      id: this.masterId,
     };
-    this.selectedProject = this.core;
-    this.allProjects = [];
   }
 
   load(mountId, projectId) {
@@ -46,16 +46,24 @@ class ProjectService {
   }
 
   isBranch() {
-    return this.selectedProject !== this.core;
+    return this.selectedProject.id !== this.masterId;
   }
 
   updateSelectedProject(projectId) {
-    return this._selectProject(projectId)
-      .then(() => this._callListeners(projectId));
+    if (projectId !== this.selectedProject.id) {
+      return this._callListeners(this.beforeChangeListeners)
+        .then(() => this._selectProject(projectId))
+        .then(() => this._callListeners(this.afterChangeListeners));
+    }
+    return this.$q.resolve();
   }
 
-  registerListener(cb) {
-    this.listeners.push(cb);
+  beforeChange(id, cb) {
+    this.beforeChangeListeners.set(id, cb);
+  }
+
+  afterChange(id, cb) {
+    this.afterChangeListeners.set(id, cb);
   }
 
   associateWithProject(documentId) {
@@ -63,7 +71,7 @@ class ProjectService {
     return this.$http
       .post(url)
       .then(() => {
-        this._getAllProjects();
+        this._getProjects();
         this.FeedbackService.showNotification('DOCUMENT_ADDED_TO_PROJECT', {
           name: this.selectedProject.name,
         });
@@ -76,37 +84,21 @@ class ProjectService {
     return channels && !!channels.find(c => c.id === baseChannelId);
   }
 
-  showAddToProjectForDocument(documentId) {
-    const associatedProject = this._getProjectByDocumentId(documentId);
-    return this.isBranch() && !associatedProject;
-  }
+  _callListeners(listeners) {
+    const promises = Array.from(listeners.values())
+      .map(listener => listener());
 
-  _getProjectByDocumentId(documentId) {
-    // returns undefined if document is not part of any project
-    // and therefore is part of core
-    return this.allProjects.find(project => project.documents.find(document => document.id === documentId));
-  }
-
-  _callListeners(...args) {
-    this.listeners.forEach(listener => listener(...args));
+    return this.$q.all(promises);
   }
 
   _setupProjects(projectId) {
-    return this.$q
-      .all([
-        this._getProjects(),
-        this._getAllProjects(),
-      ])
-      .finally(() => this._selectProject(projectId));
+    return this._getProjects()
+      .finally(() => this.updateSelectedProject(projectId));
   }
 
   _selectProject(projectId) {
-    this.selectedProject = this.allProjects.find(project => project.id === projectId) || this.core;
-    return this._setProjectInHST();
-  }
-
-  _setProjectInHST() {
-    return this.selectedProject === this.core ? this._activateCore() : this._activateProject(this.selectedProject.id);
+    this.selectedProject = this.projects.find(project => project.id === projectId);
+    return this._setProjectInHST(this.selectedProject.id);
   }
 
   isContentOverlayEnabled() {
@@ -180,22 +172,22 @@ class ProjectService {
       .get(url)
       .then(result => result.data)
       .then((projects) => {
-        this.projects = projects;
+        this.projects = projects.sort((p1, p2) => {
+          if (p1.id === this.masterId) {
+            return -1;
+          }
+          if (p2.id === this.masterId) {
+            return 1;
+          }
+          return p1.name.toLowerCase() <= p2.name.toLowerCase() ? -1 : 1;
+        });
       });
   }
 
-  _getAllProjects() {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects`;
-
-    return this.$http
-      .get(url)
-      .then(result => result.data)
-      .then((projects) => {
-        this.allProjects = projects;
-      });
-  }
-
-  _activateProject(projectId) {
+  _setProjectInHST(projectId) {
+    if (projectId === this.masterId) {
+      return this._activateCore();
+    }
     const url = `${this.ConfigService.getCmsContextPath()}ws/projects/activeProject/${projectId}`;
     return this.$http
       .put(url);

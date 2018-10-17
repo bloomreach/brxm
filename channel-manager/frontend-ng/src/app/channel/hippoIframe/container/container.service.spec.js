@@ -22,6 +22,7 @@ describe('ContainerService', () => {
   let ContainerService;
   let DialogService;
   let DragDropService;
+  let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
   let PageStructureService;
@@ -38,6 +39,7 @@ describe('ContainerService', () => {
       _ContainerService_,
       _DialogService_,
       _DragDropService_,
+      _EditComponentService_,
       _FeedbackService_,
       _HippoIframeService_,
       _PageStructureService_,
@@ -50,6 +52,7 @@ describe('ContainerService', () => {
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
       DragDropService = _DragDropService_;
+      EditComponentService = _EditComponentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
@@ -175,7 +178,7 @@ describe('ContainerService', () => {
     it('shows component properties dialog after rejecting the delete operation', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-      spyOn(PageStructureService, 'showComponentProperties');
+      spyOn(EditComponentService, 'startEditing');
       spyOn(DialogService, 'show').and.returnValue($q.reject());
       spyOn(DialogService, 'confirm').and.callThrough();
 
@@ -185,7 +188,7 @@ describe('ContainerService', () => {
       expect(mockComponent.getLabel).toHaveBeenCalled();
       expect(DialogService.confirm).toHaveBeenCalled();
       expect(DialogService.show).toHaveBeenCalled();
-      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(mockComponent);
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith(mockComponent);
     });
 
     it('logs a warning for unknown components', () => {

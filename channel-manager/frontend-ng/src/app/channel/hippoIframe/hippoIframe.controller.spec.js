@@ -15,26 +15,42 @@
  */
 
 describe('hippoIframeCtrl', () => {
+  let $element;
+  let $q;
   let $rootScope;
   let $window;
   let CmsService;
   let ContainerService;
   let DragDropService;
+  let FeedbackService;
   let HippoIframeService;
+  let HstComponentService;
   let OverlayService;
   let PageStructureService;
+  let PickerService;
   let RenderingService;
   let SpaService;
-  let hippoIframeCtrl;
-  let scope;
+  let ViewportService;
+  let $ctrl;
+  let onEditMenu;
 
   beforeEach(() => {
-    let $compile;
     angular.mock.module('hippo-cm');
 
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
+    HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
+    PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('FeedbackService', FeedbackService);
+      $provide.value('HstComponentService', HstComponentService);
+      $provide.value('PickerService', PickerService);
+    });
+
     inject((
-      $controller,
+      $componentController,
       _$compile_,
+      _$q_,
       _$rootScope_,
       _$window_,
       _CmsService_,
@@ -45,8 +61,9 @@ describe('hippoIframeCtrl', () => {
       _PageStructureService_,
       _RenderingService_,
       _SpaService_,
+      _ViewportService_,
     ) => {
-      $compile = _$compile_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
@@ -57,24 +74,34 @@ describe('hippoIframeCtrl', () => {
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
       SpaService = _SpaService_;
-      scope = $rootScope.$new();
+      ViewportService = _ViewportService_;
+
+      $element = angular.element('<div></div>');
+
+      spyOn(OverlayService, 'onEditMenu');
+      spyOn(OverlayService, 'onSelectDocument');
+      spyOn(DragDropService, 'onDrop');
+      onEditMenu = jasmine.createSpy('onEditMenu');
+
+      $ctrl = $componentController('hippoIframe', {
+        $element,
+        CmsService,
+        ContainerService,
+        DragDropService,
+        HippoIframeService,
+        OverlayService,
+        PageStructureService,
+        RenderingService,
+        SpaService,
+        ViewportService,
+      }, {
+        showComponentsOverlay: false,
+        showContentOverlay: false,
+        onEditMenu,
+      });
+
+      $ctrl.$onInit();
     });
-
-    spyOn(OverlayService, 'onEditMenu');
-    spyOn(DragDropService, 'onDrop');
-
-    scope.testEditMode = false;
-    scope.onEditMenu = jasmine.createSpy('onEditMenu');
-
-    const el = angular.element(
-      `<hippo-iframe show-components-overlay="false"
-                     show-content-overlay="false"
-                     on-edit-menu="onEditMenu(menuUuid)">
-      </hippo-iframe>`);
-    $compile(el)(scope);
-    scope.$digest();
-
-    hippoIframeCtrl = el.controller('hippo-iframe');
   });
 
   describe('render component', () => {
@@ -102,7 +129,7 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('does not respond to the render-component event anymore when destroyed', () => {
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
 
       expect(SpaService.renderComponent).not.toHaveBeenCalled();
@@ -128,7 +155,7 @@ describe('hippoIframeCtrl', () => {
 
     it('does not call the on-drop callback anymore when destroyed', () => {
       spyOn(DragDropService, 'offDrop');
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       expect(DragDropService.offDrop).toHaveBeenCalled();
     });
   });
@@ -144,7 +171,7 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('does not respond to the delete-component event anymore when destroyed', () => {
-      hippoIframeCtrl.$onDestroy();
+      $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('delete-component', '1234');
       expect(ContainerService.deleteComponent).not.toHaveBeenCalled();
     });
@@ -152,15 +179,15 @@ describe('hippoIframeCtrl', () => {
 
   it('unsubscribes "delete-component" event when the controller is destroyed', () => {
     spyOn(CmsService, 'unsubscribe');
-    hippoIframeCtrl.$onDestroy();
-    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), hippoIframeCtrl);
+    $ctrl.$onDestroy();
+    expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), $ctrl);
   });
 
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay');
 
-    hippoIframeCtrl.onLoad();
+    $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(RenderingService.createOverlay).toHaveBeenCalled();
@@ -170,7 +197,7 @@ describe('hippoIframeCtrl', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(true);
     spyOn(SpaService, 'initSpa');
 
-    hippoIframeCtrl.onLoad();
+    $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(SpaService.initSpa).toHaveBeenCalled();
@@ -180,60 +207,118 @@ describe('hippoIframeCtrl', () => {
     spyOn(RenderingService, 'updateDragDrop');
 
     HippoIframeService.pageLoaded = false;
-    hippoIframeCtrl.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
-    hippoIframeCtrl.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
 
     HippoIframeService.pageLoaded = true;
-    hippoIframeCtrl.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
 
     RenderingService.updateDragDrop.calls.reset();
-    hippoIframeCtrl.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(RenderingService.updateDragDrop).toHaveBeenCalled();
   });
 
   it('toggles the components overlay', () => {
     spyOn(OverlayService, 'showComponentsOverlay');
 
-    hippoIframeCtrl.showComponentsOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: true },
+    });
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
 
-    hippoIframeCtrl.showComponentsOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showComponentsOverlay: { currentValue: false },
+    });
     expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('toggles the content overlay', () => {
     spyOn(OverlayService, 'showContentOverlay');
 
-    hippoIframeCtrl.showContentOverlay = true;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showContentOverlay: { currentValue: true },
+    });
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(true);
 
-    hippoIframeCtrl.showContentOverlay = false;
-    $rootScope.$digest();
-
+    $ctrl.$onChanges({
+      showContentOverlay: { currentValue: false },
+    });
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
   });
 
   it('calls its edit menu function when the overlay service wants to edit a menu', () => {
     const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
     callback('menu-uuid');
-    expect(scope.onEditMenu).toHaveBeenCalledWith('menu-uuid');
+    expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
+  });
+
+  describe('onSelectDocument', () => {
+    let component;
+    let pickerConfig;
+    let onSelectDocument;
+
+    beforeEach(() => {
+      component = {
+        getId: () => 'componentId',
+        getLabel: () => 'componentLabel',
+        getRenderVariant: () => 'hippo-default',
+      };
+      pickerConfig = {};
+      onSelectDocument = OverlayService.onSelectDocument.calls.mostRecent().args[0];
+    });
+
+    it('can pick a path and update the component', (done) => {
+      PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
+      HstComponentService.setPathParameter.and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'renderComponent');
+
+      onSelectDocument(component, 'parameterName', '/base/currentPath', pickerConfig, '/base')
+        .then(() => {
+          expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, '/base/currentPath');
+          expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
+            'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
+          );
+          expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId');
+          expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
+            componentName: 'componentLabel',
+          });
+
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('can pick a path but fail to update the component', (done) => {
+      const errorData = {};
+      PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
+      HstComponentService.setPathParameter.and.returnValue($q.reject({ data: errorData }));
+      spyOn(HippoIframeService, 'reload');
+
+      onSelectDocument(component, 'parameterName', '/base/currentPath', pickerConfig, '/base')
+        .then(() => {
+          expect(PickerService.pickPath).toHaveBeenCalledWith(pickerConfig, '/base/currentPath');
+          expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
+            'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
+          );
+          expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(errorData, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+            jasmine.any(Object), { componentName: 'componentLabel' });
+          expect(HippoIframeService.reload).toHaveBeenCalled();
+
+          done();
+        });
+      $rootScope.$digest();
+    });
   });
 });

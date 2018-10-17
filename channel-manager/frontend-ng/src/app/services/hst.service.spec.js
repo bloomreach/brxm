@@ -289,23 +289,12 @@ describe('HstService', () => {
       expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
     });
 
-    it('removes an exist component from a container', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      const url = `${cmsContextPath}${apiUrlPrefix}/container-1./component-foo`;
-      $httpBackend.expectDELETE(url).respond(200);
-
-      hstService.removeHstComponent('container-1', 'component-foo').then(promiseSpy);
-      $httpBackend.flush();
-
-      expect(promiseSpy).toHaveBeenCalled();
-    });
-
     it('updates component orders of a container', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
       const url = `${cmsContextPath}${apiUrlPrefix}/container-1./`;
       $httpBackend.expectPUT(url, { foo: 'foo-value', baa: 'baah' }).respond(200);
 
-      hstService.updateHstComponent('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
+      hstService.updateHstContainer('container-1', { foo: 'foo-value', baa: 'baah' }).then(promiseSpy);
       $httpBackend.flush();
 
       expect(promiseSpy).toHaveBeenCalled();

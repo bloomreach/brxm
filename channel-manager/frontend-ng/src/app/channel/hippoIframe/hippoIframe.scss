@@ -14,7 +14,17 @@
 
 @import 'variables';
 
+%parent-size {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
 hippo-iframe {
+  position: relative;
+
   // The value of this variable is set by the HippoIframeService
   --locked-width: 100%;
 
@@ -41,5 +51,55 @@ hippo-iframe {
     // should be allowed to use 100% width because it can be bigger due to the closing of the side-panel
     width: 100%;
     min-width: var(--locked-width);
+  }
+}
+
+.channel-iframe-canvas {
+  @extend %parent-size;
+
+  background-color: $canvas-bgcolor;
+
+  // ensure a horizontal scrollbar for constrained viewport widths
+  height: 100%;
+  overflow-y: hidden;
+  user-select: none;
+
+  &.hippo-dragging {
+    // IE does not support the grabbing cursor so we show 'move' instead
+    cursor: move;
+    cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+  }
+
+  &.iframe-lifted {
+    z-index: $z-index-iframe-lifted;
+  }
+}
+
+.channel-iframe-sheet {
+  background-color: $grey-50;
+  box-shadow: 0 0 20px $black-shadow;
+
+  // center the sheet on the canvas; use margin instead of flexbox to properly center fixed-width viewports (Tablet etc.)
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+
+  // use explicit max-width and min-width so its transition can be animated
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
+
+  .channel-dragula-mirror {
+    @extend %parent-size;
+  }
+
+  iframe {
+    @extend .channel-dragula-mirror;
+
+    border: 0;
+    height: 100%;
+    width: 100%;
   }
 }

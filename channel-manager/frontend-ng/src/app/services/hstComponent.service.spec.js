@@ -20,100 +20,23 @@ import 'angular-mocks';
 describe('HstComponentService', () => {
   let $q;
   let $rootScope;
-  let $window;
   let ChannelService;
+  let ConfigService;
   let HstComponentService;
   let HstService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
-
-    inject((_$window_) => {
-      $window = _$window_;
-    });
-
-    spyOn($window.APP_TO_CMS, 'publish').and.callThrough();
-    spyOn($window.CMS_TO_APP, 'subscribe').and.callThrough();
   });
 
   beforeEach(() => {
-    inject((_$q_, _$rootScope_, _ChannelService_, _HstService_, _HstComponentService_) => {
+    inject((_$q_, _$rootScope_, _ChannelService_, _ConfigService_, _HstService_, _HstComponentService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
       HstService = _HstService_;
       HstComponentService = _HstComponentService_;
-    });
-  });
-
-  describe('interaction with the CMS through the "path-picked" event', () => {
-    it('subscribes to the CMS event "path-picked" upon construction', () => {
-      expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('path-picked', jasmine.any(Function));
-    });
-
-    it('responds to callbacks with id "component-path-picker"', () => {
-      const pathPickedHandler = spyOn(HstComponentService, 'pathPickedHandler');
-
-      $window.CMS_TO_APP.publish('path-picked', 'random-id', '/path/picked');
-      expect(pathPickedHandler).not.toHaveBeenCalled();
-
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker', '/path/picked');
-      expect(pathPickedHandler).toHaveBeenCalledWith('/path/picked');
-      expect(HstComponentService.pathPickedHandler).toBe(angular.noop);
-    });
-
-    it('resets the pathPickedHandler after a succesfull callback', () => {
-      HstComponentService.pathPickedHandler = () => {};
-
-      $window.CMS_TO_APP.publish('path-picked', 'random-id');
-      expect(HstComponentService.pathPickedHandler).not.toBe(angular.noop);
-
-      $window.CMS_TO_APP.publish('path-picked', 'component-path-picker');
-      expect(HstComponentService.pathPickedHandler).toBe(angular.noop);
-    });
-  });
-
-  describe('pickPath', () => {
-    let pickPathPromise;
-
-    beforeEach(() => {
-      pickPathPromise = HstComponentService.pickPath('id', 'variant', 'name', 'value', 'pickerConfig', 'basePath');
-    });
-
-    it('publishes a "show-path-picker" event to the CMS application', () => {
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-path-picker', 'component-path-picker', 'value', 'pickerConfig');
-    });
-
-    it('sets the picked path when the pathPickedHandler is invoked', () => {
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
-
-      HstComponentService.pathPickedHandler('selected-path');
-      expect(HstComponentService.setPathParameter).toHaveBeenCalledWith('id', 'variant', 'name', 'selected-path', 'basePath');
-    });
-
-    it('returns a promise that is resolved after the picked path is set', (done) => {
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.resolve());
-
-      expect(pickPathPromise).toBeDefined();
-      pickPathPromise.then(() => {
-        done();
-      });
-
-      HstComponentService.pathPickedHandler('selected-path');
-      $rootScope.$digest();
-    });
-
-    it('returns a promise that is rejected if setting the picked path fails', (done) => {
-      const errorResponse = {};
-      spyOn(HstComponentService, 'setPathParameter').and.returnValue($q.reject(errorResponse));
-
-      pickPathPromise.catch((response) => {
-        expect(response).toEqual(errorResponse);
-        done();
-      });
-
-      HstComponentService.pathPickedHandler('selected-path');
-      $rootScope.$digest();
     });
   });
 
@@ -155,20 +78,57 @@ describe('HstComponentService', () => {
       spyOn(ChannelService, 'recordOwnChange');
     });
 
+    it('uses the HstService to store the parameter data of a component', (done) => {
+      HstService.doPutForm.and.returnValue($q.resolve());
+
+      HstComponentService.setParameter('id', 'variant', 'name', 'value')
+        .then(() => {
+          expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
+          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('does not record own change if parameter change fails', (done) => {
+      HstService.doPutForm.and.returnValue($q.reject());
+
+      HstComponentService.setParameter('id', 'variant', 'name', 'value')
+        .catch(() => {
+          expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+          done();
+        });
+      $rootScope.$digest();
+    });
+
+    it('URI-encodes the variant name', () => {
+      HstService.doPutForm.and.returnValue($q.resolve());
+
+      HstComponentService.setParameter('id', '@variant', 'name', 'value');
+      expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', '%40variant');
+    });
+  });
+
+  describe('setParameters', () => {
+    beforeEach(() => {
+      spyOn(HstService, 'doPutForm');
+      spyOn(ChannelService, 'recordOwnChange');
+    });
+
     it('uses the HstService to store the parameter data of a component', () => {
       HstService.doPutForm.and.returnValue($q.resolve());
 
-      HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      HstComponentService.setParameters('id', 'variant', { param1: 1, param2: 2 });
       $rootScope.$digest();
 
-      expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', 'variant');
+      expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', 'variant');
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
 
     it('does not record own change if parameter change fails', () => {
       HstService.doPutForm.and.returnValue($q.reject());
 
-      HstComponentService.setParameter('id', 'variant', 'name', 'value');
+      HstComponentService.setParameters('id', 'variant', { param1: 1, param2: 2 });
       $rootScope.$digest();
 
       expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
@@ -177,8 +137,33 @@ describe('HstComponentService', () => {
     it('URI-encodes the variant name', () => {
       HstService.doPutForm.and.returnValue($q.resolve());
 
-      HstComponentService.setParameter('id', '@variant', 'name', 'value');
-      expect(HstService.doPutForm).toHaveBeenCalledWith({ name: 'value' }, 'id', '%40variant');
+      HstComponentService.setParameters('id', '@variant', { param1: 1, param2: 2 });
+      expect(HstService.doPutForm).toHaveBeenCalledWith({ param1: 1, param2: 2 }, 'id', '%40variant');
+    });
+  });
+
+  describe('getProperties', () => {
+    beforeEach(() => {
+      spyOn(HstService, 'doGet').and.returnValue($q.resolve());
+      ConfigService.locale = 'test-locale';
+    });
+
+    it('uses the HstService to get the properties of a component', () => {
+      HstComponentService.getProperties('id', 'variant');
+      expect(HstService.doGet).toHaveBeenCalledWith('id', 'variant', 'test-locale');
+    });
+
+    it('URI-encodes the variant name', () => {
+      HstComponentService.getProperties('id', '@variant');
+      expect(HstService.doGet).toHaveBeenCalledWith('id', '%40variant', 'test-locale');
+    });
+  });
+
+  describe('delete component', () => {
+    it('uses the HstService to delete a component', () => {
+      spyOn(HstService, 'doDelete').and.returnValue($q.resolve());
+      HstComponentService.deleteComponent('containerId', 'componentId');
+      expect(HstService.doDelete).toHaveBeenCalledWith('containerId', 'componentId');
     });
   });
 });

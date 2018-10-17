@@ -103,6 +103,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private Boolean relevancePresent;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private final String ckeditorUrl;
 
     @ExtProperty
@@ -150,7 +154,10 @@ public class ChannelEditor extends ExtPanel {
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
         }
-        getUuid(variantsPath).ifPresent(uuid -> this.variantsUuid = uuid);
+        getUuid(variantsPath).ifPresent(uuid -> { 
+            this.variantsUuid = uuid; 
+            this.relevancePresent = true;
+        });
         Optional.of(config).ifPresent(
                 (c -> getUuid(c.getString("projectsPath"))
                         .ifPresent(uuid -> this.projectsEnabled = true))
@@ -178,7 +185,6 @@ public class ChannelEditor extends ExtPanel {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/colorfield/colorfield.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(ChannelEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
         response.render(ChannelEditorHeaderItem.get());
     }
