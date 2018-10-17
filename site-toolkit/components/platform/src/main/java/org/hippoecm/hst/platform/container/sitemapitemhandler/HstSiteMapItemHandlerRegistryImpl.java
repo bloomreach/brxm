@@ -18,7 +18,6 @@ package org.hippoecm.hst.platform.container.sitemapitemhandler;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 // note we do not need to account for concurrency since this is all controlled by the virtualhosts building
