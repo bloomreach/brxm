@@ -28,6 +28,7 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_CONFIG;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DISPLAY_NAME;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_EXTENSION_POINT;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
@@ -80,17 +81,18 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         final String extensionId = extensionNode.getName();
         extension.setId(extensionId);
 
-        readContext(extensionNode).ifPresent(extension::setExtensionPoint);
+        readExtensionPoint(extensionNode).ifPresent(extension::setExtensionPoint);
 
         final String displayName = readProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
         extension.setDisplayName(displayName);
 
         readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
+        readProperty(extensionNode, FRONTEND_CONFIG).ifPresent(extension::setConfig);
 
         return extension;
     }
 
-    private Optional<UiExtensionPoint> readContext(final Node extensionNode) throws RepositoryException {
+    private Optional<UiExtensionPoint> readExtensionPoint(final Node extensionNode) throws RepositoryException {
         final Optional<String> optionalProperty = readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
 
         if (optionalProperty.isPresent()) {

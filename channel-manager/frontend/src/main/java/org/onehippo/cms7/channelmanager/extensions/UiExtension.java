@@ -40,4 +40,9 @@ public interface UiExtension {
      */
     String getUrl();
 
+    /**
+     * @return the configuration to pass to the extension.
+     */
+    String getConfig();
+
 }

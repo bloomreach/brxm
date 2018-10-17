@@ -18,6 +18,8 @@ class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
+    $sce,
+    $scope,
     $window,
     ChannelService,
     ConfigService,
@@ -30,6 +32,7 @@ class IframeExtensionCtrl {
 
     this.$element = $element;
     this.$log = $log;
+    this.$sce = $sce;
     this.$window = $window;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
@@ -53,8 +56,24 @@ class IframeExtensionCtrl {
   }
 
   getExtensionUrl() {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), this.extension.url);
+    if (this._isAbsoluteUrl(this.extension.url)) {
+      return this._getTrustedAbsoluteUrl(this.extension.url);
+    }
+    return this._getUrlRelativeToCmsLocation(this.extension.url);
+  }
 
+  _isAbsoluteUrl(url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  _getTrustedAbsoluteUrl(extensionUrl) {
+    const url = new URL(extensionUrl);
+    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    return this.$sce.trustAsResourceUrl(url.href);
+  }
+
+  _getUrlRelativeToCmsLocation(extensionUrl) {
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), extensionUrl);
     // The current location should be the default value for the second parameter of the URL() constructor,
     // but Chrome needs it explicitly otherwise it will throw an error.
     const url = new URL(path, this.$window.location.origin);
@@ -96,6 +115,7 @@ class IframeExtensionCtrl {
         refreshPage: () => {
           this.HippoIframeService.reload();
         },
+        config: this.extension.config,
       };
       this.iframeWindow.BR_EXTENSION.onInit(publicApi);
     } catch (e) {

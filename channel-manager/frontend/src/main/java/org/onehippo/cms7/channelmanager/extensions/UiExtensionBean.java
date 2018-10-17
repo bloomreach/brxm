@@ -20,6 +20,7 @@ class UiExtensionBean implements UiExtension {
     private String id;
     private String displayName;
     private String url;
+    private String config;
     private UiExtensionPoint extensionPoint;
 
     @Override
@@ -47,6 +48,15 @@ class UiExtensionBean implements UiExtension {
 
     public void setUrl(final String url) {
         this.url = url;
+    }
+
+    @Override
+    public String getConfig() {
+        return config;
+    }
+
+    public void setConfig(final String config) {
+        this.config = config;
     }
 
     @Override

@@ -3,3 +3,7 @@ export class UiExtension {
     return 'test';
   }
 }
+
+export function register() {
+  return new UiExtension();
+}

@@ -45,7 +45,8 @@ describe('iframeExtension', () => {
       id: 'test',
       displayName: 'Test',
       extensionPoint: 'testExtensionPoint',
-      url: 'testUrl',
+      url: '/testUrl',
+      config: 'testConfig',
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
@@ -116,20 +117,51 @@ describe('iframeExtension', () => {
         $ctrl.$onInit();
       });
 
-      it('works when the CMS location has a context path', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?antiCache=42');
+      describe('for extensions from the same origin', () => {
+        it('works when the CMS location has a context path', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?antiCache=42');
+        });
+
+        it('works when the CMS location has no context path', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/');
+          expect($ctrl.getExtensionUrl()).toEqual('/testUrl?antiCache=42');
+        });
+
+        it('works when the extension URL path contains search parameters', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          extension.url = '/testUrl?customParam=X';
+          expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&antiCache=42');
+        });
+
+        it('works when the extension URL path does not start with a slash', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          extension.url = 'testUrl';
+          expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?antiCache=42');
+        });
+
+        it('works when the extension URL path contains dots', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          extension.url = '../testUrl';
+          expect($ctrl.getExtensionUrl()).toEqual('/testUrl?antiCache=42');
+        });
       });
 
-      it('works when the CMS location has no context path', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/');
-        expect($ctrl.getExtensionUrl()).toEqual('/testUrl?antiCache=42');
-      });
+      describe('for extensions from a different origin', () => {
+        it('works for URLs without parameters', () => {
+          extension.url = 'http://www.bloomreach.com';
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?antiCache=42');
+        });
 
-      it('works when the extension URL path contains search parameters', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        extension.url = 'testUrl?customParam=X';
-        expect($ctrl.getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&antiCache=42');
+        it('works for URLs with parameters', () => {
+          extension.url = 'http://www.bloomreach.com?customParam=X';
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&antiCache=42');
+        });
+
+        it('works for HTTPS URLs', () => {
+          extension.url = 'https://www.bloomreach.com';
+          expect($ctrl.getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?antiCache=42');
+        });
       });
     });
 
@@ -193,6 +225,12 @@ describe('iframeExtension', () => {
           const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
           publicApi.refreshPage();
           expect(HippoIframeService.reload).toHaveBeenCalled();
+        });
+
+        it('provides config to the extension', () => {
+          triggerIframeLoad();
+          const publicApi = iframeWindow.BR_EXTENSION.onInit.calls.mostRecent().args[0];
+          expect(publicApi.config).toBe('testConfig');
         });
 
         it('calls the BR_EXTENSION.onContextChanged function', () => {
