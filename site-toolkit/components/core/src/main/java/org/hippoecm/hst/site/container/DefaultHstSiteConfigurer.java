@@ -245,7 +245,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
             if (oldComponentManager != null) {
                 HstServices.setComponentManager(null);
-                hstModelRegistry.unregisterHstModel(getServletContext().getContextPath());
+                hstModelRegistry.unregisterHstModel(getServletContext());
                 log.info("HstSiteConfigurer attempting to stop the old component manager...");
                 try {
                     oldComponentManager.stop();
@@ -255,7 +255,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
                 }
             }
 
-            hstModelRegistry.registerHstModel(DefaultHstSiteConfigurer.this.getServletContext().getContextPath(),
+            hstModelRegistry.registerHstModel(DefaultHstSiteConfigurer.this.getServletContext(),
                     componentManager, !lazyHstConfigurationLoading);
             HstServices.setComponentManager(componentManager);
             initialized = true;
@@ -287,7 +287,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
             ComponentManager componentManager = HstServices.getComponentManager();
             HstServices.setComponentManager(null);
-            hstModelRegistry.unregisterHstModel(getServletContext().getContextPath());
+            hstModelRegistry.unregisterHstModel(getServletContext());
             // componentManager can be null if HstSiteConfigServlet didn't finish the initialization yet.
             if (componentManager != null) {
                 try {

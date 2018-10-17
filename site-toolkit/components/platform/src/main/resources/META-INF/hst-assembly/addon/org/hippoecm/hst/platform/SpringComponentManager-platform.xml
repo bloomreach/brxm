@@ -21,7 +21,11 @@
   <bean id="org.hippoecm.hst.platform.api.ChannelEventBus"
         class="org.hippoecm.hst.platform.eventbus.GuavaChannelEventBus"
         init-method="init"
-        destroy-method="destroy">
-  </bean>
+        destroy-method="destroy"/>
+
+  <bean id="org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactories"
+        class="org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactoriesImpl"
+        init-method="init"
+        destroy-method="destroy"/>
 
 </beans>

@@ -17,14 +17,18 @@ package org.hippoecm.hst.platform.model;
 
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.hippoecm.hst.core.container.ComponentManager;
 
 public interface HstModelRegistry {
 
-    HstModel registerHstModel(String contextPath, ComponentManager websiteComponentManager,
+    HstModel registerHstModel(ServletContext servletContext, ComponentManager websiteComponentManager,
                               boolean loadHstConfigNodes) throws ModelRegistrationException;
 
     void unregisterHstModel(String contextPath) throws ModelRegistrationException;
+
+    void unregisterHstModel(ServletContext servletContext) throws ModelRegistrationException;
 
     HstModel getHstModel(String contextPath);
 

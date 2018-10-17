@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.sitemapitemhandler;
+package org.hippoecm.hst.platform.configuration.sitemapitemhandler;
 
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.core.container.HstContainerConfig;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
 /**
  * The factory interface which is responsible for creating HstSiteMapItemHandler instances.
@@ -26,13 +27,12 @@ public interface HstSiteMapItemHandlerFactory {
     
     /**
      * Returns the HstSiteMapItemHandler instance.
-     * 
-     * @param requestContainerConfig the HstContainer configuration
+     *
      * @param handlerConfig the HstSiteMapItemHandlerConfiguration configuration
      * @return the instance of the HstSiteMapItemHandler
      * @throws HstSiteMapItemHandlerException
      */
-    HstSiteMapItemHandler getSiteMapItemHandlerInstance(HstContainerConfig requestContainerConfig, HstSiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException;
+    HstSiteMapItemHandler getSiteMapItemHandlerInstance(HstSiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException;
    
     
 }

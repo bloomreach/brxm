@@ -17,7 +17,6 @@ package org.hippoecm.hst.container;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Repository;
@@ -38,7 +37,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -59,7 +57,6 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.sitemapitemhandler.FilterChainAwareHstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -106,8 +103,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private HstRequestProcessor requestProcessor;
 
-    private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
-
     private HstURLFactory urlFactory;
 
     /**
@@ -134,10 +129,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
-    }
-
-    public void setSiteMapItemHandlerFactory(HstSiteMapItemHandlerFactory siteMapItemHandlerFactory) {
-        this.siteMapItemHandlerFactory = siteMapItemHandlerFactory;
     }
 
     public void setPreviewDecorator(PreviewDecorator previewDecorator) {
@@ -398,7 +389,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 }
 
                 log.info("Start processing sitemap item '{}' for {}", resolvedSiteMapItem.getHstSiteMapItem(), containerRequest);
-                processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
+                processResolvedSiteMapItem(containerRequest, res, chain, requestContext, processSiteMapItemHandlers);
 
             } else {
                 log.debug("{} matches mount {} that is not mapped by a sitemap.", containerRequest, resolvedMount.getMount());
@@ -693,14 +684,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
     }
 
-    protected void processResolvedSiteMapItem(HttpServletRequest containerRequest, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
-            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers) throws ContainerException {
+    protected void processResolvedSiteMapItem(HttpServletRequest containerRequest, HttpServletResponse res, FilterChain filterChain,
+                                              HstMutableRequestContext requestContext, boolean processHandlers) throws ContainerException {
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
         if (processHandlers) {
             // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
-                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , containerRequest, res, filterChain);
+                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem , containerRequest, res, filterChain);
                 if(resolvedSiteMapItem == null) {
                     return;
                 }
@@ -757,7 +748,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(urlFactory.getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
-            processResolvedSiteMapItem(containerRequest, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
+            processResolvedSiteMapItem(containerRequest, res, filterChain, requestContext, true);
         }
 
         return;
@@ -771,37 +762,54 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
      * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
      * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
      * @param orginalResolvedSiteMapItem
-     * @param siteMapItemHandlerFactory
      * @param req
      * @param res
      * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
      */
-    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem,
-                                                  HstSiteMapItemHandlerFactory siteMapItemHandlerFactory,
-                                                  HttpServletRequest req,
-                                                  HttpServletResponse res,
-                                                  FilterChain filterChain) {
+    protected ResolvedSiteMapItem processHandlers(final ResolvedSiteMapItem orginalResolvedSiteMapItem,
+                                                  final HttpServletRequest req,
+                                                  final HttpServletResponse res,
+                                                  final FilterChain filterChain) {
 
         ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
-        List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
-        for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
-           HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
-            log.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
-           try {
-               if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
-                   newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
-               } else {
-                   newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
-               }
-               if(newResolvedSiteMapItem == null) {
-                   log.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
-                   return null;
-               }
-           } catch (HstSiteMapItemHandlerException e){
-               log.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
-               throw e;
-           }
+
+        for (HstSiteMapItemHandler handler : orginalResolvedSiteMapItem.getHstSiteMapItem().getHstSiteMapItemHandlers()) {
+            log.debug("Processing siteMapItemHandler for configuration handler '{}'", handler.getClass().getName());
+            try {
+                if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
+                    newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
+                } else {
+                    newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
+                }
+                if(newResolvedSiteMapItem == null) {
+                    log.debug("handler for '{}' return null. Request processing done. Return null", handler.getClass().getName());
+                    return null;
+                }
+            } catch (HstSiteMapItemHandlerException e){
+                log.error(String.format("Exception during executing siteMapItemHandler '%s'", handler.getClass().getName()));
+                throw e;
+            }
         }
+
+//        List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
+//        for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
+//           HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
+//            log.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
+//           try {
+//               if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
+//                   newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
+//               } else {
+//                   newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
+//               }
+//               if(newResolvedSiteMapItem == null) {
+//                   log.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
+//                   return null;
+//               }
+//           } catch (HstSiteMapItemHandlerException e){
+//               log.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
+//               throw e;
+//           }
+//        }
         return newResolvedSiteMapItem;
     }
 

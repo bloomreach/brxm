@@ -21,6 +21,7 @@ import java.util.function.BiPredicate;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -43,6 +44,9 @@ import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCach
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactories;
+import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl;
+import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl;
 import org.hippoecm.hst.platform.linking.CompositeHstLinkCreatorImpl;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.DefaultRewriteContextResolver;
@@ -65,7 +69,7 @@ public class HstModelImpl implements PlatformHstModel {
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
 
     private Session session;
-    private final String contextPath;
+    private ServletContext websiteServletContext;
     private final ContainerConfiguration websiteContainerConfiguration;
     private ClassLoader platformClassloader = this.getClass().getClassLoader();
     private final ComponentManager websiteComponentManager;
@@ -82,14 +86,17 @@ public class HstModelImpl implements PlatformHstModel {
     private final String[] hstFilterSuffixExclusions;
 
     private InvalidationMonitor invalidationMonitor;
+    private final HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry = new HstSiteMapItemHandlerRegistryImpl();
+
 
     public HstModelImpl(final Session session,
-                        final String contextPath,
+                        final ServletContext servletContext,
                         final ComponentManager websiteComponentManager,
                         final HstNodeLoadingCache hstNodeLoadingCache,
                         final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws RepositoryException {
         this.session = session;
-        this.contextPath = contextPath;
+        this.websiteServletContext = servletContext;
+
         this.websiteComponentManager = websiteComponentManager;
         websiteContainerConfiguration = websiteComponentManager.getContainerConfiguration();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
@@ -116,9 +123,19 @@ public class HstModelImpl implements PlatformHstModel {
         hstFilterPrefixExclusions = websiteHstManager.getHstFilterPrefixExclusions();
         hstFilterSuffixExclusions = websiteHstManager.getHstFilterSuffixExclusions();
 
+        final HstSiteMapItemHandlerFactoryImpl hstSiteMapItemHandlerFactory =
+                new HstSiteMapItemHandlerFactoryImpl(siteMapItemHandlerRegistry, websiteServletContext);
+
+        final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
+        hstSiteMapItemHandlerFactories.register(websiteServletContext.getContextPath(), hstSiteMapItemHandlerFactory);
+
     }
 
     public void destroy() throws RepositoryException {
+
+        final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
+        hstSiteMapItemHandlerFactories.unregister(websiteServletContext.getContextPath());
+
         invalidationMonitor.destroy();
         session.logout();
     }
@@ -140,6 +157,8 @@ public class HstModelImpl implements PlatformHstModel {
                 return vhosts;
             }
 
+            siteMapItemHandlerRegistry.expungeStaleEntries();
+
             // dispatch all events
             invalidationMonitor.dispatchHstEvents();
 
@@ -149,7 +168,10 @@ public class HstModelImpl implements PlatformHstModel {
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(platformClassloader);
                 }
-                final VirtualHostsService virtualHosts = new VirtualHostsService(contextPath, websiteContainerConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache);
+                final VirtualHostsService virtualHosts = new VirtualHostsService(websiteServletContext.getContextPath(),
+                        websiteContainerConfiguration,
+                        hstNodeLoadingCache,
+                        hstConfigurationLoadingCache);
                 virtualHosts.setHstFilterPrefixExclusions(hstFilterPrefixExclusions);
                 virtualHosts.setHstFilterSuffixExclusions(hstFilterSuffixExclusions);
                 augment(virtualHosts);

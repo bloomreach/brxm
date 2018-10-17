@@ -13,43 +13,50 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.sitemapitemhandler;
+package org.hippoecm.hst.platform.configuration.sitemapitemhandler;
+
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.site.request.SiteMapItemHandlerConfigurationImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstSiteMapItemHandlerFactoryImpl
  * 
  */
 public class HstSiteMapItemHandlerFactoryImpl implements HstSiteMapItemHandlerFactory {
-    
-    protected HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
-    
-    public HstSiteMapItemHandlerFactoryImpl(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
+
+    protected HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry;
+    private ServletContext websiteServletContext;
+
+    public HstSiteMapItemHandlerFactoryImpl(final HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry,
+                                            final ServletContext websiteServletContext) {
         this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
+        this.websiteServletContext = websiteServletContext;
     }
     
-    public HstSiteMapItemHandler getSiteMapItemHandlerInstance(HstContainerConfig requestContainerConfig, HstSiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException {
+    public HstSiteMapItemHandler getSiteMapItemHandlerInstance(HstSiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException {
         
         String handlerId = handlerConfig.getId() + handlerConfig.hashCode();
-        HstSiteMapItemHandler handler = this.siteMapItemHandlerRegistry.getSiteMapItemHandler(requestContainerConfig, handlerId);
+        HstSiteMapItemHandler handler = this.siteMapItemHandlerRegistry.getSiteMapItemHandler(handlerId);
         
         if (handler == null) {
-            boolean initialized = false;
             String siteMapItemHandlerClassName = handlerConfig.getSiteMapItemHandlerClassName();
-            
-            ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
-            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+
+            final ClassLoader websiteClassloader = websiteServletContext.getClassLoader();
+            final ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
 
             try {
-                if (containerClassloader != currentClassloader) {
-                    Thread.currentThread().setContextClassLoader(containerClassloader);
+                if (websiteClassloader != currentClassloader) {
+                    Thread.currentThread().setContextClassLoader(websiteClassloader);
                 }
                 
-                Class<?> handlerClass = containerClassloader.loadClass(siteMapItemHandlerClassName);
+                Class<?> handlerClass = websiteClassloader.loadClass(siteMapItemHandlerClassName);
                 if(!HstSiteMapItemHandler.class.isAssignableFrom(handlerClass)) {
                    throw new HstSiteMapItemHandlerException("Cannot instantiate HstSiteMapItemHandler: The class '"+siteMapItemHandlerClassName+"' of '" + handlerId + "' is not a subtype of '"+HstSiteMapItemHandler.class.getName()+"'. "); 
                 }
@@ -57,24 +64,22 @@ public class HstSiteMapItemHandlerFactoryImpl implements HstSiteMapItemHandlerFa
                
                 SiteMapItemHandlerConfiguration handlerConfigImpl = new SiteMapItemHandlerConfigurationImpl(handlerConfig); 
                 
-                handler.init(requestContainerConfig.getServletContext(), handlerConfigImpl);
-                
-                initialized = true;
+                handler.init(websiteServletContext, handlerConfigImpl);
+
             } catch (ClassNotFoundException e) {
-                throw new HstSiteMapItemHandlerException("Cannot find the class of " + handlerId + ": " + siteMapItemHandlerClassName);
+                throw new HstSiteMapItemHandlerException(String.format("Cannot find the class of  %s: %s", handlerId, siteMapItemHandlerClassName));
             } catch (InstantiationException e) {
-                throw new HstSiteMapItemHandlerException("Cannot instantiate the class of " + handlerId + ": " + siteMapItemHandlerClassName);
+                throw new HstSiteMapItemHandlerException(String.format("Cannot instantiate the class of %s: %s", handlerId, siteMapItemHandlerClassName));
             } catch (IllegalAccessException e) {
-                throw new HstSiteMapItemHandlerException("Illegal access to the class of " + handlerId + ": " + siteMapItemHandlerClassName);
+                throw new HstSiteMapItemHandlerException(String.format("Illegal access to the class of %s: %s", handlerId, siteMapItemHandlerClassName));
             } finally {
-                if (containerClassloader != currentClassloader) {
+                if (websiteClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
                 }                
             }
-            
-            if (initialized) {
-                this.siteMapItemHandlerRegistry.registerSiteMapItemHandler(requestContainerConfig, handlerId, handler);
-            }
+
+            this.siteMapItemHandlerRegistry.registerSiteMapItemHandler(handlerId, handler);
+
         }
         return handler;
     }

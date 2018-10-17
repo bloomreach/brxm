@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -74,8 +75,10 @@ public class HstModelRegistryImpl implements HstModelRegistry {
     // TODO HSTTWO-4355 register listeners for jcr events!!
     // TODO HSTTWO-4355 if a root hst:hst node gets deleted, remove the listener and remove from virtualHostsSuppliers
     @Override
-    public synchronized HstModel registerHstModel(final String contextPath, final ComponentManager websiteComponentManager,
+    public synchronized HstModel registerHstModel(final ServletContext servletContext, final ComponentManager websiteComponentManager,
                                                   final boolean loadHstConfigNodes) throws ModelRegistrationException {
+
+        final String contextPath = servletContext.getContextPath();
         if (models.containsKey(contextPath)) {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
@@ -109,7 +112,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                 loadHstConfigNodes(hstNodeLoadingCache);
             }
 
-            final HstModelImpl model = new HstModelImpl(session, contextPath, websiteComponentManager,
+            final HstModelImpl model = new HstModelImpl(session, servletContext, websiteComponentManager,
                     hstNodeLoadingCache, hstConfigurationLoadingCache);
             models.put(contextPath, model);
 
@@ -122,6 +125,11 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         } catch (Exception e) {
             throw new ModelRegistrationException("Cannot create HstModelRegistryImpl", e);
         }
+    }
+
+    @Override
+    public void unregisterHstModel(final ServletContext servletContext) throws ModelRegistrationException {
+        unregisterHstModel(servletContext.getContextPath());
     }
 
     @Override

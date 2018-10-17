@@ -27,7 +27,6 @@
     <property name="hstModelProvider" ref="org.hippoecm.hst.platform.HstModelProvider"/>
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
-    <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
     <property name="pageCache" ref="pageCache"/>
     <property name="clearPageCacheAfterModelLoad" value="${pageCache.clearOnHstConfigChange}"/>
     <property name="hstFilterPrefixExclusions">

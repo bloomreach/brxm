@@ -23,6 +23,8 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 
 /**
  * A <code>HstSiteMapItem<code> is used as a representation of a logical path (element) for matching (part of a)
@@ -341,7 +343,10 @@ public interface HstSiteMapItem {
      * @param handlerId
      * @return the {@link HstSiteMapItemHandlerConfiguration} for <code>handlerId</code> or <code>null</code> if no
      * handler present for <code>handlerId</code>
+     * @deprecated since 13.0.0. Only {@link #getHstSiteMapItemHandlers()} will possibly be supported in future via api
+     * but even that method might disappear in the future
      */
+    @Deprecated
     HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String handlerId);
 
     /**
@@ -353,7 +358,10 @@ public interface HstSiteMapItem {
      *
      * @return The List of {@link HstSiteMapItemHandlerConfiguration}s and an empty list if this SiteMapItem does not
      * contain {@link HstSiteMapItemHandlerConfiguration}s
+     * @deprecated since 13.0.0. Only {@link #getHstSiteMapItemHandlers()} will possibly be supported in future via api
+     * but even that method might disappear in the future
      */
+    @Deprecated
     List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations();
 
     /**
@@ -440,5 +448,10 @@ public interface HstSiteMapItem {
      * any responses by the requests on this.
      */
     Map<String, String> getResponseHeaders();
+
+    /**
+     * @return the list of {@link HstSiteMapItemHandler}s for this {@link HstSiteMapItem} and an empty list if none present
+     */
+    List<HstSiteMapItemHandler> getHstSiteMapItemHandlers();
 
 }

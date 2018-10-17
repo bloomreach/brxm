@@ -78,10 +78,14 @@ import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerC
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
+import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactories;
+import org.hippoecm.hst.platform.configuration.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.util.HttpHeaderUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +100,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new LinkedHashMap<>();
+
+    private List<HstSiteMapItemHandler> hstSiteMapItemHandlers = new ArrayList<>();
 
     private String id;
 
@@ -199,10 +205,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
     private boolean hiddenInChannelManager;
     private boolean markedDeleted;
 
+
     HstSiteMapItemService(final HstNode node,
                           final MountSiteMapConfiguration mountSiteMapConfiguration,
                           final HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration,
-                          final HstSiteMapItem parentItem, HstSiteMap hstSiteMap,
+                          final HstSiteMapItem parentItem, final HstSiteMap hstSiteMap,
                           final int depth) throws ModelLoadingException {
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap;
@@ -411,14 +418,31 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
             siteMapItemHandlerIds = mountSiteMapConfiguration.getDefaultSiteMapItemHandlerIds();
         }
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
-            for(String handlerId : siteMapItemHandlerIds) {
-                HstSiteMapItemHandlerConfiguration handlerConfiguration = siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
-                if(handlerConfiguration == null) {
-                    log.error("Incorrect configuration: SiteMapItem '{}' contains a handlerId '{}' which cannot be found in the siteMapItemHandlers configuration. The handler will be ignored", getQualifiedId(), handlerId);
-                } else {
-                    this.siteMapItemHandlerConfigurations.put(StringPool.get(handlerId), handlerConfiguration);
+
+            final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
+            final HstSiteMapItemHandlerFactory hstSiteMapItemHandlerFactory = hstSiteMapItemHandlerFactories.getHstSiteMapItemHandlerFactory(mountSiteMapConfiguration.getContextPath());
+
+            if (hstSiteMapItemHandlerFactory == null) {
+                log.error("Missing HstSiteMapItemHandlerFactory for context path '{}'. Cannot create sitemap item handlers", mountSiteMapConfiguration.getContextPath());
+            } else {
+                for (String handlerId : siteMapItemHandlerIds) {
+                    HstSiteMapItemHandlerConfiguration handlerConfiguration = siteMapItemHandlersConfiguration.getSiteMapItemHandlerConfiguration(handlerId);
+                    if (handlerConfiguration == null) {
+                        log.error("Incorrect configuration: SiteMapItem '{}' contains a handlerId '{}' which cannot be found in the siteMapItemHandlers configuration. The handler will be ignored", getQualifiedId(), handlerId);
+                    } else {
+                        this.siteMapItemHandlerConfigurations.put(StringPool.get(handlerId), handlerConfiguration);
+
+                        try {
+                            final HstSiteMapItemHandler siteMapItemHandlerInstance = hstSiteMapItemHandlerFactory.getSiteMapItemHandlerInstance(handlerConfiguration);
+                            hstSiteMapItemHandlers.add(siteMapItemHandlerInstance);
+                        } catch (Exception e) {
+                            log.error("Could not create sitemap item handler for '{}'", handlerConfiguration.getName(), e);
+                        }
+                    }
                 }
             }
+            // make unmodifiable
+            hstSiteMapItemHandlers = Collections.unmodifiableList(hstSiteMapItemHandlers);
         }
 
         if (node.getValueProvider().hasProperty(GENERAL_PROPERTY_LOCALE)) {
@@ -677,11 +701,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 		return localParameters;
 	}
 
-
+    @Deprecated
 	public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String handlerId) {
 	    return siteMapItemHandlerConfigurations.get(handlerId);
 	}
-
+    @Deprecated
     public List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
         return Collections.unmodifiableList(new ArrayList<>(siteMapItemHandlerConfigurations.values()));
     }
@@ -927,6 +951,11 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         }
 
         return Collections.unmodifiableMap(responseHeaders);
+    }
+
+    @Override
+    public List<HstSiteMapItemHandler> getHstSiteMapItemHandlers() {
+        return hstSiteMapItemHandlers;
     }
 
     /**

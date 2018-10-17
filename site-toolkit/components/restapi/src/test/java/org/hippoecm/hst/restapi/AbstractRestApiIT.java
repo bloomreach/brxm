@@ -87,7 +87,7 @@ public class AbstractRestApiIT {
         filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel("/site", componentManager, true);
+        modelRegistry.registerHstModel(servletContext, componentManager, true);
 
     }
 

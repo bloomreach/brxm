@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,16 @@ public interface HstSiteMapItemHandler {
      * Allows the sitemap handler to destroy itself
      * 
      * @throws HstSiteMapItemHandlerException
+     * @deprecated since 13.0.0 : #destroy won't be invoked any more and will be removed. On every
+     * {@link org.hippoecm.hst.configuration.hosting.VirtualHosts} rebuild (aka after hst config changes),
+     * {@link HstSiteMapItemHandler} instances are recreated. Make sure that your implementation of the
+     * {@link HstSiteMapItemHandler} does not result in a memory leak, for example because you add objects to a
+     * class variable like a static cache. The reason why this has been deprecated is that HstSiteMapItemHandler instances
+     * now piggy-back on the lifecycle on the {@link org.hippoecm.hst.configuration.hosting.VirtualHosts} instead of on
+     * a separate registry
      */
+    @Deprecated
     void destroy() throws HstSiteMapItemHandlerException;
-    
+
+
 }

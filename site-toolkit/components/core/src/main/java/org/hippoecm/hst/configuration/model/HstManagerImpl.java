@@ -22,7 +22,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.springframework.web.context.ServletContextAware;
 
@@ -30,11 +29,9 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     private HstModelProvider hstModelProvider;
 
-    volatile int consecutiveBuildFailCounter = 0;
 
     private HstComponentRegistry componentRegistry;
 
-    private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     private HstCache pageCache;
     private boolean clearPageCacheAfterModelLoad;
 
@@ -59,10 +56,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
-    }
-
-    public void setSiteMapItemHandlerRegistry(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
-        this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
     }
 
     public void setPageCache(HstCache pageCache) {

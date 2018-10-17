@@ -34,6 +34,7 @@ import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockServletContext;
 
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.PLATFORM;
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public abstract class AbstractComponentManagerTest {
@@ -43,13 +44,13 @@ public abstract class AbstractComponentManagerTest {
 
     protected SpringComponentManager siteComponentManager;
     protected SpringComponentManager platformComponentManager;
-    protected HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
+    protected final HippoWebappContext siteWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
         public String getContextPath() {
             return CONTEXT_PATH;
         }
     });
 
-    protected HippoWebappContext platformWebappContext = new HippoWebappContext(SITE, new MockServletContext() {
+    protected final HippoWebappContext platformWebappContext = new HippoWebappContext(CMS, new MockServletContext() {
         public String getContextPath() {
             return PLATFORM_CONTEXT_PATH;
         }
@@ -76,7 +77,6 @@ public abstract class AbstractComponentManagerTest {
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
 
-        platformWebappContext = new HippoWebappContext(CMS, platformServletContext);
         HippoWebappContextRegistry.get().register(platformWebappContext);
         platformServletContext.setContextPath(PLATFORM_CONTEXT_PATH);
 
@@ -94,7 +94,7 @@ public abstract class AbstractComponentManagerTest {
         HstServices.setComponentManager(platformComponentManager);
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel(PLATFORM_CONTEXT_PATH, platformComponentManager, true);
+        modelRegistry.registerHstModel(platformServletContext, platformComponentManager, true);
 
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
@@ -116,7 +116,7 @@ public abstract class AbstractComponentManagerTest {
         siteComponentManager.initialize();
         siteComponentManager.start();
 
-        modelRegistry.registerHstModel(CONTEXT_PATH, siteComponentManager, true);
+        modelRegistry.registerHstModel(siteWebappContext.getServletContext(), siteComponentManager, true);
 
     }
 
