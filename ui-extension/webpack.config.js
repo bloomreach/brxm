@@ -15,7 +15,9 @@
  */
 
 const dts = require('dts-bundle');
+const merge = require('webpack-merge');
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 class DtsBundlePlugin {
   apply(compiler) {
@@ -32,25 +34,60 @@ class DtsBundlePlugin {
   }
 }
 
-module.exports = {
+const config = {
   mode: 'production',
   entry: './src/ui-extension.ts',
-  target: 'node',
   context: __dirname,
+  externals: {
+    document: 'document',
+    window: 'window',
+  },
   resolve: {
-    extensions: ['.ts'],
+    extensions: ['.ts', '.js', '.json'],
   },
   output: {
     path: path.resolve(__dirname, 'target/classes'),
-    libraryTarget: 'commonjs',
-    filename: 'ui-extension.js',
+    library: 'UiExtension',
   },
   module: {
     rules: [
-      { test: /\.ts$/, use: 'ts-loader' },
+      { test: /\.ts$/, use: ['babel-loader', 'ts-loader'] },
+      { test: /\.js$/, use: 'babel-loader' },
     ],
   },
-  plugins: [
-    new DtsBundlePlugin(),
-  ],
 };
+
+module.exports = [
+  merge(config, {
+    name: 'es5',
+    target: 'node',
+    output: {
+      filename: 'ui-extension.js',
+      libraryTarget: 'umd',
+    },
+    plugins: [
+      new DtsBundlePlugin(),
+    ],
+  }),
+
+  merge(config, {
+    name: 'bundle',
+    target: 'web',
+    output: {
+      filename: 'ui-extension.min.js',
+      libraryTarget: 'window',
+    },
+    optimization: {
+      minimizer: [new UglifyJsPlugin({
+        sourceMap: true,
+        uglifyOptions: {
+          comments: false,
+          dead_code: false,
+          unused: false,
+          warnings: false
+        }
+      })],
+    },
+    devtool: 'source-map',
+  }),
+];
