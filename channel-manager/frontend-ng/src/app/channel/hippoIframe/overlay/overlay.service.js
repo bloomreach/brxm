@@ -520,10 +520,9 @@ class OverlayService {
     const height = rect.height;
 
     // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
     if (this.iframeWindow) {
-      left += this.iframeWindow.pageXOffset;
-      top += this.iframeWindow.pageYOffset;
+      left += this.iframeWindow.scrollX;
+      top += this.iframeWindow.scrollY;
     }
 
     return {
