@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.container.sitemapitemhandler;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 // note we do not need to account for concurrency since this is all controlled by the virtualhosts building
@@ -39,11 +40,12 @@ public class HstSiteMapItemHandlerRegistryImpl {
     }
 
     public void expungeStaleEntries() {
-        for (Map.Entry<String, WeakReference<HstSiteMapItemHandler>> entry : siteMapItemHandlersMap.entrySet()) {
+
+        siteMapItemHandlersMap.entrySet().stream().forEach(entry -> {
             if (entry.getValue().get() == null) {
-                // entry has been GC-ed
                 siteMapItemHandlersMap.remove(entry.getKey());
             }
-        }
+        });
+
     }
 }
