@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,6 +35,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -161,7 +163,9 @@ public class ParameterHistoryBehavior extends AbstractDefaultAjaxBehavior implem
     private void setPathWithAjax(final String path, final boolean replace) {
         final AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
         if (ajax != null) {
-            final String script = String.format("Hippo.ParameterHistory.setPath('%s', %s);", path, replace);
+            final String encoding = Application.get().getRequestCycleSettings().getResponseRequestEncoding();
+            final String encodedPath = UrlEncoder.QUERY_INSTANCE.encode(path, encoding);
+            final String script = String.format("Hippo.ParameterHistory.setPath('%s', %s);", encodedPath, replace);
             ajax.appendJavaScript(script);
         }
     }

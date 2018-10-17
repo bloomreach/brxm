@@ -150,7 +150,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
-          <include>**/*.ico</include>
+          <include>**/*.png</include>
           <include>**/*.js</include>
         </includes>
       </resource>
@@ -177,7 +177,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>install</commandlineArgs>
+              <commandlineArgs>ci</commandlineArgs>
             </configuration>
           </execution>
         </executions>
