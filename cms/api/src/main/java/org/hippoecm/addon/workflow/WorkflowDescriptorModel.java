@@ -18,6 +18,7 @@ package org.hippoecm.addon.workflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -33,6 +34,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -45,7 +47,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     private String id;
     private String category;
     private transient Workflow workflow;
-    private transient Map<String, Serializable> hints;
+    private transient Map<String, Map<String, Serializable>> hints;
 
     public WorkflowDescriptorModel(String category, Node subject) throws RepositoryException {
         init(category, subject);
@@ -118,19 +120,31 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     }
 
     public Map<String, Serializable> getHints() {
-        if (hints != null) {
-            return hints;
+        return getHints(BranchConstants.MASTER_BRANCH_ID);
+    }
+
+    public Map<String, Serializable> getHints(String branchId) {
+        if (hints == null){
+            hints = new HashMap<>();
         }
-        DocumentWorkflow workflow = getWorkflow();
-        if (workflow != null) {
-            try {
-                hints = workflow.hints();
-                return hints;
-            } catch (WorkflowException | RemoteException | RepositoryException e) {
-                log.error("Unable to retrieve workflow hints", e);
+        if (hints.get(branchId) == null) {
+            DocumentWorkflow workflow = getWorkflow();
+            if (workflow != null) {
+                try {
+                    if (workflow instanceof DocumentWorkflow) {
+                        DocumentWorkflow documentWorkflow = workflow;
+                        hints.put(branchId, documentWorkflow.hints(branchId));
+                    } else {
+                        hints.put(branchId, workflow.hints());
+                    }
+                } catch (WorkflowException | RemoteException | RepositoryException e) {
+                    log.error("Unable to retrieve workflow hints", e);
+                }
+            }
+            else{
+                hints.put(branchId, Collections.emptyMap());
             }
         }
-        hints = Collections.emptyMap();
-        return hints;
+        return hints.get(branchId);
     }
 }

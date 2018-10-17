@@ -145,6 +145,7 @@ public class BrowseServiceTest extends PluginTest {
                         "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document/document", "frontendtest:document",
                             "jcr:mixinTypes", "mix:versionable",
+                            "hippostd:state", "unpublished",
                             "a", "xxx",
                     "/test/content/folder", "hippostd:folder",
                         "jcr:mixinTypes", "mix:referenceable",
@@ -333,7 +334,8 @@ public class BrowseServiceTest extends PluginTest {
     public void switchToBrowseWhenDocumentIsNotInSearchResults() throws Exception {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
         otherHandle.addMixin("mix:referenceable");
-        Node otherDoc = otherHandle.addNode("doc", "hippo:document");
+        Node otherDoc = otherHandle.addNode("doc", "frontendtest:document");
+        otherDoc.setProperty("hippostd:state", "unpublished");
         otherDoc.addMixin("mix:referenceable");
         session.save();
 
@@ -347,7 +349,8 @@ public class BrowseServiceTest extends PluginTest {
     public void keepSearchingWhenDocumentIsInSearchResults() throws Exception {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
         otherHandle.addMixin("mix:referenceable");
-        Node otherDoc = otherHandle.addNode("doc", "hippo:document");
+        Node otherDoc = otherHandle.addNode("doc", "frontendtest:document");
+        otherDoc.setProperty("hippostd:state", "unpublished");
         otherDoc.addMixin("mix:referenceable");
         session.save();
 
