@@ -30,11 +30,6 @@ definitions:
       /en:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: String
-    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
-      jcr:primaryType: hipposys:resourcebundles
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Label (deprecated)
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Double:
       jcr:primaryType: hipposys:resourcebundles
       /en:
