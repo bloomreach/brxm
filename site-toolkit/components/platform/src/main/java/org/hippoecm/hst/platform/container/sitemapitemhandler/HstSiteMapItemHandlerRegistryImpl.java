@@ -16,14 +16,20 @@
 package org.hippoecm.hst.platform.container.sitemapitemhandler;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
-// note we do not need to account for concurrency since this is all controlled by the virtualhosts building
+/*
+ * note we do not need to account for concurrency since this is all controlled by the virtualhosts building which is
+ * single threaded (mutex makes sure for this)
+ */
+
 public class HstSiteMapItemHandlerRegistryImpl {
 
-    private final Map<String, WeakReference<HstSiteMapItemHandler>> siteMapItemHandlersMap = new HashMap<>();
+    final Map<String, WeakReference<HstSiteMapItemHandler>> siteMapItemHandlersMap = new HashMap<>();
 
     public HstSiteMapItemHandler getSiteMapItemHandler(final String handlerId) {
 
@@ -39,12 +45,15 @@ public class HstSiteMapItemHandlerRegistryImpl {
     }
 
     public void expungeStaleEntries() {
-
+        final List<String> toRemove = new ArrayList();
         siteMapItemHandlersMap.entrySet().stream().forEach(entry -> {
             if (entry.getValue().get() == null) {
-                siteMapItemHandlersMap.remove(entry.getKey());
+                toRemove.add(entry.getKey());
             }
         });
 
+        for (String key : toRemove) {
+            siteMapItemHandlersMap.remove(key);
+        }
     }
 }
