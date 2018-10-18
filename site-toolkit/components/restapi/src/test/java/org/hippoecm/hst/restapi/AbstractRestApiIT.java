@@ -105,7 +105,8 @@ public class AbstractRestApiIT {
     protected String[] getConfigurations() {
         String classXmlFileName = AbstractRestApiIT.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractRestApiIT.class.getName().replace(".", "/") + "-*.xml";
-        return new String[]{classXmlFileName, classXmlFileName2};
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
     protected ComponentManager getComponentManager() {
