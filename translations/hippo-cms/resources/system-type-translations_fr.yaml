@@ -16,10 +16,6 @@ definitions:
       /fr:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Nombre entier
-    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
-      /fr:
-        jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Étiquette
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /fr:
         jcr:primaryType: hipposys:resourcebundle
