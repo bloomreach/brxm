@@ -9,7 +9,8 @@ definitions:
           value: ['/hst:*/**']
         autoexport:injectresidualchildnodecategory:
           operation: add
-          value: ['/hst:*/**/hst:workspace/**[hst:containercomponent]: content',
+          value: ['/hst:platform/**: config',
+            '/hst:*/**/hst:workspace/**[hst:containercomponent]: content',
             '/hst:*/**/hst:workspace/**[hst:sitemenu]: content',
             '/hst:*/**/hst:workspace/hst:abstractpages: content',
             '/hst:*/**/hst:workspace/hst:channel: content',
