@@ -83,7 +83,7 @@ public abstract class AbstractComponentManagerTest {
         final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
         platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
         platformComponentManager = new SpringComponentManager(platformConfiguration);
-        platformComponentManager.setConfigurationResources(getConfigurations());
+        platformComponentManager.setConfigurationResources(getConfigurations(true));
         platformComponentManager.setServletContext(platformServletContext);
 
         platformComponentManager.setAddonModuleDefinitions(addonModuleDefinitions);
@@ -99,7 +99,7 @@ public abstract class AbstractComponentManagerTest {
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.setProperty("hst.configuration.rootPath", "/hst:hst");
         siteComponentManager = new SpringComponentManager(configuration);
-        siteComponentManager.setConfigurationResources(getConfigurations());
+        siteComponentManager.setConfigurationResources(getConfigurations(false));
 
         HippoWebappContextRegistry.get().register(siteWebappContext);
         siteComponentManager.setServletContext(siteWebappContext.getServletContext());
@@ -132,5 +132,5 @@ public abstract class AbstractComponentManagerTest {
         ModifiableRequestContextProvider.clear();
     }
 
-    abstract protected String[] getConfigurations();
+    abstract protected String[] getConfigurations(boolean platform);
 }

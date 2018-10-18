@@ -75,10 +75,15 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
     }
 
 
-    protected String[] getConfigurations() {
+    protected String[] getConfigurations(final boolean platform) {
         String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
-        return new String[]{classXmlFileName, classXmlFileName2};
+        if (!platform) {
+            return new String[]{classXmlFileName, classXmlFileName2};
+        }
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
     protected Session createSession(final String userName, final String password) throws RepositoryException {

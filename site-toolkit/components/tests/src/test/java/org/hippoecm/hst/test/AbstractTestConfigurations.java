@@ -27,10 +27,16 @@ import org.hippoecm.repository.util.JcrUtils;
 public class AbstractTestConfigurations extends AbstractSpringTestCase {
 
     @Override
-    protected String[] getConfigurations() {
+    protected String[] getConfigurations(final boolean platform) {
         String classXmlFileName = AbstractTestConfigurations.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractTestConfigurations.class.getName().replace(".", "/") + "-*.xml";
-        return new String[] { classXmlFileName, classXmlFileName2 };
+
+        if (!platform) {
+            return new String[]{classXmlFileName, classXmlFileName2};
+        }
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
 

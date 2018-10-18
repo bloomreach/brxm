@@ -123,10 +123,16 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
     }
 
-    protected String[] getConfigurations() {
+    protected String[] getConfigurations(final boolean platform) {
         String classXmlFileName = AbstractPageComposerTest.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractPageComposerTest.class.getName().replace(".", "/") + "-*.xml";
-        return new String[] { classXmlFileName, classXmlFileName2 };
+
+        if (!platform) {
+            return new String[]{classXmlFileName, classXmlFileName2};
+        }
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
 
     protected Session createSession() throws RepositoryException {

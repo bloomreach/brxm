@@ -116,7 +116,7 @@ public abstract class AbstractSpringTestCase
         final Configuration containerConfiguration = getContainerConfiguration();
         containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
         componentManager = new SpringComponentManager(containerConfiguration);
-        componentManager.setConfigurationResources(getConfigurations());
+        componentManager.setConfigurationResources(getConfigurations(true));
 
         HippoWebappContextRegistry.get().register(webappContext);
 
@@ -152,10 +152,16 @@ public abstract class AbstractSpringTestCase
      * required specification of spring configurations
      * the derived class can override this.
      */
-    protected String[] getConfigurations() {
+    protected String[] getConfigurations(final boolean platform) {
         String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
-        return new String[] { classXmlFileName, classXmlFileName2 };
+
+        if (!platform) {
+            return new String[]{classXmlFileName, classXmlFileName2};
+        }
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
     
     protected ComponentManager getComponentManager() {

@@ -30,9 +30,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
  * <p>
@@ -47,6 +51,12 @@ public abstract class AbstractJaxrsSpringTestCase
     
     protected SpringComponentManager componentManager;
 
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
@@ -55,6 +65,8 @@ public abstract class AbstractJaxrsSpringTestCase
 
     @Before
     public void setUp() throws Exception {
+        HippoWebappContextRegistry.get().register(webappContext);
+
         final Configuration containerConfiguration = getContainerConfiguration();
         containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:hst");
         componentManager = new SpringComponentManager(containerConfiguration);
@@ -62,6 +74,7 @@ public abstract class AbstractJaxrsSpringTestCase
 
         final MockServletContext servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
+
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (!addonModuleDefinitions.isEmpty()) {
             componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
@@ -78,6 +91,7 @@ public abstract class AbstractJaxrsSpringTestCase
 
     @After
     public void tearDown() throws Exception {
+        HippoWebappContextRegistry.get().unregister(webappContext);
         this.componentManager.stop();
         this.componentManager.close();
         ModifiableRequestContextProvider.clear();

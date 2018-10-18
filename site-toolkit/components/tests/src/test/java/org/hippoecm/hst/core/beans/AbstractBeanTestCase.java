@@ -93,7 +93,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
             final Configuration containerConfiguration = getContainerConfiguration();
             containerConfiguration.addProperty("hst.configuration.rootPath", "/hst:site2");
             componentManager2 = new SpringComponentManager(containerConfiguration);
-            componentManager2.setConfigurationResources(getConfigurations());
+            componentManager2.setConfigurationResources(getConfigurations(false));
             componentManager2.setServletContext(AbstractBeanTestCase.this.servletContext2);
             componentManager2.initialize();
             componentManager2.start();
