@@ -19,30 +19,50 @@ import java.util.HashSet;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
 
+    private VirtualHost virtualHost;
+    private VirtualHosts virtualHosts;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        virtualHost = createNiceMock(VirtualHost.class);
+        virtualHosts = createNiceMock(VirtualHosts.class);
+        expect(virtualHost.getVirtualHosts()).andStubReturn(virtualHosts);
+        expect(virtualHosts.getComponentRegistry()).andStubReturn(new HstComponentRegistryImpl());
+        replay(virtualHost, virtualHosts);
+    }
+
     @Test
     public void testComponentInstances() {
 
         Mount mount1 = createNiceMock(Mount.class);
         expect(mount1.getIdentifier()).andReturn("cafe-babe").anyTimes();
+        expect(mount1.getVirtualHost()).andStubReturn(virtualHost);
 
         Mount mount2 = createNiceMock(Mount.class);
         // same identifier as mount1 on purpose!
         expect(mount2.getIdentifier()).andReturn("cafe-babe").anyTimes();
+        expect(mount2.getVirtualHost()).andStubReturn(virtualHost);
 
         ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
         expect(resolvedMount.getMount()).andReturn(mount1).anyTimes();
@@ -81,6 +101,7 @@ public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
 
         Mount mount1 = createNiceMock(Mount.class);
         expect(mount1.getIdentifier()).andReturn("cafe-babe").anyTimes();
+        expect(mount1.getVirtualHost()).andStubReturn(virtualHost);
 
         ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
         expect(resolvedMount.getMount()).andReturn(mount1).anyTimes();
