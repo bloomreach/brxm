@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl;
@@ -654,17 +655,19 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
-            Response response = mountResource.publish();
+            try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().trap(AbstractConfigResource.class).deny().build()) {
+                Response response = mountResource.publish();
 
-            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-            assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
-            // session contains not more changes as should be reset
-            assertFalse(session.hasPendingChanges());
+                assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-            // locks should still be present since publication failed
-            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+                assertEquals("IllegalStateException message", ((ExtResponseRepresentation) response.getEntity()).getMessage());
+                // session contains not more changes as should be reset
+                assertFalse(session.hasPendingChanges());
 
+                // locks should still be present since publication failed
+                assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+            }
         } finally {
             unregisterChannelEventListener(listener);
         }
