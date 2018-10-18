@@ -478,10 +478,6 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
-//        //TODO SS: Clarify what could be the cause of failures without delay
-//        try {
-//            Thread.sleep(100);
-//        } catch (InterruptedException ex) {}
     }
 
     @Test
