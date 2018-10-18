@@ -31,6 +31,8 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
+import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
@@ -88,7 +90,6 @@ public class HstModelImpl implements PlatformHstModel {
     private InvalidationMonitor invalidationMonitor;
     private final HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry = new HstSiteMapItemHandlerRegistryImpl();
 
-
     public HstModelImpl(final Session session,
                         final ServletContext servletContext,
                         final ComponentManager websiteComponentManager,
@@ -134,14 +135,29 @@ public class HstModelImpl implements PlatformHstModel {
     public void destroy() throws RepositoryException {
 
         final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
-        hstSiteMapItemHandlerFactories.unregister(websiteServletContext.getContextPath());
+        if (hstSiteMapItemHandlerFactories != null) {
+            // platform webapp could already have been destroyed (in integration tests for example)
+            hstSiteMapItemHandlerFactories.unregister(websiteServletContext.getContextPath());
+        }
 
         invalidationMonitor.destroy();
         session.logout();
     }
 
     public synchronized void invalidate() {
+
+        if (virtualHosts == null) {
+            return;
+        }
+
+        final HstComponentRegistryImpl oldComponentRegistry = (HstComponentRegistryImpl)virtualHosts.getComponentRegistry();
         virtualHosts = null;
+
+        // Note there is a time window that there are currently running requests registering again components in the
+        // oldComponentRegistry : That is why in the CleanupValve we invoke componentRegistry.unregisterAllComponents()
+        // again in case the registry is awaiting termination
+        oldComponentRegistry.unregisterAllComponents();
+        oldComponentRegistry.setAwaitingTermination(true);
     }
 
     @Override
@@ -172,8 +188,13 @@ public class HstModelImpl implements PlatformHstModel {
                         websiteContainerConfiguration,
                         hstNodeLoadingCache,
                         hstConfigurationLoadingCache);
+
+                final HstComponentRegistry hstComponentRegistry = new HstComponentRegistryImpl();
+
                 virtualHosts.setHstFilterPrefixExclusions(hstFilterPrefixExclusions);
                 virtualHosts.setHstFilterSuffixExclusions(hstFilterSuffixExclusions);
+                virtualHosts.setComponentRegistry(hstComponentRegistry);
+
                 augment(virtualHosts);
 
                 this.virtualHosts = virtualHosts;

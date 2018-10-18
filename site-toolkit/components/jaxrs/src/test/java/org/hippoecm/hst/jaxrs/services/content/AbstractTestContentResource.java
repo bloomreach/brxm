@@ -52,6 +52,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
+import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
@@ -117,7 +118,8 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         List<Mount> mountsForHostGroup = Collections.emptyList();
         virtualHosts = EasyMock.createNiceMock(VirtualHosts.class);
         EasyMock.expect(virtualHosts.getMountsByHostGroup(hostGroupName)).andReturn(mountsForHostGroup).anyTimes();
-        
+        EasyMock.expect(virtualHosts.getComponentRegistry()).andStubReturn(new HstComponentRegistryImpl());
+
         virtualHost = EasyMock.createNiceMock(VirtualHost.class);
         EasyMock.expect(virtualHost.getHostName()).andReturn("localhost").anyTimes();
         EasyMock.expect(virtualHost.getHostGroupName()).andReturn(hostGroupName).anyTimes();

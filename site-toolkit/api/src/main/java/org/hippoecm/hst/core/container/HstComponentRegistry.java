@@ -70,5 +70,12 @@ public interface HstComponentRegistry {
      * Unregisters all the HstComponents.
      */
     void unregisterAllComponents();
-    
+
+    /**
+     * @return {@code true} if this {@link HstComponentRegistry} is waiting for termination. Note that the registry
+     * functions as normal when this returns {@code true}. This method should return {@link true} if the backing
+     * {@link org.hippoecm.hst.configuration.hosting.VirtualHosts} model is belongs too is invalidated and is about
+     * to be garbage collected
+     */
+    boolean isAwaitingTermination();
 }

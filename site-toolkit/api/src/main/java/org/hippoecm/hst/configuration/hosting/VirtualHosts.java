@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.onehippo.cms7.services.hst.Channel;
@@ -295,4 +296,9 @@ public interface VirtualHosts {
     List<HstPropertyDefinition> getPropertyDefinitions(String hostGroup, String channelId);
 
 
+    /**
+     * meant for internal platform usage only!
+     * @return {@link HstComponentRegistry}, meant for internal platform usage only!
+     */
+    HstComponentRegistry getComponentRegistry();
 }

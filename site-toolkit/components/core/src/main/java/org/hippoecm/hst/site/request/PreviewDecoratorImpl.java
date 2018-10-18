@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -776,6 +777,11 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public List<HstPropertyDefinition> getPropertyDefinitions(final String hostGroup, final String channelId) {
             return delegatee.getPropertyDefinitions(hostGroup, channelId);
+        }
+
+        @Override
+        public HstComponentRegistry getComponentRegistry() {
+            return delegatee.getComponentRegistry();
         }
     }
 

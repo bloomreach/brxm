@@ -26,7 +26,6 @@
   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <property name="hstModelProvider" ref="org.hippoecm.hst.platform.HstModelProvider"/>
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
-    <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
     <property name="pageCache" ref="pageCache"/>
     <property name="clearPageCacheAfterModelLoad" value="${pageCache.clearOnHstConfigChange}"/>
     <property name="hstFilterPrefixExclusions">

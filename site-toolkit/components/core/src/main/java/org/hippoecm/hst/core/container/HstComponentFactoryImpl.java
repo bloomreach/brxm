@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,15 +30,10 @@ import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
  */
 public class HstComponentFactoryImpl implements HstComponentFactory, ComponentManagerAware {
 
-    protected HstComponentRegistry componentRegistry;
     protected Class<?> defaultHstComponentClass = GenericHstComponent.class;
     protected String defaultHstComponentClassName = GenericHstComponent.class.getName();
 
     private ComponentManager componentManager;
-
-    public HstComponentFactoryImpl(HstComponentRegistry componentRegistry) {
-        this.componentRegistry = componentRegistry;
-    }
 
     @Override
     public void setComponentManager(ComponentManager componentManager) {
@@ -60,7 +55,9 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
     
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
         String componentId = getComponentId(compConfig, mount);
-        HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
+
+        final  HstComponentRegistry componentRegistry = mount.getVirtualHost().getVirtualHosts().getComponentRegistry();
+        HstComponent component = componentRegistry.getComponent(requestContainerConfig, componentId);
 
         if (component == null) {
             String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
@@ -87,18 +84,18 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
 
             } catch (ClassNotFoundException e) {
                 HstComponentException exc = new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
-                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw  exc;
             } catch (InstantiationException e) {
                 HstComponentException exc = new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
-                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw exc;
             } catch (IllegalAccessException e) {
                 HstComponentException exc = new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
-                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
                 throw exc;
             }
-            this.componentRegistry.registerComponent(requestContainerConfig, componentId, component);
+            componentRegistry.registerComponent(requestContainerConfig, componentId, component);
         }
 
         if (component instanceof FailedComponent) {
@@ -110,6 +107,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
     
     public HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
         String componentId = getComponentId(compConfig, mount);
+        final  HstComponentRegistry componentRegistry = mount.getVirtualHost().getVirtualHosts().getComponentRegistry();
         return componentRegistry.getComponentMetadata(requestContainerConfig, componentId);
     }
 

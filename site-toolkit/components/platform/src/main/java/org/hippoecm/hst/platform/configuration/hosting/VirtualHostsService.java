@@ -32,6 +32,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
@@ -175,6 +176,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private boolean bluePrintsPrototypeChecked;
     private String[] hstFilterPrefixExclusions;
     private String[] hstFilterSuffixExclusions;
+
+    private HstComponentRegistry componentRegistry;
 
     public VirtualHostsService(final String contextPath, final ContainerConfiguration websiteContainerConfiguration, final HstNodeLoadingCache hstNodeLoadingCache,
                                final HstConfigurationLoadingCache hstConfigurationLoadingCache) {
@@ -944,6 +947,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
          return getPropertyDefinitions(getChannelById(hostGroup, channelId));
     }
 
+    @Override
+    public HstComponentRegistry getComponentRegistry() {
+        return componentRegistry;
+    }
+
+    public void setComponentRegistry(final HstComponentRegistry hstComponentRegistry) {
+        this.componentRegistry = hstComponentRegistry;
+    }
 
     private void loadBlueprints(final HstNode rootConfigNode) {
         HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
@@ -1011,6 +1022,5 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         return null;
     }
-
 
 }
