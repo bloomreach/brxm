@@ -105,12 +105,14 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        modelRegistry.unregisterHstModel(webappContext2.getServletContext().getContextPath());
         if (componentManager2 != null) {
             this.componentManager2.stop();
             this.componentManager2.close();
         }
         HippoWebappContextRegistry.get().unregister(webappContext2);
+        super.tearDown();
     }
 
     protected ObjectConverter getObjectConverter() {
