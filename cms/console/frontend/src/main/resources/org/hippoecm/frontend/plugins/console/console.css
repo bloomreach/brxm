@@ -462,7 +462,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 6px 2px 8px;
   height: 20px;
   width: 42px;
-  background: white url('hippo-logo.svg') no-repeat scroll 0 0/50px 46px;
+  background: white url('bloomreach-logo.svg') no-repeat scroll 0 2px/30px 30px;
+  opacity: 0.8;
 }
 
 .hippo-console-menu-buttons button {
