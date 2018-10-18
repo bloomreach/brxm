@@ -1,10 +1,10 @@
-# Hippo Essentials
-Hippo Essentials is for developers who want to setup a new [Hippo CMS](https://www.onehippo.org) project. It enables
+# BloomReach Essentials
+BloomReach Essentials is for developers who want to setup a new [BloomReach CMS](https://www.onehippo.org) project. It enables
 them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise
-or community plugins from the Hippo Marketplace.
+or community plugins.
 
 ```
-Please use the Hippo Essentials feedback form to inform us if you encounter any bugs/glitches or if you have any
+Please use the BloomReach Essentials feedback form to inform us if you encounter any bugs/glitches or if you have any
 suggestions for improvements.
 ```
 
@@ -12,7 +12,7 @@ suggestions for improvements.
 
 ## Code checkout
 
-To get started with the Hippo Essentials, checkout the code. You have two options to check out
+To get started with the BloomReach Essentials, checkout the code. You have two options to check out
 the project. The example commands below use the potentially unstable trunk snapshot. Consider
 using a tag instead.
 
@@ -44,10 +44,8 @@ cd hippo-project-archetype
 mvn clean install
 ```
 
-### Generate a new Hippo project from the archetype (use appropriate archetype version):
-```shell
-mvn archetype:generate -D "archetypeGroupId=org.onehippo.cms7" -D "archetypeArtifactId=hippo-project-archetype" -D "archetypeVersion=[archetype version]"
-```
+### Generate a new BloomReach project from the archetype:
+See the [Getting Started](https://www.onehippo.org/trails/getting-started/hippo-essentials-getting-started.html) page.
 
 ##Running locally
 
@@ -63,7 +61,7 @@ mvn -P cargo.run -Drepo.path=storage
 The following URLs are available from this project:
 
  * CMS at http://localhost:8080/cms
- * Website at http://localhost:8080/site
+ * Website at http://localhost:8080/myhippoproject
  * Essentials dashboard at http://localhost:8080/essentials
 
 Logs are located in `target/tomcat8x/logs`
@@ -110,13 +108,13 @@ mvn cargo:redeploy (or cargo:undeploy, or cargo:deploy)
 
 ##Automatic Export
 
-Essentials depends on the automatic export feature being enabled, which is the archetype-generated Hippo
+Essentials depends on the automatic export feature being enabled, which is the archetype-generated BloomReach
 project's default setting. You can change the setting temporarily in the upper right corner in the CMS,
 or permanently in your project's file
 `./repository-data/config/src/main/resources/configuration/modules/autoexport-module.xml`
 
 ##Copyright and license
 
-Copyright 2013-2016 Hippo B.V.
+Copyright 2013-2016 BloomReach B.V.
 Distributed under the [Apache 2.0 license](https://code.onehippo.org/cms-community/hippo-essentials/blob/master/LICENSE).
 
