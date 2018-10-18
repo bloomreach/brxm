@@ -88,6 +88,7 @@ public class HstSiteService implements HstSite {
                    final boolean isPreviewSite) throws ModelLoadingException {
 
         // TODO HSTTWO-4355 this is now a platform mutex which is allowed but do we want this?
+        // TODO NOTE THAT WE DO NEED TO SYNC still on a mutex for model loading!! PER WEBAPP HOWEVER perhaps?
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
 
         this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
