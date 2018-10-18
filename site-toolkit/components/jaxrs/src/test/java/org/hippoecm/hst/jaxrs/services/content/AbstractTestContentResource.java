@@ -88,7 +88,10 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected HstLinkCreator linkCreator;
     
     protected String[] getConfigurations() {
-        return new String[] { "org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml" };
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { "org/hippoecm/hst/jaxrs/services/content/TestContentServices.xml", classXmlFileNamePlatform };
+
     }
     
     @Before

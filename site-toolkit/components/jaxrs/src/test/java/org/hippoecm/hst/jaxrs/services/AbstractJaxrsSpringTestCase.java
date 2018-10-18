@@ -105,7 +105,9 @@ public abstract class AbstractJaxrsSpringTestCase
     protected String[] getConfigurations() {
         String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
-        return new String[] { classXmlFileName, classXmlFileName2 };
+
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] { classXmlFileName, classXmlFileName2, classXmlFileNamePlatform };
     }
     
     protected ComponentManager getComponentManager() {
