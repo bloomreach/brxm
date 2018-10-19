@@ -46,6 +46,10 @@ describe('EditContentToolsCtrl', () => {
     });
   });
 
+  it('always allows exiting the ui-router state when switch to content editor has not been clicked', () => {
+    expect($ctrl.uiCanExit()).toBe(true);
+  });
+
   it('disables buttons when the content editor error says so', () => {
     ContentEditor.getError.and.returnValue({
       disableContentButtons: true,

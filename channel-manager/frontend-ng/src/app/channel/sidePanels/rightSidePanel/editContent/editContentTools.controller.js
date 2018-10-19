@@ -42,13 +42,20 @@ class EditContentToolsCtrl {
 
   openContentEditor() {
     this.publicationStateOnExit = this.ContentEditor.getPublicationState();
+    this.exitToContentEditor = true;
     this.EditContentService.stopEditing();
   }
 
   uiCanExit() {
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
-      .then(() => this.ContentEditor.discardChanges())
-      .then(() => this._viewContent());
+    if (this.exitToContentEditor) {
+      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
+        .then(() => this.ContentEditor.discardChanges())
+        .then(() => this._viewContent())
+        .finally(this._clear());
+    }
+    // yes, the UI can exit. Return something to make ESLint happy.
+    this._clear();
+    return true;
   }
 
   _viewContent() {
@@ -56,6 +63,10 @@ class EditContentToolsCtrl {
     this.ContentEditor.close();
     const statisticEventName = this._getPublicationStateValue(REPORT_USAGE_STATISTIC_EVENT_NAMES, this.publicationStateOnExit);
     this.CmsService.reportUsageStatistic(statisticEventName);
+  }
+
+  _clear() {
+    delete this.exitToContentEditor;
   }
 }
 
