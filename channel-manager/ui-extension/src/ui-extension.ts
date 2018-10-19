@@ -14,7 +14,7 @@ export default class UiExtension {
       throw new Error('No callback function provided');
     }
 
-    const parentOrigin = new URL(window.location.href).searchParams.get('br.parentOrigin');
+    const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
     const connection = Penpal.connectToParent({
       parentOrigin,
     });
