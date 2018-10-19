@@ -29,6 +29,9 @@ function editComponentConfig($stateProvider) {
       tools: {
         component: 'editComponentTools',
       },
+      icon: {
+        template: '', // no icon
+      },
     },
   });
 }

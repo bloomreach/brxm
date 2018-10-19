@@ -30,6 +30,9 @@ function config($stateProvider) {
       tools: {
         template: '', // no tools
       },
+      icon: {
+        template: '', // no icon
+      },
       main: {
         controller: 'step1Ctrl',
         controllerAs: '$ctrl',
@@ -50,6 +53,9 @@ function config($stateProvider) {
     views: {
       tools: {
         template: '', // no tools
+      },
+      icon: {
+        template: '', // no icon
       },
       main: {
         controller: 'step2Ctrl',

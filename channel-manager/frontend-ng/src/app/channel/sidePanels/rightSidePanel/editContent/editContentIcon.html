@@ -13,10 +13,9 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<md-button class="md-icon-button qa-edit-in-content-perspective"
-           aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
-           ng-disabled="$ctrl.isDisabled()"
-           ng-click="$ctrl.openContentEditor()"
-           title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
-  <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-</md-button>
+
+<md-icon class="qa-status-icon" 
+         md-font-icon="{{ $ctrl.getPublicationIconName() }}"
+         aria-label="{{ $ctrl.getPublicationIconTooltip() | translate }}"
+         title="{{ $ctrl.getPublicationIconTooltip() | translate }}">
+</md-icon>

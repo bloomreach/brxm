@@ -17,6 +17,7 @@
 import config from './editContent.config';
 import addToProjectCtrl from './addToProject/addToProject.controller';
 import editContentService from './editContent.service';
+import editContentIconCtrl from './editContentIcon.controller';
 import editContentMainCtrl from './editContentMain.controller';
 import editContentToolsCtrl from './editContentTools.controller';
 
@@ -25,6 +26,7 @@ const editContentModule = angular
   .config(config)
   .service('EditContentService', editContentService)
   .controller('addToProjectCtrl', addToProjectCtrl)
+  .controller('editContentIconCtrl', editContentIconCtrl)
   .controller('editContentMainCtrl', editContentMainCtrl)
   .controller('editContentToolsCtrl', editContentToolsCtrl);
 
