@@ -38,7 +38,10 @@ public interface DocumentService {
      */
     List<ChannelDocument> getChannels(Session userSession, String hostGroup, String uuid);
 
-    // TODO
+    /**
+     * @return See {@link #getChannels(Session, String, String)} only if available, use the branched Hst configuration
+     * for branch {@code branchId}
+     */
     List<ChannelDocument> getChannels(Session userSession, String hostGroup, String uuid, String branchId);
 
     /**

@@ -39,6 +39,9 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
+
 public class DocumentServiceImpl implements DocumentService  {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentServiceImpl.class);
@@ -114,7 +117,19 @@ public class DocumentServiceImpl implements DocumentService  {
 
     @Override
     public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid, final String branchId) {
-        log.error("TODO TODO TODO");
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            log.error("#getChannels invoked with a branchId should always originate from a real http request having an " +
+                    "HstRequestContext on a ThreadLocal. RequestContext is missing, return #getChannels ignoring " +
+                    "branchId '{}'", branchId);
+        } else if (!MASTER_BRANCH_ID.equals(branchId)) {
+            // Admittedly, very OPAQUE below but this can be used to find for a specific branch the right channel
+            // documents (this RENDER_BRANCH_ID attribute is used in downstream projects to select the right HstSite
+            // from CompositeHstSiteImpl)
+            requestContext.setAttribute(RENDER_BRANCH_ID, branchId);
+        }
         return getChannels(userSession, hostGroup, uuid);
     }
 
