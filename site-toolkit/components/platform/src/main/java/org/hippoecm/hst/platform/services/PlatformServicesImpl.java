@@ -63,6 +63,6 @@ public class PlatformServicesImpl implements PlatformServices
 
     @Override
     public DocumentService getDocumentService() {
-        return new DocumentServiceImpl(hstModelRegistry);
+        return new DocumentServiceImpl(hstModelRegistry, previewDecorator);
     }
 }

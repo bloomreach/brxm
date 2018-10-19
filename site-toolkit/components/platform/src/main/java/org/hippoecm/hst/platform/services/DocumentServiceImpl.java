@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.linking.CompositeHstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -47,12 +48,14 @@ public class DocumentServiceImpl implements DocumentService  {
     private static final Logger log = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
     private HstModelRegistryImpl hstModelRegistry;
+    private final PreviewDecorator previewDecorator;
 
-    public DocumentServiceImpl(final HstModelRegistryImpl hstModelRegistry) {
+    public DocumentServiceImpl(final HstModelRegistryImpl hstModelRegistry, final PreviewDecorator previewDecorator) {
         this.hstModelRegistry = hstModelRegistry;
+        this.previewDecorator = previewDecorator;
     }
 
-    public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid) {
+    public List<ChannelDocument> getPreviewChannels(final Session userSession, final String hostGroup, final String uuid) {
 
         final List<ChannelDocument> channelDocuments = new ArrayList<>();
 
@@ -65,6 +68,8 @@ public class DocumentServiceImpl implements DocumentService  {
 
             final Optional<Mount> mountCandidate = hstModel.getVirtualHosts().getMountsByHostGroup(hostGroup).stream().findFirst();
             mountCandidate.ifPresent(mount -> {
+
+                final Mount previewMount = previewDecorator.decorateMountAsPreview(mount);
                 HstLinkCreator hstLinkCreator = hstModel.getHstLinkCreator();
 
                 if (hstLinkCreator instanceof CompositeHstLinkCreator) {
@@ -73,7 +78,7 @@ public class DocumentServiceImpl implements DocumentService  {
                     hstLinkCreator = ((CompositeHstLinkCreator)hstLinkCreator).getLocalHstLinkCreator();
                 }
 
-                List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, mount, null, hostGroup);
+                List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, previewMount, null, hostGroup);
 
                 for (HstLink link : canonicalLinks) {
                     final Mount linkMount = link.getMount();
@@ -116,7 +121,7 @@ public class DocumentServiceImpl implements DocumentService  {
     }
 
     @Override
-    public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid, final String branchId) {
+    public List<ChannelDocument> getPreviewChannels(final Session userSession, final String hostGroup, final String uuid, final String branchId) {
 
         final HstRequestContext requestContext = RequestContextProvider.get();
 
@@ -130,7 +135,7 @@ public class DocumentServiceImpl implements DocumentService  {
             // from CompositeHstSiteImpl)
             requestContext.setAttribute(RENDER_BRANCH_ID, branchId);
         }
-        return getChannels(userSession, hostGroup, uuid);
+        return getPreviewChannels(userSession, hostGroup, uuid);
     }
 
     public String getUrl(final Session userSession, final String hostGroup, final String uuid, final String type) {

@@ -36,13 +36,13 @@ public interface DocumentService {
      * or an empty list if the identifier is unknown or the document is not part of any channel.
      *
      */
-    List<ChannelDocument> getChannels(Session userSession, String hostGroup, String uuid);
+    List<ChannelDocument> getPreviewChannels(Session userSession, String hostGroup, String uuid);
 
     /**
-     * @return See {@link #getChannels(Session, String, String)} only if available, use the branched Hst configuration
+     * @return See {@link #getPreviewChannels(Session, String, String)} only if available, use the branched Hst configuration
      * for branch {@code branchId}
      */
-    List<ChannelDocument> getChannels(Session userSession, String hostGroup, String uuid, String branchId);
+    List<ChannelDocument> getPreviewChannels(Session userSession, String hostGroup, String uuid, String branchId);
 
     /**
      * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
