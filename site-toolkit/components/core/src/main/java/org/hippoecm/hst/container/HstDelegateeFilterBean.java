@@ -593,30 +593,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return false;
     }
 
-    /*
-     * we do never allow a stale model for cms sso logged in users as they need to see changes directly in the
-     * channel manager
-     */
-    // TODO remove, not supported any more
-    private boolean isStaleConfigurationAllowedForRequest(final HttpServletRequest request, String hostName) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            int index = hostName.indexOf(":");
-            if (index > -1) {
-                hostName = hostName.substring(0, index);
-            }
-            if ("127.0.0.1".equals(hostName)) {
-                // internal cms rest proxy call, see SpringComponentManager-cmsrest.xml
-                return false;
-            }
-            return true;
-        }
-        if (CmsSessionContext.getContext(session) != null) {
-            return false;
-        }
-        return true;
-    }
-
     // returns true if the request comes from cms
     private boolean requestComesFromCms(VirtualHosts vHosts, ResolvedMount resolvedMount) {
         if(vHosts.getCmsPreviewPrefix() == null || "".equals(vHosts.getCmsPreviewPrefix())) {
@@ -794,25 +770,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
         }
 
-//        List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
-//        for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
-//           HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
-//            log.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
-//           try {
-//               if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
-//                   newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
-//               } else {
-//                   newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
-//               }
-//               if(newResolvedSiteMapItem == null) {
-//                   log.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
-//                   return null;
-//               }
-//           } catch (HstSiteMapItemHandlerException e){
-//               log.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
-//               throw e;
-//           }
-//        }
         return newResolvedSiteMapItem;
     }
 
