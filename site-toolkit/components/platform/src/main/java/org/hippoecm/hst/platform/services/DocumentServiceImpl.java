@@ -119,6 +119,12 @@ public class DocumentServiceImpl implements DocumentService  {
         return channelDocuments;
     }
 
+    @Override
+    public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid, final String branchId) {
+        log.error("TODO TODO TODO");
+        return getChannels(userSession, hostGroup, uuid);
+    }
+
     public String getUrl(final Session userSession, final String hostGroup, final String uuid, final String type) {
 
         // TODO HSTTWO-4359 toUrlForm requires HstRequestContext but we do not have one....what to do?
