@@ -158,12 +158,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         try {
 
-            // HSTTWO-4473 TODO enable 'branchId' to be sent with the #getChannels
-//            channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
-//                    .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid, branchId);
-
             channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
-                    .getDocumentService().getChannels(getUserJcrSession(), getHostGroup(), documentUuid);
+                    .getDocumentService().getPreviewChannels(getUserJcrSession(), getHostGroup(), documentUuid, branchId);
         } catch (IllegalStateException e) {
             log.info("Cannot get channels for document: {}", e.getMessage());
             channelDocuments = new ArrayList<>();
