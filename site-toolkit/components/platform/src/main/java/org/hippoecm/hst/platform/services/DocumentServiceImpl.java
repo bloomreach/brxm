@@ -135,10 +135,16 @@ public class DocumentServiceImpl implements DocumentService  {
 
     public String getUrl(final Session userSession, final String hostGroup, final String uuid, final String type) {
 
-        // TODO HSTTWO-4359 toUrlForm requires HstRequestContext but we do not have one....what to do?
-        HstRequestContext requestContext = RequestContextProvider.get();
+        final HstRequestContext requestContext = RequestContextProvider.get();
 
-        HstLink bestLink = getBestLink(userSession, hostGroup, uuid, type);
+        if (requestContext == null) {
+            log.error("#getUrl invoked without HstRequestContext but should always originate from a real http request " +
+                    "having an HstRequestContext on a ThreadLocal. RequestContext is missing, return empty");
+            return StringUtils.EMPTY;
+        }
+
+
+        final HstLink bestLink = getBestLink(userSession, hostGroup, uuid, type);
         if (bestLink == null) {
             return StringUtils.EMPTY;
         }
