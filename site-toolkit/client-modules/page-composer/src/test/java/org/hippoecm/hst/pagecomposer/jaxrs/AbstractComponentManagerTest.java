@@ -65,26 +65,14 @@ public abstract class AbstractComponentManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        MockServletContext platformServletContext = new MockServletContext() {
-            public String getContextPath() {
-                return PLATFORM_CONTEXT_PATH;
-            }
-
-            public ClassLoader getClassLoader() {
-                return AbstractFullRequestCycleTest.class.getClassLoader();
-            }
-        };
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
 
         HippoWebappContextRegistry.get().register(platformWebappContext);
-        platformServletContext.setContextPath(PLATFORM_CONTEXT_PATH);
 
-        final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
-        platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
-        platformComponentManager = new SpringComponentManager(platformConfiguration);
+        platformComponentManager = new SpringComponentManager(new PropertiesConfiguration());
         platformComponentManager.setConfigurationResources(getConfigurations(true));
-        platformComponentManager.setServletContext(platformServletContext);
+        platformComponentManager.setServletContext(platformWebappContext.getServletContext());
 
         platformComponentManager.setAddonModuleDefinitions(addonModuleDefinitions);
 
@@ -94,7 +82,7 @@ public abstract class AbstractComponentManagerTest {
         HstServices.setComponentManager(platformComponentManager);
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel(platformServletContext, platformComponentManager, true);
+        modelRegistry.registerHstModel(platformWebappContext.getServletContext(), platformComponentManager, true);
 
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.setProperty("hst.configuration.rootPath", "/hst:hst");

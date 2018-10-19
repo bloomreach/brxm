@@ -683,16 +683,18 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
-            Response response = mountResource.discardChanges();
+            try (Log4jInterceptor ignore = Log4jInterceptor.onWarn().trap(AbstractConfigResource.class).build()) {
+                Response response = mountResource.discardChanges();
+                assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+                assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
-            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-            assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
+                // session contains not more changes as should be reset
+                assertFalse(session.hasPendingChanges());
 
-            // session contains not more changes as should be reset
-            assertFalse(session.hasPendingChanges());
+                // locks should still be present since discard failed
+                assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
+            }
 
-            // locks should still be present since discard failed
-            assertTrue(lockForPresentBelow(session, mountResource.getPageComposerContextService().getEditingPreviewSite().getConfigurationPath()));
 
         } finally {
             unregisterChannelEventListener(listener);
