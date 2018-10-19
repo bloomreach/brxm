@@ -16,9 +16,9 @@
 package org.hippoecm.hst.platform.container.site;
 
 
-import org.hippoecm.hst.configuration.site.CompositeHstSite;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.site.HstSiteProvider;
+import org.hippoecm.hst.container.site.HstSiteProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 public class DelegatingHstSiteProvider  {

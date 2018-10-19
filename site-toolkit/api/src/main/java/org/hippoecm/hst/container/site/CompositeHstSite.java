@@ -13,14 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.site;
+package org.hippoecm.hst.container.site;
 
-import org.hippoecm.hst.core.request.HstRequestContext;
+import java.util.Map;
+
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.onehippo.cms7.services.hst.Channel;
 
-@FunctionalInterface
-public interface HstSiteProvider {
+public interface CompositeHstSite extends HstSite {
 
-    HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
+    /**
+     * @return the master
+     */
+    HstSite getMaster();
 
+    /**
+     * @return the immutable Map of all the branches for this {@link CompositeHstSite} and empty set if missing. The keys are
+     * the {@link Channel#getBranchId()}
+     */
+    Map<String, HstSite> getBranches();
 }

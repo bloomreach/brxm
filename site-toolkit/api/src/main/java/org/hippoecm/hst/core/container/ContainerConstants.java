@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.container.site.HstSiteProvider;
 import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
@@ -193,7 +194,7 @@ public interface ContainerConstants {
 
     /**
      * The attribute used to find the node that will be used to represent a document.
-     * This attribute should be set when a {@link org.hippoecm.hst.configuration.site.HstSiteProvider} determines what
+     * This attribute should be set when a {@link HstSiteProvider} determines what
      * {@link org.hippoecm.hst.configuration.site.HstSite} to return to the hst engine.
      */
     String RENDER_BRANCH_ID = "org.hippoecm.hst.container.render_branch_id";

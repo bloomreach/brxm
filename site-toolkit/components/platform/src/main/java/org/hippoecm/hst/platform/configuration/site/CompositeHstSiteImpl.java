@@ -17,7 +17,7 @@ package org.hippoecm.hst.platform.configuration.site;
 
 import java.util.Map;
 
-import org.hippoecm.hst.configuration.site.CompositeHstSite;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
