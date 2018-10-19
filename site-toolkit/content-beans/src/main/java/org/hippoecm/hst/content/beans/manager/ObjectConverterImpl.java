@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -177,7 +176,7 @@ public class ObjectConverterImpl implements ObjectConverter {
                     return null;
                 }
             }
-            jcrPrimaryNodeType = node.getPrimaryNodeType().getName();
+            jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
 
             if (delegateeClass == null) {
@@ -205,7 +204,7 @@ public class ObjectConverterImpl implements ObjectConverter {
 				Object object = ServiceFactory.create(delegateeClass);
 				if (object != null) {
 					if (object instanceof NodeAware) {
-						((NodeAware) object).setNode(node);
+						((NodeAware) object).setNode(useNode);
 					}
 					if (object instanceof ObjectConverterAware) {
 						((ObjectConverterAware) object).setObjectConverter(this);
