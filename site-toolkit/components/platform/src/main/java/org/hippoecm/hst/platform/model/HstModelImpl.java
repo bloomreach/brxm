@@ -359,4 +359,11 @@ public class HstModelImpl implements PlatformHstModel {
 
         return compositeFilter;
     }
+
+    @Override
+    public String toString() {
+        return "HstModelImpl{" +
+                "contextPath=" + websiteServletContext.getContextPath() +
+                '}';
+    }
 }
