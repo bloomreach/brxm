@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -29,6 +30,7 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.DocumentService;
 import org.hippoecm.hst.platform.api.beans.ChannelDocument;
+import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
@@ -39,25 +41,15 @@ public class DocumentServiceImpl implements DocumentService  {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentServiceImpl.class);
 
-    // default no context augmenters
-    // TODO HSTTWO-4359 get rid of DocumentContextAugmenter
-    //private List<DocumentContextAugmenter> documentContextAugmenters = new ArrayList<>();
     private HstModelRegistryImpl hstModelRegistry;
 
     public DocumentServiceImpl(final HstModelRegistryImpl hstModelRegistry) {
         this.hstModelRegistry = hstModelRegistry;
     }
 
-//    public void addDocumentContextAugmenter(final DocumentContextAugmenter documentContextAugmenter) {
-//        documentContextAugmenters.add(documentContextAugmenter);
-//    }
-
     public List<ChannelDocument> getChannels(final Session userSession, final String hostGroup, final String uuid) {
 
         final List<ChannelDocument> channelDocuments = new ArrayList<>();
-
-        // TODO HSTTWO-4359 get rid of DocumentContextAugmenter
-        //documentContextAugmenters.stream().forEach(dca -> dca.apply(requestContext, uuid));
 
         Node handle = ResourceUtil.getNode(userSession, uuid);
         if (handle == null) {
@@ -82,11 +74,11 @@ public class DocumentServiceImpl implements DocumentService  {
                         continue;
                     }
 
-                    // TODO HSTTWO-4359 support channelFilter in a different way?
-//            if (!channelFilter.apply(channel)) {
-//                log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
-//                continue;
-//            }
+                    final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) model).getChannelFilter();
+                    if (!channelFilter.test(userSession, channel)) {
+                        log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
+                        continue;
+                    }
 
                     ChannelDocument document = new ChannelDocument();
                     document.setChannelId(channel.getId());
