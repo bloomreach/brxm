@@ -21,12 +21,19 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.VMHippoRepository;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestJcrHippoRepository {
     
     private SimpleCredentials defaultCreds = new SimpleCredentials("admin", "admin".toCharArray());
-    
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+    }
+
     @Test
     public void testLocalRepositories() throws Exception {
         JcrHippoRepository orgRepository1 = new JcrHippoRepository();
@@ -50,6 +57,7 @@ public class TestJcrHippoRepository {
         session2 = orgRepository2.login(defaultCreds);
         assertNotNull(session2);
         session2.logout();
+        orgRepository2.closeHippoRepository();
     }
     
     @Test
@@ -82,6 +90,6 @@ public class TestJcrHippoRepository {
         session2 = vmRepository2.login(defaultCreds);
         assertNotNull(session2);
         session2.logout();
-        
+        vmRepository2.closeHippoRepository();
     }
 }

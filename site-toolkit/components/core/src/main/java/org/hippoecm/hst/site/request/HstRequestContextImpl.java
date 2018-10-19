@@ -182,27 +182,27 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public Session getSession(boolean create) throws RepositoryException {
         checkStateValidity();
 
-        if (this.session == null) {
+        if (session == null) {
             if (create) {
                 final ContextCredentialsProvider credsProvider = getContextCredentialsProvider();
                 if (credsProvider != null) {
                     final SimpleCredentials defaultCredentials = (SimpleCredentials) credsProvider.getDefaultCredentials(this);
                     try {
-                        this.session = this.repository.login(defaultCredentials);
+                        session = this.repository.login(defaultCredentials);
                     } catch (LoginException e) {
                         log.warn("Login Exception for session for userID {}. Cannot create session.", defaultCredentials.getUserID());
                         throw e;
                     }
                 } else {
                     try {
-                        this.session = this.repository.login();
+                        session = this.repository.login();
                     } catch (LoginException e) {
                         log.warn("Login Exception for anonymous login.");
                         throw e;
                     }
                 }
             }
-        } else if (!this.session.isLive()) {
+        } else if (!session.isLive()) {
             throw new HstComponentException("Invalid session.");
         }
         return this.session;
@@ -218,7 +218,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setResolvedMount(ResolvedMount resolvedMount) {
         checkStateValidity();
         this.resolvedMount = resolvedMount;
-    }
+        }
 
     @Override
     public ResolvedMount getResolvedMount() {

@@ -84,12 +84,12 @@ public class TestMultiplePoolingRepositoryFactory {
         Credentials firstCreds = new SimpleCredentials("admin@1", "admin".toCharArray());
         Repository firstRepo = multipleRepository.getRepositoryByCredentials(firstCreds);
         assertNotNull(firstRepo);
-        assertTrue(firstRepo instanceof PoolingRepository);
+        assertTrue(firstRepo instanceof BasicPoolingRepository);
         
         Credentials secondCreds = new SimpleCredentials("admin@2", "admin".toCharArray());
         Repository secondRepo = multipleRepository.getRepositoryByCredentials(secondCreds);
         assertNotNull(secondRepo);
-        assertTrue(secondRepo instanceof PoolingRepository);
+        assertTrue(secondRepo instanceof BasicPoolingRepository);
         
         assertMultiplePoolProperties(multiplePoolConfigMap, 0, firstRepo);
         assertMultiplePoolProperties(multiplePoolConfigMap, 1, secondRepo);
@@ -105,6 +105,10 @@ public class TestMultiplePoolingRepositoryFactory {
         assertTrue(session instanceof PooledSession);
         assertEquals("admin@2", session.getUserID());
         session.logout();
+
+        ((BasicPoolingRepository)firstRepo).close();
+        ((BasicPoolingRepository)secondRepo).close();
+
     }
     
     private void assertMultiplePoolProperties(Map<String, String> expectedPropMap, int index, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
