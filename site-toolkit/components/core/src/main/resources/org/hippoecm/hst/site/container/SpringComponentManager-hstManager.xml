@@ -61,9 +61,5 @@
     <!--<property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>-->
   <!--</bean>-->
 
-  <!-- TODO HSTTWO-4355 partly move to platform except for the org.hippoecm.hst.platform.configuration.site.DelegatingHstSiteProvider.websiteHstSiteProvider : -->
-  <!-- TODO HSTTWO-4355 that part should be pluggable  -->
-  <bean id="org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider" abstract="true"/>
-
 </beans>
 

@@ -28,4 +28,6 @@
         init-method="init"
         destroy-method="destroy"/>
 
+  <bean id="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider"/>
+
 </beans>

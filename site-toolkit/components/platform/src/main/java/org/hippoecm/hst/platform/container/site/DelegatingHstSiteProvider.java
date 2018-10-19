@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.platform.configuration.site;
+package org.hippoecm.hst.platform.container.site;
 
 
 import org.hippoecm.hst.configuration.site.CompositeHstSite;
@@ -28,16 +28,15 @@ public class DelegatingHstSiteProvider  {
     private HstSiteProvider websiteHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
 
     /**
-     * this setter can be used by enterprise / end project modules to inject a custom HstSiteProvider for the channel mngr
+     * this setter can be used by enterprise paltform webapp to inject a custom HstSiteProvider for the channel mngr
      */
     public void setChannelManagerHstSiteProvider(final HstSiteProvider channelManagerHstSiteProvider) {
         this.channelManagerHstSiteProvider = channelManagerHstSiteProvider;
     }
 
     /**
-     * this setter can be used by enterprise / end project modules to inject a custom HstSiteProvider for the website
+     * this setter can be used by enterprise platform webapp to inject a custom HstSiteProvider for the website
      */
-    // TODO HSTTWO-4356 get rid of this setter
     public void setWebsiteHstSiteProvider(final HstSiteProvider websiteHstSiteProvider) {
         this.websiteHstSiteProvider = websiteHstSiteProvider;
     }
@@ -49,11 +48,6 @@ public class DelegatingHstSiteProvider  {
         if (requestContext.isCmsRequest()) {
             return channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
         }
-        // TODO HSTTWO-4356 org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider.websiteHstSiteProvider MUST BE pluggable
-        // TODO but the org.hippoecm.hst.configuration.site.DelegatingHstSiteProvider.channelManagerHstSiteProvider MUST NOT
-        // TODO be pluggable! Hence, we need to make a separate SITE webapp Spring bean for websiteHstSiteProvider and
-        // TODO load this bean via HstServices.getComponentManager().getComponent("websiteHstSiteProvider"); here instead
-        // TODO of from the instance variable
         return websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
     }
 }

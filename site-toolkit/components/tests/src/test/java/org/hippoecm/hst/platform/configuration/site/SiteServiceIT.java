@@ -36,6 +36,7 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
+import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedMountImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -553,7 +554,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             HstServices.getComponentManager()
-                    .getComponent(DelegatingHstSiteProvider.class)
+                    .getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
                     .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
 
             createHstConfigBackup(session);
@@ -578,7 +579,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             assertSame("Expected that the branch channel would be matched returned due to custom channel mngr hst site provider",
                     channel, branch);
         } finally {
-            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class)
+            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
                     .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
             restoreHstConfigBackup(session);
             session.logout();
@@ -591,7 +592,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         Session session = createSession();
         try {
             HstServices.getComponentManager()
-                    .getComponent(DelegatingHstSiteProvider.class)
+                    .getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
                     .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
 
             createHstConfigBackup(session);
@@ -617,7 +618,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
 
             assertSame("Expected that the branch channel would be matched", channel, branch);
         } finally {
-            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class)
+            HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
                     .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
             restoreHstConfigBackup(session);
             session.logout();

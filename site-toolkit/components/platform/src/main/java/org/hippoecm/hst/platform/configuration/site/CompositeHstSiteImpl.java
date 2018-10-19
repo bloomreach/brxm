@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
 import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -43,8 +45,10 @@ public class CompositeHstSiteImpl implements CompositeHstSite {
     public CompositeHstSiteImpl(final HstSite master, final Map<String, HstSite> branches) {
         this.master = master;
         this.branches = branches;
-        // TODO HSTTWO-4355 Most likely not ok like this!
-        delegatingHstSiteProvider = HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class);
+        // Tricky: since CompositeHstSiteImpl is loaded by the platform webapp, HstServices.getComponentManager() will
+        // be the platform component mngr which has the DelegatingHstSiteProvider
+        final ComponentManager platformComponentManager = HstServices.getComponentManager();
+        delegatingHstSiteProvider = platformComponentManager.getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform");
         if (delegatingHstSiteProvider == null) {
             log.warn("No DelegatingHstSiteProvider is found.");
         }
