@@ -16,8 +16,7 @@
 package org.hippoecm.hst.platform.configuration.model;
 
 import org.hippoecm.hst.platform.configuration.cache.HstEventsCollector;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
-import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.model.HstModelImpl;
 
 /**

@@ -18,7 +18,7 @@ package org.hippoecm.hst.platform.configuration.model;
 
 import javax.jcr.Session;
 
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;

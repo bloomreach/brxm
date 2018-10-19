@@ -22,7 +22,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;

@@ -31,14 +31,13 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.platform.api.model.PlatformHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;

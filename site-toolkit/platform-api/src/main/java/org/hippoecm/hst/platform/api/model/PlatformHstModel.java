@@ -20,7 +20,6 @@ import java.util.function.BiPredicate;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.hst.Channel;
 

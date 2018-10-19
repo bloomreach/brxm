@@ -25,7 +25,7 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ComponentManager;

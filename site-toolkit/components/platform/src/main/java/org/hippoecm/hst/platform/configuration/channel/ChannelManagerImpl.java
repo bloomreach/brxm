@@ -43,7 +43,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
-import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.model.HstModelImpl;

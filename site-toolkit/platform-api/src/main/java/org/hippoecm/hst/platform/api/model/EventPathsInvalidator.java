@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.hippoecm.hst.configuration.model;
+package org.hippoecm.hst.platform.api.model;
 
 public interface EventPathsInvalidator {
     void eventPaths(String... absEventPaths);
