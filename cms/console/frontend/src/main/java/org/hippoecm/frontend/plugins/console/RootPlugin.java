@@ -79,7 +79,7 @@ public class RootPlugin extends RenderPlugin {
 
         add(new Label("pageTitle", getPageTitle(config)));
 
-        final String faviconPath = config.getString("favicon.path", "console-red.png");
+        final String faviconPath = config.getString("favicon.path", "console-blue.png");
         add(new ResourceLink("faviconLink", new PackageResourceReference(RootPlugin.class, faviconPath)));
     }
 
