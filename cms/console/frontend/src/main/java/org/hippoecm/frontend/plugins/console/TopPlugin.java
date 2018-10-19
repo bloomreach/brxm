@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class TopPlugin extends RenderPlugin {
         super(context, config);
 
         final WebMarkupContainer logo = new WebMarkupContainer("logo");
-        logo.add(TitleAttribute.set("Hippo Release Version: " + SYSTEM_INFO.getReleaseVersion()));
+        logo.add(TitleAttribute.set("Release Version: " + SYSTEM_INFO.getReleaseVersion()));
         add(logo);
 
         final WebComponent toolbar = new WebComponent(BAR_STYLES);
