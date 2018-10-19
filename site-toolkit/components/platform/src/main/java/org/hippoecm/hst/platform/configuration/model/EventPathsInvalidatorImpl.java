@@ -43,4 +43,11 @@ public class EventPathsInvalidatorImpl implements EventPathsInvalidator {
         }
     }
 
+    /**
+     * used by downstream project for testing purposes
+     */
+    @SuppressWarnings("unused")
+    public HstEventsCollector getHstEventsCollector() {
+        return hstEventsCollector;
+    }
 }
