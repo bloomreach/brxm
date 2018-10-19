@@ -26,7 +26,9 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.linking.CompositeHstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.DocumentService;
 import org.hippoecm.hst.platform.api.beans.ChannelDocument;
@@ -56,14 +58,19 @@ public class DocumentServiceImpl implements DocumentService  {
             return channelDocuments;
         }
 
-        final Optional<HstModel> firstModel = hstModelRegistry.getModels().values().stream()
-                .filter(m -> m.getVirtualHosts().getMountsByHostGroup(hostGroup).size() > 0).findFirst();
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
-        firstModel.ifPresent(model -> {
-
-            final Optional<Mount> mountCandidate = model.getVirtualHosts().getMountsByHostGroup(hostGroup).stream().findFirst();
+            final Optional<Mount> mountCandidate = hstModel.getVirtualHosts().getMountsByHostGroup(hostGroup).stream().findFirst();
             mountCandidate.ifPresent(mount -> {
-                List<HstLink> canonicalLinks = model.getHstLinkCreator().createAllAvailableCanonicals(handle, mount, null, hostGroup);
+                HstLinkCreator hstLinkCreator = hstModel.getHstLinkCreator();
+
+                if (hstLinkCreator instanceof CompositeHstLinkCreator) {
+                    // local link creator is needed since for every HstModel we request all canonical links AND channelFilter
+                    // below can be unique PER webapp
+                    hstLinkCreator = ((CompositeHstLinkCreator)hstLinkCreator).getLocalHstLinkCreator();
+                }
+
+                List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, mount, null, hostGroup);
 
                 for (HstLink link : canonicalLinks) {
                     final Mount linkMount = link.getMount();
@@ -74,7 +81,7 @@ public class DocumentServiceImpl implements DocumentService  {
                         continue;
                     }
 
-                    final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) model).getChannelFilter();
+                    final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) hstModel).getChannelFilter();
                     if (!channelFilter.test(userSession, channel)) {
                         log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
                         continue;
@@ -92,21 +99,15 @@ public class DocumentServiceImpl implements DocumentService  {
                     }
                     document.setMountPath(link.getMount().getMountPath());
                     document.setHostName(link.getMount().getVirtualHost().getHostName());
-
-
                     document.setContextPath(link.getMount().getContextPath());
 
-                    // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
-
-                    // TODO HSTTWO-4355 always get the cms preview prefix via HstManager instead of via VirtualHosts model!!
                     document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
-
                     channelDocuments.add(document);
 
                 }
             });
 
-        });
+        }
 
         return channelDocuments;
     }

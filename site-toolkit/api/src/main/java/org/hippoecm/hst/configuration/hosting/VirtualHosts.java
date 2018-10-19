@@ -138,11 +138,15 @@ public interface VirtualHosts {
     Mount getMountByIdentifier(String uuid);
 
     /**
-     * The cmsPreviewPrefix will never start or end with a slash and will never be <code>null</code>
-     * @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
-     * to be empty, it will be ""
+     * <p>
+     *    The cmsPreviewPrefix will never start or end with a slash and will never be <code>null</code>
+     *    @return the configured cmsPreviewPrefix with leading and trailing slashes removed. It will never be <code>null</code>. If configured
+     *    to be empty, it will be ""
+     * </p>
+     * <p>
+     *    Note that the cms preview prefix MUST be the same for every hst site webapp AND hst platform webapp
+     * </p>
      */
-    // TODO 13.0.0 : is it still allowed and possible that cmsPreviewPrefix can be empty? I am not sure
      String getCmsPreviewPrefix();
 
      /**
