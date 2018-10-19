@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -120,14 +120,14 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             // note you CANNOT use HstModelProvider spring bean since that will always give you the platform HstModel
             // instead of for the contextPath for the current request
             final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            final PlatformHstModel liveHstModel = (PlatformHstModel)hstModelRegistry.getHstModel(contextPath);
+            final InternalHstModel liveHstModel = (InternalHstModel)hstModelRegistry.getHstModel(contextPath);
             if (liveHstModel == null) {
                 throw new IllegalArgumentException(String.format("Cannot find an hst model for context path '%s'", contextPath));
             }
             requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
 
-            final PlatformHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
-            final PlatformHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
+            final InternalHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
+            final InternalHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
 
             requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
             requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
@@ -187,16 +187,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         super.invoke(requestContext, request, response);
     }
 
-    public static class HstModelSnapshot implements PlatformHstModel {
+    public static class HstModelSnapshot implements InternalHstModel {
 
-        private final PlatformHstModel delegatee;
+        private final InternalHstModel delegatee;
         private PreviewDecorator previewDecorator;
         private VirtualHosts cache;
 
-        public HstModelSnapshot(final PlatformHstModel delegatee) {
+        public HstModelSnapshot(final InternalHstModel delegatee) {
             this.delegatee = delegatee;
         }
-        public HstModelSnapshot(final PlatformHstModel delegatee, final PreviewDecorator previewDecorator) {
+        public HstModelSnapshot(final InternalHstModel delegatee, final PreviewDecorator previewDecorator) {
             this.delegatee = delegatee;
             this.previewDecorator = previewDecorator;
         }

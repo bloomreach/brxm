@@ -45,7 +45,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -127,7 +127,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		// load the model first ones to make sure async model is really async
 		hstManager.getVirtualHosts();
 		final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-		final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+		final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
 
 		try {
 			final int synchronousJobCount = 1000;
@@ -190,7 +190,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadIT extends AbstractTestCon
 		assertTrue(channels.size() == 2);
 		final Channel existingChannel = channels.values().iterator().next();
 		final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-		final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+		final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
 		try {
 			final int jobCount = 1000;
 			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);

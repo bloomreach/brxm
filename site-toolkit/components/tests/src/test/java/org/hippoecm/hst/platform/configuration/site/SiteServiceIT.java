@@ -34,7 +34,7 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider;
 import org.hippoecm.hst.site.HstServices;
@@ -74,7 +74,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
     public void setUp() throws Exception {
         super.setUp();
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         hstManager = getComponent(HstManager.class.getName());
     }
 
@@ -163,7 +163,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
             saveSession(session);
             final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-            invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+            invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
             invalidator.eventPaths(pathsToBeChanged);
 
             {

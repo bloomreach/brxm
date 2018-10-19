@@ -30,7 +30,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.platform.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.site.HstServices;
@@ -190,7 +190,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         globalConfig.addNode("hst:pages", "hst:pages");
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
 
         session.save();
@@ -292,7 +292,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         defaultComponents.addNode("testNewUniqueNamedNodeInHstDefaultConfigurationTriggersReloadAll", "hst:component");
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final PlatformHstModel hstModel = (PlatformHstModel) provider.getHstModel();
+        final InternalHstModel hstModel = (InternalHstModel) provider.getHstModel();
         final EventPathsInvalidator invalidator = hstModel.getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
@@ -371,7 +371,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         commonCatalog.addNode("testNewUniqueNamedNodeInCommonCatalogTriggersReloadAll", "hst:containeritempackage");
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();
         invalidator.eventPaths(pathsToBeChanged);

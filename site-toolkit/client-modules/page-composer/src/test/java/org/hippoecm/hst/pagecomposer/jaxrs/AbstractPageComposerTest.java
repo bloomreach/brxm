@@ -26,8 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
@@ -50,8 +48,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResource;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.site.HstServices;
@@ -169,12 +166,12 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
 
-        final PlatformHstModel liveHstModel = (PlatformHstModel)modelRegistry.getHstModel(CONTEXT_PATH);
+        final InternalHstModel liveHstModel = (InternalHstModel)modelRegistry.getHstModel(CONTEXT_PATH);
 
         final PreviewDecorator previewDecorator = platformComponentManager.getComponent(PreviewDecorator.class);
 
-        final PlatformHstModel liveHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModel);
-        final PlatformHstModel previewHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
+        final InternalHstModel liveHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModel);
+        final InternalHstModel previewHstModelSnapshot = new CXFJaxrsHstConfigService.HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
 
         requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
         requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());

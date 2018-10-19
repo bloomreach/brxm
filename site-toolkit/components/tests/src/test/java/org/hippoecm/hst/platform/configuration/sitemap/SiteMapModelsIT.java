@@ -34,7 +34,7 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -57,7 +57,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private Session session;
-    private PlatformHstModel hstModel;
+    private InternalHstModel hstModel;
     private EventPathsInvalidator invalidator;
 
     @Override
@@ -68,7 +68,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        hstModel = (PlatformHstModel) provider.getHstModel();
+        hstModel = (InternalHstModel) provider.getHstModel();
         invalidator = hstModel.getEventPathsInvalidator();
     }
 
@@ -285,7 +285,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap");
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         saveSession();
         invalidator.eventPaths(pathsToBeChanged);
@@ -394,7 +394,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
                 new String[]{"../unittestcommon/hst:workspace", "../unittestcommon"});
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         saveSession();
         invalidator.eventPaths(new String[]{"/hst:hst/hst:configurations/unittestproject"});
 
@@ -437,7 +437,7 @@ public class SiteMapModelsIT extends AbstractTestConfigurations {
         newsDefault.setProperty(HstNodeTypes.EDITABLE_PROPERTY_STATE, "deleted");
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final EventPathsInvalidator invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        final EventPathsInvalidator invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         saveSession();
         invalidator.eventPaths(pathsToBeChanged);

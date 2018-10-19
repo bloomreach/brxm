@@ -49,7 +49,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -111,7 +111,7 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
         ModifiableRequestContextProvider.set(requestContext);
 
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final PlatformHstModel hstModel = (PlatformHstModel) provider.getHstModel();
+        final InternalHstModel hstModel = (InternalHstModel) provider.getHstModel();
         invalidator = hstModel.getEventPathsInvalidator();
 
         channelMngr = (ChannelManagerImpl) hstModel.getChannelManager();

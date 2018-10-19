@@ -23,7 +23,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.hst.Channel;
 
-public interface PlatformHstModel extends HstModel {
+public interface InternalHstModel extends HstModel {
 
     BiPredicate<Session, Channel> getChannelFilter() ;
 

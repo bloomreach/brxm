@@ -41,7 +41,7 @@ import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public class HstModelImpl implements PlatformHstModel {
+public class HstModelImpl implements InternalHstModel {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
 

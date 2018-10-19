@@ -33,7 +33,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.DocumentService;
 import org.hippoecm.hst.platform.api.beans.ChannelDocument;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
@@ -89,7 +89,7 @@ public class DocumentServiceImpl implements DocumentService  {
                         continue;
                     }
 
-                    final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) hstModel).getChannelFilter();
+                    final BiPredicate<Session, Channel> channelFilter = ((InternalHstModel) hstModel).getChannelFilter();
                     if (!channelFilter.test(userSession, channel)) {
                         log.info("Skipping channel '{}' because filtered out by channel filters", channel.toString());
                         continue;

@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +73,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
         expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
         expect(hstRequestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
 
-        final PlatformHstModel hstModel = createNiceMock(PlatformHstModel.class);
+        final InternalHstModel hstModel = createNiceMock(InternalHstModel.class);
         final VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
         expect(hstRequestContext.getAttribute(eq(PREVIEW_EDITING_HST_MODEL_ATTR))).andStubReturn(hstModel);
 

@@ -34,7 +34,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
@@ -136,7 +136,7 @@ public class ChannelServiceImpl implements ChannelService {
                     requiredIdMatchDone = true;
                 }
 
-                final BiPredicate<Session, Channel> channelFilter = ((PlatformHstModel) hstModel).getChannelFilter();
+                final BiPredicate<Session, Channel> channelFilter = ((InternalHstModel) hstModel).getChannelFilter();
 
                 if (channelFilter.test(userSession, channel)) {
                     if (channels.containsKey(channel.getId())) {
@@ -159,7 +159,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public String persist(final Session userSession, final String blueprintId, final Channel channel) throws ChannelException {
 
-        final PlatformHstModel hstModel = hstModelRegistry.getPlatformHstModel(channel.getContextPath());
+        final InternalHstModel hstModel = hstModelRegistry.getPlatformHstModel(channel.getContextPath());
 
         try {
             return hstModel.getChannelManager().persist(userSession, blueprintId, channel);

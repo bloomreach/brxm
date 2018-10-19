@@ -17,7 +17,6 @@ package org.hippoecm.hst.platform.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -25,7 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.platform.api.BlueprintService;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.slf4j.Logger;
@@ -48,7 +47,7 @@ public class BlueprintServiceImpl implements BlueprintService {
 
             hstModel.getVirtualHosts().getBlueprints().stream()
                     .filter(blueprint -> {
-                        final String configurationRootPath = ((PlatformHstModel) hstModel).getConfigurationRootPath();
+                        final String configurationRootPath = ((InternalHstModel) hstModel).getConfigurationRootPath();
                         try {
                             final boolean granted = userSession.hasPermission(configurationRootPath + "/accesstest", Session.ACTION_ADD_NODE);
                             if (granted) {

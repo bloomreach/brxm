@@ -29,7 +29,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -72,7 +72,7 @@ public class HstConfigurationUtils {
         setLastModifiedTimeStamps(session, pathsToBeChanged);
 
         session.save();
-        final PlatformHstModel previewHstModel = getPreviewHstModel();
+        final InternalHstModel previewHstModel = getPreviewHstModel();
         if (previewHstModel != null) {
             final EventPathsInvalidator invalidator = previewHstModel.getEventPathsInvalidator();
             // after the save the paths need to be send, not before!
@@ -194,8 +194,8 @@ public class HstConfigurationUtils {
         return getPreviewHstModel().getVirtualHosts();
     }
 
-    public static PlatformHstModel getPreviewHstModel() {
-        return (PlatformHstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
+    public static InternalHstModel getPreviewHstModel() {
+        return (InternalHstModel)getRequestContext().getAttribute(PREVIEW_EDITING_HST_MODEL_ATTR);
     }
     public static HstRequestContext getRequestContext() {
         return RequestContextProvider.get();

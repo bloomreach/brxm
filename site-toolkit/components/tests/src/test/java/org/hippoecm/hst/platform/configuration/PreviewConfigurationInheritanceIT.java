@@ -25,7 +25,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.platform.HstModelProvider;
-import org.hippoecm.hst.platform.api.model.PlatformHstModel;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -53,7 +53,7 @@ public class PreviewConfigurationInheritanceIT extends AbstractTestConfiguration
         super.setUp();
         this.hstManager = getComponent(HstManager.class.getName());
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        invalidator = ((PlatformHstModel) provider.getHstModel()).getEventPathsInvalidator();
+        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
 
         this.session = createSession();
         createHstConfigBackup(session);
