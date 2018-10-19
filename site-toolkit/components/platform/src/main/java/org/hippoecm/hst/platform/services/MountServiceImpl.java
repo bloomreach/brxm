@@ -43,8 +43,18 @@ public class MountServiceImpl implements MountService {
     }
 
     @Override
+    public Mount getLiveMount(final String mountId) {
+        return getMount(mountId, true);
+    }
+
+    @Override
     public Map<String, Mount> getPreviewMounts(final String hostGroup) {
         return getMounts(hostGroup, true);
+    }
+
+    @Override
+    public Mount getPreviewMount(final String mountId) {
+        return getMount(mountId, true);
     }
 
     private Map<String, Mount> getMounts(final String hostGroup, final boolean preview) {
@@ -66,5 +76,20 @@ public class MountServiceImpl implements MountService {
             }
         }
         return mounts;
+    }
+
+    private Mount getMount(final String mountId, final boolean preview) {
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+            final Mount mount = virtualHosts.getMountByIdentifier(mountId);
+            if (mount != null) {
+                if (preview) {
+                    return previewDecorator.decorateMountAsPreview(mount);
+                } else {
+                    return mount;
+                }
+            }
+        }
+        return null;
     }
 }

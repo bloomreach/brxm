@@ -37,10 +37,22 @@ public interface MountService {
     Map<String, Mount> getLiveMounts(String hostGroup);
 
     /**
+     * @param mountId
+     * @return the live {@link Mount} for {@code mountId} and {@code null} if none found
+     */
+    Mount getLiveMount(final String mountId);
+
+    /**
      * Same as {@link #getLiveMounts(String)} only the mounts get decorated to preview mounts
      * @param hostGroup the hostGroup to get the mounts for for all hst configurations
      * @return The preview {@link Mount} objects
      * @see #getLiveMounts(String)
      */
     Map<String, Mount> getPreviewMounts(String hostGroup);
+
+    /**
+     * @param mountId
+     * @return the preview {@link Mount} for {@code mountId} and {@code null} if none found
+     */
+    Mount getPreviewMount(final String mountId);
 }
