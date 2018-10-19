@@ -54,7 +54,7 @@ class IframeExtensionCtrl {
       url: this._getExtensionUrl(),
       appendTo: this.$element[0],
       methods: {
-        getCmsProperties: () => ({ user: this.ConfigService.cmsUser }),
+        getProperties: () => ({ user: this.ConfigService.cmsUser }),
       },
     });
 
@@ -94,7 +94,7 @@ class IframeExtensionCtrl {
 
   _getTrustedAbsoluteUrl(extensionUrl) {
     const url = new URL(extensionUrl);
-    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    this._addQueryParameters(url);
     return this.$sce.trustAsResourceUrl(url.href);
   }
 
@@ -103,8 +103,13 @@ class IframeExtensionCtrl {
     // The current location should be the default value for the second parameter of the URL() constructor,
     // but Chrome needs it explicitly otherwise it will throw an error.
     const url = new URL(path, this.$window.location.origin);
-    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    this._addQueryParameters(url);
     return url.pathname + url.search;
+  }
+
+  _addQueryParameters(url) {
+    url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
+    url.searchParams.append('br.parentOrigin', this.$window.location.origin);
   }
 
   $onChanges(params) {

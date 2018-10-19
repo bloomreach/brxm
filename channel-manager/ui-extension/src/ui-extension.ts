@@ -1,20 +1,29 @@
 import Penpal from 'penpal';
 
-// TODO: do we need this class? maybe for the ui-extension.js file?
-export class UiExtension {
-  register(onReady: Function) {
-    // TODO: read origin of CMS from query parameter in the URL and pass it to Penpal as the parentOrigin
-    const connection = Penpal.connectToParent();
+export interface Parent {
+  getProperties: () => Promise<Ui>,
+}
 
-    connection.promise.then(parent => {
-      // TODO: add type for 'cms' object
-      parent.getCmsProperties().then((cms: object) => {
-        onReady(cms);
-      });
+export interface Ui {
+  user: string,
+}
+
+export default class UiExtension {
+  static register(onReady: (ui: Ui) => void) {
+    if (typeof onReady !== 'function') {
+      throw new Error('No callback function provided');
+    }
+
+    const parentOrigin = new URL(window.location.href).searchParams.get('br.parentOrigin');
+    const connection = Penpal.connectToParent({
+      parentOrigin,
+    });
+
+    connection.promise.then((parent: Parent) => {
+      parent.getProperties().then(onReady);
     });
   }
 }
 
-export function register(onReady: Function) {
-  return new UiExtension().register(onReady);
-}
+// enable UiExtension.register() in ui-extension.min.js
+export const register = UiExtension.register;
