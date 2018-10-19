@@ -27,7 +27,7 @@ function editComponentConfig($stateProvider) {
         component: 'editComponentMain',
       },
       tools: {
-        component: 'editComponentTools',
+        component: '', // no tools
       },
       icon: {
         template: '', // no icon
