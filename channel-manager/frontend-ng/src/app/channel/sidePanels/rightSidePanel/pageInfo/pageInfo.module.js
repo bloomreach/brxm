@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Penpal from 'penpal';
+
 import config from './pageInfo.config';
 import iframeExtensionComponent from './iframeExtension.component';
 import pageExtensionComponent from './pageExtension.component';
@@ -23,6 +25,7 @@ import PageInfoService from './pageInfo.service';
 const pageInfoModule = angular
   .module('hippo-cm.channel.pageInfo', [])
   .config(config)
+  .constant('Penpal', Penpal)
   .service('PageInfoService', PageInfoService)
   .controller('pageInfoMainCtrl', pageInfoMainCtrl)
   .component('iframeExtension', iframeExtensionComponent)

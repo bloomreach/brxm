@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Penpal from 'penpal';
-
 class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
     $sce,
-    $scope,
     $window,
     ChannelService,
     ConfigService,
@@ -28,6 +25,7 @@ class IframeExtensionCtrl {
     ExtensionService,
     HippoIframeService,
     PathService,
+    Penpal,
   ) {
     'ngInject';
 
@@ -41,6 +39,7 @@ class IframeExtensionCtrl {
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
     this.PathService = PathService;
+    this.Penpal = Penpal;
   }
 
   $onInit() {
@@ -50,7 +49,7 @@ class IframeExtensionCtrl {
   _initExtension() {
     this.extension = this.ExtensionService.getExtension(this.extensionId);
 
-    this.connection = Penpal.connectToChild({
+    this.connection = this.Penpal.connectToChild({
       url: this._getExtensionUrl(),
       appendTo: this.$element[0],
       methods: {
@@ -68,22 +67,6 @@ class IframeExtensionCtrl {
       this.iframeLoaded = true;
       this._setIframeContext();
     });
-    // old _initExtension code:
-    //
-    // try {
-    //   const publicApi = {
-    //     refreshChannel: () => {
-    //       this.ChannelService.reload();
-    //     },
-    //     refreshPage: () => {
-    //       this.HippoIframeService.reload();
-    //     },
-    //     config: this.extension.config,
-    //   };
-    //   this.iframeWindow.BR_EXTENSION.onInit(publicApi);
-    // } catch (e) {
-    //   this._warnExtension('threw an error in window.BR_EXTENSION.onInit()', e);
-    // }
   }
 
   _getExtensionUrl() {
@@ -134,26 +117,6 @@ class IframeExtensionCtrl {
 
   _setIframeContext() {
     this._warnExtension('should update the page context: TODO');
-    // if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
-    //   this._warnExtension('does not define a window.BR_EXTENSION object, cannot provide context');
-    //   return;
-    // }
-    //
-    // if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
-    //   this._warnExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide context');
-    //   return;
-    // }
-    //
-    // try {
-    //   const extensionPoint = this.extension.extensionPoint;
-    //   const contextData = this.context;
-    //   this.iframeWindow.BR_EXTENSION.onContextChanged({
-    //     extensionPoint,
-    //     data: contextData,
-    //   });
-    // } catch (e) {
-    //   this._warnExtension('threw an error in window.BR_EXTENSION.onContextChanged()', e);
-    // }
   }
 
   _warnExtension(message, error) {
