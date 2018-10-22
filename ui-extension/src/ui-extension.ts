@@ -36,7 +36,12 @@ export default class UiExtension {
     });
 
     connection.promise.then((parent: Parent) => {
-      parent.getProperties().then(onReady);
+      try {
+        parent.getProperties().then(onReady);
+      } catch (e) {
+        console.error('Failed to register extension: cannot get parent properties. '
+          + 'Are you using compatible versions of BloomReach Experience and the client library?');
+      }
     });
   }
 }
