@@ -88,7 +88,7 @@ public class ChannelServiceImpl implements ChannelService {
     private List<Channel> cloneChannels(final Collection<Channel> channels) {
         final List<Channel> cloned = new ArrayList<>();
         channels.stream().forEach(channel -> cloned.add(new Channel(channel)));
-        return null;
+        return cloned;
     }
 
     @Override
