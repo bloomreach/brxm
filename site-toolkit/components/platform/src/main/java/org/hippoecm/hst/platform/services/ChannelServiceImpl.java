@@ -166,18 +166,26 @@ public class ChannelServiceImpl implements ChannelService {
                             log.error("Found channel with duplicate id. Skipping channel '{}' which has a duplicate id with '{}'",
                                     channel, channels.get(channel.getId()));
                         } else {
-                            // never return the HST model Channel instances but clone them!!
-                            final Channel clone = new Channel(channel);
-                            channels.put(channel.getId(), clone);
+                            addClonedChannel(channels, channel);
+
                         }
                     } else {
                         log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
                     }
+                } else {
+                    // never return the HST model Channel instances but clone them!!
+                    addClonedChannel(channels, channel);
                 }
             }
         }
 
         return channels.values().stream().collect(Collectors.toList());
+    }
+
+    private void addClonedChannel(final Map<String, Channel> channels, final Channel channel) {
+        // never return the HST model Channel instances but clone them!!
+        final Channel clone = new Channel(channel);
+        channels.put(channel.getId(), clone);
     }
 
     @Override
