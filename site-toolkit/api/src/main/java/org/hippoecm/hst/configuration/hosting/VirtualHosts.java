@@ -195,12 +195,14 @@ public interface VirtualHosts {
     /**
      * @param hostGroup the name of the host group to get the channels for
      * @return all managed channels for the <code></code>hostGroup</code>. Empty List in case the hostGroup does not
-     * exist or has no channel. The keys in the map are the {@link Channel#getId()}'s
+     * exist or has no channel. The keys in the map are the {@link Channel#getId()}'s. Note that in case there are
+     * branches of the hst configuration, also the channels for these branches are returned
      */
     Map<String, Channel> getChannels(String hostGroup);
 
     /**
-     * @return The map of all {@code hostGroup} names to the map of all the channels for that hostgroup
+     * @return The map of all {@code hostGroup} names to the map of all the channels for that hostgroup.
+     * Note that in case there are branches of the hst configuration, also the channels for these branches are returned
      */
     Map<String, Map<String, Channel>> getChannels();
 

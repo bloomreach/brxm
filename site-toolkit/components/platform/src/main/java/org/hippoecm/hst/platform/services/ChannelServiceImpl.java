@@ -16,12 +16,15 @@
 
 package org.hippoecm.hst.platform.services;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
@@ -57,57 +60,58 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public List<Channel> getLiveChannels(final Session userSession, final String hostGroup) {
-        return doGetChannels(Optional.of(userSession), hostGroup, false, Optional.empty());
+    public List<Channel> getChannels(final String hostGroup, final boolean branchesIncluded) {
+        if (hostGroup == null) {
+            throw new IllegalArgumentException("host group is not allowed to be null");
+        }
+
+        final List<Channel> channels = new ArrayList<>();
+
+        for (HstModel hstModel : hstModelRegistry.getModels().values()) {
+            final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
+            if (branchesIncluded) {
+                channels.addAll(cloneChannels(virtualHosts.getChannels(hostGroup).values()));
+            } else {
+                final Set<Channel> masters = virtualHosts.getChannels(hostGroup).values().stream().filter(channel -> channel.getBranchId() == null).collect(Collectors.toSet());
+                channels.addAll(cloneChannels(masters));
+            }
+        }
+
+        return channels;
     }
 
+    @Override
+    public Channel getChannel(final String channelId, final String hostGroup) {
+        return getChannels(hostGroup, true).stream().filter(channel -> channel.getId().equals(channelId)).findFirst().orElse(null);
+    }
+
+    private List<Channel> cloneChannels(final Collection<Channel> channels) {
+        final List<Channel> cloned = new ArrayList<>();
+        channels.stream().forEach(channel -> cloned.add(new Channel(channel)));
+        return null;
+    }
+
+    @Override
+    public List<Channel> getLiveChannels(final Session userSession, final String hostGroup) {
+        return doGetChannels(Optional.of(userSession), hostGroup, false);
+    }
 
     @Override
     public List<Channel> getLiveChannels(final String hostGroup) {
-        return doGetChannels(Optional.empty(), hostGroup, false, Optional.empty());
-    }
-
-    @Override
-    public Channel getLiveChannel(final Session userSession, final String channelId, final String hostGroup) {
-        return doGetChannel(Optional.of(userSession), channelId, hostGroup, false);
-    }
-
-    @Override
-    public Channel getLiveChannel(final String channelId, final String hostGroup) {
-        return doGetChannel(Optional.empty(), channelId, hostGroup, false);
+        return doGetChannels(Optional.empty(), hostGroup, false);
     }
 
     @Override
     public List<Channel> getPreviewChannels(final Session userSession, final String hostGroup) {
-        return doGetChannels(Optional.of(userSession), hostGroup, true, Optional.empty());
+        return doGetChannels(Optional.of(userSession), hostGroup, true);
     }
 
     @Override
     public List<Channel> getPreviewChannels(final String hostGroup) {
-        return doGetChannels(Optional.empty(), hostGroup, true, Optional.empty());
+        return doGetChannels(Optional.empty(), hostGroup, true);
     }
 
-    @Override
-    public Channel getPreviewChannel(final Session userSession, final String channelId, final String hostGroup) {
-        return doGetChannel(Optional.of(userSession), channelId, hostGroup, true);
-    }
-
-    @Override
-    public Channel getPreviewChannel(final String channelId, final String hostGroup) {
-        return doGetChannel(Optional.empty(), channelId, hostGroup, true);
-    }
-
-    private Channel doGetChannel(final Optional<Session> userSession, final String channelId, final String hostGroup, final boolean preview) {
-        final List<Channel> channels = doGetChannels(userSession, hostGroup, preview, Optional.of(channelId));
-        if (channels.isEmpty()) {
-             throw new ChannelNotFoundException(channelId);
-        }
-        return channels.get(0);
-    }
-
-
-    private List<Channel> doGetChannels(final Optional<Session> userSession, final String hostGroup, final boolean preview,
-                                        Optional<String> requiredId) {
+    private List<Channel> doGetChannels(final Optional<Session> userSession, final String hostGroup, final boolean preview) {
 
         if (hostGroup == null) {
             throw new IllegalArgumentException("host group is not allowed to be null");
@@ -119,18 +123,10 @@ public class ChannelServiceImpl implements ChannelService {
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
-            if (requiredIdMatchDone) {
-                break;
-            }
-
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
 
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
             for (Mount mount : mountsByHostGroup) {
-
-                if (requiredIdMatchDone) {
-                    break;
-                }
 
                 if (mount.isPreview()) {
                     log.debug("Skipping explicit preview mounts");
@@ -148,14 +144,6 @@ public class ChannelServiceImpl implements ChannelService {
                 if (channel == null) {
                     log.debug("No channel present for mount '{}'", mount);
                     continue;
-                }
-
-                if (requiredId.isPresent()) {
-                    if (!channel.getId().equals(requiredId.get())) {
-                        log.debug("Skipping channel '{}' since wrong id", channel);
-                        continue;
-                    }
-                    requiredIdMatchDone = true;
                 }
 
                 final BiPredicate<Session, Channel> channelFilter = ((InternalHstModel) hstModel).getChannelFilter();

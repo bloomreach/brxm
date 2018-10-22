@@ -30,8 +30,21 @@ import org.onehippo.cms7.services.hst.Channel;
 public interface ChannelService {
 
 	/**
+	 * @see #getLiveChannels(Session, String) and #getPreviewChannels(Session, String) without filtering applied,
+	 * now with branches included if {@code branchesIncluded} is true, both preview and live channels
+	 */
+	List<Channel> getChannels(String hostGroup, boolean branchesIncluded);
+
+	/**
+	 * @return the channel from {@link #getChannels(String, boolean)} where the channelId can be preview or live. Returns
+	 * {@code null} if no such channel present
+	 */
+	Channel getChannel(String channelId, String hostGroup);
+
+
+	/**
 	 * <p>
-	 * List all managed live channels, possibly filtered by what the {@code userSession} is allowed to see
+	 * List all managed live master (no branches) channels, possibly filtered by what the {@code userSession} is allowed to see
 	 * (via org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter()), identified by their channel IDs.
 	 * </p>
 	 * <p>
@@ -55,26 +68,8 @@ public interface ChannelService {
 	List<Channel> getLiveChannels(String hostGroup);
 
 	/**
-	 *
-	 * @param userSession the user session that should have access to the channel for {@code channelId}
-	 * @param channelId the id of the channel to get
-	 * @param hostGroup the host group to use
-	 * @return the live {@link Channel} for {@code channelId} and throws a
-	 * {@link org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException} if no such channel available
-	 * for {@code userSession}.Also note that a clone of the {@link Channel} object of the
-	 * {@link org.hippoecm.hst.platform.model.HstModel} is returned to
-	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
-	 */
-	Channel getLiveChannel(Session userSession, String channelId, String hostGroup);
-
-	/**
-	 * @see #getLiveChannel(Session, String, String) without filtering applied
-	 */
-	Channel getLiveChannel(String channelId, String hostGroup);
-
-	/**
 	 * <p>
-	 * 	List all managed preview channels, possibly filtered by what the {@code userSession} is allowed to see
+	 * 	List all managed preview master (no branches) channels, possibly filtered by what the {@code userSession} is allowed to see
 	 * 	(via org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter()), identified by their channel IDs.
 	 * </p>
 	 * <p>
@@ -98,24 +93,6 @@ public interface ChannelService {
 	 * @see #getPreviewChannels(Session, String) without filtering applied
 	 */
 	List<Channel> getPreviewChannels(String hostGroup);
-
-	/**
-	 *
-	 * @param userSession the user session that should have access to the channel for {@code channelId}
-	 * @param channelId the id of the channel to get
-	 * @param hostGroup the host group to use
-	 * @return the preview {@link Channel} for {@code channelId} and throws a
-	 * {@link org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException} if no such channel available
-	 * for {@code userSession}. Also note that a clone of the {@link Channel} object of the
-	 * {@link org.hippoecm.hst.platform.model.HstModel} is returned to
-	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
-	 */
-	Channel getPreviewChannel(Session userSession, String channelId, String hostGroup);
-
-	/**
-	 * @see #getPreviewChannel(Session, String, String) without filtering applied
-	 */
-	Channel getPreviewChannel(String channelId, String hostGroup);
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id

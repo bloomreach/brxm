@@ -296,7 +296,7 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public Channel getChannel(final Session session, final String channelId, final String hostGroup) throws ChannelException {
 
-        return channelService.getPreviewChannel(session, channelId, hostGroup);
+        return channelService.getChannel(channelId, hostGroup);
 
     }
 
