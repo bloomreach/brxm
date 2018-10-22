@@ -30,16 +30,29 @@ import org.onehippo.cms7.services.hst.Channel;
 public interface ChannelService {
 
 	/**
-	 * List all managed channels, identified by their channel IDs
+	 * <p>
+	 * List all managed live channels, possibly filtered by what the {@code userSession} is allowed to see
+	 * (via org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter()), identified by their channel IDs.
+	 * </p>
+	 * <p>
+	 *     If you need to get hold of all channels without
+	 *     org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter() filters being applied, use
+	 *     {@link #getLiveChannels(String)}
+	 * </p>
 	 *
 	 * @param userSession - the jcr session of the current user
 	 * @param hostGroup the host group for which the channels should be returned
-	 * @return {@link List} of {@link Channel}s of all available live channels, empty list otherwise. Also note that
-	 * a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel} are returned to
-	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
+	 * @return {@link List} of {@link Channel}s of all available live channels for {@code userSession}, empty list otherwise.
+	 * Also note that a clone of the {@link Channel} objects of the {@link org.hippoecm.hst.platform.model.HstModel}
+	 * are returned to avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 * @throws IllegalArgumentException if {@code userSession} or {@code hostGroup} is {@code null}
 	 */
 	List<Channel> getLiveChannels(Session userSession, String hostGroup);
+
+	/**
+	 * @see #getLiveChannels(Session, String) without filtering applied
+	 */
+	List<Channel> getLiveChannels(String hostGroup);
 
 	/**
 	 *
@@ -54,21 +67,37 @@ public interface ChannelService {
 	 */
 	Channel getLiveChannel(Session userSession, String channelId, String hostGroup);
 
+	/**
+	 * @see #getLiveChannel(Session, String, String) without filtering applied
+	 */
+	Channel getLiveChannel(String channelId, String hostGroup);
 
 	/**
-	 * List all managed channels, identified by their channel IDs
+	 * <p>
+	 * 	List all managed preview channels, possibly filtered by what the {@code userSession} is allowed to see
+	 * 	(via org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter()), identified by their channel IDs.
+	 * </p>
+	 * <p>
+	 *     If you need to get hold of all channels without
+	 *     org.hippoecm.hst.platform.api.model.InternalHstModel#getChannelFilter() filters being applied, use
+	 *     {@link #getPreviewChannels(String)}
+	 * </p>
 	 *
 	 * @param userSession - the jcr session of the current user
 	 * @param hostGroup the host group for which the channels should be returned
-	 * @return {@link List} of {@link Channel}s of all available preview channels, empty list otherwise. Note that if for
-	 * a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version is returned and
-	 * otherwise the live. Also note that a clone of the {@link Channel} objects of the
-	 * {@link org.hippoecm.hst.platform.model.HstModel} are returned to
-	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
+	 * @return {@link List} of {@link Channel}s of all available preview channels for {@code userSession}, empty list otherwise.
+	 * Note that if for a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version
+	 * is returned and otherwise the live. Also note that a clone of the {@link Channel} objects of the
+	 * {@link org.hippoecm.hst.platform.model.HstModel} are returned to avoid direct modification of the backing hst
+	 * model in case a setter on a {@link Channel} object is invoked
 	 * @throws IllegalArgumentException if {@code userSession} or {@code hostGroup} is {@code null}
 	 */
 	List<Channel> getPreviewChannels(Session userSession, String hostGroup);
 
+	/**
+	 * @see #getPreviewChannels(Session, String) without filtering applied
+	 */
+	List<Channel> getPreviewChannels(String hostGroup);
 
 	/**
 	 *
@@ -82,6 +111,11 @@ public interface ChannelService {
 	 * avoid direct modification of the backing hst model in case a setter on a {@link Channel} object is invoked
 	 */
 	Channel getPreviewChannel(Session userSession, String channelId, String hostGroup);
+
+	/**
+	 * @see #getPreviewChannel(Session, String, String) without filtering applied
+	 */
+	Channel getPreviewChannel(String channelId, String hostGroup);
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id

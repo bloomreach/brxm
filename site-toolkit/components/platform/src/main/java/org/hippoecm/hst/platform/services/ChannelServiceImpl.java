@@ -58,25 +58,46 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public List<Channel> getLiveChannels(final Session userSession, final String hostGroup) {
-        return doGetChannels(userSession, hostGroup, false, Optional.empty());
+        return doGetChannels(Optional.of(userSession), hostGroup, false, Optional.empty());
+    }
+
+
+    @Override
+    public List<Channel> getLiveChannels(final String hostGroup) {
+        return doGetChannels(Optional.empty(), hostGroup, false, Optional.empty());
     }
 
     @Override
     public Channel getLiveChannel(final Session userSession, final String channelId, final String hostGroup) {
-        return doGetChannel(userSession, channelId, hostGroup, false);
+        return doGetChannel(Optional.of(userSession), channelId, hostGroup, false);
+    }
+
+    @Override
+    public Channel getLiveChannel(final String channelId, final String hostGroup) {
+        return doGetChannel(Optional.empty(), channelId, hostGroup, false);
     }
 
     @Override
     public List<Channel> getPreviewChannels(final Session userSession, final String hostGroup) {
-        return doGetChannels(userSession, hostGroup, true, Optional.empty());
+        return doGetChannels(Optional.of(userSession), hostGroup, true, Optional.empty());
+    }
+
+    @Override
+    public List<Channel> getPreviewChannels(final String hostGroup) {
+        return doGetChannels(Optional.empty(), hostGroup, true, Optional.empty());
     }
 
     @Override
     public Channel getPreviewChannel(final Session userSession, final String channelId, final String hostGroup) {
-        return doGetChannel(userSession, channelId, hostGroup, true);
+        return doGetChannel(Optional.of(userSession), channelId, hostGroup, true);
     }
 
-    private Channel doGetChannel(final Session userSession, final String channelId, final String hostGroup, final boolean preview) {
+    @Override
+    public Channel getPreviewChannel(final String channelId, final String hostGroup) {
+        return doGetChannel(Optional.empty(), channelId, hostGroup, true);
+    }
+
+    private Channel doGetChannel(final Optional<Session> userSession, final String channelId, final String hostGroup, final boolean preview) {
         final List<Channel> channels = doGetChannels(userSession, hostGroup, preview, Optional.of(channelId));
         if (channels.isEmpty()) {
              throw new ChannelNotFoundException(channelId);
@@ -85,10 +106,11 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
 
-    private List<Channel> doGetChannels(final Session userSession, final String hostGroup, final boolean preview, Optional<String> requiredId) {
+    private List<Channel> doGetChannels(final Optional<Session> userSession, final String hostGroup, final boolean preview,
+                                        Optional<String> requiredId) {
 
-        if (hostGroup == null || userSession == null) {
-            throw new IllegalArgumentException("User session and host group are not allowed to be null");
+        if (hostGroup == null) {
+            throw new IllegalArgumentException("host group is not allowed to be null");
         }
 
         final Map<String, Channel> channels = new HashMap<>();
@@ -138,17 +160,19 @@ public class ChannelServiceImpl implements ChannelService {
 
                 final BiPredicate<Session, Channel> channelFilter = ((InternalHstModel) hstModel).getChannelFilter();
 
-                if (channelFilter.test(userSession, channel)) {
-                    if (channels.containsKey(channel.getId())) {
-                        log.error("Found channel with duplicate id. Skipping channel '{}' which has a duplicate id with '{}'",
-                                channel, channels.get(channel.getId()));
+                if (userSession.isPresent()) {
+                    if (channelFilter.test(userSession.get(), channel)) {
+                        if (channels.containsKey(channel.getId())) {
+                            log.error("Found channel with duplicate id. Skipping channel '{}' which has a duplicate id with '{}'",
+                                    channel, channels.get(channel.getId()));
+                        } else {
+                            // never return the HST model Channel instances but clone them!!
+                            final Channel clone = new Channel(channel);
+                            channels.put(channel.getId(), clone);
+                        }
                     } else {
-                        // never return the HST model Channel instances but clone them!!
-                        final Channel clone = new Channel(channel);
-                        channels.put(channel.getId(), clone);
+                        log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
                     }
-                } else {
-                    log.info("Skipping channel '{}' because filtered out by channel filters.", channel.toString());
                 }
             }
         }
