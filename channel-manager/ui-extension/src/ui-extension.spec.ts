@@ -45,4 +45,20 @@ describe('register', () => {
       expect(ui.user).toBe('admin');
     });
   });
+
+  it('logs an error when the parent does not implement the getProperties method', (done) => {
+    const incompatibleParent = {
+      getPropertiesWithOtherName: () => {},
+    };
+    Penpal.connectToParent = jest.fn(() => ({ promise: Promise.resolve(incompatibleParent) }));
+    const callback = jest.fn();
+
+    window.console.error = jest.fn((message) => {
+      expect(callback).not.toHaveBeenCalled();
+      expect(message).toEqual(expect.any(String));
+      done();
+    });
+
+    UiExtension.register(callback);
+  });
 });
