@@ -25,24 +25,37 @@ export interface Ui {
 }
 
 export default class UiExtension {
-  static register(onReady: (ui: Ui) => void) {
-    if (typeof onReady !== 'function') {
+  static register(onSuccess: (ui: Ui) => void) {
+    if (typeof onSuccess !== 'function') {
       throw new Error('No callback function provided');
     }
 
-    const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
-    const connection = Penpal.connectToParent({
-      parentOrigin,
-    });
+    const connection = UiExtension.connectToParent();
+    if (connection) {
+      connection.promise.then((parent: Parent) => {
+        try {
+          parent.getProperties()
+            .then(onSuccess)
+            .catch((e) => {
+              console.error('Failed to register extension, cannot get parent properties:', e);
+            })
+        } catch (e) {
+          console.error('Failed to register extension: cannot get parent properties. '
+            + 'Are you using compatible versions of BloomReach Experience and the client library?');
+        }
+      });
+    }
+  }
 
-    connection.promise.then((parent: Parent) => {
-      try {
-        parent.getProperties().then(onReady);
-      } catch (e) {
-        console.error('Failed to register extension: cannot get parent properties. '
-          + 'Are you using compatible versions of BloomReach Experience and the client library?');
-      }
-    });
+  private static connectToParent(): Penpal.IConnectionObject {
+    const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
+    try {
+      return Penpal.connectToParent({
+        parentOrigin,
+      });
+    } catch (e) {
+      console.info('Failed to register extension: cannot connect to parent');
+    }
   }
 }
 
