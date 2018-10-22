@@ -41,6 +41,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -296,8 +297,11 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public Channel getChannel(final Session session, final String channelId, final String hostGroup) throws ChannelException {
 
-        return channelService.getChannel(channelId, hostGroup);
-
+        final Channel channel = channelService.getChannel(channelId, hostGroup);
+        if (channel == null) {
+            throw new ChannelNotFoundException(channelId);
+        }
+        return channel;
     }
 
     @Override
