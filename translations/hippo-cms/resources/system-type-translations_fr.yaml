@@ -19,7 +19,7 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
       /fr:
         jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Étiquette
+        jcr:name: Étiquette (obsolète)
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /fr:
         jcr:primaryType: hipposys:resourcebundle

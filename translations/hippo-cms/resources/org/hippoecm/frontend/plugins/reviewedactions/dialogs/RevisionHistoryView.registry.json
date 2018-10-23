@@ -10,34 +10,16 @@
       "locales" : null
     },
     "history-label" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "history-version" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "history-name" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

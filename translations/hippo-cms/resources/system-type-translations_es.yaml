@@ -18,7 +18,7 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
       /es:
         jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Etiqueta
+        jcr:name: Etiqueta (sin aprobar)
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /es:
         jcr:primaryType: hipposys:resourcebundle
