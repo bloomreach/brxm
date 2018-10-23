@@ -16,6 +16,7 @@
 
 class Step2Controller {
   constructor(
+    $q,
     $scope,
     $translate,
     ContentEditor,
@@ -28,6 +29,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ContentEditor = ContentEditor;
@@ -93,44 +95,12 @@ class Step2Controller {
       });
   }
 
-  discard() {
-    console.log('TODO: implement discard action.');
-/*
-    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
-      .then(() => {
-        this.form.$setPristine();
-        this.ContentEditor.deleteDocument()
-          .then(this.createDocument());
-      })
-*/
-  }
-
-/*
-  createDocument() {
-    const document = {
-      name: this.name,
-      slug: this.url,
-      documentTemplateQuery: this.documentTemplateQuery,
-      documentTypeId: this.documentType,
-      rootPath: this.rootPath,
-      defaultPath: this.defaultPath,
-    };
-    return this.ContentService._send('POST', ['documents'], document)
-      .catch(error => this._onError(error, 'Unexpected error creating a new document'));
-  }
-*/
-
-
-  isDocumentDirty() {
-    return this.ContentEditor.isDocumentDirty();
-  }
-
   isEditing() {
     return this.ContentEditor.isEditing();
   }
 
   isSaveAllowed() {
-    return this.isEditing() && this.isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
+    return this.form.$valid && this.allMandatoryFieldsShown();
   }
 
   close() {

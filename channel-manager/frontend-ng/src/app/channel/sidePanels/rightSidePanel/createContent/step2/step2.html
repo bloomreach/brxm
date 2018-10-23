@@ -53,12 +53,6 @@
     <div class="md-toolbar-tools">
       <span flex></span>
 
-      <md-button class="qa-discard"
-                 ng-click="$ctrl.discard()"
-                 ng-disabled="!$ctrl.isDocumentDirty()">
-        {{ ::'DISCARD' | translate }}
-      </md-button>
-
       <md-button class="qa-save"
                  ng-click="$ctrl.save()"
                  ng-disabled="!$ctrl.isSaveAllowed()"
