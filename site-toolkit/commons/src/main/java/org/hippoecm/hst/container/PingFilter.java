@@ -45,13 +45,14 @@ public class PingFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(PingFilter.class);
 
+
     private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
     /**
      * attribute on the request which gets the message stored, useful if for example in your web.xml you want to
      * include a custom 503.jsp outputting that the HST application is starting up
      */
     public static final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
-
+    private static final String AVAILABLE_MESSAGE = "HST Application is ready to serve requests";
     /**
      * <p>
      * FilterConfig or ServletContext init parameter in the web.xml that indicates which check this {@code PingFilter}
@@ -140,16 +141,18 @@ public class PingFilter implements Filter {
                 break;
         }
         final String message = hasCustomMessage() ? customMessage : "HST Application is starting up";
-        request.setAttribute(PING_FILTER_MESSAGE_ATTR, message);
-        res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+        printMessage(request, res, message, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     }
 
     private void available(final ServletRequest request, final HttpServletResponse response) throws IOException {
-        final String msg = "HST Application is ready to serve requests";
-        request.setAttribute(PING_FILTER_MESSAGE_ATTR, msg);
+        printMessage(request, response, AVAILABLE_MESSAGE, HttpServletResponse.SC_OK);
+    }
+
+    private void printMessage(final ServletRequest request, final HttpServletResponse response, final String message, final int responseStatus) throws IOException {
+        request.setAttribute(PING_FILTER_MESSAGE_ATTR, message);
         response.setContentType("text/plain");
-        response.getWriter().println(msg);
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().println(message);
+        response.setStatus(responseStatus);
     }
 
     @Override
