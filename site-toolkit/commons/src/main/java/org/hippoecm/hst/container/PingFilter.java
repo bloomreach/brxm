@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,34 +45,35 @@ public class PingFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(PingFilter.class);
 
+    private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
     /**
      * attribute on the request which gets the message stored, useful if for example in your web.xml you want to
      * include a custom 503.jsp outputting that the HST application is starting up
      */
-    public final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
+    public static final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
 
     /**
      * <p>
-     *     FilterConfig or ServletContext init parameter in the web.xml that indicates which check this {@code PingFilter}
-     *     should do (aka meaning the HST available for serving webpages).
+     * FilterConfig or ServletContext init parameter in the web.xml that indicates which check this {@code PingFilter}
+     * should do (aka meaning the HST available for serving webpages).
      * </p>
      * <p>
-     *     By default, the check is based on whether the HST Configuration JCR Nodes all have been loaded into memory.
-     *     (indicated by {@link HstServices#isHstConfigurationNodesLoaded()} returning {@code true}.
-     *     This is the best check because it means the HST only needs to build its in memory model and does not need to
-     *     fetch all jcr Nodes any more from the repository.
+     * By default, the check is based on whether the HST Configuration JCR Nodes all have been loaded into memory.
+     * (indicated by {@link HstServices#isHstConfigurationNodesLoaded()} returning {@code true}.
+     * This is the best check because it means the HST only needs to build its in memory model and does not need to
+     * fetch all jcr Nodes any more from the repository.
      * </p>
      * <p>
-     *     Supported check values are:
-     *     <ul>
-     *         <li>hstConfigNodes</li>
-     *         <li>hstServices</li>
-     *         <li>repositoryAvailability</li>
-     *     </ul>
+     * Supported check values are:
+     * <ul>
+     * <li>hstConfigNodes</li>
+     * <li>hstServices</li>
+     * <li>repositoryAvailability</li>
+     * </ul>
      * </p>
      * <p>
-     *     For example, the PingFilter check can be set to
-     *     <pre>
+     * For example, the PingFilter check can be set to
+     * <pre>
      *         <code>
      *               <context-param>
      *                  <param-name>hst-availability-check</param-name>
@@ -82,27 +83,28 @@ public class PingFilter implements Filter {
      *     </pre>
      * </p>
      * <p>
-     *     The check for 'hstServices' complies if {@link HstServices#isAvailable()} returns {@code true}. The check for
-     *     'repositoryAvailability' complies if HippoServiceRegistry.getService(RepositoryService.class) does not return
-     *     null.
+     * The check for 'hstServices' complies if {@link HstServices#isAvailable()} returns {@code true}. The check for
+     * 'repositoryAvailability' complies if HippoServiceRegistry.getService(RepositoryService.class) does not return
+     * null.
      * </p>
      * <p>
-     *     In case the check does not comply (for example, the HST configuration JCR nodes have not yet been loaded), this
-     *     PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}. After the check
-     *     complies, this PingFilter will return a 200.
+     * In case the check does not comply (for example, the HST configuration JCR nodes have not yet been loaded), this
+     * PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}. After the check
+     * complies, this PingFilter will return a 200.
      * </p>
      * <p>
-     *     Note this PingFilter should be placed <strong>before</strong> the {@link HstFilter} in the web.xml
+     * Note this PingFilter should be placed <strong>before</strong> the {@link HstFilter} in the web.xml
      * </p>
-     *
      */
-    public final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
+    public static final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
 
     private AvailabilityCheck availabilityCheck;
+    private String customMessage;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         final String availabilityCheckValue = getInitParameter(filterConfig, filterConfig.getServletContext(), AVAILABILITY_CHECK_PARAM, hstConfigNodes.name());
+        customMessage = getInitParameter(filterConfig, filterConfig.getServletContext(), CUSTOM_MESSAGE_PARAM, null);
         try {
             availabilityCheck = Enum.valueOf(AvailabilityCheck.class, availabilityCheckValue);
         } catch (Exception e) {
@@ -116,7 +118,7 @@ public class PingFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletResponse res = (HttpServletResponse)response;
+        HttpServletResponse res = (HttpServletResponse) response;
         switch (availabilityCheck) {
             case hstConfigNodes:
                 if (HstServices.isHstConfigurationNodesLoaded()) {
@@ -137,7 +139,8 @@ public class PingFilter implements Filter {
                 }
                 break;
         }
-        request.setAttribute(PING_FILTER_MESSAGE_ATTR, "HST Application is starting up");
+        final String message = hasCustomMessage() ? customMessage : "HST Application is starting up";
+        request.setAttribute(PING_FILTER_MESSAGE_ATTR, message);
         res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     }
 
@@ -147,7 +150,6 @@ public class PingFilter implements Filter {
         response.setContentType("text/plain");
         response.getWriter().println(msg);
         response.setStatus(HttpServletResponse.SC_OK);
-        return;
     }
 
     @Override
@@ -171,5 +173,9 @@ public class PingFilter implements Filter {
         }
 
         return value;
+    }
+
+    private boolean hasCustomMessage() {
+        return customMessage != null;
     }
 }
