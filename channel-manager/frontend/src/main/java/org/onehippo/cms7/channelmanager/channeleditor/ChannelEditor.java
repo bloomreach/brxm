@@ -34,6 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -107,6 +108,10 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private String cmsVersion;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private Long initialHstConnectionTimeout = DEFAULT_INITIAL_CONNECTION_TIMEOUT;
 
     @ExtProperty
@@ -162,6 +167,7 @@ public class ChannelEditor extends ExtPanel {
         }
 
         this.cmsUser = userSession.getJcrSession().getUserID();
+        this.cmsVersion = new SystemInfoDataProvider().getReleaseVersion();
 
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 

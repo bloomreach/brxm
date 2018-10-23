@@ -123,6 +123,7 @@ function mockHost() {
         },
       },
       location: {
+        origin: 'http://localhost:8080',
         pathname: '/test/',
       },
       Ext: {

@@ -53,7 +53,7 @@ class IframeExtensionCtrl {
       url: this._getExtensionUrl(),
       appendTo: this.$element[0],
       methods: {
-        getProperties: () => ({ user: this.ConfigService.cmsUser }),
+        getProperties: () => this._getProperties(),
       },
     });
 
@@ -102,6 +102,19 @@ class IframeExtensionCtrl {
   _addQueryParameters(url) {
     url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
     url.searchParams.append('br.parentOrigin', this.$window.location.origin);
+  }
+
+  _getProperties() {
+    return {
+      baseUrl: this.ConfigService.getCmsOrigin() + this.ConfigService.getCmsContextPath(),
+      extension: {
+        config: this.extension.config,
+      },
+      locale: this.ConfigService.locale,
+      timeZone: this.ConfigService.timeZone,
+      user: this.ConfigService.cmsUser,
+      version: this.ConfigService.cmsVersion,
+    };
   }
 
   $onChanges(params) {

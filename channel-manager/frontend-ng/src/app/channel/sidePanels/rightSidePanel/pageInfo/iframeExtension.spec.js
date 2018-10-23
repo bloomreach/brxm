@@ -54,7 +54,7 @@ describe('iframeExtension', () => {
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
-    ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath']);
+    ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath', 'getCmsOrigin']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -178,6 +178,72 @@ describe('iframeExtension', () => {
       it('works for HTTPS URLs', () => {
         extension.url = 'https://www.bloomreach.com';
         expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+      });
+    });
+  });
+
+  describe('API for client library', () => {
+    let methods;
+
+    beforeEach(() => {
+      Penpal.connectToChild.and.returnValue({
+        promise: $q.resolve(),
+        iframe,
+      });
+      ExtensionService.getExtension.and.returnValue(extension);
+
+      $ctrl.$onInit();
+
+      methods = Penpal.connectToChild.calls.mostRecent().args[0].methods;
+    });
+
+    describe('getProperties', () => {
+      describe('baseUrl', () => {
+        it('is set to the base URL of a CMS on localhost', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/cms/');
+          ConfigService.getCmsOrigin.and.returnValue('http://localhost:8080');
+          expect(methods.getProperties().baseUrl).toBe('http://localhost:8080/cms/');
+        });
+
+        it('is set to the base URL of a CMS in production', () => {
+          ConfigService.getCmsContextPath.and.returnValue('/');
+          ConfigService.getCmsOrigin.and.returnValue('https://cms.example.com');
+          expect(methods.getProperties().baseUrl).toBe('https://cms.example.com/');
+        });
+      });
+
+      describe('extension config', () => {
+        it('is set to the config string of the extension', () => {
+          expect(methods.getProperties().extension.config).toBe('testConfig');
+        });
+      });
+
+      describe('locale', () => {
+        it('is set to the current CMS locale', () => {
+          ConfigService.locale = 'fr';
+          expect(methods.getProperties().locale).toBe('fr');
+        });
+      });
+
+      describe('timeZone', () => {
+        it('is set to the current CMS time zone', () => {
+          ConfigService.timeZone = 'Europe/Amsterdam';
+          expect(methods.getProperties().timeZone).toBe('Europe/Amsterdam');
+        });
+      });
+
+      describe('user', () => {
+        it('is set to the current CMS user', () => {
+          ConfigService.cmsUser = 'editor';
+          expect(methods.getProperties().user).toBe('editor');
+        });
+      });
+
+      describe('version', () => {
+        it('is set to the current CMS version', () => {
+          ConfigService.cmsVersion = '13.0.0';
+          expect(methods.getProperties().version).toBe('13.0.0');
+        });
       });
     });
   });
