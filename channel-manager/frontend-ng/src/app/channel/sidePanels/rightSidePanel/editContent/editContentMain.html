@@ -13,15 +13,14 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<form name="$ctrl.form"
+      class="form-dense-layout"
+      layout="column">
 
 <content-editor flex="grow"
                 layout="column"
-                allow-save="true"
-                enable-publish="true"
                 on-switch-editor="$ctrl.switchEditor()"
-                loading="$ctrl.loading"
-                on-save="$ctrl.save()"
-                on-close="$ctrl.close()">
+                loading="$ctrl.loading">
 
   <content-editor-message>
     <md-subheader ng-if="$ctrl.notAllFieldsShown()"
@@ -34,3 +33,30 @@
   </content-editor-message>
 
 </content-editor>
+</form>
+
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex></span>
+
+    <md-button class="qa-discard"
+               ng-click="$ctrl.discard()"
+               ng-disabled="!$ctrl.isDocumentDirty()">
+      {{ ::'DISCARD' | translate }}
+    </md-button>
+
+    <md-button class="qa-publish animate-flash"
+               ng-if="$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.publish()">
+      {{ ::'PUBLISH' | translate }}
+    </md-button>
+
+    <md-button class="qa-save"
+               ng-if="!$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
+  </div>
+</md-toolbar>

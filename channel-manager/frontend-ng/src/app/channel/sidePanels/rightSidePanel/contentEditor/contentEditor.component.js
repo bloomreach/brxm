@@ -23,16 +23,14 @@ const contentEditorComponent = {
   template,
   transclude: {
     message: '?contentEditorMessage',
-    extraButton: '?contentEditorExtraButton',
   },
   bindings: {
-    allowSave: '<',
-    closeLabel: '@?',
     enablePublish: '<',
     loading: '=',
-    onClose: '&',
-    onSave: '&',
     onSwitchEditor: '&',
+  },
+  require: {
+    form: '^^form',
   },
 };
 

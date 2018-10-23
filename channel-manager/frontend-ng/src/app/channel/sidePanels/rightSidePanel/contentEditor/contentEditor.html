@@ -46,39 +46,9 @@
     </div>
   </div>
 
-  <form name="$ctrl.form"
-        class="form-dense-layout">
-    <document-fields ng-if="$ctrl.isEditing()"
-                     class="top-level"
-                     field-types="$ctrl.getFieldTypes()"
-                     field-values="$ctrl.getFieldValues()">
-    </document-fields>
-  </form>
+  <document-fields ng-if="$ctrl.isEditing()"
+                   class="top-level"
+                   field-types="$ctrl.getFieldTypes()"
+                   field-values="$ctrl.getFieldValues()">
+  </document-fields>
 </md-content>
-
-<md-toolbar>
-  <div class="md-toolbar-tools">
-    <span flex></span>
-
-    <md-button class="qa-close"
-               ng-click="$ctrl.onClose()">
-      {{ ::$ctrl.closeLabel | translate }}
-    </md-button>
-
-    <md-button class="qa-publish animate-flash"
-               ng-if="$ctrl.isPublishAllowed()"
-               ng-click="$ctrl.publish()">
-      {{ ::'PUBLISH' | translate }}
-    </md-button>
-
-    <md-button class="qa-save"
-               ng-if="!$ctrl.isPublishAllowed()"
-               ng-click="$ctrl.save()"
-               ng-disabled="!$ctrl.isSaveAllowed()">
-      {{ ::'SAVE' | translate }}
-    </md-button>
-
-    <div ng-transclude="extraButton"></div>
-
-  </div>
-</md-toolbar>

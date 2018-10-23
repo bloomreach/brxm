@@ -67,17 +67,70 @@ class Step2Controller {
     this.close();
   }
 
-  onSave() {
-    this.documentIsSaved = true;
-    this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-    this.ContentEditor.discardChanges()
-      .then(() => this.Step2Service.saveComponentParameter())
-      .then(() => {
-        this.CreateContentService.finish(this.ContentEditor.getDocumentId());
-      })
+  save() {
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.documentIsSaved = true;
+          this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+          this.ContentEditor.discardChanges()
+            .then(() => this.Step2Service.saveComponentParameter())
+            .then(() => {
+              this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+            })
+            .finally(() => {
+              this.CmsService.reportUsageStatistic('CreateContent2Done');
+            });
+        }));
+  }
+
+  showLoadingIndicator(promise) {
+    this.loading = true;
+    return this.$q.resolve(promise())
       .finally(() => {
-        this.CmsService.reportUsageStatistic('CreateContent2Done');
+        this.loading = false;
       });
+  }
+
+  discard() {
+    console.log('TODO: implement discard action.');
+/*
+    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
+      .then(() => {
+        this.form.$setPristine();
+        this.ContentEditor.deleteDocument()
+          .then(this.createDocument());
+      })
+*/
+  }
+
+/*
+  createDocument() {
+    const document = {
+      name: this.name,
+      slug: this.url,
+      documentTemplateQuery: this.documentTemplateQuery,
+      documentTypeId: this.documentType,
+      rootPath: this.rootPath,
+      defaultPath: this.defaultPath,
+    };
+    return this.ContentService._send('POST', ['documents'], document)
+      .catch(error => this._onError(error, 'Unexpected error creating a new document'));
+  }
+*/
+
+
+  isDocumentDirty() {
+    return this.ContentEditor.isDocumentDirty();
+  }
+
+  isEditing() {
+    return this.ContentEditor.isEditing();
+  }
+
+  isSaveAllowed() {
+    return this.isEditing() && this.isDocumentDirty() && this.form.$valid && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
   }
 
   close() {
