@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class RobotstxtComponent extends BaseHstComponent {
         request.setAttribute("document", bean);
 
         // Handle faceted navigation
-        if (isFacetedNavigationDisallowed(request, (Robotstxt) bean)) {
+        if (isFacetedNavigationDisallowed(request, bean)) {
             request.setAttribute("disallowedFacNavLinks", getDisallowedFacetNavigationLinks(request, mount));
         }
     }
@@ -150,7 +150,7 @@ public class RobotstxtComponent extends BaseHstComponent {
      * Get the XPath query for searching facet navigation nodes, that are to be checked for exclusion.
      */
     protected String getFacNavQueryXPath() {
-        return "//element(*, " + FacNavNodeType.NT_FACETNAVIGATION + ")";
+        return "content//element(*, " + FacNavNodeType.NT_FACETNAVIGATION + ')';
     }
 
     /**
