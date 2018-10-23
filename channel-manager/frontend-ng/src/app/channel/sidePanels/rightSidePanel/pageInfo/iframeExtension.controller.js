@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
     $sce,
-    $scope,
     $window,
     ChannelService,
     ConfigService,
@@ -27,6 +25,7 @@ class IframeExtensionCtrl {
     ExtensionService,
     HippoIframeService,
     PathService,
+    Penpal,
   ) {
     'ngInject';
 
@@ -40,22 +39,41 @@ class IframeExtensionCtrl {
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
     this.PathService = PathService;
+    this.Penpal = Penpal;
   }
 
   $onInit() {
-    this.extension = this.ExtensionService.getExtension(this.extensionId);
-
-    const extensionIframe = this.$element.children('.iframe-extension');
-    this.iframeWindow = this.DomService.getIframeWindow(extensionIframe);
-
-    extensionIframe.on('load', () => {
-      this.iframeLoaded = true;
-      this._initExtension();
-      this._setIframeContext();
-    });
+    this._initExtension();
   }
 
-  getExtensionUrl() {
+  _initExtension() {
+    this.extension = this.ExtensionService.getExtension(this.extensionId);
+
+    this.connection = this.Penpal.connectToChild({
+      url: this._getExtensionUrl(),
+      appendTo: this.$element[0],
+      methods: {
+        getProperties: () => ({ user: this.ConfigService.cmsUser }),
+      },
+    });
+
+    // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
+    // - allow-top-navigation
+    // - allow-top-navigation-by-user-activation
+    $(this.connection.iframe).attr('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
+
+    this.connection.promise
+      .then((child) => {
+        this.child = child;
+        this.iframeLoaded = true;
+        this._setIframeContext();
+      })
+      .catch((e) => {
+        this._warnExtension('failed to connect with the client library.', e);
+      });
+  }
+
+  _getExtensionUrl() {
     if (this._isAbsoluteUrl(this.extension.url)) {
       return this._getTrustedAbsoluteUrl(this.extension.url);
     }
@@ -68,7 +86,7 @@ class IframeExtensionCtrl {
 
   _getTrustedAbsoluteUrl(extensionUrl) {
     const url = new URL(extensionUrl);
-    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    this._addQueryParameters(url);
     return this.$sce.trustAsResourceUrl(url.href);
   }
 
@@ -77,8 +95,13 @@ class IframeExtensionCtrl {
     // The current location should be the default value for the second parameter of the URL() constructor,
     // but Chrome needs it explicitly otherwise it will throw an error.
     const url = new URL(path, this.$window.location.origin);
-    url.searchParams.append('antiCache', this.ConfigService.antiCache);
+    this._addQueryParameters(url);
     return url.pathname + url.search;
+  }
+
+  _addQueryParameters(url) {
+    url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
+    url.searchParams.append('br.parentOrigin', this.$window.location.origin);
   }
 
   $onChanges(params) {
@@ -96,54 +119,8 @@ class IframeExtensionCtrl {
     }
   }
 
-  _initExtension() {
-    if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
-      this._warnExtension('does not define a window.BR_EXTENSION object, cannot initialize');
-      return;
-    }
-
-    if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onInit)) {
-      this._warnExtension('does not define a window.BR_EXTENSION.onInit function, cannot initialize');
-      return;
-    }
-
-    try {
-      const publicApi = {
-        refreshChannel: () => {
-          this.ChannelService.reload();
-        },
-        refreshPage: () => {
-          this.HippoIframeService.reload();
-        },
-        config: this.extension.config,
-      };
-      this.iframeWindow.BR_EXTENSION.onInit(publicApi);
-    } catch (e) {
-      this._warnExtension('threw an error in window.BR_EXTENSION.onInit()', e);
-    }
-  }
-
   _setIframeContext() {
-    if (!angular.isObject(this.iframeWindow.BR_EXTENSION)) {
-      this._warnExtension('does not define a window.BR_EXTENSION object, cannot provide context');
-      return;
-    }
-
-    if (!angular.isFunction(this.iframeWindow.BR_EXTENSION.onContextChanged)) {
-      this._warnExtension('does not define a window.BR_EXTENSION.onContextChanged function, cannot provide context');
-      return;
-    }
-
-    try {
-      const extensionPoint = this.extension.extensionPoint;
-      const contextData = this.context;
-      this.iframeWindow.BR_EXTENSION.onContextChanged({
-        extensionPoint,
-        data: contextData,
-      });
-    } catch (e) {
-      this._warnExtension('threw an error in window.BR_EXTENSION.onContextChanged()', e);
-    }
+    this._warnExtension('should update the page context: TODO');
   }
 
   _warnExtension(message, error) {

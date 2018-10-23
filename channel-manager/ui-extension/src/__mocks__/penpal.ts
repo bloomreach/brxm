@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import './iframeExtension.scss';
-import controller from './iframeExtension.controller';
-
-const iframeExtensionComponent = {
-  controller,
-  bindings: {
-    context: '<',
-    extensionId: '@',
-  },
+const uiProperties = {
+  user: 'admin'
 };
 
-export default iframeExtensionComponent;
+const parent = {
+  getProperties: () => Promise.resolve(uiProperties)
+};
+
+const penpal = {
+  connectToParent: jest.fn(() => ({
+    promise: Promise.resolve(parent)
+  }))
+};
+
+export default penpal;

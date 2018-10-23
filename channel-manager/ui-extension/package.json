@@ -20,9 +20,12 @@
     "test": "jest"
   },
   "jest": {
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "coverageDirectory": "./coverage",
     "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -32,7 +35,7 @@
     },
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "tsconfig.json"
+        "tsConfig": "tsconfig.json"
       }
     },
     "testMatch": [
@@ -60,5 +63,8 @@
     "webpack": "^4.0",
     "webpack-cli": "^3.0",
     "webpack-merge": "^4.0"
+  },
+  "dependencies": {
+    "penpal": "^3.0"
   }
 }

@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.iframe-extension {
-  border: 0;
-  height: 100%;
-  margin: 0;
-  width: 100%;
+iframe-extension {
+  iframe {
+    border: 0;
+    height: 100%;
+    margin: 0;
+    width: 100%;
+  }
 }
