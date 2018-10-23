@@ -63,7 +63,7 @@ public class CompositeHstSiteImpl implements CompositeHstSite {
     }
 
     private HstSite getActiveHstSite() {
-        if (branches.isEmpty() || delegatingHstSiteProvider == null) {
+        if (branches.isEmpty() || delegatingHstSiteProvider == null || RequestContextProvider.get() == null) {
             return master;
         }
         return delegatingHstSiteProvider.getHstSite(this, RequestContextProvider.get());

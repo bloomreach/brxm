@@ -25,6 +25,9 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.container.PlatformRequestContextProvider;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -173,14 +176,23 @@ public class HstModelImpl implements InternalHstModel {
                 return vhosts;
             }
 
-            siteMapItemHandlerRegistry.expungeStaleEntries();
 
-            // dispatch all events
-            invalidationMonitor.dispatchHstEvents();
+            final PlatformRequestContextProvider platformRequestContextProvider = new PlatformRequestContextProvider();
+            final HstRequestContext requestContext = RequestContextProvider.get();
 
             // make sure that the Thread class loader during model loading is the platform classloader
             final ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+
             try {
+                // Model loading must be HstRequestContext-less hence we clear the request context and in finally set it again
+                platformRequestContextProvider.clear();
+
+                siteMapItemHandlerRegistry.expungeStaleEntries();
+
+                // dispatch all events
+                invalidationMonitor.dispatchHstEvents();
+
+
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(platformClassloader);
                 }
@@ -209,6 +221,7 @@ public class HstModelImpl implements InternalHstModel {
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
                 }
+                platformRequestContextProvider.set(requestContext);
             }
         }
     }
