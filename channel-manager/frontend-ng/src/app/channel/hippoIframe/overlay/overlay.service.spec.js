@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
+import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
 describe('OverlayService', () => {
   let $iframe;
@@ -81,9 +81,9 @@ describe('OverlayService', () => {
   });
 
   function loadIframeFixture(callback) {
-    $iframe.one('load', () => {
+    $iframe.one('load', async () => {
       iframeWindow = $iframe[0].contentWindow;
-      DomService.addCss(iframeWindow, hippoIframeCss);
+      await DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
 
       try {
         PageStructureService.clearParsedElements();
