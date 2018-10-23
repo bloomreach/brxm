@@ -18,7 +18,9 @@ describe('iframeExtension', () => {
   let $componentController;
   let $ctrl;
   let $element;
+  let $log;
   let $q;
+  let $rootScope;
   let $window;
   let context;
   let extension;
@@ -33,9 +35,10 @@ describe('iframeExtension', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_) => {
+    inject((_$componentController_, _$q_, _$rootScope_) => {
       $componentController = _$componentController_;
       $q = _$q_;
+      $rootScope = _$rootScope_;
     });
 
     context = {
@@ -56,6 +59,7 @@ describe('iframeExtension', () => {
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
     Penpal = jasmine.createSpyObj('Penpal', ['connectToChild']);
+    $log = jasmine.createSpyObj('$log', ['warn']);
     $window = {
       location: {
         origin: 'https://www.example.com:443',
@@ -66,6 +70,7 @@ describe('iframeExtension', () => {
     iframe = angular.element('<iframe src="about:blank"></iframe>');
     $ctrl = $componentController('iframeExtension', {
       $element,
+      $log,
       $window,
       ChannelService,
       ConfigService,
@@ -106,6 +111,20 @@ describe('iframeExtension', () => {
         appendTo: $element[0],
         methods: jasmine.any(Object),
       });
+    });
+
+    it('logs a warning when connecting to the child failed', () => {
+      ConfigService.antiCache = 42;
+      ConfigService.getCmsContextPath.and.returnValue('/cms/');
+
+      const error = new Error('Connection destroyed');
+      Penpal.connectToChild.and.returnValue({ promise: $q.reject(error) });
+
+      $ctrl.$onInit();
+      $rootScope.$digest();
+
+      expect(Penpal.connectToChild).toHaveBeenCalled();
+      expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' failed to connect with the client library.', error);
     });
   });
 

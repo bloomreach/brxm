@@ -62,11 +62,15 @@ class IframeExtensionCtrl {
     // - allow-top-navigation-by-user-activation
     $(this.connection.iframe).attr('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
-    this.connection.promise.then((child) => {
-      this.child = child;
-      this.iframeLoaded = true;
-      this._setIframeContext();
-    });
+    this.connection.promise
+      .then((child) => {
+        this.child = child;
+        this.iframeLoaded = true;
+        this._setIframeContext();
+      })
+      .catch((e) => {
+        this._warnExtension('failed to connect with the client library.', e);
+      });
   }
 
   _getExtensionUrl() {
