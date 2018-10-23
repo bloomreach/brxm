@@ -16,11 +16,9 @@
 
 import './iframeExtension.scss';
 import controller from './iframeExtension.controller';
-import template from './iframeExtension.html';
 
 const iframeExtensionComponent = {
   controller,
-  template,
   bindings: {
     context: '<',
     extensionId: '@',
