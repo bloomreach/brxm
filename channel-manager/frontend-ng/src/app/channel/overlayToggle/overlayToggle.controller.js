@@ -27,7 +27,6 @@ class OverlayToggleController {
 
   $onInit() {
     this.storageKey = `channelManager.overlays.${this.name}`;
-    this.initiateOverlay();
   }
 
   $onChanges() {
@@ -38,11 +37,12 @@ class OverlayToggleController {
     if (this.ProjectService.isBranch() && !this.ProjectService.isEditingAllowed(this.name)) {
       this.disabled = true;
       this.state = false;
-      this.onStateChange({ state: false });
     } else {
       this.disabled = false;
       this.loadPersistentState();
     }
+
+    this.onStateChange({ state: this.state });
   }
 
   setState(state) {
@@ -53,8 +53,12 @@ class OverlayToggleController {
 
   loadPersistentState() {
     const state = this.localStorageService.get(this.storageKey);
-    this.state = state || this.defaultState;
-    this.onStateChange({ state });
+
+    if (state === null) {
+      this.state = this.defaultState;
+    } else {
+      this.state = state;
+    }
   }
 }
 
