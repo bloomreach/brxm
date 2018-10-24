@@ -56,12 +56,6 @@ describe('overlayToggle component', () => {
       expect($ctrl.iconName).toEqual('md-icon-name');
       expect($ctrl.tooltip).toEqual('Test tooltip');
     });
-
-    it('sets storage key based on the toggle name and loads persistent toggle state', () => {
-      $ctrl.$onInit();
-      expect($ctrl.storageKey).toEqual(testStorageKey);
-      expect(localStorageService.get).toHaveBeenCalledWith(testStorageKey);
-    });
   });
 
   describe('$onChanges', () => {
@@ -75,7 +69,8 @@ describe('overlayToggle component', () => {
   describe('initOverlay', () => {
     it('loads persisted state when selected project is master', () => {
       spyOn($ctrl, 'loadPersistentState');
-      $ctrl.$onInit();
+
+      $ctrl.initiateOverlay();
 
       expect($ctrl.disabled).toBe(false);
       expect($ctrl.loadPersistentState).toHaveBeenCalled();
@@ -86,7 +81,7 @@ describe('overlayToggle component', () => {
       spyOn(ProjectService, 'isEditingAllowed').and.returnValue(true);
       spyOn($ctrl, 'loadPersistentState');
 
-      $ctrl.$onInit();
+      $ctrl.initiateOverlay();
 
       expect($ctrl.disabled).toBe(false);
       expect($ctrl.loadPersistentState).toHaveBeenCalled();
@@ -97,7 +92,7 @@ describe('overlayToggle component', () => {
       spyOn(ProjectService, 'isEditingAllowed').and.returnValue(false);
       spyOn($ctrl, 'loadPersistentState');
 
-      $ctrl.$onInit();
+      $ctrl.initiateOverlay();
 
       expect($ctrl.disabled).toBe(true);
       expect($ctrl.state).toBe(false);
