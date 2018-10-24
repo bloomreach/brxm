@@ -27,6 +27,7 @@ class OverlayToggleController {
 
   $onInit() {
     this.storageKey = `channelManager.overlays.${this.name}`;
+    this.initiateOverlay();
   }
 
   $onChanges() {
