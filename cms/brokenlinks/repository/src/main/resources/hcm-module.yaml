@@ -1,7 +1,0 @@
-group: hippo-cms
-project:
-    name: hippo-cms
-    after: hippo-repository
-module:
-    name: hippo-cms-brokenlinks-repository
-    after: hippo-cms-reporting-repository
