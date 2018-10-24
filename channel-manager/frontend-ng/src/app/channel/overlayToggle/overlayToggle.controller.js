@@ -30,8 +30,10 @@ class OverlayToggleController {
     this.initiateOverlay();
   }
 
-  $onChanges() {
-    this.initiateOverlay();
+  $onChanges(changes) {
+    if (changes.channel) {
+      this.initiateOverlay();
+    }
   }
 
   initiateOverlay() {
