@@ -15,7 +15,14 @@
  */
 
 const uiProperties = {
-  user: 'admin'
+  baseUrl: 'https://cms.example.com',
+  extension: {
+    config: 'testConfig',
+  },
+  locale: 'en',
+  timeZone: 'Europe/Amsterdam',
+  user: 'admin',
+  version: '13.0.0',
 };
 
 const parent = {
@@ -25,7 +32,10 @@ const parent = {
 const penpal = {
   connectToParent: jest.fn(() => ({
     promise: Promise.resolve(parent)
-  }))
+  })),
+  ERR_CONNECTION_DESTROYED: 'ConnectionDestroyed',
+  ERR_CONNECTION_TIMEOUT: 'ConnectionTimeout',
+  ERR_NOT_IN_IFRAME: 'NotInIframe',
 };
 
 export default penpal;
