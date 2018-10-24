@@ -24,8 +24,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -45,6 +47,7 @@ import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.onehippo.cms7.essentials.WebUtils;
 import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.filters.EssentialsContextListener;
+import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.rest.PluginDescriptorList;
 import org.onehippo.cms7.essentials.plugin.sdk.services.SettingsServiceImpl;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
@@ -203,6 +206,15 @@ public class PluginStore {
             // extract all REST classes to setup the dynamic endpoints
             if (plugin.getRestClasses() != null) {
                 restClasses.addAll(plugin.getRestClasses());
+            }
+
+            // set flag if plugin declares changes for default parameters
+            final DefaultInstructionPackage instructionPackage = installService.makeInstructionPackageInstance(plugin);
+            if (instructionPackage != null) {
+                final Map<String, Object> parameters = installService.ensureGenericInstallationParameters(new HashMap<>());
+                if (!instructionPackage.getInstructionsMessages(parameters).isEmpty()) {
+                    plugin.setHasMessages(true);
+                }
             }
         }
 
