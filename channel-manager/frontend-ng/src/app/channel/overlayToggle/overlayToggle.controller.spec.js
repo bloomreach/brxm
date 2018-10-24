@@ -56,6 +56,12 @@ describe('overlayToggle component', () => {
       expect($ctrl.iconName).toEqual('md-icon-name');
       expect($ctrl.tooltip).toEqual('Test tooltip');
     });
+
+    it('sets storage key based on the toggle name and loads persistent toggle state', () => {
+      $ctrl.$onInit();
+      expect($ctrl.storageKey).toEqual(testStorageKey);
+      expect(localStorageService.get).toHaveBeenCalledWith(testStorageKey);
+    });
   });
 
   describe('$onChanges', () => {
