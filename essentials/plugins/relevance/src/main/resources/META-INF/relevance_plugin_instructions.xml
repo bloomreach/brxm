@@ -21,7 +21,6 @@
   <instructionSet>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-dependencies-cms" targetPom="cms-dependencies" type="pom"/>
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-dependencies-site" targetPom="site-components" type="pom"/>
-    <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-maxmind-geolite2" version="20161123" targetPom="cms-dependencies" scope="runtime"/>
   
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceInstruction" />
   </instructionSet>
