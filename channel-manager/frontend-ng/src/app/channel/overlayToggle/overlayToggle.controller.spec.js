@@ -65,9 +65,9 @@ describe('overlayToggle component', () => {
   });
 
   describe('$onChanges', () => {
-    it('initiates overlay again when inputs change', () => {
+    it('initiates overlay again when channel input changes', () => {
       spyOn($ctrl, 'initiateOverlay');
-      $ctrl.$onChanges();
+      $ctrl.$onChanges({ channel: 'testChannel' });
       expect($ctrl.initiateOverlay).toHaveBeenCalled();
     });
   });
