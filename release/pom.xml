@@ -494,21 +494,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-brokenlinks-frontend</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-brokenlinks-repository</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-brokenlinks-common</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-google-analytics-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
