@@ -22,7 +22,6 @@ import ConfigService from './config.service';
 import ContentService from './content.service';
 import DialogService from './dialog.service';
 import DomService from './dom.service';
-import ExtensionService from './extension.service';
 import FeedbackService from './feedback.service';
 import HippoGlobal from './hippoGlobal.service';
 import HstComponentService from './hstComponent.service';
@@ -45,7 +44,6 @@ const servicesModule = angular
   .service('ContentService', ContentService)
   .service('DialogService', DialogService)
   .service('DomService', DomService)
-  .service('ExtensionService', ExtensionService)
   .service('FeedbackService', FeedbackService)
   .service('HippoGlobal', HippoGlobal)
   .service('HstComponentService', HstComponentService)

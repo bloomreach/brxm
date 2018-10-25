@@ -27,8 +27,8 @@ describe('PageMenuService', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageMenuService;
-  let PageInfoService;
   let PageMetaDataService;
+  let SessionService;
   let SiteMapItemService;
   let SiteMapService;
 
@@ -38,33 +38,9 @@ describe('PageMenuService', () => {
   confirmDialog.ok.and.returnValue(confirmDialog);
   confirmDialog.cancel.and.returnValue(confirmDialog);
 
-  const SessionServiceMock = jasmine.createSpyObj('SessionServiceMock', [
-    'hasWriteAccess',
-    'isCrossChannelPageCopySupported',
-  ]);
-
-  const ExtensionServiceMock = jasmine.createSpyObj('ExtensionServiceMock', [
-    'hasExtensions',
-    'getExtensions',
-  ]);
-
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    angular.mock.module(($provide) => {
-      $provide.value('SessionService', SessionServiceMock);
-    });
-
-    angular.mock.module(($provide) => {
-      $provide.value('ExtensionService', ExtensionServiceMock);
-    });
-
-    ExtensionServiceMock.getExtensions.and.returnValue([]);
-  });
-
-  const getItem = name => PageMenuService.menu.items.find(item => item.name === name);
-
-  function doInject() {
     inject((
       _$q_,
       _$rootScope_,
@@ -74,8 +50,8 @@ describe('PageMenuService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageMenuService_,
-      _PageInfoService_,
       _PageMetaDataService_,
+      _SessionService_,
       _SiteMapItemService_,
       _SiteMapService_,
     ) => {
@@ -87,334 +63,238 @@ describe('PageMenuService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageMenuService = _PageMenuService_;
-      PageInfoService = _PageInfoService_;
       PageMetaDataService = _PageMetaDataService_;
+      SessionService = _SessionService_;
       SiteMapItemService = _SiteMapItemService_;
       SiteMapService = _SiteMapService_;
     });
-  }
 
-  describe('for editors', () => {
-    beforeEach(() => {
-      SessionServiceMock.isCrossChannelPageCopySupported.and.returnValue(true);
-      SessionServiceMock.hasWriteAccess.and.returnValue(true);
+    spyOn($translate, 'instant').and.callFake((key) => {
+      if (key.startsWith('TOOLBAR_MENU_PAGES_')) {
+        return key.replace(/^TOOLBAR_MENU_PAGES_/, '');
+      }
+
+      return key;
     });
 
-    describe('when there are no page extensions', () => {
-      beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(false);
-
-        doInject();
-
-        spyOn(ChannelService, 'isEditable');
-      });
-
-      // menu button
-      it('shows the menu button if the channel is editable', () => {
-        ChannelService.isEditable.and.returnValue(true);
-        const menu = PageMenuService.menu;
-        expect(menu.isVisible()).toBe(true);
-      });
-
-      it('hides the menu button if the channel is not editable', () => {
-        ChannelService.isEditable.and.returnValue(false);
-        const menu = PageMenuService.menu;
-        expect(menu.isVisible()).toBe(false);
-      });
-
-      it('hides the "info" option', () => {
-        const info = getItem('info');
-        expect(info).not.toBeDefined();
-      });
-    });
-
-    describe('when there are page extensions', () => {
-      beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(true);
-
-        doInject();
-
-        spyOn($translate, 'instant').and.callFake((key) => {
-          if (key.startsWith('TOOLBAR_MENU_PAGES_')) {
-            return key.replace(/^TOOLBAR_MENU_PAGES_/, '');
-          }
-
-          return key;
-        });
-
-        spyOn(FeedbackService, 'showError');
-        spyOn(ChannelService, 'isEditable').and.returnValue(false);
-        spyOn(ChannelService, 'hasPrototypes');
-        spyOn(ChannelService, 'hasWorkspace');
-        spyOn(ChannelService, 'recordOwnChange');
-        spyOn(ChannelService, 'loadPageModifiableChannels');
-        spyOn(ChannelService, 'getPageModifiableChannels');
-        spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
-        spyOn(SiteMapService, 'load');
-        spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
-        spyOn(SiteMapItemService, 'hasItem').and.returnValue(true);
-        spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
-        spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
-        spyOn(SiteMapItemService, 'deleteItem');
-        spyOn(SiteMapItemService, 'clear');
-        spyOn(SiteMapItemService, 'loadAndCache');
-        spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
-        spyOn(DialogService, 'show');
-        spyOn(HippoIframeService, 'load');
-        spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
-      });
-
-      // menu button
-      it('only shows the menu button if the channel is editable', () => {
-        const menu = PageMenuService.menu;
-        expect(menu.isVisible()).toBe(true);
-
-        ChannelService.isEditable.and.returnValue(true);
-        expect(menu.isVisible()).toBe(true);
-      });
-
-      it('shows the "info" option', () => {
-        const info = getItem('info');
-        expect(info).toBeDefined();
-      });
-
-      it('shows page info when clicked', () => {
-        spyOn(PageInfoService, 'showPageInfo');
-
-        getItem('info').onClick();
-
-        expect(PageInfoService.showPageInfo).toHaveBeenCalled();
-      });
-
-      // all other menu options
-      it('loads the meta data of the current page when opening the page menu', () => {
-        const menu = PageMenuService.menu;
-        menu.onClick();
-
-        expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
-        expect(ChannelService.loadPageModifiableChannels).toHaveBeenCalled();
-      });
-
-      // properties
-      it('enables the "properties" option if the page is editable', () => {
-        const properties = getItem('properties');
-        SiteMapItemService.isEditable.and.returnValue(true);
-        expect(properties.isVisible()).toBe(true);
-        expect(properties.isEnabled()).toBe(true);
-
-        SiteMapItemService.isEditable.and.returnValue(false);
-        expect(properties.isVisible()).toBe(true);
-        expect(properties.isEnabled()).toBe(false);
-      });
-
-      it('opens the page-properties subpage when "properties" option is clicked', () => {
-        spyOn(PageMenuService, 'showSubPage');
-
-        getItem('properties').onClick();
-        expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-properties');
-      });
-
-      // copy
-      it('enables the "copy" option if the page can be copied', () => {
-        const copy = getItem('copy');
-
-        SiteMapItemService.isLocked.and.returnValue(true);
-        expect(copy.isVisible()).toBe(true);
-
-        expect(copy.isEnabled()).toBe(false);
-        SiteMapItemService.isLocked.and.returnValue(false);
-        ChannelService.hasWorkspace.and.returnValue(true);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(true);
-
-        ChannelService.hasWorkspace.and.returnValue(false);
-        SessionServiceMock.isCrossChannelPageCopySupported.and.returnValue(false);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(false);
-
-        SessionServiceMock.isCrossChannelPageCopySupported.and.returnValue(true);
-        ChannelService.getPageModifiableChannels.and.returnValue(undefined);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(false);
-
-        ChannelService.getPageModifiableChannels.and.returnValue([]);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(false);
-
-        ChannelService.getPageModifiableChannels.and.returnValue(['dummy']);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(true);
-
-        // page is undefined
-        SiteMapItemService.hasItem.and.returnValue(false);
-        expect(copy.isVisible()).toBe(true);
-        expect(copy.isEnabled()).toBe(false);
-      });
-
-      it('opens the page-copy subpage when "copy" option is clicked', () => {
-        spyOn(PageMenuService, 'showSubPage');
-
-        getItem('copy').onClick();
-        expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-copy');
-      });
-
-      // move
-      it('enables the "move" option if the page can be moved', () => {
-        const move = getItem('move');
-        expect(move.isVisible()).toBe(true);
-        expect(move.isEnabled()).toBe(false);
-
-        SiteMapItemService.isEditable.and.returnValue(true);
-        expect(move.isVisible()).toBe(true);
-        expect(move.isEnabled()).toBe(true);
-      });
-
-      it('opens the page-move subpage when the "move" option is clicked', () => {
-        spyOn(PageMenuService, 'showSubPage');
-
-        getItem('move').onClick();
-        expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-move');
-      });
-
-      // delete
-      it('enables the "delete" option if the page can be deleted', () => {
-        const del = getItem('delete');
-        expect(del.isVisible()).toBe(true);
-        expect(del.isEnabled()).toBe(false);
-
-        SiteMapItemService.isEditable.and.returnValue(true);
-        expect(del.isVisible()).toBe(true);
-        expect(del.isEnabled()).toBe(true);
-      });
-
-      it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
-        spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
-
-        DialogService.show.and.returnValue($q.when());
-        SiteMapItemService.deleteItem.and.returnValue($q.when());
-        getItem('delete').onClick();
-        $rootScope.$digest(); // process confirm action
-
-        expect(HippoIframeService.load).toHaveBeenCalledWith('');
-        expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-        expect(SiteMapItemService.clear).toHaveBeenCalled();
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-      });
-
-      it('does nothing when not confirming the deletion of a page', () => {
-        spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
-
-        DialogService.show.and.returnValue($q.reject());
-        getItem('delete').onClick();
-
-        expect(DialogService.confirm).toHaveBeenCalled();
-        expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
-
-        $rootScope.$digest();
-        expect(SiteMapItemService.deleteItem).not.toHaveBeenCalled();
-      });
-
-      it('flashes a toast when failing to delete the current page', () => {
-        spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
-
-        DialogService.show.and.returnValue($q.when());
-        SiteMapItemService.deleteItem.and.returnValue($q.reject());
-        getItem('delete').onClick();
-
-        $rootScope.$digest();
-        expect(SiteMapItemService.deleteItem).toHaveBeenCalled();
-
-        $rootScope.$digest();
-        expect(HippoIframeService.load).not.toHaveBeenCalled();
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_PAGE');
-      });
-
-      it('shows the confirm delete single page message when the page has no subpages', () => {
-        spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
-
-        DialogService.show.and.returnValue($q.when());
-        getItem('delete').onClick();
-
-        expect(confirmDialog.textContent).toHaveBeenCalledWith('CONFIRM_DELETE_SINGLE_PAGE_MESSAGE');
-      });
-
-      it('shows the confirm delete multiple pages message when the page has subpages', () => {
-        spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(3);
-
-        DialogService.show.and.returnValue($q.when());
-        getItem('delete').onClick();
-
-        expect(confirmDialog.textContent).toHaveBeenCalledWith('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE');
-      });
-
-      // new
-      it('enables the "new" action if the current channel has both a workspace and prototypes', () => {
-        const newPage = getItem('new');
-        ChannelService.hasWorkspace.and.returnValue(false);
-        ChannelService.hasPrototypes.and.returnValue(false);
-        expect(newPage.isEnabled()).toBe(false);
-
-        ChannelService.hasWorkspace.and.returnValue(false);
-        ChannelService.hasPrototypes.and.returnValue(true);
-        expect(newPage.isEnabled()).toBe(false);
-
-        ChannelService.hasWorkspace.and.returnValue(true);
-        ChannelService.hasPrototypes.and.returnValue(false);
-        expect(newPage.isEnabled()).toBe(false);
-
-        ChannelService.hasWorkspace.and.returnValue(true);
-        ChannelService.hasPrototypes.and.returnValue(true);
-        expect(newPage.isEnabled()).toBe(true);
-      });
-
-      it('opens the page-new subpage when the "new" option is clicked', () => {
-        spyOn(PageMenuService, 'showSubPage');
-
-        getItem('new').onClick();
-        expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-new');
-      });
-    });
+    spyOn(FeedbackService, 'showError');
+    spyOn(ChannelService, 'isEditable').and.returnValue(false);
+    spyOn(ChannelService, 'hasPrototypes');
+    spyOn(ChannelService, 'hasWorkspace');
+    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'loadPageModifiableChannels');
+    spyOn(ChannelService, 'getPageModifiableChannels');
+    spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
+    spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
+    spyOn(SiteMapService, 'load');
+    spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
+    spyOn(SiteMapItemService, 'hasItem').and.returnValue(true);
+    spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
+    spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
+    spyOn(SiteMapItemService, 'deleteItem');
+    spyOn(SiteMapItemService, 'clear');
+    spyOn(SiteMapItemService, 'loadAndCache');
+    spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
+    spyOn(DialogService, 'show');
+    spyOn(HippoIframeService, 'load');
+    spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
   });
 
-  describe('for authors', () => {
-    beforeEach(() => {
-      SessionServiceMock.hasWriteAccess.and.returnValue(false);
-    });
+  const getItem = name => PageMenuService.menu.items.find(item => item.name === name);
 
-    describe('when there are page extensions', () => {
-      beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(true);
+  // menu button
+  it('only shows the menu button if the channel is editable', () => {
+    const menu = PageMenuService.menu;
+    expect(menu.isVisible()).toBe(false);
 
-        doInject();
+    ChannelService.isEditable.and.returnValue(true);
+    expect(menu.isVisible()).toBe(true);
+  });
 
-        spyOn(ChannelService, 'isEditable').and.returnValue(false);
-      });
+  it('loads the meta data of the current page when opening the page menu', () => {
+    const menu = PageMenuService.menu;
+    menu.onClick();
 
-      // menu button
-      it('shows the menu button', () => {
-        const menu = PageMenuService.menu;
-        expect(menu.isVisible()).toBe(true);
-      });
+    expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
+    expect(ChannelService.loadPageModifiableChannels).toHaveBeenCalled();
+  });
 
-      it('the menu has only the info option', () => {
-        const info = getItem('info');
-        expect(info).toBeDefined();
-        expect(PageMenuService.menu.items.length).toBe(1);
-      });
-    });
+  // properties
+  it('enables the "properties" option if the page is editable', () => {
+    const properties = getItem('properties');
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(properties.isVisible()).toBe(true);
+    expect(properties.isEnabled()).toBe(true);
 
-    describe('when there are no page extensions', () => {
-      beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(false);
+    SiteMapItemService.isEditable.and.returnValue(false);
+    expect(properties.isVisible()).toBe(true);
+    expect(properties.isEnabled()).toBe(false);
+  });
 
-        doInject();
-      });
+  it('opens the page-properties subpage when "properties" option is clicked', () => {
+    spyOn(PageMenuService, 'showSubPage');
 
-      // menu button
-      it('hides the menu button', () => {
-        const menu = PageMenuService.menu;
-        expect(menu.isVisible()).toBe(false);
-      });
-    });
+    getItem('properties').onClick();
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-properties');
+  });
+
+  // copy
+  it('enables the "copy" option if the page can be copied', () => {
+    const copy = getItem('copy');
+
+    SiteMapItemService.isLocked.and.returnValue(true);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(false);
+
+    SiteMapItemService.isLocked.and.returnValue(false);
+    ChannelService.hasWorkspace.and.returnValue(true);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(true);
+
+    ChannelService.hasWorkspace.and.returnValue(false);
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(false);
+
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(true);
+    ChannelService.getPageModifiableChannels.and.returnValue(undefined);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(false);
+
+    ChannelService.getPageModifiableChannels.and.returnValue([]);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(false);
+
+    ChannelService.getPageModifiableChannels.and.returnValue(['dummy']);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(true);
+
+    // page is undefined
+    SiteMapItemService.hasItem.and.returnValue(false);
+    expect(copy.isVisible()).toBe(true);
+    expect(copy.isEnabled()).toBe(false);
+  });
+
+  it('opens the page-copy subpage when "copy" option is clicked', () => {
+    spyOn(PageMenuService, 'showSubPage');
+
+    getItem('copy').onClick();
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-copy');
+  });
+
+  // move
+  it('enables the "move" option if the page can be moved', () => {
+    const move = getItem('move');
+    expect(move.isVisible()).toBe(true);
+    expect(move.isEnabled()).toBe(false);
+
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(move.isVisible()).toBe(true);
+    expect(move.isEnabled()).toBe(true);
+  });
+
+  it('opens the page-move subpage when the "move" option is clicked', () => {
+    spyOn(PageMenuService, 'showSubPage');
+
+    getItem('move').onClick();
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-move');
+  });
+
+  // delete
+  it('enables the "delete" option if the page can be deleted', () => {
+    const del = getItem('delete');
+    expect(del.isVisible()).toBe(true);
+    expect(del.isEnabled()).toBe(false);
+
+    SiteMapItemService.isEditable.and.returnValue(true);
+    expect(del.isVisible()).toBe(true);
+    expect(del.isEnabled()).toBe(true);
+  });
+
+  it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
+
+    DialogService.show.and.returnValue($q.when());
+    SiteMapItemService.deleteItem.and.returnValue($q.when());
+    getItem('delete').onClick();
+    $rootScope.$digest(); // process confirm action
+
+    expect(HippoIframeService.load).toHaveBeenCalledWith('');
+    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
+    expect(SiteMapItemService.clear).toHaveBeenCalled();
+    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+  });
+
+  it('does nothing when not confirming the deletion of a page', () => {
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
+
+    DialogService.show.and.returnValue($q.reject());
+    getItem('delete').onClick();
+
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
+
+    $rootScope.$digest();
+    expect(SiteMapItemService.deleteItem).not.toHaveBeenCalled();
+  });
+
+  it('flashes a toast when failing to delete the current page', () => {
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
+
+    DialogService.show.and.returnValue($q.when());
+    SiteMapItemService.deleteItem.and.returnValue($q.reject());
+    getItem('delete').onClick();
+
+    $rootScope.$digest();
+    expect(SiteMapItemService.deleteItem).toHaveBeenCalled();
+
+    $rootScope.$digest();
+    expect(HippoIframeService.load).not.toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_PAGE');
+  });
+
+  it('shows the confirm delete single page message when the page has no subpages', () => {
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(0);
+
+    DialogService.show.and.returnValue($q.when());
+    getItem('delete').onClick();
+
+    expect(confirmDialog.textContent).toHaveBeenCalledWith('CONFIRM_DELETE_SINGLE_PAGE_MESSAGE');
+  });
+
+  it('shows the confirm delete multiple pages message when the page has subpages', () => {
+    spyOn(SiteMapItemService, 'getNumberOfChildren').and.returnValue(3);
+
+    DialogService.show.and.returnValue($q.when());
+    getItem('delete').onClick();
+
+    expect(confirmDialog.textContent).toHaveBeenCalledWith('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE');
+  });
+
+  // new
+  it('enables the "new" action if the current channel has both a workspace and prototypes', () => {
+    const newPage = getItem('new');
+    ChannelService.hasWorkspace.and.returnValue(false);
+    ChannelService.hasPrototypes.and.returnValue(false);
+    expect(newPage.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(false);
+    ChannelService.hasPrototypes.and.returnValue(true);
+    expect(newPage.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(true);
+    ChannelService.hasPrototypes.and.returnValue(false);
+    expect(newPage.isEnabled()).toBe(false);
+
+    ChannelService.hasWorkspace.and.returnValue(true);
+    ChannelService.hasPrototypes.and.returnValue(true);
+    expect(newPage.isEnabled()).toBe(true);
+  });
+
+  it('opens the page-new subpage when the "new" option is clicked', () => {
+    spyOn(PageMenuService, 'showSubPage');
+
+    getItem('new').onClick();
+    expect(PageMenuService.showSubPage).toHaveBeenCalledWith('page-new');
   });
 });

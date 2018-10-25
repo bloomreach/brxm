@@ -21,7 +21,6 @@ describe('RightSidePanel', () => {
   let $state;
   let $timeout;
   let $transitions;
-  let $window;
   let RightSidePanelService;
   let SidePanelService;
 
@@ -33,14 +32,13 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _$window_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $timeout = _$timeout_;
       $transitions = _$transitions_;
-      $window = _$window_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
@@ -112,19 +110,6 @@ describe('RightSidePanel', () => {
     expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
   });
 
-  it('triggers a window resize event after a full width toggle', () => {
-    spyOn($window, 'dispatchEvent');
-
-    $ctrl.setFullScreen(true);
-    const evt = new Event('resize');
-    expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(evt);
-    expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
-
-    $ctrl.setFullScreen(false);
-    expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(evt);
-    expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
-  });
-
   it('updates local storage on resize', () => {
     $ctrl.onResize(800);
 
@@ -138,7 +123,7 @@ describe('RightSidePanel', () => {
 
     spyOn($state, 'go');
     $ctrl.$element.trigger(e);
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    expect($state.go).toHaveBeenCalledWith('^');
   });
 
   it('ignores other keypresses', () => {

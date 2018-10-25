@@ -48,10 +48,6 @@ class PageMetaDataService {
     return this.data[HstConstants.CONTEXT_PATH];
   }
 
-  getPageId() {
-    return this.data[HstConstants.PAGE_ID];
-  }
-
   getRenderVariant() {
     return this.data[HstConstants.RENDER_VARIANT];
   }
