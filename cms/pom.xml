@@ -64,7 +64,6 @@
     <module>google-analytics</module>
     <module>automatic-export</module>
 
-    <module>brokenlinks</module>
     <module>builtin</module>
     <module>gallery</module>
     <module>perspectives</module>
@@ -502,7 +501,6 @@
                 <!-- repository content XML -->
                 <exclude>automatic-export/repository/src/main/resources/**/*.xml</exclude>
                 <exclude>automatic-export/repository/src/test/resources/**/*.xml</exclude>
-                <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
                 <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!-- front-end build configuration files without license header -->

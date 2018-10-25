@@ -39,11 +39,6 @@
       <artifactId>hippo-cms-translation-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-brokenlinks-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
