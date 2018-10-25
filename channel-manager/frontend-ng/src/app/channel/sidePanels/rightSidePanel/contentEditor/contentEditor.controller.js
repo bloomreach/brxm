@@ -28,7 +28,6 @@ class ContentEditorCtrl {
     this.$scope = $scope;
     this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
-
   }
 
   $onInit() {
@@ -64,9 +63,9 @@ class ContentEditorCtrl {
     return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
   }
 
-  showLoadingIndicator(promise) {
+  showLoadingIndicator(action) {
     this.loading = true;
-    return this.$q.resolve(promise())
+    return this.$q.resolve(action())
       .finally(() => {
         this.loading = false;
       });

@@ -87,9 +87,9 @@ class Step2Controller {
         }));
   }
 
-  showLoadingIndicator(promise) {
+  showLoadingIndicator(action) {
     this.loading = true;
-    return this.$q.resolve(promise())
+    return this.$q.resolve(action())
       .finally(() => {
         this.loading = false;
       });
