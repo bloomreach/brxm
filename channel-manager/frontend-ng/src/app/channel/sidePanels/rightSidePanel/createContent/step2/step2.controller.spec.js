@@ -37,6 +37,7 @@ describe('Create content step 2 controller', () => {
   let Step2Service;
 
   let $ctrl;
+  let form;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContent.step2');
@@ -61,10 +62,13 @@ describe('Create content step 2 controller', () => {
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
       Step2Service = _Step2Service_;
 
+      form = jasmine.createSpyObj('form', ['$setPristine']);
       $ctrl = $controller('step2Ctrl as $ctrl', {
         $scope,
         RightSidePanelService,
-      });
+      },
+      { form },
+      );
     });
 
     spyOn(CmsService, 'reportUsageStatistic');
@@ -115,6 +119,16 @@ describe('Create content step 2 controller', () => {
     });
   });
 
+  it('knows when the content editor is editing', () => {
+    spyOn(ContentEditor, 'isEditing');
+
+    ContentEditor.isEditing.and.returnValue(true);
+    expect($ctrl.isEditing()).toBe(true);
+
+    ContentEditor.isEditing.and.returnValue(false);
+    expect($ctrl.isEditing()).toBe(false);
+  });
+
   it('can switch the editor', () => {
     spyOn(CmsService, 'publish');
     spyOn(ContentEditor, 'close');
@@ -127,18 +141,22 @@ describe('Create content step 2 controller', () => {
     expect(CreateContentService.stop).toHaveBeenCalled();
   });
 
-  it('discards the editable instance, saves the component parameter and finishes create-content on save', () => {
+  it('discards the editable instance, saves the component parameter and finishes create-content on save', (done) => {
     spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
     spyOn(CreateContentService, 'finish');
-    $ctrl.onSave();
+    spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+
+    $ctrl.save().then(() => {
+      expect($ctrl.documentIsSaved).toBe(true);
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
+      expect(FeedbackService.showNotification).toHaveBeenCalled();
+      expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
+      done();
+    });
 
     $rootScope.$digest();
-    expect($ctrl.documentIsSaved).toBe(true);
-    expect(ContentEditor.discardChanges).toHaveBeenCalled();
-    expect(FeedbackService.showNotification).toHaveBeenCalled();
-    expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
   });
 
   it('stops create content when close is called', () => {

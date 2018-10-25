@@ -38,11 +38,11 @@ class EditContentMainCtrl {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
-
-    this.closing = false;
   }
 
   $onInit() {
+    this.RightSidePanelService.setClosing(false);
+
     this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
@@ -61,13 +61,59 @@ class EditContentMainCtrl {
   }
 
   save() {
-    this.HippoIframeService.reload();
-    this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.HippoIframeService.reload();
+          this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+        }));
   }
 
-  close() {
-    this.closing = true;
-    this.EditContentService.stopEditing();
+  showLoadingIndicator(action) {
+    this.loading = true;
+    return this.$q.resolve(action())
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+
+  discard() {
+    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
+      .then(() => {
+        this.form.$setPristine();
+        this.ContentEditor.discardChanges()
+          .then(this.EditContentService._loadDocument(this.ContentEditor.getDocumentId()));
+      });
+  }
+
+  publish() {
+    this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
+    return this.ContentEditor.confirmPublication()
+      .then(() => this._doPublish());
+  }
+
+  _doPublish() {
+    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+      ? this.save().then(() => this.ContentEditor.publish())
+      : this.ContentEditor.publish()),
+    );
+  }
+
+  isEditing() {
+    return this.ContentEditor.isEditing();
+  }
+
+  isDocumentDirty() {
+    return this.ContentEditor.isDocumentDirty();
+  }
+
+  isPublishAllowed() {
+    return this.ContentEditor.isPublishAllowed() && !this.isDocumentDirty();
+  }
+
+  isSaveAllowed() {
+    return this.isEditing() && this.isDocumentDirty() && this.form.$valid;
   }
 
   switchEditor() {
@@ -87,13 +133,13 @@ class EditContentMainCtrl {
       )
       .catch(() => {
         // user cancelled the exit
-        this.closing = false;
+        this.RightSidePanelService.setClosing(false);
         return this.$q.reject();
       });
   }
 
   _confirmExit() {
-    if (this.closing) {
+    if (this.RightSidePanelService.isClosing()) {
       return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
     }
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')

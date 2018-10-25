@@ -14,9 +14,8 @@
   ~ limitations under the License.
   -->
 
-<md-button class="md-icon-button qa-close"
-           aria-label="{{ ::'CLOSE' | translate }}"
-           ng-click="$ctrl.close()"
-           title="{{ ::'CLOSE' | translate }}">
-  <md-icon md-font-icon="mdi-close"></md-icon>
-</md-button>
+<md-icon class="qa-status-icon" 
+         md-font-icon="{{ $ctrl.getPublicationIconName() }}"
+         aria-label="{{ $ctrl.getPublicationIconTooltip() | translate }}"
+         title="{{ $ctrl.getPublicationIconTooltip() | translate }}">
+</md-icon>

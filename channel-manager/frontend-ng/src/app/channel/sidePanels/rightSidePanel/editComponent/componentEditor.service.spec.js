@@ -779,4 +779,11 @@ describe('ComponentEditorService', () => {
       });
     });
   });
+
+  it('manages kill state', () => {
+    expect(ComponentEditor.isKilled()).toBe(false);
+
+    ComponentEditor.kill();
+    expect(ComponentEditor.isKilled()).toBe(true);
+  });
 });

@@ -14,55 +14,33 @@
  * limitations under the License.
  */
 
-class OverlayToggleController {
+class modeToggleController {
   constructor(
-    ProjectService,
     localStorageService,
   ) {
     'ngInject';
 
-    this.ProjectService = ProjectService;
     this.localStorageService = localStorageService;
   }
 
   $onInit() {
     this.storageKey = `channelManager.overlays.${this.name}`;
-    this.initiateOverlay();
-  }
-
-  $onChanges(changes) {
-    if (changes.channel) {
-      this.initiateOverlay();
-    }
-  }
-
-  initiateOverlay() {
-    if (this.ProjectService.isBranch() && !this.ProjectService.isEditingAllowed(this.name)) {
-      this.disabled = true;
-      this.state = false;
-    } else {
-      this.disabled = false;
-      this.loadPersistentState();
-    }
-
-    this.onStateChange({ state: this.state });
+    this.loadPersistentState();
   }
 
   setState(state) {
     this.state = state;
     this.localStorageService.set(this.storageKey, this.state);
-    this.onStateChange({ state });
   }
 
   loadPersistentState() {
-    const state = this.localStorageService.get(this.storageKey);
-
-    if (state === null) {
-      this.state = this.defaultState;
-    } else {
-      this.state = state;
+    let state = this.localStorageService.get(this.storageKey);
+    if (this.localStorageService.get(this.storageKey) == null) {
+      state = this.defaultState;
     }
+
+    this.setState(state);
   }
 }
 
-export default OverlayToggleController;
+export default modeToggleController;

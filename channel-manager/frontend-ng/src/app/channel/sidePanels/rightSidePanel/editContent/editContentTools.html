@@ -16,16 +16,7 @@
 <md-button class="md-icon-button qa-edit-in-content-perspective"
            aria-label="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}"
            ng-disabled="$ctrl.isDisabled()"
-           ng-click="$ctrl.openContentEditor('edit')"
+           ng-click="$ctrl.openContentEditor()"
            title="{{ ::'SWITCH_TO_CONTENT_EDITOR' | translate }}">
   <md-icon md-svg-icon="switch-to-content-editor"></md-icon>
-</md-button>
-
-<md-button class="md-icon-button qa-view-in-content-perspective"
-           aria-label="{{ $ctrl.getPublicationIconTooltip() | translate }}"
-           ng-if="!$ctrl.isDisabled()"
-           ng-disabled="!$ctrl.isPublicationStateAvailable()"
-           ng-click="$ctrl.openContentEditor('view')"
-           title="{{ $ctrl.getPublicationIconTooltip() | translate }}">
-  <md-icon md-font-icon="{{ $ctrl.getPublicationIconName() }}"></md-icon>
 </md-button>
