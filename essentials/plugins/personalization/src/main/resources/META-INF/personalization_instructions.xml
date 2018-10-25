@@ -19,5 +19,6 @@
   <instructionSet>
     <mavenDependency targetPom="cms-dependencies" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-components-repository" version="${hippo.addon-personalization.version}"/>
     <mavenDependency targetPom="site-components" groupId="com.onehippo.cms7" artifactId="hippo-addon-personalization-dependencies" type="pom" version="${hippo.addon-personalization.version}"/>
+    <file action="copy" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
   </instructionSet>
 </instructions>

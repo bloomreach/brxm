@@ -17,7 +17,6 @@
 
 <instructions xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet>
-    <file action="copy" binary="false" overwrite="false" source="xml/commerce-components.xml" target="{{siteOverrideFolder}}/commerce-components.xml"/>
     <file action="copy" binary="false" overwrite="false" source="css/product-grid.css" target="{{webfilesRoot}}/css/product-grid.css"/>
     <xml action="copy" overwrite="false" source="hst/commerce-search-product-list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <file action="copy" binary="true" overwrite="false" source="images/commerce-search-product-list.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/commerce-search-product-list.png"/>
