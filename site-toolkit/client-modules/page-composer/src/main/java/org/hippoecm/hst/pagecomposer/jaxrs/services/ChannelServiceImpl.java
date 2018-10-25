@@ -20,6 +20,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -280,7 +281,7 @@ public class ChannelServiceImpl implements ChannelService {
     private Map<String, String> getLocalizedResources(final String channelId, final String language) throws ChannelException {
         final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
         if (resourceBundle == null) {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         return resourceBundle.keySet().stream()
@@ -319,14 +320,16 @@ public class ChannelServiceImpl implements ChannelService {
                                      final boolean skipBranches,
                                      final boolean skipConfigurationLocked) {
         final VirtualHost virtualHost = getCurrentVirtualHost();
-        return virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
-                .values()
-                .stream()
-                .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
-                .filter(channel -> workspaceFiltered(channel, workspaceRequired))
-                .filter(channel -> !skipBranches || channel.getBranchOf() == null)
-                .filter(channel -> !channel.isConfigurationLocked())
-                .collect(Collectors.toList());
+        return virtualHost.getVirtualHosts()
+                          .getChannels(virtualHost.getHostGroupName())
+                          .values()
+                          .stream()
+                          .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
+                          .filter(channel -> workspaceFiltered(channel, workspaceRequired))
+                          .filter(channel -> !skipBranches || channel.getBranchOf() == null)
+                          .filter(channel -> !channel.isConfigurationLocked())
+                          .sorted(Comparator.comparing(channel -> channel.getName() == null ? "" : channel.getName().toLowerCase()))
+                          .collect(Collectors.toList());
     }
 
     @Override
