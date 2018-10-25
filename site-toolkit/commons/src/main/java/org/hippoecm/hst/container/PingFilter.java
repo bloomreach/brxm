@@ -45,36 +45,34 @@ public class PingFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(PingFilter.class);
 
-
-    private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
     /**
      * attribute on the request which gets the message stored, useful if for example in your web.xml you want to
      * include a custom 503.jsp outputting that the HST application is starting up
      */
     public static final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
-    private static final String AVAILABLE_MESSAGE = "HST Application is ready to serve requests";
+
     /**
      * <p>
-     * FilterConfig or ServletContext init parameter in the web.xml that indicates which check this {@code PingFilter}
-     * should do (aka meaning the HST available for serving webpages).
+     *     FilterConfig or ServletContext init parameter in the web.xml that indicates which check this {@code PingFilter}
+     *     should do (aka meaning the HST available for serving webpages).
      * </p>
      * <p>
-     * By default, the check is based on whether the HST Configuration JCR Nodes all have been loaded into memory.
-     * (indicated by {@link HstServices#isHstConfigurationNodesLoaded()} returning {@code true}.
-     * This is the best check because it means the HST only needs to build its in memory model and does not need to
-     * fetch all jcr Nodes any more from the repository.
+     *     By default, the check is based on whether the HST Configuration JCR Nodes all have been loaded into memory.
+     *     (indicated by {@link HstServices#isHstConfigurationNodesLoaded()} returning {@code true}.
+     *     This is the best check because it means the HST only needs to build its in memory model and does not need to
+     *     fetch all jcr Nodes any more from the repository.
      * </p>
      * <p>
-     * Supported check values are:
-     * <ul>
-     * <li>hstConfigNodes</li>
-     * <li>hstServices</li>
-     * <li>repositoryAvailability</li>
-     * </ul>
+     *     Supported check values are:
+     *     <ul>
+     *         <li>hstConfigNodes</li>
+     *         <li>hstServices</li>
+     *         <li>repositoryAvailability</li>
+     *     </ul>
      * </p>
      * <p>
-     * For example, the PingFilter check can be set to
-     * <pre>
+     *     For example, the PingFilter check can be set to
+     *     <pre>
      *         <code>
      *               <context-param>
      *                  <param-name>hst-availability-check</param-name>
@@ -84,20 +82,30 @@ public class PingFilter implements Filter {
      *     </pre>
      * </p>
      * <p>
-     * The check for 'hstServices' complies if {@link HstServices#isAvailable()} returns {@code true}. The check for
-     * 'repositoryAvailability' complies if HippoServiceRegistry.getService(RepositoryService.class) does not return
-     * null.
+     *     The check for 'hstServices' complies if {@link HstServices#isAvailable()} returns {@code true}. The check for
+     *     'repositoryAvailability' complies if HippoServiceRegistry.getService(RepositoryService.class) does not return
+     *     null.
      * </p>
      * <p>
-     * In case the check does not comply (for example, the HST configuration JCR nodes have not yet been loaded), this
-     * PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}. After the check
-     * complies, this PingFilter will return a 200.
+     *     In case the check does not comply (for example, the HST configuration JCR nodes have not yet been loaded), this
+     *     PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}. After the check
+     *     complies, this PingFilter will return a 200.
      * </p>
      * <p>
-     * Note this PingFilter should be placed <strong>before</strong> the {@link HstFilter} in the web.xml
+     *     Note this PingFilter should be placed <strong>before</strong> the {@link HstFilter} in the web.xml
      * </p>
      */
     public static final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
+
+    /**
+     * FilterConfig or ServletContext init parameter in the web.xml or context.xml configuring a custom message.
+     * If configured, the PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}
+     * with the custom message printed to the response.
+    */
+    public static final String CUSTOM_MESSAGE_PARAM = "custom-message";
+
+    private static final String AVAILABLE_MESSAGE = "OK - HST Application is ready to serve requests";
+    private static final String UNAVAILABLE_MESSAGE = "Unavailable - HST Application is starting up";
 
     private AvailabilityCheck availabilityCheck;
     private String customMessage;
@@ -112,14 +120,20 @@ public class PingFilter implements Filter {
             log.error(String.format("Illegal value '%s' for init-param '%s'. Using default value '%s'", availabilityCheckValue, AVAILABILITY_CHECK_PARAM, hstConfigNodes.name()));
             availabilityCheck = hstConfigNodes;
         }
-        log.info("Availability check will be done on {}", availabilityCheck);
+        log.info("Availability check will be done on {}. Custom message: {}", availabilityCheck, (customMessage == null) ? "<none>" : customMessage);
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletResponse res = (HttpServletResponse) response;
+        final HttpServletResponse res = (HttpServletResponse) response;
+
+        if (hasCustomMessage()) {
+            printMessage(request, res, customMessage, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            return;
+        }
+
         switch (availabilityCheck) {
             case hstConfigNodes:
                 if (HstServices.isHstConfigurationNodesLoaded()) {
@@ -140,9 +154,9 @@ public class PingFilter implements Filter {
                 }
                 break;
         }
-        final String message = hasCustomMessage() ? customMessage : "HST Application is starting up";
-        printMessage(request, res, message, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-    }
+
+        printMessage(request, res, UNAVAILABLE_MESSAGE, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+   }
 
     private void available(final ServletRequest request, final HttpServletResponse response) throws IOException {
         printMessage(request, response, AVAILABLE_MESSAGE, HttpServletResponse.SC_OK);
@@ -150,6 +164,7 @@ public class PingFilter implements Filter {
 
     private void printMessage(final ServletRequest request, final HttpServletResponse response, final String message, final int responseStatus) throws IOException {
         request.setAttribute(PING_FILTER_MESSAGE_ATTR, message);
+
         response.setContentType("text/plain");
         response.getWriter().println(message);
         response.setStatus(responseStatus);
