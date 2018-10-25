@@ -38,11 +38,11 @@ class EditContentMainCtrl {
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
-
-    this.closing = false;
   }
 
   $onInit() {
+    this.RightSidePanelService.setClosing(false);
+
     this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
@@ -84,7 +84,7 @@ class EditContentMainCtrl {
         this.form.$setPristine();
         this.ContentEditor.discardChanges()
           .then(this.EditContentService._loadDocument(this.ContentEditor.getDocumentId()));
-      })
+      });
   }
 
   publish() {
@@ -133,13 +133,13 @@ class EditContentMainCtrl {
       )
       .catch(() => {
         // user cancelled the exit
-        this.closing = false;
+        this.RightSidePanelService.setClosing(false);
         return this.$q.reject();
       });
   }
 
   _confirmExit() {
-    if (this.closing) {
+    if (this.RightSidePanelService.isClosing()) {
       return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
     }
     return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')

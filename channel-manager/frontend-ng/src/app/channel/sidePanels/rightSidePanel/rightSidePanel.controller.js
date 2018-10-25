@@ -61,6 +61,7 @@ class RightSidePanelCtrl {
   }
 
   close() {
+    this.RightSidePanelService.setClosing(true);
     this.$state.go('hippo-cm.channel');
   }
 
