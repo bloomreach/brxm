@@ -337,25 +337,26 @@ public class PluginUserSession extends UserSession {
             increaseAppCount();
             pageId = 1;
 
-            populateCmsSessionContext(httpSession);
+            if (getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {
+                createCmsSessionContext(httpSession);
+            }
         }
     }
 
-    private void populateCmsSessionContext(final HttpSession httpSession) {
-        final CmsSessionContext context = CmsSessionContext.getContext(httpSession);
-        if (context != null) {
-            log.debug("CmsSessionContext already exists, no need to repopulate");
-            return;
-        }
-
+    private void createCmsSessionContext(final HttpSession httpSession) {
         final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
         if (cmsContextService == null) {
             log.debug("cmsContextService does not exist, cannot populate cms session context");
             return;
         }
-        final CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
-        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, this);
+        CmsSessionContext context = CmsSessionContext.getContext(httpSession);
+        if (context != null) {
+            log.error("A non null CmsSessionContext for a new cms login should not be possible");
+            cmsContextService.detach(getHttpSession());
+        }
 
+        context = cmsContextService.create(httpSession);
+        CmsSessionUtil.populateCmsSessionContext(cmsContextService, context, this);
     }
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
@@ -387,7 +388,12 @@ public class PluginUserSession extends UserSession {
                 invalidate();
             } else {
                 if (PluginApplication.get().getPluginApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {
-                    getHttpSession().removeAttribute(CmsSessionContext.SESSION_KEY);
+                    final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
+                    if (cmsContextService == null) {
+                        log.debug("cmsContextService does not exist, cannot detach cms session context");
+                        return;
+                    }
+                    cmsContextService.detach(getHttpSession());
                 }
             }
         } finally {
