@@ -33,6 +33,12 @@ public interface CmsInternalCmsContextService extends CmsContextService {
     CmsSessionContext create(final HttpSession session);
 
     /**
+     * Detaches the CmsSessionContext for {@code session} if there is a CmsSessionContext for {@code session}
+     * @param session the HttpSession to detach the CmsSessionContext for
+     */
+    void detach(final HttpSession session);
+
+    /**
      * Add specific data into a CmsSessionContext by key
      * @param ctx the CmsSessionContext
      * @param key the key for the data
