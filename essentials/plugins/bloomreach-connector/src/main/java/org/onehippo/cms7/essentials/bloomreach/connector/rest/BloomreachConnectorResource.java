@@ -16,7 +16,9 @@
 
 package org.onehippo.cms7.essentials.bloomreach.connector.rest;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -30,8 +32,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.plugin.sdk.utils.CndUtils;
-import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
+import org.apache.commons.io.IOUtils;
+
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
@@ -45,6 +47,7 @@ public class BloomreachConnectorResource {
 
     private static final Logger log = LoggerFactory.getLogger(BloomreachConnectorResource.class);
     private static final String CRISP_NODE = "crisp:resourceresolvercontainer";
+    private static final String RESOURCE_TEMPLATE = "/bloomreachResourcetemplate.xml";
 
     private final JcrService jcrService;
 
@@ -57,7 +60,7 @@ public class BloomreachConnectorResource {
     public ResourceData index(@Context ServletContext servletContext) throws Exception {
         // check if we have crisp namespace registered:
         final ResourceData resourceData = new ResourceData();
-        resourceData.setCrispExists(CndUtils.nodeTypeExists(jcrService, CRISP_NODE));
+        resourceData.setCrispExists(jcrService.nodeTypeExists(CRISP_NODE));
         return resourceData;
     }
 
@@ -82,8 +85,19 @@ public class BloomreachConnectorResource {
                 return feedback.addSuccess("Resource with name '" + resourceName + "' already exists.");
             }
             final Node node = root.addNode(resourceName, "crisp:resourceresolver");
-            final InputStream stream = getClass().getResourceAsStream("/bloomreachResourcetemplate.xml");
-            final String xml = GlobalUtils.readStreamAsText(stream);
+            String xml = "";
+            final InputStream stream = getClass().getResourceAsStream(RESOURCE_TEMPLATE);
+            if (stream != null) {
+                try {
+                    xml = IOUtils.toString(stream, StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    log.error("Failed reading resource '{}'.", RESOURCE_TEMPLATE, e);
+                } finally {
+                    IOUtils.closeQuietly(stream);
+                }
+            } else {
+                log.error("Failed to locate resource '{}'.", RESOURCE_TEMPLATE);
+            }
             node.setProperty("crisp:beandefinition", xml);
             // add names
             node.setProperty("crisp:propnames", new String[]{
