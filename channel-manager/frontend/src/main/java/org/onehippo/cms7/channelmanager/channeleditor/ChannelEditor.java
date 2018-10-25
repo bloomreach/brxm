@@ -16,8 +16,10 @@
 package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,6 +34,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -39,6 +42,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
@@ -46,6 +50,11 @@ import org.onehippo.cms7.channelmanager.channeleditor.pickers.ImagePicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
+import org.onehippo.cms7.channelmanager.extensions.ChannelEditorUiExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.UiExtension;
+import org.onehippo.cms7.channelmanager.extensions.UiExtensionLoader;
+import org.onehippo.cms7.channelmanager.extensions.UiExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +63,9 @@ import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsonorg.JsonOrgModule;
 
 @ExtClass("Hippo.ChannelManager.ChannelEditor.ChannelEditor")
 public class ChannelEditor extends ExtPanel {
@@ -64,6 +76,11 @@ public class ChannelEditor extends ExtPanel {
 
     private static final String OPEN_DOCUMENT_EVENT = "open-document";
     private static final String CLOSE_DOCUMENT_EVENT = "close-document";
+
+    private static final ObjectMapper JSON_ORG_OBJECT_MAPPER = new ObjectMapper();
+    static {
+        JSON_ORG_OBJECT_MAPPER.registerModule(new JsonOrgModule());
+    }
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -88,6 +105,10 @@ public class ChannelEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String cmsUser;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String cmsVersion;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -146,6 +167,7 @@ public class ChannelEditor extends ExtPanel {
         }
 
         this.cmsUser = userSession.getJcrSession().getUserID();
+        this.cmsVersion = new SystemInfoDataProvider().getReleaseVersion();
 
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
 
@@ -214,6 +236,17 @@ public class ChannelEditor extends ExtPanel {
         properties.put("linkPickerWicketUrl", linkPicker.getBehavior().getCallbackUrl().toString());
         properties.put("richTextImagePickerWicketUrl", richTextImagePicker.getBehavior().getCallbackUrl().toString());
         properties.put("richTextLinkPickerWicketUrl", richTextLinkPicker.getBehavior().getCallbackUrl().toString());
+        properties.put("extensions", loadExtensions());
+    }
+
+    private JSONArray loadExtensions() {
+        final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
+        final UiExtensionValidator validator = new ChannelEditorUiExtensionValidator();
+        final List<UiExtension> extensions = loader.loadUiExtensions()
+                .stream()
+                .filter(validator::validate)
+                .collect(Collectors.toList());
+        return JSON_ORG_OBJECT_MAPPER.convertValue(extensions, JSONArray.class);
     }
 
     @Override

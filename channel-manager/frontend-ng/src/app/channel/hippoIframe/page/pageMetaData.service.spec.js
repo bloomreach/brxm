@@ -81,4 +81,11 @@ describe('PageMetaDataService', () => {
     });
     expect(PageMetaDataService.getContextPath()).toBe('contextPath');
   });
+
+  it('provides the ID of the current page', () => {
+    PageMetaDataService.add({
+      'HST-Page-Id': 'pageId',
+    });
+    expect(PageMetaDataService.getPageId()).toBe('pageId');
+  });
 });
