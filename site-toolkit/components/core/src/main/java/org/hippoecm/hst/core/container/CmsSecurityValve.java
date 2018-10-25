@@ -15,30 +15,18 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.site.HstServices;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
-
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
-import static org.hippoecm.hst.util.HstRequestUtils.getCmsBaseURL;
 
 /**
  * <p>
@@ -65,7 +53,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
-        HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
         if (!requestContext.isCmsRequest()) {
@@ -79,59 +66,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
         if (httpSession == null || cmsSessionContext == null) {
-            CmsContextService cmsContextService = HippoServiceRegistry.getService(CmsContextService.class);
-            if (cmsContextService == null) {
-                log.debug("No CmsContextService available");
-                sendError(servletResponse, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-
-            final String cmsContextServiceId = servletRequest.getParameter("cmsCSID");
-            final String cmsSessionContextId = servletRequest.getParameter("cmsSCID");
-            if (cmsContextServiceId == null || cmsSessionContextId == null) {
-                // no CmsSessionContext and/or CmsContextService IDs provided:  if possible, request these by redirecting back to CMS
-                final String method = servletRequest.getMethod();
-                if (!"GET".equals(method) && !"HEAD".equals(method)) {
-                    log.warn("Invalid request to redirect for authentication because request method is '{}' and only" +
-                            " 'GET' or 'HEAD' are allowed", method);
-                    sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-                log.debug("No CmsSessionContext and/or CmsContextService IDs found. Redirect to the CMS");
-                redirectToCms(servletRequest, servletResponse, requestContext, cmsContextService.getId());
-                return;
-            }
-
-            if (!cmsContextServiceId.equals(cmsContextService.getId())) {
-                log.warn("Cannot authorize request: not coming from this CMS HOST. Redirecting to cms authentication URL to retry.");
-                redirectToCms(servletRequest, servletResponse, requestContext, cmsContextService.getId());
-                return;
-            }
-
-
-            // if the (HST) http session already exists, it might be because the user logged out from cms and logged in with
-            // different user or logged in with same user again but the authorization rules for example changed (that is
-            // why the user for example logged out and in). However, now it can happen that we have stale jcr sessions
-            // still on the HttpSessionBoundJcrSessionHolder attribute of the HST http session. We need to clear these
-            // now actively
-            if (httpSession != null) {
-                HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
-            } else {
-                httpSession = servletRequest.getSession(true);
-            }
-
-            cmsSessionContext = cmsContextService.attachSessionContext(cmsSessionContextId, httpSession);
-            if (cmsSessionContext == null) {
-                httpSession.invalidate();
-                log.warn("Cannot authorize request: CmsSessionContext not found");
-                sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
+            throw new ContainerException("Request is a cms request but there has not been an SSO handshake.");
         }
-
-        servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
-        // TODO HSTTWO-4375  remove this attribute once we have addressed HSTTWO-4375
-        servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager.
         synchronized (httpSession) {
@@ -159,8 +95,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.",
                         cmsSessionContext.getRepositoryCredentials().getUserID());
                 httpSession.invalidate();
-                redirectToCms(servletRequest, servletResponse, requestContext, null);
-                return;
+                throw new ContainerException("CMS user credentials have changed");
             } catch (RepositoryException e) {
                 log.warn("RepositoryException : {}", e.toString());
                 throw new ContainerException(e);
@@ -179,74 +114,6 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 }
             }
         }
-    }
-
-    private static void sendError(final HttpServletResponse servletResponse, final int errorCode) throws ContainerException {
-        try {
-            servletResponse.sendError(errorCode);
-        } catch (IOException e) {
-            throw new ContainerException(String.format("Unable to send unauthorized (%s) response to client", errorCode) , e);
-        }
-    }
-
-    private static void redirectToCms(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse,
-                                      final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
-
-        if (servletRequest.getParameterMap().containsKey("retry")) {
-            // endless redirect loop protection
-            // in case the loadbalancer keeps skewing the CMS and HST application from different container instances
-            sendError(servletResponse, HttpServletResponse.SC_CONFLICT);
-            return;
-        }
-
-        try {
-            final String cmsAuthUrl = createCmsAuthenticationUrl(servletRequest, requestContext, cmsContextServiceId);
-            servletResponse.sendRedirect(cmsAuthUrl);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unable to encode the destination url with UTF8 encoding " + e.getMessage(), e);
-            sendError(servletResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (IOException e) {
-            log.error("Something gone wrong so stopping valve invocation fall through: " + e.getMessage(), e);
-            sendError(servletResponse, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
-        // we need to find out whether the cms URL looks like http(s)://host/cms or http(s)://host (without context path)
-        // we know that the current request is over the current cms host. We need to match the current host to the
-        // platform hst model to find out whether to include the platform context path or not
-
-        final String cmsLocation = getCmsBaseURL(servletRequest);
-        final String destinationPath = createDestinationPath(servletRequest, requestContext);
-
-        final StringBuilder authUrl = new StringBuilder(cmsLocation);
-        if (!cmsLocation.endsWith("/")) {
-            authUrl.append("/");
-        }
-        authUrl.append("auth?destinationPath=").append(destinationPath);
-        if (cmsContextServiceId != null) {
-            authUrl.append("&cmsCSID=").append(cmsContextServiceId);
-        }
-        return authUrl.toString();
-    }
-
-    private static String createDestinationPath(final HttpServletRequest servletRequest, final HstRequestContext requestContext) {
-        final StringBuilder destinationPath = new StringBuilder();
-
-        // we start with the request uri including the context path (normally this is /site/...)
-        destinationPath.append(servletRequest.getRequestURI());
-
-        if (requestContext.getPathSuffix() != null) {
-            final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-            final String subPathDelimiter = hstManager.getPathSuffixDelimiter();
-            destinationPath.append(subPathDelimiter).append(requestContext.getPathSuffix());
-        }
-
-        final String queryString = servletRequest.getQueryString();
-        if (queryString != null) {
-            destinationPath.append("?").append(queryString);
-        }
-        return destinationPath.toString();
     }
 
     private Session getOrCreateCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {

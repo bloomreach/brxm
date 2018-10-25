@@ -208,8 +208,18 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 return;
             }
 
-
             VirtualHosts vHosts = hstManager.getVirtualHosts();
+
+            final String renderingHost = getRenderingHost(containerRequest);
+
+            if (requestComesFromCms(vHosts, renderingHost, req)) {
+                if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest, res)) {
+                    if (!CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
+                        return;
+                    }
+                }
+            }
+
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
             if ((containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
@@ -293,11 +303,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 if (resolvedMount != null) {
                     request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
                     requestContext.setResolvedMount(resolvedMount);
-                    // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
-                    String renderingHost = getRenderingHost(containerRequest);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
-                        if (requestComesFromCms(vHosts, resolvedMount)) {
+                        if (requestComesFromCms(vHosts, renderingHost, req)) {
+
                             requestContext.setCmsRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
@@ -594,11 +603,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     }
 
     // returns true if the request comes from cms
-    private boolean requestComesFromCms(VirtualHosts vHosts, ResolvedMount resolvedMount) {
+    private boolean requestComesFromCms(VirtualHosts vHosts, final String renderingHost, final HttpServletRequest req) {
+        if (renderingHost == null) {
+            return false;
+        }
         if(vHosts.getCmsPreviewPrefix() == null || "".equals(vHosts.getCmsPreviewPrefix())) {
             return true;
         }
-        if(vHosts.getCmsPreviewPrefix().equals(resolvedMount.getMatchingIgnoredPrefix())) {
+        if (req.getServletPath().isEmpty()) {
+            return false;
+        }
+        if(req.getServletPath().substring(1).startsWith(vHosts.getCmsPreviewPrefix())) {
             return true;
         }
         return false;
