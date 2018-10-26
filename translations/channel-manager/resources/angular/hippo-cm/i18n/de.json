@@ -76,7 +76,7 @@
   "DISCARD_DOCUMENT": "'{{documentName}}' verwerfen?",
   "CANCEL": "Abbrechen",
   "DOCUMENT_ADDED_TO_PROJECT": "Dokument hinzugefügt zu Projekt '{{name}}'",
-  "DOCUMENT_CHANGED_TOOLTIP": "Eine frühere Version wurde veröffentlicht (klicken, um Änderungen anzuzeigen)",
+  "DOCUMENT_CHANGED_TOOLTIP": "Eine frühere Version wurde veröffentlicht",
   "FEEDBACK_NOT_FOUND_MESSAGE": "Der angeforderte Inhalt wurde nicht gefunden. Er wurde möglicherweise seit der letzten Seitenwiedergabe gelöscht.",
   "ERROR_PAGE_ADD_FAILED": "Neue Seite konnte nicht erstellt werden",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE": "Linken Bereich schließen",

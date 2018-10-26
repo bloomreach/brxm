@@ -76,7 +76,7 @@
   "DISCARD_DOCUMENT": "'{{documentName}}' negeren?",
   "CANCEL": "Afbreken",
   "DOCUMENT_ADDED_TO_PROJECT": "Document is toegevoegd aan project '{{name}}'.",
-  "DOCUMENT_CHANGED_TOOLTIP": "Een vorige versie is gepubliceerd (klik om de wijzigingen te zien).",
+  "DOCUMENT_CHANGED_TOOLTIP": "Een vorige versie is gepubliceerd",
   "FEEDBACK_NOT_FOUND_MESSAGE": "De gevraagde content was niet gvonden. Het is mogelijk dat deze gewist is sinds de laatste weergave.",
   "ERROR_PAGE_ADD_FAILED": "Het is niet gelukt een nieuwe pagina aan te maken",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE": "Sluit linker paneel",

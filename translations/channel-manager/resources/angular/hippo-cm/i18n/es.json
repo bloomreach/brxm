@@ -76,7 +76,7 @@
   "DISCARD_DOCUMENT": "¿Descartar '{{documentName}}'?",
   "CANCEL": "Cancelar",
   "DOCUMENT_ADDED_TO_PROJECT": "Documento añadido al proyecto '{{name}}'",
-  "DOCUMENT_CHANGED_TOOLTIP": "Una versión anterior está publicada\n(pulsar para ver cambios)",
+  "DOCUMENT_CHANGED_TOOLTIP": "Una versión anterior está publicada",
   "FEEDBACK_NOT_FOUND_MESSAGE": "No se ha encontrado el contenido solicitado. Puede haber sido eliminando ya que la página ha sido reproducida.",
   "ERROR_PAGE_ADD_FAILED": "No se pudo crear una nueva página",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE": "Cerrar panel izquierdo",

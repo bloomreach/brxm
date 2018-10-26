@@ -75,7 +75,7 @@
   "DISCARD_DOCUMENT": "Ignorer « {{documentName}} » ?",
   "CANCEL": "Annuler",
   "DOCUMENT_ADDED_TO_PROJECT": "Le document a été ajouté au projet « {{name}} »",
-  "DOCUMENT_CHANGED_TOOLTIP": "Une version précédente est disponible\n(cliquer ici pour visualiser les changements)",
+  "DOCUMENT_CHANGED_TOOLTIP": "Une version précédente est disponible",
   "FEEDBACK_NOT_FOUND_MESSAGE": "Le contenu demandé n’a pas été trouvé. Il peut avoir été supprimé depuis que la page a été rendue.",
   "ERROR_PAGE_ADD_FAILED": "La nouvelle page n'a pas pu être créée",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE": "Fermer le panneau de gauche",
