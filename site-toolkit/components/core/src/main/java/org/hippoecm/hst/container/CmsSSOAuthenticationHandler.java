@@ -40,10 +40,10 @@ public class CmsSSOAuthenticationHandler {
 
     private final static Logger log = LoggerFactory.getLogger(CmsSSOAuthenticationHandler.class);
 
-    static boolean isAuthenticated(final HstContainerRequest containerRequest, final HttpServletResponse servletResponse) {
+    static boolean isAuthenticated(final HstContainerRequest containerRequest) {
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", containerRequest.getRequestURL());
 
-        HttpSession httpSession = containerRequest.getSession(false);
+        final HttpSession httpSession = containerRequest.getSession(false);
         CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
         if (httpSession == null || cmsSessionContext == null) {
             return false;

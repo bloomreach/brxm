@@ -213,7 +213,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             final String renderingHost = getRenderingHost(containerRequest);
 
             if (requestComesFromCms(vHosts, renderingHost, req)) {
-                if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest, res)) {
+                if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
                     if (!CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
                         return;
                     }
