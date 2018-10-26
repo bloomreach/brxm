@@ -77,7 +77,7 @@
   "DISCARD_DOCUMENT": "Discard '{{documentName}}'?",
   "CANCEL": "Cancel",
   "DOCUMENT_ADDED_TO_PROJECT": "Document added to project '{{name}}'",
-  "DOCUMENT_CHANGED_TOOLTIP": "A previous version is live\n(click to view changes)",
+  "DOCUMENT_CHANGED_TOOLTIP": "A previous version is live",
   "FEEDBACK_NOT_FOUND_MESSAGE": "The requested content has not been found. It may have been deleted since the page was rendered.",
   "COMPONENT": "Component",
   "ERROR_PAGE_ADD_FAILED": "Failed to create a new page",

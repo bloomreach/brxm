@@ -76,7 +76,7 @@
   "DISCARD_DOCUMENT": "是否放弃 '{{documentName}}'？",
   "CANCEL": "取消",
   "DOCUMENT_ADDED_TO_PROJECT": "文档已添加到项目 '{{name}}'",
-  "DOCUMENT_CHANGED_TOOLTIP": "以前的版本为有效状态\n（点击可查看更改）",
+  "DOCUMENT_CHANGED_TOOLTIP": "以前的版本为有效状态",
   "FEEDBACK_NOT_FOUND_MESSAGE": "尚未找到请求的内容。自显示页面以来它可能已被删除。",
   "ERROR_PAGE_ADD_FAILED": "创建新页面失败",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_CLOSE": "关闭左侧面板",
