@@ -593,7 +593,6 @@
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-platform-api</artifactId>
         <version>${hippo.hst.version}</version>
-        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
@@ -921,10 +920,6 @@
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-platform-api</artifactId>
-    </dependency>
   </dependencies>
 
   <build>
@@ -1042,11 +1037,6 @@
                   <dependency>
                     <groupId>org.onehippo.cms7.hst</groupId>
                     <artifactId>hst-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms7.hst</groupId>
-                    <artifactId>hst-platform-api</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
