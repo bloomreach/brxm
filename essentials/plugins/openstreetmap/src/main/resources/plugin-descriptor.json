@@ -1,0 +1,28 @@
+{
+  "id" : "openStreetMapPlugin",
+  "name" : "Open Street Map Plugin",
+  "icon" : "/essentials/feature/images/openstreetmap-plugin-icon.png",
+  "introduction" : "This feature adds a configurable drag-and-drop Open Street Map component.",
+  "description" : "With this Open Street Map Plugin, you can easily place a Open Street Map on your pages. This Feature will be installed as a drag-and-drop component in the component gallery in the Channel Manager. You can select in the CMS what coordinates, etc. should be shown. Please consult the Open Street Map policies before using this feature on a production system, see: https://operations.osmfoundation.org/policies/",
+  "packageFile" : "/META-INF/openStreetMapPlugin_instructions.xml",
+  "type" : "feature",
+  "vendor" : {
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "hasConfiguration" : false,
+  "rebuildAfterInstallation" : true,
+  "installWithParameters" : false,
+  "categories" : {
+    "license" : [ "community" ],
+    "type" : [ "feature" ],
+    "application": [
+      "media",
+      "integration",
+      "content"
+    ]
+  },
+  "pluginDependencies" : [ {
+    "pluginId" : "skeleton"
+  } ]
+}
