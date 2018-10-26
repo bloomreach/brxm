@@ -29,7 +29,7 @@
           <li>
             <label class="nav-header">
               ${facetvalue.name?html}
-              <#if facetvalue.name == "Authors"><@hst.manageContent templateQuery="new-blogauthor-document" rootPath="blog/authors"/></#if>
+              <#if facetvalue.name == "Authors"><@hst.manageContent documentTemplateQuery="new-blogauthor-document" rootPath="blog/authors"/></#if>
             </label>
             <ul class="nav">
               <#list facetvalue.folders as item>

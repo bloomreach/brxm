@@ -20,7 +20,7 @@
       </article>
     </#list>
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+      <@hst.manageContent documentTemplateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
     <#if cparam.showPagination>
         <#include "../include/pagination.ftl">
@@ -31,7 +31,7 @@
   <div>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
     <div class="has-new-content-button">
-      <@hst.manageContent templateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
+      <@hst.manageContent documentTemplateQuery="new-events-document" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>
   </div>
 </#if>

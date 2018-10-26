@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for manipulating java source files.
  *
- * @version "$Id$"
  */
 public final class JavaSourceUtils {
 
@@ -580,7 +579,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getBeans", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod("getBean", "HippoResourceBean", path, methodName, propertyName);
