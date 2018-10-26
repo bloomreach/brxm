@@ -46,7 +46,7 @@ public class EssentialsMenuComponent extends CommonComponent {
             log.warn("No site menu is selected within EssentialsMenuComponent nor set as a component parameter (menuName)");
             return;
         }
-        siteMenu = CharMatcher.WHITESPACE.trimFrom(siteMenu);
+        siteMenu = CharMatcher.whitespace().trimFrom(siteMenu);
         final HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu(siteMenu);
         if (menu == null) {
             log.warn("Invalid site menu is selected within EssentialsMenuComponent: {}", siteMenu);
