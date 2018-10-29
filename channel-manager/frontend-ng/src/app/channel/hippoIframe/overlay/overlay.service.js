@@ -78,7 +78,6 @@ class OverlayService {
 
   _onLoad() {
     this.iframeWindow = this.iframeJQueryElement[0].contentWindow;
-
     this._initOverlay();
 
     this.observer = new MutationSummary({
@@ -96,6 +95,7 @@ class OverlayService {
     this.$rootScope.$apply(() => {
       this.observer.disconnect();
       delete this.overlay;
+      delete this.iframeWindow;
     });
   }
 
@@ -151,12 +151,14 @@ class OverlayService {
   }
 
   _updateOverlayClasses() {
-    if (this.iframeWindow) {
-      const html = $(this.iframeWindow.document.documentElement);
-      html.toggleClass('hippo-show-components', this.isComponentsOverlayDisplayed);
-      html.toggleClass('hippo-show-content', this.isContentOverlayDisplayed);
-      // don't call sync() explicitly: the DOM mutation will trigger it automatically
+    if (!this.overlay) {
+      return;
     }
+
+    const html = $(this.iframeWindow.document.documentElement);
+    html.toggleClass('hippo-show-components', this.isComponentsOverlayDisplayed);
+    html.toggleClass('hippo-show-content', this.isContentOverlayDisplayed);
+    // don't call sync() explicitly: the DOM mutation will trigger it automatically
   }
 
   sync() {
@@ -518,9 +520,8 @@ class OverlayService {
     const height = rect.height;
 
     // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    left += this.iframeWindow.pageXOffset;
-    top += this.iframeWindow.pageYOffset;
+    left += this.iframeWindow.scrollX;
+    top += this.iframeWindow.scrollY;
 
     return {
       top,
