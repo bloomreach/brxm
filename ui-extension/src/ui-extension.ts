@@ -32,6 +32,10 @@ interface UiExtensionParent {
   getProperties: () => Promise<UiProperties>;
 }
 
+type UiExtensionConfig = {
+  Promise?: typeof Promise,
+};
+
 type PenpalError = Error & { code?: string };
 
 enum UiExtensionErrorCode {
@@ -47,7 +51,7 @@ class UiExtensionError {
   }
 
   toPromise() {
-    return Promise.reject(this);
+    return Penpal.Promise.reject(this);
   }
 
   static fromPenpal(error: PenpalError): UiExtensionError {
@@ -99,10 +103,6 @@ class Ui extends UiScope implements UiProperties {
     }
   }
 }
-
-type UiExtensionConfig = {
-  Promise?: typeof Promise,
-};
 
 export default class UiExtension {
   static register(config: UiExtensionConfig = {}) {

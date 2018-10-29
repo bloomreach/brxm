@@ -30,6 +30,7 @@ const parent = {
 };
 
 const penpal = {
+  Promise,
   connectToParent: jest.fn(() => ({
     promise: Promise.resolve(parent),
   })),
