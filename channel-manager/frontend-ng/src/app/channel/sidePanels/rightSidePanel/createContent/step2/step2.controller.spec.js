@@ -41,6 +41,8 @@ describe('Create content step 2 controller', () => {
   let $ctrl;
   let form;
 
+  const $element = angular.element('<form></form>');
+
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContent.step2');
 
@@ -68,9 +70,10 @@ describe('Create content step 2 controller', () => {
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
       Step2Service = _Step2Service_;
 
-      form = jasmine.createSpyObj('form', ['$setPristine']);
+      form = jasmine.createSpyObj('form', ['$setPristine', 'focus']);
       $ctrl = $controller('step2Ctrl as $ctrl', {
         $scope,
+        $element,
         RightSidePanelService,
       },
       { form },
@@ -90,6 +93,13 @@ describe('Create content step 2 controller', () => {
       $ctrl.documentIsSaved = true;
       $ctrl.$onInit();
       expect($ctrl.documentIsSaved).toBe(false);
+    });
+
+    it('does focus the form', () => {
+      spyOn($element, 'find').and.returnValue(form);
+      $ctrl.$onInit();
+      expect($element.find).toHaveBeenCalledWith('.form-dense-layout');
+      expect(form.focus).toHaveBeenCalled();
     });
   });
 

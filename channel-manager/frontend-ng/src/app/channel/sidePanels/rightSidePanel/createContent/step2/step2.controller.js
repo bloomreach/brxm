@@ -16,6 +16,7 @@
 
 class Step2Controller {
   constructor(
+    $element,
     $q,
     $scope,
     $translate,
@@ -30,6 +31,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$element = $element;
     this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
@@ -58,6 +60,8 @@ class Step2Controller {
         this.RightSidePanelService.stopLoading();
       }
     });
+    // focus the form so key presses will reach Angular Material instead of the parent window
+    this.$element.find('.form-dense-layout').focus();
   }
 
   allMandatoryFieldsShown() {
