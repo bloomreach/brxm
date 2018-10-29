@@ -73,6 +73,13 @@ describe('RightSidePanel', () => {
     expect($ctrl.isLoading()).toBe(false);
   });
 
+  it('goes to state hippo-cm.channel when closed', () => {
+    spyOn($state, 'go');
+    $ctrl.close();
+
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+  });
+
   it('knows the title', () => {
     RightSidePanelService.setTitle('test title');
     expect($ctrl.getTitle()).toEqual('test title');

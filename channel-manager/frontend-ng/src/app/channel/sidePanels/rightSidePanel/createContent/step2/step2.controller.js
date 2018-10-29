@@ -16,6 +16,7 @@
 
 class Step2Controller {
   constructor(
+    $q,
     $scope,
     $translate,
     ContentEditor,
@@ -28,6 +29,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ContentEditor = ContentEditor;
@@ -67,17 +69,38 @@ class Step2Controller {
     this.close();
   }
 
-  onSave() {
-    this.documentIsSaved = true;
-    this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-    this.ContentEditor.discardChanges()
-      .then(() => this.Step2Service.saveComponentParameter())
-      .then(() => {
-        this.CreateContentService.finish(this.ContentEditor.getDocumentId());
-      })
+  save() {
+    return this.showLoadingIndicator(() =>
+      this.ContentEditor.save()
+        .then(() => {
+          this.form.$setPristine();
+          this.documentIsSaved = true;
+          this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+          this.ContentEditor.discardChanges()
+            .then(() => this.Step2Service.saveComponentParameter())
+            .then(() => {
+              this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+            })
+            .finally(() => {
+              this.CmsService.reportUsageStatistic('CreateContent2Done');
+            });
+        }));
+  }
+
+  showLoadingIndicator(action) {
+    this.loading = true;
+    return this.$q.resolve(action())
       .finally(() => {
-        this.CmsService.reportUsageStatistic('CreateContent2Done');
+        this.loading = false;
       });
+  }
+
+  isEditing() {
+    return this.ContentEditor.isEditing();
+  }
+
+  isSaveAllowed() {
+    return this.form.$valid && this.allMandatoryFieldsShown();
   }
 
   close() {

@@ -21,8 +21,6 @@ class ContentEditorCtrl {
     $translate,
     CmsService,
     ContentEditor,
-    ConfigService,
-    ProjectService,
   ) {
     'ngInject';
 
@@ -30,10 +28,6 @@ class ContentEditorCtrl {
     this.$scope = $scope;
     this.CmsService = CmsService;
     this.ContentEditor = ContentEditor;
-    this.ConfigService = ConfigService;
-    this.ProjectService = ProjectService;
-
-    this.closeLabel = $translate.instant('CLOSE');
   }
 
   $onInit() {
@@ -52,18 +46,6 @@ class ContentEditorCtrl {
     return this.ContentEditor.isEditing();
   }
 
-  isPublishAllowed() {
-    return this.ContentEditor.isPublishAllowed() && !this._isDocumentDirty();
-  }
-
-  isSaveAllowed() {
-    return this.isEditing() && this._isDocumentDirty() && this.form.$valid && this.allowSave;
-  }
-
-  _isDocumentDirty() {
-    return this.ContentEditor.isDocumentDirty();
-  }
-
   getFieldTypes() {
     return this.ContentEditor.getDocumentType().fields;
   }
@@ -76,36 +58,14 @@ class ContentEditorCtrl {
     return this.ContentEditor.getError();
   }
 
-  save() {
-    return this.showLoadingIndicator(() =>
-      this.ContentEditor.save()
-        .then(() => {
-          this.form.$setPristine();
-          this.onSave();
-        }));
-  }
-
-  publish() {
-    this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
-    return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish());
-  }
-
-  _doPublish() {
-    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
-      ? this.save().then(() => this.ContentEditor.publish())
-      : this.ContentEditor.publish()),
-    );
-  }
-
   cancelRequestPublication() {
     this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
     return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
   }
 
-  showLoadingIndicator(promise) {
+  showLoadingIndicator(action) {
     this.loading = true;
-    return this.$q.resolve(promise())
+    return this.$q.resolve(action())
       .finally(() => {
         this.loading = false;
       });

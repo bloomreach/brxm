@@ -30,6 +30,9 @@
 
   <md-toolbar class="right-side-panel-top-toolbar">
     <div class="md-toolbar-tools">
+
+      <ui-view name="icon" class="right-side-panel-top-toolbar-icon"></ui-view>
+
       <md-truncate class="md-title"
                    flex
                    title="{{ $ctrl.getTooltip() }}">
@@ -39,6 +42,9 @@
         </div>
         {{ $ctrl.getTitle() }}
       </md-truncate>
+
+      <ui-view name="tools" class="right-side-panel-top-toolbar-tools"></ui-view>
+
       <md-button class="md-icon-button btn-full-screen qa-rightsidepanel-full-screen"
                  aria-label="{{ ::'FULL_SIZE' | translate }}"
                  ng-click="$ctrl.setFullScreen(true)"
@@ -53,8 +59,12 @@
                  title="{{ ::'NORMAL_SIZE' | translate }}">
         <md-icon md-svg-icon="un-maximize-sidepanel"></md-icon>
       </md-button>
-
-      <ui-view name="tools" class="right-side-panel-top-toolbar-tools"></ui-view>
+      <md-button class="md-icon-button qa-close"
+                 aria-label="{{ ::'CLOSE' | translate }}"
+                 ng-click="$ctrl.close()"
+                 title="{{ ::'CLOSE' | translate }}">
+        <md-icon md-font-icon="mdi-close"></md-icon>
+      </md-button>
     </div>
     <md-progress-linear md-mode="indeterminate"
                         ng-if="$ctrl.isLoading()">
