@@ -15,17 +15,28 @@
  */
 
 const uiProperties = {
-  user: 'admin'
+  baseUrl: 'https://cms.example.com',
+  extension: {
+    config: 'testConfig',
+  },
+  locale: 'en',
+  timeZone: 'Europe/Amsterdam',
+  user: 'admin',
+  version: '13.0.0',
 };
 
 const parent = {
-  getProperties: () => Promise.resolve(uiProperties)
+  getProperties: () => Promise.resolve(uiProperties),
 };
 
 const penpal = {
+  Promise,
   connectToParent: jest.fn(() => ({
-    promise: Promise.resolve(parent)
-  }))
+    promise: Promise.resolve(parent),
+  })),
+  ERR_CONNECTION_DESTROYED: 'ConnectionDestroyed',
+  ERR_CONNECTION_TIMEOUT: 'ConnectionTimeout',
+  ERR_NOT_IN_IFRAME: 'NotInIframe',
 };
 
 export default penpal;
