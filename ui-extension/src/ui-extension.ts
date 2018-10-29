@@ -16,7 +16,7 @@
 
 import Penpal from 'penpal';
 
-type UiProperties = {
+interface UiProperties {
   baseUrl: string;
   extension: {
     config: string,
