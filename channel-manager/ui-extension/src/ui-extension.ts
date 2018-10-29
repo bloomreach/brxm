@@ -53,7 +53,7 @@ class UiExtensionError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 
-  toPromise() {
+  toPromise(): Promise<any> {
     return Penpal.Promise.reject(this);
   }
 
@@ -75,7 +75,7 @@ class UiExtensionError extends Error {
 }
 
 abstract class UiScope {
-  constructor(protected parent: UiExtensionParent) {
+  constructor(protected _parent: UiExtensionParent) {
   }
 
   protected convertPenpalError(error: PenpalError): Promise<any> {
@@ -93,12 +93,12 @@ class Ui extends UiScope implements UiProperties {
   user: string;
   version: string;
 
-  init() {
-    if (!this.parent.getProperties) {
+  init(): Promise<Ui> {
+    if (!this._parent.getProperties) {
       return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, 'missing getProperties()').toPromise();
     }
     try {
-      return this.parent.getProperties()
+      return this._parent.getProperties()
         .then(properties => Object.assign(this, properties))
         .catch(this.convertPenpalError);
     } catch (error) {
@@ -108,7 +108,7 @@ class Ui extends UiScope implements UiProperties {
 }
 
 export default class UiExtension {
-  static register(config: UiExtensionConfig = {}) {
+  static register(config: UiExtensionConfig = {}): Promise<Ui> {
     if (config.Promise) {
       Penpal.Promise = config.Promise;
     }
