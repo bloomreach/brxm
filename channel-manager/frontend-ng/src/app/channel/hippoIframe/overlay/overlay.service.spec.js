@@ -148,6 +148,14 @@ describe('OverlayService', () => {
     });
   });
 
+  it('deletes iframe referrence on iframe unload', () => {
+    loadIframeFixture(() => {
+      OverlayService.iframeWindow = {};
+      $iframe.triggerHandler('unload');
+      expect(OverlayService.iframeWindow).toBeUndefined();
+    });
+  });
+
   it('syncs when the iframe DOM is changed', (done) => {
     spyOn(OverlayService, 'sync');
     loadIframeFixture(() => {
