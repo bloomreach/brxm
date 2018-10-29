@@ -111,10 +111,7 @@ export default class UiExtension {
     }
 
     return UiExtension.connect()
-      .then((parent: UiExtensionParent) => {
-        const ui = new Ui(parent);
-        return ui.init();
-      });
+      .then((parent: UiExtensionParent) => new Ui(parent).init());
   }
 
   private static connect(): Promise<UiExtensionParent> {
