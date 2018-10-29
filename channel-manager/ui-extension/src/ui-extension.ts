@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';
+// disable TSLint for "import Penpal" to work around issue 387
+import Penpal from 'penpal'; // tslint:disable-line
 
 interface UiProperties {
   baseUrl: string;
   extension: {
     config: string,
-  },
+  };
   locale: string;
   timeZone: string;
   user: string;
@@ -28,7 +29,7 @@ interface UiProperties {
 }
 
 interface UiExtensionParent {
-  getProperties: () => Promise<UiProperties>,
+  getProperties: () => Promise<UiProperties>;
 }
 
 type PenpalError = Error & { code?: string };
@@ -45,12 +46,16 @@ class UiExtensionError {
               public message: string) {
   }
 
-  static fromPenpalError(error: PenpalError): UiExtensionError {
+  toPromise() {
+    return Promise.reject(this);
+  }
+
+  static fromPenpal(error: PenpalError): UiExtensionError {
     const errorCode = UiExtensionError.convertPenpalErrorCode(error);
     return new UiExtensionError(errorCode, error.message);
   }
 
-  static convertPenpalErrorCode(error: PenpalError): UiExtensionErrorCode {
+  private static convertPenpalErrorCode(error: PenpalError): UiExtensionErrorCode {
     switch (error.code) {
       case Penpal.ERR_NOT_IN_IFRAME:
         return UiExtensionErrorCode.NotInIframe;
@@ -62,12 +67,12 @@ class UiExtensionError {
   }
 }
 
-const convertPenpalError = (error: PenpalError): Promise<any> => {
-  return Promise.reject(UiExtensionError.fromPenpalError(error));
-};
-
 abstract class UiScope {
   constructor(protected parent: UiExtensionParent) {
+  }
+
+  protected convertPenpalError(error: PenpalError): Promise<any> {
+    return UiExtensionError.fromPenpal(error).toPromise();
   }
 }
 
@@ -83,7 +88,7 @@ class Ui extends UiScope implements UiProperties {
 
   init() {
     if (!this.parent.getProperties) {
-      return Promise.reject(new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, 'missing getProperties()'))
+      return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, 'missing getProperties()').toPromise();
     }
     try {
       return this.parent.getProperties()
@@ -91,16 +96,16 @@ class Ui extends UiScope implements UiProperties {
           Object.assign(this, properties);
           return this;
         })
-        .catch(convertPenpalError)
+        .catch(this.convertPenpalError);
     } catch (error) {
-      return convertPenpalError(error);
+      return this.convertPenpalError(error);
     }
   }
 }
 
 type UiExtensionConfig = {
   Promise?: typeof Promise,
-}
+};
 
 export default class UiExtension {
   static register(config: UiExtensionConfig = {}) {
@@ -122,7 +127,7 @@ export default class UiExtension {
         parentOrigin,
       }).promise;
     } catch (penpalError) {
-      return convertPenpalError(penpalError);
+      return UiExtensionError.fromPenpal(penpalError).toPromise();
     }
   }
 }

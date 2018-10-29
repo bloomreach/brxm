@@ -26,12 +26,12 @@ const uiProperties = {
 };
 
 const parent = {
-  getProperties: () => Promise.resolve(uiProperties)
+  getProperties: () => Promise.resolve(uiProperties),
 };
 
 const penpal = {
   connectToParent: jest.fn(() => ({
-    promise: Promise.resolve(parent)
+    promise: Promise.resolve(parent),
   })),
   ERR_CONNECTION_DESTROYED: 'ConnectionDestroyed',
   ERR_CONNECTION_TIMEOUT: 'ConnectionTimeout',
