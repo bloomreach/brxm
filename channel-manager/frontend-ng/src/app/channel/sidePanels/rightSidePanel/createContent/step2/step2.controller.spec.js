@@ -29,9 +29,11 @@ describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
   let $scope;
+  let $translate;
   let CmsService;
   let ContentEditor;
   let CreateContentService;
+  let DialogService;
   let FeedbackService;
   let RightSidePanelService;
   let Step2Service;
@@ -45,19 +47,23 @@ describe('Create content step 2 controller', () => {
     inject((
       $controller,
       _$rootScope_,
+      _$translate_,
       _$q_,
       _CmsService_,
       _ContentEditor_,
       _CreateContentService_,
+      _DialogService_,
       _FeedbackService_,
       _Step2Service_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
       $scope = $rootScope.$new();
+      $translate = _$translate_;
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       CreateContentService = _CreateContentService_;
+      DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
       Step2Service = _Step2Service_;
@@ -74,6 +80,7 @@ describe('Create content step 2 controller', () => {
     spyOn(CmsService, 'reportUsageStatistic');
     spyOn(ContentEditor, 'getDocument').and.returnValue(testDocument);
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocument.id);
+    spyOn(DialogService, 'show');
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showNotification');
   });
@@ -175,6 +182,42 @@ describe('Create content step 2 controller', () => {
     expect(Step2Service.openEditNameUrlDialog).toHaveBeenCalled();
   });
 
+  describe('confirm discard changes', () => {
+    const showPromise = {};
+
+    beforeEach(() => {
+      ContentEditor.document = {
+        displayName: 'Test',
+      };
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'confirm').and.callThrough();
+      DialogService.show.and.returnValue(showPromise);
+    });
+
+    it('shows a dialog with a title', () => {
+      const result = $ctrl.confirmDiscardChanges('MESSAGE_KEY', 'TITLE_KEY');
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('TITLE_KEY', {
+        documentName: 'Test',
+      });
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('does not show a dialog when the editor is killed', (done) => {
+      ContentEditor.kill();
+      $ctrl.confirmDiscardChanges().then(() => {
+        expect(DialogService.show).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
+  });
+
   describe('uiCanExit', () => {
     let deleteDocumentSpy;
 
@@ -196,12 +239,13 @@ describe('Create content step 2 controller', () => {
     });
 
     it('calls confirmDiscardChanges if document is not yet saved', () => {
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
       $ctrl.uiCanExit();
-      expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+      expect($ctrl.confirmDiscardChanges).toHaveBeenCalled();
     });
 
     it('does not discard the changes if confirmDiscardChanges is canceled', (done) => {
-      ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.reject());
 
       $ctrl.uiCanExit().then(
         () => fail('Dialog promise should not be resolved'),
@@ -213,7 +257,7 @@ describe('Create content step 2 controller', () => {
     });
 
     it('deletes the document when confirmDiscardChanges is resolved', (done) => {
-      ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(deleteDocumentSpy).toHaveBeenCalled();

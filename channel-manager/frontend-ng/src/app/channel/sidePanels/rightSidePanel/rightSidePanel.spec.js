@@ -121,9 +121,9 @@ describe('RightSidePanel', () => {
     const e = angular.element.Event('keydown');
     e.which = 27;
 
-    spyOn($state, 'go');
+    spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($ctrl.close).toHaveBeenCalled();
   });
 
   it('ignores other keypresses', () => {

@@ -331,6 +331,10 @@ class ContentEditorService {
     this.killed = true;
   }
 
+  isKilled() {
+    return this.killed;
+  }
+
   confirmDiscardChanges(messageKey, titleKey) {
     if (this._doNotConfirm()) {
       return this.$q.resolve();
