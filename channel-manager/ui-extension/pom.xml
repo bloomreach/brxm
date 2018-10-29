@@ -23,7 +23,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.bloomreach</groupId>
+  <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
   <name>BloomReach OpenUI SDK</name>
 
