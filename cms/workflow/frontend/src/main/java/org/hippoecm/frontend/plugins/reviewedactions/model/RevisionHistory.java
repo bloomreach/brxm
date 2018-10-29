@@ -43,10 +43,10 @@ import org.slf4j.LoggerFactory;
  */
 public class RevisionHistory implements IDetachable {
 
+    private static final Logger log = LoggerFactory.getLogger(RevisionHistory.class);
     private static final long serialVersionUID = -562404992641520380L;
-
-    static final Logger log = LoggerFactory.getLogger(RevisionHistory.class);
-
+    static final String UNPUBLISHED = "unpublished";
+    static final String DASH = "-";
     private final WorkflowDescriptorModel wdm;
 
     private transient List<Revision> list;
@@ -88,7 +88,10 @@ public class RevisionHistory implements IDetachable {
                     final SortedMap<Calendar, Set<String>> versions = workflow.listVersions();
                     int index = versions.size();
                     for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
-                        list.add(new Revision(this, entry.getKey(), entry.getValue(), --index, new JcrNodeModel(wdm.getNode())));
+                        final Set<String> labels = entry.getValue();
+                        if (!isLatestRevisionOfBranch(labels)) {
+                            list.add(new Revision(this, entry.getKey(), labels, --index, new JcrNodeModel(wdm.getNode())));
+                        }
                     }
                 }
                 Collections.reverse(list);
@@ -98,7 +101,11 @@ public class RevisionHistory implements IDetachable {
         }
     }
 
-    public DocumentWorkflow getWorkflow() throws RepositoryException {
+    boolean isLatestRevisionOfBranch(final Set<String> labels) {
+        return labels.stream().anyMatch(label -> label.endsWith(DASH + UNPUBLISHED));
+    }
+
+    public DocumentWorkflow getWorkflow() {
         return wdm.getWorkflow();
     }
 
