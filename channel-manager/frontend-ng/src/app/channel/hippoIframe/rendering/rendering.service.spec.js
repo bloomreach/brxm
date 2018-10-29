@@ -20,8 +20,6 @@ describe('RenderingService', () => {
   let ChannelService;
   let DomService;
   let DragDropService;
-  let EditComponentService;
-  let HippoIframeService;
   let HstCommentsProcessorService;
   let OverlayService;
   let PageMetaDataService;
@@ -38,19 +36,12 @@ describe('RenderingService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    EditComponentService = jasmine.createSpyObj('EditComponentService', ['syncPreview']);
-
-    angular.mock.module(($provide) => {
-      $provide.value('EditComponentService', EditComponentService);
-    });
-
     inject((
       _$q_,
       _$rootScope_,
       _ChannelService_,
       _DomService_,
       _DragDropService_,
-      _HippoIframeService_,
       _HstCommentsProcessorService_,
       _OverlayService_,
       _PageMetaDataService_,
@@ -62,7 +53,6 @@ describe('RenderingService', () => {
       ChannelService = _ChannelService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
-      HippoIframeService = _HippoIframeService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageMetaDataService = _PageMetaDataService_;
@@ -81,7 +71,6 @@ describe('RenderingService', () => {
       spyOn(HstCommentsProcessorService, 'run');
       spyOn(RenderingService, 'updateDragDrop');
       spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
-      spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
 
     it('handles the loading of a new page', () => {
@@ -96,8 +85,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
-      expect(EditComponentService.syncPreview).toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
@@ -111,8 +98,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
-      expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops if the iframe DOM is not present', () => {
@@ -126,8 +111,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
-      expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
@@ -154,7 +137,6 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(RenderingService._parseLinks).toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
   });
 

@@ -20,12 +20,8 @@ class RenderingService {
   constructor(
     $q,
     ChannelService,
-    CmsService,
-    ConfigService,
     DomService,
     DragDropService,
-    EditComponentService,
-    HippoIframeService,
     HstCommentsProcessorService,
     LinkProcessorService,
     OverlayService,
@@ -37,12 +33,8 @@ class RenderingService {
 
     this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
-    this.EditComponentService = EditComponentService;
-    this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
@@ -58,16 +50,12 @@ class RenderingService {
   createOverlay() {
     this.PageStructureService.clearParsedElements();
 
-    this._insertCss()
+    return this._insertCss()
       .then(() => {
         this._parseHstComments();
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
-        this.EditComponentService.syncPreview();
-      })
-      .finally(() => {
-        this.HippoIframeService.signalPageLoadCompleted();
       });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,

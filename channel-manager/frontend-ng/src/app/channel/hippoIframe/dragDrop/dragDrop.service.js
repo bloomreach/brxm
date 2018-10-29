@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Emittery from 'emittery';
+
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
@@ -27,7 +29,6 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
-    EditComponentService,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -40,14 +41,13 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
-    this.EditComponentService = EditComponentService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
-    this.offDrop();
+    this.emitter = new Emittery();
 
     PageStructureService.registerChangeListener(() => this._sync());
   }
@@ -61,11 +61,23 @@ class DragDropService {
   }
 
   onDrop(callback) {
-    this.onDropCallback = callback;
+    this.unbindOnDrop = this.emitter.on('component-drop', callback);
   }
 
   offDrop() {
-    this.onDropCallback = () => this.$q.resolve();
+    if (this.unbindOnDrop) {
+      this.unbindOnDrop();
+    }
+  }
+
+  onClick(callback) {
+    this.unbindOnClick = this.emitter.on('component-click', callback);
+  }
+
+  offClick() {
+    if (this.unbindOnClick) {
+      this.unbindOnClick();
+    }
   }
 
   _sync() {
@@ -201,7 +213,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.EditComponentService.startEditing(component);
+      this.emitter.emit('component-click', component);
       this._digestIfNeeded();
     }
   }
@@ -295,8 +307,7 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    return this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
-      .then(() => this.EditComponentService.syncPreview())
+    return this.emitter.emit('component-drop', [movedComponent, targetContainer, targetNextComponent])
       .finally(() => {
         this.dropping = false;
       });

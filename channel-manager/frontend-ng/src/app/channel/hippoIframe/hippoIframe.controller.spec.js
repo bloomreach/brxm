@@ -20,8 +20,10 @@ describe('hippoIframeCtrl', () => {
   let $rootScope;
   let $window;
   let CmsService;
+  let ComponentRenderingService;
   let ContainerService;
   let DragDropService;
+  let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
@@ -37,11 +39,15 @@ describe('hippoIframeCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
+    EditComponentService = jasmine.createSpyObj('EditComponentService', ['syncPreview']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
 
     angular.mock.module(($provide) => {
+      $provide.value('ComponentRenderingService', ComponentRenderingService);
+      $provide.value('EditComponentService', EditComponentService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('HstComponentService', HstComponentService);
       $provide.value('PickerService', PickerService);
@@ -104,36 +110,24 @@ describe('hippoIframeCtrl', () => {
     });
   });
 
+  describe('click component', () => {
+    it('removes the on-click event handler when destroyed', () => {
+      spyOn(DragDropService, 'offClick');
+      $ctrl.$onDestroy();
+      expect(DragDropService.offClick).toHaveBeenCalled();
+    });
+  });
+
   describe('render component', () => {
-    beforeEach(() => {
-      spyOn(SpaService, 'renderComponent');
-      spyOn(PageStructureService, 'renderComponent');
-    });
-
-    it('first tries to render a component via the SPA', () => {
-      SpaService.renderComponent.and.returnValue(true);
-
+    it('renders a component when it receives a "render-component" event from the CMS', () => {
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-
-      expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
-      expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
-    });
-
-    it('second renders a component via the PageStructureService', () => {
-      SpaService.renderComponent.and.returnValue(false);
-
-      $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-
-      expect(SpaService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
-      expect(PageStructureService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+      expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
     });
 
     it('does not respond to the render-component event anymore when destroyed', () => {
       $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-
-      expect(SpaService.renderComponent).not.toHaveBeenCalled();
-      expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+      expect(ComponentRenderingService.renderComponent).not.toHaveBeenCalled();
     });
   });
 
@@ -141,7 +135,7 @@ describe('hippoIframeCtrl', () => {
     let callback;
 
     beforeEach(() => {
-      spyOn(ContainerService, 'moveComponent');
+      spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
       callback = DragDropService.onDrop.calls.mostRecent().args[0];
     });
 
@@ -149,11 +143,11 @@ describe('hippoIframeCtrl', () => {
       const component = {};
       const targetContainer = {};
       const targetContainerNextComponent = {};
-      callback(component, targetContainer, targetContainerNextComponent);
+      callback([component, targetContainer, targetContainerNextComponent]);
       expect(ContainerService.moveComponent).toHaveBeenCalledWith(component, targetContainer, targetContainerNextComponent);
     });
 
-    it('does not call the on-drop callback anymore when destroyed', () => {
+    it('removes the on-drop event handler when destroyed', () => {
       spyOn(DragDropService, 'offDrop');
       $ctrl.$onDestroy();
       expect(DragDropService.offDrop).toHaveBeenCalled();
@@ -185,12 +179,27 @@ describe('hippoIframeCtrl', () => {
 
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(false);
-    spyOn(RenderingService, 'createOverlay');
+    spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
+    spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(RenderingService.createOverlay).toHaveBeenCalled();
+    expect(EditComponentService.syncPreview).toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+  });
+
+  it('signals page-load-completed when createOverlay rejects', () => {
+    spyOn(SpaService, 'detectSpa').and.returnValue(false);
+    spyOn(RenderingService, 'createOverlay').and.returnValue($q.reject());
+    spyOn(HippoIframeService, 'signalPageLoadCompleted');
+
+    $ctrl.onLoad();
+    $rootScope.$digest();
+
+    expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
   it('initializes the SPA when a SPA is detected', () => {
@@ -282,7 +291,6 @@ describe('hippoIframeCtrl', () => {
     it('can pick a path and update the component', (done) => {
       PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
       HstComponentService.setPathParameter.and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'renderComponent');
 
       onSelectDocument(component, 'parameterName', '/base/currentPath', pickerConfig, '/base')
         .then(() => {
@@ -290,7 +298,7 @@ describe('hippoIframeCtrl', () => {
           expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
             'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
           );
-          expect(PageStructureService.renderComponent).toHaveBeenCalledWith('componentId');
+          expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith('componentId');
           expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
             componentName: 'componentLabel',
           });

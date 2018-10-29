@@ -20,8 +20,10 @@ class HippoIframeCtrl {
   constructor(
     $element,
     CmsService,
+    ComponentRenderingService,
     ContainerService,
     DragDropService,
+    EditComponentService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
@@ -37,8 +39,10 @@ class HippoIframeCtrl {
     this.$element = $element;
 
     this.CmsService = CmsService;
+    this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
     this.DragDropService = DragDropService;
+    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
@@ -79,6 +83,7 @@ class HippoIframeCtrl {
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
     this.DragDropService.onDrop(this._moveComponent.bind(this));
+    this.DragDropService.onClick(this._clickComponent.bind(this));
   }
 
   $onChanges(changes) {
@@ -98,24 +103,32 @@ class HippoIframeCtrl {
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
     this.DragDropService.offDrop();
+    this.DragDropService.offClick();
   }
 
   onLoad() {
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();
     } else {
-      this.RenderingService.createOverlay();
+      this.RenderingService.createOverlay()
+        .then(() => this.EditComponentService.syncPreview()) // TODO: test this
+        .finally(() => {
+          this.HippoIframeService.signalPageLoadCompleted();
+        });
     }
   }
 
   _renderComponent(componentId, propertiesMap) {
-    if (!this.SpaService.renderComponent(componentId, propertiesMap)) {
-      this.PageStructureService.renderComponent(componentId, propertiesMap);
-    }
+    this.ComponentRenderingService.renderComponent(componentId, propertiesMap);
   }
 
-  _moveComponent(component, targetContainer, targetContainerNextComponent) {
-    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent);
+  _clickComponent(component) {
+    this.EditComponentService.startEditing(component);
+  }
+
+  _moveComponent([component, targetContainer, targetContainerNextComponent]) {
+    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent)
+      .then(() => this.EditComponentService.syncPreview()); // TODO: test this
   }
 
   _deleteComponent(componentId) {
@@ -142,7 +155,7 @@ class HippoIframeCtrl {
 
     return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
       .then(() => {
-        this.PageStructureService.renderComponent(componentId);
+        this.ComponentRenderingService.renderComponent(componentId);
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
       .catch((response) => {
