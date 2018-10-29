@@ -25,7 +25,7 @@
   
   <name>Hippo Addon Channel Manager Translations</name>
   <artifactId>hippo-addon-channel-manager-l10n</artifactId>
-  <version>5.6.1-SNAPSHOT</version>
+  <version>${hippo.addon-channel-manager.version}</version>
   
   <dependencies>
     <dependency>

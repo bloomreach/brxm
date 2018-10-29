@@ -25,7 +25,7 @@
   
   <name>Hippo CMS Translations</name>
   <artifactId>hippo-cms-l10n</artifactId>
-  <version>5.6.1-SNAPSHOT</version>
+  <version>${hippo.cms.version}</version>
   
   <dependencies>
     <dependency>

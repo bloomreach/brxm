@@ -25,7 +25,7 @@
   
   <name>Hippo Plugin Content Tagging Translations</name>
   <artifactId>hippo-plugin-content-tagging-l10n</artifactId>
-  <version>7.6.1-SNAPSHOT</version>
+  <version>${hippo.plugin.content-tagging.version}</version>
   
   <dependencies>
     <dependency>

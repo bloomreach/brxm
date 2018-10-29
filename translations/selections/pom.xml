@@ -25,7 +25,7 @@
   
   <name>Hippo Plugin Selections Translations</name>
   <artifactId>hippo-plugin-selections-l10n</artifactId>
-  <version>5.6.1-SNAPSHOT</version>
+  <version>${hippo.plugin.selections.version}</version>
   
   <dependencies>
     <dependency>

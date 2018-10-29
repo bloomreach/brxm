@@ -19,19 +19,19 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>29.6</version>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>12.6.1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Community Translations</name>
   <artifactId>hippo-community-translations</artifactId>
-  <version>12.6.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
 
   <properties>
     <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
+    <maven.plugin.flatten.version>1.0.1</maven.plugin.flatten.version>
     <locales>fr,nl,de,zh,es</locales>
     <locale/>
     <format>excel</format>
@@ -154,6 +154,27 @@
             </execution>
           </executions>
         </plugin>
+        <!-- Restore remote-resources disabled in the release pom to add L&N files -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles>
+                  <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+                </resourceBundles>
+                <properties>
+                  <projectName>${notice.project.name}</projectName>
+                </properties>
+              </configuration>
+
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -182,6 +203,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${maven.plugin.flatten.version}</version>
+        <configuration>
+          <flattenMode>clean</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
     <resources>
       <!--<resource>-->
