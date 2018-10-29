@@ -21,10 +21,12 @@ jest.mock('penpal');
 
 // save globals that will be mocked
 const connectToParent = Penpal.connectToParent;
+const promise = Penpal.Promise;
 
 // reset mocked globals after each test
 afterEach(() => {
   Penpal.connectToParent = connectToParent;
+  Penpal.Promise = promise;
 });
 
 describe('register', () => {
