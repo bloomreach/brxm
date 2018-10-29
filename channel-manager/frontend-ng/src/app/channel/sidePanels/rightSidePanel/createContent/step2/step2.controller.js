@@ -61,7 +61,7 @@ class Step2Controller {
       }
     });
     // focus the form so key presses will reach Angular Material instead of the parent window
-    this.$element.find('.form-dense-layout').focus();
+    this.$element.find('form').focus();
   }
 
   allMandatoryFieldsShown() {

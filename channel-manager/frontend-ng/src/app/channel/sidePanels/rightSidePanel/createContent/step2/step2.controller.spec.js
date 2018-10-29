@@ -98,7 +98,7 @@ describe('Create content step 2 controller', () => {
     it('does focus the form', () => {
       spyOn($element, 'find').and.returnValue(form);
       $ctrl.$onInit();
-      expect($element.find).toHaveBeenCalledWith('.form-dense-layout');
+      expect($element.find).toHaveBeenCalledWith('form');
       expect(form.focus).toHaveBeenCalled();
     });
   });
