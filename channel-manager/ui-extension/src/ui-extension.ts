@@ -92,10 +92,7 @@ class Ui extends UiScope implements UiProperties {
     }
     try {
       return this.parent.getProperties()
-        .then((properties) => {
-          Object.assign(this, properties);
-          return this;
-        })
+        .then(properties => Object.assign(this, properties))
         .catch(this.convertPenpalError);
     } catch (error) {
       return this.convertPenpalError(error);
