@@ -14,47 +14,117 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';
+// disable TSLint for "import Penpal" to work around issue 387
+import Penpal from 'penpal'; // tslint:disable-line
 
-export interface Parent {
-  getProperties: () => Promise<Ui>,
+interface UiProperties {
+  baseUrl: string;
+  extension: {
+    config: string,
+  };
+  locale: string;
+  timeZone: string;
+  user: string;
+  version: string;
 }
 
-export interface Ui {
-  user: string,
+interface UiExtensionParent {
+  getProperties: () => Promise<UiProperties>;
+}
+
+type UiExtensionConfig = {
+  Promise?: typeof Promise,
+};
+
+type PenpalError = Error & { code?: string };
+
+enum UiExtensionErrorCode {
+  'NotInIframe' = 'NotInIframe',
+  'IncompatibleParent' = 'IncompatibleParent',
+  'ConnectionDestroyed' = 'ConnectionDestroyed',
+  'InternalError' = 'InternalError',
+}
+
+class UiExtensionError extends Error {
+  constructor(public code: UiExtensionErrorCode,
+              public message: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+
+  toPromise() {
+    return Penpal.Promise.reject(this);
+  }
+
+  static fromPenpal(error: PenpalError): UiExtensionError {
+    const errorCode = UiExtensionError.convertPenpalErrorCode(error);
+    return new UiExtensionError(errorCode, error.message);
+  }
+
+  private static convertPenpalErrorCode(error: PenpalError): UiExtensionErrorCode {
+    switch (error.code) {
+      case Penpal.ERR_NOT_IN_IFRAME:
+        return UiExtensionErrorCode.NotInIframe;
+      case Penpal.ERR_CONNECTION_DESTROYED:
+        return UiExtensionErrorCode.ConnectionDestroyed;
+      default:
+        return UiExtensionErrorCode.InternalError;
+    }
+  }
+}
+
+abstract class UiScope {
+  constructor(protected parent: UiExtensionParent) {
+  }
+
+  protected convertPenpalError(error: PenpalError): Promise<any> {
+    return UiExtensionError.fromPenpal(error).toPromise();
+  }
+}
+
+class Ui extends UiScope implements UiProperties {
+  baseUrl: string;
+  extension: {
+    config: string,
+  };
+  locale: string;
+  timeZone: string;
+  user: string;
+  version: string;
+
+  init() {
+    if (!this.parent.getProperties) {
+      return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, 'missing getProperties()').toPromise();
+    }
+    try {
+      return this.parent.getProperties()
+        .then(properties => Object.assign(this, properties))
+        .catch(this.convertPenpalError);
+    } catch (error) {
+      return this.convertPenpalError(error);
+    }
+  }
 }
 
 export default class UiExtension {
-  static register(onSuccess: (ui: Ui) => void) {
-    if (typeof onSuccess !== 'function') {
-      throw new Error('No callback function provided');
+  static register(config: UiExtensionConfig = {}) {
+    if (config.Promise) {
+      Penpal.Promise = config.Promise;
     }
 
-    const connection = UiExtension.connectToParent();
-    if (connection) {
-      connection.promise.then((parent: Parent) => {
-        try {
-          parent.getProperties()
-            .then(onSuccess)
-            .catch((e) => {
-              console.error('Failed to register extension, cannot get parent properties:', e);
-            })
-        } catch (e) {
-          console.error('Failed to register extension: cannot get parent properties. '
-            + 'Are you using compatible versions of BloomReach Experience and the client library?');
-        }
-      });
-    }
+    return UiExtension.connect()
+      .then((parent: UiExtensionParent) => new Ui(parent).init());
   }
 
-  private static connectToParent(): Penpal.IConnectionObject {
+  private static connect(): Promise<UiExtensionParent> {
     const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
     try {
       return Penpal.connectToParent({
         parentOrigin,
-      });
-    } catch (e) {
-      console.info('Failed to register extension: cannot connect to parent');
+      }).promise;
+    } catch (penpalError) {
+      return UiExtensionError.fromPenpal(penpalError).toPromise();
     }
   }
 }

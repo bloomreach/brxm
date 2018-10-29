@@ -17,7 +17,8 @@
   "types": "target/classes/ui-extension.d.ts",
   "scripts": {
     "build": "webpack --config=webpack.config.js",
-    "test": "jest"
+    "lint": "tslint --project .",
+    "test": "npm run lint && jest"
   },
   "jest": {
     "testEnvironment": "jsdom",
