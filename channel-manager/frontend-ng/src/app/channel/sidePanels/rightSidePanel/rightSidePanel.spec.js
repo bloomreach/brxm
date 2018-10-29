@@ -121,18 +121,18 @@ describe('RightSidePanel', () => {
     const e = angular.element.Event('keydown');
     e.which = 27;
 
-    spyOn($state, 'go');
+    spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($ctrl.close).toHaveBeenCalled();
   });
 
   it('ignores other keypresses', () => {
     const e = angular.element.Event('keydown');
     e.which = 28;
 
-    spyOn($state, 'go');
+    spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
-    expect($state.go).not.toHaveBeenCalled();
+    expect($ctrl.close).not.toHaveBeenCalled();
   });
 
   it('loads last saved width of right side panel', () => {

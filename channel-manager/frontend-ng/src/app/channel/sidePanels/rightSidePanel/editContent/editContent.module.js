@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './editContentMain.scss';
 import config from './editContent.config';
 import addToProjectCtrl from './addToProject/addToProject.controller';
 import editContentService from './editContent.service';

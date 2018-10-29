@@ -16,12 +16,14 @@
 
 class Step2Controller {
   constructor(
+    $element,
     $q,
     $scope,
     $translate,
     ContentEditor,
     ContentService,
     CreateContentService,
+    DialogService,
     FeedbackService,
     RightSidePanelService,
     Step2Service,
@@ -29,6 +31,7 @@ class Step2Controller {
   ) {
     'ngInject';
 
+    this.$element = $element;
     this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
@@ -36,6 +39,7 @@ class Step2Controller {
     this.ContentService = ContentService;
     this.CreateContentService = CreateContentService;
     this.FeedbackService = FeedbackService;
+    this.DialogService = DialogService;
     this.RightSidePanelService = RightSidePanelService;
     this.Step2Service = Step2Service;
     this.CmsService = CmsService;
@@ -56,6 +60,8 @@ class Step2Controller {
         this.RightSidePanelService.stopLoading();
       }
     });
+    // focus the form so key presses will reach Angular Material instead of the parent window
+    this.$element.find('form').focus();
   }
 
   allMandatoryFieldsShown() {
@@ -111,11 +117,31 @@ class Step2Controller {
     return this.ContentEditor.getDocument();
   }
 
+  confirmDiscardChanges(messageKey, titleKey) {
+    if (this.ContentEditor.isKilled()) {
+      return this.$q.resolve(); // editor was killed, don't show dialog
+    }
+    const translateParams = {
+      documentName: this.ContentEditor.getDocumentDisplayName(),
+    };
+
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant(messageKey, translateParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    if (titleKey) {
+      confirm.title(this.$translate.instant(titleKey, translateParams));
+    }
+
+    return this.DialogService.show(confirm);
+  }
+
   uiCanExit() {
     if (this.documentIsSaved || this.switchingEditor) {
       return true;
     }
-    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
+    return this.confirmDiscardChanges('CONFIRM_DISCARD_NEW_DOCUMENT', 'DISCARD_DOCUMENT')
       .then(() => {
         this.ContentEditor.deleteDocument();
         this.CmsService.reportUsageStatistic('CreateContent2Cancel');

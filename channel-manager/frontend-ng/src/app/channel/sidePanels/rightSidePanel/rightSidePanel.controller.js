@@ -41,7 +41,7 @@ class RightSidePanelCtrl {
     $element.on('keydown', (e) => {
       if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
         e.stopImmediatePropagation();
-        $state.go('^');
+        this.close();
       }
     });
   }
