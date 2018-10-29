@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/ui-extensions-config:
+      jcr:primaryType: hipposys:domain
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [webmaster]
+        hipposys:role: readonly
+      /frontend-ui-extensions:
+        jcr:primaryType: hipposys:domainrule
+        /path-to-frontend-ui-extensions:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:frontend/cms/ui-extensions

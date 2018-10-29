@@ -84,24 +84,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: frontend:application
-      /frontend-ui-extension:
-        jcr:primaryType: hipposys:domainrule
-        /type-frontend-ui-extension:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:primaryType
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: frontend:uiExtension
-      /frontend-ui-extensions:
-        jcr:primaryType: hipposys:domainrule
-        /type-frontend-ui-extensions:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:primaryType
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: frontend:uiExtensions
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]
