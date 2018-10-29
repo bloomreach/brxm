@@ -35,7 +35,7 @@ class ComponentRenderingService {
       this.$log.warn(`Cannot render unknown component with ID '${componentId}'`);
       return this.$q.reject();
     }
-
+    // let the SPA render the component; if it returns false, we render the component instead
     return this.SpaService.renderComponent(component, properties)
       ? this.$q.resolve()
       : this.PageStructureService.renderComponent(component, properties);

@@ -60,11 +60,8 @@ class SpaService {
   }
 
   renderComponent(component, parameters = {}) {
-    if (component && this.spa && angular.isFunction(this.spa.renderComponent)) {
-      // let the SPA render the component; if it returns false, we still render the component instead
-      return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
-    }
-    return false;
+    return component && this.spa && angular.isFunction(this.spa.renderComponent)
+      && this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
   }
 }
 
