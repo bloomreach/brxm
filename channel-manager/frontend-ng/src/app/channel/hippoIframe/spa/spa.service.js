@@ -15,13 +15,12 @@
  */
 
 class SpaService {
-  constructor($log, DomService, OverlayService, PageStructureService, RenderingService) {
+  constructor($log, DomService, OverlayService, RenderingService) {
     'ngInject';
 
     this.$log = $log;
     this.DomService = DomService;
     this.OverlayService = OverlayService;
-    this.PageStructureService = PageStructureService;
     this.RenderingService = RenderingService;
   }
 
@@ -60,14 +59,10 @@ class SpaService {
     }
   }
 
-  renderComponent(componentId, parameters = {}) {
-    if (this.spa && angular.isFunction(this.spa.renderComponent)) {
-      const component = this.PageStructureService.getComponentById(componentId);
-      if (component) {
-        // let the SPA render the component; if it returns false, we still render the component instead
-        return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
-      }
-      this.$log.warn(`SPA cannot render unknown component with ID '${componentId}'`);
+  renderComponent(component, parameters = {}) {
+    if (component && this.spa && angular.isFunction(this.spa.renderComponent)) {
+      // let the SPA render the component; if it returns false, we still render the component instead
+      return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
     }
     return false;
   }
