@@ -45,9 +45,12 @@ enum UiExtensionErrorCode {
   'InternalError' = 'InternalError',
 }
 
-class UiExtensionError {
+class UiExtensionError extends Error {
   constructor(public code: UiExtensionErrorCode,
               public message: string) {
+    super(message);
+
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 
   toPromise() {

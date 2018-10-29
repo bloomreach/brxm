@@ -85,6 +85,7 @@ describe('register', () => {
 
       UiExtension.register()
         .catch((error) => {
+          expect(error).toBeInstanceOf(Error);
           expect(error.code).toBe('NotInIframe');
           done();
         })
@@ -99,6 +100,7 @@ describe('register', () => {
 
       UiExtension.register()
         .catch((error) => {
+          expect(error).toBeInstanceOf(Error);
           expect(error.code).toBe('IncompatibleParent');
           done();
         })
@@ -118,6 +120,7 @@ describe('register', () => {
 
       UiExtension.register()
         .catch((error) => {
+          expect(error).toBeInstanceOf(Error);
           expect(error.code).toBe('ConnectionDestroyed');
           done();
         })
@@ -131,6 +134,7 @@ describe('register', () => {
 
       UiExtension.register()
         .catch((error) => {
+          expect(error).toBeInstanceOf(Error);
           expect(error.code).toBe('InternalError');
           done();
         });
