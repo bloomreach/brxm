@@ -388,25 +388,20 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
-        final FieldTypeContext fieldContext3 = createMock(FieldTypeContext.class);
         final Node node = createMock(Node.class);
         final StringFieldType stringField1 = createMock(StringFieldType.class);
-        final StringFieldType stringField2 = createMock(StringFieldType.class);
         final MultilineStringFieldType multilineStringField = createMock(MultilineStringFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
-        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3));
+        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2));
         expect(fieldContext1.getType()).andReturn("String");
         expect(fieldContext2.getType()).andReturn("Text");
-        expect(fieldContext3.getType()).andReturn("Label");
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
-        expect(fieldContext3.getEditorConfigNode()).andReturn(Optional.of(node));
-        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).times(3);
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).times(2);
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField1));
         expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(multilineStringField));
-        expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField2));
 
         expect(stringField1.init(fieldContext1)).andReturn(FieldsInformation.allSupported());
         expect(stringField1.isSupported()).andReturn(true);
@@ -414,19 +409,15 @@ public class FieldTypeUtilsTest {
         expect(multilineStringField.init(fieldContext2)).andReturn(FieldsInformation.allSupported());
         expect(multilineStringField.isSupported()).andReturn(true);
 
-        expect(stringField2.init(fieldContext3)).andReturn(FieldsInformation.allSupported());
-        expect(stringField2.isSupported()).andReturn(true);
-
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
         assertTrue(fieldsInfo.isAllFieldsIncluded());
         assertTrue(fieldsInfo.getCanCreateAllRequiredFields());
 
-        assertThat(fields.size(), equalTo(3));
+        assertThat(fields.size(), equalTo(2));
         assertThat(fields.get(0), equalTo(stringField1));
         assertThat(fields.get(1), equalTo(multilineStringField));
-        assertThat(fields.get(2), equalTo(stringField2));
 
         verifyAll();
     }
