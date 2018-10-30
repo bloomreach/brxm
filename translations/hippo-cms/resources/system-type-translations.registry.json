@@ -12,11 +12,7 @@
     "hippo:types.hipposys:Label/jcr:name" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "nl" : "UNRESOLVED"
       }
     },
     "hippo:types.hipposys:Boolean/jcr:name" : {

@@ -19,7 +19,7 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
       /de:
         jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Etikette
+        jcr:name: Label (veraltet)
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /de:
         jcr:primaryType: hipposys:resourcebundle
