@@ -784,7 +784,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
                     richTextFields.add(
                             (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
-                } else if (fieldType.getName().equals("Text") || fieldType.getName().equals("Label")) {
+                } else if (fieldType.getName().equals("Text")) {
                     plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
                 } else if (fieldType.getName().equals("Html")) {
                     richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
