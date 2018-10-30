@@ -16,10 +16,6 @@ definitions:
       /zh:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: 整数
-    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
-      /zh:
-        jcr:primaryType: hipposys:resourcebundle
-        jcr:name: 标签（已弃用）
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /zh:
         jcr:primaryType: hipposys:resourcebundle
