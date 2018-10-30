@@ -578,14 +578,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_ON_BLUR_MESSAGE" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_NO_HOLDER" : {
       "status" : "CLEAN",
@@ -600,14 +594,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_ON_PUBLISH_MESSAGE" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "VIEWPORT_ANY_DEVICE" : {
       "status" : "CLEAN",
@@ -742,14 +730,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_ON_CLOSE_CHANNEL" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_SLUG_ALREADY_EXISTS" : {
       "status" : "CLEAN",
@@ -768,14 +750,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_ON_CREATE_DOCUMENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_ALREADY_DELETED" : {
       "status" : "CLEAN",
@@ -798,14 +774,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_GENERIC" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "CREATE_NEW_DOCUMENT_TYPE" : {
       "status" : "CLEAN",
@@ -820,14 +790,8 @@
       "locales" : null
     },
     "SAVE_CHANGES_ON_SWITCH_TO_CONTENT_EDITOR_MESSAGE" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "SELECT_DOCUMENT_LOCKED" : {
       "status" : "CLEAN",
@@ -1214,14 +1178,8 @@
       }
     },
     "SAVE_CHANGES_ON_PROJECT_SWITCH" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "DEFAULT_PROPERTY_GROUP_LABEL" : {
       "status" : "ADDED",
