@@ -30,13 +30,13 @@
   <packaging>pom</packaging>
 
   <properties>
-    <commons-io.version>2.5</commons-io.version>
+    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-csv.version>1.4</commons-csv.version>
+    <commons-csv.version>1.6</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
     <apache-poi.version>3.16</apache-poi.version>
     <hippo.configuration-management.version>13.0.0-SNAPSHOT</hippo.configuration-management.version>
-    <junit.version>4.10</junit.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <scm>
