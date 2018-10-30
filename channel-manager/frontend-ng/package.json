@@ -29,6 +29,7 @@
     "@bloomreach/dragula": "3.7.2-br.3",
     "@mdi/font": "2.2.43",
     "@uirouter/angularjs": "1.0.15",
+    "@uirouter/sticky-states": "1.5.0",
     "@uirouter/visualizer": "6.0.0",
     "angular": "1.6.9",
     "angular-animate": "1.6.9",
@@ -46,6 +47,7 @@
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
     "open-sans-fontface": "github:FontFaceKit/open-sans#91b197ff77e8d6717ccf3a9872f4ebb2a547560f",
+    "penpal": "3.0.3",
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {

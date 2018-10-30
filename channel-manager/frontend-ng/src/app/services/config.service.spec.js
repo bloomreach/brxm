@@ -52,12 +52,25 @@ describe('ConfigService', () => {
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
   });
 
-  it('knows the CMS context path', () => {
-    expect(ConfigService.getCmsContextPath()).toBe('/test/');
+  describe('getCmsContextPath', () => {
+    it('knows the CMS context path', () => {
+      expect(ConfigService.getCmsContextPath()).toBe('/test/');
+    });
+
+    it('falls back to a default CMS context path', () => {
+      delete $window.parent;
+      expect(ConfigService.getCmsContextPath()).toBe('/cms/');
+    });
   });
 
-  it('falls back to a default CMS context path', () => {
-    delete $window.parent;
-    expect(ConfigService.getCmsContextPath()).toBe('/cms/');
+  describe('getCmsOrigin', () => {
+    it('knows the CMS origin', () => {
+      expect(ConfigService.getCmsOrigin()).toBe('http://localhost:8080');
+    });
+
+    it('falls back to an empty string when there is no parent frame', () => {
+      delete $window.parent;
+      expect(ConfigService.getCmsOrigin()).toBe('');
+    });
   });
 });

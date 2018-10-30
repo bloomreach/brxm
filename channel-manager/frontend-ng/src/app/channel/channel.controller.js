@@ -48,8 +48,6 @@ class ChannelCtrl {
     this.ProjectService = ProjectService;
     this.SidePanelService = SidePanelService;
 
-    this.projectsEnabled = ConfigService.projectsEnabled;
-
     this.menus = [
       ChannelMenuService.getMenu(subPage => this.showSubpage(subPage)),
       PageMenuService.getMenu(subPage => this.showSubpage(subPage)),
@@ -57,6 +55,8 @@ class ChannelCtrl {
   }
 
   $onInit() {
+    this.projectsEnabled = this.ConfigService.projectsEnabled;
+
     this.CmsService.subscribe('reload-page', this._reloadPage, this);
   }
 
@@ -97,16 +97,12 @@ class ChannelCtrl {
     this.OverlayService.showComponentsOverlay(value);
   }
 
-  get isComponentsOverlayEnabled() {
-    return this.ProjectService.isComponentsOverlayEnabled();
-  }
-
-  get isContentOverlayEnabled() {
-    return this.ProjectService.isContentOverlayEnabled();
-  }
-
   isControlsDisabled() {
     return !this.isChannelLoaded() || !this.isPageLoaded();
+  }
+
+  get channel() {
+    return this.ChannelService.getChannel();
   }
 
   isConfigurationLocked() {
@@ -119,10 +115,6 @@ class ChannelCtrl {
 
   isPageLoaded() {
     return this.HippoIframeService.isPageLoaded();
-  }
-
-  projectsEnabled() {
-    return this.ConfigService.projectsEnabled;
   }
 
   isEditable() {

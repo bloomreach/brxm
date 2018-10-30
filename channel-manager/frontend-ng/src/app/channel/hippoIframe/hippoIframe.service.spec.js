@@ -24,6 +24,7 @@ describe('HippoIframeService', () => {
   let ConfigService;
   let HippoIframeService;
   let PageMetaDataService;
+  let PageInfoService;
   let ScrollService;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
@@ -34,9 +35,10 @@ describe('HippoIframeService', () => {
       _$log_,
       _$rootScope_,
       _$window_,
-      _HippoIframeService_,
       _ChannelService_,
+      _HippoIframeService_,
       _ConfigService_,
+      _PageInfoService_,
       _PageMetaDataService_,
       _ScrollService_,
     ) => {
@@ -46,12 +48,14 @@ describe('HippoIframeService', () => {
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       HippoIframeService = _HippoIframeService_;
+      PageInfoService = _PageInfoService_;
       PageMetaDataService = _PageMetaDataService_;
       ScrollService = _ScrollService_;
     });
 
     spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
     spyOn(ChannelService, 'extractRenderPathInfo');
+    spyOn(PageInfoService, 'updatePageInfo');
     spyOn(ScrollService, 'saveScrollPosition');
     spyOn(ScrollService, 'restoreScrollPosition');
 
@@ -157,11 +161,13 @@ describe('HippoIframeService', () => {
       iframe.one('load', () => { // catch the reload event to signal page load completion
         expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
         expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
+        expect(PageInfoService.updatePageInfo).not.toHaveBeenCalled();
         expect(HippoIframeService.deferredReload).toBeTruthy();
 
         HippoIframeService.signalPageLoadCompleted();
 
         expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
+        expect(PageInfoService.updatePageInfo).toHaveBeenCalled();
 
         $rootScope.$digest();
       });
