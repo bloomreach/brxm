@@ -102,7 +102,7 @@ describe('SpaService', () => {
       iframeWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
       SpaService.detectSpa();
       SpaService.initSpa();
-      publicApi = iframeWindow.SPA.init.calls.mostRecent().args[0];
+      [publicApi] = iframeWindow.SPA.init.calls.mostRecent().args;
     });
 
     it('can create the overlay', () => {
@@ -121,13 +121,13 @@ describe('SpaService', () => {
   describe('render component', () => {
     it('ignores the SPA when it does not exist', () => {
       SpaService.detectSpa();
-      expect(SpaService.renderComponent('1234')).toBe(false);
+      expect(SpaService.renderComponent({})).toBe(false);
     });
 
     it('ignores the SPA when it does not define a renderComponent function', () => {
       iframeWindow.SPA = {};
       SpaService.detectSpa();
-      expect(SpaService.renderComponent('1234')).toBe(false);
+      expect(SpaService.renderComponent({})).toBe(false);
     });
 
     describe('an SPA that defines a renderComponent function', () => {
