@@ -42,7 +42,7 @@ public abstract class ExportImportTest {
     @Before
     public void setupTestModule() throws IOException {
         final File module = temporaryFolder.newFolder("module");
-        resources = temporaryFolder.newFolder("module/resources");
+        resources = temporaryFolder.newFolder("module", "resources");
         final ClassLoader classLoader = getClass().getClassLoader();
         new Extractor(resources, "module", Arrays.asList("en", "nl", "fr"), classLoader, new String[] {}).extract();
         registrar = new Registrar(module, "module", Arrays.asList("nl", "fr"), classLoader, new String[] {});
@@ -136,9 +136,9 @@ public abstract class ExportImportTest {
 
         importDutch: {
             File export = getExporter(temporaryFolder.getRoot()).export("nl");
-            File _import = temporaryFolder.newFile("import");
+            File _import = temporaryFolder.newFile("importNL");
             FileUtils.copyFile(export, _import);
-            getImporter(temporaryFolder.getRoot())._import("import", "nl");
+            getImporter(temporaryFolder.getRoot())._import("importNL", "nl");
         }
 
         assertDutchIsResolved: {
@@ -147,11 +147,11 @@ public abstract class ExportImportTest {
         
         importFrench: {
             File export = getExporter(temporaryFolder.getRoot()).export("fr");
-            File _import = temporaryFolder.newFile("import");
+            File _import = temporaryFolder.newFile("importFR");
             FileUtils.copyFile(export, _import);
             // change the reference bundles in the mean time
             changeBundle();
-            getImporter(temporaryFolder.getRoot())._import("import", "fr");
+            getImporter(temporaryFolder.getRoot())._import("importFR", "fr");
         }
 
         assertFrenchIsUnresolved: {
