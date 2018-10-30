@@ -102,11 +102,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
         final VirtualHosts virtualHosts = hstModelProvider.getHstModel().getVirtualHosts();
 
-        // TODO HSTTWO-4355 if the hstModelRegistry#getVirtualHosts triggered a new model build because of a change, it must
-        // TODO HSTTWO-4355 inform the current webapp to invoke componentRegistry.unregisterAllComponents(); and siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-        // TODO HSTTWO-4355 how will we communicate this? A guava bus registered by hst-platform?
-
-        // TODO HSTTWO-4355 and invoke after a new model the following:
 //        if (clearPageCacheAfterModelLoad) {
 //            log.info("Clearing page cache after new model is loaded");
 //            pageCache.clear();
@@ -114,30 +109,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 //            log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
 //        }
 
-        // TODO HSTTWO-4355 componentRegistry.unregisterAllComponents();
-        // TODO HSTTWO-4355 siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-
-
         return virtualHosts;
-
-//        if (state == BuilderState.UP2DATE) {
-//            return virtualHostsModel;
-//        }
-//        if (state == BuilderState.UNDEFINED) {
-//            return synchronousBuild();
-//        }
-//        if (allowStale && staleConfigurationSupported) {
-//            asynchronousBuild();
-//            return prevVirtualHostsModel;
-//        }
-//        return synchronousBuild();
     }
-
-
-    // TODO
-
-//            componentRegistry.unregisterAllComponents();
-//            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-
 
 }
