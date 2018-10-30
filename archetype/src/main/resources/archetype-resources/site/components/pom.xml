@@ -59,10 +59,6 @@
       <artifactId>freemarker</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-page-composer</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-security</artifactId>
     </dependency>
