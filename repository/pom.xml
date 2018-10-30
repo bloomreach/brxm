@@ -99,7 +99,7 @@
          Typically these should be the same but currently we need a newer pdfbox.
          As soon as Tika 'catches' up with the latest pdfbox, they should preferrably be kept in sync again. -->
     <pdfbox.version>2.0.12</pdfbox.version>
-    <quartz.version>2.2.1</quartz.version>
+    <quartz.version>2.3.0</quartz.version>
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>3.4</easymock.version>
     <powermock.version>1.7.0</powermock.version>
