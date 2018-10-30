@@ -46,30 +46,6 @@ definitions:
               jcr:primaryType: frontend:plugin
               diffservice.id: html.diffservice.id
               plugin.class: org.hippoecm.frontend.editor.plugins.TextTemplatePlugin
-      /Label:
-        jcr:primaryType: hipposysedit:templatetype
-        jcr:mixinTypes: ['mix:referenceable', 'editor:editable']
-        jcr:uuid: eab1bc13-3085-4e5a-a5b4-a31ea74bbb70
-        /hipposysedit:nodetype:
-          jcr:primaryType: hippo:handle
-          jcr:mixinTypes: ['mix:referenceable']
-          jcr:uuid: 9b37d0dc-d294-40e4-9850-f8c397fe404d
-          /hipposysedit:nodetype:
-            jcr:primaryType: hipposysedit:nodetype
-            jcr:mixinTypes: ['hipposysedit:remodel']
-            hipposysedit:node: false
-            hipposysedit:type: String
-            hipposysedit:uri: internal
-        /editor:templates:
-          jcr:primaryType: editor:templateset
-          /_default_:
-            jcr:primaryType: frontend:plugincluster
-            frontend:properties: [mode, size]
-            frontend:references: [wicket.model, engine, model.compareTo]
-            frontend:services: [wicket.id]
-            /root:
-              jcr:primaryType: frontend:plugin
-              plugin.class: org.hippoecm.frontend.editor.plugins.ValueTemplatePlugin
       /Boolean:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
