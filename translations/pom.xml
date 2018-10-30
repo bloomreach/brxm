@@ -209,6 +209,8 @@
         <version>${maven.plugin.flatten.version}</version>
         <configuration>
           <flattenMode>clean</flattenMode>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <flattenedPomFilename>${project.artifactId}-${project.version}.pom</flattenedPomFilename>
         </configuration>
         <executions>
           <execution>
