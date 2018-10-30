@@ -36,7 +36,7 @@ public abstract class ReaderWriterTest {
     abstract ImportFileReader getImportFileReader();
 
     private void test(final String str) throws IOException {
-        final File file = temporaryFolder.newFile("ReaderWriterTest");
+        final File file = temporaryFolder.newFile();
 
         // create a small table
         final List<String[]> exportData = new ArrayList<>();
