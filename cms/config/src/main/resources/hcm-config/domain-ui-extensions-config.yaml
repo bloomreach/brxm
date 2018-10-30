@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/ui-extensions-config:
+    /hippo:configuration/hippo:domains/ui-extensions:
       jcr:primaryType: hipposys:domain
       /readonly:
         jcr:primaryType: hipposys:authrole
