@@ -33,7 +33,7 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
-    <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-lang3.version>3.8.1</commons-lang3.version>
     <junit.version>4.12</junit.version>
   </properties>
 
