@@ -34,13 +34,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - webfiles</notice.project.name>
 
-    <commons-io.version>2.5</commons-io.version>
+    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
 
     <jackrabbit.vault.version>3.1.6</jackrabbit.vault.version>
-    <junit.version>4.11</junit.version>
+    <junit.version>4.12</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>
 
