@@ -100,5 +100,15 @@ describe('RightSidePanelService', () => {
     RightSidePanelService.clearContext();
     expect(RightSidePanelService.getContext()).toEqual('');
   });
+
+  it('manages closing state', () => {
+    expect(RightSidePanelService.isClosing()).toBe(false);
+
+    RightSidePanelService.setClosing(true);
+    expect(RightSidePanelService.isClosing()).toBe(true);
+
+    RightSidePanelService.setClosing(false);
+    expect(RightSidePanelService.isClosing()).toBe(false);
+  });
 });
 

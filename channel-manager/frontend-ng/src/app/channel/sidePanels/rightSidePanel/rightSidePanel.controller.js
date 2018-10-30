@@ -30,6 +30,7 @@ class RightSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$state = $state;
     this.$transitions = $transitions;
     this.$window = $window;
 
@@ -42,7 +43,7 @@ class RightSidePanelCtrl {
     $element.on('keydown', (e) => {
       if (e.which === $mdConstant.KEY_CODE.ESCAPE) {
         e.stopImmediatePropagation();
-        $state.go('hippo-cm.channel');
+        this.close();
       }
     });
   }
@@ -59,6 +60,11 @@ class RightSidePanelCtrl {
 
   $postLink() {
     this.SidePanelService.initialize('right', this.$element, this.sideNavElement);
+  }
+
+  close() {
+    this.RightSidePanelService.setClosing(true);
+    this.$state.go('hippo-cm.channel');
   }
 
   onResize(newWidth) {
