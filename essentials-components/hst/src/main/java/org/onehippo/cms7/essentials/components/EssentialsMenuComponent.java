@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class EssentialsMenuComponent extends CommonComponent {
             log.warn("No site menu is selected within EssentialsMenuComponent nor set as a component parameter (menuName)");
             return;
         }
-        siteMenu = CharMatcher.WHITESPACE.trimFrom(siteMenu);
+        siteMenu = CharMatcher.whitespace().trimFrom(siteMenu);
         final HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu(siteMenu);
         if (menu == null) {
             log.warn("Invalid site menu is selected within EssentialsMenuComponent: {}", siteMenu);
