@@ -2131,7 +2131,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(false);
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(false);
         expect(JcrUtils.getNodeNameQuietly(handle)).andReturn("document");
         expect(JcrUtils.getNodePathQuietly(folder)).andReturn("/path/to/folder");
 
@@ -2161,7 +2161,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(true);
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
 
         final String handleName = "document";
         expect(handle.getName()).andReturn(handleName);
@@ -2196,7 +2196,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.hasPreview(eq(hints))).andReturn(false);
         expect(FolderUtils.getFolder(eq(handle))).andReturn(folder);
         expect(WorkflowUtils.getWorkflow(eq(folder), eq("internal"), eq(FolderWorkflow.class))).andReturn(Optional.of(folderWorkflow));
-        expect(EditingUtils.canEraseDocument(eq(hints))).andReturn(true);
+        expect(EditingUtils.canEraseDocument(eq(folderWorkflow))).andReturn(true);
 
         final String handleName = "document";
         expect(handle.getName()).andReturn(handleName);
