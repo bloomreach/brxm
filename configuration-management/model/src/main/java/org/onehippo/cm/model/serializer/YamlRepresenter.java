@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Represent;
@@ -123,6 +124,7 @@ class YamlRepresenter extends Representer {
 
     public YamlRepresenter() {
         super();
+        this.defaultScalarStyle = DumperOptions.ScalarStyle.PLAIN;
         this.multiRepresenters.put(Calendar.class, new RepresentDate());
     }
 
