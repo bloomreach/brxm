@@ -17,7 +17,6 @@ package org.hippoecm.hst.configuration.model;
 
 import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -27,9 +26,6 @@ import org.springframework.web.context.ServletContextAware;
 public class HstManagerImpl implements HstManager, ServletContextAware {
 
     private HstModelProvider hstModelProvider;
-
-    private HstCache pageCache;
-    private boolean clearPageCacheAfterModelLoad;
 
     /**
      * Request path suffix delimiter
@@ -50,13 +46,6 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
         this.hstModelProvider = hstModelProvider;
     }
 
-    public void setPageCache(HstCache pageCache) {
-        this.pageCache = pageCache;
-    }
-
-    public void setClearPageCacheAfterModelLoad(final boolean clearPageCacheAfterModelLoad) {
-        this.clearPageCacheAfterModelLoad = clearPageCacheAfterModelLoad;
-    }
 
     public HstSiteMapMatcher getSiteMapMatcher() {
 
@@ -99,17 +88,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
     @Override
     public VirtualHosts getVirtualHosts() throws ContainerException {
-
-        final VirtualHosts virtualHosts = hstModelProvider.getHstModel().getVirtualHosts();
-
-//        if (clearPageCacheAfterModelLoad) {
-//            log.info("Clearing page cache after new model is loaded");
-//            pageCache.clear();
-//        } else {
-//            log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
-//        }
-
-        return virtualHosts;
+        return hstModelProvider.getHstModel().getVirtualHosts();
     }
 
 }

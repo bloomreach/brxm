@@ -23,19 +23,20 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.container.PlatformRequestContextProvider;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.PlatformRequestContextProvider;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
-import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
@@ -43,12 +44,15 @@ import org.hippoecm.hst.core.linking.HstLinkProcessorChain;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.channel.ChannelManagerImpl;
 import org.hippoecm.hst.platform.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.platform.container.components.HstComponentRegistryImpl;
 import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactories;
 import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactoryImpl;
 import org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl;
@@ -66,9 +70,6 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 public class HstModelImpl implements InternalHstModel {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
@@ -83,6 +84,8 @@ public class HstModelImpl implements InternalHstModel {
     private final BasicHstSiteMapMatcher hstSiteMapMatcher;
     private final HstLinkCreator hstLinkCreator;
     private final ChannelManager channelManager;
+    private final HstCache pageCache;
+    private final boolean clearPageCacheAfterModelLoad;
 
     private volatile VirtualHosts virtualHosts;
     private BiPredicate<Session, Channel> channelFilter;
@@ -133,8 +136,10 @@ public class HstModelImpl implements InternalHstModel {
         final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
         hstSiteMapItemHandlerFactories.register(websiteServletContext.getContextPath(), hstSiteMapItemHandlerFactory);
 
-    }
+        pageCache = websiteComponentManager.getComponent("pageCache");
+        clearPageCacheAfterModelLoad = websiteContainerConfiguration.getBoolean("pageCache.clearOnHstConfigChange", true);
 
+    }
     public void destroy() throws RepositoryException {
 
         final HstSiteMapItemHandlerFactories hstSiteMapItemHandlerFactories = HippoServiceRegistry.getService(HstSiteMapItemHandlerFactories.class);
@@ -210,6 +215,14 @@ public class HstModelImpl implements InternalHstModel {
                 augment(virtualHosts);
 
                 this.virtualHosts = virtualHosts;
+
+                if (clearPageCacheAfterModelLoad) {
+                    log.info("Clearing page cache after new model is loaded");
+                    pageCache.clear();
+                } else {
+                    log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
+                }
+
                 return this.virtualHosts;
             } catch (RuntimeException e) {
                 log.error("Exception loading model", e);
@@ -218,6 +231,8 @@ public class HstModelImpl implements InternalHstModel {
                 log.error("Exception loading model", e);
                 throw new RuntimeException(e);
             } finally {
+
+
                 if (platformClassloader != currentClassloader) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
                 }
