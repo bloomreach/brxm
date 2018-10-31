@@ -16,8 +16,10 @@
 package org.onehippo.cms7.crisp.api.resource;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 
 /**
  * An abstraction responsible for the following:
@@ -65,6 +67,20 @@ public interface ResourceCacheResolvable {
      * @return true if the given {@code resource} is cacheable
      */
     boolean isCacheable(Resource resource);
+
+    /**
+     * Create cache key based on given operation key, resource path, path variables and exchange hint.
+     * Or return null if no cache should be available.
+     * @param resourceSpace resource space name
+     * @param operationKey a unique operation name given by a {@link ResourceServiceBroker}.
+     * @param absPath absolute path of a {@link Resource}
+     * @param pathVariables the variables to expand the template given by {@code absPath}
+     * @param exchangeHint a message exchange hint for the backend
+     * @return cache key based on given operation key, resource path, path variables and exchange hint,
+     *         or null if no cache should be available
+     */
+    ValueMap createCacheKey(final String resourceSpace, final String operationKey, final String absPath,
+            final Map<String, Object> pathVariables, final ExchangeHint exchangeHint);
 
     /**
      * Convert the given {@code resource} to a cacheable data object to be stored in {@link ResourceDataCache}.

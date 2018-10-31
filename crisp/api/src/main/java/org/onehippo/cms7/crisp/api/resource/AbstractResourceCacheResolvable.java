@@ -16,6 +16,10 @@
 package org.onehippo.cms7.crisp.api.resource;
 
 import java.io.IOException;
+import java.util.Map;
+
+import org.onehippo.cms7.crisp.api.broker.AbstractResourceServiceBroker;
+import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 
 /**
  * Abstract {@link ResourceCacheResolvable} base class.
@@ -54,6 +58,34 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
     @Override
     public boolean isCacheable(Resource resource) {
         return false;
+    }
+
+    @Override
+    public ValueMap createCacheKey(final String resourceSpace, final String operationKey, final String resourcePath,
+            final Map<String, Object> pathVariables, final ExchangeHint exchangeHint) {
+        final ValueMap cacheKey = new DefaultValueMap();
+
+        if (operationKey != null) {
+            cacheKey.put(AbstractResourceServiceBroker.OPERATION_KEY, operationKey);
+        }
+
+        if (resourceSpace != null) {
+            cacheKey.put(AbstractResourceServiceBroker.RESOURCE_SPACE, resourceSpace);
+        }
+
+        if (resourcePath != null) {
+            cacheKey.put(AbstractResourceServiceBroker.RESOURCE_PATH, resourcePath);
+        }
+
+        if (pathVariables != null && !pathVariables.isEmpty()) {
+            cacheKey.put(AbstractResourceServiceBroker.PATH_VARIABLES, pathVariables);
+        }
+
+        if (exchangeHint != null) {
+            cacheKey.put(AbstractResourceServiceBroker.EXCHANGE_HINT, exchangeHint.getCacheKey());
+        }
+
+        return cacheKey;
     }
 
     /**
