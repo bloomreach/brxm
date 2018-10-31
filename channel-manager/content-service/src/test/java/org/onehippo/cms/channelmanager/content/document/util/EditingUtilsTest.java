@@ -29,6 +29,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.repository.security.SecurityService;
@@ -113,13 +114,19 @@ public class EditingUtilsTest {
     @Test
     public void canEraseDocument() throws Exception {
 
-        assertFalse(EditingUtils.canEraseDocument(hints));
+        final FolderWorkflow workflow = createMock(FolderWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
 
-        hints.put(delete().getAction(), Boolean.FALSE);
-        assertFalse(EditingUtils.canEraseDocument(hints));
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
 
-        hints.put(delete().getAction(), Boolean.TRUE);
-        assertTrue(EditingUtils.canEraseDocument(hints));
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.FALSE);
+        assertFalse(EditingUtils.canEraseDocument(workflow));
+
+        hints.put("delete", Boolean.TRUE);
+        assertTrue(EditingUtils.canEraseDocument(workflow));
     }
 
     @Test
