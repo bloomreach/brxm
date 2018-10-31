@@ -96,7 +96,7 @@ public abstract class AbstractBaseSerializer {
     }
 
     protected static ScalarNode createStrScalar(final String str) {
-        return new ScalarNode(Tag.STR, str, null, null, null);
+        return new ScalarNode(Tag.STR, str, null, null, DumperOptions.ScalarStyle.PLAIN);
     }
 
     protected static ScalarNode createStrScalar(final String str, final Character style) {

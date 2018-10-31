@@ -34,6 +34,7 @@ import org.onehippo.cm.model.tree.PropertyKind;
 import org.onehippo.cm.model.tree.PropertyOperation;
 import org.onehippo.cm.model.tree.Value;
 import org.onehippo.cm.model.tree.ValueType;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -190,7 +191,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected NodeTuple representNodeDelete() {
-        return new NodeTuple(createStrScalar(META_DELETE_KEY), new ScalarNode(Tag.BOOL, "true", null, null, null));
+        return new NodeTuple(createStrScalar(META_DELETE_KEY),
+                new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN));
     }
 
     protected NodeTuple representNodeOrderBefore(final String name) {
@@ -198,7 +200,8 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     protected NodeTuple representNodeIgnoreReorderedChildren(final Boolean ignoreReorderedChildren) {
-        return new NodeTuple(createStrScalar(META_IGNORE_REORDERED_CHILDREN), new ScalarNode(Tag.BOOL, ignoreReorderedChildren.toString(), null, null, null));
+        return new NodeTuple(createStrScalar(META_IGNORE_REORDERED_CHILDREN), new ScalarNode(Tag.BOOL,
+                ignoreReorderedChildren.toString(), null, null, DumperOptions.ScalarStyle.PLAIN));
     }
 
     protected NodeTuple representCategory(final String metaDataField, final ConfigurationItemCategory category) {
