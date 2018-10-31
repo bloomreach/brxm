@@ -40,7 +40,7 @@
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
     <hippo.jackrabbit.version>2.16.2-h3-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
-    <snakeyaml.version>1.18</snakeyaml.version>
+    <snakeyaml.version>1.23</snakeyaml.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-cli.version>1.4</commons-cli.version>

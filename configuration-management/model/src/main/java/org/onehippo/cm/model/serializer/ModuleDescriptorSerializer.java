@@ -27,6 +27,7 @@ import org.onehippo.cm.model.OrderableByName;
 import org.onehippo.cm.model.impl.GroupImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.springframework.util.CollectionUtils;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -93,7 +94,9 @@ public class ModuleDescriptorSerializer extends AbstractBaseSerializer {
             case 1:
                 return Optional.of(createStrStrTuple(AFTER_KEY, afters.iterator().next()));
             default:
-                final List<Node> afterNodes = orderable.getAfter().stream().map(after -> new ScalarNode(Tag.STR, after, null, null, null)).collect(Collectors.toList());
+                final List<Node> afterNodes = orderable.getAfter().stream().map(after ->
+                        new ScalarNode(Tag.STR, after, null, null, DumperOptions.ScalarStyle.PLAIN))
+                        .collect(Collectors.toList());
                 final NodeTuple afterTuple = createStrSeqTuple(AFTER_KEY, afterNodes, true);
                 return Optional.of(afterTuple);
         }
