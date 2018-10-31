@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceLinkResolver;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceLink;
 import org.onehippo.cms7.crisp.api.resource.ResourceLinkResolver;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +125,7 @@ public class FreemarkerTemplateResourceLinkResolver extends AbstractResourceLink
         } catch (Exception e) {
             throw new ResourceException("Resource link resolving failure.", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            CrispUtils.closeQuietly(out);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package org.onehippo.cms7.crisp.core.resource;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
+
 import org.onehippo.cms7.crisp.api.resource.Binary;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -46,7 +47,7 @@ public class SpringResourceBinary implements Binary {
     @Override
     public InputStream getInputStream() throws IOException {
         if (inputStream != null) {
-            IOUtils.closeQuietly(inputStream);
+            CrispUtils.closeQuietly(inputStream);
         }
 
         if (!resource.exists()) {

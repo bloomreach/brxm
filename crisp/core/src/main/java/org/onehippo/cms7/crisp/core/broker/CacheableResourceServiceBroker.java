@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 /**
  * {@link ResourceServiceBroker} implementation enabling resource data caching in a generic way.
  * <P>
- * This implementation generates a cache key for a result resource object using {@link #createCacheKey(String, String, String, Map)} method.
+ * This implementation generates a cache key for a result resource object using {@link #createCacheKey(String, String, String, Map, ExchangeHint)} method.
  * </P>
  */
 public class CacheableResourceServiceBroker extends AbstractResourceServiceBroker {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -27,6 +26,7 @@ import org.jdom2.input.SAXBuilder;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -123,7 +123,7 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
             final Element elem = document.getRootElement();
             return elem;
         } finally {
-            IOUtils.closeQuietly(input);
+            CrispUtils.closeQuietly(input);
         }
     }
 }

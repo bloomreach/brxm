@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.onehippo.cms7.crisp.core.resource.jdom;
 
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -25,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,7 +48,7 @@ public class JdomResourceTest {
             Element rootElem = jdomDocument.getRootElement();
             rootResource = new JdomResource(rootElem);
         } finally {
-            IOUtils.closeQuietly(input);
+            CrispUtils.closeQuietly(input);
         }
     }
 

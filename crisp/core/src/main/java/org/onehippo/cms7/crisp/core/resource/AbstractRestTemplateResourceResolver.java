@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -181,8 +182,8 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
                                                 resourceBinary = new SpringResourceBinary(new FileSystemResource(file), true);
                                             }
                                         } finally {
-                                            IOUtils.closeQuietly(output);
-                                            IOUtils.closeQuietly(input);
+                                            CrispUtils.closeQuietly(output);
+                                            CrispUtils.closeQuietly(input);
                                         }
                                     } else {
                                         throw new ResourceException("Unexpected response status: " + response.getStatusCode());
@@ -254,7 +255,7 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
                 headers.putAll(requestHeaders);
             }
 
-            return new HttpEntity(requestBody, headers);
+            return new HttpEntity<>(requestBody, headers);
         }
 
         return requestEntity;
