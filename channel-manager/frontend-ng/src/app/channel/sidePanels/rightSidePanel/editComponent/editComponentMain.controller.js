@@ -28,7 +28,6 @@ class EditComponentMainCtrl {
     $log,
     $q,
     $scope,
-    $translate,
     ChannelService,
     CmsService,
     ComponentEditor,
@@ -44,7 +43,6 @@ class EditComponentMainCtrl {
     this.$log = $log;
     this.$q = $q;
     this.$scope = $scope;
-    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
@@ -92,11 +90,10 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine())
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
       .catch((error) => {
-        const message = SAVE_ERRORS[error.data.error]
-          ? this.$translate.instant(SAVE_ERRORS[error.data.error], error.data.parameterMap)
-          : this.$translate.instant(SAVE_ERRORS.GENERAL_ERROR);
-
-        this.FeedbackService.showError(message);
+        this.FeedbackService.showDismissible(
+          SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
+          error.data.parameterMap,
+        );
         this.HippoIframeService.reload();
         if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
           this.EditComponentService.killEditor();
@@ -114,13 +111,10 @@ class EditComponentMainCtrl {
             this.EditComponentService.killEditor();
           })
           .catch((error) => {
-            const messageParameters = error.parameterMap;
-            messageParameters.component = this.ComponentEditor.getComponentName();
-            const message = DELETE_ERRORS[error.error]
-              ? this.$translate.instant(DELETE_ERRORS[error.error], messageParameters)
-              : this.$translate.instant(DELETE_ERRORS.GENERAL_ERROR, messageParameters);
-
-            this.FeedbackService.showError(message);
+            this.FeedbackService.showDismissible(
+              DELETE_ERRORS[error.error] || DELETE_ERRORS.GENERAL_ERROR,
+              Object.assign(error.parameterMap, { component: this.ComponentEditor.getComponentName() }),
+            );
             this.HippoIframeService.reload();
           });
       },
