@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('FeedbackSerfvice', () => {
+describe('FeedbackService', () => {
   let $log;
   let $translate;
   let $mdToast;
@@ -36,7 +36,7 @@ describe('FeedbackSerfvice', () => {
       FeedbackService = _FeedbackService_;
     });
 
-    toast = jasmine.createSpyObj('toast', ['textContent', 'position', 'hideDelay', 'parent']);
+    toast = jasmine.createSpyObj('toast', ['textContent', 'position', 'hideDelay', 'parent', 'action']);
     toast.textContent.and.returnValue(toast);
     toast.position.and.returnValue(toast);
     toast.hideDelay.and.returnValue(toast);
@@ -69,6 +69,20 @@ describe('FeedbackSerfvice', () => {
     expect(toast.textContent).toHaveBeenCalledWith(message);
     expect(toast.position).toHaveBeenCalledWith('top right');
     expect(toast.hideDelay).toHaveBeenCalledWith(3000);
+  });
+
+  it('shows a translated dismissible message', () => {
+    const key = { trans: 'parent' };
+    const params = { trans: 'tarent, too' };
+
+    FeedbackService.showDismissible(key, params);
+
+    expect($translate.instant).toHaveBeenCalledWith(key, params);
+    expect($mdToast.simple).toHaveBeenCalled();
+    expect(toast.textContent).toHaveBeenCalledWith(message);
+    expect(toast.position).toHaveBeenCalledWith('top right');
+    expect(toast.hideDelay).toHaveBeenCalledWith(20000);
+    expect(toast.action).toHaveBeenCalled();
   });
 
   describe('showErrorResponse', () => {
