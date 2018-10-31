@@ -118,4 +118,5 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     public boolean isCacheable(Resource resource) {
         return (isCacheEnabled() && resource instanceof JdomResource);
     }
+
 }

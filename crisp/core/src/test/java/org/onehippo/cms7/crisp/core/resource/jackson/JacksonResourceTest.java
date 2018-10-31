@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
@@ -25,6 +24,7 @@ import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,7 +54,7 @@ public class JacksonResourceTest {
             rootNode = objectMapper.readTree(input);
             rootResource = new JacksonResource(rootNode);
         } finally {
-            IOUtils.closeQuietly(input);
+            CrispUtils.closeQuietly(input);
         }
     }
 
