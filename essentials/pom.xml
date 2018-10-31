@@ -243,6 +243,8 @@
                 <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.js.map</exclude>
                 <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.css</exclude>
                 <exclude>**/target/**</exclude>
+                <exclude>**/archetype-resources/**</exclude>
+                <exclude>**/archetype-resources/**</exclude>
               </excludes>
             </configuration>
           </plugin>
