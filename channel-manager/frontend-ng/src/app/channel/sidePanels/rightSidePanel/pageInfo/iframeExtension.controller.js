@@ -68,7 +68,7 @@ class IframeExtensionCtrl {
         this.child = child;
       })
       .catch((error) => {
-        this._warnExtension('failed to connect with the client library.', error);
+        this.$log.warn(`Extension '${this.extension.displayName}' failed to connect with the client library.`, error);
       });
   }
 
@@ -126,15 +126,6 @@ class IframeExtensionCtrl {
       if (this.child) {
         this.child.emitPageEvent('load', this.context);
       }
-    }
-  }
-
-  _warnExtension(message, error) {
-    const warning = `Extension '${this.extension.displayName}' ${message}`;
-    if (error) {
-      this.$log.warn(warning, error);
-    } else {
-      this.$log.warn(warning);
     }
   }
 }
