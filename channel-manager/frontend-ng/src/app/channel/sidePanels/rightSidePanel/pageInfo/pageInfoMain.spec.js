@@ -24,7 +24,7 @@ describe('pageInfoMainCtrl', () => {
 
     inject(($controller, $rootScope) => {
       ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
-      PageInfoService = jasmine.createSpyObj('PageInfoService', ['closePageInfo']);
+      PageInfoService = {};
 
       const $scope = $rootScope.$new();
       $ctrl = $controller('pageInfoMainCtrl', {
@@ -69,10 +69,5 @@ describe('pageInfoMainCtrl', () => {
 
     PageInfoService.selectedExtensionId = 'b';
     expect($ctrl.selectedTab).toBe(1);
-  });
-
-  it('closes page info', () => {
-    $ctrl.close();
-    expect(PageInfoService.closePageInfo).toHaveBeenCalled();
   });
 });

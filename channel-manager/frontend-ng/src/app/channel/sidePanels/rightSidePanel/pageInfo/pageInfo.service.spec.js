@@ -215,12 +215,4 @@ describe('PageInfoService', () => {
       expect($state.current.name).toEqual('hippo-cm.channel.page-info.extension2');
     });
   });
-
-  describe('closePageInfo', () => {
-    it('goes to the hippo-cm.channel state', () => {
-      spyOn($state, 'go');
-      PageInfoService.closePageInfo();
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
-    });
-  });
 });

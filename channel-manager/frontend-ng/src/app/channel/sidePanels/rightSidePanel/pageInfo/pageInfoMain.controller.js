@@ -35,10 +35,6 @@ class PageInfoMainCtrl {
   set selectedTab(index) {
     this.PageInfoService.selectedExtensionId = this.extensions[index].id;
   }
-
-  close() {
-    this.PageInfoService.closePageInfo();
-  }
 }
 
 export default PageInfoMainCtrl;
