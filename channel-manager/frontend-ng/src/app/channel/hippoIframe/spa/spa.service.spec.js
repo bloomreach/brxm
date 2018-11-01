@@ -163,6 +163,14 @@ describe('SpaService', () => {
           expect(SpaService.renderComponent(component)).toBe(false);
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
         });
+
+        it('logs an error when the SPA throws an error while rendering the component', () => {
+          spyOn($log, 'error');
+          iframeWindow.SPA.renderComponent.and.throwError('Failed to render');
+
+          expect(SpaService.renderComponent(component)).toBe(true);
+          expect($log.error).toHaveBeenCalledWith(new Error('Failed to render'));
+        });
       });
     });
   });

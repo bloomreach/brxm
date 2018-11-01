@@ -60,8 +60,16 @@ class SpaService {
   }
 
   renderComponent(component, parameters = {}) {
-    return angular.isObject(component) && this.detectedSpa() && angular.isFunction(this.spa.renderComponent)
-      && this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
+    if (!component || !this.spa || !angular.isFunction(this.spa.renderComponent)) {
+      return false;
+    }
+
+    try {
+      return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
+    } catch (error) {
+      this.$log.error(error);
+      return true;
+    }
   }
 }
 
