@@ -128,6 +128,11 @@ public class DocumentsServiceImpl implements DocumentsService {
                 return createDocument(uuid, handle, docType, publishedMaster);
             }
 
+            final Node draft = branchHandle.getDraft();
+            if (draft != null) {
+                return createDocument(uuid, handle, docType, draft);
+            }
+
             throw new NotFoundException(new ErrorInfo(ErrorInfo.Reason.DOES_NOT_EXIST));
 
         } catch (WorkflowException e) {
@@ -465,7 +470,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node folder = FolderUtils.getFolder(handle);
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
-        if (EditingUtils.canEraseDocument(hints)) {
+        if (EditingUtils.canEraseDocument(folderWorkflow)) {
             eraseDocument(uuid, folderWorkflow, handle);
         } else {
             log.warn("Forbidden to erase document '{}': not allowed by the workflow of folder '{}'",
