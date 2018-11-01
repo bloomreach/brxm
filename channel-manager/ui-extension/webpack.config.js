@@ -17,7 +17,6 @@
 const dts = require('dts-bundle');
 const merge = require('webpack-merge');
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 class DtsBundlePlugin {
   apply(compiler) {
@@ -76,17 +75,6 @@ module.exports = [
     output: {
       filename: 'ui-extension.min.js',
       libraryTarget: 'window',
-    },
-    optimization: {
-      minimizer: [new UglifyJsPlugin({
-        sourceMap: true,
-        uglifyOptions: {
-          comments: false,
-          dead_code: false,
-          unused: false,
-          warnings: false
-        }
-      })],
     },
     devtool: 'source-map',
   }),
