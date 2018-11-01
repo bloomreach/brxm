@@ -128,10 +128,6 @@ class PageInfoService {
     // N.B. the current pageUrl is inherited from the page-info parent state
     this.$state.go(`hippo-cm.channel.page-info.${extensionId}`);
   }
-
-  closePageInfo() {
-    this.$state.go('hippo-cm.channel');
-  }
 }
 
 export default PageInfoService;
