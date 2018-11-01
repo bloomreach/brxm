@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Emittery from 'emittery';
+
 import channelComponent from './channel.component';
 import channelConfig from './channel.config';
 import channelService from './channel.service';
@@ -43,6 +45,7 @@ const channelModule = angular
     viewportToggleModule.name,
   ])
   .config(channelConfig)
+  .constant('Emittery', Emittery)
   .component('channel', channelComponent)
   .service('ChannelService', channelService);
 

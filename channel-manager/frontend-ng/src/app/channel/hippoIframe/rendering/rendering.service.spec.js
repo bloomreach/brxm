@@ -20,6 +20,7 @@ describe('RenderingService', () => {
   let ChannelService;
   let DomService;
   let DragDropService;
+  let HippoIframeService;
   let HstCommentsProcessorService;
   let OverlayService;
   let PageMetaDataService;
@@ -33,8 +34,19 @@ describe('RenderingService', () => {
     },
   };
 
+  class EmitteryMock {
+    constructor() {
+      this.on = jasmine.createSpy('on');
+      this.emit = jasmine.createSpy('emit');
+    }
+  }
+
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    angular.mock.module(($provide) => {
+      $provide.constant('Emittery', EmitteryMock);
+    });
 
     inject((
       _$q_,
@@ -42,6 +54,7 @@ describe('RenderingService', () => {
       _ChannelService_,
       _DomService_,
       _DragDropService_,
+      _HippoIframeService_,
       _HstCommentsProcessorService_,
       _OverlayService_,
       _PageMetaDataService_,
@@ -53,6 +66,7 @@ describe('RenderingService', () => {
       ChannelService = _ChannelService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
+      HippoIframeService = _HippoIframeService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageMetaDataService = _PageMetaDataService_;
@@ -64,6 +78,14 @@ describe('RenderingService', () => {
     spyOn(DomService, 'getIframeWindow').and.returnValue(window);
   });
 
+  describe('onOverlayCreated', () => {
+    it('registers an "overlay-created" callback', () => {
+      const overlayCreatedCallback = jasmine.createSpy('overlayCreatedCallback');
+      RenderingService.onOverlayCreated(overlayCreatedCallback);
+      expect(RenderingService.emitter.on).toHaveBeenCalledWith('overlay-created', overlayCreatedCallback);
+    });
+  });
+
   describe('createOverlay', () => {
     beforeEach(() => {
       spyOn(PageStructureService, 'clearParsedElements');
@@ -71,6 +93,7 @@ describe('RenderingService', () => {
       spyOn(HstCommentsProcessorService, 'run');
       spyOn(RenderingService, 'updateDragDrop');
       spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
+      spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
 
     it('handles the loading of a new page', () => {
@@ -85,6 +108,8 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
+      expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
+      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
@@ -98,6 +123,8 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
+      expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
+      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops if the iframe DOM is not present', () => {
@@ -111,6 +138,8 @@ describe('RenderingService', () => {
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
+      expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
+      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {

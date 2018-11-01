@@ -16,12 +16,16 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
+const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
+
 class RenderingService {
   constructor(
     $q,
     ChannelService,
     DomService,
     DragDropService,
+    Emittery,
+    HippoIframeService,
     HstCommentsProcessorService,
     LinkProcessorService,
     OverlayService,
@@ -35,16 +39,23 @@ class RenderingService {
     this.ChannelService = ChannelService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
+    this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
+
+    this.emitter = new Emittery();
   }
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
+  }
+
+  onOverlayCreated(callback) {
+    return this.emitter.on(OVERLAY_CREATED_EVENT_NAME, callback);
   }
 
   createOverlay() {
@@ -56,6 +67,10 @@ class RenderingService {
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
+        return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
+      })
+      .finally(() => {
+        this.HippoIframeService.signalPageLoadCompleted();
       });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,

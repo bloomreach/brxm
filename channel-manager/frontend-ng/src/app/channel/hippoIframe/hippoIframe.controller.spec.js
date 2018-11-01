@@ -40,7 +40,7 @@ describe('hippoIframeCtrl', () => {
     angular.mock.module('hippo-cm');
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
-    EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing', 'syncPreview']);
+    EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
@@ -193,26 +193,11 @@ describe('hippoIframeCtrl', () => {
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
-    spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(RenderingService.createOverlay).toHaveBeenCalled();
-    expect(EditComponentService.syncPreview).toHaveBeenCalled();
-    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
-  });
-
-  it('signals page-load-completed when createOverlay rejects', () => {
-    spyOn(SpaService, 'detectSpa').and.returnValue(false);
-    spyOn(RenderingService, 'createOverlay').and.returnValue($q.reject());
-    spyOn(HippoIframeService, 'signalPageLoadCompleted');
-
-    $ctrl.onLoad();
-    $rootScope.$digest();
-
-    expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
-    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
   it('initializes the SPA when a SPA is detected', () => {

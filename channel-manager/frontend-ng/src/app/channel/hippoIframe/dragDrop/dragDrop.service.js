@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import Emittery from 'emittery';
-
 const COMPONENT_CLICK_EVENT_NAME = 'component-click';
 const COMPONENT_DROP_EVENT_NAME = 'component-drop';
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
@@ -31,6 +29,7 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
+    Emittery,
     PageStructureService,
     ScrollService,
     HippoIframeService,

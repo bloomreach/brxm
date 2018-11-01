@@ -88,10 +88,7 @@ class EditComponentService {
   }
 
   syncPreview() {
-    if (this.$state.is('hippo-cm.channel.edit-component')
-      && this.PageStructureService.getComponentById(this.$state.params.properties.component.id)) {
-      this.ComponentEditor.updatePreview();
-    }
+    this.ComponentEditor.updatePreview();
   }
 
   stopEditing() {

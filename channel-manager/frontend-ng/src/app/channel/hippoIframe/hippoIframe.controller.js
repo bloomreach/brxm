@@ -110,11 +110,7 @@ class HippoIframeCtrl {
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();
     } else {
-      this.RenderingService.createOverlay()
-        .then(() => this.EditComponentService.syncPreview()) // TODO: test this
-        .finally(() => {
-          this.HippoIframeService.signalPageLoadCompleted();
-        });
+      this.RenderingService.createOverlay();
     }
   }
 
@@ -127,8 +123,7 @@ class HippoIframeCtrl {
   }
 
   _moveComponent([component, targetContainer, targetContainerNextComponent]) {
-    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent)
-      .then(() => this.EditComponentService.syncPreview()); // TODO: test this
+    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent);
   }
 
   _deleteComponent(componentId) {
