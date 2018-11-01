@@ -20,7 +20,6 @@ definitions:
           extAjaxTimeoutMillis: 30000
           initialHstConnectionTimeout: 60000
           manage.changes.privileges: hippo:admin
-          manage.changes.privileges.path: /hst:hst
           previewMode: true
           projectsPath: ''
           variantsPath: ''
