@@ -63,23 +63,11 @@ class DragDropService {
   }
 
   onDrop(callback) {
-    this.unbindOnDrop = this.emitter.on(COMPONENT_DROP_EVENT_NAME, callback);
-  }
-
-  offDrop() {
-    if (this.unbindOnDrop) {
-      this.unbindOnDrop();
-    }
+    return this.emitter.on(COMPONENT_DROP_EVENT_NAME, callback);
   }
 
   onClick(callback) {
-    this.unbindOnClick = this.emitter.on(COMPONENT_CLICK_EVENT_NAME, callback);
-  }
-
-  offClick() {
-    if (this.unbindOnClick) {
-      this.unbindOnClick();
-    }
+    return this.emitter.on(COMPONENT_CLICK_EVENT_NAME, callback);
   }
 
   _sync() {

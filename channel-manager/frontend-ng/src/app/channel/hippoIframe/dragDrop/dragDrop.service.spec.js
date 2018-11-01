@@ -269,20 +269,22 @@ describe('DragDropService', () => {
 
       beforeEach(() => {
         clickHandler = jasmine.createSpy('onClickHandler');
-        DragDropService.onClick(clickHandler);
       });
 
       it('registers a callback', () => {
+        DragDropService.onClick(clickHandler);
+
         loadIframeFixture(() => {
           DragDropService._onComponentClick(component1);
           expect(clickHandler).toHaveBeenCalled();
         });
       });
 
-      it('clears a registered callback', () => {
-        DragDropService.offClick();
+      it('returns an unbind function to clear a registered callback', () => {
+        const unbind = DragDropService.onClick(clickHandler);
 
         loadIframeFixture(() => {
+          unbind();
           DragDropService._onComponentClick(component1);
           expect(clickHandler).not.toHaveBeenCalled();
         });
@@ -296,10 +298,11 @@ describe('DragDropService', () => {
 
       beforeEach(() => {
         dropHandler = jasmine.createSpy('onDropHandler');
-        DragDropService.onDrop(dropHandler);
       });
 
       it('registers a callback', (done) => {
+        DragDropService.onDrop(dropHandler);
+
         loadIframeFixture(() => {
           DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
             .then(() => {
@@ -309,10 +312,10 @@ describe('DragDropService', () => {
         });
       });
 
-      it('clears a registered callback', (done) => {
-        DragDropService.offDrop();
-
+      it('returns an unbind function to clear a registered callback', (done) => {
+        const unbind = DragDropService.onDrop(dropHandler);
         loadIframeFixture(() => {
+          unbind();
           DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
             .then(() => {
               expect(dropHandler).not.toHaveBeenCalled();

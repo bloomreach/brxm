@@ -40,7 +40,7 @@ describe('hippoIframeCtrl', () => {
     angular.mock.module('hippo-cm');
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
-    EditComponentService = jasmine.createSpyObj('EditComponentService', ['syncPreview']);
+    EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing', 'syncPreview']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
@@ -86,7 +86,8 @@ describe('hippoIframeCtrl', () => {
 
       spyOn(OverlayService, 'onEditMenu');
       spyOn(OverlayService, 'onSelectDocument');
-      spyOn(DragDropService, 'onDrop');
+      spyOn(DragDropService, 'onClick').and.callThrough();
+      spyOn(DragDropService, 'onDrop').and.callThrough();
       onEditMenu = jasmine.createSpy('onEditMenu');
 
       $ctrl = $componentController('hippoIframe', {
@@ -111,10 +112,21 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('click component', () => {
+    it('starts editing a component when it receives an "onClick" event from the DragDropService', () => {
+      const onClickHandler = DragDropService.onClick.calls.mostRecent().args[0];
+      onClickHandler({ id: 'testId' });
+
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 'testId' });
+    });
+
     it('removes the on-click event handler when destroyed', () => {
-      spyOn(DragDropService, 'offClick');
+      const unbind = jasmine.createSpy('unbind');
+      DragDropService.onClick.and.returnValue(unbind);
+
+      $ctrl.$onInit();
       $ctrl.$onDestroy();
-      expect(DragDropService.offClick).toHaveBeenCalled();
+
+      expect(unbind).toHaveBeenCalled();
     });
   });
 
@@ -132,25 +144,26 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('move component', () => {
-    let callback;
-
-    beforeEach(() => {
-      spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
-      callback = DragDropService.onDrop.calls.mostRecent().args[0];
-    });
-
     it('moves a component via the ContainerService', () => {
+      spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
+
+      const onDropHandler = DragDropService.onDrop.calls.mostRecent().args[0];
       const component = {};
       const targetContainer = {};
       const targetContainerNextComponent = {};
-      callback([component, targetContainer, targetContainerNextComponent]);
+      onDropHandler([component, targetContainer, targetContainerNextComponent]);
+
       expect(ContainerService.moveComponent).toHaveBeenCalledWith(component, targetContainer, targetContainerNextComponent);
     });
 
     it('removes the on-drop event handler when destroyed', () => {
-      spyOn(DragDropService, 'offDrop');
+      const unbind = jasmine.createSpy('unbind');
+      DragDropService.onDrop.and.returnValue(unbind);
+
+      $ctrl.$onInit();
       $ctrl.$onDestroy();
-      expect(DragDropService.offDrop).toHaveBeenCalled();
+
+      expect(unbind).toHaveBeenCalled();
     });
   });
 

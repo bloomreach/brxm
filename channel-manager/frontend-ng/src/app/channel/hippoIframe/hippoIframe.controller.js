@@ -82,8 +82,8 @@ class HippoIframeCtrl {
   $onInit() {
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
-    this.DragDropService.onDrop(this._moveComponent.bind(this));
-    this.DragDropService.onClick(this._clickComponent.bind(this));
+    this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
+    this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
   }
 
   $onChanges(changes) {
@@ -102,8 +102,8 @@ class HippoIframeCtrl {
   $onDestroy() {
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
-    this.DragDropService.offDrop();
-    this.DragDropService.offClick();
+    this._offClick();
+    this._offDrop();
   }
 
   onLoad() {
