@@ -66,6 +66,7 @@
     "webpack-merge": "^4.0"
   },
   "dependencies": {
+    "emittery": "^0.4",
     "penpal": "^3.0"
   }
 }

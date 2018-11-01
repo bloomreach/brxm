@@ -25,12 +25,23 @@ const uiProperties = {
   version: '13.0.0',
 };
 
+const testPage = {
+  channel: {
+    id: 'testChannelId',
+  },
+  id: 'testPageId',
+  sitemapItem: {
+    id: 'testSitemapItemId',
+  },
+  url: 'http://www.example.com',
+};
+
 const parent = {
   getProperties: () => Promise.resolve(uiProperties),
+  getPage: () => Promise.resolve(testPage),
 };
 
 const penpal = {
-  Promise,
   connectToParent: jest.fn(() => ({
     promise: Promise.resolve(parent),
   })),

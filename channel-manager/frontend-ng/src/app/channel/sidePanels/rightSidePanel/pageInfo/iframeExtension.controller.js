@@ -54,6 +54,7 @@ class IframeExtensionCtrl {
       appendTo: this.$element[0],
       methods: {
         getProperties: () => this._getProperties(),
+        getPage: () => this.context,
       },
     });
 
@@ -65,11 +66,9 @@ class IframeExtensionCtrl {
     this.connection.promise
       .then((child) => {
         this.child = child;
-        this.iframeLoaded = true;
-        this._setIframeContext();
       })
-      .catch((e) => {
-        this._warnExtension('failed to connect with the client library.', e);
+      .catch((error) => {
+        this._warnExtension('failed to connect with the client library.', error);
       });
   }
 
@@ -124,16 +123,10 @@ class IframeExtensionCtrl {
       // copy the context so any changes to it won't affect the parent version
       this.context = angular.copy(changedContext.currentValue);
 
-      // the iframe's onload handler sets the initial context, so only subsequent context changes
-      // need to be passed to the iframe.
-      if (!changedContext.isFirstChange() && this.iframeLoaded) {
-        this._setIframeContext();
+      if (this.child) {
+        this.child.emitPageEvent('load', this.context);
       }
     }
-  }
-
-  _setIframeContext() {
-    this._warnExtension('should update the page context: TODO');
   }
 
   _warnExtension(message, error) {

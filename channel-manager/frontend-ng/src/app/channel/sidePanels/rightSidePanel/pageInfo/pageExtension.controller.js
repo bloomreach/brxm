@@ -33,16 +33,20 @@ class pageExtensionCtrl {
     }
   }
 
-  _setPageContext(pageUrl) {
+  _setPageContext(url) {
+    const id = this.PageMetaDataService.getPageId();
     const channelId = this.PageMetaDataService.getChannelId();
-    const pageId = this.PageMetaDataService.getPageId();
-    const sitemapItemId = this.PageMetaDataService.getSiteMapItemId();
+    const siteMapItemId = this.PageMetaDataService.getSiteMapItemId();
 
     this.pageContext = {
-      channelId,
-      pageId,
-      pageUrl,
-      sitemapItemId,
+      id,
+      url,
+      channel: {
+        id: channelId,
+      },
+      siteMapItem: {
+        id: siteMapItemId,
+      },
     };
   }
 }

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-// disable TSLint for "import Penpal" to work around issue 387
-import Penpal from 'penpal'; // tslint:disable-line
+// disable TSLint for imports that start with an uppercase letter (workaround for issue 387)
+import Emittery = require('emittery');  // tslint:disable-line
+import Penpal from 'penpal';            // tslint:disable-line
 
 interface UiProperties {
   baseUrl: string;
@@ -28,13 +29,28 @@ interface UiProperties {
   version: string;
 }
 
-interface UiExtensionParent {
+export interface PageProperties {
+  channel: {
+    id: string;
+  };
+  id: string;
+  sitemapItem: {
+    id: string;
+  };
+  url: string;
+}
+
+interface PageEvents extends Emittery.Events {
+  load: PageProperties;
+}
+
+interface Parent {
+  getPage: () => Promise<PageProperties>;
   getProperties: () => Promise<UiProperties>;
 }
 
-type UiExtensionConfig = {
-  Promise?: typeof Promise,
-};
+type ParentMethod = keyof Parent;
+type ParentMethodPromisedValue<M extends ParentMethod> = ReturnType<Parent[M]> extends Promise<infer U> ? U : never;
 
 type PenpalError = Error & { code?: string };
 
@@ -54,7 +70,7 @@ class UiExtensionError extends Error {
   }
 
   toPromise(): Promise<any> {
-    return Penpal.Promise.reject(this);
+    return Promise.reject(this);
   }
 
   static fromPenpal(error: PenpalError): UiExtensionError {
@@ -75,16 +91,55 @@ class UiExtensionError extends Error {
 }
 
 abstract class UiScope {
-  constructor(protected _parent: UiExtensionParent) {
+  protected constructor(protected _parent: Parent) {
   }
 
-  protected convertPenpalError(error: PenpalError): Promise<any> {
+  protected callParent<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
+    if (!this._parent[method]) {
+      return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, `missing ${method}()`).toPromise();
+    }
+    try {
+      return this._parent[method]()
+        .catch(UiScope.convertPenpalError);
+    } catch (error) {
+      return UiScope.convertPenpalError(error);
+    }
+  }
+
+  protected static convertPenpalError(error: PenpalError): Promise<any> {
     return UiExtensionError.fromPenpal(error).toPromise();
   }
 }
 
-class Ui extends UiScope implements UiProperties {
+class Page extends UiScope {
+
+  constructor(parent: Parent, private _eventEmitter: Emittery.Typed<PageEvents>) {
+    super(parent);
+  }
+
+  get(): Promise<PageProperties> {
+    return this.callParent('getPage');
+  }
+
+  on<Name extends Extract<keyof PageEvents, string>>
+      (event: Name, listener: (eventData: PageEvents[Name]) => any): Emittery.UnsubscribeFn {
+    return this._eventEmitter.on(event, listener);
+  }
+}
+
+class Channel extends UiScope {
+
+  page: Page;
+
+  constructor(_parent: Parent, pageEventEmitter: Emittery.Typed<PageEvents>) {
+    super(_parent);
+    this.page = new Page(_parent, pageEventEmitter);
+  }
+}
+
+export class Ui extends UiScope implements UiProperties {
   baseUrl: string;
+  channel: Channel;
   extension: {
     config: string,
   };
@@ -93,35 +148,33 @@ class Ui extends UiScope implements UiProperties {
   user: string;
   version: string;
 
+  constructor(_parent: Parent, pageEventEmitter: Emittery.Typed<PageEvents>) {
+    super(_parent);
+    this.channel = new Channel(_parent, pageEventEmitter);
+  }
+
   init(): Promise<Ui> {
-    if (!this._parent.getProperties) {
-      return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, 'missing getProperties()').toPromise();
-    }
-    try {
-      return this._parent.getProperties()
-        .then(properties => Object.assign(this, properties))
-        .catch(this.convertPenpalError);
-    } catch (error) {
-      return this.convertPenpalError(error);
-    }
+    return this.callParent('getProperties')
+      .then(properties => Object.assign(this, properties));
   }
 }
 
 export default class UiExtension {
-  static register(config: UiExtensionConfig = {}): Promise<Ui> {
-    if (config.Promise) {
-      Penpal.Promise = config.Promise;
-    }
+  static register(): Promise<Ui> {
+    const pageEventEmitter = new Emittery.Typed<PageEvents>();
 
-    return UiExtension.connect()
-      .then((parent: UiExtensionParent) => new Ui(parent).init());
+    return UiExtension.connect(pageEventEmitter)
+      .then(parent => new Ui(parent, pageEventEmitter).init());
   }
 
-  private static connect(): Promise<UiExtensionParent> {
+  private static connect(pageEventEmitter: Emittery.Typed<PageEvents>): Promise<Parent> {
     const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
     try {
       return Penpal.connectToParent({
         parentOrigin,
+        methods: {
+          emitPageEvent: pageEventEmitter.emit.bind(pageEventEmitter),
+        },
       }).promise;
     } catch (penpalError) {
       return UiExtensionError.fromPenpal(penpalError).toPromise();
