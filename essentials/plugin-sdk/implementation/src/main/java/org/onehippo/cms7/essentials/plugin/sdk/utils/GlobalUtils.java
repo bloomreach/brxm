@@ -36,12 +36,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Strings;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -157,7 +157,7 @@ public final class GlobalUtils {
         if (Strings.isNullOrEmpty(myName) || myName.trim().equals(":")) {
             return EssentialConst.INVALID_METHOD_NAME;
         }
-        myName = CharMatcher.WHITESPACE.removeFrom(myName);
+        myName = CharMatcher.whitespace().removeFrom(myName);
         // replace all whitespaces:
         final int index = myName.indexOf(':');
         if (index == -1 || index == myName.length() - 1) {
