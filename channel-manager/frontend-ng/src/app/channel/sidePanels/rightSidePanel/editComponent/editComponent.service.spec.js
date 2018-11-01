@@ -162,32 +162,6 @@ describe('EditComponentService', () => {
     });
   });
 
-  describe('sync preview', () => {
-    it('does nothing when the edit-component state is not active', () => {
-      EditComponentService.syncPreview();
-      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
-    });
-
-    it('does nothing when the page does not contain the edited component', () => {
-      editComponent();
-      PageStructureService.getComponentById.and.returnValue(null);
-
-      EditComponentService.syncPreview();
-
-      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
-    });
-
-    it('updates the preview when the page contains the edited component', () => {
-      editComponent();
-      PageStructureService.getComponentById.and.returnValue({});
-
-      EditComponentService.syncPreview();
-
-      expect(PageStructureService.getComponentById).toHaveBeenCalledWith(testData.component.id);
-      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
-    });
-  });
-
   describe('killing the editor', () => {
     it('kills the editor and stops editing', () => {
       spyOn(EditComponentService, 'stopEditing');

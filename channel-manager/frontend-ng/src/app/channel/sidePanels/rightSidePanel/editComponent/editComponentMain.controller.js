@@ -58,8 +58,8 @@ class EditComponentMainCtrl {
 
   $onInit() {
     this._overrideSelectDocumentHandler();
-    this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.EditComponentService.syncPreview());
-    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => this.EditComponentService.syncPreview());
+    this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
+    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => this.ComponentEditor.updatePreview());
   }
 
   $onDestroy() {

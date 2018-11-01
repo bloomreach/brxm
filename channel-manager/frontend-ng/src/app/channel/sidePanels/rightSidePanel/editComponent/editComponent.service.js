@@ -87,10 +87,6 @@ class EditComponentService {
     }
   }
 
-  syncPreview() {
-    this.ComponentEditor.updatePreview();
-  }
-
   stopEditing() {
     if (this.$state.is('hippo-cm.channel.edit-component')) {
       return this.$state.go('^');

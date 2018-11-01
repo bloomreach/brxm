@@ -71,6 +71,7 @@ describe('EditComponentMainCtrl', () => {
         'isReadOnly',
         'reopen',
         'save',
+        'updatePreview',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -105,12 +106,10 @@ describe('EditComponentMainCtrl', () => {
     });
 
     it('redraws the preview of the component being edited', () => {
-      spyOn(EditComponentService, 'syncPreview');
-
       const onComponentMoved = ContainerService.onComponentMoved.calls.mostRecent().args[0];
       onComponentMoved();
 
-      expect(EditComponentService.syncPreview).toHaveBeenCalled();
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
     });
 
     it('removes the "onComponentMoved" event listener when destroyed', () => {
@@ -130,12 +129,10 @@ describe('EditComponentMainCtrl', () => {
     });
 
     it('redraws the preview of the component being edited', () => {
-      spyOn(EditComponentService, 'syncPreview');
-
       const onOverlayCreated = RenderingService.onOverlayCreated.calls.mostRecent().args[0];
       onOverlayCreated();
 
-      expect(EditComponentService.syncPreview).toHaveBeenCalled();
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
     });
 
     it('removes the "onOverlayCreated" event listener when destroyed', () => {
