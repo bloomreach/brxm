@@ -16,10 +16,12 @@
 
 import Emittery from 'emittery';
 
+const COMPONENT_CLICK_EVENT_NAME = 'component-click';
+const COMPONENT_DROP_EVENT_NAME = 'component-drop';
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
-const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
-const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
+const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
+const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 
 class DragDropService {
   constructor(
@@ -61,7 +63,7 @@ class DragDropService {
   }
 
   onDrop(callback) {
-    this.unbindOnDrop = this.emitter.on('component-drop', callback);
+    this.unbindOnDrop = this.emitter.on(COMPONENT_DROP_EVENT_NAME, callback);
   }
 
   offDrop() {
@@ -71,7 +73,7 @@ class DragDropService {
   }
 
   onClick(callback) {
-    this.unbindOnClick = this.emitter.on('component-click', callback);
+    this.unbindOnClick = this.emitter.on(COMPONENT_CLICK_EVENT_NAME, callback);
   }
 
   offClick() {
@@ -213,7 +215,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.emitter.emit('component-click', component);
+      this.emitter.emit(COMPONENT_CLICK_EVENT_NAME, component);
       this._digestIfNeeded();
     }
   }
@@ -307,7 +309,7 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    return this.emitter.emit('component-drop', [movedComponent, targetContainer, targetNextComponent])
+    return this.emitter.emit(COMPONENT_DROP_EVENT_NAME, [movedComponent, targetContainer, targetNextComponent])
       .finally(() => {
         this.dropping = false;
       });
