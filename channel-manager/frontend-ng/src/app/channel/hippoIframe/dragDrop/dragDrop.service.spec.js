@@ -341,7 +341,7 @@ describe('DragDropService', () => {
       });
 
       it('sets dropping state to true while emitting "component-drop"', () => {
-        emit.and.returnValue($q.defer().promise);
+        emit.and.returnValue($q(angular.noop));
 
         loadIframeFixture(() => {
           expect(DragDropService.dropping).toBe(false);
@@ -351,8 +351,7 @@ describe('DragDropService', () => {
       });
 
       it('sets dropping state back to false when "component-drop" emit resolves', (done) => {
-        const defer = $q.defer();
-        emit.and.returnValue(defer.promise);
+        emit.and.returnValue($q.resolve());
 
         loadIframeFixture(() => {
           DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
@@ -360,14 +359,11 @@ describe('DragDropService', () => {
               expect(DragDropService.dropping).toBe(false);
               done();
             });
-
-          defer.resolve();
         });
       });
 
       it('sets dropping state back to false when "component-drop" emit rejects', (done) => {
-        const defer = $q.defer();
-        emit.and.returnValue(defer.promise);
+        emit.and.returnValue($q.reject());
 
         loadIframeFixture(() => {
           DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
@@ -375,8 +371,6 @@ describe('DragDropService', () => {
               expect(DragDropService.dropping).toBe(false);
               done();
             });
-
-          defer.reject();
         });
       });
     });
