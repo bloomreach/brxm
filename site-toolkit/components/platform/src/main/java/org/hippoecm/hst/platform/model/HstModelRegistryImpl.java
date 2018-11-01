@@ -27,6 +27,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
+import com.google.common.collect.ImmutableList;
+
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -35,12 +38,8 @@ import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCach
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.context.HippoWebappContext;
-import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONFIGURATIONS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_HST;
@@ -92,17 +91,11 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             Credentials credentials = websiteComponentManager.getComponent(Credentials.class.getName() + ".hstconfigreader.delegating");
             final Session session = repository.login(credentials);
 
-            final String rootPath;
-            final HippoWebappContext hippoWebappContext = HippoWebappContextRegistry.get().getContext(contextPath);
-            if (hippoWebappContext.getType() == HippoWebappContext.Type.CMS || hippoWebappContext.getType() ==  HippoWebappContext.Type.PLATFORM) {
-                rootPath = PLATFORM_HST_ROOT_PATH;
-            } else {
-                final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
-                rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
 
-            }
+            final ContainerConfiguration websiteContainerConfiguration = websiteComponentManager.getComponent("containerConfiguration");
+            final String rootPath = websiteContainerConfiguration.getString("hst.configuration.rootPath", null);
 
-            if (rootPath == null) {
+            if (StringUtils.isBlank(rootPath)) {
                 throw new ModelRegistrationException(String.format("Cannot register model for context '%s' since missing 'hst.configuration.rootPath' property", contextPath));
             }
             if (!session.nodeExists(rootPath)) {

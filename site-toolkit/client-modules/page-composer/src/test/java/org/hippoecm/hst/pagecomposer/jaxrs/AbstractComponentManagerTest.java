@@ -70,6 +70,10 @@ public abstract class AbstractComponentManagerTest {
 
         HippoWebappContextRegistry.get().register(platformWebappContext);
 
+
+        final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
+        platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
+
         platformComponentManager = new SpringComponentManager(new PropertiesConfiguration());
         platformComponentManager.setConfigurationResources(getConfigurations(true));
         platformComponentManager.setServletContext(platformWebappContext.getServletContext());
