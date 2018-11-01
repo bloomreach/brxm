@@ -2,8 +2,8 @@
   "id": "documentWizardPlugin",
   "name": "Documents Wizard",
   "icon": "/essentials/feature/images/documents-wizard-plugin-icon.png",
-  "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Hippo CMS while working in another part of the CMS.",
-  "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the certified Hippo Dashboard Document Wizard.",
+  "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the BloomReach CMS while working in another part of the CMS.",
+  "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the BloomReach Dashboard Document Wizard plugin.",
   "imageUrls": [
     "/essentials/feature/images/screenshots/documentwizard01.png",
     "/essentials/feature/images/screenshots/documentwizard02.png"

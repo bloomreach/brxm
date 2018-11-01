@@ -4,12 +4,38 @@
   <@hst.headContribution category="SEO" keyHint="hst.seo.document.title">
   <title>${title?xml}</title>
   </@hst.headContribution>
+  <@hst.headContribution category="SEO,metadata">
+  <meta property="og:title" content="${title?xml}" />
+  </@hst.headContribution>
 </#if>
 
 <#if metaDescription??>
   <@hst.headContribution category="SEO" keyHint="hst.seo.document.description">
   <meta name="description" content="${metaDescription?xml}"/>
   </@hst.headContribution>
+  <@hst.headContribution category="SEO,metadata">
+  <meta property="og:description" content="${metaDescription?xml}" />
+  </@hst.headContribution>
+</#if>
+
+<#if document??>
+    <@hst.headContribution category="metadata">
+    <meta property="og:url" content="<@hst.link hippobean=document canonical=true fullyQualified=true/>"/>
+    </@hst.headContribution>
+</#if>
+
+<#if image??>
+    <@hst.headContribution category="SEO,metadata">
+    <meta property="twitter:card" content="summary_large_image"/>
+    </@hst.headContribution>
+    <@hst.headContribution category="SEO,metadata">
+        <meta property="og:image" content="<@hst.link hippobean=image.original fullyQualified=true/>"/>
+    </@hst.headContribution>
+    <#if image.description??>
+        <@hst.headContribution category="SEO,metadata">
+            <meta property="og:image:alt" content="${image.description}"/>
+       </@hst.headContribution>
+    </#if>
 </#if>
 
 <#if dublinCoreSchemaLink??>
@@ -48,8 +74,19 @@
   </@hst.headContribution>
 </#if>
 
+
 <#if hstRequest.requestContext.cmsRequest>
-  <div>
-    <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.png" />"> Click to edit SEO parameters
-  </div>
+<div>
+  <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.png" />"> Click to edit SEO parameters
+  <#if title??>
+    <p>Title: ${title?xml}</p>
+  </#if>
+  <#if metaDescription??>
+    <p>Description: ${metaDescription?xml}</p>
+  </#if>
+  <#if image??>
+      <p> Social Media image:<#if image.description??> ${image.description}</#if></p>
+      <img src="<@hst.link hippobean=image.thumbnail fullyQualified=true/>"/>
+  </#if>
+</div>
 </#if>

@@ -47,8 +47,8 @@
   <script src="${pageContext.request.contextPath}/dashboard/api/services.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/dashboard/api/directives.js?v=${project.version}"></script>
 
-  <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
-  <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon"/>
+  <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.png" type="image/png"/>
+  <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.png" type="image/png"/>
 </head>
 <body id="container"  ng-cloak>
 <div class="hidden" ng-include="'${pageContext.request.contextPath}/components/hippo-theme/dist/images/hippo-icon-sprite.svg?v=${project.version}'"></div>

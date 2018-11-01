@@ -16,38 +16,51 @@
 
 package org.onehippo.cms7.essentials.plugin.crisp;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
-import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenAssemblyService;
-import org.onehippo.cms7.essentials.sdk.api.service.MavenCargoService;
+import org.onehippo.cms7.essentials.sdk.api.model.Module;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CrispInstruction implements Instruction {
 
-    private static final String CRISP_API_ARTIFACTID = "hippo-addon-crisp-api";
-    private static final MavenDependency DEPENDENCY_CRISP_API
-            = new MavenDependency(ProjectService.GROUP_ID_COMMUNITY, CRISP_API_ARTIFACTID);
+    private static final Logger LOG = LoggerFactory.getLogger(CrispInstruction.class);
 
-    @Inject private MavenAssemblyService mavenAssemblyService;
-    @Inject private MavenCargoService mavenCargoService;
+    @Inject private ProjectService projectService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
-        mavenCargoService.addDependencyToCargoSharedClasspath(DEPENDENCY_CRISP_API);
-        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_CRISP_API);
+        final Path hstConfigProperties = projectService.getWebInfPathForModule(Module.SITE_WEBAPP)
+                .resolve("hst-config.properties");
+        try {
+            String oldContent = new String(Files.readAllBytes(hstConfigProperties));
+            if (!oldContent.contains("crisp.moduleconfig.path")) {
+                if (!oldContent.endsWith("\n")) {
+                    oldContent += "\n";
+                }
+                oldContent += "\n";
+                oldContent += "# Repository base path for this site application's CRISP configuration\n";
+                oldContent += "crisp.moduleconfig.path = /crisp/site/hippo:moduleconfig\n";
+                Files.write(hstConfigProperties, oldContent.getBytes());
+            }
+        } catch (IOException e) {
+            LOG.warn("Failed to update HST configuration properties:", e);
+            return Status.FAILED;
+        }
 
         return Status.SUCCESS;
     }
 
     @Override
     public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
-        changeMessageQueue.accept(Type.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_COMMUNITY
-                + ":" + CRISP_API_ARTIFACTID + "' to shared classpath of the Maven cargo plugin configuration.");
-        changeMessageQueue.accept(Type.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add HST configuration property to locate CRISP configuration in site webapp.");
     }
 }
