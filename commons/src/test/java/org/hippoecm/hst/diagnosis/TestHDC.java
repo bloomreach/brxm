@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.diagnosis;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 /**
  * TestHDC.
@@ -32,28 +32,62 @@ public class TestHDC {
     private Query query1 = new Query();
     private Query query2 = new Query();
 
+    @SuppressWarnings("resource")
     @Test
     public void testDefaultExample() throws Exception {
         // first, the HST container will start the root task first somewhere. e.g., HstFilter or InitializationValve
         Task rootTask = HDC.start("request-processing");
 
         // when invoking each valve, HST container can start a subtask
+
+        // test with try (AutoCloseable Task) first
+        {
+            Task valveTask;
+            try (Task task = HDC.getCurrentTask().startSubtask("valve1")) {
+                valveTask = task;
+                valve1.execute();
+                // if the container started a subtask, then it should stop the task.
+                // in reality, it should use try ~ finally to guarantee this call.
+                assertTrue(task.isRunning());
+            }
+            assertFalse(valveTask.isRunning());
+        }
+
+        // test with manual Task#stop() call
         {
             Task valveTask = HDC.getCurrentTask().startSubtask("valve1");
             valve1.execute();
             // if the container started a subtask, then it should stop the task.
             // in reality, it should use try ~ finally to guarantee this call.
+            assertTrue(valveTask.isRunning());
             valveTask.stop();
+            assertFalse(valveTask.isRunning());
         }
 
+        // test with try (AutoCloseable Task) first
+        {
+            Task valveTask;
+            try (Task task = HDC.getCurrentTask().startSubtask("valve2")) {
+                valveTask = task;
+                valve2.execute();
+                assertTrue(task.isRunning());
+            }
+            assertFalse(valveTask.isRunning());
+        }
+
+        // test with manual Task#stop() call
         {
             Task valveTask = HDC.getCurrentTask().startSubtask("valve2");
             valve2.execute();
+            assertTrue(valveTask.isRunning());
             valveTask.stop();
+            assertFalse(valveTask.isRunning());
         }
 
         // also the container will stop the root task.
+        assertTrue(rootTask.isRunning());
         rootTask.stop();
+        assertFalse(rootTask.isRunning());
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
         final String logSummary = logSummary();
@@ -76,6 +110,15 @@ public class TestHDC {
     public void testNOOPExample() throws Exception {
 
         // when invoking each valve, HST container can start a subtask
+
+        // test with try (AutoCloseable Task) first
+        {
+            try (Task valveTask = HDC.getCurrentTask().startSubtask("valve1")) {
+                valve1.execute();
+            }
+        }
+
+        // test with manual Task#stop() call
         {
             Task valveTask = HDC.getCurrentTask().startSubtask("valve1");
             valve1.execute();
@@ -84,6 +127,14 @@ public class TestHDC {
             valveTask.stop();
         }
 
+        // test with try (AutoCloseable Task) first
+        {
+            try (Task valveTask = HDC.getCurrentTask().startSubtask("valve2")) {
+                valve2.execute();
+            }
+        }
+
+        // test with manual Task#stop() call
         {
             Task valveTask = HDC.getCurrentTask().startSubtask("valve2");
             valve2.execute();
@@ -99,29 +150,35 @@ public class TestHDC {
         HDC.cleanUp();
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void testRootTaskOnlyExample() throws Exception {
         // first, the HST container will start the root task first somewhere. e.g., HstFilter or InitializationValve
-        Task rootTask = HDC.start("request-processing");
-        HDC.setCurrentTask(HDC.NOOP_TASK);
+        Task rootTaskRef;
 
-        // when invoking each valve, HST container can start a subtask
-        {
-            Task valveTask = HDC.getCurrentTask().startSubtask("valve1");
-            valve1.execute();
-            // if the container started a subtask, then it should stop the task.
-            // in reality, it should use try ~ finally to guarantee this call.
-            valveTask.stop();
+        try (Task rootTask = HDC.start("request-processing")) {
+            rootTaskRef = rootTask;
+            assertTrue(rootTaskRef.isRunning());
+
+            HDC.setCurrentTask(HDC.NOOP_TASK);
+
+            // when invoking each valve, HST container can start a subtask
+            {
+                Task valveTask = HDC.getCurrentTask().startSubtask("valve1");
+                valve1.execute();
+                // if the container started a subtask, then it should stop the task.
+                // in reality, it should use try ~ finally to guarantee this call.
+                valveTask.stop();
+            }
+
+            {
+                Task valveTask = HDC.getCurrentTask().startSubtask("valve2");
+                valve2.execute();
+                valveTask.stop();
+            }
         }
 
-        {
-            Task valveTask = HDC.getCurrentTask().startSubtask("valve2");
-            valve2.execute();
-            valveTask.stop();
-        }
-
-        // also the container will stop the root task.
-        rootTask.stop();
+        assertFalse(rootTaskRef.isRunning());
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
         final String logSummary = logSummary();
