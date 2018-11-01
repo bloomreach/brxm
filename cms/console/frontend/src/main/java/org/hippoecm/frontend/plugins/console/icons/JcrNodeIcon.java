@@ -136,7 +136,6 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hipposys:applicationfolder", FontAwesomeIcon.DIAMOND);
         primaryTypeNameIcons.put("hipposys:modulefolder", FontAwesomeIcon.SIMPLYBUILT);
         primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
-        primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
         primaryTypeNameIcons.put("hippostd:templatequery", FontAwesomeIcon.QUESTION);
         primaryTypeNameIcons.put("hipposys:resourcebundles", FontAwesomeIcon.BOOKMARK_O);
         primaryTypeNameIcons.put("hipposys:resourcebundle", FontAwesomeIcon.BOOKMARK);
