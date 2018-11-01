@@ -276,9 +276,7 @@
 }
 
 .hippo-dragging {
-  // IE does not support the grabbing cursor so we show 'move' instead
-  cursor: move;
-  cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+  cursor: grabbing;
 
   .hippo-overlay-element-container {
     display: flex;
