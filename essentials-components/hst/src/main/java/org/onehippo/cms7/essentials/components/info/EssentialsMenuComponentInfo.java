@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.Parameter;
 
-/**
- * @version "$Id$"
- */
 public interface EssentialsMenuComponentInfo {
-
     @Parameter(name = "menu", required = true)
     String getSiteMenu();
 }
