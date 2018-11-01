@@ -134,7 +134,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
     private static final String USE_HCM_SITES_PROPERTY = "use.hcm.sites";
 
-    static final boolean USE_HCM_SITES_MODE = isUseHcmSitesMode();
+    public static final boolean USE_HCM_SITES_MODE = isUseHcmSitesMode();
 
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
