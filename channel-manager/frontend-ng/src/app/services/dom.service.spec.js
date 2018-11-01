@@ -223,16 +223,6 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('creates a mousedown event in IE11', () => {
-    spyOn(BrowserService, 'isIE').and.returnValue(true);
-    const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
-    expect(mouseDownEvent.type).toEqual('MSPointerDown');
-    expect(mouseDownEvent.bubbles).toEqual(true);
-    expect(mouseDownEvent.clientX).toEqual(100);
-    expect(mouseDownEvent.clientY).toEqual(200);
-    expect(mouseDownEvent.view).toEqual(window);
-  });
-
   it('checks if an element is hidden on the page', () => {
     $j('.shouldBeHidden').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(false);

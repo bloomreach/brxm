@@ -53,29 +53,14 @@
 }
 
 .angular-ui-tree-handle {
-  .drag-enabled & {
-    cursor: move;
-
-    .ie11 & {
-      cursor: grab;
-    }
-  }
-
+  .drag-enabled &,
   .hippo-tree-is-dragging & {
     cursor: move;
-
-    .ie11 & {
-      cursor: grabbing;
-    }
   }
 }
 
 .hippo-tree-is-dragging {
   cursor: move;
-
-  .ie11 & {
-    cursor: grabbing;
-  }
 }
 
 .has-styling {

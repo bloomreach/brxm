@@ -27,8 +27,10 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,11 +99,11 @@ public class EditingUtils {
     /**
      * Check if a document can be erased from a folder, i.e. permanently deleted without any archiving in the attic.
      *
-     * @param hints
+     * @param workflow the folder workflow
      * @return true if the document can be erased, false otherwise
      */
-    public static boolean canEraseDocument(final Map<String, Serializable> hints) {
-        return isActionAvailable(HINT_DELETE, hints);
+    public static boolean canEraseDocument(final FolderWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_DELETE);
     }
 
     /**
@@ -133,6 +135,23 @@ public class EditingUtils {
      */
     public static boolean isActionAvailable(final String action, final Map<String, Serializable> hints) {
         return isHintActionTrue(hints, action);
+    }
+
+    /**
+     * Check a workflow to see if an action is available.
+     *
+     * @param workflow the workflow to check
+     * @param action   name of the action to check for
+     * @return true if the action is present as a workflow hint and its value is true
+     */
+    public static boolean isActionAvailable(final Workflow workflow, final String action) {
+        try {
+            final Map<String, Serializable> hints = workflow.hints();
+            return isHintActionTrue(hints, action);
+        } catch (RemoteException | RepositoryException | WorkflowException e) {
+            log.warn("Failed reading hints from workflow", e);
+        }
+        return false;
     }
 
     public static boolean isRequestActionAvailable(final String action, final String requestIdentifier, final Map<String, Serializable> hints) {
