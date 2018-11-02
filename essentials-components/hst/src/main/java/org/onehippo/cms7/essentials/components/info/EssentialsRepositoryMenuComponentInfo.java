@@ -18,6 +18,11 @@ package org.onehippo.cms7.essentials.components.info;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
+/**
+ * @deprecated Not used by any supported plugin. Will be removed in 14.0.0.
+ */
+
+@Deprecated
 public interface EssentialsRepositoryMenuComponentInfo {
     @Parameter(name = "root")
     @JcrPath(isRelative = true, pickerSelectableNodeTypes = {"hippostd:folder"})

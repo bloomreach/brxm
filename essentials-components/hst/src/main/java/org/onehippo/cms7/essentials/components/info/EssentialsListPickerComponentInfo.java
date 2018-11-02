@@ -36,6 +36,10 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 }
         )
 })
+/**
+ * @deprecated Not used by any supported plugin. Will be removed in 14.0.0.
+ */
+@Deprecated
 public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
     String HIPPO_DOCUMENT = "hippo:document";
 
