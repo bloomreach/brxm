@@ -20,7 +20,7 @@ definitions:
                 pageSize: Nr. of posts to show
                 postScope: Blog posts location
                 sortField: Sort field
-                group.blogauthorposts: Author Blogs
+                group.blogauthorposts: Author blogs
             /EssentialsListComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
@@ -28,7 +28,7 @@ definitions:
                 documentTypes: Document types (comma separated)
                 includeSubtypes: Include document subtypes
                 path: Documents path
-                list.group: Content Selection
+                list.group: Content selection
             /EssentialsListPickerComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
@@ -74,8 +74,8 @@ definitions:
                 document4: Carousel item 4
                 document5: Carousel item 5
                 document6: Carousel item 6
-                group.documents: Carousel Documents
-                group.settings: Carousel Settings
+                group.documents: Carousel documents
+                group.settings: Carousel settings
                 interval: Carousel interval (milli seconds)
                 pause: Pause carousel on mouse enter
                 showNavigation: Show carousel navigation
@@ -107,7 +107,7 @@ definitions:
                 location.help: For the location you can either provide an address or use the
                   longitude and latitude
                 longitude: Longitude
-                map.options: Map Options
+                map.options: Map options
                 mapType: Map type
                 mapType#HYBRID: Mixture of normal and satellite
                 mapType#ROADMAP: Road map
