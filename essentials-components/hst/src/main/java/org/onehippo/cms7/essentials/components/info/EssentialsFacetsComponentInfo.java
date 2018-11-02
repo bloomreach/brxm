@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.Parameter;
 
-/**
- * @version "$Id$"
- */
 public interface EssentialsFacetsComponentInfo {
-
     @Parameter(name = "facetPath")
     String getFacetPath();
 }

@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
-
+@FieldGroupList({
+        @FieldGroup(value = {"postScope", "pageSize", "sortField"}, titleKey = "group.blogauthorposts")
+})
 public interface EssentialsBlogAuthorPostsComponentInfo {
     @Parameter(name = "postScope")
-    @JcrPath(
-            pickerSelectableNodeTypes = {"hippostd:folder"}
-    )
+    @JcrPath(pickerSelectableNodeTypes = {"hippostd:folder"})
     String getScope();
 
-
-    @Parameter(name = "pageSize", required = true, defaultValue = "3", description = "Nr of items per page")
+    @Parameter(name = "pageSize", required = true, defaultValue = "10", description = "Nr of items to show")
     int getPageSize();
 
     @Parameter(name = "sortField", required = true, defaultValue = "hippostdpubwf:publicationDate")
     String getSortField();
-
 }
