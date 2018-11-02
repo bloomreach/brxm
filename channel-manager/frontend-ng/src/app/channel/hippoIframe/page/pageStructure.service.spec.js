@@ -718,11 +718,11 @@ describe('PageStructureService', () => {
   it('shows an error message and reloads the page when a component has been deleted', (done) => {
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
     spyOn(HippoIframeService, 'reload');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showDismissible');
 
     PageStructureService.renderComponent({}).catch(() => {
       expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
+      expect(FeedbackService.showDismissible).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
       done();
     });
     $rootScope.$digest();
