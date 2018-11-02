@@ -222,35 +222,13 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
-    /**
-     * Normally the security model in production is read from jcr node /hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer
-     * During these unit tests, we we change the above path to /hst:hst/hst:hosts/dev-localhost/localhost/hst:root and
-     * try to read properies 'manage.changes.privileges' and 'manage.changes.privileges.path' from there. However during
-     * this unit test, these props are not yet set.
-     * <p>
-     * However, this node is by default not present, and as a result, the org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel
-     * cannot map ChannelManagerAdmin to 'hippo:admin' Note that @Path("/userswithchanges/publish") on MountResource has
-     * the annotation @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
-     */
     @Test
-    public void publish_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded() throws Exception {
-        publishAssertions(ADMIN_CREDENTIALS, EDITOR_CREDENTIALS, false);
-    }
-
-    @Test
-    public void publish_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded() throws Exception {
-        setPrivilegePropsForSecurityModel();
+    public void publish_userswithchanges_as_admin_succeeds() throws Exception {
         publishAssertions(ADMIN_CREDENTIALS, EDITOR_CREDENTIALS, true);
     }
 
     @Test
-    public void publish_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded() throws Exception {
-        publishAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
-    }
-
-    @Test
-    public void publish_userswithchanges_as_editor_fails_if_security_model_can_be_loaded() throws Exception {
-        setPrivilegePropsForSecurityModel();
+    public void publish_userswithchanges_as_editor_fails() throws Exception {
         publishAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
     }
 
@@ -284,28 +262,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         }
     }
 
-    @Test
-    public void discard_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded() throws Exception {
-        discardAssertions(ADMIN_CREDENTIALS, EDITOR_CREDENTIALS, false);
-    }
-
-    @Test
-    public void discard_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded() throws Exception {
-        setPrivilegePropsForSecurityModel();
-        discardAssertions(ADMIN_CREDENTIALS, EDITOR_CREDENTIALS, true);
-    }
-
-    @Test
-    public void discard_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded() throws Exception {
-        discardAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
-    }
-
-    @Test
-    public void discard_userswithchanges_as_editor_fails_if_security_model_can_be_loaded() throws Exception {
-        setPrivilegePropsForSecurityModel();
-        discardAssertions(EDITOR_CREDENTIALS, EDITOR_CREDENTIALS, false);
-    }
-
     protected MockHttpServletResponse discard(final Credentials publishCreds, final SimpleCredentials changesCreds) throws Exception {
         final String mountId = getNodeId("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
         final RequestResponseMock requestResponse = mockGetRequestResponse(
@@ -318,22 +274,6 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
         request.setContent(idsToPublish.getBytes("UTF-8"));
         request.setContentType("application/json");
         return render(mountId, requestResponse, publishCreds);
-    }
-
-    protected void discardAssertions(final Credentials publishCreds, final SimpleCredentials changesCreds, final boolean shouldSucceed) throws Exception {
-        // first force a change *by* changesCreds
-        copyPage(changesCreds);
-        final MockHttpServletResponse response = discard(publishCreds, changesCreds);
-
-        if (shouldSucceed) {
-            final String restResponse = response.getContentAsString();
-            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
-
-            assertEquals(Boolean.TRUE, responseMap.get("success"));
-            assertTrue(responseMap.get("message").toString().contains("discarded"));
-        } else {
-            assertEquals(SC_FORBIDDEN, response.getStatus());
-        }
     }
 
 }

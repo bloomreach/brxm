@@ -22,8 +22,4 @@
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-filterDelegatee.xml" />
 
-  <bean id="jcrPathTemplateComposer" class="java.lang.String">
-    <constructor-arg value="/hst:hst/hst:hosts/dev-localhost/localhost/hst:root"/>
-  </bean>
-
 </beans>

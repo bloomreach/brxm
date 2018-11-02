@@ -19,11 +19,11 @@ import java.util.Map;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.hst.Channel;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
@@ -215,9 +215,9 @@ public class ConfigurationLockedTest extends MountResourceTest {
 
     @Test
     @Override
-    public void publish_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded() throws Exception {
+    public void publish_userswithchanges_as_admin_succeeds() throws Exception {
         try {
-            super.publish_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded();
+            super.publish_userswithchanges_as_admin_succeeds();
             fail("Expected forbidden");
         } catch (ForbiddenException e) {
             forbiddenAssertions(e);
@@ -226,67 +226,13 @@ public class ConfigurationLockedTest extends MountResourceTest {
 
     @Test
     @Override
-    public void publish_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded() throws Exception {
+    public void publish_userswithchanges_as_editor_fails() throws Exception {
         try {
-            super.publish_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded();
+            super.publish_userswithchanges_as_editor_fails();
             fail("Expected forbidden");
         } catch (ForbiddenException e) {
             forbiddenAssertions(e);
         }
     }
 
-    @Test
-    @Override
-    public void publish_userswithchanges_as_editor_fails_if_security_model_can_be_loaded() throws Exception {
-        try {
-            super.publish_userswithchanges_as_editor_fails_if_security_model_can_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
-
-    @Test
-    @Override
-    public void discard_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded() throws Exception {
-        try {
-            super.discard_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
-
-    @Test
-    @Override
-    public void discard_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded() throws Exception {
-        try {
-            super.discard_userswithchanges_as_admin_succeeds_if_security_model_can_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
-
-    @Test
-    @Override
-    public void discard_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded() throws Exception {
-        try {
-            super.discard_userswithchanges_as_editor_fails_regardless_of_security_model_can_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
-
-    @Test
-    @Override
-    public void discard_userswithchanges_as_editor_fails_if_security_model_can_be_loaded() throws Exception {
-        try {
-            super.discard_userswithchanges_as_editor_fails_if_security_model_can_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
 }

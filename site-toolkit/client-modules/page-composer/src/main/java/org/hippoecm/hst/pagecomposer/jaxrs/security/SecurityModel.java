@@ -122,8 +122,10 @@ public class SecurityModel {
 
                 final Node templateComposerNode = JcrUtils.getNodeIfExists(jcrPathTemplateComposer, session);
                 if (templateComposerNode == null) {
-                    log.warn("Missing jcr node at '{}' to read required configured admin privileges from: Return empty SecurityModel.",
+                    log.warn("Missing jcr node at '{}' to read required configured admin privileges from: Return default hippo:admin " +
+                                    "required privileges.",
                             jcrPathTemplateComposer);
+                    mapping.put(CHANNEL_MANAGER_ADMIN_ROLE, "hippo:admin");
                     return mapping;
                 }
                 final String manageChangesPrivileges = JcrUtils.getStringProperty(templateComposerNode, "manage.changes.privileges", null);

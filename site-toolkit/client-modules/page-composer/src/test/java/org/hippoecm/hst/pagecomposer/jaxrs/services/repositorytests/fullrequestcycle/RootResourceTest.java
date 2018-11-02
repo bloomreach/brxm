@@ -15,6 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.util.Map;
+
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
+
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
@@ -30,23 +44,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Map;
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.servlet.ServletException;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
-import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 public class RootResourceTest extends AbstractFullRequestCycleTest {
 
@@ -72,13 +69,12 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "DELETE");
 
-        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-
         Session session = createSession("admin", "admin");
         try {
             final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
 
-            final MockHttpServletResponse response = render(mountId, requestResponse, admin);
+            final SimpleCredentials editor = new SimpleCredentials("editor", "editor".toCharArray());
+            final MockHttpServletResponse response = render(mountId, requestResponse, editor);
             assertEquals(SC_FORBIDDEN, response.getStatus());
         } finally {
             session.logout();
@@ -87,8 +83,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @Test
     public void remove_channel_with_right_role_but_channel_not_existing_results_in_404() throws Exception {
-
-        setPrivilegePropsForSecurityModel();
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/nonexisting", null, "DELETE");
@@ -101,8 +95,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @Test
     public void remove_channel_with_right_role_but_channel_not_deletable_fails() throws Exception {
-
-        setPrivilegePropsForSecurityModel();
 
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "DELETE");
@@ -123,8 +115,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @Test
     public void remove_channel_with_right_role_and_channel_deletable_but_mount_has_child_mounts_fails() throws Exception {
-
-        setPrivilegePropsForSecurityModel();
 
         Session session = createSession("admin", "admin");
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
@@ -150,8 +140,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @Test
     public void remove_channel_with_right_role_and_channel_deletable_and_mount_has_no_child_mounts_succeeds() throws Exception {
-
-        setPrivilegePropsForSecurityModel();
 
         Session session = createSession("admin", "admin");
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
@@ -187,7 +175,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
     @Test
     public void successful_remove_channel_keeps_hst_configuration_in_case_it_is_inherited() throws Exception {
-        setPrivilegePropsForSecurityModel();
 
         Session session = createSession("admin", "admin");
         session.getNode("/hst:hst/hst:configurations/unittestsubproject/hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
@@ -233,8 +220,6 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         // org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor.preprocoess() will directly
         // return null because pageComposerContextService.isRenderingMountSet() returns false. But still a locked config
         // should not be possible to be removed
-
-        setPrivilegePropsForSecurityModel();
 
         Session session = createSession("admin", "admin");
         Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
