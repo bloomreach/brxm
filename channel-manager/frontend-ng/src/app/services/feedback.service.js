@@ -31,16 +31,15 @@ class FeedbackService {
   _showToast({
     text,
     delay,
-    showDismissal = false,
-    dismissal = showDismissal && this.$translate.instant('ERROR_TOAST_DISMISS'),
+    dismissal = false,
   }) {
     const toast = this.$mdToast.simple()
       .textContent(text)
       .position('top right')
       .hideDelay(delay);
 
-    if (showDismissal) {
-      toast.action(dismissal);
+    if (dismissal) {
+      toast.action(this.$translate.instant('ERROR_TOAST_DISMISS'));
     }
 
     this.$mdToast.show(toast);
@@ -64,7 +63,7 @@ class FeedbackService {
     this._showToast({
       text: this.$translate.instant(key, params),
       delay: DELAY_DISMISSIBLE,
-      showDismissal: true,
+      dismissal: true,
     });
   }
 
