@@ -31,6 +31,7 @@ class OverlayService {
     $translate,
     ChannelService,
     CmsService,
+    ComponentEditor,
     CreateContentService,
     DomService,
     EditContentService,
@@ -46,6 +47,7 @@ class OverlayService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ComponentEditor = ComponentEditor;
     this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.EditContentService = EditContentService;
@@ -163,19 +165,26 @@ class OverlayService {
     // don't call sync() explicitly: the DOM mutation will trigger it automatically
   }
 
+  _isSelected(element) {
+    return element.type === 'component' && element.metaData.uuid === this.ComponentEditor.getComponentId();
+  }
+
   sync() {
-    if (this.overlay) {
-      const currentOverlayElements = new Set();
-
-      this._forAllStructureElements((structureElement) => {
-        this._syncElement(structureElement);
-
-        const overlayElement = structureElement.getOverlayElement()[0];
-        currentOverlayElements.add(overlayElement);
-      });
-
-      this._tidyOverlay(currentOverlayElements);
+    if (!this.overlay) {
+      return;
     }
+
+    const currentOverlayElements = this._getAllStructureElements()
+      .reduce((overlayElements, element) => {
+        this._syncElement(element);
+
+        const [overlayElement] = element.getOverlayElement()
+          .toggleClass('hippo-overlay-element-component-active', this._isSelected(element));
+
+        return overlayElements.add(overlayElement);
+      }, new Set());
+
+    this._tidyOverlay(currentOverlayElements);
   }
 
   attachComponentMouseDown(callback) {
@@ -196,12 +205,13 @@ class OverlayService {
     }
   }
 
-  _forAllStructureElements(callback) {
-    this.PageStructureService.getContainers().forEach((container) => {
-      callback(container);
-      container.getComponents().forEach(callback);
-    });
-    this.PageStructureService.getEmbeddedLinks().forEach(callback);
+  _getAllStructureElements() {
+    return this.PageStructureService.getContainers().reduce((result, container) => {
+      result.push(container, ...container.getComponents());
+
+      return result;
+    }, [])
+      .concat(this.PageStructureService.getEmbeddedLinks());
   }
 
   _syncElement(structureElement) {

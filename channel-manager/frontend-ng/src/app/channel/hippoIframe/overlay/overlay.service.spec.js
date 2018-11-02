@@ -23,6 +23,7 @@ describe('OverlayService', () => {
   let iframeWindow;
   let ChannelService;
   let CmsService;
+  let ComponentEditor;
   let CreateContentService;
   let DomService;
   let EditContentService;
@@ -47,6 +48,7 @@ describe('OverlayService', () => {
       _$rootScope_,
       _ChannelService_,
       _CmsService_,
+      _ComponentEditor_,
       _CreateContentService_,
       _DomService_,
       _EditContentService_,
@@ -60,6 +62,7 @@ describe('OverlayService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      ComponentEditor = _ComponentEditor_;
       CreateContentService = _CreateContentService_;
       DomService = _DomService_;
       EditContentService = _EditContentService_;
@@ -230,6 +233,16 @@ describe('OverlayService', () => {
       done();
     });
   });
+
+  it('highlights selected element', (done) => {
+    spyOn(ComponentEditor, 'getComponentId').and.returnValue('aaaa');
+    loadIframeFixture(() => {
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active [data-qa-name="component A"]').length).toBe(1);
+      done();
+    });
+  });
+
 
   it('sets specific CSS classes on the box- and overlay elements of containers', (done) => {
     loadIframeFixture(() => {
