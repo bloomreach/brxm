@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+  
+  <!-- repository bootstrap -->
+  <instructionSet>
+    <xml action="copy" overwrite="false" source="xml/openstreetmap.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
+    <xml action="copy" overwrite="false" source="templates/essentials-openstreetmap.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+    <file action="copy" binary="false" overwrite="false" source="yamlFiles/open-street-map.yaml" target="{{applicationContent}}/content/documents/administration/open-street-map.yaml"/>
+  </instructionSet>
+
+  <!-- webfiles -->
+  <instructionSet>
+    <file action="copy" binary="true" overwrite="false" source="webfiles/marker-icon.png" target="{{webfilesRoot}}/css/images/marker-icon.png"/>
+    <file action="copy" binary="true" overwrite="false" source="webfiles/marker-shadow.png" target="{{webfilesRoot}}/css/images/marker-shadow.png"/>
+    <file action="copy" binary="true" overwrite="false" source="webfiles/layers.png" target="{{webfilesRoot}}/css/images/layers.png"/>
+    <file action="copy" binary="true" overwrite="false" source="webfiles/layers-2x.png" target="{{webfilesRoot}}/css/images/layers-2x.png"/>
+    <file action="copy" binary="true" overwrite="false" source="webfiles/marker-icon-2x.png" target="{{webfilesRoot}}/css/images/marker-icon-2x.png"/>
+    <file action="copy" binary="false" overwrite="false" source="webfiles/leaflet.css" target="{{webfilesRoot}}/css/leaflet.css"/>
+    <file action="copy" binary="false" overwrite="false" source="webfiles/essentials-openstreetmap.js" target="{{webfilesRoot}}/js/essentials-openstreetmap.js"/>
+    <file action="copy" binary="false" overwrite="false" source="webfiles/leaflet.js" target="{{webfilesRoot}}/js/leaflet.js"/>
+    <file action="copy" binary="false" overwrite="false" source="webfiles/leaflet.js.map" target="{{webfilesRoot}}/js/leaflet.js.map"/>
+    <file action="copy" binary="false" overwrite="false" source="webfiles/essentials-openstreetmap.css" target="{{webfilesRoot}}/css/essentials-openstreetmap.css"/>
+    <freemarker action="copy" binary="false" overwrite="false" source="webfiles/essentials-openstreetmap.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-openstreetmap.ftl"/>
+  </instructionSet>
+
+  <!-- component icon -->
+  <instructionSet>
+    <file action="copy" binary="true" overwrite="false" source="siteFiles/openstreetmap.png" target="{{imagesRoot}}/essentials/catalog-component-icons/openstreetmap.png"/>
+  </instructionSet>
+</instructions>

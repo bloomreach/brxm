@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="openstreetmap">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:containeritemcomponent</sv:value>
+  </sv:property>
+  
+  <sv:property sv:name="hst:componentclassname" sv:type="String">
+    <sv:value>org.onehippo.cms7.essentials.components.EssentialsOpenStreetMapComponent</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/essentials/catalog-component-icons/openstreetmap.png</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:label" sv:type="String">
+    <sv:value>OpenStreetMap</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:template" sv:type="String">
+    <sv:value>essentials-openstreetmap</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:xtype" sv:type="String">
+    <sv:value>hst.item</sv:value>
+  </sv:property>
+</sv:node>
