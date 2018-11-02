@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';              // tslint:disable-line
-import UiExtension from './ui-extension'; // tslint:disable-line
-import { Ui, PageProperties } from './ui-extension';      // tslint:disable-line
+import Penpal from 'penpal';                                      // tslint:disable-line
+import UiExtension, { Ui, PageProperties } from './ui-extension'; // tslint:disable-line
 
 jest.mock('penpal');
 
