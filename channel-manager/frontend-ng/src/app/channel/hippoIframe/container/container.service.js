@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const COMPONENT_MOVED_EVENT_NAME = 'component-moved';
+
 class ContainerService {
   constructor(
     $log,
@@ -23,6 +25,7 @@ class ContainerService {
     DialogService,
     DragDropService,
     EditComponentService,
+    Emittery,
     FeedbackService,
     HippoIframeService,
     PageStructureService,
@@ -41,6 +44,12 @@ class ContainerService {
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
     this.SpaService = SpaService;
+
+    this.emitter = new Emittery();
+  }
+
+  onComponentMoved(callback) {
+    return this.emitter.on(COMPONENT_MOVED_EVENT_NAME, callback);
   }
 
   addComponent(catalogComponent, containerOverlayElement) {
@@ -70,7 +79,8 @@ class ContainerService {
 
   moveComponent(component, targetContainer, targetContainerNextComponent) {
     return this.PageStructureService.moveComponent(component, targetContainer, targetContainerNextComponent)
-      .then(changedContainers => this._reloadSpa() || this._renderContainers(changedContainers));
+      .then(changedContainers => this._reloadSpa() || this._renderContainers(changedContainers))
+      .then(() => this.emitter.emit(COMPONENT_MOVED_EVENT_NAME, component));
   }
 
   _renderContainers(changedContainers) {

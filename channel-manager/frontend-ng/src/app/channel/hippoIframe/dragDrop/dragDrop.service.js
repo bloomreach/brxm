@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+const COMPONENT_CLICK_EVENT_NAME = 'component-click';
+const COMPONENT_DROP_EVENT_NAME = 'component-drop';
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
-const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
-const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
+const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
+const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 
 class DragDropService {
   constructor(
@@ -27,7 +29,7 @@ class DragDropService {
     ChannelService,
     ConfigService,
     DomService,
-    EditComponentService,
+    Emittery,
     PageStructureService,
     ScrollService,
     HippoIframeService,
@@ -40,14 +42,13 @@ class DragDropService {
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
-    this.EditComponentService = EditComponentService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
     this.HippoIframeService = HippoIframeService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
-    this.offDrop();
+    this.emitter = new Emittery();
 
     PageStructureService.registerChangeListener(() => this._sync());
   }
@@ -61,11 +62,11 @@ class DragDropService {
   }
 
   onDrop(callback) {
-    this.onDropCallback = callback;
+    return this.emitter.on(COMPONENT_DROP_EVENT_NAME, callback);
   }
 
-  offDrop() {
-    this.onDropCallback = () => this.$q.resolve();
+  onClick(callback) {
+    return this.emitter.on(COMPONENT_CLICK_EVENT_NAME, callback);
   }
 
   _sync() {
@@ -196,7 +197,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.EditComponentService.startEditing(component);
+      this.emitter.emit(COMPONENT_CLICK_EVENT_NAME, component);
       this._digestIfNeeded();
     }
   }
@@ -290,8 +291,7 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    return this.onDropCallback(movedComponent, targetContainer, targetNextComponent)
-      .then(() => this.EditComponentService.syncPreview())
+    return this.emitter.emit(COMPONENT_DROP_EVENT_NAME, [movedComponent, targetContainer, targetNextComponent])
       .finally(() => {
         this.dropping = false;
       });

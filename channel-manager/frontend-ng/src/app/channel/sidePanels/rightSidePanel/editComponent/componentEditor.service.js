@@ -22,11 +22,21 @@ const TEMPLATE_PICKER = 'org.hippoecm.hst.core.component.template';
 const isEmpty = str => str === undefined || str === null || str === '';
 
 class ComponentEditorService {
-  constructor($q, $translate, DialogService, FeedbackService, HippoIframeService, HstComponentService, PageStructureService) {
+  constructor(
+    $q,
+    $translate,
+    ComponentRenderingService,
+    DialogService,
+    FeedbackService,
+    HippoIframeService,
+    HstComponentService,
+    PageStructureService,
+  ) {
     'ngInject';
 
     this.$q = $q;
     this.$translate = $translate;
+    this.ComponentRenderingService = ComponentRenderingService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -226,7 +236,7 @@ class ComponentEditorService {
   }
 
   updatePreview() {
-    return this.PageStructureService.renderComponent(this.component.id, this._propertiesAsFormData());
+    return this.ComponentRenderingService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
   save() {

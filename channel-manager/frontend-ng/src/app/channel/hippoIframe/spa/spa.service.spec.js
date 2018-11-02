@@ -18,7 +18,6 @@ describe('SpaService', () => {
   let $log;
   let DomService;
   let OverlayService;
-  let PageStructureService;
   let RenderingService;
   let SpaService;
 
@@ -32,14 +31,12 @@ describe('SpaService', () => {
       _$log_,
       _DomService_,
       _OverlayService_,
-      _PageStructureService_,
       _RenderingService_,
       _SpaService_,
     ) => {
       $log = _$log_;
       DomService = _DomService_;
       OverlayService = _OverlayService_;
-      PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
       SpaService = _SpaService_;
     });
@@ -105,7 +102,7 @@ describe('SpaService', () => {
       iframeWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
       SpaService.detectSpa();
       SpaService.initSpa();
-      publicApi = iframeWindow.SPA.init.calls.mostRecent().args[0];
+      [publicApi] = iframeWindow.SPA.init.calls.mostRecent().args;
     });
 
     it('can create the overlay', () => {
@@ -124,13 +121,13 @@ describe('SpaService', () => {
   describe('render component', () => {
     it('ignores the SPA when it does not exist', () => {
       SpaService.detectSpa();
-      expect(SpaService.renderComponent('1234')).toBe(false);
+      expect(SpaService.renderComponent({})).toBe(false);
     });
 
     it('ignores the SPA when it does not define a renderComponent function', () => {
       iframeWindow.SPA = {};
       SpaService.detectSpa();
-      expect(SpaService.renderComponent('1234')).toBe(false);
+      expect(SpaService.renderComponent({})).toBe(false);
     });
 
     describe('an SPA that defines a renderComponent function', () => {
@@ -139,34 +136,40 @@ describe('SpaService', () => {
         SpaService.detectSpa();
       });
 
-      it('ignores unknown components', () => {
-        spyOn(PageStructureService, 'getComponentById').and.returnValue(null);
-        spyOn($log, 'warn');
-        expect(SpaService.renderComponent('1234')).toBe(false);
-        expect($log.warn).toHaveBeenCalledWith('SPA cannot render unknown component with ID \'1234\'');
+      it('ignores null and undefined components', () => {
+        expect(SpaService.renderComponent()).toBe(false);
+        expect(SpaService.renderComponent(null)).toBe(false);
       });
 
       describe('with an existing component', () => {
+        let component;
         beforeEach(() => {
-          const component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
+          component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
           component.getReferenceNamespace.and.returnValue('r1_r2_r3');
-          spyOn(PageStructureService, 'getComponentById').and.returnValue(component);
         });
 
         it('renders the component in the SPA', () => {
-          expect(SpaService.renderComponent('1234')).toBe(true);
+          expect(SpaService.renderComponent(component)).toBe(true);
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
         });
 
         it('renders the component with specific parameters in the SPA', () => {
-          expect(SpaService.renderComponent('1234', { foo: 1 })).toBe(true);
+          expect(SpaService.renderComponent(component, { foo: 1 })).toBe(true);
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', { foo: 1 });
         });
 
         it('can let the SPA indicate it did not render the component ', () => {
           iframeWindow.SPA.renderComponent.and.returnValue(false);
-          expect(SpaService.renderComponent('1234')).toBe(false);
+          expect(SpaService.renderComponent(component)).toBe(false);
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
+        });
+
+        it('logs an error when the SPA throws an error while rendering the component', () => {
+          spyOn($log, 'error');
+          iframeWindow.SPA.renderComponent.and.throwError('Failed to render');
+
+          expect(SpaService.renderComponent(component)).toBe(true);
+          expect($log.error).toHaveBeenCalledWith(new Error('Failed to render'));
         });
       });
     });

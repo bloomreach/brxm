@@ -32,10 +32,12 @@ class EditComponentMainCtrl {
     ChannelService,
     CmsService,
     ComponentEditor,
+    ContainerService,
     EditComponentService,
     FeedbackService,
     HippoIframeService,
     OverlayService,
+    RenderingService,
   ) {
     'ngInject';
 
@@ -46,18 +48,24 @@ class EditComponentMainCtrl {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
+    this.ContainerService = ContainerService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
+    this.RenderingService = RenderingService;
   }
 
   $onInit() {
-    this._overrrideSelectDocumentHandler();
+    this._overrideSelectDocumentHandler();
+    this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
+    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => this.ComponentEditor.updatePreview());
   }
 
   $onDestroy() {
     this._restoreSelectDocumentHandler();
+    this._offComponentMoved();
+    this._offOverlayCreated();
   }
 
   getPropertyGroups() {
@@ -166,7 +174,7 @@ class EditComponentMainCtrl {
     return this.$q.resolve();
   }
 
-  _overrrideSelectDocumentHandler() {
+  _overrideSelectDocumentHandler() {
     this.defaultSelectDocumentHandler = this.OverlayService.onSelectDocument(this._onSelectDocument.bind(this));
   }
 

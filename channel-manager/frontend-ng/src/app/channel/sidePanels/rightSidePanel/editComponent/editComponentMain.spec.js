@@ -22,10 +22,12 @@ describe('EditComponentMainCtrl', () => {
   let ChannelService;
   let CmsService;
   let ComponentEditor;
+  let ContainerService;
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
   let OverlayService;
+  let RenderingService;
 
   let $ctrl;
   let form;
@@ -39,12 +41,16 @@ describe('EditComponentMainCtrl', () => {
       _$log_,
       _$q_,
       _$translate_,
+      _ContainerService_,
       _EditComponentService_,
+      _RenderingService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
       $translate = _$translate_;
+      ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
+      RenderingService = _RenderingService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
       CmsService = jasmine.createSpyObj('CmsService', [
@@ -65,6 +71,7 @@ describe('EditComponentMainCtrl', () => {
         'isReadOnly',
         'reopen',
         'save',
+        'updatePreview',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -86,6 +93,52 @@ describe('EditComponentMainCtrl', () => {
       $ctrl.form = form;
 
       $scope.$digest();
+    });
+  });
+
+  describe('handling of "component-moved" event', () => {
+    let unbind;
+
+    beforeEach(() => {
+      unbind = jasmine.createSpy('unbind');
+      spyOn(ContainerService, 'onComponentMoved').and.returnValue(unbind);
+      $ctrl.$onInit();
+    });
+
+    it('redraws the preview of the component being edited', () => {
+      const onComponentMoved = ContainerService.onComponentMoved.calls.mostRecent().args[0];
+      onComponentMoved();
+
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+    });
+
+    it('removes the "onComponentMoved" event listener when destroyed', () => {
+      $ctrl.$onDestroy();
+
+      expect(unbind).toHaveBeenCalled();
+    });
+  });
+
+  describe('handling of "overlay-created" event', () => {
+    let unbind;
+
+    beforeEach(() => {
+      unbind = jasmine.createSpy('unbind');
+      spyOn(RenderingService, 'onOverlayCreated').and.returnValue(unbind);
+      $ctrl.$onInit();
+    });
+
+    it('redraws the preview of the component being edited', () => {
+      const onOverlayCreated = RenderingService.onOverlayCreated.calls.mostRecent().args[0];
+      onOverlayCreated();
+
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+    });
+
+    it('removes the "onOverlayCreated" event listener when destroyed', () => {
+      $ctrl.$onDestroy();
+
+      expect(unbind).toHaveBeenCalled();
     });
   });
 

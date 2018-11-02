@@ -28,7 +28,6 @@ describe('EditComponentService', () => {
   let EditComponentService;
   let MaskService;
   let PageMetaDataService;
-  let PageStructureService;
   let RightSidePanelService;
 
   let mockComponent;
@@ -56,14 +55,12 @@ describe('EditComponentService', () => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'kill', 'open', 'updatePreview']);
-    PageStructureService = jasmine.createSpyObj('PageStructureService', ['getComponentById']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
     mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
     mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited', 'getId']);
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentEditor', ComponentEditor);
-      $provide.value('PageStructureService', PageStructureService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
 
@@ -159,32 +156,6 @@ describe('EditComponentService', () => {
       editComponent();
 
       expect(EditComponentService.stopEditing).toHaveBeenCalled();
-    });
-  });
-
-  describe('sync preview', () => {
-    it('does nothing when the edit-component state is not active', () => {
-      EditComponentService.syncPreview();
-      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
-    });
-
-    it('does nothing when the page does not contain the edited component', () => {
-      editComponent();
-      PageStructureService.getComponentById.and.returnValue(null);
-
-      EditComponentService.syncPreview();
-
-      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
-    });
-
-    it('updates the preview when the page contains the edited component', () => {
-      editComponent();
-      PageStructureService.getComponentById.and.returnValue({});
-
-      EditComponentService.syncPreview();
-
-      expect(PageStructureService.getComponentById).toHaveBeenCalledWith(testData.component.id);
-      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
     });
   });
 
