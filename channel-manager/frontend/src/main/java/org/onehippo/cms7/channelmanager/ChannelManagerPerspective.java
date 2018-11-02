@@ -36,6 +36,9 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
@@ -50,9 +53,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config, EVENT_ID);
 
-        // FIXME: CHANNELMGR-2079: How to check siteIsUp now??
-        siteIsUp = true;
-
+        siteIsUp = HippoWebappContextRegistry.get().hasAtLeastOne(SITE);
         if (siteIsUp) {
             IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
             if (wfConfig != null) {
