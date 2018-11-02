@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.essentials.components.info;
 
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
-
 
 @FieldGroupList({
         @FieldGroup(
@@ -38,11 +36,12 @@ import org.hippoecm.hst.core.parameters.Parameter;
                 }
         )
 })
+/**
+ * @deprecated Not used by any supported plugin. Will be removed in 14.0.0.
+ */
+@Deprecated
 public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
-
-
     String HIPPO_DOCUMENT = "hippo:document";
-
 
     @Parameter(name = "document1")
     @JcrPath(
@@ -86,6 +85,4 @@ public interface EssentialsListPickerComponentInfo extends EssentialsPageable {
     @Parameter(name = "document10")
     @JcrPath(isRelative = true, pickerSelectableNodeTypes = {HIPPO_DOCUMENT})
     String getDocumentItem10();
-
-
 }

@@ -18,7 +18,7 @@ package org.onehippo.cms7.essentials.components.info;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
-public interface EssentialsBannerComponentInfo extends EssentialsDocumentComponentInfo {
+public interface EssentialsBannerComponentInfo {
     @Parameter(name = "document", required = true)
     @JcrPath(
             isRelative = true,
