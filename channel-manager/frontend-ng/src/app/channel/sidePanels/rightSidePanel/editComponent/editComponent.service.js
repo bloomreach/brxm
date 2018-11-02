@@ -26,7 +26,6 @@ class EditComponentService {
     ConfigService,
     MaskService,
     PageMetaDataService,
-    PageStructureService,
     RightSidePanelService,
   ) {
     'ngInject';
@@ -41,7 +40,6 @@ class EditComponentService {
     this.ConfigService = ConfigService;
     this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
-    this.PageStructureService = PageStructureService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
