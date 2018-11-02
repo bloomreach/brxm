@@ -20,6 +20,7 @@ definitions:
                 pageSize: Nr. of posts to show
                 postScope: Blog posts location
                 sortField: Sort field
+                group.blogauthorposts: Author blogs
             /EssentialsListComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
@@ -27,6 +28,7 @@ definitions:
                 documentTypes: Document types (comma separated)
                 includeSubtypes: Include document subtypes
                 path: Documents path
+                list.group: Content selection
             /EssentialsListPickerComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
@@ -83,10 +85,12 @@ definitions:
                 jcr:primaryType: hipposys:resourcebundle
                 pageSize: Page size
                 showPagination: Show pagination
+                pagination.group: Pagination
             /EssentialsSortable:
               jcr:primaryType: hipposys:resourcebundles
               /en:
                 jcr:primaryType: hipposys:resourcebundle
+                sorting.group: Sorting
                 sortField: Sort field
                 sortOrder: Sort order
                 sortOrder#asc: Ascending
@@ -99,7 +103,7 @@ definitions:
                 apiKey: Google Maps API Key
                 height: Height (in pixels)
                 latitude: Latitude
-                location: Location information
+                location: Location
                 location.help: For the location you can either provide an address or use the
                   longitude and latitude
                 longitude: Longitude
@@ -136,8 +140,9 @@ definitions:
               jcr:primaryType: hipposys:resourcebundles
               /en:
                 jcr:primaryType: hipposys:resourcebundle
-                height: Video height
-                width: Video width
+                height: Height
+                width: Width
+                video.group: Video
             /EssentialsDocumentComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
