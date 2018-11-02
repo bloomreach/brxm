@@ -129,10 +129,10 @@ class RenderingService {
 
   _parseLinks() {
     const iframeDocument = this.DomService.getIframeDocument(this.iframeJQueryElement);
-    const protocolAndHost = `${iframeDocument.location.protocol}//${iframeDocument.location.host}`;
-    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
+    // const protocolAndHost = `${iframeDocument.location.protocol}//${iframeDocument.location.host}`;
+    // const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
-    this.LinkProcessorService.run(iframeDocument, internalLinkPrefixes);
+    this.LinkProcessorService.run(iframeDocument);
   }
 }
 

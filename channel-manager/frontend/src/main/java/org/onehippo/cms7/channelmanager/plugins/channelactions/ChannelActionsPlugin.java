@@ -157,7 +157,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         List<ChannelDocument> channelDocuments;
 
         try {
-
+            // TODO Validate this call!
             channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
                     .getDocumentService().getPreviewChannels(getUserJcrSession(), getHostGroup(), documentUuid, branchId);
         } catch (IllegalStateException e) {
