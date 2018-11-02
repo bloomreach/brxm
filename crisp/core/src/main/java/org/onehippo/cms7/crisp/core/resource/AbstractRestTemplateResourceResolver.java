@@ -161,6 +161,8 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
                             new ResponseExtractor<SpringResourceBinary>() {
                                 @Override
                                 public SpringResourceBinary extractData(ClientHttpResponse response) throws IOException {
+                                    extractResponseDataToExchangeHint(response, exchangeHint);
+
                                     SpringResourceBinary resourceBinary = null;
 
                                     if (response.getStatusCode().is2xxSuccessful()) {
