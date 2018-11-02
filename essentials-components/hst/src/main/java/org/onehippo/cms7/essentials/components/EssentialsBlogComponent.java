@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.essentials.components;
-
-import com.google.common.base.Strings;
 
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.onehippo.cms7.essentials.components.info.EssentialsBlogComponentInfo;
+import org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo;
 import org.onehippo.cms7.essentials.components.utils.ComponentsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
  */
-@ParametersInfo(type = EssentialsBlogComponentInfo.class)
+@ParametersInfo(type = EssentialsListComponentInfo.class)
 public class EssentialsBlogComponent extends EssentialsListComponent {
-
-    private static Logger log = LoggerFactory.getLogger(EssentialsBlogComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        final EssentialsBlogComponentInfo paramInfo = getComponentParametersInfo(request);
+        final EssentialsListComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentTypes = paramInfo.getDocumentTypes();
         ComponentsUtils.addCurrentDateStrings(request);
         if (Strings.isNullOrEmpty(documentTypes)) {
