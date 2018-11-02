@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,6 +59,8 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
                 result = restTemplate.getForEntity(getBaseResourceURI(absPath), String.class, pathVariables);
             }
 
+            extractResponseDataToExchangeHint(result, exchangeHint);
+
             if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
                 JsonNode jsonNode = getObjectMapper().readTree(bodyText);
@@ -71,6 +74,9 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
+        } catch (RestClientResponseException e) {
+            extractResponseDataToExchangeHint(e, exchangeHint);
+            throw new ResourceException("REST client response error.", e);
         } catch (JsonProcessingException e) {
             throw new ResourceException("JSON processing error.", e);
         } catch (RestClientException e) {
@@ -100,6 +106,8 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
                         pathVariables);
             }
 
+            extractResponseDataToExchangeHint(result, exchangeHint);
+
             if (isSuccessfulResponse(result)) {
                 final String bodyText = result.getBody();
                 JsonNode jsonNode = getObjectMapper().readTree(bodyText);
@@ -113,6 +121,9 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
+        } catch (RestClientResponseException e) {
+            extractResponseDataToExchangeHint(e, exchangeHint);
+            throw new ResourceException("REST client response error.", e);
         } catch (JsonProcessingException e) {
             throw new ResourceException("JSON processing error.", e);
         } catch (RestClientException e) {
