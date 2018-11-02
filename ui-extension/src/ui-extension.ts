@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-// disable TSLint for imports that start with an uppercase letter (workaround for issue 387)
-import Emittery = require('emittery');  // tslint:disable-line
-import Penpal from 'penpal';            // tslint:disable-line
+/**
+ * Disable TSLint for imports that start with an uppercase letter
+ * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
+ */
+import Emittery = require('emittery');  // tslint:disable-line:import-name
+import Penpal from 'penpal';            // tslint:disable-line:import-name
 
 interface UiProperties {
   baseUrl: string;
@@ -94,7 +97,7 @@ abstract class UiScope {
   protected constructor(protected _parent: Parent) {
   }
 
-  protected callParent<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
+  protected call<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
     if (!this._parent[method]) {
       return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, `missing ${method}()`).toPromise();
     }
@@ -106,7 +109,7 @@ abstract class UiScope {
     }
   }
 
-  protected static convertPenpalError(error: PenpalError): Promise<any> {
+  private static convertPenpalError(error: PenpalError): Promise<any> {
     return UiExtensionError.fromPenpal(error).toPromise();
   }
 }
@@ -118,7 +121,7 @@ class Page extends UiScope {
   }
 
   get(): Promise<PageProperties> {
-    return this.callParent('getPage');
+    return this.call('getPage');
   }
 
   on<Name extends Extract<keyof PageEvents, string>>
@@ -154,7 +157,7 @@ export class Ui extends UiScope implements UiProperties {
   }
 
   init(): Promise<Ui> {
-    return this.callParent('getProperties')
+    return this.call('getProperties')
       .then(properties => Object.assign(this, properties));
   }
 }
