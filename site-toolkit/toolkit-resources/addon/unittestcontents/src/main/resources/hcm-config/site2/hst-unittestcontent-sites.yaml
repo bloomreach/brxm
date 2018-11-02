@@ -10,6 +10,9 @@ definitions:
       /intranettestproject:
         jcr:primaryType: hst:site
         hst:content: /unittestcontent/documents/unittestproject
+      /extraproject:
+        jcr:primaryType: hst:site
+        hst:content: /extracontent/documents/extraproject
 #      /global:
 #        jcr:primaryType: hst:site
 #        hst:content: /unittestcontent/documents/unittestproject

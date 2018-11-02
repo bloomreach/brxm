@@ -16,7 +16,6 @@
 package org.hippoecm.hst.test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,7 @@ import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -88,6 +88,8 @@ public abstract class AbstractSpringTestCase
         }
     });
 
+    protected HstModel hstModelSite1;
+
     @BeforeClass
     public static void clearRepository() {
         //Enable legacy project structure mode (without extensions)
@@ -131,7 +133,7 @@ public abstract class AbstractSpringTestCase
         HstServices.setComponentManager(getComponentManager());
 
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        modelRegistry.registerHstModel(webappContext.getServletContext(), componentManager, true);
+        hstModelSite1 = modelRegistry.registerHstModel(webappContext.getServletContext(), componentManager, true);
     }
 
     @After

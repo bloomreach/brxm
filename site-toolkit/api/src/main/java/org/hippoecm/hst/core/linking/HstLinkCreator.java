@@ -121,6 +121,34 @@ public interface HstLinkCreator {
      * @return the HstLink for this jcr Node or <code>null</code>
      */
     HstLink createCanonical(Node node, HstRequestContext requestContext, HstSiteMapItem preferredItem);
+
+    /**
+     * @see #createCanonical(Node, HstRequestContext)
+     * The <code>mount</code> can be a different one then the one of the current request context.
+     * If the <code>mount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * to a different (sub)site, a page not found link is returned. </p>
+     * <p>note: if a link is returned, this is always the canonical link, also see {@link #createCanonical(Node, HstRequestContext)}</p>
+     *
+     * @param node
+     * @param mount
+     * @return
+     */
+    HstLink createCanonical(Node node, Mount mount);
+
+    /**
+     * @see #createCanonical(Node, HstRequestContext)
+     * The <code>mount</code> can be a different one then the one of the current request context.
+     * If the <code>mount</code> cannot be used to create a HstLink for the jcr <code>node</code>, because the <code>node</code> belongs
+     * to a different (sub)site, and <code>crossMount</code> is false, a page not found link is returned. </p>
+     * <p>note: if a link is returned, this is always the canonical link, also see {@link #createCanonical(Node, HstRequestContext)}</p>
+     *
+     * @param node
+     * @param mount
+     * @param crossMount if <code>true</code> also mounts within the same host group not belonging to the parameter {@code mount} are tried if the
+     *                   {@code mount} cannot return a link for the {@code node}.
+     * @return
+     */
+    HstLink createCanonical(final Node node, final Mount mount, final boolean crossMount);
    
     /**
      * Expert: Creates a {@link List} of all available canonical links for <code>node</code> within the hostgroup ( {@link VirtualHost#getHostGroupName()} ) of the {@link Mount} for 

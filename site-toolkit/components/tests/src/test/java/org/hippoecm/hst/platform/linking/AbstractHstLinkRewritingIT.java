@@ -33,6 +33,7 @@ public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
 
     protected ObjectConverter objectConverter;
     protected HstLinkCreator linkCreator;
+    protected HstLinkCreator linkCreator2;
     protected HstManager hstManager;
 
     @Before
@@ -40,6 +41,7 @@ public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
         super.setUp();
         this.objectConverter = getObjectConverter();
         this.linkCreator = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site").getHstLinkCreator();
+        this.linkCreator2 = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site2").getHstLinkCreator();
         this.hstManager = getComponent(HstManager.class.getName());
     }
 

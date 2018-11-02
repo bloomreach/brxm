@@ -26,6 +26,10 @@ definitions:
               hst:alias: intranet
               # TODO HSTTWO-4358 contextpath on hst:mount is not supported any more. Fix test setup
               hst:mountpoint: /hst:site2/hst:sites/intranettestproject
+            /extra:
+              jcr:primaryType: hst:mount
+              hst:alias: extra
+              hst:mountpoint: /hst:site2/hst:sites/extraproject
 #            /subsite:
 #              jcr:primaryType: hst:mount
 #              hst:alias: subsite

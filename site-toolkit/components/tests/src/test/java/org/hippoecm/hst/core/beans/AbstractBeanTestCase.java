@@ -35,6 +35,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -43,9 +44,9 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -65,6 +66,8 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     protected MockServletContext servletContext2;
     protected HippoWebappContext webappContext2;
     protected SpringComponentManager componentManager2;
+
+    protected HstModel hstModelSite2;
 
     private final static String HTTP_SCHEME = "http";
     private final static String HTTPS_SCHEME = "https";
@@ -99,7 +102,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
             componentManager2.start();
 
             final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            modelRegistry.registerHstModel(servletContext2, componentManager2, true);
+            hstModelSite2 = modelRegistry.registerHstModel(servletContext2, componentManager2, true);
         }
     }
 
@@ -135,12 +138,23 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
                                                                                         final String hostAndPort,
                                                                                         final String pathInfo,
                                                                                         final String queryString) throws Exception {
+        final HstModel hstModel = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site");
+        return getRequestContextWithResolvedSiteMapItemAndContainerURL(scheme, hostAndPort, "/site", pathInfo, queryString, hstModel);
+    }
+
+
+    protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final String scheme,
+                                                                                        final String hostAndPort,
+                                                                                        final String contextPath,
+                                                                                        final String pathInfo,
+                                                                                        final String queryString,
+                                                                                        final HstModel hstModel) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
         ModifiableRequestContextProvider.set(requestContext);
-        HstContainerURL containerUrl = createContainerUrl(scheme, hostAndPort, pathInfo, requestContext, queryString);
+        HstContainerURL containerUrl = createContainerUrl(scheme, hostAndPort, pathInfo, contextPath, hstModel, requestContext, queryString);
         requestContext.setBaseURL(containerUrl);
-        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
+        ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl, hstModel);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
         requestContext.matchingFinished();
@@ -154,10 +168,11 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     protected HstContainerURL createContainerUrl(final String scheme,
                                                  final String hostAndPort,
                                                  final String pathInfo,
+                                                 final String contextPath,
+                                                 final HstModel hstModel,
                                                  final HstMutableRequestContext requestContext,
                                                  final String queryString) throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
-
         GenericHttpServletRequestWrapper containerRequest;
         {
             MockHttpServletRequest request = new MockHttpServletRequest();
@@ -170,7 +185,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
             request.setScheme(scheme == null ? HTTP_SCHEME : scheme);
             request.setServerName(host);
             request.addHeader("Host", hostAndPort);
-            setRequestInfo(request, "/site", pathInfo);
+            setRequestInfo(request, contextPath, pathInfo);
             if (queryString != null) {
                 request.setQueryString(queryString);
             }
@@ -180,13 +195,25 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
         requestContext.setServletRequest(containerRequest);
         requestContext.setServletResponse(response);
 
-        VirtualHosts vhosts = hstManager.getVirtualHosts();
+        VirtualHosts vhosts = hstModel.getVirtualHosts();
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
                 HstRequestUtils.getRequestPath(containerRequest));
 
         setHstServletPath(containerRequest, mount);
         return hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
     }
+
+    protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url, HstModel hstModel) throws ContainerException {
+        VirtualHosts vhosts = hstModel.getVirtualHosts();
+        final ResolvedMount resolvedMount = vhosts.matchMount(url.getHostName(), url.getRequestPath());
+        return resolvedMount.matchSiteMapItem(url.getPathInfo());
+    }
+
+    protected ResolvedMount getResolvedMount(HstContainerURL url, HstModel hstModel) throws ContainerException {
+        VirtualHosts vhosts = hstModel.getVirtualHosts();
+        return vhosts.matchMount(url.getHostName(), url.getRequestPath());
+    }
+
 
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();

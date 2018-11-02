@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -33,9 +35,12 @@ import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
 
+    private static final Logger log = LoggerFactory.getLogger(CompositeHstLinkCreator.class);
     private final HstLinkCreator hstLinkCreator;
     private final HstModelRegistry modelRegistry;
 
@@ -50,27 +55,152 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
 
     @Override
     public HstLink create(final String uuid, final Session session, final HstRequestContext requestContext) {
-        return hstLinkCreator.create(uuid, session, requestContext);
+        final HstLink hstLink = hstLinkCreator.create(uuid, session, requestContext);
+
+        if (hstLink == null || hstLink.isNotFound()) {
+
+            final Node node;
+            try {
+                node = session.getNodeByIdentifier(uuid);
+            } catch (ItemNotFoundException e) {
+                log.info("Node with uuid '{}' cannot be found. Cannot create a HstLink, return null", uuid);
+                return hstLink;
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException Cannot create a HstLink, return null", uuid);
+                return hstLink;
+            }
+
+            final HstLink canonicalLink = getCanonicalLinkFromOtherModels(node, requestContext.getVirtualHost().getHostGroupName());
+            if (canonicalLink != null) {
+                return canonicalLink;
+            }
+
+        }
+        return hstLink;
     }
 
     @Override
     public HstLink create(final Node node, final HstRequestContext requestContext) {
-        return hstLinkCreator.create(node, requestContext);
+        final HstLink hstLink = hstLinkCreator.create(node, requestContext);
+        return getBestCanonicalCandidate(node, hstLink, requestContext.getVirtualHost().getHostGroupName());
     }
 
     @Override
     public HstLink create(final Node node, final HstRequestContext requestContext, final HstSiteMapItem preferredItem, final boolean fallback) {
-        return hstLinkCreator.create(node, requestContext, preferredItem, fallback);
+        final HstLink hstLink = hstLinkCreator.create(node, requestContext, preferredItem, fallback);
+        if (!fallback) {
+            return hstLink;
+        }
+
+        final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
     }
 
     @Override
     public HstLink create(final Node node, final HstRequestContext requestContext, final HstSiteMapItem preferredItem, final boolean fallback, final boolean navigationStateful) {
-        return hstLinkCreator.create(node, requestContext, preferredItem, fallback, navigationStateful);
+        final HstLink hstLink = hstLinkCreator.create(node, requestContext, preferredItem, fallback, navigationStateful);
+        if (!fallback) {
+            return hstLink;
+        }
+
+        final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
     }
 
     @Override
+    public HstLink create(final Node node, final Mount mount, final boolean crossMount) {
+        final HstLink hstLink = hstLinkCreator.create(node, mount, crossMount);
+        if (!crossMount) {
+            return hstLink;
+        }
+
+        final String hostGroupName = mount.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+    }
+
+    @Override
+    public HstLink create(final Node node, final Mount mount, final HstSiteMapItem preferredItem, final boolean fallback) {
+        final HstLink hstLink = hstLinkCreator.create(node, mount, preferredItem, fallback);
+        if (!fallback) {
+            return hstLink;
+        }
+
+        final String hostGroupName = mount.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+    }
+
+    @Override
+    public HstLink create(final Node node, final HstRequestContext requestContext, final String mountAlias) {
+        //CrossOff
+        return hstLinkCreator.create(node, requestContext, mountAlias);
+    }
+
+    @Override
+    public HstLink create(final Node node, final Mount mount) {
+        //CrossOff
+        return hstLinkCreator.create(node, mount);
+    }
+
+    @Override
+    public HstLink create(final Node node, final HstRequestContext requestContext, final String mountAlias, final String type) {
+        //CrossOff
+        return hstLinkCreator.create(node, requestContext, mountAlias, type);
+    }
+
+    @Override
+    public HstLink create(final HippoBean bean, final HstRequestContext requestContext) {
+        final HstLink hstLink = hstLinkCreator.create(bean, requestContext);
+
+        final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(bean.getNode(), hstLink, hostGroupName);
+    }
+
+    @Override
+    public HstLink create(final HstSiteMapItem toHstSiteMapItem, final Mount mount) {
+        //CrossOff
+        return hstLinkCreator.create(toHstSiteMapItem, mount);
+    }
+
+    @Override
+    public HstLink create(final String path, final Mount mount) {
+        //CrossOff
+        return hstLinkCreator.create(path, mount);
+    }
+
+    @Override
+    public HstLink create(final String path, final Mount mount, final boolean containerResource) {
+        //CrossOff
+        return hstLinkCreator.create(path, mount, containerResource);
+    }
+
+    @Override
+    public HstLink createByRefId(final String siteMapItemRefId, final Mount mount) {
+        //CrossOff
+        return hstLinkCreator.createByRefId(siteMapItemRefId, mount);
+    }
+
+    @Override
+    public HstLink createCanonical(final Node node, final Mount mount) {
+        //CrossOff
+        return hstLinkCreator.createCanonical(node, mount);
+    }
+
+    @Override
+    public HstLink createCanonical(final Node node, final Mount mount, final boolean crossMount) {
+        final HstLink hstLink = hstLinkCreator.createCanonical(node, mount);
+        if (!crossMount) {
+            return hstLink;
+        }
+
+        return getBestCanonicalCandidate(node, hstLink, mount.getVirtualHost().getHostGroupName());
+    }
+
+
+    @Override
     public HstLink createCanonical(final Node node, final HstRequestContext requestContext) {
-        return hstLinkCreator.createCanonical(node, requestContext);
+        final HstLink hstLink = hstLinkCreator.createCanonical(node, requestContext);
+        final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
+        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -81,12 +211,13 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
     @Override
     public List<HstLink> createAllAvailableCanonicals(final Node node, final HstRequestContext requestContext) {
         final Mount mount = requestContext.getResolvedMount().getMount();
-        return createAllAvailableCanonicals(node, requestContext, mount.getType());
+        return createAllAvailableCanonicals(node, mount, mount.getType(), mount.getVirtualHost().getHostGroupName());
     }
 
     @Override
     public List<HstLink> createAllAvailableCanonicals(final Node node, final HstRequestContext requestContext, final String type) {
-        return hstLinkCreator.createAllAvailableCanonicals(node, requestContext, type);
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        return createAllAvailableCanonicals(node, mount, type, mount.getVirtualHost().getHostGroupName());
     }
 
     @Override
@@ -120,64 +251,6 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         //Sort aggregated link collection
         hstLinks.sort(new DefaultHstLinkCreator.LowestDepthFirstAndThenLexicalComparator());
         return hstLinks;
-    }
-
-    @Override
-    public HstLink create(final Node node, final Mount mount) {
-        return hstLinkCreator.create(node, mount);
-    }
-
-    @Override
-    public HstLink create(final Node node, final Mount mount, final boolean crossMount) {
-        return hstLinkCreator.create(node, mount, crossMount);
-    }
-
-    @Override
-    public HstLink create(final Node node, final Mount mount, final HstSiteMapItem preferredItem, final boolean fallback) {
-        return hstLinkCreator.create(node, mount, preferredItem, fallback);
-    }
-
-    @Override
-    public HstLink create(final Node node, final HstRequestContext requestContext, final String mountAlias) {
-        return hstLinkCreator.create(node, requestContext, mountAlias);
-    }
-
-    @Override
-    public HstLink create(final Node node, final HstRequestContext requestContext, final String mountAlias, final String type) {
-        return hstLinkCreator.create(node, requestContext, mountAlias, type);
-    }
-
-    @Override
-    public HstLink create(final HippoBean bean, final HstRequestContext requestContext) {
-        return hstLinkCreator.create(bean, requestContext);
-    }
-
-    @Override
-    public HstLink create(final HstSiteMapItem toHstSiteMapItem, final Mount mount) {
-        return hstLinkCreator.create(toHstSiteMapItem, mount);
-    }
-
-    @Override
-    public HstLink createByRefId(final String siteMapItemRefId, final Mount mount) {
-        return hstLinkCreator.createByRefId(siteMapItemRefId, mount);
-    }
-
-    @Override
-    public HstLink create(final String path, final Mount mount) {
-        return hstLinkCreator.create(path, mount);
-    }
-
-    @Override
-    public HstLink create(final String path, final Mount mount, final boolean containerResource) {
-        return hstLinkCreator.create(path, mount, containerResource);
-    }
-
-    /**
-     * Get all HST models except the model current link creator belongs to
-     * @return Collection of HST models
-     */
-    private List<HstModel> getOtherHstModels() {
-        return modelRegistry.getHstModels().stream().filter(m -> m.getHstLinkCreator() != this).collect(Collectors.toList());
     }
 
     @Override
@@ -248,4 +321,41 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
     public void clear() {
         hstLinkCreator.clear();
     }
+
+    private HstLink getCanonicalLinkFromOtherModels(final Node node, final String hostGroupName) {
+        final List<HstModel> hstModels = getOtherHstModels();
+        for (final HstModel hstModel : hstModels) {
+            final Optional<Mount> firstMount = hstModel.getVirtualHosts()
+                    .getMountsByHostGroup(hostGroupName).stream()
+                    .findFirst();
+
+            if (firstMount.isPresent()) {
+                final HstLinkCreator localHstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getLocalHstLinkCreator();
+                final HstLink canonicalLink = localHstLinkCreator.createCanonical(node, firstMount.get(), true);
+                if (canonicalLink != null && !canonicalLink.isNotFound()) {
+                    return canonicalLink;
+                }
+            }
+        }
+        return null;
+    }
+
+    private HstLink getBestCanonicalCandidate(final Node node, final HstLink hstLink, final String hostGroupName) {
+        if (hstLink == null || hstLink.isNotFound()) {
+            final HstLink canonicalLink = getCanonicalLinkFromOtherModels(node, hostGroupName);
+            if (canonicalLink != null) {
+                return canonicalLink;
+            }
+        }
+        return hstLink;
+    }
+
+    /**
+     * Get all HST models except the model current link creator belongs to
+     * @return Collection of HST models
+     */
+    private List<HstModel> getOtherHstModels() {
+        return modelRegistry.getHstModels().stream().filter(m -> m.getHstLinkCreator() != this).collect(Collectors.toList());
+    }
+
 }

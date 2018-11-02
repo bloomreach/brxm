@@ -189,7 +189,22 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         linkResolver.resolverProperties.fallback = true;
         return linkResolver.resolve();
     }
-    
+
+    @Override
+    public HstLink createCanonical(final Node node, final Mount mount, final boolean crossMount) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
+        linkResolver.resolverProperties.canonicalLink = true;
+        linkResolver.resolverProperties.tryOtherMounts = crossMount;
+        return linkResolver.resolve();
+    }
+
+    @Override
+    public HstLink createCanonical(Node node, Mount mount) {
+        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
+        linkResolver.resolverProperties.canonicalLink = true;
+        linkResolver.resolverProperties.tryOtherMounts = false;
+        return linkResolver.resolve();
+    }
 
     @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext) {
@@ -1050,23 +1065,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
                 return pathInfo == null ? null : new HstLinkImpl(pathInfo, tryMount, false);
             } else if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath() + "/")) {
-                String relPath = nodePath.substring(tryMount.getContentPath().length());
-                ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
-                if (resolvedLocation == null || resolvedLocation.getPath() == null) {
-                    return null;
-                }
-                return new HstLinkImpl(resolvedLocation, tryMount, false);
+                return createHstLink(nodePath, tryMount, resolverProperties);
             } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) { 
                 // the root node of the site. Return the homepage
                 String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
                 return pathInfo == null ? null : new HstLinkImpl(pathInfo, tryMount, false);
-            }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) { 
-                String relPath = nodePath.substring(tryMount.getContentPath().length());
-                ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
-                if (resolvedLocation == null || resolvedLocation.getPath() == null) {
-                    return null;
-                }
-                return new HstLinkImpl(resolvedLocation, tryMount, false);
+            }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) {
+                return createHstLink(nodePath, tryMount, resolverProperties);
             } else if (isBinaryLocation(nodePath)) {
                 final HstLink hstLinkForBinaryLocation = createHstLinkForBinaryLocation(nodePath, tryMount);
                 if (hstLinkForBinaryLocation != null) {
@@ -1077,6 +1082,15 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return new HstLinkImpl(pathInfo, tryMount, true);
             }
             return null;
+        }
+
+        private HstLink createHstLink(final String nodePath, final Mount tryMount, final ResolverProperties resolverProperties) {
+            final String relPath = nodePath.substring(tryMount.getContentPath().length());
+            ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
+            if (resolvedLocation == null || resolvedLocation.getPath() == null) {
+                return null;
+            }
+            return new HstLinkImpl(resolvedLocation, tryMount, false);
         }
 
         /**

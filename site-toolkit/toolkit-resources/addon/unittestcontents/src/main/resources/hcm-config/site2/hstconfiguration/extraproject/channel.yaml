@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hst:site2/hst:configurations/extraproject/hst:channel:
+      jcr:primaryType: hst:channel
+      hst:name: Extra Test Channel
+      /hst:channelinfo:
+        jcr:primaryType: hst:channelinfo

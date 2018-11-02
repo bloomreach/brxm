@@ -12,6 +12,9 @@ definitions:
       /intranettestproject:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../unittestproject]
+      /extraproject:
+        jcr:primaryType: hst:configuration
+        hst:inheritsfrom: [../unittestproject]
       /global:
         jcr:primaryType: hst:configuration
         hst:inheritsfrom: [../unittestcommon]
