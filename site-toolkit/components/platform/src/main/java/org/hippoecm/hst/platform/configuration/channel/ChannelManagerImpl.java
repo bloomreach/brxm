@@ -20,6 +20,8 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
@@ -43,10 +45,10 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListener;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistry;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelImpl;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -58,6 +60,8 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,33 +92,28 @@ public class ChannelManagerImpl implements ChannelManager {
     private final StringCodec CHANNEL_ID_CODEC = new StringCodecFactory.UriEncoding();
 
     private final HstModelImpl hstModel;
-    private final EventPathsInvalidator eventPathsInvalidator;
-    private final HstNodeLoadingCache hstNodeLoadingCache;
     private final String contentRoot;
 
-    public ChannelManagerImpl(final HstModelImpl hstModel, final EventPathsInvalidator eventPathsInvalidator,
-                              final HstNodeLoadingCache hstNodeLoadingCache, final String contentRoot) {
+    public ChannelManagerImpl(final HstModelImpl hstModel, final String contentRoot) {
         this.hstModel = hstModel;
-        this.eventPathsInvalidator = eventPathsInvalidator;
-        this.hstNodeLoadingCache = hstNodeLoadingCache;
         this.contentRoot = contentRoot;
     }
 
     @Override
     public String persist(final Session session, final String blueprintId, Channel channel) throws ChannelException {
         synchronized (hstModel) {
-            Blueprint blueprint = hstModel.getVirtualHosts().getBlueprint(blueprintId);
+            final Blueprint blueprint = hstModel.getVirtualHosts().getBlueprint(blueprintId);
             if (blueprint == null) {
                 throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
             }
             try {
-                Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
+                final Node configNode = session.getNode(hstModel.getConfigurationRootPath());
 
-                String channelName = createUniqueHstConfigurationName(channel.getName(), session);
+                final String channelName = createUniqueHstConfigurationName(channel.getName(), session);
                 channel.setId(channelName);
 
-                Node createdContentNode = createChannel(configNode, blueprint, session, channelName, channel);
-                ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
+                final Node createdContentNode = createChannel(configNode, blueprint, session, channelName, channel);
+                final ChannelManagerEvent event = new ChannelManagerEventImpl(blueprint, channel, configNode);
                 getChannelManagerEventListeners().forEach(listener -> {
                     try {
                         listener.channelCreated(event);
@@ -143,9 +142,9 @@ public class ChannelManagerImpl implements ChannelManager {
                     }
                 });
 
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstModel.getConfigurationRootPath()), false);
                 session.save();
-                eventPathsInvalidator.eventPaths(pathsToBeChanged);
+                hstModel.getEventPathsInvalidator().eventPaths(pathsToBeChanged);
                 return channelName;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -163,22 +162,20 @@ public class ChannelManagerImpl implements ChannelManager {
      * @throws ChannelException
      */
     protected String createUniqueHstConfigurationName(String channelName, Session session) throws ChannelException {
+
         if (StringUtils.isBlank(channelName)) {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
         }
         try {
             String encodedChannelName = CHANNEL_ID_CODEC.encode(channelName);
-            int retries = 0;
-            Node rootNode = session.getNode(hstNodeLoadingCache.getRootPath());
-            Node sitesNode = rootNode.getNode(sites);
-            Node configurationsNode = rootNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
 
-            while (configurationsNode.hasNode(encodedChannelName) || sitesNode.hasNode(encodedChannelName)) {
+            int retries = 0;
+
+            final Set<String> uniqueChannelNames = collectChannelAndSiteNames(session);
+            while (uniqueChannelNames.contains(encodedChannelName)) {
                 retries += 1;
-                StringBuilder builder = new StringBuilder(channelName);
-                builder.append('-');
-                builder.append(retries);
-                encodedChannelName = CHANNEL_ID_CODEC.encode(builder.toString());
+                final String builder = channelName + '-' + retries;
+                encodedChannelName = CHANNEL_ID_CODEC.encode(builder);
             }
 
             return encodedChannelName;
@@ -187,12 +184,35 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
+    private Set<String> collectChannelAndSiteNames(final Session session) throws RepositoryException {
+        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+
+        final Set<String> uniqueChannelNames = new HashSet<>();
+
+        for (HstModel model : modelRegistry.getHstModels()) {
+            final String hstRoot = ((HstModelImpl) model).getConfigurationRootPath();
+            Node rootNode = session.getNode(hstRoot);
+
+            Node sitesNode = rootNode.getNode(sites);
+            Node configurationsNode = rootNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
+
+            for (Node channelNode : new NodeIterable(configurationsNode.getNodes())) {
+                uniqueChannelNames.add(channelNode.getName());
+            }
+
+            for (Node siteNode : new NodeIterable(sitesNode.getNodes())) {
+                uniqueChannelNames.add(siteNode.getName());
+            }
+        }
+        return uniqueChannelNames;
+    }
+
     @Override
     public void save(final Session session, final String hostGroupName, final Channel channel) throws ChannelException {
         synchronized (hstModel) {
             try {
                 // TODO is hostGroupName not available on the Channel object already??? IF so, remove from method
-                Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
+                Node configNode = session.getNode(hstModel.getConfigurationRootPath());
                 updateChannel(configNode, hostGroupName, channel);
 
                 ChannelManagerEvent event = new ChannelManagerEventImpl(null, channel, configNode);
@@ -218,9 +238,9 @@ public class ChannelManagerImpl implements ChannelManager {
                                 listenerEx);
                     }
                 });
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstModel.getConfigurationRootPath()), false);
                 session.save();
-                eventPathsInvalidator.eventPaths(pathsToBeChanged);
+                hstModel.getEventPathsInvalidator().eventPaths(pathsToBeChanged);
             } catch (RepositoryException | IllegalArgumentException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }

@@ -23,9 +23,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -69,6 +66,9 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class HstModelImpl implements InternalHstModel {
 
@@ -124,7 +124,7 @@ public class HstModelImpl implements InternalHstModel {
         invalidationMonitor = new InvalidationMonitor(session, hstNodeLoadingCache, hstConfigurationLoadingCache, this);
 
         final String contentRoot = websiteContainerConfiguration.getString("channel.manager.contentRoot", ChannelManagerImpl.DEFAULT_CONTENT_ROOT);
-        channelManager = new ChannelManagerImpl(this, invalidationMonitor.getEventPathsInvalidator(), hstNodeLoadingCache, contentRoot);
+        channelManager = new ChannelManagerImpl(this, contentRoot);
 
         final HstManager websiteHstManager = websiteComponentManager.getComponent(HstManager.class);
         hstFilterPrefixExclusions = websiteHstManager.getHstFilterPrefixExclusions();

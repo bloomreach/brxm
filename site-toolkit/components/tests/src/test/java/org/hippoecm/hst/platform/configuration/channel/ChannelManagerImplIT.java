@@ -40,18 +40,19 @@ import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerRegistr
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
@@ -84,7 +85,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ChannelManagerImplIT extends AbstractTestConfigurations {
+public class ChannelManagerImplIT extends AbstractBeanTestCase {
 
     private ChannelManagerImpl channelMngr;
     private HstManager hstManager;
@@ -284,6 +285,33 @@ public class ChannelManagerImplIT extends AbstractTestConfigurations {
                 channelsAgain.containsKey("unittestproject-preview"));
     }
 
+
+    @Test
+    public void created_channel_names_should_be_unique() throws Exception {
+        List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
+        final Blueprint blueprint = bluePrints.get(0);
+
+        final Channel channel = blueprint.getPrototypeChannel();
+        channel.setName("CMIT Test Channel: with special and/or specific characters");
+        channel.setUrl("http://cmit-myhost");
+        channel.setContentRoot("/unittestcontent/documents");
+        channel.setLocale("nl_NL");
+
+        String channelId = channelMngr.persist(session, blueprint.getId(), channel);
+        final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
+        assertEquals(encodedChannelName, channelId);
+
+        final Blueprint blueprint2 = hstModelSite2.getVirtualHosts().getBlueprints().get(0);
+        final Channel channel2 = blueprint2.getPrototypeChannel();
+        channel2.setName("CMIT Test Channel: with special and/or specific characters");
+        channel2.setUrl("http://cmit-myhost");
+        channel2.setContentRoot("/unittestcontent/documents");
+        channel2.setLocale("nl_NL");
+
+        final String channelId2 = ((HstModelImpl) hstModelSite2).getChannelManager().persist(session, blueprint2.getId(), channel2);
+        final String encodedChannelName2 = "cmit-test-channel-with-special-and-or-specific-characters-1";
+        assertEquals(encodedChannelName2, channelId2);
+    }
 
     @Test
     public void channel_is_created_from_blueprint_without_content_prototype() throws Exception {
