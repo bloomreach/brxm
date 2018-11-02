@@ -119,8 +119,6 @@ public class ChannelServiceImpl implements ChannelService {
 
         final Map<String, Channel> channels = new HashMap<>();
 
-        boolean requiredIdMatchDone = false;
-
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 
             final VirtualHosts virtualHosts = hstModel.getVirtualHosts();
