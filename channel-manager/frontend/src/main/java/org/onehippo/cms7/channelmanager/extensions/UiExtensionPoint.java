@@ -22,8 +22,27 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum UiExtensionPoint {
 
-    PAGESIDEPANEL;
+    PAGESIDEPANEL("channel.page.tools");
 
+    private final String extensionPoint;
+
+    UiExtensionPoint(final String extensionPoint) {
+        this.extensionPoint = extensionPoint;    
+    }
+
+    public static UiExtensionPoint getForConfigProperty(final String configProperty) {
+        for(UiExtensionPoint uiExtensionPoint : UiExtensionPoint.values()) {
+            if (uiExtensionPoint.getConfigProperty().equalsIgnoreCase(configProperty)) {
+                return uiExtensionPoint;
+            }
+        }
+        throw new IllegalArgumentException(String.format("UiExtensionPoint for '%s' does not exist.", configProperty));
+    }
+    
+    public String getConfigProperty() {
+        return this.extensionPoint;
+    }
+    
     @JsonValue
     public String getLowerCase() {
         return this.name().toLowerCase();

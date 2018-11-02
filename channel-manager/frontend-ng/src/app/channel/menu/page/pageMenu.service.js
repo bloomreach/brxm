@@ -57,7 +57,7 @@ class PageMenuService extends MenuService {
 
     if (this._hasPageExtensions()) {
       menu.addAction('info', {
-        translationKey: 'TOOLBAR_MENU_PAGE_INFO',
+        translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
         onClick: () => this._pageInfo(),
       });
     }

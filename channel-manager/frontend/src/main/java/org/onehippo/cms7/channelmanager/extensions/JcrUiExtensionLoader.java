@@ -97,7 +97,7 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
 
         if (optionalProperty.isPresent()) {
             try {
-                return Optional.of(UiExtensionPoint.valueOf(optionalProperty.get().toUpperCase()));
+                return Optional.of(UiExtensionPoint.getForConfigProperty(optionalProperty.get()));
             } catch (IllegalArgumentException e) {
                 log.warn("Cannot convert '{}' to a UI extension context", optionalProperty.get(), e);
             }
