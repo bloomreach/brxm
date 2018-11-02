@@ -15,11 +15,17 @@
 
 package org.hippoecm.frontend.service.categories;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.util.io.IClusterable;
 import org.onehippo.cms7.services.SingletonService;
+import org.hippoecm.frontend.plugin.IPluginContext;
 
 @SingletonService
 public interface CategoriesService extends IClusterable {
 
-    CategoriesBuilder getBuilder();
+    String[] getCategories(final Node node
+            , final IPluginContext context
+            , final String[] workflowCategories
+            , final String[] versionCategories);
 }
