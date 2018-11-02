@@ -204,17 +204,6 @@ public class ConfigurationLockedTest extends MountResourceTest {
 
     @Test
     @Override
-    public void publish_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded() throws Exception {
-        try {
-            super.publish_userswithchanges_as_admin_fails_if_security_model_cannot_be_loaded();
-            fail("Expected forbidden");
-        } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
-        }
-    }
-
-    @Test
-    @Override
     public void publish_userswithchanges_as_admin_succeeds() throws Exception {
         try {
             super.publish_userswithchanges_as_admin_succeeds();
