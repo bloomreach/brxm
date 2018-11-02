@@ -30,6 +30,8 @@ import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -41,6 +43,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -48,6 +51,8 @@ import org.springframework.web.client.RestTemplate;
  * with REST API backends.
  */
 public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpRequestResourceResolver {
+
+    private static Logger log = LoggerFactory.getLogger(AbstractRestTemplateResourceResolver.class);
 
     /**
      * Client HTTP Request interceptors that are set to the default {@link RestTemplate} creation if {@link #restTemplate}
@@ -193,6 +198,9 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
                                 }
                             },
                             pathVariables);
+        } catch (RestClientResponseException e) {
+            extractResponseDataToExchangeHint(e, exchangeHint);
+            throw new ResourceException("REST client response error.", e);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (Exception e) {
@@ -260,4 +268,61 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
 
         return requestEntity;
     }
+
+    /**
+     * Extract response data from the given {@code response} to set status code and headers in {@code exchangeHint}.
+     * @param response response
+     * @param exchangeHint exchange hint
+     */
+    protected void extractResponseDataToExchangeHint(final ClientHttpResponse response,
+            final ExchangeHint exchangeHint) {
+        if (exchangeHint == null) {
+            return;
+        }
+
+        try {
+            exchangeHint.setResponseStatusCode(response.getRawStatusCode());
+
+            final HttpHeaders responseHeaders = response.getHeaders();
+            exchangeHint.setResponseHeaders(responseHeaders);
+        } catch (Exception e) {
+            log.warn("Failed to extract response data from clientHttpResponse.", e);
+        }
+    }
+
+    /**
+     * Extract response data from the given {@code responseEntity} to set status code and headers in {@code exchangeHint}.
+     * <p>
+     * <em>Note:</em> This method is supposed to be invoked only when no {@link RestClientResponseException} occurs while
+     * invoking on {@link RestTemplate}.
+     * @param responseEntity response entity
+     * @param exchangeHint exchange hint
+     */
+    protected void extractResponseDataToExchangeHint(final ResponseEntity responseEntity,
+            final ExchangeHint exchangeHint) {
+        if (exchangeHint == null) {
+            return;
+        }
+
+        try {
+            exchangeHint.setResponseStatusCode(responseEntity.getStatusCodeValue());
+
+            final HttpHeaders responseHeaders = responseEntity.getHeaders();
+            exchangeHint.setResponseHeaders(responseHeaders);
+        } catch (Exception e) {
+            log.warn("Failed to extract response data from responseEntity.", e);
+        }
+    }
+
+    /**
+     * Extract response data from the given {@code responseException} to set status code and headers in {@code exchangeHint}.
+     * <p>
+     * <em>Note:</em> This method is supposed to be invoked only when {@link RestClientResponseException} occurs while
+     * invoking on {@link RestTemplate}.
+     * @param responseEntity response entity
+     * @param exchangeHint exchange hint
+     */
+    abstract protected void extractResponseDataToExchangeHint(final RestClientResponseException responseException,
+            final ExchangeHint exchangeHint);
+
 }

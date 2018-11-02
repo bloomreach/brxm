@@ -16,21 +16,17 @@
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
-import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemplateResourceResolver {
@@ -56,6 +52,8 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
                         ByteArrayResource.class, pathVariables);
             }
 
+            extractResponseDataToExchangeHint(result, exchangeHint);
+
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();
                 final Element rootElem = byteArrayResourceToElement(body);
@@ -64,6 +62,9 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
+        } catch (RestClientResponseException e) {
+            extractResponseDataToExchangeHint(e, exchangeHint);
+            throw new ResourceException("REST client response error.", e);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (IOException e) {
@@ -91,6 +92,8 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
                         ByteArrayResource.class, pathVariables);
             }
 
+            extractResponseDataToExchangeHint(result, exchangeHint);
+
             if (isSuccessfulResponse(result)) {
                 final ByteArrayResource body = result.getBody();
                 final Element rootElem = byteArrayResourceToElement(body);
@@ -99,6 +102,9 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
             } else {
                 throw new ResourceException("Unexpected response status: " + result.getStatusCode());
             }
+        } catch (RestClientResponseException e) {
+            extractResponseDataToExchangeHint(e, exchangeHint);
+            throw new ResourceException("REST client response error.", e);
         } catch (RestClientException e) {
             throw new ResourceException("REST client invocation error.", e);
         } catch (IOException e) {
@@ -111,19 +117,5 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     @Override
     public boolean isCacheable(Resource resource) {
         return (isCacheEnabled() && resource instanceof JdomResource);
-    }
-
-    private Element byteArrayResourceToElement(final ByteArrayResource body) throws JDOMException, IOException {
-        InputStream input = null;
-
-        try {
-            SAXBuilder jdomBuilder = new SAXBuilder();
-            input = body.getInputStream();
-            final Document document = jdomBuilder.build(input);
-            final Element elem = document.getRootElement();
-            return elem;
-        } finally {
-            CrispUtils.closeQuietly(input);
-        }
     }
 }
