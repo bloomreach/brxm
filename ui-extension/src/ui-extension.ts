@@ -44,9 +44,11 @@ interface PageEvents extends Emittery.Events {
   load: PageProperties;
 }
 
-interface Parent {
+export interface Parent {
   getPage: () => Promise<PageProperties>;
   getProperties: () => Promise<UiProperties>;
+  refreshChannel: () => Promise<void>;
+  refreshPage: () => Promise<void>;
 }
 
 type ParentMethod = keyof Parent;
@@ -121,6 +123,10 @@ class Page extends UiScope {
     return this.callParent('getPage');
   }
 
+  refresh(): Promise<void> {
+    return this.callParent('refreshPage');
+  }
+
   on<Name extends Extract<keyof PageEvents, string>>
       (event: Name, listener: (eventData: PageEvents[Name]) => any): Emittery.UnsubscribeFn {
     return this._eventEmitter.on(event, listener);
@@ -134,6 +140,10 @@ class Channel extends UiScope {
   constructor(_parent: Parent, pageEventEmitter: Emittery.Typed<PageEvents>) {
     super(_parent);
     this.page = new Page(_parent, pageEventEmitter);
+  }
+
+  refresh(): Promise<void> {
+    return this.callParent('refreshChannel');
   }
 }
 

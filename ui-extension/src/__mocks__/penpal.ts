@@ -39,6 +39,8 @@ const testPage = {
 const parent = {
   getProperties: () => Promise.resolve(uiProperties),
   getPage: () => Promise.resolve(testPage),
+  refreshChannel: () => Promise.resolve(),
+  refreshPage: () => Promise.resolve(),
 };
 
 const penpal = {
