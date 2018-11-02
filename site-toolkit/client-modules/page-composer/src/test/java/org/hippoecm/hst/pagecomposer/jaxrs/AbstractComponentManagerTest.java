@@ -74,7 +74,7 @@ public abstract class AbstractComponentManagerTest {
         final PropertiesConfiguration platformConfiguration = new PropertiesConfiguration();
         platformConfiguration.addProperty("hst.configuration.rootPath", "/hst:platform");
 
-        platformComponentManager = new SpringComponentManager(new PropertiesConfiguration());
+        platformComponentManager = new SpringComponentManager(platformConfiguration);
         platformComponentManager.setConfigurationResources(getConfigurations(true));
         platformComponentManager.setServletContext(platformWebappContext.getServletContext());
 
