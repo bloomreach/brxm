@@ -124,3 +124,25 @@ definitions:
     : /en:
         document: Image
         jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
+    : /en:
+        jcr:primaryType: hipposys:resourcebundle
+        address: Address
+        map.canvas: Map Canvas
+        latitude: Latitude
+        markerCustomText: Marker Custom Text
+        mapType: Map Type
+        map.size: Map Size
+        zoomFactor: Zoom Factor
+        map.options: Map options
+        showMarker#no: No Marker
+        showMarker: Show Marker
+        mapOverlay: Map Overlay
+        width: Width (in pixels)
+        showMarker#withoutText: Without Text
+        map.focus: Map Focus
+        location: Location information
+        showMarker#withCustomText: With Custom Text
+        showMarker#withAddress: With Address
+        height: Height (in pixels)
+        longitude: Longitude
