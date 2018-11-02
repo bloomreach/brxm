@@ -90,24 +90,27 @@ describe('register', () => {
         };
       });
 
-      it('calls the listener whenever the parent emits a page \'load\' event', () => {
-        const emitPageEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitPageEvent;
+      it('calls the listener whenever the parent emits a \'channel.page.load\' event', () => {
+        const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
+        const listener = jest.fn();
 
-        ui.channel.page.on('load', (page) => {
-          expect(page).toBe(nextPage);
-        });
+        ui.channel.page.on('load', listener);
 
-        return emitPageEvent('load', nextPage);
+        return emitEvent('channel.page.load', nextPage)
+          .then(() => {
+            expect(listener).toHaveBeenCalled();
+            expect(listener.mock.calls[0][0]).toBe(nextPage);
+          });
       });
 
       it('returns an unbind function', () => {
-        const emitPageEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitPageEvent;
+        const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
         const listener = jest.fn();
 
         const unbind = ui.channel.page.on('load', listener);
         unbind();
 
-        return emitPageEvent('load', nextPage)
+        return emitEvent('channel.page.load', nextPage)
           .then(() => {
             expect(listener).not.toHaveBeenCalled();
           });

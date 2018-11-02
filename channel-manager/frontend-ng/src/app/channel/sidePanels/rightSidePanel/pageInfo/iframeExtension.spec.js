@@ -70,7 +70,7 @@ describe('iframeExtension', () => {
     ExtensionService.getExtension.and.returnValue(extension);
 
     iframe = angular.element('<iframe src="about:blank"></iframe>');
-    child = jasmine.createSpyObj('child', ['emitPageEvent']);
+    child = jasmine.createSpyObj('child', ['emitEvent']);
 
     Penpal.connectToChild.and.returnValue({
       promise: $q.resolve(child),
@@ -300,14 +300,14 @@ describe('iframeExtension', () => {
         expect($ctrl.context).not.toBe(newContext);
       });
 
-      it('emits a page "load" event in the child with the new page properties', () => {
+      it('emits a "channel.page.load" event in the child with the new page properties', () => {
         $ctrl.$onChanges({
           context: {
             currentValue: newContext,
           },
         });
 
-        expect(child.emitPageEvent).toHaveBeenCalledWith('load', newContext);
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.page.load', newContext);
       });
     });
   });
