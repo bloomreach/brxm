@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';              // tslint:disable-line
-import UiExtension from './ui-extension'; // tslint:disable-line
-import { Ui, PageProperties } from './ui-extension';      // tslint:disable-line
+// tslint:disable
+import Penpal from 'penpal';
+import UiExtension from './ui-extension';
+import { Ui, PageProperties, Parent } from './ui-extension';
+// tslint:enable
 
 jest.mock('penpal');
 
@@ -63,6 +65,18 @@ describe('register', () => {
       expect(ui.version).toBe('13.0.0');
     });
 
+    describe('ui.channel.refresh()', () => {
+      it('refreshes the current channel', () => {
+        const connection = (Penpal.connectToParent as jest.Mock).mock.results[0].value;
+        return connection.promise.then((parent: Parent) => {
+          const refreshChannel = jest.spyOn(parent, 'refreshChannel');
+          return ui.channel.refresh().then(() => {
+            expect(refreshChannel).toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
     describe('ui.channel.page.get()', () => {
       it('returns the current page', () => {
         return ui.channel.page.get()
@@ -72,6 +86,18 @@ describe('register', () => {
             expect(page.sitemapItem.id).toBe('testSitemapItemId');
             expect(page.url).toBe('http://www.example.com');
           });
+      });
+    });
+
+    describe('ui.channel.page.refresh()', () => {
+      it('refreshes the current page', () => {
+        const connection = (Penpal.connectToParent as jest.Mock).mock.results[0].value;
+        return connection.promise.then((parent: Parent) => {
+          const refreshPage = jest.spyOn(parent, 'refreshPage');
+          return ui.channel.page.refresh().then(() => {
+            expect(refreshPage).toHaveBeenCalled();
+          });
+        });
       });
     });
 

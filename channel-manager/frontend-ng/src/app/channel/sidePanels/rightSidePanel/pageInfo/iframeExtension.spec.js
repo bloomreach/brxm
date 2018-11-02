@@ -249,6 +249,20 @@ describe('iframeExtension', () => {
         expect(methods.getPage()).toBe(context);
       });
     });
+
+    describe('refreshChannel', () => {
+      it('reloads the current channel meta-data', () => {
+        methods.refreshChannel();
+        expect(ChannelService.reload).toHaveBeenCalled();
+      });
+    });
+
+    describe('refreshPage', () => {
+      it('reloads the page', () => {
+        methods.refreshPage();
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('$onChanges', () => {
