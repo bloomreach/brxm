@@ -62,31 +62,40 @@
   justify-content: space-between;
   pointer-events: auto;
   position: absolute;
-}
 
-.hippo-overlay-element-visible {
-  display: flex;
-}
+  &-visible {
+    display: flex;
+  }
 
-.hippo-overlay-element-container {
-  border: 1px solid $overlay-container-outline-color;
-  pointer-events: none;
-  z-index: $z-index-overlay-container;
-}
+  &-container {
+    border: 1px solid $overlay-container-outline-color;
+    pointer-events: none;
+    z-index: $z-index-overlay-container;
 
-.hippo-overlay-element-container-empty {
-  box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
-  pointer-events: auto;
-}
+    &-empty {
+      box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
+      pointer-events: auto;
+    }
+  }
 
-.hippo-overlay-element-component {
-  border: 1px solid $overlay-component-outline-color;
-  box-shadow: inset 0 0 1px 0 $overlay-component-inline-color, inset 0 0 8px 0 $overlay-component-glow-color;
-  cursor: pointer;
-  z-index: $z-index-overlay-component;
+  &-component {
+    border: 1px solid $overlay-component-outline-color;
+    box-shadow: inset 0 0 1px 0 $overlay-component-inline-color, inset 0 0 8px 0 $overlay-component-glow-color;
+    cursor: pointer;
+    z-index: $z-index-overlay-component;
 
-  &:hover {
-    box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
+    &:hover {
+      box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
+    }
+
+    &-active {
+      border-color: $overlay-component-active-outline-color;
+      box-shadow: inset 0 0 1px 0 $overlay-component-active-glow-color, inset 0 0 15px 0 $overlay-component-active-glow-color;
+
+      &:hover {
+        box-shadow: inset 0 0 160px 0 $overlay-component-active-hover-shadow-color;
+      }
+    }
   }
 }
 
@@ -107,6 +116,11 @@
   .hippo-overlay-element-component > & {
     background-color: $overlay-component-label-bgcolor;
     border: 1px solid $overlay-component-label-border-color;
+  }
+
+  .hippo-overlay-element-component-active > & {
+    background-color: $overlay-component-active-label-bgcolor;
+    border: 1px solid $overlay-component-active-label-border-color;
   }
 
   &.hippo-overlay-label-experiment,
