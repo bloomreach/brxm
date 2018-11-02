@@ -312,8 +312,8 @@ class ComponentEditorService {
             return this._alertFieldErrors()
               .then(() => this.$q.reject());
           case 'DISCARD':
-            this.discardChanges();
-            return this.$q.resolve(action);
+            return this.discardChanges()
+              .then(this.$q.resolve(action));
           default:
             return this.$q.resolve(action); // let caller know that changes should not be saved
         }

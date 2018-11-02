@@ -731,7 +731,7 @@ describe('ComponentEditorService', () => {
       });
 
       it('discards the changes when the dialog resolves with "DISCARD"', (done) => {
-        spyOn(ComponentEditor, 'discardChanges');
+        spyOn(ComponentEditor, 'discardChanges').and.returnValue($q.resolve('DISCARD'));
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
@@ -770,7 +770,7 @@ describe('ComponentEditorService', () => {
       });
 
       it('discards the changes when the dialog resolves with "DISCARD" and does not save', (done) => {
-        spyOn(ComponentEditor, 'discardChanges');
+        spyOn(ComponentEditor, 'discardChanges').and.returnValue($q.resolve('DISCARD'));
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
