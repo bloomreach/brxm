@@ -95,6 +95,29 @@ definitions:
                 sortOrder: Sort order
                 sortOrder#asc: Ascending
                 sortOrder#desc: Descending
+            /EssentialsOpenStreetMapComponentInfo:
+              jcr:primaryType: hipposys:resourcebundles
+              /en:
+                jcr:primaryType: hipposys:resourcebundle
+                address: Address
+                height: Height (in pixels)
+                latitude: Latitude
+                location: Location information
+                longitude: Longitude
+                map.canvas: Map Canvas
+                map.focus: Map Focus
+                map.options: Map options
+                map.size: Map Size
+                mapOverlay: Map Overlay
+                mapType: Map Type
+                width: Width (in pixels)
+                zoomFactor: Zoom Factor
+                showMarker: Show Marker
+                showMarker#withoutText: Without Text
+                showMarker#no: No Marker
+                showMarker#withCustomText: With Custom Text
+                showMarker#withAddress: With Address
+                markerCustomText: Marker Custom Text
             /EssentialsGoogleMapsComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
               /en:
