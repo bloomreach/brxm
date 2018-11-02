@@ -78,6 +78,7 @@ public final class Constants {
 
     public static final String SYSTEM_PARAMETER_REPO_BOOTSTRAP = "repo.bootstrap";
     public static final String SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION = "autoexport.loop.protection";
+    public static final String SYSTEM_PARAMETER_USE_HCM_SITES = "use.hcm.sites";
 
     // Path within a Maven module where we expect the module descriptor to be
     public static final String MAVEN_MODULE_DESCRIPTOR = "/src/main/resources/" + HCM_MODULE_YAML;
