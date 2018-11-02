@@ -15,53 +15,15 @@
 
 package org.hippoecm.addon.workflow.categories;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import org.hippoecm.frontend.service.categories.AbstractCategoriesBuilder;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.categories.CategoriesBuilder;
-import org.onehippo.repository.util.JcrConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class CategoriesBuilderImpl implements CategoriesBuilder {
-
-    private static final Logger log = LoggerFactory.getLogger(CategoriesBuilderImpl.class);
-
-    private Node node;
+public class CategoriesBuilderImpl extends AbstractCategoriesBuilder {
 
     @Override
-    public boolean useVersionCategories() {
-       return isFrozenNode();
+    public String[] build() {
+        assert node != null;
+        assert versionCategories != null;
+        assert workflowCategories != null;
+        return isFrozenNode(node) ? versionCategories : workflowCategories;
     }
-
-
-    @Override
-    public CategoriesBuilder node(final Node node) {
-        this.node = node;
-        return this;
-
-    }
-
-    @Override
-    public CategoriesBuilder config(final IPluginConfig config) {
-        return this;
-    }
-
-    @Override
-    public CategoriesBuilder context(final IPluginContext context) {
-        return this;
-    }
-
-
-    private boolean isFrozenNode(){
-        try {
-            return node.isNodeType(JcrConstants.NT_FROZEN_NODE);
-        } catch (RepositoryException e) {
-            log.warn(e.getMessage(), e);
-        }
-        return false;
-    }
-
 }
