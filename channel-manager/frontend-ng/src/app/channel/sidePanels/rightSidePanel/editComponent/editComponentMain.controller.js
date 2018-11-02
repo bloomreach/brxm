@@ -90,7 +90,7 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine())
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
       .catch((error) => {
-        this.FeedbackService.showDismissible(
+        this.FeedbackService.showError(
           SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
           error.data.parameterMap,
         );
@@ -111,7 +111,7 @@ class EditComponentMainCtrl {
             this.EditComponentService.killEditor();
           })
           .catch((error) => {
-            this.FeedbackService.showDismissible(
+            this.FeedbackService.showError(
               DELETE_ERRORS[error.error] || DELETE_ERRORS.GENERAL_ERROR,
               Object.assign(error.parameterMap, { component: this.ComponentEditor.getComponentName() }),
             );

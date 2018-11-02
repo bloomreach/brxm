@@ -70,7 +70,7 @@ describe('EditComponentMainCtrl', () => {
         'save',
         'updatePreview',
       ]);
-      FeedbackService = jasmine.createSpyObj('FeedbackService', ['showDismissible']);
+      FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       OverlayService = jasmine.createSpyObj('OverlayService', ['onSelectDocument']);
 
@@ -288,7 +288,7 @@ describe('EditComponentMainCtrl', () => {
 
       $ctrl.save()
         .then(() => {
-          expect(FeedbackService.showDismissible).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           done();
@@ -308,7 +308,7 @@ describe('EditComponentMainCtrl', () => {
 
       $ctrl.save()
         .then(() => {
-          expect(FeedbackService.showDismissible).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           expect(EditComponentService.killEditor).toHaveBeenCalled();
@@ -534,7 +534,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect(FeedbackService.showDismissible).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
 
@@ -546,7 +546,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect(FeedbackService.showDismissible).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
     });
