@@ -505,9 +505,7 @@ describe('ComponentEditorService', () => {
   });
 
   describe('updatePreview', () => {
-    let component;
     beforeEach(() => {
-      component = {};
       spyOn(ComponentRenderingService, 'renderComponent').and.returnValue($q.resolve());
     });
 
