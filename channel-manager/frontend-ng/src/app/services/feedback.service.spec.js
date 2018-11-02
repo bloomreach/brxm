@@ -81,7 +81,7 @@ describe('FeedbackService', () => {
     expect($mdToast.simple).toHaveBeenCalled();
     expect(toast.textContent).toHaveBeenCalledWith(message);
     expect(toast.position).toHaveBeenCalledWith('top right');
-    expect(toast.hideDelay).toHaveBeenCalledWith(20000);
+    expect(toast.hideDelay).toHaveBeenCalledWith(30000);
     expect(toast.action).toHaveBeenCalled();
   });
 

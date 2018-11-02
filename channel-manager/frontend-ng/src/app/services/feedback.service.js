@@ -16,7 +16,7 @@
 
 const DELAY_NOTIFICATION = 1000;
 const DELAY_ERROR = 3 * 1000;
-const DELAY_DISMISSIBLE = 20 * 1000;
+const DELAY_DISMISSIBLE = 30 * 1000;
 
 class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
