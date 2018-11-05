@@ -389,7 +389,7 @@ class ContentEditorService {
     translateParams.documentName = this.document.displayName;
 
     const message = this.$translate.instant(messageKey, translateParams);
-    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
+    const title = this.$translate.instant('SAVE_DOCUMENT_CHANGES_TITLE');
 
     return this.DialogService.show({
       template: multiActionDialogTemplate,

@@ -76,7 +76,7 @@ describe('EditContentToolsCtrl', () => {
     });
 
     function expectSuccess() {
-      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
+      expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
       expect(ContentEditor.discardChanges).toHaveBeenCalled();
       expect(CmsService.publish).toHaveBeenCalledWith('open-content', documentId, 'view');
       expect(ContentEditor.close).toHaveBeenCalled();
@@ -98,7 +98,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().catch(() => {
-        expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
+        expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
         done();
       });
       $rootScope.$digest();
@@ -109,7 +109,7 @@ describe('EditContentToolsCtrl', () => {
       ContentEditor.discardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().catch(() => {
-        expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_ON_PUBLISH_MESSAGE');
+        expect(ContentEditor.confirmSaveOrDiscardChanges).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
         expect(ContentEditor.discardChanges).toHaveBeenCalled();
         done();
       });

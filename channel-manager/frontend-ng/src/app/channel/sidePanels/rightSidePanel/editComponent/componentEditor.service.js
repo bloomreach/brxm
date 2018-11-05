@@ -322,7 +322,7 @@ class ComponentEditorService {
 
   _askSaveOrDiscardChanges() {
     const message = this.$translate.instant('SAVE_CHANGES_TO_COMPONENT', { componentLabel: this.component.label });
-    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
+    const title = this.$translate.instant('SAVE_COMPONENT_CHANGES_TITLE');
 
     return this.DialogService.show({
       template: multiActionDialogTemplate,

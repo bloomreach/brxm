@@ -50,8 +50,8 @@ class ChangeManagementCtrl {
         projectName: this.ProjectService.selectedProject.name,
       });
     }
-    return this.$translate.instant('SUBPAGE_CHANGEMANAGEMENT_TITLE', { 
-      channelName: this.ChannelService.getChannel().name, 
+    return this.$translate.instant('SUBPAGE_CHANGEMANAGEMENT_TITLE', {
+      channelName: this.ChannelService.getChannel().name,
     });
   }
 
