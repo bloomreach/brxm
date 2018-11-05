@@ -26,7 +26,6 @@ class RightSidePanelService {
     this.stopLoading();
     this.clearTitle();
     this.clearContext();
-    this.closing = false;
   }
 
   isLoading() {
@@ -51,14 +50,6 @@ class RightSidePanelService {
       this.loadingPromise = null;
     }
     this.loading = false;
-  }
-
-  isClosing() {
-    return this.closing;
-  }
-
-  setClosing(closing) {
-    this.closing = closing;
   }
 
   getTitle() {

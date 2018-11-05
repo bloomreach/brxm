@@ -705,7 +705,7 @@ describe('ComponentEditorService', () => {
     it('translates the dialog title and body text', (done) => {
       ComponentEditor.confirmSaveOrDiscardChanges(true)
         .then(() => {
-          expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+          expect($translate.instant).toHaveBeenCalledWith('SAVE_COMPONENT_CHANGES_TITLE');
           expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TO_COMPONENT', {
             componentLabel: 'component-label',
           });
