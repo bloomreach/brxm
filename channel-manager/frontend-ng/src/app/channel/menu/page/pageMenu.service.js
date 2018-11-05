@@ -120,7 +120,7 @@ class PageMenuService extends MenuService {
   }
 
   _hasPageExtensions() {
-    return this.ExtensionService.hasExtensions('pagesidepanel');
+    return this.ExtensionService.hasExtensions('channel.page.tools');
   }
 
   _hasWriteAccess() {

@@ -25,7 +25,7 @@ class PageInfoMainCtrl {
   }
 
   $onInit() {
-    this.extensions = this.ExtensionService.getExtensions('pagesidepanel');
+    this.extensions = this.ExtensionService.getExtensions('channel.page.tools');
   }
 
   get selectedTab() {

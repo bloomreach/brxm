@@ -42,6 +42,8 @@ import static org.junit.Assert.assertTrue;
 
 public class JcrUiExtensionLoaderTest {
 
+    private static final String CHANNEL_PAGE_TOOLS_EXTENSION_POINT = "channel.page.tools";
+
     private JcrUiExtensionLoader loader;
     private MockNode root;
 
@@ -76,7 +78,7 @@ public class JcrUiExtensionLoaderTest {
     public void singleExtension() throws RepositoryException {
         final MockNode configNode = createConfigNode();
         final MockNode extensionNode = configNode.addNode("extension1", NT_UI_EXTENSION);
-        extensionNode.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
         extensionNode.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
         extensionNode.setProperty(FRONTEND_URL, "/extensions/extension-one");
 
@@ -85,7 +87,7 @@ public class JcrUiExtensionLoaderTest {
 
         final UiExtension extension = extensions.iterator().next();
         assertThat(extension.getId(), equalTo("extension1"));
-        assertThat(extension.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
         assertThat(extension.getUrl(), equalTo("/extensions/extension-one"));
     }
@@ -95,12 +97,12 @@ public class JcrUiExtensionLoaderTest {
         final MockNode configNode = createConfigNode();
 
         final MockNode extensionNode1 = configNode.addNode("extension1", NT_UI_EXTENSION);
-        extensionNode1.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode1.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
         extensionNode1.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
         extensionNode1.setProperty(FRONTEND_URL, "/extensions/extension-one");
 
         final MockNode extensionNode2 = configNode.addNode("extension2", NT_UI_EXTENSION);
-        extensionNode2.setProperty(FRONTEND_EXTENSION_POINT, "pageSidePanel");
+        extensionNode2.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
         extensionNode2.setProperty(FRONTEND_DISPLAY_NAME, "Extension Two");
         extensionNode2.setProperty(FRONTEND_URL, "/extensions/extension-two");
 
@@ -111,13 +113,13 @@ public class JcrUiExtensionLoaderTest {
 
         final UiExtension extension1 = iterator.next();
         assertThat(extension1.getId(), equalTo("extension1"));
-        assertThat(extension1.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension1.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
         assertThat(extension1.getDisplayName(), equalTo("Extension One"));
         assertThat(extension1.getUrl(), equalTo("/extensions/extension-one"));
 
         final UiExtension extension2 = iterator.next();
         assertThat(extension2.getId(), equalTo("extension2"));
-        assertThat(extension2.getExtensionPoint(), equalTo(UiExtensionPoint.PAGESIDEPANEL));
+        assertThat(extension2.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
         assertThat(extension2.getDisplayName(), equalTo("Extension Two"));
         assertThat(extension2.getUrl(), equalTo("/extensions/extension-two"));
     }
