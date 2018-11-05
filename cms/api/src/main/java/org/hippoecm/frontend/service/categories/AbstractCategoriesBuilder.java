@@ -37,9 +37,6 @@ public abstract class AbstractCategoriesBuilder implements CategoriesBuilder {
     public CategoriesBuilder node(final Node node) {
         Objects.requireNonNull(node);
         Objects.requireNonNull(node);
-        if (!isFrozenNode(node) && !isHandle(node)) {
-            throw new IllegalStateException(String.format("Node should be of type %s or %s", NT_HANDLE, NT_FROZEN_NODE));
-        }
         this.node = node;
         return this;
     }
