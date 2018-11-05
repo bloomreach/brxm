@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -136,7 +136,6 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hipposys:applicationfolder", FontAwesomeIcon.DIAMOND);
         primaryTypeNameIcons.put("hipposys:modulefolder", FontAwesomeIcon.SIMPLYBUILT);
         primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
-        primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
         primaryTypeNameIcons.put("hippostd:templatequery", FontAwesomeIcon.QUESTION);
         primaryTypeNameIcons.put("hipposys:resourcebundles", FontAwesomeIcon.BOOKMARK_O);
         primaryTypeNameIcons.put("hipposys:resourcebundle", FontAwesomeIcon.BOOKMARK);
@@ -208,8 +207,8 @@ public class JcrNodeIcon {
         // reports
         primaryTypeNameIcons.put("hipporeport:folder", FontAwesomeIcon.PIECHART);
 
-        pathCssMatchers.put("^/hst:hst.*-preview.*$", "hst-preview");
-        pathCssMatchers.put("^/hst:hst.*$", "hst");
+        pathCssMatchers.put("^/hst:.*-preview.*$", "hst-preview");
+        pathCssMatchers.put("^/hst:.*$", "hst");
         pathCssMatchers.put("^/" + CONFIGURATION_PATH + ".*$", "conf");
         pathCssMatchers.put("^/" + HCM_ROOT + ".*$", "system");
         pathCssMatchers.put("^/" + JCR_SYSTEM + ".*$", "system");

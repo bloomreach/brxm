@@ -104,13 +104,13 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-io.version>2.5</commons-io.version>
+    <commons-io.version>2.6</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
-    <jetty.version>6.1.22</jetty.version>
+    <jetty.version>6.1.26</jetty.version>
 
     <!--
       TODO: when wicket.version is bumped again, check whether the version override
@@ -119,7 +119,7 @@
     <wicket.version>7.10.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
-    <httpclient.version>4.5.5</httpclient.version>
+    <httpclient.version>4.5.6</httpclient.version>
 
     <joda-time.version>2.0</joda-time.version>
     <json-lib.version>2.4</json-lib.version>
