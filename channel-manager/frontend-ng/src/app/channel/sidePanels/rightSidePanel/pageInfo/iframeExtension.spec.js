@@ -31,6 +31,7 @@ describe('iframeExtension', () => {
   let ExtensionService;
   let HippoIframeService;
   let Penpal;
+  let child;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -42,7 +43,7 @@ describe('iframeExtension', () => {
     });
 
     context = {
-      foo: 1,
+      id: 1,
     };
 
     extension = {
@@ -66,8 +67,17 @@ describe('iframeExtension', () => {
       },
     };
 
-    $element = angular.element('<div></div>');
+    ExtensionService.getExtension.and.returnValue(extension);
+
     iframe = angular.element('<iframe src="about:blank"></iframe>');
+    child = jasmine.createSpyObj('child', ['emitEvent']);
+
+    Penpal.connectToChild.and.returnValue({
+      promise: $q.resolve(child),
+      iframe,
+    });
+
+    $element = angular.element('<div></div>');
     $ctrl = $componentController('iframeExtension', {
       $element,
       $log,
@@ -85,14 +95,6 @@ describe('iframeExtension', () => {
   });
 
   describe('$onInit', () => {
-    beforeEach(() => {
-      Penpal.connectToChild.and.returnValue({
-        promise: $q.resolve(),
-        iframe,
-      });
-      ExtensionService.getExtension.and.returnValue(extension);
-    });
-
     it('initializes the extension', () => {
       $ctrl.$onInit();
 
@@ -105,12 +107,14 @@ describe('iframeExtension', () => {
       ConfigService.getCmsContextPath.and.returnValue('/cms/');
 
       $ctrl.$onInit();
+      $rootScope.$digest();
 
       expect(Penpal.connectToChild).toHaveBeenCalledWith({
         url: '/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443',
         appendTo: $element[0],
         methods: jasmine.any(Object),
       });
+      expect($ctrl.child).toBe(child);
     });
 
     it('logs a warning when connecting to the child failed', () => {
@@ -186,14 +190,7 @@ describe('iframeExtension', () => {
     let methods;
 
     beforeEach(() => {
-      Penpal.connectToChild.and.returnValue({
-        promise: $q.resolve(),
-        iframe,
-      });
-      ExtensionService.getExtension.and.returnValue(extension);
-
       $ctrl.$onInit();
-
       methods = Penpal.connectToChild.calls.mostRecent().args[0].methods;
     });
 
@@ -244,6 +241,87 @@ describe('iframeExtension', () => {
           ConfigService.cmsVersion = '13.0.0';
           expect(methods.getProperties().version).toBe('13.0.0');
         });
+      });
+    });
+
+    describe('getPage', () => {
+      it('returns the current context', () => {
+        expect(methods.getPage()).toBe(context);
+      });
+    });
+
+    describe('refreshChannel', () => {
+      it('reloads the current channel meta-data', () => {
+        methods.refreshChannel();
+        expect(ChannelService.reload).toHaveBeenCalled();
+      });
+    });
+
+    describe('refreshPage', () => {
+      it('reloads the page', () => {
+        methods.refreshPage();
+        expect(HippoIframeService.reload).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('$onChanges', () => {
+    let newContext;
+
+    beforeEach(() => {
+      newContext = {
+        id: '2',
+      };
+    });
+
+    describe('without a connected child', () => {
+      it('ignores changes without a context', () => {
+        $ctrl.$onChanges({});
+        expect($ctrl.context).toBe(context);
+      });
+
+      it('remembers a copy of the new context', () => {
+        $ctrl.$onChanges({
+          context: {
+            currentValue: newContext,
+          },
+        });
+
+        expect($ctrl.context).toEqual(newContext);
+        expect($ctrl.context).not.toBe(newContext);
+      });
+    });
+
+    describe('with a connected child', () => {
+      beforeEach(() => {
+        $ctrl.$onInit();
+        $rootScope.$digest();
+      });
+
+      it('ignores changes without a context', () => {
+        $ctrl.$onChanges({});
+        expect($ctrl.context).toBe(context);
+      });
+
+      it('remembers a copy of the new context', () => {
+        $ctrl.$onChanges({
+          context: {
+            currentValue: newContext,
+          },
+        });
+
+        expect($ctrl.context).toEqual(newContext);
+        expect($ctrl.context).not.toBe(newContext);
+      });
+
+      it('emits a "channel.page.navigate" event in the child with the new page properties', () => {
+        $ctrl.$onChanges({
+          context: {
+            currentValue: newContext,
+          },
+        });
+
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.page.navigate', newContext);
       });
     });
   });
