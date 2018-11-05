@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-// tslint:disable
+/**
+ * Disable TSLint for imports that start with an uppercase letter
+ * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
+ */
+// tslint:disable:import-name
 import Penpal from 'penpal';
-import UiExtension from './ui-extension';
-import { Ui, PageProperties, Parent } from './ui-extension';
-// tslint:enable
+import UiExtension, { Ui, PageProperties, Parent } from './ui-extension';
+// tslint:enable:import-name
 
 jest.mock('penpal');
 
@@ -101,7 +104,7 @@ describe('register', () => {
       });
     });
 
-    describe('ui.channel.page.on(\'load\', listener)', () => {
+    describe('ui.channel.page.on(\'navigate\', listener)', () => {
       let nextPage: PageProperties;
 
       beforeEach(() => {
@@ -117,24 +120,27 @@ describe('register', () => {
         };
       });
 
-      it('calls the listener whenever the parent emits a page \'load\' event', () => {
-        const emitPageEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitPageEvent;
+      it('calls the listener whenever the parent emits a \'channel.page.navigate\' event', () => {
+        const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
+        const listener = jest.fn();
 
-        ui.channel.page.on('load', (page) => {
-          expect(page).toBe(nextPage);
-        });
+        ui.channel.page.on('navigate', listener);
 
-        return emitPageEvent('load', nextPage);
+        return emitEvent('channel.page.navigate', nextPage)
+          .then(() => {
+            expect(listener).toHaveBeenCalled();
+            expect(listener.mock.calls[0][0]).toBe(nextPage);
+          });
       });
 
       it('returns an unbind function', () => {
-        const emitPageEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitPageEvent;
+        const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
         const listener = jest.fn();
 
-        const unbind = ui.channel.page.on('load', listener);
+        const unbind = ui.channel.page.on('navigate', listener);
         unbind();
 
-        return emitPageEvent('load', nextPage)
+        return emitEvent('channel.page.navigate', nextPage)
           .then(() => {
             expect(listener).not.toHaveBeenCalled();
           });

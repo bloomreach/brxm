@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-// disable TSLint for imports that start with an uppercase letter (workaround for issue 387)
-import Emittery = require('emittery');  // tslint:disable-line
-import Penpal from 'penpal';            // tslint:disable-line
+/**
+ * Disable TSLint for imports that start with an uppercase letter
+ * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
+ */
+import Emittery = require('emittery');  // tslint:disable-line:import-name
+import Penpal from 'penpal';            // tslint:disable-line:import-name
 
 interface UiProperties {
   baseUrl: string;
@@ -40,8 +43,8 @@ export interface PageProperties {
   url: string;
 }
 
-interface PageEvents extends Emittery.Events {
-  load: PageProperties;
+interface PageEvents {
+  navigate: PageProperties;
 }
 
 export interface Parent {
@@ -96,7 +99,7 @@ abstract class UiScope {
   protected constructor(protected _parent: Parent) {
   }
 
-  protected callParent<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
+  protected call<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
     if (!this._parent[method]) {
       return new UiExtensionError(UiExtensionErrorCode.IncompatibleParent, `missing ${method}()`).toPromise();
     }
@@ -108,28 +111,31 @@ abstract class UiScope {
     }
   }
 
-  protected static convertPenpalError(error: PenpalError): Promise<any> {
+  private static convertPenpalError(error: PenpalError): Promise<any> {
     return UiExtensionError.fromPenpal(error).toPromise();
   }
 }
 
-class Page extends UiScope {
+abstract class UiScopeEmitter<Events> extends UiScope {
 
-  constructor(parent: Parent, private _eventEmitter: Emittery.Typed<PageEvents>) {
+  constructor(parent: Parent, private _eventEmitter: Emittery, private _eventScope: string) {
     super(parent);
   }
 
+  on(eventName: keyof Events, listener: (eventData: Events[keyof Events]) => any) {
+    const scopedEventName = `${this._eventScope}.${eventName}`;
+    return this._eventEmitter.on(scopedEventName, listener);
+  }
+}
+
+class Page extends UiScopeEmitter<PageEvents> {
+
   get(): Promise<PageProperties> {
-    return this.callParent('getPage');
+    return this.call('getPage');
   }
 
   refresh(): Promise<void> {
-    return this.callParent('refreshPage');
-  }
-
-  on<Name extends Extract<keyof PageEvents, string>>
-      (event: Name, listener: (eventData: PageEvents[Name]) => any): Emittery.UnsubscribeFn {
-    return this._eventEmitter.on(event, listener);
+    return this.call('refreshPage');
   }
 }
 
@@ -137,13 +143,13 @@ class Channel extends UiScope {
 
   page: Page;
 
-  constructor(_parent: Parent, pageEventEmitter: Emittery.Typed<PageEvents>) {
-    super(_parent);
-    this.page = new Page(_parent, pageEventEmitter);
+  constructor(parent: Parent, eventEmitter: Emittery) {
+    super(parent);
+    this.page = new Page(parent, eventEmitter, 'channel.page');
   }
 
   refresh(): Promise<void> {
-    return this.callParent('refreshChannel');
+    return this.call('refreshChannel');
   }
 }
 
@@ -158,32 +164,32 @@ export class Ui extends UiScope implements UiProperties {
   user: string;
   version: string;
 
-  constructor(_parent: Parent, pageEventEmitter: Emittery.Typed<PageEvents>) {
-    super(_parent);
-    this.channel = new Channel(_parent, pageEventEmitter);
+  constructor(parent: Parent, eventEmitter: Emittery) {
+    super(parent);
+    this.channel = new Channel(parent, eventEmitter);
   }
 
   init(): Promise<Ui> {
-    return this.callParent('getProperties')
+    return this.call('getProperties')
       .then(properties => Object.assign(this, properties));
   }
 }
 
 export default class UiExtension {
   static register(): Promise<Ui> {
-    const pageEventEmitter = new Emittery.Typed<PageEvents>();
+    const eventEmitter = new Emittery();
 
-    return UiExtension.connect(pageEventEmitter)
-      .then(parent => new Ui(parent, pageEventEmitter).init());
+    return UiExtension.connect(eventEmitter)
+      .then(parent => new Ui(parent, eventEmitter).init());
   }
 
-  private static connect(pageEventEmitter: Emittery.Typed<PageEvents>): Promise<Parent> {
+  private static connect(eventEmitter: Emittery): Promise<Parent> {
     const parentOrigin = new URLSearchParams(window.location.search).get('br.parentOrigin');
     try {
       return Penpal.connectToParent({
         parentOrigin,
         methods: {
-          emitPageEvent: pageEventEmitter.emit.bind(pageEventEmitter),
+          emitEvent: eventEmitter.emit.bind(eventEmitter),
         },
       }).promise;
     } catch (penpalError) {
