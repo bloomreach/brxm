@@ -41,7 +41,7 @@
 
     <jsp-api.version>2.2</jsp-api.version>
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <dom4j.version>2.1.0</dom4j.version>
     <junit.version>4.12</junit.version>
@@ -239,6 +239,9 @@
                 <exclude>plugins/commerce-search-box/src/main/resources/css/jquery.typeahead.min.css</exclude>
                 <exclude>plugins/commerce-search-box/src/main/resources/js/jquery.typeahead.min.js</exclude>
                 <exclude>plugins/urlrewriter/src/main/resources/instructions/xml/content/sample-rule.xml</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.js</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.js.map</exclude>
+                <exclude>plugins/openstreetmap/src/main/resources/webfiles/leaflet.css</exclude>
                 <exclude>**/target/**</exclude>
               </excludes>
             </configuration>

@@ -1,0 +1,114 @@
+/content/documents/administration/open-street-map:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippo:named', 'mix:versionable']
+  jcr:uuid: e630766b-2b83-4bd1-9ec1-7e57b5c7360e
+  hippo:name: open street map
+  hippostd:foldertype: [new-resource-bundle, new-untranslated-folder]
+  /openstreetmap-maps:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: f0d26428-6f5f-4403-b545-5a271fb3b39b
+    hippo:name: OpenStreetMap Maps
+    /openstreetmap-maps[1]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 09a90d56-e769-4fc9-893a-9bdcf3049ce7
+      hippo:availability: []
+      hippostd:state: draft
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T10:44:38.564+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:44:35.722+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      resourcebundle:descriptions: [The standard OpenStreetMap map., '', '', '']
+      resourcebundle:id: openstreetmap.maptypes
+      resourcebundle:keys: ['https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png', 'https://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png',
+        'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png']
+      resourcebundle:messages: [Standard, Watercolor, No Labels, Toner]
+    /openstreetmap-maps[2]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+      jcr:uuid: 95328ecf-efb8-4f9e-a1ec-a01f491524c4
+      hippo:availability: [preview]
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T10:44:38.564+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:44:35.722+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      resourcebundle:descriptions: [The standard OpenStreetMap map., '', '', '']
+      resourcebundle:id: openstreetmap.maptypes
+      resourcebundle:keys: ['https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png', 'https://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png',
+        'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png']
+      resourcebundle:messages: [Standard, Watercolor, No Labels, Toner]
+    /openstreetmap-maps[3]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 8edd1338-50b4-45a2-ab94-11ae9b58f875
+      hippo:availability: [live]
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T10:44:38.564+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:44:35.722+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2018-09-28T13:36:56.849+02:00
+      resourcebundle:descriptions: [The standard OpenStreetMap map., '', '', '']
+      resourcebundle:id: openstreetmap.maptypes
+      resourcebundle:keys: ['https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png', 'https://{s}.tiles.wmflabs.org/osm-no-labels/{z}/{x}/{y}.png',
+        'http://a.tile.stamen.com/toner/{z}/{x}/{y}.png']
+      resourcebundle:messages: [Standard, Watercolor, No Labels, Toner]
+  /openstreetmap-overlays:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: b4a5778e-539f-41e6-9962-563d04059bdb
+    hippo:name: OpenStreetMap Overlays
+    /openstreetmap-overlays[1]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 394d9f19-8678-4fa7-b43b-742d473a4eaa
+      hippo:availability: []
+      hippostd:state: draft
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T12:49:10.173+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:49:10.174+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      resourcebundle:descriptions: ['', '', '', '']
+      resourcebundle:id: openstreetmap.overlays
+      resourcebundle:keys: ['https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
+        'https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        none]
+      resourcebundle:messages: [Hiking Trails, Cycling Trails, Sea Markers, None]
+    /openstreetmap-overlays[2]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
+      jcr:uuid: aafd5af1-1d05-4199-9de7-9e0afe997c3d
+      hippo:availability: [preview]
+      hippostd:state: unpublished
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T12:49:10.173+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:53:47.782+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      resourcebundle:descriptions: ['', '', '', '']
+      resourcebundle:id: openstreetmap.overlays
+      resourcebundle:keys: ['https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
+        'https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        none]
+      resourcebundle:messages: [Hiking Trails, Cycling Trails, Sea Markers, None]
+    /openstreetmap-overlays[3]:
+      jcr:primaryType: resourcebundle:resourcebundle
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 4e2a450d-5aaa-47ac-914d-f51c7a80a33c
+      hippo:availability: [live]
+      hippostd:state: published
+      hippostdpubwf:createdBy: admin
+      hippostdpubwf:creationDate: 2018-08-13T12:49:10.173+02:00
+      hippostdpubwf:lastModificationDate: 2018-08-13T12:53:47.782+02:00
+      hippostdpubwf:lastModifiedBy: admin
+      hippostdpubwf:publicationDate: 2018-09-28T13:36:56.689+02:00
+      resourcebundle:descriptions: ['', '', '', '']
+      resourcebundle:id: openstreetmap.overlays
+      resourcebundle:keys: ['https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',
+        'https://tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+        none]
+      resourcebundle:messages: [Hiking Trails, Cycling Trails, Sea Markers, None]

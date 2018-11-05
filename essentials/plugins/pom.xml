@@ -53,6 +53,7 @@
     <module>list</module>
     <module>menu</module>
     <module>news</module>
+    <module>openstreetmap</module>
     <module>poll</module>
     <module>projects</module>
     <module>related-documents</module>

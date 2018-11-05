@@ -103,6 +103,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-openstreetmap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-plugin-poll</artifactId>
       <version>${project.version}</version>
     </dependency>
