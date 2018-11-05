@@ -25,6 +25,9 @@
       <hippo-icon name="{{showChanges ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
       <a href="#">Changes made by this feature</a>
     </span>
+    <span class="feature-control pull-left" ng-if="!plugin.hasMessages">
+      <p>This feature has no installation instructions.</p>
+    </span>
   </div>
   <div class="log-messages" ng-show="showChanges">
     <p ng-repeat="changeMessage in changeMessages"><hippo-icon name="{{changeMessage.icon}}" size="m" ></hippo-icon> {{changeMessage.message}}</p>
