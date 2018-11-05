@@ -324,6 +324,14 @@
       width: (Wicket.Window.current.width + deltaX < this.initialWidth) ? 0 : deltaX,
     };
   };
+  
+  WicketWindowResizer.prototype.restoreDatatableHeight = function () {
+    this.readComponents();
+    if (this.picker != null && this.pickerList != null) {
+      this.pickerList.style.height = this.picker.clientHeight + 'px';
+    }
+    this.resizePickerListDatatable();
+  };
 
   WicketWindowResizer.prototype.resize = function (delta) {
     this.readComponents();
