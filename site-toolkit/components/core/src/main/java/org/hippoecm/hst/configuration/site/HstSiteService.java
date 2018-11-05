@@ -88,14 +88,22 @@ public class HstSiteService implements HstSite {
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
         findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
-        init(site, mount, isPreviewSite, hstNodeLoadingCache, null);
+        init(site, mount, isPreviewSite, hstNodeLoadingCache);
     }
 
+    /**
+     *
+     * @param site
+     * @param mount
+     * @param mountSiteMapConfiguration
+     * @param hstNodeLoadingCache
+     * @param configurationPath
+     * @param isPreviewSite
+     */
     public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
                           final HstNodeLoadingCache hstNodeLoadingCache,
                           final String configurationPath,
-                          final boolean isPreviewSite,
-                          final Channel master) {
+                          final boolean isPreviewSite) {
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
         name = site.getValueProvider().getName();
@@ -108,7 +116,7 @@ public class HstSiteService implements HstSite {
             hasPreviewConfiguration = hstNodeLoadingCache.getNode(configurationPath + "-preview") != null;
         }
 
-        init(site, mount, isPreviewSite, hstNodeLoadingCache, master);
+        init(site, mount, isPreviewSite, hstNodeLoadingCache);
     }
 
     private void findAndSetConfigurationPath(final HstNode site,
@@ -132,11 +140,11 @@ public class HstSiteService implements HstSite {
     }
 
     private void init(final HstNode site, final Mount mount, final boolean isPreviewSite,
-                      final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
+                      final HstNodeLoadingCache hstNodeLoadingCache) {
 
         log.debug("Loading channel configuration for '{}'", configurationPath);
 
-        loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache, master);
+        loadChannel(site, mount, isPreviewSite, hstNodeLoadingCache);
 
         HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
         if (ccs != null) {
@@ -161,7 +169,7 @@ public class HstSiteService implements HstSite {
 
     }
 
-    private void loadChannel(final HstNode site, final Mount mount, final boolean isPreviewSite, final HstNodeLoadingCache hstNodeLoadingCache, final Channel master) {
+    private void loadChannel(final HstNode site, final Mount mount, final boolean isPreviewSite, final HstNodeLoadingCache hstNodeLoadingCache) {
         HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         if (mount.getContextPath() != null && !mount.getContextPath().equals(mngr.getContextPath())) {
             log.info("channel for different context path can't be loaded because of channel info class");
@@ -176,13 +184,11 @@ public class HstSiteService implements HstSite {
         }
         if (ch != null) {
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
-            if (master != null) {
-                if (!rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) || !rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
-                    throw new ModelLoadingException(String.format("Cannot load branch '%s' since misses mandatory property '%s' or '%s'",
-                            configLoadingCache, BRANCH_PROPERTY_BRANCH_OF, BRANCH_PROPERTY_BRANCH_ID));
-                }
+
+            if (rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) && rootConfigNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
                 ch.setBranchOf(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF));
                 ch.setBranchId(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID));
+
             }
 
             if (rootConfigNode == null) {
