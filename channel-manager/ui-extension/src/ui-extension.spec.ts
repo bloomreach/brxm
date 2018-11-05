@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';                                      // tslint:disable-line
-import UiExtension, { Ui, PageProperties } from './ui-extension'; // tslint:disable-line
+/**
+ * Disable TSLint for imports that start with an uppercase letter
+ * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
+ */
+// tslint:disable:import-name
+import Penpal from 'penpal';
+import UiExtension, { Ui, PageProperties, Parent } from './ui-extension';
+// tslint:enable:import-name
 
 jest.mock('penpal');
 
@@ -62,6 +68,18 @@ describe('register', () => {
       expect(ui.version).toBe('13.0.0');
     });
 
+    describe('ui.channel.refresh()', () => {
+      it('refreshes the current channel', () => {
+        const connection = (Penpal.connectToParent as jest.Mock).mock.results[0].value;
+        return connection.promise.then((parent: Parent) => {
+          const refreshChannel = jest.spyOn(parent, 'refreshChannel');
+          return ui.channel.refresh().then(() => {
+            expect(refreshChannel).toHaveBeenCalled();
+          });
+        });
+      });
+    });
+
     describe('ui.channel.page.get()', () => {
       it('returns the current page', () => {
         return ui.channel.page.get()
@@ -71,6 +89,18 @@ describe('register', () => {
             expect(page.sitemapItem.id).toBe('testSitemapItemId');
             expect(page.url).toBe('http://www.example.com');
           });
+      });
+    });
+
+    describe('ui.channel.page.refresh()', () => {
+      it('refreshes the current page', () => {
+        const connection = (Penpal.connectToParent as jest.Mock).mock.results[0].value;
+        return connection.promise.then((parent: Parent) => {
+          const refreshPage = jest.spyOn(parent, 'refreshPage');
+          return ui.channel.page.refresh().then(() => {
+            expect(refreshPage).toHaveBeenCalled();
+          });
+        });
       });
     });
 
@@ -110,7 +140,7 @@ describe('register', () => {
         const unbind = ui.channel.page.on('navigate', listener);
         unbind();
 
-        return emitEvent('channel.page.load', nextPage)
+        return emitEvent('channel.page.navigate', nextPage)
           .then(() => {
             expect(listener).not.toHaveBeenCalled();
           });

@@ -55,6 +55,8 @@ class IframeExtensionCtrl {
       methods: {
         getProperties: () => this._getProperties(),
         getPage: () => this.context,
+        refreshChannel: () => this.ChannelService.reload(),
+        refreshPage: () => this.HippoIframeService.reload(),
       },
     });
 

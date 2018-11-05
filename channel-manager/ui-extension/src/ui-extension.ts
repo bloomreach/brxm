@@ -47,9 +47,11 @@ interface PageEvents {
   navigate: PageProperties;
 }
 
-interface Parent {
+export interface Parent {
   getPage: () => Promise<PageProperties>;
   getProperties: () => Promise<UiProperties>;
+  refreshChannel: () => Promise<void>;
+  refreshPage: () => Promise<void>;
 }
 
 type ParentMethod = keyof Parent;
@@ -131,6 +133,10 @@ class Page extends UiScopeEmitter<PageEvents> {
   get(): Promise<PageProperties> {
     return this.call('getPage');
   }
+
+  refresh(): Promise<void> {
+    return this.call('refreshPage');
+  }
 }
 
 class Channel extends UiScope {
@@ -140,6 +146,10 @@ class Channel extends UiScope {
   constructor(parent: Parent, eventEmitter: Emittery) {
     super(parent);
     this.page = new Page(parent, eventEmitter, 'channel.page');
+  }
+
+  refresh(): Promise<void> {
+    return this.call('refreshChannel');
   }
 }
 
