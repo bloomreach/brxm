@@ -44,7 +44,7 @@ export interface PageProperties {
 }
 
 interface PageEvents {
-  load: PageProperties;
+  navigate: PageProperties;
 }
 
 interface Parent {
