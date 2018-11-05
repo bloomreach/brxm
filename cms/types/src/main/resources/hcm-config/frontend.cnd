@@ -53,7 +53,7 @@
 [frontend:uiExtension]
 - frontend:config (string)
 - frontend:displayName (string) mandatory
-- frontend:extensionPoint (string) = 'pageSidePanel' mandatory < 'pageSidePanel'
+- frontend:extensionPoint (string) = 'channel.page.tools' mandatory < 'channel.page.tools'
 - frontend:url (string) mandatory
 
 [frontend:uiExtensions] orderable
