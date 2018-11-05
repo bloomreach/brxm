@@ -66,7 +66,8 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
             final Node extensionNode = extensionNodes.nextNode();
             final UiExtension extension = readExtension(extensionNode);
             if (extensions.contains(extension)) {
-                log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.", extension.getId());
+                log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.",
+                        extension.getId());
             } else {
                 extensions.add(extension);
             }
@@ -92,17 +93,8 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         return extension;
     }
 
-    private Optional<UiExtensionPoint> readExtensionPoint(final Node extensionNode) throws RepositoryException {
-        final Optional<String> optionalProperty = readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
-
-        if (optionalProperty.isPresent()) {
-            try {
-                return Optional.of(UiExtensionPoint.valueOf(optionalProperty.get().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                log.warn("Cannot convert '{}' to a UI extension context", optionalProperty.get(), e);
-            }
-        }
-        return Optional.empty();
+    private Optional<String> readExtensionPoint(final Node extensionNode) throws RepositoryException {
+        return readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
     }
 
     private Optional<String> readProperty(final Node extensionNode, final String propertyName) throws RepositoryException {

@@ -33,7 +33,7 @@ public interface UiExtension {
     /**
      * @return the extension point for this extension.
      */
-    UiExtensionPoint getExtensionPoint();
+    String getExtensionPoint();
 
     /**
      * @return the URL that loads the extension.

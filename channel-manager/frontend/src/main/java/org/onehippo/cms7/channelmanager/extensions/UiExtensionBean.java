@@ -21,7 +21,7 @@ class UiExtensionBean implements UiExtension {
     private String displayName;
     private String url;
     private String config;
-    private UiExtensionPoint extensionPoint;
+    private String extensionPoint;
 
     @Override
     public String getId() {
@@ -60,11 +60,11 @@ class UiExtensionBean implements UiExtension {
     }
 
     @Override
-    public UiExtensionPoint getExtensionPoint() {
+    public String getExtensionPoint() {
         return extensionPoint;
     }
 
-    public void setExtensionPoint(final UiExtensionPoint extensionPoint) {
+    public void setExtensionPoint(final String extensionPoint) {
         this.extensionPoint = extensionPoint;
     }
 

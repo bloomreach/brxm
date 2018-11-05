@@ -23,6 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ChannelEditorExtensionValidatorTest {
 
+    private static final String CHANNEL_PAGE_TOOLS_EXTENSION_POINT = "channel.page.tools";
+
     private ChannelEditorUiExtensionValidator validator;
 
     @Before
@@ -60,9 +62,9 @@ public class ChannelEditorExtensionValidatorTest {
     }
 
     @Test
-    public void validateContext() {
-        assertTrue(isValidContext(UiExtensionPoint.PAGESIDEPANEL));
-        assertFalse(isValidContext(null));
+    public void validateExtensionPoint() {
+        assertTrue(isValidExtensionPoint(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
+        assertFalse(isValidExtensionPoint(null));
     }
 
     @Test
@@ -77,29 +79,29 @@ public class ChannelEditorExtensionValidatorTest {
     }
 
     private boolean isValidId(final String id) {
-        return validator.validate(extension(id, id, UiExtensionPoint.PAGESIDEPANEL, "extensions/" + id));
+        return validator.validate(extension(id, id, CHANNEL_PAGE_TOOLS_EXTENSION_POINT, "extensions/" + id));
     }
 
     private boolean isValidDisplayName(final String displayName) {
-        return validator.validate(extension("test", displayName, UiExtensionPoint.PAGESIDEPANEL, "extensions/test"));
+        return validator.validate(extension("test", displayName, CHANNEL_PAGE_TOOLS_EXTENSION_POINT, "extensions/test"));
     }
 
-    private boolean isValidContext(final UiExtensionPoint context) {
+    private boolean isValidExtensionPoint(final String context) {
         return validator.validate(extension("test", "Test", context, "extensions/test"));
     }
 
     private boolean isValidUrl(final String url) {
-        return validator.validate(extension("test", "Test", UiExtensionPoint.PAGESIDEPANEL, url));
+        return validator.validate(extension("test", "Test", CHANNEL_PAGE_TOOLS_EXTENSION_POINT, url));
     }
 
     private UiExtension extension(final String id,
                                   final String displayName,
-                                  final UiExtensionPoint context,
+                                  final String extensionPoint,
                                   final String url) {
         final UiExtensionBean extension = new UiExtensionBean();
         extension.setId(id);
         extension.setDisplayName(displayName);
-        extension.setExtensionPoint(context);
+        extension.setExtensionPoint(extensionPoint);
         extension.setUrl(url);
         return extension;
     }

@@ -15,17 +15,13 @@
  */
 package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates that a {@link UiExtension} can be used in the Channel Editor.
- * Validation errors will be logged as warnings.
+ * Validates that a {@link UiExtension} can be used in the Channel Editor. Validation errors will be logged as
+ * warnings.
  */
 public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
 
@@ -66,14 +62,10 @@ public class ChannelEditorUiExtensionValidator implements UiExtensionValidator {
     }
 
     private boolean validateExtensionPoint(final UiExtension extension) {
-        final UiExtensionPoint extensionPoint = extension.getExtensionPoint();
+        final String extensionPoint = extension.getExtensionPoint();
 
-        if (extensionPoint == null) {
-            final List<String> extensionPointNames = Arrays.stream(UiExtensionPoint.values())
-                    .map(UiExtensionPoint::getLowerCase)
-                    .collect(Collectors.toList());
-            log.warn("Ignoring UI extension '{}': extensionPoint unknown. Valid extensionPoints are: {}.",
-                    extension.getId(), extensionPointNames);
+        if (StringUtils.isBlank(extensionPoint)) {
+            log.warn("Ignoring UI extension '{}': no extensionPoint provided.", extensionPoint);
             return false;
         }
 

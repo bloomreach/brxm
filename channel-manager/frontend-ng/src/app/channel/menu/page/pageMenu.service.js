@@ -57,7 +57,7 @@ class PageMenuService extends MenuService {
 
     if (this._hasPageExtensions()) {
       menu.addAction('info', {
-        translationKey: 'TOOLBAR_MENU_PAGE_INFO',
+        translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
         onClick: () => this._pageInfo(),
       });
     }
@@ -120,7 +120,7 @@ class PageMenuService extends MenuService {
   }
 
   _hasPageExtensions() {
-    return this.ExtensionService.hasExtensions('pagesidepanel');
+    return this.ExtensionService.hasExtensions('channel.page.tools');
   }
 
   _hasWriteAccess() {
