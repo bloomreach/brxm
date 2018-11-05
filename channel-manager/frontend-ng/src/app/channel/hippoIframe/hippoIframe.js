@@ -15,6 +15,7 @@
  */
 
 import hippoIframeComponent from './hippoIframe.component';
+import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import DragDropService from './dragDrop/dragDrop.service';
 import HippoIframeService from './hippoIframe.service';
@@ -32,6 +33,7 @@ const channelHippoIframeModule = angular
     PageModule.name,
   ])
   .component('hippoIframe', hippoIframeComponent)
+  .service('ComponentRenderingService', ComponentRenderingService)
   .service('ContainerService', ContainerService)
   .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)

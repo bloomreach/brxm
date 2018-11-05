@@ -48,7 +48,7 @@ class EditContentToolsCtrl {
 
   uiCanExit() {
     if (this.exitToContentEditor) {
-      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
+      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
         .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())
         .finally(this._clear());

@@ -41,8 +41,6 @@ class EditContentMainCtrl {
   }
 
   $onInit() {
-    this.RightSidePanelService.setClosing(false);
-
     this.$scope.$watch('$ctrl.loading', (newValue, oldValue) => {
       if (newValue === oldValue) {
         return;
@@ -130,19 +128,11 @@ class EditContentMainCtrl {
           // the editor should still be closed.
         })
         .finally(() => this.ContentEditor.close()),
-      )
-      .catch(() => {
-        // user cancelled the exit
-        this.RightSidePanelService.setClosing(false);
-        return this.$q.reject();
-      });
+      );
   }
 
   _confirmExit() {
-    if (this.RightSidePanelService.isClosing()) {
-      return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-    }
-    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_BLUR_MESSAGE')
+    return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
       .then((action) => {
         if (action === 'SAVE') {
           this.HippoIframeService.reload();

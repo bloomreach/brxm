@@ -51,7 +51,6 @@ describe('EditContentMainCtrl', () => {
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
-        'isClosing',
         'setClosing',
         'startLoading',
         'stopLoading',
@@ -248,68 +247,6 @@ describe('EditContentMainCtrl', () => {
   });
 
   describe('ui-router state exit', () => {
-    describe('on close', () => {
-      beforeEach(() => {
-        RightSidePanelService.isClosing.and.returnValue(true);
-      });
-
-      it('succeeds when discarding changes', (done) => {
-        ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.discardChanges.and.returnValue($q.resolve());
-
-        $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.discardChanges).toHaveBeenCalled();
-          expect(ContentEditor.close).toHaveBeenCalled();
-          done();
-        });
-        $scope.$digest();
-      });
-
-      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
-        ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-        ContentEditor.discardChanges.and.returnValue($q.reject());
-
-        $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.discardChanges).toHaveBeenCalled();
-          expect(ContentEditor.close).toHaveBeenCalled();
-          done();
-        });
-        $scope.$digest();
-      });
-
-      it('has closed the editor when the returned promise resolves', (done) => {
-        ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
-
-        const deferredDiscard = $q.defer();
-        ContentEditor.discardChanges.and.returnValue(deferredDiscard.promise);
-
-        $ctrl.uiCanExit().then(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          expect(ContentEditor.discardChanges).toHaveBeenCalled();
-          expect(ContentEditor.close).toHaveBeenCalled();
-          done();
-        });
-
-        $scope.$digest();
-        expect(ContentEditor.close).not.toHaveBeenCalled();
-
-        deferredDiscard.reject();
-        $scope.$digest();
-      });
-
-      it('fails when discarding changes is canceled', (done) => {
-        ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
-
-        $ctrl.uiCanExit().catch(() => {
-          expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE');
-          done();
-        });
-        $scope.$digest();
-      });
-    });
-
     describe('when opening another document', () => {
       it('succeeds when saving changes and reloads the iframe', (done) => {
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));

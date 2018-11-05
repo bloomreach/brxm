@@ -12,22 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.ie11 {
-  // CHANNELMGR-705 If an action on the page causes a scrollbar to appear/disappear, a flex element with a max-width
-  // other than 100% (like 50%) will be rendered at 100% width. A browser-resize event fixes this and renders the
-  // element at 50%, but that is not a pleasant solution :)
-  // It is caused by flex-grow: 1; Normally, adding flex="nogrow" should be enough, but in some cases this is overridden
-  // by media-query rules like 'flex-gt-xs="66"'. For these situations we need to force flex-grow: 0
-  .flex-no-grow-ie {
-    flex-grow: 0 !important;
-  }
-
-  md-input-container label:not(.md-no-float):not(.md-container-ignore),
-  md-input-container .md-placeholder {
-    width: auto;
-  }
-}
-
 .chrome {
   // Chrome resets the scroll position of an iframe if an ancestor of the iframe is hidden using display:none
   // To retain the scroll position, we mark these ancestors with "retain-iframe-scroll-position-when-hiding-in-chrome"

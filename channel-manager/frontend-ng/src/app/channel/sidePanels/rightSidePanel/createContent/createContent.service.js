@@ -158,8 +158,7 @@ class CreateContentService {
 
   _beforeSwitchProject() {
     if (this._isStep2()) {
-      const projectName = this.ProjectService.selectedProject.name;
-      return this.Step2Service.closeEditor('SAVE_CHANGES_ON_PROJECT_SWITCH', { projectName })
+      return this.Step2Service.closeEditor('SAVE_CHANGES_TO_DOCUMENT')
         .then(() => this.stop());
     }
     return this.$q.resolve();

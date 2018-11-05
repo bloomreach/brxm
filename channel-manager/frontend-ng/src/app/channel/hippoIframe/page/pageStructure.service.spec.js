@@ -622,7 +622,9 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('aaaa');
+
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -648,7 +650,9 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('component-no-markup');
+
+    const component = PageStructureService.getComponentById('component-no-markup');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     expect(PageStructureService.getEmbeddedLinks().length).toBe(0);
@@ -670,7 +674,9 @@ describe('PageStructureService', () => {
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('aaaa');
+
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -691,43 +697,43 @@ describe('PageStructureService', () => {
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    PageStructureService.renderComponent('bbbb');
-    PageStructureService.renderComponent('bbbb');
+    const component = PageStructureService.getComponentById('bbbb');
+    PageStructureService.renderComponent(component);
+    PageStructureService.renderComponent(component);
 
     expect(() => {
       $rootScope.$digest();
     }).not.toThrow();
   });
 
-  it('gracefully handles requests to re-render an unknown component', () => {
+  it('gracefully handles requests to re-render an undefined or null component', () => {
     spyOn(MarkupService, 'fetchComponentMarkup');
 
-    PageStructureService.renderComponent('unknown-component');
+    PageStructureService.renderComponent();
+    PageStructureService.renderComponent(null);
 
     expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
   });
 
   it('shows an error message and reloads the page when a component has been deleted', (done) => {
-    spyOn(PageStructureService, 'getComponentById').and.returnValue({});
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
     spyOn(HippoIframeService, 'reload');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showDismissible');
 
-    PageStructureService.renderComponent('componentId').catch(() => {
+    PageStructureService.renderComponent({}).catch(() => {
       expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
+      expect(FeedbackService.showDismissible).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
       done();
     });
     $rootScope.$digest();
   });
 
   it('does nothing if markup for a component cannot be retrieved but status is not 404', (done) => {
-    spyOn(PageStructureService, 'getComponentById').and.returnValue({});
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({}));
     spyOn(HippoIframeService, 'reload');
     spyOn(FeedbackService, 'showError');
 
-    PageStructureService.renderComponent('componentId').then(() => {
+    PageStructureService.renderComponent({}).then(() => {
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
       expect(FeedbackService.showError).not.toHaveBeenCalled();
       done();
@@ -747,7 +753,9 @@ describe('PageStructureService', () => {
       `;
     spyOn($log, 'error');
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    PageStructureService.renderComponent('aaaa');
+
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     expect(PageStructureService.getContainers().length).toBe(1);
@@ -769,7 +777,8 @@ describe('PageStructureService', () => {
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    PageStructureService.renderComponent('aaaa');
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
@@ -790,7 +799,8 @@ describe('PageStructureService', () => {
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    PageStructureService.renderComponent('aaaa');
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
@@ -813,7 +823,8 @@ describe('PageStructureService', () => {
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
-    PageStructureService.renderComponent('aaaa');
+    const component = PageStructureService.getComponentById('aaaa');
+    PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
@@ -835,10 +846,11 @@ describe('PageStructureService', () => {
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
+    const component = PageStructureService.getComponentById('aaaa');
     const propertiesMap = {
       parameter: 'customValue',
     };
-    PageStructureService.renderComponent('aaaa', propertiesMap);
+    PageStructureService.renderComponent(component, propertiesMap);
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];

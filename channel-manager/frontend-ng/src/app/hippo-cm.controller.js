@@ -44,9 +44,6 @@ class HippoCmCtrl {
     this.$state.defaultErrorHandler(angular.noop);
 
     // add CSS classes to the body for browser-specific hacks
-    if (this.BrowserService.isIE()) {
-      $('body').addClass('ie11');
-    }
     if (this.BrowserService.isChrome()) {
       $('body').addClass('chrome');
     }

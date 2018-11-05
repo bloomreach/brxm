@@ -28,8 +28,19 @@ describe('ContainerService', () => {
   let PageStructureService;
   let SpaService;
 
+  class EmitteryMock {
+    constructor() {
+      this.on = jasmine.createSpy('on');
+      this.emit = jasmine.createSpy('emit');
+    }
+  }
+
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    angular.mock.module(($provide) => {
+      $provide.constant('Emittery', EmitteryMock);
+    });
 
     inject((
       _$log_,
@@ -57,6 +68,14 @@ describe('ContainerService', () => {
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
       SpaService = _SpaService_;
+    });
+  });
+
+  describe('onComponentMoved', () => {
+    it('registers a "component-moved" callback', () => {
+      const componentMovedCallback = jasmine.createSpy('componentMovedCallback');
+      ContainerService.onComponentMoved(componentMovedCallback);
+      expect(ContainerService.emitter.on).toHaveBeenCalledWith('component-moved', componentMovedCallback);
     });
   });
 
@@ -124,6 +143,7 @@ describe('ContainerService', () => {
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
       expect(DragDropService.replaceContainer).toHaveBeenCalledWith(sourceContainer, rerenderedSourceContainer);
       expect(DragDropService.replaceContainer).toHaveBeenCalledWith(targetContainer, rerenderedTargetContainer);
+      expect(ContainerService.emitter.emit).toHaveBeenCalledWith('component-moved', component);
     });
   });
 
