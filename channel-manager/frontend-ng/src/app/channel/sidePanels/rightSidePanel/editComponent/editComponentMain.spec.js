@@ -18,7 +18,6 @@ describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
   let $scope;
-  let $translate;
   let ChannelService;
   let CmsService;
   let ComponentEditor;
@@ -40,14 +39,12 @@ describe('EditComponentMainCtrl', () => {
       $rootScope,
       _$log_,
       _$q_,
-      _$translate_,
       _ContainerService_,
       _EditComponentService_,
       _RenderingService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
-      $translate = _$translate_;
       ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
       RenderingService = _RenderingService_;
@@ -289,13 +286,9 @@ describe('EditComponentMainCtrl', () => {
       }));
       ComponentEditor.reopen.and.returnValue($q.resolve());
 
-      spyOn($translate, 'instant');
-      $translate.instant.and.returnValue('translated');
-
       $ctrl.save()
         .then(() => {
-          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
-          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           done();
@@ -311,14 +304,11 @@ describe('EditComponentMainCtrl', () => {
         },
       }));
 
-      spyOn($translate, 'instant');
-      $translate.instant.and.returnValue('translated');
       spyOn(EditComponentService, 'killEditor');
 
       $ctrl.save()
         .then(() => {
-          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
-          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           expect(EditComponentService.killEditor).toHaveBeenCalled();
@@ -532,8 +522,6 @@ describe('EditComponentMainCtrl', () => {
 
       beforeEach(() => {
         ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
-        spyOn($translate, 'instant');
-        $translate.instant.and.returnValue('translated');
         ComponentEditor.getComponentName.and.returnValue('componentName');
       });
 
@@ -546,8 +534,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
-        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
 
@@ -559,8 +546,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
-        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
     });

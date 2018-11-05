@@ -274,7 +274,7 @@ class PageStructureService {
           if (response.status === 404) {
             // component being edited is removed (by someone else), reload the page
             this.HippoIframeService.reload();
-            this.FeedbackService.showError('FEEDBACK_NOT_FOUND_MESSAGE');
+            this.FeedbackService.showDismissible('FEEDBACK_NOT_FOUND_MESSAGE');
             return this.$q.reject();
           }
           return this.$q.resolve();
