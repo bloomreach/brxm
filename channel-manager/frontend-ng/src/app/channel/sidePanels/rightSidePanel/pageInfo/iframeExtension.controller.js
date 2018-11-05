@@ -124,7 +124,7 @@ class IframeExtensionCtrl {
       this.context = angular.copy(changedContext.currentValue);
 
       if (this.child) {
-        this.child.emitEvent('channel.page.load', this.context);
+        this.child.emitEvent('channel.page.navigate', this.context);
       }
     }
   }

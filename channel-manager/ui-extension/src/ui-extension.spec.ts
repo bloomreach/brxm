@@ -74,7 +74,7 @@ describe('register', () => {
       });
     });
 
-    describe('ui.channel.page.on(\'load\', listener)', () => {
+    describe('ui.channel.page.on(\'navigate\', listener)', () => {
       let nextPage: PageProperties;
 
       beforeEach(() => {
@@ -90,13 +90,13 @@ describe('register', () => {
         };
       });
 
-      it('calls the listener whenever the parent emits a \'channel.page.load\' event', () => {
+      it('calls the listener whenever the parent emits a \'channel.page.navigate\' event', () => {
         const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
         const listener = jest.fn();
 
-        ui.channel.page.on('load', listener);
+        ui.channel.page.on('navigate', listener);
 
-        return emitEvent('channel.page.load', nextPage)
+        return emitEvent('channel.page.navigate', nextPage)
           .then(() => {
             expect(listener).toHaveBeenCalled();
             expect(listener.mock.calls[0][0]).toBe(nextPage);
@@ -107,7 +107,7 @@ describe('register', () => {
         const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
         const listener = jest.fn();
 
-        const unbind = ui.channel.page.on('load', listener);
+        const unbind = ui.channel.page.on('navigate', listener);
         unbind();
 
         return emitEvent('channel.page.load', nextPage)
