@@ -230,7 +230,7 @@
   </login-config>
 
   <security-role>
-    <description>Default role of Hippo Repository</description>
+    <description>Default role of BloomReach Repository</description>
     <role-name>everybody</role-name>
   </security-role>
 
