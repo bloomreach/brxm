@@ -1,4 +1,4 @@
-<div class="feature-changes" ng-show="plugin.documentationLink || hasMessages">
+<div class="feature-changes" ng-show="plugin.documentationLink || plugin.hasMessages">
   <!--
     Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 
@@ -21,9 +21,12 @@
       <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
     </span>
 
-    <span class="feature-control pull-left" ng-show="hasMessages" ng-click="toggleChanges($event)">
+    <span class="feature-control pull-left" ng-if="plugin.hasMessages" ng-click="toggleChanges($event)">
       <hippo-icon name="{{showChanges ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
       <a href="#">Changes made by this feature</a>
+    </span>
+    <span class="feature-control pull-left" ng-if="!plugin.hasMessages">
+      <p>This feature has no installation instructions.</p>
     </span>
   </div>
   <div class="log-messages" ng-show="showChanges">

@@ -42,6 +42,7 @@ public class PluginDescriptor {
     private boolean hasConfiguration;
     private boolean rebuildAfterInstallation = true;
     private boolean installWithParameters = true; // for plugins with no setup parameters, the setup phase can always be triggered automatically
+    private boolean hasMessages;
     private String packageFile;
     private String type;
     @JsonIgnore private InstallState state;
@@ -229,6 +230,14 @@ public class PluginDescriptor {
 
     public void setDependencySummary(final String dependencySummary) {
         this.dependencySummary = dependencySummary;
+    }
+
+    public boolean getHasMessages() {
+        return hasMessages;
+    }
+
+    public void setHasMessages(final boolean hasMessages) {
+        this.hasMessages = hasMessages;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

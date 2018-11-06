@@ -30,9 +30,11 @@ import org.onehippo.cms7.essentials.plugin.sdk.config.InstallerDocument;
 import org.onehippo.cms7.essentials.plugin.sdk.config.PluginFileService;
 import org.onehippo.cms7.essentials.plugin.sdk.packaging.DefaultInstructionPackage;
 import org.onehippo.cms7.essentials.plugin.sdk.services.RebuildServiceImpl;
+import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.HstUtils;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
+import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.InstallState;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
@@ -174,5 +176,25 @@ public class InstallService {
             return instructionPackage;
         }
         return null;
+    }
+
+
+    /**
+     * Make sure that the generic installation parameters are set.
+     */
+    public Map<String, Object> ensureGenericInstallationParameters(final Map<String, Object> parameters) {
+        final ProjectSettings settings = settingsService.getSettings();
+
+        final Object sampleData = parameters.get(EssentialConst.PROP_SAMPLE_DATA);
+        if (!(sampleData instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
+        }
+
+        final Object extraTemplates = parameters.get(EssentialConst.PROP_EXTRA_TEMPLATES);
+        if (!(extraTemplates instanceof Boolean)) {
+            parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
+        }
+
+        return parameters;
     }
 }
