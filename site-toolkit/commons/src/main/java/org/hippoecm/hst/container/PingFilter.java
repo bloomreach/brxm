@@ -98,29 +98,29 @@ public class PingFilter implements Filter {
     public static final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
 
     /**
-     * FilterConfig or ServletContext init parameter in the web.xml or context.xml configuring a custom message.
+     * FilterConfig or ServletContext init parameter in the web.xml or context.xml configuring a custom error message.
      * If configured, the PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}
-     * with the custom message printed to the response.
+     * with the custom error message printed to the response.
     */
-    public static final String CUSTOM_MESSAGE_PARAM = "custom-message";
+    public static final String CUSTOM_ERROR_MESSAGE_PARAM = "custom-error-message";
 
     private static final String AVAILABLE_MESSAGE = "OK - HST Application is ready to serve requests";
     private static final String UNAVAILABLE_MESSAGE = "Unavailable - HST Application is starting up";
 
     private AvailabilityCheck availabilityCheck;
-    private String customMessage;
+    private String customErrorMessage;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         final String availabilityCheckValue = getInitParameter(filterConfig, filterConfig.getServletContext(), AVAILABILITY_CHECK_PARAM, hstConfigNodes.name());
-        customMessage = getInitParameter(filterConfig, filterConfig.getServletContext(), CUSTOM_MESSAGE_PARAM, null);
         try {
             availabilityCheck = Enum.valueOf(AvailabilityCheck.class, availabilityCheckValue);
         } catch (Exception e) {
             log.error(String.format("Illegal value '%s' for init-param '%s'. Using default value '%s'", availabilityCheckValue, AVAILABILITY_CHECK_PARAM, hstConfigNodes.name()));
             availabilityCheck = hstConfigNodes;
         }
-        log.info("Availability check will be done on {}. Custom message: {}", availabilityCheck, (customMessage == null) ? "<none>" : customMessage);
+        customErrorMessage = getInitParameter(filterConfig, filterConfig.getServletContext(), CUSTOM_ERROR_MESSAGE_PARAM, null);
+        log.info("Availability check will be done on {}. Custom error message: {}", availabilityCheck, (customErrorMessage == null) ? "<none>" : customErrorMessage);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class PingFilter implements Filter {
         final HttpServletResponse res = (HttpServletResponse) response;
 
         if (hasCustomMessage()) {
-            printMessage(request, res, customMessage, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            printMessage(request, res, customErrorMessage, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
         }
 
@@ -194,6 +194,6 @@ public class PingFilter implements Filter {
     }
 
     private boolean hasCustomMessage() {
-        return customMessage != null;
+        return customErrorMessage != null;
     }
 }
