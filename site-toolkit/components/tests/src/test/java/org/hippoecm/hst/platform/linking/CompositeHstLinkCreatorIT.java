@@ -51,10 +51,10 @@ public class CompositeHstLinkCreatorIT extends AbstractHstLinkRewritingIT {
         HstLink canonicalNewsLink = linkCreator.createCanonical(node, requestContext);
         assertEquals("wrong canonical link.getPath for News/News1", "news/News1.html", canonicalNewsLink.getPath());
 
-        canonicalNewsLink = linkCreator.createCanonical(node, requestContext.getResolvedMount().getMount());
+        canonicalNewsLink = linkCreator.create(node, requestContext.getResolvedMount().getMount());
         assertTrue(canonicalNewsLink.isNotFound());
 
-        canonicalNewsLink = linkCreator.createCanonical(node, requestContext.getResolvedMount().getMount(), true);
+        canonicalNewsLink = linkCreator.create(node, requestContext.getResolvedMount().getMount(), true);
         assertFalse(canonicalNewsLink.isNotFound());
 
     }

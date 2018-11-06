@@ -191,22 +191,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
 
     @Override
-    public HstLink createCanonical(final Node node, final Mount mount, final boolean crossMount) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
-        linkResolver.resolverProperties.canonicalLink = true;
-        linkResolver.resolverProperties.tryOtherMounts = crossMount;
-        return linkResolver.resolve();
-    }
-
-    @Override
-    public HstLink createCanonical(Node node, Mount mount) {
-        HstLinkResolver linkResolver = new HstLinkResolver(node, mount);
-        linkResolver.resolverProperties.canonicalLink = true;
-        linkResolver.resolverProperties.tryOtherMounts = false;
-        return linkResolver.resolve();
-    }
-
-    @Override
     public List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext) {
         return createAllAvailableCanonicals(node, requestContext, null, null);
         

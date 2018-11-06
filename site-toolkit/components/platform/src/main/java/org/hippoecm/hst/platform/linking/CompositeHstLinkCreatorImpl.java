@@ -82,7 +82,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
     @Override
     public HstLink create(final Node node, final HstRequestContext requestContext) {
         final HstLink hstLink = hstLinkCreator.create(node, requestContext);
-        return getBestCanonicalCandidate(node, hstLink, requestContext.getVirtualHost().getHostGroupName());
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, requestContext.getVirtualHost().getHostGroupName());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         }
 
         final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         }
 
         final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         }
 
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         }
 
         final String hostGroupName = mount.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -152,7 +152,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         final HstLink hstLink = hstLinkCreator.create(bean, requestContext);
 
         final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(bean.getNode(), hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(bean.getNode(), hstLink, hostGroupName);
     }
 
     @Override
@@ -180,27 +180,10 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
     }
 
     @Override
-    public HstLink createCanonical(final Node node, final Mount mount) {
-        //CrossOff
-        return hstLinkCreator.createCanonical(node, mount);
-    }
-
-    @Override
-    public HstLink createCanonical(final Node node, final Mount mount, final boolean crossMount) {
-        final HstLink hstLink = hstLinkCreator.createCanonical(node, mount);
-        if (!crossMount) {
-            return hstLink;
-        }
-
-        return getBestCanonicalCandidate(node, hstLink, mount.getVirtualHost().getHostGroupName());
-    }
-
-
-    @Override
     public HstLink createCanonical(final Node node, final HstRequestContext requestContext) {
         final HstLink hstLink = hstLinkCreator.createCanonical(node, requestContext);
         final String hostGroupName = requestContext.getVirtualHost().getHostGroupName();
-        return getBestCanonicalCandidate(node, hstLink, hostGroupName);
+        return getFirstCrossWebAppLinkIfNeeded(node, hstLink, hostGroupName);
     }
 
     @Override
@@ -286,7 +269,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
                     .findFirst();
 
             firstMount.ifPresent(m -> {
-                //Invoke simple link creator
+                //Invoke local link creator
                 final HstLinkCreator hstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getLocalHstLinkCreator();
                 hstLinks.addAll(hstLinkCreator.createAll(node, m, hostGroupName, type, true));
             });
@@ -331,7 +314,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
 
             if (firstMount.isPresent()) {
                 final HstLinkCreator localHstLinkCreator = ((CompositeHstLinkCreator) hstModel.getHstLinkCreator()).getLocalHstLinkCreator();
-                final HstLink canonicalLink = localHstLinkCreator.createCanonical(node, firstMount.get(), true);
+                final HstLink canonicalLink = localHstLinkCreator.create(node, firstMount.get(), true);
                 if (canonicalLink != null && !canonicalLink.isNotFound()) {
                     return canonicalLink;
                 }
@@ -340,7 +323,7 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
         return null;
     }
 
-    private HstLink getBestCanonicalCandidate(final Node node, final HstLink hstLink, final String hostGroupName) {
+    private HstLink getFirstCrossWebAppLinkIfNeeded(final Node node, final HstLink hstLink, final String hostGroupName) {
         if (hstLink == null || hstLink.isNotFound()) {
             final HstLink canonicalLink = getCanonicalLinkFromOtherModels(node, hostGroupName);
             if (canonicalLink != null) {

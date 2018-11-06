@@ -40,8 +40,8 @@ public class AbstractHstLinkRewritingIT  extends AbstractBeanTestCase {
     public void setUp() throws Exception {
         super.setUp();
         this.objectConverter = getObjectConverter();
-        this.linkCreator = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site").getHstLinkCreator();
-        this.linkCreator2 = HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel("/site2").getHstLinkCreator();
+        this.linkCreator = hstModelSite1.getHstLinkCreator();
+        this.linkCreator2 = hstModelSite2.getHstLinkCreator();
         this.hstManager = getComponent(HstManager.class.getName());
     }
 
