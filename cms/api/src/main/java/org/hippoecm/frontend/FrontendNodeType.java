@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,15 @@ public interface FrontendNodeType {
     String NT_CLUSTERFOLDER = "frontend:clusterfolder";
     String NT_APPLICATION = "frontend:application";
     String NT_WORKFLOW = "frontend:workflow";
+    String NT_UI_EXTENSION = "frontend:uiExtension";
+    String NT_UI_EXTENSIONS = "frontend:uiExtensions";
     String NT_USER = "frontend:user";
+
+    //--- Frontend Node Names ---//
+    String UI_EXTENSIONS_NODE_NAME = "ui-extensions";
+
+    //--- Frontend Config Paths ---//
+    String UI_EXTENSIONS_CONFIG_PATH = "/hippo:configuration/hippo:frontend/cms/" + UI_EXTENSIONS_NODE_NAME;
 
     //--- Frontend Item Names ---//
     String FRONTEND_SERVICES = "frontend:services";
@@ -51,4 +59,8 @@ public interface FrontendNodeType {
     String FRONTEND_UUIDS = "frontend:uuids";
     String FRONTEND_NODETYPES = "frontend:nodetypes";
     String FRONTEND_DEFAULTCLUSTER = "frontend:defaultcluster";
+    String FRONTEND_CONFIG = "frontend:config";
+    String FRONTEND_DISPLAY_NAME = "frontend:displayName";
+    String FRONTEND_EXTENSION_POINT = "frontend:extensionPoint";
+    String FRONTEND_URL = "frontend:url";
 }
