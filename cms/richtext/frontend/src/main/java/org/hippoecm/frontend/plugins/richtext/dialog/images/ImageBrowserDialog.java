@@ -79,6 +79,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     public ImageBrowserDialog(final IPluginContext context, final IPluginConfig config, final IModel<RichTextEditorImageLink> model) {
         super(context, config, model);
 
+        setResizable(true);
         setSize(DialogConstants.LARGE_AUTO);
 
         imageModel = model;
