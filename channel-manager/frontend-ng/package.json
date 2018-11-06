@@ -52,7 +52,7 @@
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "8.0.4",
+    "@bloomreach/frontend-build": "9.0.1",
     "angular-mocks": "1.6.9"
   }
 }
