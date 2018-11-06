@@ -175,6 +175,11 @@
         <artifactId>hippo-cms-testutils</artifactId>
         <version>${hippo.testutils.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms</groupId>
+        <artifactId>hippo-cargo-extensions</artifactId>
+        <version>${hippo.commons.version}</version>
+      </dependency>
 
       <!-- Hippo Configuration Management -->
       <dependency>
@@ -1009,6 +1014,13 @@
                 </dependencies>
               </container>
             </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>org.onehippo.cms</groupId>
+                <artifactId>hippo-cargo-extensions</artifactId>
+                <version>${hippo.commons.version}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
