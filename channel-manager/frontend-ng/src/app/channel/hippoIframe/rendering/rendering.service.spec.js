@@ -74,7 +74,7 @@ describe('RenderingService', () => {
     spyOn(DomService, 'getIframeWindow').and.returnValue(window);
   });
 
-  describe('createOverlay', () => {
+  xdescribe('createOverlay', () => {
     beforeEach(() => {
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'attachEmbeddedLinks');
