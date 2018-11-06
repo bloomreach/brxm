@@ -1,1 +1,0 @@
-<#if autoSuggest??>${autoSuggest}<#else>{}</#if>

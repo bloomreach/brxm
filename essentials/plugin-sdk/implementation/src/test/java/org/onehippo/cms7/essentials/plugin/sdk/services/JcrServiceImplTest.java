@@ -135,4 +135,11 @@ public class JcrServiceImplTest extends BaseRepositoryTest {
         assertFalse(session.nodeExists("/hippo:configuration/hippo:translations/hippo:types"));
         jcrService.destroySession(session);
     }
+
+    @Test
+    public void node_type_existence() throws Exception {
+        assertFalse(jcrService.nodeTypeExists(""));
+        assertFalse(jcrService.nodeTypeExists("dummy:nodeType"));
+        assertTrue(jcrService.nodeTypeExists("hippo:request"));
+    }
 }

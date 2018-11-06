@@ -72,4 +72,12 @@ public interface JcrService {
      * @return true if the resource was found and imported successfully, false otherwise.
      */
     boolean importTranslationsResource(Session session, String resourcePath, Map<String, Object> placeholderData);
+
+    /**
+     * Check if a node-type exists in the repository
+     *
+     * @param nodeType namespaced node-type to check for
+     * @return true if node-type exists, false otherwise.
+     */
+    boolean nodeTypeExists(String nodeType);
 }

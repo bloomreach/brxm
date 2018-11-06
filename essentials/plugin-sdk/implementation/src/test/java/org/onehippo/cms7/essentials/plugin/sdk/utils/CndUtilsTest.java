@@ -57,7 +57,7 @@ public class CndUtilsTest extends BaseRepositoryTest {
         // check if exists:
         final boolean prefixExists = CndUtils.namespacePrefixExists(jcrService, TEST_PREFIX);
         assertTrue("Expected to find namespace prefix: " + TEST_PREFIX, prefixExists);
-        final boolean nodeTypeExists = CndUtils.nodeTypeExists(jcrService, NODE_TYPE);
+        final boolean nodeTypeExists = jcrService.nodeTypeExists(NODE_TYPE);
         assertTrue("Expected registered nodetype, found nothing", nodeTypeExists);
         final boolean isMySupertype = CndUtils.isNodeOfSuperType(jcrService, NODE_TYPE, GalleryUtils.HIPPOGALLERY_IMAGE_SET);
         assertTrue("Expected to be of supertype:" + GalleryUtils.HIPPOGALLERY_IMAGE_SET, isMySupertype);
@@ -72,6 +72,5 @@ public class CndUtilsTest extends BaseRepositoryTest {
     public void testNamespaceNoneExists() throws Exception {
         assertFalse(CndUtils.namespaceUriExists(jcrService, TEST_URI + "/none"));
         assertFalse(CndUtils.namespacePrefixExists(jcrService, TEST_PREFIX + "none"));
-        assertFalse(CndUtils.nodeTypeExists(jcrService, NODE_TYPE + "none"));
     }
 }

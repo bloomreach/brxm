@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
@@ -97,5 +98,22 @@ public class JcrServiceImpl implements JcrService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean nodeTypeExists(final String nodeType) {
+        if (StringUtils.isEmpty(nodeType)) {
+            return false;
+        }
+
+        final Session session = createSession();
+        try {
+            return session.getWorkspace().getNodeTypeManager().hasNodeType(nodeType);
+        } catch (RepositoryException e) {
+            LOG.error("Failed to check for node-type.", e);
+        } finally {
+            destroySession(session);
+        }
+        return false;
     }
 }
