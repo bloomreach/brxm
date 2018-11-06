@@ -22,6 +22,7 @@ class RightSidePanelCtrl {
     $mdConstant,
     $state,
     $transitions,
+    $window,
     SidePanelService,
     localStorageService,
     RightSidePanelService,
@@ -31,6 +32,7 @@ class RightSidePanelCtrl {
     this.$element = $element;
     this.$state = $state;
     this.$transitions = $transitions;
+    this.$window = $window;
 
     this.SidePanelService = SidePanelService;
     this.localStorageService = localStorageService;
@@ -51,9 +53,9 @@ class RightSidePanelCtrl {
     this.sideNavElement = this.$element.find('.right-side-panel');
     this.sideNavElement.css('width', this.lastSavedWidth);
 
-    this.$transitions.onBefore({ to: 'hippo-cm.channel.*' }, () => this._openPanel());
-    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel' }, () => this._closePanel());
-    this.$transitions.onError({ from: 'hippo-cm.channel.*' }, () => this._focusPanel());
+    this.$transitions.onBefore({ to: 'hippo-cm.channel.**' }, () => this._openPanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
+    this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
   }
 
   $postLink() {
@@ -108,6 +110,8 @@ class RightSidePanelCtrl {
 
   setFullScreen(fullScreen) {
     this.SidePanelService.setFullScreen('right', fullScreen);
+    // to trigger hiding/showing pagination handles of md-tabs
+    this.$window.dispatchEvent(new Event('resize'));
   }
 }
 

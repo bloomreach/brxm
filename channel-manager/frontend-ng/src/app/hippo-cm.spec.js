@@ -49,7 +49,7 @@ describe('hippoCm', () => {
 
       $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'includes', 'go']);
 
-      BrowserService = jasmine.createSpyObj('$state', ['isIE']);
+      BrowserService = jasmine.createSpyObj('$state', ['isChrome', 'isIE']);
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'initializeChannel',

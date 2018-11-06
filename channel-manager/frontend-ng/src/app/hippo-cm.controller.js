@@ -43,6 +43,11 @@ class HippoCmCtrl {
     // don't log state transition errors
     this.$state.defaultErrorHandler(angular.noop);
 
+    // add CSS classes to the body for browser-specific hacks
+    if (this.BrowserService.isChrome()) {
+      $('body').addClass('chrome');
+    }
+
     this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
       this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, branchId, initialPath));
     });
