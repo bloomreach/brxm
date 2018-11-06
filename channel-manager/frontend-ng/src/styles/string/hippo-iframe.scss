@@ -88,13 +88,10 @@
       box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
     }
 
-    &-active {
+    &-active,
+    &-active:hover {
       border-color: $overlay-component-active-outline-color;
       box-shadow: inset 0 0 1px 0 $overlay-component-active-glow-color, inset 0 0 15px 0 $overlay-component-active-glow-color;
-
-      &:hover {
-        box-shadow: inset 0 0 1px 0 $overlay-component-active-glow-color, inset 0 0 15px 0 $overlay-component-active-glow-color;
-      }
     }
   }
 }
