@@ -112,23 +112,10 @@
 
         _onCellClick: function(grid, rowIndex, columnIndex, e) {
             var record = this.getStore().getAt(rowIndex), hstMountPoint;
-            switch (e.getTarget().name) {
-                case 'show-channel':
-                    this.selectedChannelId = record.get('id');
-                    e.stopEvent();
-                    this.fireEvent('channel-selected', this.selectedChannelId, record);
-                    break;
-                case 'show-preview':
-                    this.synchronousAjaxRequest(
-                      window.location.pathname + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname'),
-                      {
-                          'CMS-User': this.cmsUser,
-                          'contextPath' : record.get('contextPath')
-                      }
-                    );
-                    break;
-                case 'show-live':
-                    break;
+            if (e.getTarget().name === 'show-channel') {
+                this.selectedChannelId = record.get('id');
+                e.stopEvent();
+                this.fireEvent('channel-selected', this.selectedChannelId, record);
             }
         },
 

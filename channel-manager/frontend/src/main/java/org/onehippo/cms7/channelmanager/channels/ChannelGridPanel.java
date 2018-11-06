@@ -148,8 +148,8 @@ public class ChannelGridPanel extends ExtPanel {
                 + "title=\"" + liveTooltip + "\">{url}</a>"
                 + "<a href=\"{contextPath}"
                 + "{[values.cmsPreviewPrefix !== '' ? '/' : '']}{cmsPreviewPrefix}"
-                + "{[values.mountPath === '' ? '/' : '']}{mountPath}\" "
-                + "name=\"show-preview\" class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
+                + "{[values.mountPath === '' ? '/' : '']}{mountPath}?org.hippoecm.hst.container.render_host={hostname}\" "
+                + "class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
                 + previewTooltip + "\">" + previewLabel + "</a>");
     }
 
