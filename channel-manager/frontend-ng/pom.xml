@@ -49,12 +49,21 @@
             </configuration>
           </execution>
           <execution>
+            <id>npm-lint</id>
+            <phase>process-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>run lint</commandlineArgs>
+            </configuration>
+          </execution>
+          <execution>
             <id>npm-build</id>
             <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run build -- --lint</commandlineArgs>
+              <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
           <execution>
@@ -63,7 +72,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run testOnce</commandlineArgs>
+              <commandlineArgs>run test:single-run</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>
