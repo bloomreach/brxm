@@ -47,6 +47,8 @@ class DefaultExchangeHint implements ExchangeHint {
 
     private Object responseBody;
 
+    private boolean noCache;
+
     @Override
     public String getMethodName() {
         return methodName;
@@ -156,6 +158,16 @@ class DefaultExchangeHint implements ExchangeHint {
             sb.append("requestBody=").append(requestBody.toString());
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean isNoCache() {
+        return noCache;
+    }
+
+    @Override
+    public void setNoCache(boolean noCache) {
+        this.noCache = noCache;
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.onehippo.cms7.crisp.api.exchange;
 
 import java.util.List;
 import java.util.Map;
+
+import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 /**
  * Builder to help build {@link ExchangeHint} instance.
@@ -110,5 +112,18 @@ public abstract class ExchangeHintBuilder {
      * @return request body object representation or request callback instance that can be understood by the backend
      */
     public abstract Object requestBody();
+
+    /**
+     * Set the flag whether or not the underlying {@link ResourceResolver} should disallow caching.
+     * @param noCache flag whether or not the underlying {@link ResourceResolver} should disallow caching
+     * @return this builder
+     */
+    public abstract ExchangeHintBuilder noCache(boolean noCache);
+
+    /**
+     * Return true if the underlying {@link ResourceResolver} should disallow caching.
+     * @return true if the underlying {@link ResourceResolver} should disallow caching
+     */
+    public abstract boolean noCache();
 
 }

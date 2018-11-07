@@ -106,4 +106,16 @@ public interface ExchangeHint {
      */
     public void setResponseBody(Object responseBody);
 
+    /**
+     * Return true if the underlying {@link ResourceResolver} should disallow caching.
+     * @return true if the underlying {@link ResourceResolver} should disallow caching
+     */
+    public boolean isNoCache();
+
+    /**
+     * Set flag whether or not the underlying {@link ResourceResolver} should disallow caching.
+     * @param noCache flag whether or not the underlying {@link ResourceResolver} should disallow caching
+     */
+    public void setNoCache(boolean noCache);
+
 }

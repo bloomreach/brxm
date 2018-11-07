@@ -186,7 +186,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             }
         }
 
-        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
+        if (cacheKey != null && isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             putResourceCacheInRequestLevelCache(cacheKey, resource);
         }
 
@@ -259,7 +259,7 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
             }
         }
 
-        if (isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
+        if (cacheKey != null && isCacheInRequestEnabled() && ResourceServiceBrokerRequestContext.hasCurrentServletRequest()) {
             putResourceCacheInRequestLevelCache(cacheKey, resource);
         }
 

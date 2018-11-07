@@ -46,6 +46,8 @@ class DefaultExchangeHintBuilder extends ExchangeHintBuilder {
 
     private Object requestBody;
 
+    private boolean noCache;
+
     DefaultExchangeHintBuilder() {
     }
 
@@ -132,12 +134,24 @@ class DefaultExchangeHintBuilder extends ExchangeHintBuilder {
     }
 
     @Override
+    public ExchangeHintBuilder noCache(boolean noCache) {
+        this.noCache = noCache;
+        return this;
+    }
+
+    @Override
+    public boolean noCache() {
+        return noCache;
+    }
+
+    @Override
     public ExchangeHint build() {
         DefaultExchangeHint exchangeHint = new DefaultExchangeHint();
         exchangeHint.setMethodName(methodName());
         exchangeHint.setRequest(request());
         exchangeHint.setRequestHeaders(requestHeaders);
         exchangeHint.setRequestBody(requestBody);
+        exchangeHint.setNoCache(noCache);
         return exchangeHint;
     }
 

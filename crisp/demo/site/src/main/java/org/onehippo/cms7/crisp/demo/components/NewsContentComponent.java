@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHintBuilder;
@@ -100,7 +101,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
     private Resource findProductCatalogs(final HstRequest request, final NewsDocument document) {
         Resource productCatalogs = null;
-        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter();
+        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter("application/json", "{}");
 
         try {
             ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
@@ -136,7 +137,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
                 final Map<String, Object> pathVars = new HashMap<>();
                 pathVars.put("sku", sku);
                 Binary binary = resourceServiceBroker.resolveBinary(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
-                        "/products/{sku}/image/download", pathVars, createExampleExchangeHintFromParameter());
+                        "/products/{sku}/image/download", pathVars, createExampleExchangeHintFromParameter(null, null));
                 request.setAttribute("binary", binary);
             } catch (Exception e) {
                 log.warn("Failed to find binary.", e);
@@ -148,7 +149,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
     private Resource findProductCatalogsXml(final HstRequest request, final NewsDocument document) {
         Resource productCatalogs = null;
-        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter();
+        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter("application/xml", null);
 
         try {
             ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
@@ -175,15 +176,35 @@ public class NewsContentComponent extends EssentialsContentComponent {
 
     /**
      * Create a demo-purpose-only <code>ExchangeHint</code> instance that can be passed *optionally*.
+     * @param contentType
+     * @param requestBody
      * @return
      */
-    private ExchangeHint createExampleExchangeHintFromParameter() {
-        final String methodName = RequestContextProvider.get().getServletRequest().getParameter("_method");
-        if (!StringUtils.equalsIgnoreCase("POST", methodName)) {
-            return ExchangeHintBuilder.create().build();
+    private ExchangeHint createExampleExchangeHintFromParameter(final String contentType, final String requestBody) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final ExchangeHintBuilder builder = ExchangeHintBuilder.create();
+
+        final String noCacheParam = requestContext.getServletRequest().getParameter("_nocache");
+
+        if (StringUtils.isNotEmpty(noCacheParam)) {
+            builder.noCache(BooleanUtils.toBoolean(noCacheParam));
         }
-        return ExchangeHintBuilder.create().methodName("POST").requestHeader("Content-Type", "application/json")
-                .requestBody("{}").build();
+
+        final String methodName = StringUtils.upperCase(requestContext.getServletRequest().getParameter("_method"));
+
+        if (StringUtils.isNotEmpty(methodName)) {
+            builder.methodName(methodName);
+        }
+
+        if (("POST".equals(methodName) || "PUT".equals(methodName)) && StringUtils.isNotEmpty(contentType)) {
+            builder.requestHeader("Content-Type", contentType);
+        }
+
+        if (StringUtils.isNotEmpty(requestBody)) {
+            builder.requestBody(requestBody);
+        }
+
+        return builder.build();
     }
 
     private void testPutMethodOnEndpoint() {
