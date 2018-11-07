@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeDefinitionTemplate;
@@ -29,14 +30,18 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeDefinition;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
+import javax.jcr.nodetype.PropertyDefinitionTemplate;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.jackrabbit.JcrConstants.MIX_VERSIONABLE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VERSIONABLE;
@@ -51,18 +56,11 @@ public class MigrateToV13 {
     public static final String NT_HST_BLUEPRINT = "hst:blueprint";
     public static final String NT_HST_BLUEPRINTS = "hst:blueprints";
     public static final String NT_HST_CHANNEL = "hst:channel";
-    public static final String NT_HST_CHANNELS = "hst:channels";
     public static final String NT_HST_CONFIGURATION = "hst:configuration";
     public static final String NT_HST_CONFIGURATIONS = "hst:configurations";
     public static final String NT_HST_SITE = "hst:site";
     public static final String NT_HST_SITES = "hst:sites";
     public static final String NT_HST_VIRTUALHOSTS = "hst:virtualhosts";
-
-    public static final String OBSOLETE_NT_HIPPO_INITIALIZEITEM = "hippo:initializeitem";
-    public static final String OBSOLETE_NT_HIPPO_INITIALIZEFOLDER = "hippo:initializefolder";
-    public static final String OBSOLETE_NT_HIPPO_LOCKABLE = "hippo:lockable";
-    public static final String OBSOLETE_NT_HIPPO_LOCK = "hippo:lock";
-    public static final String OBSOLETE_NT_HIPPOSYS_INITIALIZEITEM = "hipposys:initializeitem";
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -80,31 +78,43 @@ public class MigrateToV13 {
     }
 
     public void migrateIfNeeded() throws RepositoryException {
-        if (!ntm.hasNodeType(OBSOLETE_NT_HIPPO_INITIALIZEITEM)) {
+        if (!ntm.hasNodeType("hippo:initializeitem")) {
             log.debug("No migration needed");
             return;
         }
-        ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPO_LOCKABLE, true, new String[]{OBSOLETE_NT_HIPPO_LOCK});
-        ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPO_LOCK, false, null);
-        ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPO_INITIALIZEFOLDER, false, null);
-        ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPOSYS_INITIALIZEITEM, false, null);
-        ensureNodeTypeNotInUse(OBSOLETE_NT_HIPPO_INITIALIZEITEM, false, null);
+        ensureNodeTypeNotInUse("hippo:lockable", true, new String[] {"hippo:lock"});
+        ensureNodeTypeNotInUse("hippo:lock", false, null);
+        ensureNodeTypeNotInUse("hippo:initializefolder", false, null);
+        ensureNodeTypeNotInUse("hipposys:initializeitem", false, null);
+        ensureNodeTypeNotInUse("hippo:initializeitem", false, null);
+        ensureNodeTypeNotInUse("hst:channels", false, null);
 
         removeVersionableMixinFromNodeTypes();
+
+        removePropertiesFromType("hst:containeritemcomponent", new String[] {"hst:referencecomponent", "hst:dummycontent"});
+        removePropertiesFromType("hst:sitemapitem", new String[] {"hst:portletcomponentconfigurationid"});
+        removePropertiesFromType("hst:sitemenuitem", new String[] {"hst:refidsitemapitem"});
+        removePropertiesFromType("hst:configuration", new String[] {"hst:lockedby", "hst:lockedon"});
+        removePropertiesFromType("hst:site", new String[] {"hst:portalconfigurationenabled"});
+        removePropertiesFromType("hst:mount", new String[] {"hst:onlyforcontextpath", "hst:embeddedmountpath", "hst:isSite", "hst:channelpath"});
+        removePropertiesFromType("hst:virtualhost", new String[] {"hst:onlyforcontextpath"});
+        removePropertiesFromType("hst:virtualhosts", new String[] {"hst:channelmanagerhostgroup", "hst:prefixexclusions", "hst:suffixexclusions"});
 
         if (dryRun) {
             log.info("MigrateToV13 dry-run completed.");
         } else {
-            removeChildNodeFromType(OBSOLETE_NT_HIPPO_INITIALIZEFOLDER, OBSOLETE_NT_HIPPO_INITIALIZEITEM);
-            removeChildNodeFromType(NT_CONFIGURATION, OBSOLETE_NT_HIPPO_INITIALIZEFOLDER);
-            removeChildNodeFromType(NT_HCM_ROOT, OBSOLETE_NT_HIPPO_LOCK);
+            removeChildNodeFromType("hst:hst", "hst:channels");
+            removeChildNodeFromType("hippo:initializefolder", "hippo:initializeitem");
+            removeChildNodeFromType(NT_CONFIGURATION, "hippo:initializefolder");
+            removeChildNodeFromType(NT_HCM_ROOT, "hippo:lock");
 
-            removeNodeType(OBSOLETE_NT_HIPPO_INITIALIZEFOLDER, false);
-            removeNodeType(OBSOLETE_NT_HIPPOSYS_INITIALIZEITEM, false);
-            removeNodeType(OBSOLETE_NT_HIPPO_LOCK, false);
-            removeNodeType(OBSOLETE_NT_HIPPO_LOCKABLE, true);
+            removeNodeType("hst:channels", false);
+            removeNodeType("hippo:initializefolder", false);
+            removeNodeType("hipposys:initializeitem", false);
+            removeNodeType("hippo:lock", false);
+            removeNodeType("hippo:lockable", true);
 
-            removeNodeType(OBSOLETE_NT_HIPPO_INITIALIZEITEM, false);
+            removeNodeType("hippo:initializeitem", false);
             log.info("MigrateToV13 completed.");
         }
     }
@@ -124,7 +134,7 @@ public class MigrateToV13 {
 
     private void removeVersionableMixinFromNodeTypes() throws RepositoryException {
         final String[] candidateVersionableNodeTypes = {
-                NT_HST_HST, NT_HST_BLUEPRINT, NT_HST_BLUEPRINTS, NT_HST_CHANNEL, NT_HST_CHANNELS, NT_HST_CONFIGURATION,
+                NT_HST_HST, NT_HST_BLUEPRINT, NT_HST_BLUEPRINTS, NT_HST_CHANNEL, NT_HST_CONFIGURATION,
                 NT_HST_CONFIGURATIONS, NT_HST_SITE, NT_HST_SITES, NT_HST_VIRTUALHOSTS
         };
         final Set<NodeTypeDefinition> versionableNodeTypes = new LinkedHashSet<>();
@@ -268,6 +278,67 @@ public class MigrateToV13 {
         }
         if (save && !dryRun) {
             session.save();
+        }
+    }
+
+    private void removePropertiesFromType(final String nodeType, final String[] propertyNames) throws RepositoryException {
+        final List<String> foundProperties = new ArrayList<>();
+        NodeTypeTemplate ntt = null;
+        if (ntm.hasNodeType(nodeType)) {
+            ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeType));
+            for (Iterator<Object> iter = ntt.getPropertyDefinitionTemplates().iterator(); iter.hasNext(); ) {
+                final PropertyDefinitionTemplate pdt = (PropertyDefinitionTemplate) iter.next();
+                if (Arrays.stream(propertyNames).anyMatch(pdt.getName()::equals)) {
+                    iter.remove();
+                    foundProperties.add(pdt.getName());
+                }
+            }
+        }
+        if (foundProperties.isEmpty()) {
+            return;
+        }
+        boolean save = false;
+        for (String propertyName : foundProperties) {
+            final Query query = qm.createQuery("//element(*, " + nodeType + ")[@" + propertyName + "]", Query.XPATH);
+            final QueryResult queryResult = query.execute();
+            for (final Node node : new NodeIterable(queryResult.getNodes())) {
+                boolean skip = false;
+                Property prop = JcrUtils.getPropertyIfExists(node, propertyName);
+                if (prop != null && prop.getDefinition().getDeclaringNodeType().getName().equals(nodeType)) {
+                    if (dryRun) {
+                        log.info("NodeType {} property {} is still used by node at '{}'.\n" +
+                                        "All usages of this property will be automatically removed during the actual migrating to v13",
+                                nodeType, propertyName, node.getPath());
+                    } else {
+                        log.info("Removing still used {} property {} at '{}'.", nodeType, propertyName, node.getPath());
+                    }
+                    if (!skip && !node.isCheckedOut()) {
+                        if (dryRun) {
+                            log.warn("Node at {} is checked-in: skipping dryRun removal of property {}.",
+                                    node.getPath(), propertyName);
+                            skip = true;
+                        } else {
+                            JcrUtils.ensureIsCheckedOut(node);
+                        }
+                    }
+                    if (!skip) {
+                        prop.remove();
+                        save = true;
+                    }
+                }
+            }
+        }
+        if (save && !dryRun) {
+            session.save();
+        }
+        if (dryRun) {
+            log.info("NodeType {} PropertyDefinition(s) [{}] will be removed during the actual migration to v13.",
+                    nodeType, foundProperties.stream().collect(Collectors.joining(", ")));
+        } else {
+            log.info("Removing NodeType {} PropertyDefinition(s) [{}].",
+                    nodeType, foundProperties.stream().collect(Collectors.joining(", ")));
+            ntr.ignoreNextConflictingContent();
+            ntm.registerNodeType(ntt, true);
         }
     }
 }
