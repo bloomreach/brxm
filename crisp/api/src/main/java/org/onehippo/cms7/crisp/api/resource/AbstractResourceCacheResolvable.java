@@ -63,6 +63,10 @@ public abstract class AbstractResourceCacheResolvable implements ResourceCacheRe
     @Override
     public ValueMap createCacheKey(final String resourceSpace, final String operationKey, final String resourcePath,
             final Map<String, Object> pathVariables, final ExchangeHint exchangeHint) {
+        if (exchangeHint != null && exchangeHint.isNoCache()) {
+            return null;
+        }
+
         final ValueMap cacheKey = new DefaultValueMap();
 
         if (operationKey != null) {
