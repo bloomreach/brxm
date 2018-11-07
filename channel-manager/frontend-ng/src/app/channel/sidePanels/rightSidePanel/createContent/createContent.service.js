@@ -73,8 +73,12 @@ class CreateContentService {
   }
 
   next(document, url, locale) {
-    const componentInfo = this.componentInfo;
-    this.$state.go('hippo-cm.channel.create-content-step-2', { document, url, locale, componentInfo });
+    this.$state.go('hippo-cm.channel.create-content-step-2', {
+      componentInfo: this.componentInfo,
+      document,
+      locale,
+      url,
+    });
   }
 
   finish(documentId) {
@@ -90,7 +94,9 @@ class CreateContentService {
     if (config && config.documentTemplateQuery) {
       return true;
     }
-    this.FeedbackService.showError('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
+    this.FeedbackService.showError(
+      'Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"',
+    );
     return false;
   }
 

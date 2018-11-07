@@ -67,7 +67,8 @@ class ProjectService {
   }
 
   associateWithProject(documentId) {
-    const url = `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
+    const contextPath = this.ConfigService.getCmsContextPath();
+    const url = `${contextPath}ws/projects/${this.selectedProject.id}/associate/${documentId}`;
     return this.$http
       .post(url)
       .then(() => {
@@ -80,7 +81,7 @@ class ProjectService {
 
   hasBranchOfProject(channelId) {
     const baseChannelId = channelId.replace(/-preview$/, '');
-    const channels = this.selectedProject.channels;
+    const { channels } = this.selectedProject;
     return channels && !!channels.find(c => c.id === baseChannelId);
   }
 
@@ -135,9 +136,10 @@ class ProjectService {
   }
 
   reject(channelId, message) {
+    const contextPath = this.ConfigService.getCmsContextPath();
     const request = {
       method: 'POST',
-      url: `${this.ConfigService.getCmsContextPath()}ws/projects/${this.selectedProject.id}/channel/reject/${channelId}`,
+      url: `${contextPath}ws/projects/${this.selectedProject.id}/channel/reject/${channelId}`,
       headers: {
         'Content-Type': 'text/plain',
       },
@@ -155,7 +157,7 @@ class ProjectService {
   }
 
   _isActionEnabled(action) {
-    const channels = this.selectedProject.channels;
+    const { channels } = this.selectedProject;
     const channelInfo = channels && channels.find(c => c.mountId === this.mountId);
     return channelInfo && channelInfo.actions[action].enabled;
   }

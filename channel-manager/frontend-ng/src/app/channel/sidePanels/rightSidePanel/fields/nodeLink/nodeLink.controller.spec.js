@@ -99,25 +99,28 @@ describe('nodeLinkController', () => {
       preventDefault = jasmine.createSpy('preventDefault');
     });
 
-    it('calls onFocusFromParent when parent broadcasts event "primitive-field:focus" and index is zero', () => {
-      spyOn($ctrl, 'onFocusFromParent');
-      $ctrl.index = 0;
-      init();
+    describe('when parent broadcasts event "primitive-field:focus"', () => {
+      it('calls onFocusFromParent when index is zero', () => {
+        spyOn($ctrl, 'onFocusFromParent');
+        $ctrl.index = 0;
+        init();
 
-      $scope.$parent.$broadcast('primitive-field:focus');
+        $scope.$parent.$broadcast('primitive-field:focus');
 
-      expect($ctrl.onFocusFromParent).toHaveBeenCalled();
+        expect($ctrl.onFocusFromParent).toHaveBeenCalled();
+      });
+
+      it('does not call onFocusFromParent when index is not zero', () => {
+        spyOn($ctrl, 'onFocusFromParent');
+        $ctrl.index = 1;
+        init();
+
+        $scope.$parent.$broadcast('primitive-field:focus');
+
+        expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
+      });
     });
 
-    it('does not call onFocusFromParent when parent broadcasts event "primitive-field:focus" and index is not zero', () => {
-      spyOn($ctrl, 'onFocusFromParent');
-      $ctrl.index = 1;
-      init();
-
-      $scope.$parent.$broadcast('primitive-field:focus');
-
-      expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
-    });
 
     it('prevents default event behavior when receiving focus from parent', () => {
       $ctrl.onFocusFromParent({ preventDefault });

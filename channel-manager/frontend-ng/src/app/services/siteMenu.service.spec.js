@@ -311,7 +311,7 @@ describe('SiteMenuService', () => {
       SiteMenuService.createEditableMenuItem()
         .then((item) => {
           expect(HstService.doPostWithParams).toHaveBeenCalled();
-          const args = HstService.doPostWithParams.calls.mostRecent().args;
+          const { args } = HstService.doPostWithParams.calls.mostRecent();
           expect(args[0].linkType).toBe('NONE');
           expect(args[0].title).toBeDefined();
           expect(args[0].localParameters).toBeUndefined();
@@ -341,7 +341,7 @@ describe('SiteMenuService', () => {
       SiteMenuService.createEditableMenuItem()
         .then((item) => {
           expect(HstService.doPostWithParams).toHaveBeenCalled();
-          const args = HstService.doPostWithParams.calls.mostRecent().args;
+          const { args } = HstService.doPostWithParams.calls.mostRecent();
           expect(args[0].localParameters).toEqual({ key1: 'value1', key2: undefined });
           delete testMenu.prototypeItem;
 
@@ -510,8 +510,9 @@ describe('SiteMenuService', () => {
       SiteMenuService.createEditableMenuItem()
         .then(() => {
           expect(HstService.doPostWithParams).toHaveBeenCalled();
-          const args = HstService.doPostWithParams.calls.mostRecent().args;
-          title = args[0].title;
+          const mostRecent = HstService.doPostWithParams.calls.mostRecent();
+          const [args] = mostRecent.args;
+          ({ title } = args);
           done();
         })
         .catch(() => fail());

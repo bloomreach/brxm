@@ -66,8 +66,8 @@ class PageCopyCtrl {
 
     if (this.SessionService.isCrossChannelPageCopySupported()) {
       this.channels = this.ChannelService.getPageModifiableChannels();
-      if (this.channels && (this.channels.length > 1 ||
-        (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {
+      if (this.channels && (this.channels.length > 1
+        || (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {
         this.channel = this.channels.find(channel => channel.id === this.channelId) || this.channels[0];
         this.isCrossChannelCopyAvailable = true;
       }
@@ -119,7 +119,7 @@ class PageCopyCtrl {
         this.locations = data.locations || [];
         this.location = this.locations.find(location => this.item.parentLocation.id === location.id);
         if (!this.location && this.locations.length > 0) {
-          this.location = this.locations[0];
+          [this.location] = this.locations;
         }
       })
       .catch(response => this.FeedbackService.showErrorResponse(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));

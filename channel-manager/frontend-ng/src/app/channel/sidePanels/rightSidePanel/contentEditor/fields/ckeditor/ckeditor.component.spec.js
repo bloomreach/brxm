@@ -324,7 +324,7 @@ describe('CKEditor Component', () => {
       beforeEach(() => {
         spyOn(CmsService, 'publish');
         $ctrl._openLinkPicker();
-        args = CmsService.publish.calls.allArgs()[0];
+        [args] = CmsService.publish.calls.allArgs();
       });
 
       it('should call success callback', () => {
@@ -362,7 +362,7 @@ describe('CKEditor Component', () => {
       beforeEach(() => {
         spyOn(CmsService, 'publish');
         $ctrl._openImageVariantPicker();
-        args = CmsService.publish.calls.allArgs()[0];
+        [args] = CmsService.publish.calls.allArgs();
       });
 
       it('should call success callback', () => {

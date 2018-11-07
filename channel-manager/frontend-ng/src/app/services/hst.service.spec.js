@@ -66,15 +66,18 @@ describe('HstService', () => {
   });
 
   it('trims concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+    expect(hstService._createApiUrl('1234', ['  foo ', ' bar']))
+      .toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
   });
 
   it('ignores undefined path elements', () => {
-    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined])).toEqual('/testContextPath/testApiUrlPrefix/1234./bar');
+    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined]))
+      .toEqual('/testContextPath/testApiUrlPrefix/1234./bar');
   });
 
   it('removes clashing slashes from concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
+    expect(hstService._createApiUrl('1234', ['/foo/', '/bar']))
+      .toEqual('/testContextPath/testApiUrlPrefix/1234./foo/bar');
   });
 
   it('can create an API URL with only a UUID', () => {

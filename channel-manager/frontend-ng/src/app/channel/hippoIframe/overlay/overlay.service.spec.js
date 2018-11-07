@@ -99,7 +99,7 @@ describe('OverlayService', () => {
       }
     });
 
-    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
+    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`); // eslint-disable-line max-len
   }
 
   function iframe(selector) {
@@ -297,8 +297,10 @@ describe('OverlayService', () => {
 
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(6);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length)
+        .toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length)
+        .toBe(6);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -392,7 +394,13 @@ describe('OverlayService', () => {
       expect(labelText.html()).toBe('component A');
 
       const componentMarkupWithExperiment = `
-        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa", "Targeting-experiment-id": "567", "Targeting-experiment-state": "CREATED" } -->
+        <!-- {
+          "HST-Type": "CONTAINER_ITEM_COMPONENT",
+          "HST-Label": "component A",
+          "uuid": "aaaa",
+          "Targeting-experiment-id": "567",
+          "Targeting-experiment-state": "CREATED"
+        } -->
           <p id="markup-in-component-a">Markup in component A that just got an experiment</p>
         <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
@@ -674,7 +682,12 @@ describe('OverlayService', () => {
     });
 
     describe('_initManageContentConfig', () => {
-      function mockManageContentConfig(uuid = false, documentTemplateQuery = false, parameterName = false, locked = false) {
+      function mockManageContentConfig(
+        uuid = false,
+        documentTemplateQuery = false,
+        parameterName = false,
+        locked = false,
+      ) {
         const enclosing = {
           isLocked: () => locked,
         };

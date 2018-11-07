@@ -137,13 +137,18 @@ describe('PageInfoService', () => {
 
       expect($translate.instant).toHaveBeenCalledWith('PAGE');
       expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
-      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('/my-page.html', 'https://example.com/news/2018/my-page.html');
+      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith(
+        '/my-page.html', 'https://example.com/news/2018/my-page.html',
+      );
     });
 
     it('goes to the state of the first page extension', () => {
       spyOn($state, 'go');
       PageInfoService.showPageInfo();
-      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/news/2018/my-page.html' });
+      expect($state.go).toHaveBeenCalledWith(
+        'hippo-cm.channel.page-info.extension1',
+        { pageUrl: 'https://example.com/news/2018/my-page.html' },
+      );
     });
   });
 
@@ -179,7 +184,10 @@ describe('PageInfoService', () => {
       it('updates the state of all loaded page extensions', () => {
         spyOn($state, 'go');
         PageInfoService.updatePageInfo();
-        expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.page-info.extension1', { pageUrl: 'https://example.com/events/latest' });
+        expect($state.go).toHaveBeenCalledWith(
+          'hippo-cm.channel.page-info.extension1',
+          { pageUrl: 'https://example.com/events/latest' },
+        );
       });
     });
 

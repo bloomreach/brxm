@@ -189,8 +189,8 @@ describe('PageNewComponent', () => {
 
     $ctrl.title = 'title';
     $ctrl.lastPathInfoElement = 'lastPathInfoElement';
-    $ctrl.location = pageModel.locations[1];
-    $ctrl.prototype = pageModel.prototypes[1];
+    [, $ctrl.location] = pageModel.locations;
+    [, $ctrl.prototype] = pageModel.prototypes;
     $ctrl.create();
 
     expect(SiteMapService.create).toHaveBeenCalledWith('siteMapId', 'location-2', {

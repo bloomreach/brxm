@@ -103,7 +103,9 @@ class RenderingService {
     if (this.OverlayService.isComponentsOverlayDisplayed) {
       this.DragDropService.enable()
         .then(() => {
-          this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+          this.OverlayService.attachComponentMouseDown((e, component) => {
+            this.DragDropService.startDragOrClick(e, component);
+          });
         });
     } else {
       this.DragDropService.disable();

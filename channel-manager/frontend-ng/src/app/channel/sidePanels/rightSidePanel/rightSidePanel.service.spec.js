@@ -101,4 +101,3 @@ describe('RightSidePanelService', () => {
     expect(RightSidePanelService.getContext()).toEqual('');
   });
 });
-

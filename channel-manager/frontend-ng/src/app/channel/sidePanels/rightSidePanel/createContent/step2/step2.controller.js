@@ -76,21 +76,20 @@ class Step2Controller {
   }
 
   save() {
-    return this.showLoadingIndicator(() =>
-      this.ContentEditor.save()
-        .then(() => {
-          this.form.$setPristine();
-          this.documentIsSaved = true;
-          this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-          this.ContentEditor.discardChanges()
-            .then(() => this.Step2Service.saveComponentParameter())
-            .then(() => {
-              this.CreateContentService.finish(this.ContentEditor.getDocumentId());
-            })
-            .finally(() => {
-              this.CmsService.reportUsageStatistic('CreateContent2Done');
-            });
-        }));
+    return this.showLoadingIndicator(() => this.ContentEditor.save()
+      .then(() => {
+        this.form.$setPristine();
+        this.documentIsSaved = true;
+        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
+        this.ContentEditor.discardChanges()
+          .then(() => this.Step2Service.saveComponentParameter())
+          .then(() => {
+            this.CreateContentService.finish(this.ContentEditor.getDocumentId());
+          })
+          .finally(() => {
+            this.CmsService.reportUsageStatistic('CreateContent2Done');
+          });
+      }));
   }
 
   showLoadingIndicator(action) {

@@ -153,7 +153,9 @@ describe('hippoIframeCtrl', () => {
       const targetContainerNextComponent = {};
       onDropHandler([component, targetContainer, targetContainerNextComponent]);
 
-      expect(ContainerService.moveComponent).toHaveBeenCalledWith(component, targetContainer, targetContainerNextComponent);
+      expect(ContainerService.moveComponent).toHaveBeenCalledWith(
+        component, targetContainer, targetContainerNextComponent,
+      );
     });
 
     it('removes the on-drop event handler when destroyed', () => {
@@ -283,7 +285,7 @@ describe('hippoIframeCtrl', () => {
         getRenderVariant: () => 'hippo-default',
       };
       pickerConfig = {};
-      onSelectDocument = OverlayService.onSelectDocument.calls.mostRecent().args[0];
+      [onSelectDocument] = OverlayService.onSelectDocument.calls.mostRecent().args;
     });
 
     it('can pick a path and update the component', (done) => {
@@ -297,9 +299,9 @@ describe('hippoIframeCtrl', () => {
             'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
           );
           expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith('componentId');
-          expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', {
-            componentName: 'componentLabel',
-          });
+          expect(FeedbackService.showNotification).toHaveBeenCalledWith(
+            'NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName: 'componentLabel' },
+          );
 
           done();
         });
@@ -318,8 +320,10 @@ describe('hippoIframeCtrl', () => {
           expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
             'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
           );
-          expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(errorData, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
-            jasmine.any(Object), { componentName: 'componentLabel' });
+          expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(
+            errorData, 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT',
+            jasmine.any(Object), { componentName: 'componentLabel' },
+          );
           expect(HippoIframeService.reload).toHaveBeenCalled();
 
           done();

@@ -257,7 +257,7 @@ describe('PageCopyComponent', () => {
 
     // "null" location matches
     ChannelService.getNewPageModel.and.returnValue($q.when(pageModel));
-    $ctrl.channel = channels[2];
+    [,, $ctrl.channel] = channels;
     $ctrl.channelChanged();
     expect(ChannelService.getNewPageModel).toHaveBeenCalledWith('channelMountC');
     $rootScope.$digest();
@@ -321,7 +321,7 @@ describe('PageCopyComponent', () => {
 
     SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));
     $ctrl.lastPathInfoElement = 'test';
-    $ctrl.location = pageModel.locations[1];
+    [, $ctrl.location] = pageModel.locations;
     $ctrl.copy();
 
     const headers = {
@@ -349,8 +349,8 @@ describe('PageCopyComponent', () => {
     };
 
     SiteMapService.copy.and.returnValue($q.when(copyReturn));
-    $ctrl.channel = channels[2];
-    $ctrl.location = pageModel.locations[2];
+    [,, $ctrl.channel] = channels;
+    [,, $ctrl.location] = pageModel.locations;
     $ctrl.lastPathInfoElement = 'test';
 
     ChannelService.initializeChannel.and.returnValue($q.resolve());

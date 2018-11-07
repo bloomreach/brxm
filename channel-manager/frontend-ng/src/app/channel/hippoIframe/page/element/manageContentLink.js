@@ -47,8 +47,9 @@ class ManageContentLink extends EmbeddedLink {
       isRelativePath: false, // the path is made relative in HstComponentService#saveParameter, and not by the picker
       remembersLastVisited: this.metaData.pickerRemembersLastVisited === 'true',
       rootPath: this.metaData.pickerRootPath,
-      selectableNodeTypes: this.metaData.pickerSelectableNodeTypes ?
-        this.metaData.pickerSelectableNodeTypes.split(',') : [],
+      selectableNodeTypes: this.metaData.pickerSelectableNodeTypes
+        ? this.metaData.pickerSelectableNodeTypes.split(',')
+        : [],
     };
   }
 

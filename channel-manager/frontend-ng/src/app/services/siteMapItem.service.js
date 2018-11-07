@@ -49,11 +49,17 @@ class SiteMapItemService {
   }
 
   isLocked() {
-    return this.hasItem() && angular.isString(this.item.lockedBy) && this.item.lockedBy !== this.ConfigService.cmsUser;
+    return this.hasItem()
+      && angular.isString(this.item.lockedBy)
+      && this.item.lockedBy !== this.ConfigService.cmsUser;
   }
 
   isEditable() {
-    return this.hasItem() && !this.item.isHomePage && !this.isLocked() && this.item.workspaceConfiguration && !this.item.inherited;
+    return this.hasItem()
+      && !this.item.isHomePage
+      && !this.isLocked()
+      && this.item.workspaceConfiguration
+      && !this.item.inherited;
   }
 
   getNumberOfChildren() {

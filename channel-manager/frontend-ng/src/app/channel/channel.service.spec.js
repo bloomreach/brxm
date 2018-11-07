@@ -160,7 +160,7 @@ describe('ChannelService', () => {
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
   });
 
-  it('should use the non-preview channel when no -preview channel exists and the user is not allowed to create it', () => {
+  it('should use the live channel when no -preview channel exists and the user is not allowed to create it', () => {
     const testChannel = {
       id: 'testChannelId',
       hostname: 'www.example.com',
@@ -207,7 +207,10 @@ describe('ChannelService', () => {
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
-    expect($log.error).toHaveBeenCalledWith('Failed to load channel \'testChannelId\'.', 'Failed to create preview configuration');
+    expect($log.error).toHaveBeenCalledWith(
+      'Failed to load channel \'testChannelId\'.',
+      'Failed to create preview configuration',
+    );
     expect(ChannelService.isEditable()).toBe(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
@@ -298,7 +301,7 @@ describe('ChannelService', () => {
     expect(ChannelService.makePath()).toEqual('/cmsPreviewPrefix');
   });
 
-  it('should create paths that start with a slash if the channel\'s webapp runs as ROOT.war and hence the contextPath is an empty string', () => {
+  it('should create paths that start with a slash if the contextPath is an empty string', () => {
     channelMock.contextPath = '';
     loadChannel();
     expect(ChannelService.makePath()).toEqual('/');
@@ -653,10 +656,10 @@ describe('ChannelService', () => {
   it('should forward a channel delete request to the HstService', () => {
     loadChannel();
 
-    const promise = $q.defer().promise;
-    HstService.doDelete.and.returnValue(promise);
+    const defer = $q.defer();
+    HstService.doDelete.and.returnValue(defer.promise);
 
-    expect(ChannelService.deleteChannel()).toBe(promise);
+    expect(ChannelService.deleteChannel()).toBe(defer.promise);
     expect(HstService.doDelete).toHaveBeenCalledWith(ConfigServiceMock.rootUuid, 'channels', channelMock.id);
   });
 

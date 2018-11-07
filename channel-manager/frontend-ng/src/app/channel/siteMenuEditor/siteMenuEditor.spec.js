@@ -81,7 +81,9 @@ describe('SiteMenuEditor', () => {
     $scope.onDone = jasmine.createSpy('onDone');
     $scope.onError = jasmine.createSpy('onError');
     $scope.menuUuid = 'testUuid';
-    $element = angular.element('<site-menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </site-menu-editor>');
+    $element = angular.element(
+      '<site-menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </site-menu-editor>',
+    );
     $compile($element)($scope);
     $scope.$digest();
 

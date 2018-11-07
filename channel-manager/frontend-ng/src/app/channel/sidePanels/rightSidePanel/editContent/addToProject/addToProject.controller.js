@@ -37,7 +37,7 @@ class AddToProjectController {
 
   addDocumentToProject() {
     this.CmsService.reportUsageStatistic('AddToProjectVisualEditor');
-    const documentId = this.$uiRouterGlobals.params.documentId;
+    const { documentId } = this.$uiRouterGlobals.params;
     this.EditContentService.branchAndEditDocument(documentId);
   }
 

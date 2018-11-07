@@ -109,7 +109,7 @@ describe('DragDropService', () => {
       });
     });
 
-    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`);
+    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`); // eslint-disable-line max-len
   }
 
   function eventHandlerCount(jqueryElement, event) {
@@ -213,7 +213,7 @@ describe('DragDropService', () => {
     });
   });
 
-  it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => {
+  it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => { // eslint-disable-line max-len
     mockCommentData.container1 = {
       'HST-LockedBy': 'anotherUser',
     };
@@ -448,7 +448,7 @@ describe('DragDropService', () => {
       loadIframeFixture(() => {
         spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
         ConfigService.antiCache = '123';
-        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`;
+        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`; // eslint-disable-line max-len
 
         spyOn(DomService, 'addScript').and.returnValue($q.resolve());
 
@@ -467,7 +467,7 @@ describe('DragDropService', () => {
 
         spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
         ConfigService.antiCache = '123';
-        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`;
+        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`; // eslint-disable-line max-len
 
         spyOn(DomService, 'addScript').and.returnValue($q.resolve());
 

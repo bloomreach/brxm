@@ -122,7 +122,9 @@ describe('ViewAsCtrl', () => {
     HstService.doPost.and.returnValue($q.reject());
     variantChangedCallback({ id: 'id2', name: 'name2' }, { id: 'id1' });
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', { variant: 'name2' });
+    expect(FeedbackService.showError).toHaveBeenCalledWith(
+      'ERROR_RELEVANCE_VARIANT_SELECTION_FAILED', { variant: 'name2' },
+    );
   });
 
   it('has no global variants if retrieving them fails', () => {
@@ -131,7 +133,9 @@ describe('ViewAsCtrl', () => {
     $ctrl = createController($rootScope.$new(), MockConfigService);
     $ctrl.$onInit();
 
-    expect(HstService.doGetWithParams).toHaveBeenCalledWith('testVariantsUuid', { locale: 'testLocale' }, 'globalvariants');
+    expect(HstService.doGetWithParams).toHaveBeenCalledWith(
+      'testVariantsUuid', { locale: 'testLocale' }, 'globalvariants',
+    );
 
     $rootScope.$digest();
 

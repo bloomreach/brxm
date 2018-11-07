@@ -60,8 +60,7 @@ class PickerService {
       config,
       currentItem,
       pickedItem => deferred.resolve(pickedItem),
-      () => deferred.reject(),
-    );
+      () => deferred.reject());
 
     return deferred.promise;
   }

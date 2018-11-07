@@ -73,8 +73,7 @@ class ScrollService {
   _bindMouseEnterMouseLeave() {
     this.iframe
       .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
-      .on(`mouseleave${EVENT_NAMESPACE}`, event => this._startScrolling(event.pageX, event.pageY),
-      );
+      .on(`mouseleave${EVENT_NAMESPACE}`, event => this._startScrolling(event.pageX, event.pageY));
   }
 
   _unbindMouseEnterMouseLeave() {
@@ -94,7 +93,9 @@ class ScrollService {
     let target = null;
 
     const loadCoords = () => {
-      const { top, right, bottom, left, targetX } = this._getScrollData();
+      const {
+        top, right, bottom, left, targetX,
+      } = this._getScrollData();
       iframeY = top;
       iframeX = left;
       iframe.bottom = bottom - top;
@@ -218,9 +219,9 @@ class ScrollService {
     const bodyScrollWidth = body.scrollWidth;
     const bodyScrollHeight = body.scrollHeight;
 
-    const top = iframeOffset.top;
+    const { top } = iframeOffset;
     const right = Math.min(canvasRight, sheetRight);
-    const bottom = iframeOffset.top + iframeHeight;
+    const bottom = top + iframeHeight;
     const left = sheetLeft >= 0 ? sheetLeft : canvasLeft;
 
     const canvasScrollMaxX = iframeWidth - canvasWidth;
@@ -238,14 +239,14 @@ class ScrollService {
     // we need to calculate it. See https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollMaxX
     let scrollMaxX;
     if (typeof win.scrollMaxX === 'number') {
-      scrollMaxX = win.scrollMaxX;
+      ({ scrollMaxX } = win);
     } else {
       scrollMaxX = useCanvas ? canvasScrollMaxX : iframeScrollMaxX;
     }
 
     let scrollMaxY;
     if (typeof win.scrollMaxY === 'number') {
-      scrollMaxY = win.scrollMaxY;
+      ({ scrollMaxY } = win);
     } else {
       scrollMaxY = bodyScrollHeight - iframeHeight;
       if (bodyScrollWidth > iframeWidth) {

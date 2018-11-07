@@ -35,7 +35,7 @@ class ViewportToggleCtrl {
   }
 
   setViewports() {
-    const viewportMap = this.ChannelService.getChannel().viewportMap;
+    const { viewportMap } = this.ChannelService.getChannel();
     const viewportWidths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
 
     this.viewports = [
@@ -63,7 +63,7 @@ class ViewportToggleCtrl {
   }
 
   activate() {
-    this.selectedViewport = this.viewports[0];
+    [this.selectedViewport] = this.viewports;
     this.viewportChanged();
   }
 

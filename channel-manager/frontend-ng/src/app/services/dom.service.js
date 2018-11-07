@@ -26,7 +26,7 @@ class DomService {
   }
 
   getAppRootUrl() {
-    const location = this.$document[0].location;
+    const { location } = this.$document[0];
     const appPath = location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
     return `//${location.host}${appPath}`;
   }
@@ -149,7 +149,20 @@ class DomService {
     // Dragula attaches a pointerdown listener to the DOM for Edge
     const type = this.BrowserService.isEdge() ? 'pointerdown' : 'mousedown';
     return new MouseEvent(type, {
-      bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget,
+      bubbles,
+      cancelable,
+      view,
+      detail,
+      screenX,
+      screenY,
+      clientX,
+      clientY,
+      ctrlKey,
+      altKey,
+      shiftKey,
+      metaKey,
+      button,
+      relatedTarget,
     });
   }
 
@@ -163,6 +176,7 @@ class DomService {
   }
 
   escapeHtml(str) {
+    // eslint-disable-next-line
     // escape all characters recommended by OWASP: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_Before_Inserting_Untrusted_Data_into_HTML_Element_Content
     return String(str)
       .replace(/&/g, '&amp;')

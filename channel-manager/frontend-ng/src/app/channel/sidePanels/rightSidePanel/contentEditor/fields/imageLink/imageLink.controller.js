@@ -83,8 +83,8 @@ class ImageLinkController {
   }
 
   _onImagePicked(image) {
-    // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during rendering.
-    // Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
+    // if no image has been picked yet, we rely on the focus-if directive to set focus on the image element during
+    // rendering. Otherwise the focus-if directive will not trigger so we explicitly set focus on the image element.
     if (this.imagePicked) {
       this._focusClearButton();
     }

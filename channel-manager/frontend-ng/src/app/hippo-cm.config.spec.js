@@ -120,19 +120,61 @@ describe('The hippo-cm module config', () => {
       });
 
       it('uses locale-specific month names', () => {
-        expect($mdDateLocale.months).toEqual(['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december']);
+        expect($mdDateLocale.months).toEqual([
+          'januari',
+          'februari',
+          'maart',
+          'april',
+          'mei',
+          'juni',
+          'juli',
+          'augustus',
+          'september',
+          'oktober',
+          'november',
+          'december',
+        ]);
       });
 
       it('uses locale-specific short month names', () => {
-        expect($mdDateLocale.shortMonths).toEqual(['jan.', 'feb.', 'mrt.', 'apr.', 'mei', 'jun.', 'jul.', 'aug.', 'sep.', 'okt.', 'nov.', 'dec.']);
+        expect($mdDateLocale.shortMonths).toEqual([
+          'jan.',
+          'feb.',
+          'mrt.',
+          'apr.',
+          'mei',
+          'jun.',
+          'jul.',
+          'aug.',
+          'sep.',
+          'okt.',
+          'nov.',
+          'dec.',
+        ]);
       });
 
       it('uses locale-specific day names', () => {
-        expect($mdDateLocale.days).toEqual(['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag']);
+        expect($mdDateLocale.days).toEqual([
+          'maandag',
+          'dinsdag',
+          'woensdag',
+          'donderdag',
+          'vrijdag',
+          'zaterdag',
+          'zondag',
+        ]);
       });
 
       it('uses locale-specific short day names', () => {
-        expect($mdDateLocale.shortDays).toEqual(['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo']);
+        expect($mdDateLocale.shortDays).toEqual([
+          'ma',
+          'di',
+          'wo',
+          'do',
+          'vr',
+          'za',
+          'zo',
+        ]);
       });
 
       it('formats dates in the user locale', () => {

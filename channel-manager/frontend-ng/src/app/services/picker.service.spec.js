@@ -38,7 +38,13 @@ describe('PickerService', () => {
       const currentPath = '/test';
 
       PickerService.pickPath(pickerConfig, currentPath);
-      expect(CmsService.publish).toHaveBeenCalledWith('show-path-picker', pickerConfig, currentPath, jasmine.any(Function), jasmine.any(Function));
+      expect(CmsService.publish).toHaveBeenCalledWith(
+        'show-path-picker',
+        pickerConfig,
+        currentPath,
+        jasmine.any(Function),
+        jasmine.any(Function),
+      );
     });
 
     it('resolves the returned promise with the picked path', (done) => {
@@ -70,7 +76,13 @@ describe('PickerService', () => {
       const currentLink = { uuid: '1' };
 
       PickerService.pickLink(pickerConfig, currentLink);
-      expect(CmsService.publish).toHaveBeenCalledWith('show-link-picker', pickerConfig, currentLink, jasmine.any(Function), jasmine.any(Function));
+      expect(CmsService.publish).toHaveBeenCalledWith(
+        'show-link-picker',
+        pickerConfig,
+        currentLink,
+        jasmine.any(Function),
+        jasmine.any(Function),
+      );
     });
 
     it('resolves the returned promise with the picked link', (done) => {
@@ -101,7 +113,13 @@ describe('PickerService', () => {
       const currentImage = { uuid: '1' };
 
       PickerService.pickImage(pickerConfig, currentImage);
-      expect(CmsService.publish).toHaveBeenCalledWith('show-image-picker', pickerConfig, currentImage, jasmine.any(Function), jasmine.any(Function));
+      expect(CmsService.publish).toHaveBeenCalledWith(
+        'show-image-picker',
+        pickerConfig,
+        currentImage,
+        jasmine.any(Function),
+        jasmine.any(Function),
+      );
     });
 
     it('resolves the returned promise with the picked image', (done) => {

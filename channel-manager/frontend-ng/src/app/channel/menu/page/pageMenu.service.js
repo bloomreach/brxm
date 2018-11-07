@@ -95,7 +95,9 @@ class PageMenuService extends MenuService {
   }
 
   onOpenMenu() {
-    this.SiteMapItemService.loadAndCache(this.ChannelService.getSiteMapId(), this.PageMetaDataService.getSiteMapItemId());
+    const siteMapId = this.ChannelService.getSiteMapId();
+    const siteMapItemId = this.PageMetaDataService.getSiteMapItemId();
+    this.SiteMapItemService.loadAndCache(siteMapId, siteMapItemId);
     this.ChannelService.loadPageModifiableChannels();
   }
 
@@ -196,7 +198,13 @@ class PageMenuService extends MenuService {
 
   _getPageDeleteMessage(page, numberOfChildren) {
     if (numberOfChildren > 0) {
-      return this.$translate.instant('CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE', { numberOfPages: numberOfChildren + 1, page });
+      return this.$translate.instant(
+        'CONFIRM_DELETE_MULTIPLE_PAGE_MESSAGE',
+        {
+          numberOfPages: numberOfChildren + 1,
+          page,
+        },
+      );
     }
     return this.$translate.instant('CONFIRM_DELETE_SINGLE_PAGE_MESSAGE', { page });
   }

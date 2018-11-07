@@ -38,7 +38,7 @@ describe('ScrollService', () => {
   const exitOnLeft = [offsetLeft, margin + offsetTop];
   const exitOnRight = [canvasWidth + offsetLeft, margin + offsetTop];
 
-  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scrolling/scroll.service.iframe.fixture.html`;
+  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scrolling/scroll.service.iframe.fixture.html`; // eslint-disable-line max-len
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,22 +61,22 @@ class CmsService {
   }
 
   publish(...args) {
-    const iframeToHost = this.getParentIFramePanel().iframeToHost;
+    const { iframeToHost } = this.getParentIFramePanel();
     return iframeToHost.publish(...args);
   }
 
   subscribe(topic, callback, scope) {
-    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    const { hostToIFrame } = this.getParentIFramePanel();
     return scope ? hostToIFrame.subscribe(topic, callback, scope) : hostToIFrame.subscribe(topic, callback);
   }
 
   subscribeOnce(topic, callback, scope) {
-    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    const { hostToIFrame } = this.getParentIFramePanel();
     return scope ? hostToIFrame.subscribeOnce(topic, callback, scope) : hostToIFrame.subscribeOnce(topic, callback);
   }
 
   unsubscribe(topic, callback, scope) {
-    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    const { hostToIFrame } = this.getParentIFramePanel();
     return hostToIFrame.unsubscribe(topic, callback, scope);
   }
 

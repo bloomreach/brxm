@@ -213,13 +213,17 @@ class PageStructureService {
           return oldContainer;
         },
         (errorResponse) => {
-          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_DELETE_COMPONENT';
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
+            ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED'
+            : 'ERROR_DELETE_COMPONENT';
           const params = errorResponse.parameterMap;
           params.component = component.getLabel();
           return this._showFeedbackAndReload(errorKey, params);
         });
     }
-    this.$log.debug(`Could not remove component with ID '${componentId}' because it does not exist in the page structure.`);
+    this.$log.debug(
+      `Could not remove component with ID '${componentId}' because it does not exist in the page structure.`,
+    );
     return this.$q.reject();
   }
 
@@ -266,7 +270,9 @@ class PageStructureService {
           const updatedComponent = this._updateComponent(component, newMarkup);
 
           if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
-            this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
+            this.$log.info(
+              `Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`,
+            );
             this.HippoIframeService.reload();
           }
         })
@@ -371,11 +377,14 @@ class PageStructureService {
           return newComponentJson.id;
         },
         (errorResponse) => {
-          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_ADD_COMPONENT';
+          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
+            ? 'ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED'
+            : 'ERROR_ADD_COMPONENT';
           const params = errorResponse.parameterMap;
           params.component = catalogComponent.name;
           return this._showFeedbackAndReload(errorKey, params);
-        });
+        },
+      );
   }
 
   moveComponent(component, targetContainer, targetContainerNextComponent) {
@@ -411,7 +420,9 @@ class PageStructureService {
       .then(() => this.getComponentById(newComponentId))
       .then((newComponent) => {
         if (this.containsNewHeadContributions(newComponent.getContainer())) {
-          this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+          this.$log.info(
+            `New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`,
+          );
           this.HippoIframeService.reload();
         }
       });

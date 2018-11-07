@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,8 @@ describe('The tree rendered by the tree directive', () => {
     const $element = angular.element(
       `<hippo-tree items="items" options="options" selected-item="selectedItem">
         <a data-ng-click="toggle(); hippoTree.toggle(item)">{{ item.title }}</a>
-      </hippo-tree>`);
+      </hippo-tree>`,
+    );
     $compile($element)($scope);
     $scope.$digest();
     const tree = $element.find('div.angular-ui-tree > hippo-tree-nodes > ol.angular-ui-tree-nodes');

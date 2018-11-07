@@ -45,10 +45,9 @@ class SiteMenuEditorCtrl {
         this.isDragging = false;
       },
       dropped: (event) => {
-        const source = event.source;
+        const { source, dest } = event;
         const sourceNodeScope = source.nodeScope;
         const sourceId = sourceNodeScope.$modelValue.id;
-        const dest = event.dest;
         const destNodesScope = dest.nodesScope;
         const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : undefined;
 

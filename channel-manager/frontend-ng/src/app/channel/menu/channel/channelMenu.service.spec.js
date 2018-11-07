@@ -144,7 +144,7 @@ describe('ChannelMenuService', () => {
 
     // menu button
     it('shows an icon in the menu button if there are any changes', () => {
-      const menu = ChannelMenuService.menu;
+      const { menu } = ChannelMenuService;
       expect(menu.isIconVisible()).toBe(false);
 
       ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
@@ -459,7 +459,9 @@ describe('ChannelMenuService', () => {
 
         expect(DialogService.hide).toHaveBeenCalled();
         expect(DialogService.alert).toHaveBeenCalled();
-        expect($translate.instant).toHaveBeenCalledWith('ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS', parameterMap);
+        expect($translate.instant).toHaveBeenCalledWith(
+          'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS', parameterMap,
+        );
       });
     });
 

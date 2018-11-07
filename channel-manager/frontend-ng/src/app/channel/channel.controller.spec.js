@@ -89,13 +89,13 @@ describe('ChannelController', () => {
     spyOn(FeedbackService, 'showError');
   });
 
-  describe('initialise overlays', () => {
+  describe('initialize overlays', () => {
     it('content overlay and component overlay values are aligned with OverlayService', () => {
       expect($ctrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
       expect($ctrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
     });
 
-    it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed should call overlayService functions', () => {
+    it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed call overlayService functions', () => {
       spyOn(OverlayService, 'showContentOverlay');
       spyOn(OverlayService, 'showComponentsOverlay');
       const arg = false;
@@ -219,7 +219,10 @@ describe('ChannelController', () => {
     it('handles the reload-page event from ExtJS when an item is already locked', () => {
       $window.CMS_TO_APP.publish('reload-page', { error: 'ITEM_ALREADY_LOCKED', parameterMap: { lockedBy: 'admin' } });
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', { lockedBy: 'admin' });
+      expect(FeedbackService.showError).toHaveBeenCalledWith(
+        'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED',
+        { lockedBy: 'admin' },
+      );
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 

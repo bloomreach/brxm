@@ -17,6 +17,58 @@
 import angular from 'angular';
 import 'angular-mocks';
 
+function containerComment(label, type, uuid) {
+  return `<!-- {
+    "HST-Type": "CONTAINER_COMPONENT",
+    "HST-Label": "${label}",
+    "HST-XType": "${type}",
+    "uuid": "${uuid}"
+  } -->`;
+}
+
+function itemComment(label, uuid) {
+  return `<!-- {
+    "HST-Type": "CONTAINER_ITEM_COMPONENT",
+    "HST-Label": "${label}",
+    "uuid": "${uuid}"
+  } -->`;
+}
+
+function contentLinkComment(uuid) {
+  return `<!-- {
+    "HST-Type": "CONTENT_LINK",
+    "uuid": "${uuid}"
+  } -->`;
+}
+
+function manageContentLinkComment(documentTemplateQuery) {
+  return `<!-- {
+    "HST-Type": "MANAGE_CONTENT_LINK",
+    "documentTemplateQuery": "${documentTemplateQuery}"
+  } -->`;
+}
+
+function editMenuLinkComment(uuid) {
+  return `<!-- {
+    "HST-Type": "EDIT_MENU_LINK",
+    "uuid": "${uuid}"
+  } -->`;
+}
+
+function unprocessedHeadContributionsComment(headElements) {
+  return `<!-- {
+    "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS",
+    "headElements": ["${headElements}"]
+  } -->`;
+}
+
+function endComment(uuid) {
+  return `<!-- {
+    "HST-End": "true",
+    "uuid": "${uuid}"
+  } -->`;
+}
+
 describe('PageStructureService', () => {
   let $document;
   let $log;
@@ -153,9 +205,13 @@ describe('PageStructureService', () => {
 
   const registerLowercaseNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-lowercase');
 
-  const registerEmptyLowercaseNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-lowercase-empty');
+  const registerEmptyLowercaseNoMarkupContainer = () => {
+    registerNoMarkupContainer('#container-no-markup-lowercase-empty');
+  };
 
-  const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => registerNoMarkupContainer('#container-no-markup-without-text-nodes-after-end-comment');
+  const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => {
+    registerNoMarkupContainer('#container-no-markup-without-text-nodes-after-end-comment');
+  };
 
   const registerNoMarkupComponent = () => {
     const component = $j('#component-no-markup', $document)[0];
@@ -420,7 +476,7 @@ describe('PageStructureService', () => {
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
   });
 
-  it('removes a valid component but fails to call HST due to an unknown reason, then iframe should be reloaded and a feedback toast should be shown', () => {
+  it('removes a valid component but fails to call HST due to an unknown reason, then iframe should be reloaded and a feedback toast should be shown', () => { // eslint-disable-line max-len
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
@@ -440,14 +496,15 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
-  it('removes a valid component but fails to call HST due to locked component then iframe should be reloaded and a feedback toast should be shown', () => {
+  it('removes a valid component but fails to call HST due to locked component then iframe should be reloaded and a feedback toast should be shown', () => { // eslint-disable-line max-len
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
     // mock the call to HST to be failed
-    spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
+    spyOn(HstComponentService, 'deleteComponent')
+      .and.returnValue($q.reject({ error: 'ITEM_ALREADY_LOCKED', parameterMap: {} }));
 
     PageStructureService.removeComponentById('aaaa');
     $rootScope.$digest();
@@ -615,12 +672,12 @@ describe('PageStructureService', () => {
     PageStructureService.attachEmbeddedLinks();
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-edit-menu-in-component-a">
-          <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "updated-menu-in-component-a" } -->
+          ${editMenuLinkComment('updated-menu-in-component-a')}
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      `;
+      ${endComment('aaaa')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     const component = PageStructureService.getComponentById('aaaa');
@@ -643,12 +700,12 @@ describe('PageStructureService', () => {
     PageStructureService.attachEmbeddedLinks();
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container", "uuid": "component-no-markup" } -->
+      ${itemComment('Component in NoMarkup container', 'component-no-markup')}
         <div id="component-no-markup">
           <p>Some markup in component D</p>
         </div>
-      <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
-      `;
+      ${endComment('component-no-markup')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     const component = PageStructureService.getComponentById('component-no-markup');
@@ -667,12 +724,12 @@ describe('PageStructureService', () => {
     expect(PageStructureService.getEmbeddedLinks().length).toBe(0);
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-edit-menu-in-component-a">
-          <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "updated-menu-in-component-a" } -->
+          ${editMenuLinkComment('updated-menu-in-component-a')}
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      `;
+      ${endComment('aaaa')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     const component = PageStructureService.getComponentById('aaaa');
@@ -691,10 +748,10 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentB');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
+      ${itemComment('component B', 'bbbb')}
         <p>Re-rendered component B</p>
-      <!-- { "HST-End": "true", "uuid": "bbbb" } -->
-      `;
+      ${endComment('bbbb')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
     const component = PageStructureService.getComponentById('bbbb');
@@ -746,9 +803,9 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-edit-menu-in-component-a">
-          <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "updated-menu-in-component-a" } -->
+          ${editMenuLinkComment('updated-menu-in-component-a')}
         </p>
       `;
     spyOn($log, 'error');
@@ -768,11 +825,11 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-component-with-new-head-contribution">
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
+      ${endComment('aaaa')}
+      ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
@@ -791,11 +848,11 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
-        <p id="updated-component-with-new-head-contribution">
-        </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      `;
+      ${itemComment('component A', 'aaaa')}
+      <p id="updated-component-with-new-head-contribution">
+      </p>
+      ${endComment('aaaa')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
@@ -808,18 +865,18 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 
-  it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => {
+  it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => { // eslint-disable-line max-len
     registerVBoxContainer();
     registerVBoxComponent('componentA');
     registerHeadContributions('#processed-head-contributions');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-component-with-new-head-contribution">
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
-      `;
+      ${endComment('aaaa')}
+      ${unprocessedHeadContributionsComment('<script>window.processed = true</script>')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
@@ -837,12 +894,12 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
 
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-component-with-new-head-contribution">
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
-      `;
+      ${endComment('aaaa')}
+      ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
+    `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
     spyOn(HippoIframeService, 'reload');
 
@@ -865,10 +922,10 @@ describe('PageStructureService', () => {
     const container = PageStructureService.getContainers()[0];
     const component = container.getComponents()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${itemComment('component A', 'aaaa')}
         <p id="updated-component-with-new-head-contribution">
         </p>
-      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      ${endComment('aaaa')}
     `;
 
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
@@ -897,12 +954,12 @@ describe('PageStructureService', () => {
     container.getEndComment().after('<p>Trailing element, to be removed</p>'); // insert trailing dom element
     expect(container.getEndComment().next().length).toBe(1);
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.nomarkup", "uuid": "container-nomarkup" } -->
-        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+      ${containerComment('NoMarkup container', 'HST.nomarkup', 'container-nomarkup')}
+        ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-        <!-- { "HST-End": "true", "uuid": "aaaa" } -->
-      <!-- { "HST-End": "true", "uuid": "container-nomarkup" } -->
-      `;
+        ${endComment('aaaa')}
+      ${endComment('container-nomarkup')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
@@ -917,8 +974,9 @@ describe('PageStructureService', () => {
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
-      <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->`;
+      ${containerComment('Empty NoMarkup container', 'HST.NoMarkup', 'no-markup-no-text-nodes-after-end-comment')}
+      ${endComment('no-markup-no-text-nodes-after-end-comment')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
@@ -943,22 +1001,22 @@ describe('PageStructureService', () => {
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
         <div id="componentA">
-          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+          ${endComment('aaaa')}
         </div>
         <p id="new-content-in-container-vbox">
-          <!-- { "HST-Type": "CONTENT_LINK", "uuid": "new-content-in-container-vbox" } -->
+          ${contentLinkComment('new-content-in-container-vbox')}
         </p>
         <p id="new-manage-content-in-container-vbox">
-          <!-- { "HST-Type": "MANAGE_CONTENT_LINK", "documentTemplateQuery": "new-manage-content-in-container-vbox" } -->
+          ${manageContentLinkComment('new-manage-content-in-container-vbox')}
         </p>
       </div>
-      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
-      `;
+      ${endComment('container-vbox')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.getContainers().length).toBe(1);
@@ -985,17 +1043,17 @@ describe('PageStructureService', () => {
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
         <div id="componentA">
-          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+          ${endComment('aaaa')}
         </div>
       </div>
-      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
-      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
-      `;
+      ${endComment('container-vbox')}
+      ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
@@ -1010,16 +1068,16 @@ describe('PageStructureService', () => {
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
         <div id="componentA">
-          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+          ${endComment('aaaa')}
         </div>
       </div>
-      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
-      `;
+      ${endComment('container-vbox')}
+    `;
 
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
@@ -1038,16 +1096,16 @@ describe('PageStructureService', () => {
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
         <div id="componentA">
-          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+          ${endComment('aaaa')}
         </div>
       </div>
-      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
-      `;
+      ${endComment('container-vbox')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
@@ -1056,24 +1114,24 @@ describe('PageStructureService', () => {
     $rootScope.$digest();
   });
 
-  it('known that a re-rendered container does not contain new head contributions if they have already been rendered by the page', (done) => {
+  it('known that a re-rendered container does not contain new head contributions if they have already been rendered by the page', (done) => { // eslint-disable-line max-len
     registerVBoxContainer();
     registerVBoxComponent('componentA');
     registerHeadContributions('#processed-head-contributions');
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
         <div id="componentA">
-          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          ${itemComment('component A', 'aaaa')}
           <p id="test">Some markup in component A</p>
-          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+          ${endComment('aaaa')}
         </div>
       </div>
-      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
-      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
-      `;
+      ${endComment('container-vbox')}
+      ${unprocessedHeadContributionsComment('<script>window.processed = true</script>')}
+    `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
@@ -1081,6 +1139,10 @@ describe('PageStructureService', () => {
     });
     $rootScope.$digest();
   });
+
+  function expectUpdateHstContainer(id, container) {
+    expect(HstService.updateHstContainer).toHaveBeenCalledWith(id, container.getHstRepresentation());
+  }
 
   describe('move component', () => {
     function componentIds(container) {
@@ -1101,7 +1163,7 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(componentA, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container);
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1121,7 +1183,7 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(componentB, container, componentA);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container);
       expect(componentIds(container)).toEqual(['bbbb', 'aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     });
@@ -1143,8 +1205,8 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container1);
+      expectUpdateHstContainer('container-vbox-empty', container2);
       expect(componentIds(container1)).toEqual(['bbbb']);
       expect(componentIds(container2)).toEqual(['aaaa']);
       expect(ChannelService.recordOwnChange).toHaveBeenCalled();
@@ -1164,7 +1226,7 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(component, container, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container);
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1186,8 +1248,8 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container1);
+      expectUpdateHstContainer('container-vbox-empty', container2);
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });
@@ -1209,8 +1271,8 @@ describe('PageStructureService', () => {
       PageStructureService.moveComponent(component, container2, undefined);
       $rootScope.$digest();
 
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox', container1.getHstRepresentation());
-      expect(HstService.updateHstContainer).toHaveBeenCalledWith('container-vbox-empty', container2.getHstRepresentation());
+      expectUpdateHstContainer('container-vbox', container1);
+      expectUpdateHstContainer('container-vbox-empty', container2);
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_MOVE_COMPONENT_FAILED', {
         component: 'component A',
       });

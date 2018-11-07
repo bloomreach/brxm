@@ -132,13 +132,16 @@ describe('ContainerService', () => {
       const rerenderedTargetContainer = {};
 
       spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
-      spyOn(PageStructureService, 'renderContainer').and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
+      spyOn(PageStructureService, 'renderContainer')
+        .and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
       spyOn(DragDropService, 'replaceContainer').and.returnValues($q.resolve(), $q.resolve());
 
       ContainerService.moveComponent(component, targetContainer, newContainerNextComponent);
       $rootScope.$digest();
 
-      expect(PageStructureService.moveComponent).toHaveBeenCalledWith(component, targetContainer, newContainerNextComponent);
+      expect(PageStructureService.moveComponent).toHaveBeenCalledWith(
+        component, targetContainer, newContainerNextComponent,
+      );
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
       expect(DragDropService.replaceContainer).toHaveBeenCalledWith(sourceContainer, rerenderedSourceContainer);

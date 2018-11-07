@@ -117,8 +117,7 @@ class EditComponentMainCtrl {
             );
             this.HippoIframeService.reload();
           });
-      },
-      )
+      })
       .catch(() => this.$q.reject()); // user cancelled the delete
   }
 

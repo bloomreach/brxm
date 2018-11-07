@@ -63,7 +63,8 @@ class IframeExtensionCtrl {
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
-    $(this.connection.iframe).attr('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
+    $(this.connection.iframe).attr('sandbox',
+      'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
     this.connection.promise
       .then((child) => {

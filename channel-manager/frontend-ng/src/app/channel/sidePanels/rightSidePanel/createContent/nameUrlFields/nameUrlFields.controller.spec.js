@@ -37,12 +37,14 @@ describe('NameUrlFields', () => {
     });
 
     $rootScope.$new();
-    element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" placeholder="Document name" required autocomplete="off" class="name-input-element"></form>');
+    element = angular.element('<form><input ng-model="$ctrl.nameField" name="name" '
+        + 'placeholder="Document name" required autocomplete="off" class="name-input-element"></form>');
     component = $componentController('nameUrlFields', {
       $element: element,
     });
 
-    spies.generateDocumentUrlByName = spyOn(CreateContentService, 'generateDocumentUrlByName').and.returnValue($q.resolve());
+    spies.generateDocumentUrlByName = spyOn(CreateContentService, 'generateDocumentUrlByName')
+      .and.returnValue($q.resolve());
     spies.setDocumentUrlByName = spyOn(component, 'setDocumentUrlByName').and.callThrough();
 
     component.locale = 'en';
@@ -84,7 +86,7 @@ describe('NameUrlFields', () => {
       expect(component.setDocumentUrlByName.calls.count()).toBe(2);
     });
 
-    it('waits until server callback resolves before submitting a new documentUrlByName request with the latest nameField value', () => {
+    it('waits until server callback resolves before submitting a new documentUrlByName request with the latest nameField value', () => { // eslint-disable-line max-len
       const deferredRequest = $q.defer();
       spies.generateDocumentUrlByName.and.returnValue(deferredRequest.promise);
 

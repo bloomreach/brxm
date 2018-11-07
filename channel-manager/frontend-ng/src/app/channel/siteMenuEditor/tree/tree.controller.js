@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,11 @@ class HippoTreeCtrl {
     item.collapsed = !item.collapsed;
 
     // when collapsing an item with a selected (grand)child, select the item itself
-    if (this.selectedItem && this.selectable !== false && item.collapsed && this.getByPropertyFilter(item.items, 'id', this.selectedItem.id, 'items')) {
+    if (this.selectedItem
+      && this.selectable !== false
+      && item.collapsed
+      && this.getByPropertyFilter(item.items, 'id', this.selectedItem.id, 'items')
+    ) {
       this.selectItem(item);
     }
 

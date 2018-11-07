@@ -50,8 +50,7 @@ describe('ContentEditorCtrl', () => {
 
     $ctrl = $componentController('contentEditor',
       { $scope, ContentEditor },
-      { form },
-    );
+      { form });
     $scope.$digest();
   });
 

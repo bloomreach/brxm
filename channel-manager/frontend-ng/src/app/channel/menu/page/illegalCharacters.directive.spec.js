@@ -33,9 +33,9 @@ describe('IllegalCharactersDirective', () => {
   function compileDirectiveAndGetScope(illegalCharacters) {
     const $scope = $rootScope.$new();
     $scope.illegalCharacters = illegalCharacters;
-    const $element = angular.element('<form name="form">' +
-      '<input name="field" ng-model="input" illegal-characters="{{illegalCharacters}}">' +
-      '</form>');
+    const $element = angular.element('<form name="form">'
+      + '<input name="field" ng-model="input" illegal-characters="{{illegalCharacters}}">'
+      + '</form>');
     $compile($element)($scope);
     $scope.$digest();
 

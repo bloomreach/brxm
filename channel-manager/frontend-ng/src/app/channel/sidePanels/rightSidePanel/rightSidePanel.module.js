@@ -40,4 +40,3 @@ const rightSidePanelModule = angular
   .service('RightSidePanelService', rightSidePanelService);
 
 export default rightSidePanelModule.name;
-

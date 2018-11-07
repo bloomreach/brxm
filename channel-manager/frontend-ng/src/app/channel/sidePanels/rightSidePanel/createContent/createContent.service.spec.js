@@ -35,7 +35,9 @@ describe('CreateContentService', () => {
     ContentService = jasmine.createSpyObj('ContentService', ['_send']);
     ContentService._send.and.returnValue(Promise.resolve());
 
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setTitle', 'startLoading', 'stopLoading']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
+      'clearContext', 'setTitle', 'startLoading', 'stopLoading',
+    ]);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
@@ -85,7 +87,9 @@ describe('CreateContentService', () => {
       CreateContentService.start({});
       $rootScope.$apply();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
+      expect(FeedbackService.showError).toHaveBeenCalledWith(
+        'Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"',
+      );
     });
   });
 
@@ -163,7 +167,9 @@ describe('CreateContentService', () => {
     it('should have a documentTemplateQuery configuration option', () => {
       spyOn(FeedbackService, 'showError');
       CreateContentService.start();
-      expect(FeedbackService.showError).toHaveBeenCalledWith('Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"');
+      expect(FeedbackService.showError).toHaveBeenCalledWith(
+        'Failed to open create-content-step1 sidepanel due to missing configuration option "documentTemplateQuery"',
+      );
     });
   });
 
