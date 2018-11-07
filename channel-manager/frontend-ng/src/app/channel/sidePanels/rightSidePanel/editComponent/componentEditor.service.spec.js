@@ -24,6 +24,7 @@ describe('ComponentEditorService', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
+  let OverlayService;
   let PageStructureService;
 
   let testData;
@@ -53,6 +54,7 @@ describe('ComponentEditorService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
+      _OverlayService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -64,6 +66,7 @@ describe('ComponentEditorService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
+      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -170,6 +173,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container).toBe(testData.container);
       expect(ComponentEditor.page).toBe(testData.page);
       expect(ComponentEditor.properties).toBe(properties);
+      expect(OverlayService.current).toBe('componentId');
     });
 
     it('reloads the page and shows a message when retrieving properties returns an error', () => {
@@ -621,6 +625,7 @@ describe('ComponentEditorService', () => {
       ComponentEditor.properties = {};
       ComponentEditor.propertyGroups = {};
       ComponentEditor.error = 'error';
+      OverlayService.current = 'something';
 
       ComponentEditor.close();
 
@@ -632,6 +637,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();
       expect(ComponentEditor.error).toBeUndefined();
+      expect(OverlayService.current).toBeUndefined();
     });
   });
 

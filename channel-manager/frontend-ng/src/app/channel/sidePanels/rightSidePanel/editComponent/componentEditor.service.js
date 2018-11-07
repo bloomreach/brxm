@@ -30,6 +30,7 @@ class ComponentEditorService {
     FeedbackService,
     HippoIframeService,
     HstComponentService,
+    OverlayService,
     PageStructureService,
   ) {
     'ngInject';
@@ -41,6 +42,7 @@ class ComponentEditorService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
+    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
@@ -70,6 +72,8 @@ class ComponentEditorService {
     this.page = page;
     this.properties = this._normalizeProperties(properties);
     this.propertyGroups = this._groupProperties(this.properties);
+
+    this.OverlayService.current = component.id;
   }
 
   _onLoadFailure() {
@@ -283,6 +287,7 @@ class ComponentEditorService {
   close() {
     this._clearData();
     delete this.error;
+    delete this.OverlayService.current;
   }
 
   isKilled() {

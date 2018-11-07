@@ -31,7 +31,6 @@ class OverlayService {
     $translate,
     ChannelService,
     CmsService,
-    ComponentEditor,
     CreateContentService,
     DomService,
     EditContentService,
@@ -47,7 +46,6 @@ class OverlayService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-    this.ComponentEditor = ComponentEditor;
     this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.EditContentService = EditContentService;
@@ -166,7 +164,7 @@ class OverlayService {
   }
 
   _isSelected(element) {
-    return element.type === 'component' && element.metaData.uuid === this.ComponentEditor.getComponentId();
+    return element.type === 'component' && element.metaData.uuid === this.current;
   }
 
   sync() {
