@@ -176,10 +176,7 @@ class OverlayService {
       .reduce((overlayElements, element) => {
         this._syncElement(element);
 
-        const [overlayElement] = element.getOverlayElement()
-          .toggleClass('hippo-overlay-element-component-active', this._isSelected(element));
-
-        return overlayElements.add(overlayElement);
+        return overlayElements.add(element.getOverlayElement()[0]);
       }, new Set());
 
     this._tidyOverlay(currentOverlayElements);
@@ -615,6 +612,7 @@ class OverlayService {
     switch (structureElement.getType()) {
       case 'component':
         this._syncLabel(structureElement, overlayElement);
+        overlayElement.toggleClass('hippo-overlay-element-component-active', this._isSelected(structureElement));
         break;
       case 'container': {
         const isEmptyInDom = structureElement.isEmptyInDom();
