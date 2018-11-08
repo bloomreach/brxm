@@ -71,11 +71,14 @@ public final class Constants {
 
     public static final String HCM_SITE_DESCRIPTOR = "hcm-site.yaml";
     public static final String HCM_SITE_DESCRIPTOR_LOCATION = "META-INF/" + HCM_SITE_DESCRIPTOR;
+    public static final String HCM_SITE_DESCRIPTOR_FIELD_NAME = "name";
+    public static final String HCM_SITE_DESCRIPTOR_FIELD_ROOT = "hstRoot";
 
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
 
     public static final String SYSTEM_PARAMETER_REPO_BOOTSTRAP = "repo.bootstrap";
     public static final String SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION = "autoexport.loop.protection";
+    public static final String SYSTEM_PARAMETER_USE_HCM_SITES = "use.hcm.sites";
 
     // Path within a Maven module where we expect the module descriptor to be
     public static final String MAVEN_MODULE_DESCRIPTOR = "/src/main/resources/" + HCM_MODULE_YAML;

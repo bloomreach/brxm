@@ -102,6 +102,7 @@ import static org.onehippo.cm.engine.Constants.HCM_SITE_DESCRIPTOR_LOCATION;
 import static org.onehippo.cm.engine.Constants.NT_HCM_ROOT;
 import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_USE_HCM_SITES;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
 import static org.onehippo.cm.model.Constants.HCM_CONFIG_FOLDER;
 import static org.onehippo.cm.model.impl.ConfigurationModelImpl.mergeWithSourceModules;
@@ -131,10 +132,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private AutoExportServiceImpl autoExportService;
     private Map<String, SiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
-
-    private static final String USE_HCM_SITES_PROPERTY = "use.hcm.sites";
-
-    static final boolean USE_HCM_SITES_MODE = isUseHcmSitesMode();
+    
+    static final boolean USE_HCM_SITES_MODE = Boolean
+            .parseBoolean(System.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
 
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
@@ -145,11 +145,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * This should be non-null on any successful startup.
      */
     private ConfigurationModelImpl runtimeConfigurationModel;
-
-    private static boolean isUseHcmSitesMode() {
-        final String useHcmSites = System.getProperty(USE_HCM_SITES_PROPERTY);
-        return StringUtils.isEmpty(useHcmSites) || useHcmSites.toLowerCase().equals("true") || useHcmSites.toLowerCase().equals("y");
-    }
 
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {

@@ -689,7 +689,7 @@ public class ConfigurationBaselineService {
                 // First phase: load and parse core module descriptors
                 final List<ModuleImpl> modules = parseDescriptors(baselineNode, null);
 
-                if (isNotEmpty(hcmSites)) {
+                if (isNotEmpty(hcmSites) && baselineNode.hasNode(HCM_SITES)) {
                     final Node hcmSiteCatalogNode = baselineNode.getNode(HCM_SITES);
                     for (NodeIterator eni = hcmSiteCatalogNode.getNodes(); eni.hasNext();) {
                         final Node hcmSiteNode = eni.nextNode();
