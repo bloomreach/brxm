@@ -141,6 +141,7 @@
                   <log4j.configurationFile>file://${project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
                   <!-- enables auto export: -->
                   <project.basedir>${project.basedir}</project.basedir>
+                  <use.hcm.sites>false</use.hcm.sites>
                 </systemProperties>
               </container>
               <deployables>

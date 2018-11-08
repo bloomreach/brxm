@@ -51,6 +51,8 @@ import org.hippoecm.editor.prototype.JcrPrototypeStore;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
+import org.hippoecm.frontend.editor.editor.EditorForm;
+import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
@@ -420,7 +422,46 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
         return StringUtils.EMPTY;
     }
- 
+
+    @Override
+    public void onMoveItemUp(final JcrNodeModel model, final AjaxRequestTarget target) {
+        super.onMoveItemUp(model, target);
+        validateModelObjects();
+    }
+
+    @Override
+    public void onRemoveItem(final JcrNodeModel childModel, final AjaxRequestTarget target) {
+        super.onRemoveItem(childModel, target);
+        validateModelObjects();
+    }
+
+    @Override
+    public void onMoveItemToTop(final JcrNodeModel model) {
+        super.onMoveItemToTop(model);
+        validateModelObjects();
+    }
+
+    @Override
+    public void onMoveItemToBottom(final JcrNodeModel model) {
+        super.onMoveItemToBottom(model);
+        validateModelObjects();
+    }
+
+    /**
+     * If validation has already been done, trigger it again. This is useful when items in the form
+     * have moved to a different location or have been removed. After redrawing a possible error message
+     * is shown at the correct field.
+     */
+    private void validateModelObjects() {
+        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
+        if (editorPlugin != null && editorPlugin.getForm() instanceof EditorForm) {
+            final EditorForm editorForm = (EditorForm) editorPlugin.getForm();
+            if (editorForm.hasErrorMessage()) {
+                editorForm.onValidateModelObjects();
+            }
+        }
+    }
+
     private static class FocusLink extends Link<CharSequence> {
 
         private FocusLink(final String id) {
