@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,15 @@
 
 [frontend:clusterlist] > frontend:clusterfolder orderable
 
+[frontend:uiExtension]
+- frontend:config (string)
+- frontend:displayName (string) mandatory
+- frontend:extensionPoint (string) = 'channel.page.tools' mandatory < 'channel.page.tools'
+- frontend:url (string) mandatory
+
+[frontend:uiExtensions] orderable
++ * (frontend:uiExtension) multiple
+
 [frontend:application] > nt:base
 - frontend:saveonexit (boolean)
 - frontend:privileges (string)
@@ -58,6 +67,7 @@
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple
 + * (nt:unstructured) multiple //FIXME, needed for cms-reports.xml
++ 'ui-extensions' (frontend:uiExtensions) = 'frontend:uiExtensions'
 
 [frontend:workflow] > hipposys:workflow
 + frontend:renderer (nt:base)
