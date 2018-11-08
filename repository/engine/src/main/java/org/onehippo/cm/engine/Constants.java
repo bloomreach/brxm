@@ -77,6 +77,7 @@ public final class Constants {
     public static final String PRODUCT_GROUP_NAME = "hippo-cms";
 
     public static final String SYSTEM_PARAMETER_REPO_BOOTSTRAP = "repo.bootstrap";
+    public static final String SYSTEM_PARAMETER_REPO_VERIFY_CONFIGURATION = "repo.verify.configuration";
     public static final String SYSTEM_PARAMETER_AUTOEXPORT_LOOP_PROTECTION = "autoexport.loop.protection";
     public static final String SYSTEM_PARAMETER_USE_HCM_SITES = "use.hcm.sites";
 

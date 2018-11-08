@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_VERIFY_CONFIGURATION;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -221,17 +223,19 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
 
-            HippoServiceRegistry.register(repositoryService =
-                    (RepositoryService) repository.getRepository(), RepositoryService.class);
-            HippoServiceRegistry.register(repositoryClusterService = new RepositoryClusterService() {
-                @Override
-                public boolean isExternalEvent(final Event event) {
-                    if (!(event instanceof JackrabbitEvent)) {
-                        throw new IllegalArgumentException("Event is not an instance of JackrabbitEvent");
+            if (!Boolean.getBoolean(SYSTEM_PARAMETER_REPO_VERIFY_CONFIGURATION)) {
+                HippoServiceRegistry.register(repositoryService = (RepositoryService) repository.getRepository(),
+                        RepositoryService.class);
+                HippoServiceRegistry.register(repositoryClusterService = new RepositoryClusterService() {
+                    @Override
+                    public boolean isExternalEvent(final Event event) {
+                        if (!(event instanceof JackrabbitEvent)) {
+                            throw new IllegalArgumentException("Event is not an instance of JackrabbitEvent");
+                        }
+                        return ((JackrabbitEvent) event).isExternal();
                     }
-                    return ((JackrabbitEvent) event).isExternal();
-                }
-            }, RepositoryClusterService.class);
+                }, RepositoryClusterService.class);
+            }
         } catch (MalformedURLException ex) {
             log.error("MalformedURLException exception: {}", bindingAddress, ex);
             throw new ServletException(ex);
