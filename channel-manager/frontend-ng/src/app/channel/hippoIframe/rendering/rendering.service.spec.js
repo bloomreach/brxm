@@ -96,7 +96,7 @@ describe('RenderingService', () => {
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
 
-    it('handles the loading of a new page', () => {
+    xit('handles the loading of a new page', () => {
       spyOn(DomService, 'addCss');
 
       RenderingService.createOverlay();
