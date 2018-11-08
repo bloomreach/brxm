@@ -61,7 +61,7 @@
     <json-lib.version>2.4</json-lib.version>
 
     <webjars-servlet-2.x.version>1.5</webjars-servlet-2.x.version>
-    <webjars-swagger-ui.version>2.2.8</webjars-swagger-ui.version>
+    <webjars-swagger-ui.version>2.2.10-1</webjars-swagger-ui.version>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
