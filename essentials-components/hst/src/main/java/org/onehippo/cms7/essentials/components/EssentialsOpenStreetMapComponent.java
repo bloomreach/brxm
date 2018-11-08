@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,26 @@
  */
 package org.onehippo.cms7.essentials.components;
 
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo;
-import org.onehippo.cms7.essentials.components.utils.ComponentsUtils;
+import org.onehippo.cms7.essentials.components.info.EssentialsOpenStreetMapComponentInfo;
 
-import com.google.common.base.Strings;
+@ParametersInfo(type = EssentialsOpenStreetMapComponentInfo.class)
 
-/**
- * @version "$Id$"
- */
-@ParametersInfo(type = EssentialsListComponentInfo.class)
-public class EssentialsBlogComponent extends EssentialsListComponent {
+public class EssentialsOpenStreetMapComponent extends CommonComponent {
 
     @Override
-    public void doBeforeRender(final HstRequest request, final HstResponse response) {
-        final EssentialsListComponentInfo paramInfo = getComponentParametersInfo(request);
-        final String documentTypes = paramInfo.getDocumentTypes();
-        ComponentsUtils.addCurrentDateStrings(request);
-        if (Strings.isNullOrEmpty(documentTypes)) {
-            setEditMode(request);
-            return;
-        }
+    public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
+
+        setComponentId(request, response);
+
+        final EssentialsOpenStreetMapComponentInfo paramInfo = getComponentParametersInfo(request);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
+        request.setAttribute("cmsrequest", RequestContextProvider.get().isCmsRequest());
     }
+
 }
