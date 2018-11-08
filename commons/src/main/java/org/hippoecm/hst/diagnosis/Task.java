@@ -25,7 +25,7 @@ import java.util.Map;
  * Each task may have attributes map of necessary data needed for diagnostics.
  * By the way, the root task should be given by the container.
  */
-public interface Task {
+public interface Task extends AutoCloseable {
 
     /**
      * returns the task name
@@ -98,4 +98,9 @@ public interface Task {
      * @return
      */
     long getDurationTimeMillis();
+
+    @Override
+    default void close() {
+        stop();
+    }
 }
