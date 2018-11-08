@@ -720,7 +720,7 @@ describe('ContentEditorService', () => {
         expect($translate.instant).toHaveBeenCalledWith('TEST_MESSAGE_KEY', {
           documentName: 'Test',
         });
-        expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+        expect($translate.instant).toHaveBeenCalledWith('SAVE_DOCUMENT_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
         expect(ContentService.saveDocument).toHaveBeenCalledWith(testDocument);
         done();
@@ -752,7 +752,7 @@ describe('ContentEditorService', () => {
         expect($translate.instant).toHaveBeenCalledWith('TEST_MESSAGE_KEY', {
           documentName: 'Test',
         });
-        expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+        expect($translate.instant).toHaveBeenCalledWith('SAVE_DOCUMENT_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
         expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();
@@ -768,7 +768,7 @@ describe('ContentEditorService', () => {
         expect($translate.instant).toHaveBeenCalledWith('TEST_MESSAGE_KEY', {
           documentName: 'Test',
         });
-        expect($translate.instant).toHaveBeenCalledWith('SAVE_CHANGES_TITLE');
+        expect($translate.instant).toHaveBeenCalledWith('SAVE_DOCUMENT_CHANGES_TITLE');
         expect(DialogService.show).toHaveBeenCalled();
         expect(ContentService.saveDocument).not.toHaveBeenCalled();
         done();

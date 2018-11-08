@@ -26,7 +26,6 @@ class EditComponentService {
     ConfigService,
     MaskService,
     PageMetaDataService,
-    PageStructureService,
     RightSidePanelService,
   ) {
     'ngInject';
@@ -41,7 +40,6 @@ class EditComponentService {
     this.ConfigService = ConfigService;
     this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
-    this.PageStructureService = PageStructureService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
@@ -84,13 +82,6 @@ class EditComponentService {
       this.CmsService.publish('show-component-properties', properties);
     } else {
       this.$state.go('hippo-cm.channel.edit-component', { properties });
-    }
-  }
-
-  syncPreview() {
-    if (this.$state.is('hippo-cm.channel.edit-component')
-      && this.PageStructureService.getComponentById(this.$state.params.properties.component.id)) {
-      this.ComponentEditor.updatePreview();
     }
   }
 

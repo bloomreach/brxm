@@ -250,18 +250,17 @@ class PageStructureService {
   }
 
   /**
-   * Re-renders a component in the current page.
-   * @param componentId   ID of the component
+   * Renders a component in the current page.
+   * @param component     The component
    * @param propertiesMap Optional: the parameter names and values to use for rendering.
    *                      When omitted the persisted names and values are used.
    */
-  renderComponent(componentId, propertiesMap = {}) {
-    let component = this.getComponentById(componentId);
+  renderComponent(component, propertiesMap = {}) {
     if (component) {
       return this.MarkupService.fetchComponentMarkup(component, propertiesMap)
         .then((response) => {
           // re-fetch component because a parallel renderComponent call may have updated the component's markup
-          component = this.getComponentById(componentId);
+          component = this.getComponentById(component.getId());
 
           const newMarkup = response.data;
           const updatedComponent = this._updateComponent(component, newMarkup);
@@ -275,7 +274,7 @@ class PageStructureService {
           if (response.status === 404) {
             // component being edited is removed (by someone else), reload the page
             this.HippoIframeService.reload();
-            this.FeedbackService.showError('FEEDBACK_NOT_FOUND_MESSAGE');
+            this.FeedbackService.showDismissible('FEEDBACK_NOT_FOUND_MESSAGE');
             return this.$q.reject();
           }
           return this.$q.resolve();

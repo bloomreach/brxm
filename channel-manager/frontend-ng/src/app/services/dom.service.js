@@ -116,7 +116,7 @@ class DomService {
     const fromChildren = $(fromElement).children();
     const toChildren = $(toElement).children();
 
-    // detach the elements that will get styles added to prevent DOM reflows; this speeds up IE11 4x
+    // detach the elements that will get styles added to prevent DOM reflows
     toChildren.detach();
     this._doCopyComputedStylesExcept(fromChildren, toChildren, excludeRegExp);
     toChildren.appendTo(toElement);
@@ -146,34 +146,11 @@ class DomService {
     const button = 0;
     const relatedTarget = null;
 
-    let mouseEvent;
-    if (this.BrowserService.isIE()) {
-      // IE11 does not support new MouseEvent(), so use the deprecated initMouseEvent() method instead
-      mouseEvent = view.document.createEvent('MouseEvent');
-      mouseEvent.initMouseEvent('MSPointerDown',
-        bubbles,
-        cancelable,
-        view,
-        detail,
-        screenX,
-        screenY,
-        clientX,
-        clientY,
-        ctrlKey,
-        altKey,
-        shiftKey,
-        metaKey,
-        button,
-        relatedTarget,
-      );
-    } else {
-      // Dragula attaches a pointerdown listener to the DOM for Edge
-      const type = this.BrowserService.isEdge() ? 'pointerdown' : 'mousedown';
-      mouseEvent = new MouseEvent(type, {
-        bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget,
-      });
-    }
-    return mouseEvent;
+    // Dragula attaches a pointerdown listener to the DOM for Edge
+    const type = this.BrowserService.isEdge() ? 'pointerdown' : 'mousedown';
+    return new MouseEvent(type, {
+      bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget,
+    });
   }
 
   isVisible(jqueryElement) {

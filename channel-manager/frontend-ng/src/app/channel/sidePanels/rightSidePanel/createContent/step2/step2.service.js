@@ -57,9 +57,6 @@ class Step2Service {
         this.documentLocale = locale;
         this.documentUrl = url;
 
-        // Mark the document dirty; this will trigger the discard dialog and enable the save button
-        this.ContentEditor.markDocumentDirty();
-
         this._reportUnsupportedRequiredFieldTypes(documentType);
 
         return documentType;

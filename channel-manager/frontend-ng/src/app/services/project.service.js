@@ -101,18 +101,13 @@ class ProjectService {
     return this._setProjectInHST(this.selectedProject.id);
   }
 
-  isContentOverlayEnabled() {
-    // For now, to prevent all kinds of corner cases, we only enable the content overlay
-    // for unapproved projects in review so that you cannot edit documents at all.
-    return !this.selectedProject.state || this.selectedProject.state === 'UNAPPROVED';
-  }
+  isEditingAllowed(type) {
+    if (type === 'content') {
+      return this.selectedProject.state === 'UNAPPROVED';
+    }
 
-  isComponentsOverlayEnabled() {
-    return !this.selectedProject.state
-      || this.selectedProject.state === 'UNAPPROVED'
+    return this.selectedProject.state === 'UNAPPROVED'
       || (this.selectedProject.state === 'IN_REVIEW' && this._isActionEnabled('resetChannel'));
-    // The action resetChannel puts a channel back into review.
-    // It is only enabled if a channel has been rejected and the project is in review.
   }
 
   isRejectEnabled() {

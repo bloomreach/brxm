@@ -21,6 +21,7 @@ describe('RightSidePanel', () => {
   let $state;
   let $timeout;
   let $transitions;
+  let $window;
   let RightSidePanelService;
   let SidePanelService;
 
@@ -32,13 +33,14 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _ChannelService_, _RightSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _$window_, _RightSidePanelService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $timeout = _$timeout_;
       $transitions = _$transitions_;
+      $window = _$window_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
@@ -73,6 +75,13 @@ describe('RightSidePanel', () => {
     expect($ctrl.isLoading()).toBe(false);
   });
 
+  it('goes to state hippo-cm.channel when closed', () => {
+    spyOn($state, 'go');
+    $ctrl.close();
+
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+  });
+
   it('knows the title', () => {
     RightSidePanelService.setTitle('test title');
     expect($ctrl.getTitle()).toEqual('test title');
@@ -103,6 +112,19 @@ describe('RightSidePanel', () => {
     expect(SidePanelService.setFullScreen).toHaveBeenCalledWith('right', false);
   });
 
+  it('triggers a window resize event after a full width toggle', () => {
+    spyOn($window, 'dispatchEvent');
+
+    $ctrl.setFullScreen(true);
+    const evt = new Event('resize');
+    expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(evt);
+    expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
+
+    $ctrl.setFullScreen(false);
+    expect($window.dispatchEvent.calls.mostRecent().args[0]).toEqual(evt);
+    expect($window.dispatchEvent.calls.mostRecent().args[0].type).toEqual(evt.type);
+  });
+
   it('updates local storage on resize', () => {
     $ctrl.onResize(800);
 
@@ -114,18 +136,18 @@ describe('RightSidePanel', () => {
     const e = angular.element.Event('keydown');
     e.which = 27;
 
-    spyOn($state, 'go');
+    spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
-    expect($state.go).toHaveBeenCalledWith('^');
+    expect($ctrl.close).toHaveBeenCalled();
   });
 
   it('ignores other keypresses', () => {
     const e = angular.element.Event('keydown');
     e.which = 28;
 
-    spyOn($state, 'go');
+    spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
-    expect($state.go).not.toHaveBeenCalled();
+    expect($ctrl.close).not.toHaveBeenCalled();
   });
 
   it('loads last saved width of right side panel', () => {

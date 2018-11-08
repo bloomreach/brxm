@@ -115,15 +115,13 @@ class PageStructureElement {
   }
 
   _removeSiblingsUntil(startNode, endNode) {
-    const parentNode = startNode.parentNode;
     let node = startNode;
     while (node && node !== endNode) {
       const toBeRemoved = node;
       node = node.nextSibling;
-
-      // IE11 does not understand node.remove(), so use parentNode.removeChild() instead
-      parentNode.removeChild(toBeRemoved);
+      toBeRemoved.remove();
     }
+
     return node;
   }
 
@@ -199,15 +197,14 @@ class PageStructureElement {
   }
 
   containsDomElement(domElement) {
+    const startCommentNode = this.getStartComment()[0];
     const endCommentNode = this.getEndComment()[0];
-    let node = this.getStartComment()[0].nextSibling;
-    while (node && node !== endCommentNode) {
-      // IE only supports contains() for elements, which have nodeType 1
-      if (node.nodeType === 1 && node.contains(domElement)) {
+    for (let node = startCommentNode.nextSibling; node && node !== endCommentNode; node = node.nextSibling) {
+      if (node.contains(domElement)) {
         return true;
       }
-      node = node.nextSibling;
     }
+
     return false;
   }
 

@@ -47,6 +47,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-json-org</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-frontend-api</artifactId>
       <version>${project.version}</version>
@@ -176,6 +181,16 @@
       <artifactId>powermock-api-easymock</artifactId>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-mockutils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,28 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.onehippo.cms7.channelmanager.extensions;
 
-class EditComponentToolsCtrl {
-  constructor(ContentEditor, EditComponentService) {
-    'ngInject';
+/**
+ * Checks that the system can use a UI extension.
+ */
+public interface UiExtensionValidator {
 
-    this.ContentEditor = ContentEditor;
-    this.EditComponentService = EditComponentService;
-  }
+    /**
+     * @param extension the extension to check
+     * @return whether the system can use the extension or not.
+     */
+    boolean validate(UiExtension extension);
 
-  close() {
-    this.EditComponentService.stopEditing();
-  }
-
-  isDisabled() {
-    // const error = this.ContentEditor.getError();
-    // return error && error.disableContentButtons;
-    return false;
-  }
-
-  isEditing() {
-    return this.ContentEditor.isEditing();
-  }
 }
-
-export default EditComponentToolsCtrl;

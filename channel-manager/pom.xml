@@ -91,6 +91,11 @@
         <artifactId>jackson-jaxrs-json-provider</artifactId>
         <version>${jackson2.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-json-org</artifactId>
+        <version>${jackson2.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -198,6 +203,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-mockutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
@@ -217,6 +228,7 @@
     <module>frontend</module>
     <module>frontend-ng</module>
     <module>repository</module>
+    <module>ui-extension</module>
   </modules>
 
   <scm>
@@ -287,9 +299,12 @@
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
 
+                <exclude>ui-extension/.*</exclude>
+
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>ui-extension/coverage/**/*</exclude>
                 <exclude>**/target/**/*</exclude>
 
                 <!-- repository content XML -->

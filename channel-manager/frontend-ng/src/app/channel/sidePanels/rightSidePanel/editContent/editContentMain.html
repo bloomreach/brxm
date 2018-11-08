@@ -13,24 +13,52 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<form name="$ctrl.form"
+      class="form-dense-layout"
+      layout="column">
 
-<content-editor flex="grow"
-                layout="column"
-                allow-save="true"
-                enable-publish="true"
-                on-switch-editor="$ctrl.switchEditor()"
-                loading="$ctrl.loading"
-                on-save="$ctrl.save()"
-                on-close="$ctrl.close()">
+  <content-editor flex="grow"
+                  layout="column"
+                  on-switch-editor="$ctrl.switchEditor()"
+                  loading="$ctrl.loading">
+  
+    <content-editor-message>
+      <md-subheader ng-if="$ctrl.notAllFieldsShown()"
+                    class="md-no-sticky"
+                    md-colors="{background: 'hippo-grey-200'}">
+        <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
+        <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+        <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
+      </md-subheader>
+    </content-editor-message>
+  
+  </content-editor>
+</form>
 
-  <content-editor-message>
-    <md-subheader ng-if="$ctrl.notAllFieldsShown()"
-                  class="md-no-sticky"
-                  md-colors="{background: 'hippo-grey-200'}">
-      <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
-      <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
-      <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
-    </md-subheader>
-  </content-editor-message>
+  <span flex></span>
 
-</content-editor>
+<md-toolbar>
+  <div class="md-toolbar-tools">
+    <span flex></span>
+
+    <md-button class="qa-discard"
+               ng-click="$ctrl.discard()"
+               ng-disabled="!$ctrl.isDocumentDirty()">
+      {{ ::'DISCARD' | translate }}
+    </md-button>
+
+    <md-button class="qa-publish animate-flash"
+               ng-if="$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.publish()">
+      {{ ::'PUBLISH' | translate }}
+    </md-button>
+
+    <md-button class="qa-save"
+               ng-if="!$ctrl.isPublishAllowed()"
+               ng-click="$ctrl.save()"
+               ng-disabled="!$ctrl.isSaveAllowed()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
+  </div>
+</md-toolbar>

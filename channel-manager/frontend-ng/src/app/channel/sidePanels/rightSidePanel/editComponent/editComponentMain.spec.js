@@ -18,14 +18,15 @@ describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
   let $scope;
-  let $translate;
   let ChannelService;
   let CmsService;
   let ComponentEditor;
+  let ContainerService;
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
   let OverlayService;
+  let RenderingService;
 
   let $ctrl;
   let form;
@@ -38,13 +39,15 @@ describe('EditComponentMainCtrl', () => {
       $rootScope,
       _$log_,
       _$q_,
-      _$translate_,
+      _ContainerService_,
       _EditComponentService_,
+      _RenderingService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
-      $translate = _$translate_;
+      ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
+      RenderingService = _RenderingService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
       CmsService = jasmine.createSpyObj('CmsService', [
@@ -65,6 +68,7 @@ describe('EditComponentMainCtrl', () => {
         'isReadOnly',
         'reopen',
         'save',
+        'updatePreview',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
@@ -86,6 +90,52 @@ describe('EditComponentMainCtrl', () => {
       $ctrl.form = form;
 
       $scope.$digest();
+    });
+  });
+
+  describe('handling of "component-moved" event', () => {
+    let unbind;
+
+    beforeEach(() => {
+      unbind = jasmine.createSpy('unbind');
+      spyOn(ContainerService, 'onComponentMoved').and.returnValue(unbind);
+      $ctrl.$onInit();
+    });
+
+    it('redraws the preview of the component being edited', () => {
+      const onComponentMoved = ContainerService.onComponentMoved.calls.mostRecent().args[0];
+      onComponentMoved();
+
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+    });
+
+    it('removes the "onComponentMoved" event listener when destroyed', () => {
+      $ctrl.$onDestroy();
+
+      expect(unbind).toHaveBeenCalled();
+    });
+  });
+
+  describe('handling of "overlay-created" event', () => {
+    let unbind;
+
+    beforeEach(() => {
+      unbind = jasmine.createSpy('unbind');
+      spyOn(RenderingService, 'onOverlayCreated').and.returnValue(unbind);
+      $ctrl.$onInit();
+    });
+
+    it('redraws the preview of the component being edited', () => {
+      const onOverlayCreated = RenderingService.onOverlayCreated.calls.mostRecent().args[0];
+      onOverlayCreated();
+
+      expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+    });
+
+    it('removes the "onOverlayCreated" event listener when destroyed', () => {
+      $ctrl.$onDestroy();
+
+      expect(unbind).toHaveBeenCalled();
     });
   });
 
@@ -236,13 +286,9 @@ describe('EditComponentMainCtrl', () => {
       }));
       ComponentEditor.reopen.and.returnValue($q.resolve());
 
-      spyOn($translate, 'instant');
-      $translate.instant.and.returnValue('translated');
-
       $ctrl.save()
         .then(() => {
-          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
-          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           done();
@@ -258,14 +304,11 @@ describe('EditComponentMainCtrl', () => {
         },
       }));
 
-      spyOn($translate, 'instant');
-      $translate.instant.and.returnValue('translated');
       spyOn(EditComponentService, 'killEditor');
 
       $ctrl.save()
         .then(() => {
-          expect($translate.instant).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT');
-          expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT', undefined);
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           expect(EditComponentService.killEditor).toHaveBeenCalled();
@@ -479,8 +522,6 @@ describe('EditComponentMainCtrl', () => {
 
       beforeEach(() => {
         ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
-        spyOn($translate, 'instant');
-        $translate.instant.and.returnValue('translated');
         ComponentEditor.getComponentName.and.returnValue('componentName');
       });
 
@@ -493,8 +534,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
-        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
 
@@ -506,8 +546,7 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect($translate.instant).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
-        expect(FeedbackService.showError).toHaveBeenCalledWith('translated');
+        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT', resultParameters);
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
     });

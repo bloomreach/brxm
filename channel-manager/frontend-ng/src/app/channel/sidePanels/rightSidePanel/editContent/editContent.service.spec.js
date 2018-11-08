@@ -144,7 +144,7 @@ describe('EditContentService', () => {
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
     expect($state.$current.name).toBe('hippo-cm');
   });
 
@@ -158,7 +158,7 @@ describe('EditContentService', () => {
     $state.go('hippo-cm');
     $rootScope.$digest();
 
-    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_ON_CLOSE_CHANNEL');
+    expect(ContentEditor.confirmClose).toHaveBeenCalledWith('SAVE_CHANGES_TO_DOCUMENT');
     expect($state.$current.name).toBe('hippo-cm.channel.edit-content');
   });
 });

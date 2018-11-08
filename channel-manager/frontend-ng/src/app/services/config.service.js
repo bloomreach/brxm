@@ -33,6 +33,10 @@ class ConfigService {
     return this.$window.parent ? this.$window.parent.location.pathname : '/cms/';
   }
 
+  getCmsOrigin() {
+    return this.$window.parent ? this.$window.parent.location.origin : '';
+  }
+
   isDevMode() {
     return isDevMode();
   }

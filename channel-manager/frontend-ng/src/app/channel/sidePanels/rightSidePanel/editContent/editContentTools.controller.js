@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-const PUBLICATION_STATE_ICON_NAMES = {
-  new: 'mdi-minus-circle',
-  live: 'mdi-check-circle',
-  changed: 'mdi-alert',
-  unknown: '',
-};
-
-const PUBLICATION_STATE_ICON_TOOLTIPS = {
-  new: 'DOCUMENT_NEW_TOOLTIP',
-  live: 'DOCUMENT_LIVE_TOOLTIP',
-  changed: 'DOCUMENT_CHANGED_TOOLTIP',
-  unknown: '',
-};
-
 const REPORT_USAGE_STATISTIC_EVENT_NAMES = {
   new: 'VisualEditingOfflineIcon',
   live: 'VisualEditingOnlineIcon',
@@ -50,43 +36,25 @@ class EditContentToolsCtrl {
     return error && error.disableContentButtons;
   }
 
-  isEditing() {
-    return this.ContentEditor.isEditing();
-  }
-
-  isPublicationStateAvailable() {
-    return !!this.ContentEditor.getPublicationState();
-  }
-
-  getPublicationIconName() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_NAMES, this.ContentEditor.getPublicationState());
-  }
-
-  getPublicationIconTooltip() {
-    return this._getPublicationStateValue(PUBLICATION_STATE_ICON_TOOLTIPS, this.ContentEditor.getPublicationState());
-  }
-
   _getPublicationStateValue(map, publicationState) {
     return map[publicationState] || map.unknown;
   }
 
-  openContentEditor(exitMode) {
+  openContentEditor() {
     this.publicationStateOnExit = this.ContentEditor.getPublicationState();
-    this.exitMode = exitMode;
+    this.exitToContentEditor = true;
     this.EditContentService.stopEditing();
   }
 
   uiCanExit() {
-    if (this.exitMode === 'view') {
-      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_ON_PUBLISH_MESSAGE')
+    if (this.exitToContentEditor) {
+      return this.ContentEditor.confirmSaveOrDiscardChanges('SAVE_CHANGES_TO_DOCUMENT')
         .then(() => this.ContentEditor.discardChanges())
         .then(() => this._viewContent())
-        .finally(() => this._clearExitMode());
-    } else if (this.exitMode === 'edit') {
-      this._editContent();
+        .finally(this._clear());
     }
     // yes, the UI can exit. Return something to make ESLint happy.
-    this._clearExitMode();
+    this._clear();
     return true;
   }
 
@@ -97,14 +65,8 @@ class EditContentToolsCtrl {
     this.CmsService.reportUsageStatistic(statisticEventName);
   }
 
-  _editContent() {
-    this.CmsService.publish('open-content', this.ContentEditor.getDocumentId(), 'edit');
-    this.ContentEditor.close();
-    this.CmsService.reportUsageStatistic('CMSChannelsContentEditor');
-  }
-
-  _clearExitMode() {
-    delete this.exitMode;
+  _clear() {
+    delete this.exitToContentEditor;
   }
 }
 

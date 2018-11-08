@@ -104,17 +104,6 @@ describe('Step2Service', () => {
       expect(Step2Service.documentUrl).toBe('test-url');
     });
 
-    it('marks ContentEditor.document as dirty when documentTypes are loaded', () => {
-      const documentType = {};
-      spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
-      spyOn(ContentEditor, 'markDocumentDirty');
-
-      Step2Service.open();
-      $rootScope.$digest();
-
-      expect(ContentEditor.markDocumentDirty).toHaveBeenCalled();
-    });
-
     it('resolves the document type', (done) => {
       const documentType = {};
       spyOn(ContentEditor, 'loadDocumentType').and.returnValue($q.resolve(documentType));
