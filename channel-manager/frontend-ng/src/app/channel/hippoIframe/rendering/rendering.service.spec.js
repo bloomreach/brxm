@@ -74,13 +74,12 @@ describe('RenderingService', () => {
     spyOn(DomService, 'getIframeWindow').and.returnValue(window);
   });
 
-  xdescribe('createOverlay', () => {
+  describe('createOverlay', () => {
     beforeEach(() => {
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'attachEmbeddedLinks');
       spyOn(HstCommentsProcessorService, 'run');
       spyOn(RenderingService, 'updateDragDrop');
-      spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
 
@@ -95,7 +94,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
       expect(EditComponentService.syncPreview).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -110,7 +108,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -125,7 +122,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(EditComponentService.syncPreview).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });

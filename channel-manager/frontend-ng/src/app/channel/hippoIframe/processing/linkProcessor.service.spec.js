@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-fdescribe('LinkProcessorService', () => {
+describe('LinkProcessorService', () => {
   let LinkProcessorService;
   let $document;
   let $window;
