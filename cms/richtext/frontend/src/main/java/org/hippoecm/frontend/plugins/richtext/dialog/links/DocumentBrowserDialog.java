@@ -16,7 +16,9 @@
 
 package org.hippoecm.frontend.plugins.richtext.dialog.links;
 
+import org.apache.wicket.ajax.AjaxRequestHandler;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
@@ -37,6 +39,8 @@ public class DocumentBrowserDialog<T extends RichTextEditorDocumentLink> extends
 
     public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(context, config, model);
+
+        setResizable(true);
 
         add(new ThrottledTextFieldWidget("title", new StringPropertyModel(model, RichTextEditorDocumentLink.TITLE)) {
             private static final long serialVersionUID = 1L;
@@ -74,6 +78,15 @@ public class DocumentBrowserDialog<T extends RichTextEditorDocumentLink> extends
             getModelObject().save();
         } else {
             error("Please select a document");
+        }
+    }
+
+    @Override
+    public void onEvent(IEvent<?> event) {
+        super.onEvent(event);
+        if (event.getPayload() instanceof AjaxRequestHandler) {
+            AjaxRequestHandler handler = (AjaxRequestHandler) event.getPayload();
+            handler.appendJavaScript("Wicket.Window.current.resizer.restoreDatatableHeight();");
         }
     }
 

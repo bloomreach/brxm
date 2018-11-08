@@ -15,19 +15,22 @@
 
 package org.hippoecm.frontend.service.categories;
 
-import javax.jcr.Node;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
+public class AbstractCategoriesBuilderTest {
 
-public interface CategoriesBuilder {
-
-    String[] build();
-
-    CategoriesBuilder node(Node node);
-
-    CategoriesBuilder context(IPluginContext context);
-
-    CategoriesBuilder versionCategories(String[] versionCategories);
-
-    CategoriesBuilder workflowCategories(String[] workflowCategories);
+    @Test()
+    public void node() throws Exception {
+        MockNode folder = new MockNode("test");
+        folder.setPrimaryType(HippoStdNodeType.NT_FOLDER);
+        AbstractCategoriesBuilder builder = new AbstractCategoriesBuilder() {
+            @Override
+            public String[] build() {
+                return new String[0];
+            }
+        };
+        builder.node(folder);
+    }
 }
