@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import './pageInfoMain.scss';
-
 class PageInfoMainCtrl {
   constructor(ExtensionService, PageInfoService) {
     'ngInject';
