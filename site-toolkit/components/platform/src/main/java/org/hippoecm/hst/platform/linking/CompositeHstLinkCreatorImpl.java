@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.linking;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +35,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.linking.LocationResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelImpl;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -334,11 +336,14 @@ public class CompositeHstLinkCreatorImpl implements CompositeHstLinkCreator {
     }
 
     /**
-     * Get all HST models except the model current link creator belongs to
+     * Get all HST models sorted by configuration root path, except the model current link creator belongs to
      * @return Collection of HST models
      */
     private List<HstModel> getOtherHstModels() {
-        return modelRegistry.getHstModels().stream().filter(m -> m.getHstLinkCreator() != this).collect(Collectors.toList());
+        return modelRegistry.getHstModels().stream()
+                .filter(m -> m.getHstLinkCreator() != this)
+                .sorted(Comparator.comparing(m -> ((HstModelImpl)m).getConfigurationRootPath()))
+                .collect(Collectors.toList());
     }
 
 }
