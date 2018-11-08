@@ -37,13 +37,6 @@
     <module>bean-writer</module>
     <module>blog</module>
     <module>bloomreach-cloud</module>
-    <module>bloomreach-connector</module>
-    <module>commerce-detail</module>
-    <module>commerce-more-like-this</module>
-    <module>commerce-product-grid</module>
-    <module>commerce-search-box</module>
-    <module>commerce-search-results-category</module>
-    <module>commerce-search-results-products</module>
     <module>content-blocks</module>
     <module>document-wizard</module>
     <module>events</module>
@@ -53,6 +46,7 @@
     <module>list</module>
     <module>menu</module>
     <module>news</module>
+    <module>openstreetmap</module>
     <module>poll</module>
     <module>projects</module>
     <module>related-documents</module>
@@ -75,7 +69,6 @@
     <module>lucene-index-exporter</module>
     <module>enterprise-project</module>
     <module>crisp</module>
-    <module>personalization</module>
   </modules>
 
   <dependencyManagement>

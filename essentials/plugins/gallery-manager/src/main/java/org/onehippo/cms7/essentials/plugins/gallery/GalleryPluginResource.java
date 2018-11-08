@@ -520,7 +520,7 @@ public class GalleryPluginResource {
         try {
             final String uri = GalleryUtils.getGalleryURI(jcrService, settingsService, prefix);
             // Check whether node type already exists
-            if (CndUtils.nodeTypeExists(jcrService, nodeType)) {
+            if (jcrService.nodeTypeExists(nodeType)) {
                 if (CndUtils.isNodeOfSuperType(jcrService, nodeType, HIPPOGALLERY_IMAGE_SET)) {
                     feedback.addError("ImageSet already exists: " + nodeType);
                 } else {

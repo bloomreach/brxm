@@ -147,7 +147,7 @@ public class PluginResource {
         final UserFeedback feedback = new UserFeedback();
 
         if (!parameters.isEmpty()) {
-            ensureGenericInstallationParameters(parameters);
+            installService.ensureGenericInstallationParameters(parameters);
             parameters.put(EssentialConst.PROP_PLUGIN_DESCRIPTOR, pluginSet.getPlugin(pluginId));
             if (!installStateMachine.installWithParameters(pluginId, pluginSet, parameters, feedback)) {
                 response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
@@ -217,7 +217,7 @@ public class PluginResource {
 
 
     private Map<String, Object> createDefaultInstallationParameters() {
-        return ensureGenericInstallationParameters(new HashMap<>());
+        return installService.ensureGenericInstallationParameters(new HashMap<>());
     }
 
     private Map<String, Object> extractInstallationParametersFromQueryParameters(final MultivaluedMap<String, String> queryParams) {
@@ -232,25 +232,6 @@ public class PluginResource {
             }
         }
 
-        return ensureGenericInstallationParameters(parameters);
-    }
-
-    /**
-     * Make sure that the generic setup parameters are set.
-     */
-    private Map<String, Object> ensureGenericInstallationParameters(final Map<String, Object> parameters) {
-        final ProjectSettings settings = settingsService.getSettings();
-
-        final Object sampleData = parameters.get(EssentialConst.PROP_SAMPLE_DATA);
-        if (!(sampleData instanceof Boolean)) {
-            parameters.put(EssentialConst.PROP_SAMPLE_DATA, settings.isUseSamples());
-        }
-
-        final Object extraTemplates = parameters.get(EssentialConst.PROP_EXTRA_TEMPLATES);
-        if (!(extraTemplates instanceof Boolean)) {
-            parameters.put(EssentialConst.PROP_EXTRA_TEMPLATES, settings.isExtraTemplates());
-        }
-
-        return parameters;
+        return installService.ensureGenericInstallationParameters(parameters);
     }
 }

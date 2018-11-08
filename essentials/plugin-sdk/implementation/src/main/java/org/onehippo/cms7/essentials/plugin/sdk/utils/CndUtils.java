@@ -195,28 +195,6 @@ public final class CndUtils {
     }
 
     /**
-     * Check whether a node type exists according to the node type manaager.
-     *
-     * @param nodeType the node type to check
-     * @return true when the node type exists, false otherwise
-     * @throws RepositoryException
-     */
-    public static boolean nodeTypeExists(final JcrService jcrService, final String nodeType) throws RepositoryException {
-        if (StringUtils.isEmpty(nodeType)) {
-            log.debug("Empty node type does not exist");
-            return false;
-        }
-        final Session session = jcrService.createSession();
-        try {
-            final Workspace workspace = session.getWorkspace();
-            final NodeTypeManager manager = workspace.getNodeTypeManager();
-            return manager.hasNodeType(nodeType);
-        } finally {
-            jcrService.destroySession(session);
-        }
-    }
-
-    /**
      * Check whether a node type is a certain super type.
      *
      * @param nodeType  the node type to check
