@@ -20,6 +20,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -332,6 +333,7 @@ public class ChannelServiceImpl implements ChannelService {
                 .filter(channel -> workspaceFiltered(virtualHosts, channel, workspaceRequired))
                 .filter(channel -> !skipBranches || channel.getBranchOf() == null)
                 .filter(channel -> !channel.isConfigurationLocked())
+                .sorted(Comparator.comparing(channel -> channel.getName() == null ? "" : channel.getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
 

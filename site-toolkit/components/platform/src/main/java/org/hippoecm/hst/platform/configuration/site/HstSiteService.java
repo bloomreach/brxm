@@ -99,6 +99,15 @@ public class HstSiteService implements HstSite {
         init(site, mount, isPreviewSite, hstNodeLoadingCache, null);
     }
 
+    /**
+     *
+     * @param site
+     * @param mount
+     * @param mountSiteMapConfiguration
+     * @param hstNodeLoadingCache
+     * @param configurationPath
+     * @param isPreviewSite
+     */
     public HstSiteService(final HstNode site, final Mount mount, final MountSiteMapConfiguration mountSiteMapConfiguration,
                           final HstNodeLoadingCache hstNodeLoadingCache,
                           final HstConfigurationLoadingCache hstConfigurationLoadingCache,
@@ -189,6 +198,7 @@ public class HstSiteService implements HstSite {
                 }
                 ch.setBranchOf(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF));
                 ch.setBranchId(rootConfigNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID));
+
             }
 
             if (rootConfigNode == null) {

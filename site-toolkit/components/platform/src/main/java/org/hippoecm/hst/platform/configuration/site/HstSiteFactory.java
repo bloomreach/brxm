@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang.StringUtils.substringAfterLast;
+import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_ID;
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 
 public class HstSiteFactory {
@@ -81,11 +82,12 @@ public class HstSiteFactory {
 
         Map<String, HstSite> branches = new HashMap<>();
         for (HstNode branchNode : configurationsNode.getNodes()) {
-            if (!branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {
+            if (!branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF) || !branchNode.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_ID)) {
                 log.debug("Skipping config '{}' which is not a branch.", branchNode.getName());
                 continue;
             }
             final String branchOf = branchNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_OF);
+            final String branchId = branchNode.getValueProvider().getString(BRANCH_PROPERTY_BRANCH_ID);
 
             final String masterName;
             if (isPreviewSite) {
@@ -110,7 +112,7 @@ public class HstSiteFactory {
             try {
                 final HstSite branch = new HstSiteService(site, mount, mountSiteMapConfiguration,
                         hstNodeLoadingCache, hstConfigurationLoadingCache, branchNode.getValueProvider().getPath(), isPreviewSite,  master.getChannel());
-                branches.put(branch.getChannel().getBranchId(), branch);
+                branches.put(branchId, branch);
             } catch (ModelLoadingException e) {
                 log.error("Could not load branch '{}'. Skip that branch.", branchNode.getName(), e);
             }

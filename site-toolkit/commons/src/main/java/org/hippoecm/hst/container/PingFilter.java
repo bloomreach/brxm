@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class PingFilter implements Filter {
      * attribute on the request which gets the message stored, useful if for example in your web.xml you want to
      * include a custom 503.jsp outputting that the HST application is starting up
      */
-    public final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
+    public static final String PING_FILTER_MESSAGE_ATTR = PingFilter.class.getName() + ".msg";
 
     /**
      * <p>
@@ -96,11 +96,21 @@ public class PingFilter implements Filter {
      * <p>
      *     Note this PingFilter should be placed <strong>before</strong> the {@link HstFilter} in the web.xml
      * </p>
-     *
      */
-    public final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
+    public static final String AVAILABILITY_CHECK_PARAM = "hst-availability-check";
+
+    /**
+     * FilterConfig or ServletContext init parameter in the web.xml or context.xml configuring a custom error message.
+     * If configured, the PingFilter returns a response with status {@link HttpServletResponse#SC_SERVICE_UNAVAILABLE}
+     * with the custom error message printed to the response.
+    */
+    public static final String CUSTOM_ERROR_MESSAGE_PARAM = "custom-error-message";
+
+    private static final String AVAILABLE_MESSAGE = "OK - HST Application is ready to serve requests";
+    private static final String UNAVAILABLE_MESSAGE = "Unavailable - HST Application is starting up";
 
     private AvailabilityCheck availabilityCheck;
+    private String customErrorMessage;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -111,14 +121,21 @@ public class PingFilter implements Filter {
             log.error(String.format("Illegal value '%s' for init-param '%s'. Using default value '%s'", availabilityCheckValue, AVAILABILITY_CHECK_PARAM, hstConfigNodes.name()));
             availabilityCheck = hstConfigNodes;
         }
-        log.info("Availability check will be done on {}", availabilityCheck);
+        customErrorMessage = getInitParameter(filterConfig, filterConfig.getServletContext(), CUSTOM_ERROR_MESSAGE_PARAM, null);
+        log.info("Availability check will be done on {}. Custom error message: {}", availabilityCheck, (customErrorMessage == null) ? "<none>" : customErrorMessage);
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletResponse res = (HttpServletResponse)response;
+        final HttpServletResponse res = (HttpServletResponse) response;
+
+        if (hasCustomMessage()) {
+            printMessage(request, res, customErrorMessage, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+            return;
+        }
+
         switch (availabilityCheck) {
             case hstConfigNodes:
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
@@ -145,17 +162,20 @@ public class PingFilter implements Filter {
                 }
                 break;
         }
-        request.setAttribute(PING_FILTER_MESSAGE_ATTR, "HST Application is starting up");
-        res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-    }
+
+        printMessage(request, res, UNAVAILABLE_MESSAGE, HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+   }
 
     private void available(final ServletRequest request, final HttpServletResponse response) throws IOException {
-        final String msg = "HST Application is ready to serve requests";
-        request.setAttribute(PING_FILTER_MESSAGE_ATTR, msg);
+        printMessage(request, response, AVAILABLE_MESSAGE, HttpServletResponse.SC_OK);
+    }
+
+    private void printMessage(final ServletRequest request, final HttpServletResponse response, final String message, final int responseStatus) throws IOException {
+        request.setAttribute(PING_FILTER_MESSAGE_ATTR, message);
+
         response.setContentType("text/plain");
-        response.getWriter().println(msg);
-        response.setStatus(HttpServletResponse.SC_OK);
-        return;
+        response.getWriter().println(message);
+        response.setStatus(responseStatus);
     }
 
     @Override
@@ -179,5 +199,9 @@ public class PingFilter implements Filter {
         }
 
         return value;
+    }
+
+    private boolean hasCustomMessage() {
+        return customErrorMessage != null;
     }
 }
