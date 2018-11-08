@@ -31,8 +31,6 @@ class HstService {
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
-
-    this.contextPath = ConfigService.contextPaths[0];
   }
 
   initializeSession(channel) {

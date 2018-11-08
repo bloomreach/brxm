@@ -151,10 +151,6 @@ class ChannelService {
     return this.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup, this.channel.branchId);
   }
 
-  getPreviewPaths() {
-    return this.ConfigService.contextPaths.map(path => this._makeContextPrefix(path));
-  }
-
   makeRenderPath(channelRelativePath) {
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
