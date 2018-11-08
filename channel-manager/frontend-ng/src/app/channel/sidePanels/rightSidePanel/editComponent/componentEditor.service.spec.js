@@ -24,7 +24,9 @@ describe('ComponentEditorService', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
+  let HstConstants;
   let OverlayService;
+  let PageMetaDataService;
   let PageStructureService;
 
   let testData;
@@ -54,7 +56,9 @@ describe('ComponentEditorService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
+      _HstConstants_,
       _OverlayService_,
+      _PageMetaDataService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -66,7 +70,9 @@ describe('ComponentEditorService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
+      HstConstants = _HstConstants_;
       OverlayService = _OverlayService_;
+      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -465,6 +471,43 @@ describe('ComponentEditorService', () => {
       testData.container.isDisabled = true;
       openComponentEditor([]);
       expect(ComponentEditor.isReadOnly()).toBe(true);
+    });
+  });
+
+  describe('open a component page', () => {
+    beforeEach(() => {
+      spyOn(HippoIframeService, 'load');
+    });
+
+    it('opens a component page', () => {
+      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
+      ComponentEditor.openComponentPage();
+
+      expect(HippoIframeService.load).toHaveBeenCalled();
+    });
+
+    it('does not open a component page', () => {
+      ComponentEditor.openComponentPage();
+
+      expect(HippoIframeService.load).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('foreign page state', () => {
+    beforeEach(() => {
+      spyOn(PageMetaDataService, 'get').and.returnValue({ [HstConstants.PAGE_ID]: 'id1' });
+    });
+
+    it('should not be on a foreign page', () => {
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id1' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
+    it('should be on a foreign page', () => {
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(true);
     });
   });
 

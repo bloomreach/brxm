@@ -31,6 +31,8 @@ class ComponentEditorService {
     HippoIframeService,
     HstComponentService,
     OverlayService,
+    HstConstants,
+    PageMetaDataService,
     PageStructureService,
   ) {
     'ngInject';
@@ -43,6 +45,8 @@ class ComponentEditorService {
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.OverlayService = OverlayService;
+    this.HstConstants = HstConstants;
+    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
@@ -65,6 +69,21 @@ class ComponentEditorService {
 
   isReadOnly() {
     return this.container && this.container.isDisabled;
+  }
+
+  openComponentPage() {
+    if (!this.page) {
+      return;
+    }
+
+    this.HippoIframeService.load(this.page[this.HstConstants.PATH_INFO]);
+  }
+
+  isForeignPage() {
+    const currentPage = this.PageMetaDataService.get();
+
+    return currentPage && this.page
+      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID];
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
