@@ -16,10 +16,6 @@ definitions:
       /en:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Integer Number
-    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
-      /en:
-        jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Label
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /en:
         jcr:primaryType: hipposys:resourcebundle

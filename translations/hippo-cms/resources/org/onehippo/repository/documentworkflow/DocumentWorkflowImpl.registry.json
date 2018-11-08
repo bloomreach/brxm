@@ -184,6 +184,18 @@
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=publication request already pending" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "branch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "removeBranch" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "restoreVersionToBranch" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

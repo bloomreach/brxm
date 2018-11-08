@@ -16,10 +16,6 @@ definitions:
       /nl:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Geheel getal
-    /hippo:configuration/hippo:translations/hippo:types/hipposys:Label:
-      /nl:
-        jcr:primaryType: hipposys:resourcebundle
-        jcr:name: Label
     /hippo:configuration/hippo:translations/hippo:types/hipposys:Text:
       /nl:
         jcr:primaryType: hipposys:resourcebundle
