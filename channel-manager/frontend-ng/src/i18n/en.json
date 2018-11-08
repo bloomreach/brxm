@@ -9,6 +9,8 @@
   "CLOSE": "Close",
   "COLLAPSE": "Collapse",
   "COMPONENT": "Component",
+  "COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK": "navigate to the page it's on",
+  "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT": "Component is not a part of the current page. To see this component",
   "CONFIRM_DELETE_CHANNEL_MESSAGE": "You cannot undo this action.",
   "CONFIRM_DELETE_CHANNEL_TITLE": "Delete channel '{{channel}}'?",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
