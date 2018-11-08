@@ -64,6 +64,26 @@
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-language" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.imagesettings" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-image-bean-props" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
