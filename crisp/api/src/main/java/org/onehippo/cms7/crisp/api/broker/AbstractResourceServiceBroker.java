@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,47 @@ import org.onehippo.cms7.crisp.api.resource.ResourceResolverProvider;
  * Abstract CRISP Resource Service Broker base class.
  */
 public abstract class AbstractResourceServiceBroker implements ResourceServiceBroker {
+
+    /**
+     * Key name for an invoked operation name, which can be used in cache key generation as an attribute name.
+     */
+    public static final String OPERATION_KEY = "operationKey";
+
+    /**
+     * Key name for the resource space name in an invocation, which can be used in cache key generation as an attribute
+     * name.
+     */
+    public static final String RESOURCE_SPACE = "resourceSpace";
+
+    /**
+     * Key name for the relative resource path in an invocation, which can be used in cache key generation as an
+     * attribute name.
+     */
+    public static final String RESOURCE_PATH = "resourcePath";
+
+    /**
+     * Key name for the path variables to be used in the physical invocation path (or URI) expansion, which can
+     * be used in cache key generation as an attribute name.
+     */
+    public static final String PATH_VARIABLES = "variables";
+
+    /**
+     * Key name for the exchange hint, which can be used in cache key generation as an attribute name.
+     */
+    public static final String EXCHANGE_HINT = "exchangeHint";
+
+    /**
+     * Key name of {@link #OPERATION_KEY} in {@link #resolve(String, String, Map)} operation invocation, which
+     * can be used in cache key generation as an attribute name.
+     */
+    public static final String OPERATION_KEY_RESOLVE = AbstractResourceServiceBroker.class.getName() + ".resolve";
+
+    /**
+     * Key name of {@link #OPERATION_KEY} in {@link #findResources(String, String, Map)} operation invocation,
+     * which can be used in cache key generation as an attribute name.
+     */
+    public static final String OPERATION_KEY_FIND_RESOURCES = AbstractResourceServiceBroker.class.getName()
+            + ".findResources";
 
     /**
      * {@link ResourceResolverProvider} that finds and returns a proper {@link ResourceResolver}.

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,10 +33,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
-import org.onehippo.cms7.services.eventbus.HippoEventListenerRegistry;
-import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -79,14 +76,9 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     private boolean initialized;
 
     /**
-     * {@link HippoEventBus} event listener instance to subscribe configuration changes in the repository.
-     */
-    private ConfigurationChangeEventListener configurationChangeEventListener;
-
-    /**
      * Map of pairs of <strong>resource space</strong> name and {@link AbstractApplicationContext} instance.
      */
-    private Map<String, AbstractApplicationContext> childAppContexts = new LinkedHashMap<>();
+    private Map<String, AbstractApplicationContext> childAppContexts = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Default constructor.
@@ -140,8 +132,6 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     @Override
     public void afterPropertiesSet() throws Exception {
         new ResourceResolversInitializingThread().start();
-        configurationChangeEventListener = new ConfigurationChangeEventListener();
-        HippoEventListenerRegistry.get().register(configurationChangeEventListener);
     }
 
     /**
@@ -149,22 +139,27 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      */
     @Override
     public void destroy() {
-        HippoEventListenerRegistry.get().unregister(configurationChangeEventListener);
+        childAppContexts.values().forEach(childContext -> {
+            childContext.close();
+        });
+
+        childAppContexts.clear();
     }
 
     /**
-     * {@link HippoEventBus} event listener to subscribe configuration changes in the repository and initialize
-     * the {@link ResourceResolver}s for each <strong>resource space</strong>s.
+     * Return the CRISP module configuration node path.
+     * e.g. "/hippo:configuration/hippo:modules/crispregistry/hippo:moduleconfig"
+     * <p>
+     * This method may be overridden to determine a different CRISP module configuration path per site webapp.
+     * In that case, the overriden method may return null if the site webapp is not fully initialized yet and so
+     * it cannot read HST container configuration yet for instance.
+     * Therefore, if {@link #getModuleConfigPath()} returns null, then this tries to load the module configuration
+     * later again.
+     * @return the CRISP module configuration node path, or null if not determinable yet
      */
-    public class ConfigurationChangeEventListener {
-        @Subscribe
-        public void handleEvent(HippoEvent event) {
-            if (CrispConstants.EVENT_APPLICATION_NAME.equals(event.application())
-                    && CrispConstants.EVENT_CATEGORY_CONFIGURATION.equals(event.category())
-                    && CrispConstants.EVENT_ACTION_UPDATE_CONFIGURATION.equals(event.action())) {
-                initializeResourceResolvers();
-            }
-        }
+    protected String getModuleConfigPath() {
+        final String resourceResolverContainerConfigPath = CrispConstants.DEFAULT_CRISP_MODULE_CONFIG_PATH;
+        return resourceResolverContainerConfigPath;
     }
 
     /**
@@ -173,88 +168,95 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      * @return initializes the internal map of {@link ResourceResolver}s for each <strong>resource space</strong>, and
      * returns true if the initialization was successful.
      */
-    private boolean initializeResourceResolvers() {
+    protected boolean refreshResourceResolvers() {
         boolean inited = false;
         Session session = null;
 
         try {
             session = repository.login(credentials);
 
-            if (session.nodeExists(CrispConstants.REGISTRY_MODULE_PATH)) {
-                Node moduleNode = session.getNode(CrispConstants.REGISTRY_MODULE_PATH);
+            final String moduleConfigPath = getModuleConfigPath();
 
-                if (moduleNode.hasNode("hippo:moduleconfig")) {
-                    Node moduleConfigNode = moduleNode.getNode("hippo:moduleconfig");
+            if (moduleConfigPath == null) {
+                log.info("Waiting for CRISP module configuration node path being determined...");
+                // if the moduleConfigPath is not determined yet, let's just wait for next checking cycle.
+                return false;
+            }
 
-                    if (!moduleConfigNode.isNodeType(CrispConstants.NT_MODULE_CONFIG)) {
-                        log.error("CRISP module configuration node must be type of '{}'.",
-                                CrispConstants.NT_MODULE_CONFIG);
-                        return false;
-                    }
+            if (!session.nodeExists(moduleConfigPath)) {
+                log.info("There is no CRISP module configuration node, not existing at '{}'.", moduleConfigPath);
+                // Even if not bootstrapped properly, let's try to load configuration in the nexe cycle
+                // as system admin may configure it after startup.
+                return false;
+            }
 
-                    if (moduleConfigNode.hasNode(CrispConstants.RESOURCE_RESOLVER_CONTAINER)) {
-                        Node resourceReesolverContainerNode = moduleConfigNode
-                                .getNode(CrispConstants.RESOURCE_RESOLVER_CONTAINER);
-                        Map<String, ResourceResolver> tempResourceResolversMap = new LinkedHashMap<>();
+            final String resourceResolverContainerConfigPath = moduleConfigPath + "/"
+                    + CrispConstants.RESOURCE_RESOLVER_CONTAINER;
 
-                        Node resourceResolverNode;
-                        String resourceSpace;
-                        Set<String> resourceSpaceNames = new HashSet<>();
-                        String beanDef;
-                        String[] propNames;
-                        String[] propValues;
-                        AbstractApplicationContext newChildContext;
-                        AbstractApplicationContext oldChildContext;
-                        ResourceResolver resourceResolver;
+            if (!session.nodeExists(resourceResolverContainerConfigPath)) {
+                log.info("There is no CRISP resource resolvers container configuration node, not existing at '{}'.",
+                        resourceResolverContainerConfigPath);
+                // Even if not bootstrapped properly, let's try to load configuration in the nexe cycle
+                // as system admin may configure it after startup.
+                return false;
+            }
 
-                        for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
-                            resourceResolverNode = nodeIt.nextNode();
+            final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);
 
-                            if (resourceResolverNode != null) {
-                                resourceSpace = resourceResolverNode.getName();
-                                beanDef = JcrUtils.getStringProperty(resourceResolverNode,
-                                        CrispConstants.BEAN_DEFINITION, null);
-                                propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                                        CrispConstants.PROP_NAMES, null);
-                                propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                                        CrispConstants.PROP_VALUES, null);
+            Node resourceResolverNode;
+            String resourceSpace;
+            Set<String> resourceSpaceNames = new HashSet<>();
+            String beanDef;
+            String[] propNames;
+            String[] propValues;
+            AbstractApplicationContext newChildContext;
+            AbstractApplicationContext oldChildContext;
+            ResourceResolver resourceResolver;
 
-                                if (StringUtils.isNotBlank(beanDef)) {
-                                    try {
-                                        newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
-                                        resourceSpaceNames.add(resourceSpace);
-                                        resourceResolver = newChildContext.getBean(ResourceResolver.class);
-                                        tempResourceResolversMap.put(resourceSpace, resourceResolver);
-                                        oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
+            for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
+                resourceResolverNode = nodeIt.nextNode();
 
-                                        if (oldChildContext != null) {
-                                            oldChildContext.close();
-                                        }
-                                    } catch (Exception childContextEx) {
-                                        log.error("Failed to load child context for resource space, '{}'.",
-                                                resourceSpace, childContextEx);
-                                    }
-                                }
+                if (resourceResolverNode != null) {
+                    resourceSpace = resourceResolverNode.getName();
+                    beanDef = JcrUtils.getStringProperty(resourceResolverNode,
+                            CrispConstants.BEAN_DEFINITION, null);
+                    propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                            CrispConstants.PROP_NAMES, null);
+                    propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                            CrispConstants.PROP_VALUES, null);
+
+                    if (StringUtils.isNotBlank(beanDef)) {
+                        try {
+                            newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
+                            resourceSpaceNames.add(resourceSpace);
+                            resourceResolver = newChildContext.getBean(ResourceResolver.class);
+                            setResourceResolver(resourceSpace, resourceResolver);
+                            oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
+
+                            if (oldChildContext != null) {
+                                oldChildContext.close();
                             }
+                        } catch (Exception childContextEx) {
+                            log.error("Failed to load child context for resource space, '{}'.",
+                                    resourceSpace, childContextEx);
                         }
-
-                        for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
-                            if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
-                                oldChildContext = childAppContexts.get(resourceSpaceNameInChildContexts);
-                                if (oldChildContext != null) {
-                                    oldChildContext.close();
-                                }
-                            }
-                        }
-
-                        setResourceResolverMap(tempResourceResolversMap);
-
-                        log.warn("CRISP resource resolvers map initialized: {}", getResourceResolverMap());
                     }
                 }
-
-                inited = true;
             }
+
+            for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
+                if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
+                    oldChildContext = childAppContexts.remove(resourceSpaceNameInChildContexts);
+
+                    if (oldChildContext != null) {
+                        oldChildContext.close();
+                    }
+                }
+            }
+
+            log.info("CRISP resource resolvers map: {}", getResourceResolverMap());
+
+            inited = true;
         } catch (RepositoryException e) {
             log.warn("Cannot initialize resource resolvers (yet). Perhaps the repository wasn't initialized yet. {}", e.toString());
         } finally {
@@ -263,7 +265,21 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             }
         }
 
+        if (inited) {
+            try {
+                onResourceResolversRefreshed();
+            } catch (Exception e) {
+                log.error("Error occurred while executing onResourceResolversRefreshed event handler.", e);
+            }
+        }
+
         return inited;
+    }
+
+    /**
+     * Can be overriden as an event when the internal resource resolvers are just refreshed.
+     */
+    protected void onResourceResolversRefreshed() {
     }
 
     /**
@@ -312,7 +328,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
 
         public void run() {
             while (!initialized) {
-                if (initializeResourceResolvers()) {
+                if (refreshResourceResolvers()) {
                     initialized = true;
                     break;
                 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,9 +24,7 @@ public abstract class AbstractValueMap implements ValueMap {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * {@inheritDoc}
-     */
+    @SuppressWarnings("unchecked")
     @Override
     public final <T> T get(String name, Class<T> type) {
         final Object value = get(name, (T) null);
@@ -54,9 +52,8 @@ public abstract class AbstractValueMap implements ValueMap {
         return (T) value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
+    @SuppressWarnings("unchecked")
     @Override
     public final <T> T get(String name, T defaultValue) {
         if (name == null) {

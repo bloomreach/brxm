@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms7.crisp.api.exchange;
 import java.util.List;
 import java.util.Map;
 
+import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 
 /**
@@ -57,4 +58,52 @@ public interface ExchangeHint {
      * @return a cache key of this hint
      */
     public Object getCacheKey();
+
+    /**
+     * Return response status code.
+     * @return response status code
+     */
+    public int getResponseStatusCode();
+
+    /**
+     * Set response status code.
+     * @param responseStatusCode response status code
+     */
+    public void setResponseStatusCode(int responseStatusCode);
+
+    /**
+     * Return response headers map.
+     * @return response headers map
+     */
+    public Map<String, List<String>> getResponseHeaders();
+
+    /**
+     * Set response headers map.
+     * @param  responseHeaders response headers map
+     */
+    public void setResponseHeaders(Map<String, List<String>> responseHeaders);
+
+    /**
+     * Return response body. Null if the underlying {@link ResourceResolver} doesn't set it.
+     * The type of response body depends on the underlying {@link ResourceResolver} implementation.
+     * It could be a {@link Resource} object (mostly likely when the backend produces the same content type for
+     * both normal response and error response),  byte[] or String, for example.
+     * <p>
+     * <em>Note:</em> This method can be used mostly when the underlying {@link ResourceResolver} throws an exception
+     * instead of returning a result.
+     * @return response body
+     */
+    public Object getResponseBody();
+
+    /**
+     * Set response body. The type of response body depends on the underlying {@link ResourceResolver} implementation.
+     * It could be a {@link Resource} object (mostly likely when the backend produces the same content type for
+     * both normal response and error response),  byte[] or String, for example.
+     * <p>
+     * <em>Note:</em> This method can be used by the underlying {@link ResourceResolver} when a call on the backend
+     * returns an error, instead of a normal result.
+     * @param responseBody response body
+     */
+    public void setResponseBody(Object responseBody);
+
 }

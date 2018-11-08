@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -60,12 +60,14 @@ class DefaultExchangeHintBuilder extends ExchangeHintBuilder {
         return methodName;
     }
 
+    @Deprecated
     @Override
     public ExchangeHintBuilder request(Object request) {
         this.request = request;
         return this;
     }
 
+    @Deprecated
     @Override
     public Object request() {
         return request;

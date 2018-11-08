@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.onehippo.cms7.crisp.core.resource.jdom.model.Image;
 import org.onehippo.cms7.crisp.core.resource.jdom.model.Product;
 import org.onehippo.cms7.crisp.core.resource.jdom.model.Widget;
 import org.onehippo.cms7.crisp.core.resource.jdom.model.Window;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import static org.junit.Assert.assertEquals;
@@ -57,7 +58,7 @@ public class JdomResourceMappingTest {
             Element rootElem = jdomDocument.getRootElement();
             widgetRootResource = new JdomResource(rootElem);
         } finally {
-            IOUtils.closeQuietly(input);
+            CrispUtils.closeQuietly(input);
         }
 
         try {
@@ -67,7 +68,7 @@ public class JdomResourceMappingTest {
             Element rootElem = jdomDocument.getRootElement();
             productsRootResource = new JdomResource(rootElem);
         } finally {
-            IOUtils.closeQuietly(input);
+            CrispUtils.closeQuietly(input);
         }
 
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();

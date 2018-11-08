@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG;
-import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML;
+import static org.onehippo.cms7.crisp.demo.Constants.RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN;
 
 public class NewsContentComponent extends EssentialsContentComponent {
 
@@ -55,7 +55,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
         log.warn("\n\n===============================================================================\n"
                 + "  [INFO] JSON based Resource Retrieval DEMO\n"
                 + "===============================================================================\n\n");
-        Resource productCatalogs = findProductCatalogs(document);
+        Resource productCatalogs = findProductCatalogs(request, document);
 
         if (productCatalogs != null) {
             request.setAttribute("productCatalogs", productCatalogs);
@@ -73,7 +73,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
         log.warn("\n\n===============================================================================\n"
                 + "  [INFO] XML based Resource Retrieval DEMO\n"
                 + "===============================================================================\n\n");
-        Resource productCatalogsXml = findProductCatalogsXml(document);
+        Resource productCatalogsXml = findProductCatalogsXml(request, document);
 
         if (productCatalogsXml != null) {
             request.setAttribute("productCatalogsXml", productCatalogsXml);
@@ -82,7 +82,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
                 Resource products = (Resource) productCatalogsXml.getValue("products");
                 Resource firstProductResource = products.getChildren(0, 1).get(0);
                 ResourceBeanMapper resourceBeanMapper = resourceServiceBroker
-                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML);
+                        .getResourceBeanMapper(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN);
                 Product firstProduct = resourceBeanMapper.map(firstProductResource, Product.class);
                 log.debug("==> First product (XML): [{}] {} - {}", firstProduct.getSku(), firstProduct.getName(),
                         firstProduct.getDescription());
@@ -98,19 +98,28 @@ public class NewsContentComponent extends EssentialsContentComponent {
         }
     }
 
-    private Resource findProductCatalogs(final NewsDocument document) {
+    private Resource findProductCatalogs(final HstRequest request, final NewsDocument document) {
         Resource productCatalogs = null;
+        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter();
 
         try {
             ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
             final Map<String, Object> pathVars = new HashMap<>();
-            // Note: Just as an example, let's try to find all the data by passing empty query string.
-            pathVars.put("fullTextSearchTerm", "");
+            final String queryTerm = StringUtils.defaultString(getAnyParameter(request, "q"));
+            pathVars.put("fullTextSearchTerm", queryTerm);
             productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG,
-                    "/products/?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
+                    "/products/?q={fullTextSearchTerm}", pathVars, exchangeHint);
+            log.info("REST Client info in exchangeHint. statusCode: {}, headers: {}",
+                    exchangeHint.getResponseStatusCode(), exchangeHint.getResponseHeaders());
         } catch (Exception e) {
-            log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/", document.getTitle(), e);
+            final Resource errorInfoResource = (Resource) exchangeHint.getResponseBody();
+            log.warn(
+                    "REST Client error. See response data in exchangeHint. statusCode: {}, headers: {}, body's status: {}, body's message: {}",
+                    exchangeHint.getResponseStatusCode(), exchangeHint.getResponseHeaders(),
+                    (errorInfoResource != null) ? errorInfoResource.getValue("status") : null,
+                    (errorInfoResource != null) ? errorInfoResource.getValue("message") : null);
+            log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'. {}",
+                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG, "/products/", document.getTitle(), e.toString());
         }
 
         return productCatalogs;
@@ -137,19 +146,28 @@ public class NewsContentComponent extends EssentialsContentComponent {
         response.setServeResourcePath("/WEB-INF/jsp/downloadjpeg.jsp");
     }
 
-    private Resource findProductCatalogsXml(final NewsDocument document) {
+    private Resource findProductCatalogsXml(final HstRequest request, final NewsDocument document) {
         Resource productCatalogs = null;
+        final ExchangeHint exchangeHint = createExampleExchangeHintFromParameter();
 
         try {
             ResourceServiceBroker resourceServiceBroker = CrispHstServices.getDefaultResourceServiceBroker();
             final Map<String, Object> pathVars = new HashMap<>();
-            // Note: Just as an example, let's try to find all the data by passing empty query string.
-            pathVars.put("fullTextSearchTerm", "");
-            productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML,
-                    "/products.xml?q={fullTextSearchTerm}", pathVars, createExampleExchangeHintFromParameter());
+            final String queryTerm = StringUtils.defaultString(getAnyParameter(request, "q"));
+            pathVars.put("fullTextSearchTerm", queryTerm);
+            productCatalogs = resourceServiceBroker.findResources(RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN,
+                    "/products.xml?q={fullTextSearchTerm}", pathVars, exchangeHint);
+            log.info("REST Client info in exchangeHint. statusCode: {}, headers: {}",
+                    exchangeHint.getResponseStatusCode(), exchangeHint.getResponseHeaders());
         } catch (Exception e) {
-            log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'.",
-                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML, "/products.xml", document.getTitle(), e);
+            final Resource errorInfoResource = (Resource) exchangeHint.getResponseBody();
+            log.warn(
+                    "REST Client error. See response data in exchangeHint. statusCode: {}, headers: {}, body's status: {}, body's message: {}",
+                    exchangeHint.getResponseStatusCode(), exchangeHint.getResponseHeaders(),
+                    (errorInfoResource != null) ? errorInfoResource.getValue("status") : null,
+                    (errorInfoResource != null) ? errorInfoResource.getValue("message") : null);
+            log.warn("Failed to find resources from '{}{}' resource space for full text search term, '{}'. {}",
+                    RESOURCE_SPACE_DEMO_PRODUCT_CATALOG_XML_BEAN, "/products.xml", document.getTitle(), e.toString());
         }
 
         return productCatalogs;
@@ -162,7 +180,7 @@ public class NewsContentComponent extends EssentialsContentComponent {
     private ExchangeHint createExampleExchangeHintFromParameter() {
         final String methodName = RequestContextProvider.get().getServletRequest().getParameter("_method");
         if (!StringUtils.equalsIgnoreCase("POST", methodName)) {
-            return null;
+            return ExchangeHintBuilder.create().build();
         }
         return ExchangeHintBuilder.create().methodName("POST").requestHeader("Content-Type", "application/json")
                 .requestBody("{}").build();

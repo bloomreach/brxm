@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,14 @@ class DefaultExchangeHint implements ExchangeHint {
     private Map<String, List<String>> unmodifiableRequestHeaders = Collections.emptyMap();
 
     private Object requestBody;
+
+    private int responseStatusCode;
+
+    private Map<String, List<String>> responseHeaders;
+
+    private Map<String, List<String>> unmodifiableResponseHeaders = Collections.emptyMap();
+
+    private Object responseBody;
 
     @Override
     public String getMethodName() {
@@ -86,6 +94,41 @@ class DefaultExchangeHint implements ExchangeHint {
 
     void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
+    }
+
+    @Override
+    public int getResponseStatusCode() {
+        return responseStatusCode;
+    }
+
+    @Override
+    public void setResponseStatusCode(int responseStatusCode) {
+        this.responseStatusCode = responseStatusCode;
+    }
+
+    @Override
+    public Map<String, List<String>> getResponseHeaders() {
+        return unmodifiableResponseHeaders;
+    }
+
+    @Override
+    public void setResponseHeaders(Map<String, List<String>> responseHeaders) {
+        this.responseHeaders = new LinkedHashMap<>();
+        unmodifiableResponseHeaders = Collections.unmodifiableMap(this.responseHeaders);
+
+        if (responseHeaders != null) {
+            this.responseHeaders.putAll(responseHeaders);
+        }
+    }
+
+    @Override
+    public Object getResponseBody() {
+        return responseBody;
+    }
+
+    @Override
+    public void setResponseBody(Object responseBody) {
+        this.responseBody = responseBody;
     }
 
     @Override

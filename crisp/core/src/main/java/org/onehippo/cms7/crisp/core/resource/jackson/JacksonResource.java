@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.onehippo.cms7.crisp.api.resource.AbstractResource;
+import org.onehippo.cms7.crisp.api.resource.DefaultValueMap;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ValueMap;
-import org.onehippo.cms7.crisp.core.resource.DefaultValueMap;
 import org.onehippo.cms7.crisp.core.resource.EmptyValueMap;
 import org.onehippo.cms7.crisp.core.resource.ListResourceCollection;
 import org.onehippo.cms7.crisp.core.resource.util.ResourceCollectionUtils;
