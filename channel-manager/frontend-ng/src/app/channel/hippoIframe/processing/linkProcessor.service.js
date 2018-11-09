@@ -27,23 +27,26 @@ class LinkProcessorService {
       const link = angular.element(el);
       const url = link.attr('href') || link.attr('xlink:href');
 
+      if (!this._isExternal(url)) {
+        return;
+      }
+
       // Intercept all clicks on external links: open them in a new tab if confirmed by the user
-      if (this._isExternal(url)) {
-        link.attr('target', '_blank');
-        link.click((event) => {
+      link
+        .attr('target', '_blank')
+        .click((event) => {
           // TODO: should use proper dialog!!
           if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
             event.preventDefault();
           }
         });
-      }
     });
   }
 
   _isExternal(url) {
     // In preview mode the HST will render all internal links as paths, even the fully qualified
     // ones. So any link that starts with a scheme is an external one.
-    return /^[a-z][a-z0-9]+:\/\//.test(url);
+    return /^(?:[a-z][a-z0-9]+:)\/\//.test(url);
   }
 }
 
