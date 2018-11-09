@@ -72,6 +72,8 @@ describe('ComponentEditorService', () => {
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
+    spyOn(OverlayService, 'selectComponent');
+    spyOn(OverlayService, 'deselectComponent');
 
     testData = {
       channel: 'channel',
@@ -173,7 +175,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container).toBe(testData.container);
       expect(ComponentEditor.page).toBe(testData.page);
       expect(ComponentEditor.properties).toBe(properties);
-      expect(OverlayService.current).toBe('componentId');
+      expect(OverlayService.selectComponent).toHaveBeenCalledWith('componentId');
     });
 
     it('reloads the page and shows a message when retrieving properties returns an error', () => {
@@ -625,7 +627,6 @@ describe('ComponentEditorService', () => {
       ComponentEditor.properties = {};
       ComponentEditor.propertyGroups = {};
       ComponentEditor.error = 'error';
-      OverlayService.current = 'something';
 
       ComponentEditor.close();
 
@@ -637,7 +638,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();
       expect(ComponentEditor.error).toBeUndefined();
-      expect(OverlayService.current).toBeUndefined();
+      expect(OverlayService.deselectComponent).toHaveBeenCalled();
     });
   });
 

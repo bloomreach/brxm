@@ -163,8 +163,16 @@ class OverlayService {
     // don't call sync() explicitly: the DOM mutation will trigger it automatically
   }
 
+  selectComponent(componentId) {
+    this._current = componentId;
+  }
+
+  deselectComponent() {
+    delete this._current;
+  }
+
   _isSelected(element) {
-    return element.type === 'component' && element.metaData.uuid === this.current;
+    return element.type === 'component' && element.metaData.uuid === this._current;
   }
 
   sync() {

@@ -73,7 +73,7 @@ class ComponentEditorService {
     this.properties = this._normalizeProperties(properties);
     this.propertyGroups = this._groupProperties(this.properties);
 
-    this.OverlayService.current = component.id;
+    this.OverlayService.selectComponent(component.id);
   }
 
   _onLoadFailure() {
@@ -286,8 +286,8 @@ class ComponentEditorService {
 
   close() {
     this._clearData();
+    this.OverlayService.deselectComponent();
     delete this.error;
-    delete this.OverlayService.current;
   }
 
   isKilled() {
