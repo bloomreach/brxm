@@ -75,7 +75,7 @@ public class VirtualHostService implements MutableVirtualHost {
      */
     private String locale;
 
-    /**
+    /**!validCdnHost
      * Whether the {@link Mount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader;
@@ -249,9 +249,9 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         if (StringUtils.isNotBlank(cdnHost) && !validCdnHost(cdnHost)) {
-            log.error("Ignoring invalid CDN host '{}'. Supported format is : //hostname or //hostname:portnumber. It is not " +
-                    "allowed to start with http: or https: and is not allowed to end with a /. Ignoring configured " +
-                    "cdnHost '{}'.", cdnHost, cdnHost);
+            log.error("Ignoring invalid CDN host '{}'. Supported formats are http://hostname, https://hostname or " +
+                    "//hostname (hostname can include portnumber). It is not allowed to end with a '/'. " +
+                    "Ignoring invalid configured cdnHost '{}'.", cdnHost, cdnHost);
             cdnHost = null;
         }
 
@@ -408,8 +408,8 @@ public class VirtualHostService implements MutableVirtualHost {
 
     private boolean validCdnHost(final String cdnHost) {
         // note, this is a very simple validation, very far from complete. However this is a basic check to avoid
-        // cdn host starts with scheme or end with a /
-        if (!cdnHost.startsWith("//")) {
+        // cdn host ends with with a / or that it doesn't start with https://, http:// or //
+        if (!cdnHost.startsWith("//") && !cdnHost.startsWith("http://") && !cdnHost.startsWith("https://")) {
             return false;
         }
         if (cdnHost.endsWith("/")) {
