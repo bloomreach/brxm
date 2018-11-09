@@ -197,7 +197,8 @@ public interface VirtualHost {
     /**
      * @return <code>null</code> or empty String in case no cdn host is used and otherwise the cdn host to be used for URLs to sitemap items that have
      * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#isContainerResource() HstSiteMapItem#isContainerResource() = true}.
-     * Supported format for a cdn host is //hostname. It is *not* allowed to include the scheme (http:|https:)
+     * Preferred format for a cdn host is //hostname so it piggybacks on the scheme of the current request. Starting with
+     * http/https is allowed but is not preferred
      */
     String getCdnHost();
 

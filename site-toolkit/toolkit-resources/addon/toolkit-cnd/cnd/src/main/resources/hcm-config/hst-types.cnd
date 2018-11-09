@@ -405,8 +405,8 @@
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 // For sitemap items that are marked to be a containerresource (and use ResourceDispatchingPipeline), then in non-channel-manager environment, the
-// cndhost is used in the URL if configured. The value is not allowed to contain the scheme, thus do not use http://hostname or
-// https://hostname but //hostname
+// cndhost is used in the URL if configured. The value is allowed to contain the scheme (http/https) but preferred is to
+// have it start with // so it piggybacks on the scheme of the current request
 - hst:cdnhost (string)
 - hst:responseheaders (string) multiple
 // path element below which for every mount for this host (or sub host) the page model api will become available
