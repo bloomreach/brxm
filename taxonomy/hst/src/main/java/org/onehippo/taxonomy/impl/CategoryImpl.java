@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  *  limitations under the License.
  */
 package org.onehippo.taxonomy.impl;
+
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
+import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +33,8 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.collections.map.LazyMap;
-import org.hippoecm.hst.service.AbstractJCRService;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.Category;
@@ -42,10 +46,7 @@ import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
-import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
-
-public class CategoryImpl extends AbstractJCRService implements Category {
+public class CategoryImpl implements Category {
 
     static Logger log = LoggerFactory.getLogger(CategoryImpl.class);
 
@@ -58,16 +59,20 @@ public class CategoryImpl extends AbstractJCRService implements Category {
     private String key;
 
     public CategoryImpl(final Node item, final Category parent, final TaxonomyImpl taxonomyImpl) throws RepositoryException, TaxonomyException {
-        super(item);
+
+        // Use a ValueProvider, but make sure to clean it up
+        final JCRValueProviderImpl jvp = new JCRValueProviderImpl(item);
         this.taxonomy = taxonomyImpl;
         this.parent = parent;
-        this.name = this.getValueProvider().getName();
-        final String path = this.getValueProvider().getPath();
+        this.name = jvp.getName();
+        final String path = jvp.getPath();
         if (!path.startsWith(taxonomyImpl.getPath() + "/")) {
             throw new TaxonomyException("Path of a category cannot start with other path than root taxonomy");
         }
         this.relPath = path.substring(taxonomyImpl.getPath().length() + 1);
-        this.key = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+
+        this.key = jvp.getString(TaxonomyNodeTypes.HIPPOTAXONOMY_KEY);
+        jvp.detach();
 
         if (item.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
             for (Node infoNode : new NodeIterable(item.getNode(HIPPOTAXONOMY_CATEGORYINFOS).getNodes())) {
@@ -109,13 +114,6 @@ public class CategoryImpl extends AbstractJCRService implements Category {
     
     public Taxonomy getTaxonomy() {
         return this.taxonomy;
-    }
-
-    public Service[] getChildServices() {
-        Collection<Service> composite =  new CompositeCollection(new Collection [] {
-                translations.values(), childCategories });
-        return composite.toArray(new Service[composite.size()]);
-        
     }
 
     public Category getParent() {

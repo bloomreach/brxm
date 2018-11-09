@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,8 +54,6 @@ public class TaxonomiesImpl implements Taxonomies {
                                 try {
                                     if (child.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY)) {
                                         TaxonomyImpl taxonomy = new TaxonomyImpl(child);
-                                        // when finished with taxonomy, detach the valueproviders + childs
-                                        taxonomy.closeValueProvider(true);
                                         this.taxonomies.put(taxonomy.getName(), taxonomy);
                                         break;
                                     }
