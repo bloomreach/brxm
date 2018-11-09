@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
                 });
 
                 // it is not important where we store comments. WE just use some timestamp path below our project content
-                String siteCanonicalBasePath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
+                String siteCanonicalBasePath = request.getRequestContext().getResolvedMount().getMount().getContentPath();
                 Calendar currentDate = Calendar.getInstance();
 
                 String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"

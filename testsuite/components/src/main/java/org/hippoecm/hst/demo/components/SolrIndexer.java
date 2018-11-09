@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,7 +63,8 @@ public class SolrIndexer extends BaseHstComponent{
     public void doAction(final HstRequest request, final HstResponse response) throws HstComponentException {
         String uuid = request.getParameter("uuid");
         try {
-            HippoBean bean = (HippoBean) getObjectConverter().getObject(uuid, request.getRequestContext().getSession());
+			HstRequestContext hrc = request.getRequestContext();
+			HippoBean bean = (HippoBean) hrc.getContentBeansTool().getObjectConverter().getObject(uuid, hrc.getSession());
             HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
             solrClient.getSolrServer().addBean(bean);
             solrClient.getSolrServer().commit();

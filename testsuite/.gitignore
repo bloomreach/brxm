@@ -42,6 +42,7 @@ intranet-bootstrap/content/.classpath
 intranet-bootstrap/content/.project
 intranet-bootstrap/content/.settings
 intranet-bootstrap/content/target
+intranet-bootstrap/site/target
 intranet-bootstrap/webfiles/.classpath
 intranet-bootstrap/webfiles/.project
 intranet-bootstrap/webfiles/.settings
@@ -68,6 +69,7 @@ random-numbers/.classpath
 random-numbers/.project
 random-numbers/.settings
 random-numbers/target
+repository-data/site/target
 resources/.classpath
 resources/.project
 resources/.settings

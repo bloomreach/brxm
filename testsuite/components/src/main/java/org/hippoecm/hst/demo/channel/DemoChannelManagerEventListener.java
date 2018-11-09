@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,17 +32,17 @@ import org.slf4j.LoggerFactory;
  * Example <CODE>ChannelManagerEventListener</CODE> implementation
  * which simply logs all the triggered event information.
  * </P>
- * 
- * @version $Id$
  */
 public class DemoChannelManagerEventListener implements ChannelManagerEventListener {
-    
+
     private static Logger log = LoggerFactory.getLogger(DemoChannelManagerEventListener.class);
 
+    @Override
     public void channelCreated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been created. {}", channelManagerEventToString(event));
     }
 
+    @Override
     public void channelUpdated(ChannelManagerEvent event) throws ChannelManagerEventListenerException {
         log.info("A channel has been updated. {}", channelManagerEventToString(event));
     }
@@ -65,7 +65,7 @@ public class DemoChannelManagerEventListener implements ChannelManagerEventListe
         
         if (channel != null) {
             sb.append("channel: [ ");
-            sb.append(event.getChannelId()).append(", ");
+            sb.append(event.getChannel().getId()).append(", ");
             sb.append(channel.getName()).append(", ");
             sb.append(channel.getContentRoot());
             sb.append(" ], ");

@@ -19,7 +19,7 @@ limitations under the License. -->
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0-hst-platform-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Test Suite Intranet</name>
@@ -28,6 +28,26 @@ limitations under the License. -->
   <packaging>war</packaging>
 
   <dependencies>
+
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
+      <artifactId>hst-addon-hcm-site</artifactId>
+      <version>${hippo.hst.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-site</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-webfiles</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>javax.servlet.jsp</groupId>
@@ -77,16 +97,6 @@ limitations under the License. -->
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-jaxrs</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-cms-rest</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-page-composer</artifactId>
     </dependency>
 
     <dependency>

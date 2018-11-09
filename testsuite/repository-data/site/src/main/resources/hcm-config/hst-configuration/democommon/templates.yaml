@@ -28,7 +28,7 @@ definitions:
         jcr:primaryType: hst:template
         hst:script:
           type: string
-          resource: /hstconfiguration/democommon/binaries/homepage.ftl
+          resource: /hst-configuration/democommon/binaries/homepage.ftl
       /homelayout:
         jcr:primaryType: hst:template
         hst:renderpath: jsp/components/layout/homelayout.jsp

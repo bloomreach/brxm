@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite-dependencies</artifactId>
-    <version>13.0.0-SNAPSHOT</version>
+    <version>13.0.0-hst-platform-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Test Suite CMS Dependencies</name>
@@ -32,9 +32,34 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-hcm-site</artifactId>
-      <version>${hippo.hst.version}</version>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-platform</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-server-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-spring-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-client-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+      <artifactId>hst-page-composer</artifactId>
     </dependency>
 
     <dependency>
@@ -71,24 +96,26 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-testsuite-repository-data-site</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
-      <version>${project.version}</version>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
+    <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-content</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-intranet-bootstrap-webfiles</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-intranet-bootstrap-content</artifactId>
       <version>${project.version}</version>
     </dependency>
 

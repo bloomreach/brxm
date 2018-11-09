@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class DemoRepoBasedMenuItem extends EditableMenuItemImpl {
     public DemoRepoBasedMenuItem(HippoFolderBean repoItem, EditableMenuItem parentItem, HstRequest request,
             HippoBean currentContentBean) {
         super(parentItem);
-        this.name = repoItem.getLocalizedName();
+        this.name = repoItem.getDisplayName();
         this.depth = parentItem.getDepth() - 1;
         this.repositoryBased = true;
         this.properties = repoItem.getProperties();

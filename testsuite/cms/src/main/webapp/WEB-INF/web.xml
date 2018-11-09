@@ -23,6 +23,25 @@
   <display-name>HST Demosuite CMS</display-name>
   <description>HST Demosuite CMS</description>
 
+  <!-- HST -->
+  <context-param>
+    <param-name>hst-beans-annotated-classes</param-name>
+    <param-value>classpath*:org/onehippo/**/*.class
+      ,classpath*:com/onehippo/**/*.class
+      ,classpath*:org/onehippo/forge/**/*.class
+    </param-value>
+  </context-param>
+  <!-- HstContextLoaderListener configuring/initializing/destroying HST Container -->
+  <listener>
+    <listener-class>org.hippoecm.hst.platform.container.HstCmsContextLoaderListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>HstFilter</filter-name>
+    <filter-class>org.hippoecm.hst.container.HstFilter</filter-class>
+  </filter>
+  <!-- END HST -->
+
   <context-param>
     <description>The address of the repository</description>
     <param-name>repository-address</param-name>
@@ -41,6 +60,11 @@
     <param-name>repository-config</param-name>
     <param-value>repository.xml</param-value>
   </context-param>
+
+  <filter-mapping>
+    <filter-name>HstFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <!--No concurrent logins-->
   <filter>
