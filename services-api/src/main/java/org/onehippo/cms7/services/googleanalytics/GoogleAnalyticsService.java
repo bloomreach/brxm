@@ -31,12 +31,6 @@ public interface GoogleAnalyticsService {
     String getTableId();
 
     /**
-     * @return  configured google analytics account password or {@code null} if not configured
-     */
-    @Deprecated
-    String getPassword();
-
-    /**
      * @return  configured google analytics account user name or {@code null} if not configured
      */
     String getUserName();

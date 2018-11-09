@@ -55,4 +55,12 @@ public class HippoWebappContextRegistry extends WhiteboardServiceRegistry<HippoW
     public HippoWebappContext getContext(final String contextPath) {
         return contextMap.get(contextPath);
     }
+
+    /**
+     * @param type the type of webapp to check
+     * @return true if and only if there is one or more HippoWebappContext instances registered with the given type
+     */
+    public boolean hasAtLeastOne(final HippoWebappContext.Type type) {
+        return getEntries().anyMatch(hwc -> hwc.getServiceObject().getType() == type);
+    }
 }

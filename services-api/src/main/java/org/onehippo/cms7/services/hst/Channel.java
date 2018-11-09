@@ -43,6 +43,7 @@ public class Channel implements Serializable {
     private boolean channelSettingsEditable;
     private String type;
     private String hostname;
+    private String hostGroup;
     private String contextPath;
     private String cmsPreviewPrefix;
     private String mountPath;
@@ -108,6 +109,7 @@ public class Channel implements Serializable {
         configurationLocked = channel.configurationLocked;
         type = channel.type;
         hostname = channel.hostname;
+        hostGroup = channel.hostGroup;
         contextPath = channel.contextPath;
         cmsPreviewPrefix = channel.cmsPreviewPrefix;
         mountPath = channel.mountPath;
@@ -257,6 +259,14 @@ public class Channel implements Serializable {
 
     public String getHostname() {
         return this.hostname;
+    }
+
+    public String getHostGroup() {
+        return hostGroup;
+    }
+
+    public void setHostGroup(final String hostGroup) {
+        this.hostGroup = hostGroup;
     }
 
     public void setMountPath(final String mountPath) {
@@ -525,6 +535,7 @@ public class Channel implements Serializable {
                 ", configurationLocked=" + configurationLocked +
                 ", type='" + type + '\'' +
                 ", hostname='" + hostname + '\'' +
+                ", hostGroup='" + hostGroup + '\'' +
                 ", contextPath='" + contextPath + '\'' +
                 ", cmsPreviewPrefix='" + cmsPreviewPrefix + '\'' +
                 ", mountPath='" + mountPath + '\'' +
@@ -557,4 +568,5 @@ public class Channel implements Serializable {
                 ", branchOf=" + branchOf +
                 '}';
     }
+
 }
