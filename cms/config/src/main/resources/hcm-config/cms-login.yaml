@@ -7,7 +7,7 @@ definitions:
         jcr:primaryType: frontend:plugincluster
         /loginPage:
           jcr:primaryType: frontend:plugin
-          browsers.supported: [firefox 63 >=, safari 12 >=, chrome 70 >=, edge 42 >=]
+          browsers.supported: [firefox 63 >=, safari 12 >=, chrome 70 >=, edge 17 >=]
           plugin.class: org.hippoecm.frontend.plugins.login.DefaultLoginPlugin
           show.captcha.after.how.many.times: 3
           signin.form.autocomplete: true
