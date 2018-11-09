@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class LinkProcessorService {
   _isExternal(url) {
     // In preview mode the HST will render all internal links as paths, even the fully qualified
     // ones. So any link that starts with a scheme is an external one.
-    return /^(?:[a-z][a-z0-9]+:)\/\//.test(url);
+    return /^(?:[a-z][a-z0-9]+:)?\/\//.test(url);
   }
 }
 
