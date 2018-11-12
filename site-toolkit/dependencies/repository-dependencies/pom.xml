@@ -26,7 +26,8 @@
   <groupId>org.onehippo.cms7.hst.dependencies</groupId>
   <artifactId>hst-repository-dependencies</artifactId>
   <packaging>pom</packaging>
-  
+
+  <!-- TODO rename repository-dependencies to hst-platform-dependencies ?? -->
   <dependencies>
 
     <dependency>
@@ -44,6 +45,12 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-resourcebundle-cnd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-platform</artifactId>
       <version>${project.version}</version>
     </dependency>
 
