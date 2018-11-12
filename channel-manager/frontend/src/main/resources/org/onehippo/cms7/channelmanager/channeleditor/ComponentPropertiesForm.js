@@ -44,6 +44,7 @@
     variant: null,
     newVariantId: null,
     composerRestMountUrl: null,
+    siteContextPath: null,
     componentId: null,
     locale: null,
     markedDirty: false,
@@ -55,6 +56,7 @@
       this.newVariantId = this.variant.id;
       this.mountId = config.mountId;
       this.composerRestMountUrl = config.composerRestMountUrl;
+      this.siteContextPath = config.siteContextPath;
       this.locale = config.locale;
       this.componentId = config.componentId;
       this.lastModified = config.lastModified;
@@ -88,8 +90,8 @@
               method: 'DELETE',
               url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
               headers: {
-                'Force-Client-Host': 'true',
-                'lastModifiedTimestamp': this.lastModified
+                'lastModifiedTimestamp': this.lastModified,
+                'contextPath': this.siteContextPath
               },
               success: function () {
                 this.fireEvent('propertiesDeleted', this.variant.id);
@@ -183,9 +185,9 @@
 
       form.submit({
         headers: {
-          'Force-Client-Host': 'true',
           'Move-To': this.newVariantId,
-          'lastModifiedTimestamp': this.lastModified
+          'lastModifiedTimestamp': this.lastModified,
+          'contextPath': this.siteContextPath
         },
         params: uncheckedValues,
         url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
@@ -450,18 +452,24 @@
     },
 
     _loadStore: function () {
-      var result = $.Deferred();
+      var result = $.Deferred(),
+      proxy = new Ext.data.HttpProxy({
+        method: 'GET',
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale,
+        headers: {
+          'contextPath': this.siteContextPath
+        }
+      });
 
       this.store = new Ext.data.JsonStore({
         autoLoad: false,
-        method: 'GET',
+        proxy: proxy,
         root: 'properties',
         fields: [
           'name', 'value', 'initialValue', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
           'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
           'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
-        ],
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?Force-Client-Host=true'
+        ]
       });
 
       this.store.on('load', function () {

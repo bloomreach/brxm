@@ -100,10 +100,6 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private final String[] contextPaths;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
     private String cmsUser;
 
     @ExtProperty
@@ -152,11 +148,10 @@ public class ChannelEditor extends ExtPanel {
     private final RichTextImageVariantPicker richTextImagePicker;
 
     public ChannelEditor(final IPluginContext context, final IPluginConfig config, final String apiUrlPrefix,
-                         final ExtStoreFuture<Object> channelStoreFuture, final String[] contextPaths) {
+                         final ExtStoreFuture<Object> channelStoreFuture) {
 
         this.channelStoreFuture = channelStoreFuture;
         this.apiUrlPrefix = apiUrlPrefix;
-        this.contextPaths = contextPaths;
         this.locale = Session.get().getLocale().toString();
 
         final UserSession userSession = UserSession.get();

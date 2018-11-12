@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-function startsWith(str, prefix) {
-  return str !== undefined && str !== null
-    && prefix !== undefined && prefix !== null
-    && prefix === str.slice(0, prefix.length);
-}
+// function startsWith(str, prefix) {
+//   return str !== undefined && str !== null
+//     && prefix !== undefined && prefix !== null
+//     && prefix === str.slice(0, prefix.length);
+// }
 
-function isInternalLink(link, internalLinks) {
-  if (!angular.isArray(internalLinks)) {
-    return false;
-  }
-  return internalLinks.some(internalLink => startsWith(link, internalLink));
-}
+// function isInternalLink(link, internalLinks) {
+//   if (!angular.isArray(internalLinks)) {
+//     return false;
+//   }
+//   return internalLinks.some(internalLink => startsWith(link, internalLink));
+// }
 
 class LinkProcessorService {
   constructor($translate, $window) {
@@ -35,7 +35,7 @@ class LinkProcessorService {
     this.$window = $window;
   }
 
-  run(document, internalLinkPrefixes) {
+  run(document) {
     angular.element(document).find('a').each((index, el) => {
       const link = angular.element(el);
       let url = link.prop('href');
@@ -46,15 +46,17 @@ class LinkProcessorService {
       }
 
       // intercept all clicks on external links: open them in a new tab if confirmed by the user
-      if (url && !isInternalLink(url, internalLinkPrefixes)) {
-        link.attr('target', '_blank');
-        link.click((event) => {
-          // TODO: should use proper dialog!!
-          if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
-            event.preventDefault();
-          }
-        });
-      }
+      // console.log("TODO CHANNELMGR-2188");
+
+      // if (url && !isInternalLink(url, internalLinkPrefixes)) {
+      //   link.attr('target', '_blank');
+      //   link.click((event) => {
+      //     // TODO: should use proper dialog!!
+      //     if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
+      //       event.preventDefault();
+      //     }
+      //   });
+      // }
     });
   }
 }

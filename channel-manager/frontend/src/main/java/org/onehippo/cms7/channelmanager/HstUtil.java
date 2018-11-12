@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,11 +16,21 @@
 
 package org.onehippo.cms7.channelmanager;
 
-/**
- * Class to hold constant values used all-over the channel manager code
- */
-public final class ChannelManagerConsts {
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 
-	public static final String CONFIG_REST_PROXY_SERVICE_ID = "rest.proxy.service.id";
+public class HstUtil {
+
+    private HstUtil() {
+
+    }
+
+    public static String getHostGroup() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            throw new IllegalStateException("Channel Manager is not available since there is not HstRequestContext");
+        }
+        return requestContext.getVirtualHost().getHostGroupName();
+    }
 
 }

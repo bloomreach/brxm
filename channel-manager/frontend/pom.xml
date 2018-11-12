@@ -76,10 +76,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-cms-dependencies</artifactId>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
       <version>${hippo.hst.version}</version>
-      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-platform-api</artifactId>
+      <version>${hippo.hst.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -166,6 +172,17 @@
     </dependency>
 
     <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-easymock</artifactId>
+    </dependency>
+
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-mockutils</artifactId>
     </dependency>
@@ -226,7 +243,6 @@
                 <include>${channel.manager.package}/common/MarkRequiredFields.js</include>
                 <include>${channel.manager.package}/ExtStoreFuture.js</include>
                 <include>${channel.manager.package}/BreadcrumbToolbar.js</include>
-                <include>${channel.manager.package}/Pinger.js</include>
                 <include>${channel.manager.package}/RootPanel.js</include>
                 <include>${channel.manager.package}/BlueprintListPanel.js</include>
                 <include>${channel.manager.package}/ChannelFormPanel.js</include>

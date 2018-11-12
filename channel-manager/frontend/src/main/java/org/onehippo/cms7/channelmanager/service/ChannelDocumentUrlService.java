@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,21 +15,19 @@
  */
 package org.onehippo.cms7.channelmanager.service;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.ws.rs.WebApplicationException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.hst.rest.DocumentService;
-import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 /**
  * Returns the fully qualified, canonical URL to a document in a channel of a certain type (preview, live,
@@ -38,8 +36,6 @@ import org.slf4j.LoggerFactory;
  *
  * The following configuration properties are available:
  * <ul>
- * <li>'rest.proxy.service.id': Referenced by CONFIG_REST_PROXY_SERVICE_ID constant, The ID of the REST proxy service to use. If omitted, the default REST proxy service is
- *     used.</li>
  * <li>'service.id': the ID to register this service under.</li>
  * <li>'type': the type of mounts to use for link creation. If omitted or empty, the type 'live' is used.</li>
  * </ul>
@@ -50,25 +46,22 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
     private static final Logger log = LoggerFactory.getLogger(ChannelDocumentUrlService.class);
     private static final long serialVersionUID = 1L;
 
-    final Map<String, IRestProxyService> liveRestProxyServices;
     private final String type;
 
     public ChannelDocumentUrlService(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
         // read type from configuration
         type = config.getString("type", DEFAULT_TYPE);
-
-        if (liveRestProxyServices.isEmpty()) {
-            log.info("No rest proxies services available.");
-            return;
-        }
 
         log.debug("Using type '{}'", type);
 
         final String serviceId = config.getString("service.id", IDocumentUrlService.DEFAULT_SERVICE_ID);
         context.registerService(this, serviceId);
+    }
+
+    private javax.jcr.Session getUserJcrSession() {
+        return UserSession.get().getJcrSession();
     }
 
     @Override
@@ -85,28 +78,14 @@ public class ChannelDocumentUrlService extends Plugin implements IDocumentUrlSer
             log.info("Could not find handle for document '{}'", path);
             return null;
         }
-        if (liveRestProxyServices.isEmpty()) {
-            log.info("No rest proxies services available.");
+
+        try {
+            return HippoServiceRegistry.getService(PlatformServices.class).getDocumentService()
+                    .getUrl(getUserJcrSession(), getHostGroup(), uuid, type);
+        } catch (IllegalStateException e) {
+            log.info("Cannot get document URL: '{}'", e.getMessage());
             return null;
         }
-
-        // since hst webapp can create cross context path  urls, any rest proxy service that responds can be used
-        for (IRestProxyService proxyService : liveRestProxyServices.values()) {
-            try {
-                final DocumentService documentService = proxyService.createSecureRestProxy(DocumentService.class);
-                String url = documentService.getUrl(uuid, type);
-                return StringUtils.isBlank(url) ? null : url;
-            } catch (WebApplicationException e) {
-                if (log.isDebugEnabled()) {
-                    log.info("WebApplicationException. Check next rest proxy : ", e);
-                } else {
-                    log.info("WebApplicationException : {}. Check next rest proxy.", e.toString());
-                }
-
-            }
-        }
-        log.warn("No rest proxy responded. Cannot create URL for '{}'", path);
-        return null;
     }
 
     private String getUuidOfHandle(Node documentNode) {

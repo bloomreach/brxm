@@ -119,24 +119,25 @@ class RenderingService {
 
     if (channelIdFromService !== channelIdFromPage) {
       const contextPathFromPage = this.PageMetaDataService.getContextPath();
+      const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
 
       if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
         // Current channel is a branch, but new channel has no branch of that project
         // therefore load master
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, this.ProjectService.masterId);
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel, this.ProjectService.masterId);
       } else {
         // otherwise load new channel within current project
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage);
+        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);
       }
     }
   }
 
   _parseLinks() {
     const iframeDocument = this.DomService.getIframeDocument(this.iframeJQueryElement);
-    const protocolAndHost = `${iframeDocument.location.protocol}//${iframeDocument.location.host}`;
-    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
+    // const protocolAndHost = `${iframeDocument.location.protocol}//${iframeDocument.location.host}`;
+    // const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
-    this.LinkProcessorService.run(iframeDocument, internalLinkPrefixes);
+    this.LinkProcessorService.run(iframeDocument);
   }
 }
 

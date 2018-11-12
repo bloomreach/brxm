@@ -17,7 +17,6 @@ package org.onehippo.cms7.channelmanager;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -35,10 +34,11 @@ import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
-import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
@@ -53,11 +53,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public ChannelManagerPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config, EVENT_ID);
 
-        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
-
-        // when at least one proxy service is live, at least one site webapp is up
-        siteIsUp = (!liveRestProxyServices.isEmpty());
-
+        siteIsUp = HippoWebappContextRegistry.get().hasAtLeastOne(SITE);
         if (siteIsUp) {
             IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
             if (wfConfig != null) {
@@ -92,19 +88,17 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     public void render(final PluginRequestTarget target) {
         super.render(target);
-        if (siteIsUp) {
-            // a hard page refresh should always show the channel manager overview again
-            if (target == null) {
-                rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
-            }
+        // a hard page refresh should always show the channel manager overview again
+        if (target == null) {
+            rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_MANAGER);
+        }
 
-            if (isActive()) {
-                rootPanel.render(target);
-            }
+        if (isActive()) {
+            rootPanel.render(target);
+        }
 
-            for (IRenderService child : childServices) {
-                child.render(target);
-            }
+        for (IRenderService child : childServices) {
+            child.render(target);
         }
     }
 

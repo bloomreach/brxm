@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager;
 
-import java.util.Map;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
@@ -28,7 +26,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeUtils;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
@@ -36,7 +33,6 @@ import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
-import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
@@ -70,7 +66,7 @@ public class RootPanel extends ExtPanel {
     public static final String CONFIG_CHANNEL_LIST = "channel-list";
     public static final String CONFIG_TEMPLATE_COMPOSER = "templatecomposer";
     public static final String COMPOSER_REST_MOUNT_PATH_PROPERTY = "composerRestMountPath";
-    public static final String DEFAULT_COMPOSER_REST_MOUNT_PATH = "/_rp";
+    public static final String DEFAULT_COMPOSER_REST_MOUNT_PATH = "_rp";
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
@@ -88,9 +84,6 @@ public class RootPanel extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String composerRestMountPath;
-
-    @ExtProperty
-    private final String[] contextPaths;
 
     @ExtProperty
     private boolean showBreadcrumbInitially = false;
@@ -116,12 +109,12 @@ public class RootPanel extends ExtPanel {
         } else {
             composerRestMountPath = editorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
         }
+        if (composerRestMountPath.startsWith("/")) {
+            composerRestMountPath = composerRestMountPath.substring(1);
+        }
 
-        final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
-        contextPaths = liveRestProxyServices.keySet().toArray(new String[liveRestProxyServices.size()]);
-
-        this.blueprintStore = new BlueprintStore(liveRestProxyServices);
-        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, liveRestProxyServices, blueprintStore);
+        this.blueprintStore = new BlueprintStore();
+        this.channelStore = ChannelStoreFactory.createStore(context, channelListConfig, blueprintStore);
         this.channelStoreFuture = new ExtStoreFuture<>(channelStore);
         add(this.channelStore);
         add(this.channelStoreFuture);
@@ -142,8 +135,7 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.add(this.blueprintStore);
         add(channelManagerCard);
 
-        // channel editor
-        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
+        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture);
         add(channelEditor);
 
         // folder picker

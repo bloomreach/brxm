@@ -48,8 +48,8 @@ class HippoCmCtrl {
       $('body').addClass('chrome');
     }
 
-    this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
-      this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, branchId, initialPath));
+    this.CmsService.subscribe('load-channel', (channelId, contextPath, hostGroup, branchId, initialPath) => {
+      this.$rootScope.$apply(() => this._loadChannel(channelId, contextPath, hostGroup, branchId, initialPath));
     });
 
     this.CmsService.subscribe('reload-channel', () => {
@@ -62,23 +62,23 @@ class HippoCmCtrl {
     });
 
     if (this.ConfigService.isDevMode()) {
-      this.CmsService.subscribe('load-channel', (channelId, contextPath, branchId, initialPath) => {
-        this.$rootScope.$apply(() => this._storeAppState(channelId, contextPath, branchId, initialPath));
+      this.CmsService.subscribe('load-channel', (channelId, contextPath, hostGroup, branchId, initialPath) => {
+        this.$rootScope.$apply(() => this._storeAppState(channelId, contextPath, hostGroup, branchId, initialPath));
       });
       this._restoreAppState();
     }
   }
 
-  _loadChannel(channelId, contextPath, branchId, initialPath) {
+  _loadChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
     if (!this.ChannelService.matchesChannel(channelId)) {
-      this._initializeChannel(channelId, contextPath, branchId, initialPath);
+      this._initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath);
     } else {
       this.HippoIframeService.initializePath(initialPath);
     }
   }
 
-  _initializeChannel(channelId, contextPath, branchId, initialPath) {
-    this.ChannelService.initializeChannel(channelId, contextPath, branchId)
+  _initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
+    this.ChannelService.initializeChannel(channelId, contextPath, hostGroup, branchId)
       .then(() => {
         if (!this.$state.includes('hippo-cm.channel')) {
           return this.$state.go('hippo-cm.channel');
@@ -93,9 +93,10 @@ class HippoCmCtrl {
       .then(() => this.HippoIframeService.reload());
   }
 
-  _storeAppState(channelId, contextPath, branchId, initialPath) {
+  _storeAppState(channelId, contextPath, hostGroup, branchId, initialPath) {
     sessionStorage.channelId = channelId;
     sessionStorage.channelContext = contextPath;
+    sessionStorage.channelHostGroup = hostGroup;
     sessionStorage.channelBranch = branchId;
     sessionStorage.channelPath = initialPath;
   }
@@ -107,6 +108,7 @@ class HippoCmCtrl {
         this._initializeChannel(
           sessionStorage.channelId,
           sessionStorage.channelContext,
+          sessionStorage.channelHostGroup,
           sessionStorage.channelBranch,
           sessionStorage.channelPath,
         );

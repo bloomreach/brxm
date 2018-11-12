@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@
 
             iconPanel = Ext.getCmp('channelIconPanel');
             this.resources = config.resources;
-            this.canModifyChannels = config.canModifyChannels;
             this.blueprintsAvailable = config.blueprintsAvailable;
             this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
 
@@ -98,7 +97,7 @@
                 ]
             });
 
-            if (this.canModifyChannels && this.blueprintsAvailable) {
+            if (this.blueprintsAvailable) {
                 toolbar.insert(0, {
                     text: config.resources['action.add.channel'],
                     handler: function () {

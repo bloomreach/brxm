@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,73 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.jcr.Session;
+
+import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.junit.After;
+import org.junit.runner.RunWith;
+import org.onehippo.cms7.channelmanager.HstUtil;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.hst.Channel;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Test;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.wicketstuff.js.ext.data.ExtDataField;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.beans.ChannelDataset;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.onehippo.cms7.services.hst.Channel;
-import org.wicketstuff.js.ext.data.ExtDataField;
-
 /**
  * Tests {ChannelStore}.
  */
+
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(HstUtil.class)
+@PowerMockIgnore("javax.management.*")
+
 public class ChannelStoreTest {
 
-    private Map<String, IRestProxyService> mockedProxyServices = new HashMap<>();
     private ChannelService mockedChannelService;
+    private PlatformServices platformServices;
+    private Session session;
 
     @Before
     public void initMocks() {
-        final IRestProxyService mockedProxyService = createNiceMock(IRestProxyService.class);
-        mockedProxyServices.put("/site", mockedProxyService);
         mockedChannelService = createNiceMock(ChannelService.class);
-        expect(mockedProxyService.createSecureRestProxy(ChannelService.class)).andReturn(mockedChannelService);
-        replay(mockedProxyService);
+        platformServices = createNiceMock(PlatformServices.class);
 
+        expect(platformServices.getChannelService()).andStubReturn(mockedChannelService);
 
+        session = createNiceMock(Session.class);
+
+        PowerMock.mockStatic(HstUtil.class);
+        expect(HstUtil.getHostGroup()).andStubReturn("dev-localhost");
+
+        replay(platformServices, session);
+        PowerMock.replay(HstUtil.class);
+
+        HippoServiceRegistry.register(platformServices, PlatformServices.class);
+    }
+
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(platformServices, PlatformServices.class);
     }
 
     @Test
@@ -80,20 +108,15 @@ public class ChannelStoreTest {
 
         // although the channel service returns three channels, only the channel with the correct contextpath /site
         // should be returned
-        final ChannelDataset dataset = new ChannelDataset();
-        dataset.setChannels(Arrays.asList(channel1,channel2, channel3));
-        expect(mockedChannelService.getChannels()).andReturn(dataset);
+        expect(mockedChannelService.getPreviewChannels(anyObject(), anyString())).andReturn(Arrays.asList(channel1,channel2, channel3));
         replay(mockedChannelService);
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
-        ChannelStore store = new ChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
-                createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
+        ChannelStore store = new TestChannelStore(session,"testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
+                createNiceMock(LocaleResolver.class), new BlueprintStore());
 
         JSONArray json = store.getData();
-        assertEquals("There should be JSON data for 1 channel which has contextpath /site", 1, json.length());
-
-        JSONObject channelData = json.getJSONObject(0);
-        assertEquals("The channel should have an ID testchannelid3", "testchannelid3", channelData.getString("id"));
+        assertEquals("Regardless the context path, we'd expect channels to be returned, thus 3", 3, json.length());
 
     }
 
@@ -104,14 +127,12 @@ public class ChannelStoreTest {
         channel.setLocale("nl_NL");
         channel.setContextPath("/site");
         channel.setHostname("host.example.com");
-        final ChannelDataset dataset = new ChannelDataset();
-        dataset.setChannels(Collections.singletonList(channel));
-        expect(mockedChannelService.getChannels()).andReturn(dataset);
+        expect(mockedChannelService.getPreviewChannels(anyObject(), anyString())).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
         final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
-        ChannelStore store = new CountryGroupingChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
-                createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
+        ChannelStore store = new TestCountryGroupingChannelStore(session, "testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
+                createNiceMock(LocaleResolver.class), new BlueprintStore());
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());
@@ -128,21 +149,62 @@ public class ChannelStoreTest {
     public void testChannelWithoutProperties() throws Exception {
         Channel channel = new Channel("testchannelid");
         channel.setContextPath("/site");
-        final ChannelDataset dataset = new ChannelDataset();
-        dataset.setChannels(Collections.singletonList(channel));
-        expect(mockedChannelService.getChannels()).andReturn(dataset);
+        expect(mockedChannelService.getPreviewChannels(anyObject(), anyString())).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
         final List<ExtDataField> dummyFields = Collections.emptyList();
-        ChannelStore store = new ChannelStore("testStoreId", dummyFields, "dummySortName", ChannelStore.SortOrder.ascending,
-                createNiceMock(LocaleResolver.class), mockedProxyServices, new BlueprintStore(mockedProxyServices));
+        ChannelStore store = new TestChannelStore(session, "testStoreId", dummyFields, "dummySortName", ChannelStore.SortOrder.ascending,
+                createNiceMock(LocaleResolver.class), new BlueprintStore());
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());
 
         JSONObject channelData = json.getJSONObject(0);
-        assertEquals("The channel should not have the default type", ChannelStore.DEFAULT_TYPE, channelData.getString("channelType"));
+        assertEquals("The channel should have the default type", ChannelStore.DEFAULT_TYPE, channelData.getString("channelType"));
         assertFalse("The channel should not have a region", channelData.has("channelRegion"));
     }
+
+    static class TestChannelStore extends ChannelStore {
+
+        private final Session session;
+
+        public TestChannelStore(final Session session,
+                                final String storeId,
+                                final List<ExtDataField> fields,
+                                final String sortFieldName,
+                                final SortOrder sortOrder,
+                                final LocaleResolver localeResolver,
+                                final BlueprintStore blueprintStore) {
+
+            super(storeId, fields, sortFieldName, sortOrder, localeResolver, blueprintStore);
+            this.session = session;
+        }
+        @Override
+        Session getUserJcrSession() {
+            return session;
+        }
+    }
+
+    static class TestCountryGroupingChannelStore extends CountryGroupingChannelStore {
+
+        private final Session session;
+
+        public TestCountryGroupingChannelStore(final Session session,
+                                final String storeId,
+                                final List<ExtDataField> fields,
+                                final String sortFieldName,
+                                final SortOrder sortOrder,
+                                final LocaleResolver localeResolver,
+                                final BlueprintStore blueprintStore) {
+
+            super(storeId, fields, sortFieldName, sortOrder, localeResolver, blueprintStore);
+            this.session = session;
+        }
+        @Override
+        Session getUserJcrSession() {
+            return session;
+        }
+    }
+
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
@@ -46,16 +44,17 @@ import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
-import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Blueprint;
+import org.hippoecm.hst.platform.api.ChannelService;
+import org.hippoecm.hst.platform.api.PlatformServices;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.rest.ChannelService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -63,7 +62,7 @@ import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 
-import static org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager.submitJobs;
+import static org.onehippo.cms7.channelmanager.HstUtil.getHostGroup;
 
 /**
  * Channel JSON Store.
@@ -80,6 +79,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         composerModeEnabled,
         contentRoot,
         hostname,
+        hostGroup,
         hstConfigPath,
         hstMountPoint,
         id, // channel id
@@ -110,7 +110,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
                         ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
-                        ChannelField.previewHstConfigExists.name()));
+                        ChannelField.previewHstConfigExists.name(),
+                        ChannelField.hostGroup.name()));
     }
 
     public enum SortOrder {ascending, descending}
@@ -128,7 +129,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final String sortFieldName;
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
-    private final Map<String, IRestProxyService> restProxyServices;
     private final BlueprintStore blueprintStore;
     private final Map<String, Properties> channelResourcesCache;
     private String channelRegionIconPath = DEFAULT_CHANNEL_ICON_PATH;
@@ -139,7 +139,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         final String sortFieldName,
                         final SortOrder sortOrder,
                         final LocaleResolver localeResolver,
-                        final Map<String, IRestProxyService> restProxyServices,
                         final BlueprintStore blueprintStore) {
 
         super(fields);
@@ -147,13 +146,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
-        this.restProxyServices = restProxyServices;
         this.blueprintStore = blueprintStore;
         this.channelResourcesCache = new HashMap<>();
 
-        if (this.restProxyServices == null || this.restProxyServices.isEmpty()) {
-            log.warn("No RESTful proxy service configured!");
-        }
     }
 
     @Override
@@ -278,7 +273,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
-            javax.jcr.Session session = UserSession.get().getJcrSession();
+            javax.jcr.Session session = getUserJcrSession();
             try {
                 if (session.nodeExists(channelIconPath)) {
                     String url = encodeUrl("binaries" + channelIconPath);
@@ -401,23 +396,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
     }
 
-    public boolean canModifyChannels() {
-        // check the first proxy service that returns without exception
-        for (IRestProxyService proxyService : restProxyServices.values()) {
-            try {
-                final ChannelService channelService = proxyService.createSecureRestProxy(ChannelService.class);
-                return channelService.canUserModifyChannels();
-            } catch (WebApplicationException e) {
-                if (log.isDebugEnabled()) {
-                    log.info("WebApplicationException. Check next rest proxy : ", e);
-                } else {
-                    log.info("WebApplicationException : {}. Check next rest proxy.", e.toString());
-                }
+    private ChannelService getChannelService() {
+        return HippoServiceRegistry.getService(PlatformServices.class).getChannelService();
+    }
 
-            }
-        }
-        log.warn("Rest proxies did not return valid response whether user can modify channels. Return false as default");
-        return false;
+    javax.jcr.Session getUserJcrSession() {
+        return UserSession.get().getJcrSession();
     }
 
     public List<Channel> getChannels() {
@@ -446,9 +430,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private Properties fetchChannelResources(final Channel channel) throws ChannelException {
         log.info("Fetching i18n resources for channel '{}'", channel.getId());
-        final ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
         final String locale = Session.get().getLocale().toString();
-        return channelService.getChannelResourceValues(channel.getId(), locale);
+        try {
+            return getChannelService().getChannelResourceValues(getHostGroup(), channel.getId(), locale);
+        } catch (IllegalStateException e) {
+            log.info("Cannot get channel resources: {}", e.getMessage());
+            return new Properties();
+        }
     }
 
     public void update() {
@@ -470,54 +458,32 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected void loadChannels() {
-        channels = new HashMap<>();
-        List<Callable<List<Channel>>> restProxyJobs = new ArrayList<>();
-        for (Map.Entry<String, IRestProxyService> entry : restProxyServices.entrySet()) {
-            final IRestProxyService restProxyService = entry.getValue();
-            final String contextPath = entry.getKey();
-            final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
-            restProxyJobs.add(() -> {
-                final List<Channel> result = channelService.getChannels().getChannels();
-                final List<Channel> checkedChannels = new ArrayList<>(result.size());
-                for (Channel channel : result) {
-                    if (!contextPath.equals(channel.getContextPath())) {
-                        log.warn("Skipping channel '{}' which  is fetched via wrong rest proxy as the " +
-                                        "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
-                                channel, contextPath, channel.getContextPath());
-                    } else {
-                        checkedChannels.add(channel);
-                    }
-                }
-                return checkedChannels;
-            });
+
+        List<Channel> channelList;
+        try {
+            channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
+        } catch (IllegalStateException e) {
+            log.info("Cannot get channels : {}", e.getMessage());
+            channelList = Collections.emptyList();
         }
-        final List<Future<List<Channel>>> futures = submitJobs(restProxyJobs);
-        for (Future<List<Channel>> future : futures) {
-            try {
-                for (Channel channel : future.get()) {
-                    if (StringUtils.isEmpty(channel.getType())) {
-                        channel.setType(DEFAULT_TYPE);
-                    }
-                    channels.put(channel.getId(), channel);
-                }
-            } catch (ExecutionException | InterruptedException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to load the channels for one or more rest proxies.", e);
-                } else {
-                    log.warn("Failed to load the channels for one or more rest proxies: {}", e.toString());
-                }
+        channels = channelList.stream().map(channel -> {
+            if (StringUtils.isEmpty(channel.getType())) {
+                channel.setType(DEFAULT_TYPE);
             }
-        }
+            return channel;
+        }).collect(Collectors.toMap(Channel::getId, Function.identity()));
+
     }
 
     @Override
     protected JSONObject createRecord(JSONObject record) throws ActionFailedException, JSONException {
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
-        final Blueprint blueprint = blueprintStore.getBlueprints().get(blueprintId);
-        if (blueprint == null) {
-            throw new ActionFailedException("Cannot find blueprint for id '" + blueprintId + "'.");
-        }
+        final Blueprint blueprint = blueprintStore.getBlueprints().stream()
+                .filter(b -> b.getId().equals(blueprintId))
+                .findFirst()
+                .orElseThrow(() -> new ActionFailedException(String.format("Cannot find blueprint for id '%s'.", blueprintId)));
+
         final Channel newChannel = blueprint.getPrototypeChannel();
         // Set channel parameters
         final String channelName = record.getString("name");
@@ -556,24 +522,14 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected String persistChannel(String blueprintId, Channel newChannel) throws ChannelException {
-        ChannelService channelService = getRestProxy(newChannel).createSecureRestProxy(ChannelService.class);
-        return channelService.persist(blueprintId, newChannel);
-    }
-
-    private IRestProxyService getRestProxy(final Channel channel) {
-        final IRestProxyService restProxy = restProxyServices.get(channel.getContextPath());
-        if (restProxy == null) {
-            throw new IllegalArgumentException("Channel '" + channel.toString() + "' has a contextPath '" + channel.getContextPath() + "' " +
-                    "for which no rest proxy is registered. Available rest proxies are for contextPath(s) '" + restProxyServices.keySet() + "'");
-        }
-        return restProxy;
+        return getChannelService().persist(getUserJcrSession(), blueprintId, newChannel);
     }
 
     private Locale getLocale(String absPath) {
         if (StringUtils.isEmpty(absPath)) {
             return null;
         }
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = getUserJcrSession();
         try {
             if (!session.nodeExists(absPath)) {
                 return null;

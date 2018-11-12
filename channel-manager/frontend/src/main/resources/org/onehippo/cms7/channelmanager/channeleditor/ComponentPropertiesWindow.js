@@ -31,6 +31,7 @@
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
+        siteContextPath: config.siteContextPath,
         variantsUuid: config.variantsUuid,
         mountId: config.mountId,
         listeners: {
