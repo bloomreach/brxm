@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -43,7 +44,6 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -53,6 +53,7 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -796,7 +797,13 @@ public class ContentBeanUtils {
                 return requestContext.getSession(true);
 
             }
-            Credentials cmsUserCred = (Credentials) requestContext.getServletRequest().getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
+            final HttpSession httpSession = requestContext.getServletRequest().getSession(false);
+            final CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
+
+            if (httpSession == null || cmsSessionContext == null) {
+                throw new HstComponentException("Request is a cms request but there has not been an SSO handshake.");
+            }
+            Credentials cmsUserCred = cmsSessionContext.getRepositoryCredentials();
             if (cmsUserCred == null) {
                 throw new IllegalStateException("HttpServletRequest should contain cms user credentials attribute for cms requests");
             }

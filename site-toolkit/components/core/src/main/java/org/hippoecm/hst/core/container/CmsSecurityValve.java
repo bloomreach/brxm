@@ -52,8 +52,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        HttpServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = context.getRequestContext();
+        final HttpServletRequest servletRequest = context.getServletRequest();
+        final HstRequestContext requestContext = context.getRequestContext();
 
         if (!requestContext.isCmsRequest()) {
             context.invokeNext();
@@ -62,8 +62,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", servletRequest.getRequestURL());
 
-        HttpSession httpSession = servletRequest.getSession(false);
-        CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
+        final HttpSession httpSession = servletRequest.getSession(false);
+        final CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
         if (httpSession == null || cmsSessionContext == null) {
             throw new ContainerException("Request is a cms request but there has not been an SSO handshake.");
@@ -76,7 +76,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 // request preview website, for example in channel manager. The request is not
                 // a REST call
                 if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                    jcrSession = getOrCreateCmsPreviewSession(servletRequest);
+                    jcrSession = getOrCreateCmsPreviewSession(servletRequest, cmsSessionContext.getRepositoryCredentials());
                 } else {
                     // do not yet create a session. just use the one that the HST container will create later
                 }
@@ -116,9 +116,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private Session getOrCreateCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {
+    private Session getOrCreateCmsPreviewSession(final HttpServletRequest request, final SimpleCredentials cmsUserCred) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
-        SimpleCredentials cmsUserCred = (SimpleCredentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
         try {
 
             final Session session = HttpSessionBoundJcrSessionHolder.getOrCreateJcrSession(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION,

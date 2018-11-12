@@ -97,12 +97,6 @@ public interface ContainerConstants {
     String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
 
     /**
-     * Name of the http servlet request attribute with the CMS repository credentials during a CMS initiated request
-     */
-    // TODO HSTTWO-4375  remove this attribute once we have addressed HSTTWO-4375
-    String CMS_REQUEST_REPO_CREDS_ATTR = "org.hippoecm.hst.container.cms.request.repo.creds";
-
-    /**
      * Preferred local request or session attribute name
      */
     String PREFERRED_LOCALE_ATTR_NAME = "org.hippoecm.hst.container.preferred.locale";

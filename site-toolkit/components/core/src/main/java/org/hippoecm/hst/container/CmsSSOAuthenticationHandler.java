@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.CmsSecurityValve.HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION;
-import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
 import static org.hippoecm.hst.util.HstRequestUtils.getCmsBaseURL;
 
@@ -125,8 +124,6 @@ public class CmsSSOAuthenticationHandler {
 
     private static void setRequestAttributes(final HstContainerRequest containerRequest, final CmsSessionContext cmsSessionContext) {
         containerRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
-        // TODO HSTTWO-4375  remove this attribute once we have addressed HSTTWO-4375
-        containerRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
     }
 
     private static void sendError(final HttpServletResponse servletResponse, final int errorCode) throws ContainerException {
