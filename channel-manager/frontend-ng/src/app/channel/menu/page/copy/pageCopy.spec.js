@@ -368,7 +368,8 @@ describe('PageCopyComponent', () => {
     };
     expect(SiteMapService.copy).toHaveBeenCalledWith('siteMapId', headers);
     $rootScope.$digest();
-    expect(ChannelService.initializeChannel).toHaveBeenCalledWith($ctrl.channel.id, $ctrl.channel.contextPath, $ctrl.channel.hostGroup);
+    expect(ChannelService.initializeChannel)
+      .toHaveBeenCalledWith($ctrl.channel.id, $ctrl.channel.contextPath, $ctrl.channel.hostGroup);
     $rootScope.$digest();
     expect(HippoIframeService.initializePath).toHaveBeenCalledWith(copyReturn.pathInfo);
     expect($ctrl.onDone).toHaveBeenCalled();

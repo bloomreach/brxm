@@ -178,11 +178,12 @@ describe('ChannelService', () => {
     HstService.getChannel.and.returnValue($q.resolve(testChannel));
     SessionService.hasWriteAccess.and.returnValue(false);
 
-    ChannelService.initializeChannel(testChannel.id, testChannel.contextPath, testChannel.hostGroup, '/testPath');
+    const { id, contextPath, hostGroup } = testChannel;
+    ChannelService.initializeChannel(id, contextPath, hostGroup, '/testPath');
     $rootScope.$digest();
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
-    expect(HstService.getChannel).not.toHaveBeenCalledWith(`${testChannel.id}-preview`, testChannel.contextPath, testChannel.hostGroup);
+    expect(HstService.getChannel).toHaveBeenCalledWith(id, contextPath, hostGroup);
+    expect(HstService.getChannel).not.toHaveBeenCalledWith(`${id}-preview`, contextPath, hostGroup);
     expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
     expect(HstService.doPost).not.toHaveBeenCalled();
     expect(ChannelService.getChannel()).toEqual(testChannel);

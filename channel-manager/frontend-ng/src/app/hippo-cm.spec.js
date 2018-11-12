@@ -95,7 +95,8 @@ describe('hippoCm', () => {
       $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'dev-localhost', 'testProject', '/some/path');
 
       expect($rootScope.$apply).toHaveBeenCalled();
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
+      expect(ChannelService.initializeChannel)
+        .toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
       $rootScope.$digest();
       expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
@@ -111,7 +112,8 @@ describe('hippoCm', () => {
       $window.CMS_TO_APP.publish('load-channel', 'testChannel', '/site', 'dev-localhost', 'testProject', '/some/path');
 
       expect($rootScope.$apply).toHaveBeenCalled();
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
+      expect(ChannelService.initializeChannel)
+        .toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
       $rootScope.$digest();
       expect($state.go).not.toHaveBeenCalled();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/some/path');
@@ -207,7 +209,8 @@ describe('hippoCm', () => {
       $ctrl.$onInit();
       $timeout.flush();
 
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
+      expect(ChannelService.initializeChannel)
+        .toHaveBeenCalledWith('testChannel', '/site', 'dev-localhost', 'testProject');
       $rootScope.$digest();
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/test/path');
     });

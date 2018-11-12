@@ -146,7 +146,12 @@ class ChannelService {
   }
 
   reload() {
-    return this.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup, this.channel.branchId);
+    return this.initializeChannel(
+      this.channel.id,
+      this.channel.contextPath,
+      this.channel.hostGroup,
+      this.channel.branchId,
+    );
   }
 
   getPreviewPaths() {

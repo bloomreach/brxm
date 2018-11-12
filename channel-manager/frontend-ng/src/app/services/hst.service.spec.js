@@ -182,12 +182,13 @@ describe('HstService', () => {
         param1: 'value1',
         'param/2': 'value/2',
       };
-      $httpBackend.expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
-        'CMS-User': 'testUser',
-        contextPath,
-        hostGroup,
-        Accept: 'application/json, text/plain, */*',
-      }).respond(200);
+      $httpBackend
+        .expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
+          'CMS-User': 'testUser',
+          contextPath,
+          hostGroup,
+          Accept: 'application/json, text/plain, */*',
+        }).respond(200);
       hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
       $httpBackend.flush();
     });
