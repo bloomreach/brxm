@@ -53,7 +53,6 @@
       Hippo.ChannelManager.RootPanel.superclass.constructor.call(this, config);
 
       this.selectCard(config.activeItem);
-      this.pinger.run();
     },
 
     initComponent: function () {
