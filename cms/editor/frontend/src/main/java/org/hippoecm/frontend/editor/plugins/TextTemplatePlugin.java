@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,66 +36,75 @@ import org.slf4j.LoggerFactory;
 
 public class TextTemplatePlugin extends RenderPlugin<String> {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(TextTemplatePlugin.class);
+
     private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
 
-    public TextTemplatePlugin(IPluginContext context, IPluginConfig config) {
+    public TextTemplatePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         final IModel<String> valueModel = getModel();
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         switch (mode) {
             case EDIT:
-                TextAreaWidget widget = new TextAreaWidget("value", valueModel);
+                final TextAreaWidget widget = new TextAreaWidget("value", valueModel);
                 if (config.getString("rows") != null) {
                     widget.setRows(config.getString("rows"));
                 }
                 add(widget);
                 break;
+
             case COMPARE:
                 final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
                         IModelReference.class).getModel();
 
-                IModel<String> compareModel = new HtmlDiffModel(new NewLinesToBrModel(baseModel),
+                final IModel<String> compareModel = new HtmlDiffModel(new NewLinesToBrModel(baseModel),
                         new NewLinesToBrModel(valueModel), getDiffService(context));
                 add(new Label("value", compareModel).setEscapeModelStrings(false));
                 break;
+
             default:
                 add(new Label("value", new NewLinesToBrModel(valueModel)).setEscapeModelStrings(false));
         }
     }
 
     private DiffService getDiffService(final IPluginContext context) {
-        String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
+        final String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
         return context.getService(serviceId, DefaultHtmlDiffService.class);
     }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.VIEW);
+
+        final String modeFromConfig = getPluginConfig().getString("mode");
+        final IEditor.Mode mode = IEditor.Mode.fromString(modeFromConfig, IEditor.Mode.VIEW);
         if (IEditor.Mode.COMPARE == mode) {
             response.render(CssHeaderItem.forReference(DIFF_CSS));
         }
     }
 
-    class NewLinesToBrModel extends AbstractReadOnlyModel<String> {
+    private static class NewLinesToBrModel extends AbstractReadOnlyModel<String> {
 
-        IModel<String> wrapped;
+        final IModel<String> wrapped;
 
-        NewLinesToBrModel(IModel<String> wrapped) {
+        NewLinesToBrModel(final IModel<String> wrapped) {
             this.wrapped = wrapped;
         }
 
         @Override
         public String getObject() {
-            if (wrapped != null && wrapped.getObject() != null) {
-                String object = Strings.escapeMarkup(wrapped.getObject()).toString();
-                return Strings.replaceAll(object, "\n", "<br/>").toString();
+            if (wrapped == null) {
+                return null;
             }
-            return null;
+
+            final String object = wrapped.getObject();
+            if (object == null) {
+                return null;
+            }
+
+            final String escaped = Strings.escapeMarkup(object).toString();
+            return Strings.replaceAll(escaped, "\n", "<br/>").toString();
         }
 
         @Override
