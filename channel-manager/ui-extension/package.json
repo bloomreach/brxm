@@ -1,7 +1,7 @@
 {
   "name": "@bloomreach/ui-extension",
   "version": "13.0.0",
-  "description": "BloomReach OpenUI SDK ",
+  "description": "BloomReach Open UI SDK ",
   "keywords": [
     "bloomreach",
     "sdk",
@@ -13,8 +13,11 @@
     "type": "git",
     "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
   },
-  "main": "target/classes/ui-extension.js",
-  "types": "target/classes/ui-extension.d.ts",
+  "main": "dist/ui-extension.js",
+  "types": "dist/ui-extension.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "webpack --config=webpack.config.js",
     "lint": "tslint --project .",
