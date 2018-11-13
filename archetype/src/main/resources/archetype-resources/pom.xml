@@ -71,12 +71,9 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
-    <!-- Uncomment line below when temporary overrides will be removed -->
     <essentials.version>13.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
-    <junit.version>4.12</junit.version>
-    <easymock.version>3.4</easymock.version>
 
     <development-module-deploy-dir>shared/lib</development-module-deploy-dir>
 
@@ -121,20 +118,6 @@
         <groupId>org.freemarker</groupId>
         <artifactId>freemarker</artifactId>
         <version>${dollar}{freemarker.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${dollar}{junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>${dollar}{easymock.version}</version>
-        <scope>test</scope>
       </dependency>
 
     </dependencies>
