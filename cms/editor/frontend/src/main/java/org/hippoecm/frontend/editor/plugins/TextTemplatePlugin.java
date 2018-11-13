@@ -15,12 +15,9 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -37,8 +34,6 @@ import org.slf4j.LoggerFactory;
 public class TextTemplatePlugin extends RenderPlugin<String> {
 
     static final Logger log = LoggerFactory.getLogger(TextTemplatePlugin.class);
-
-    private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
 
     public TextTemplatePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -71,17 +66,6 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
     private DiffService getDiffService(final IPluginContext context) {
         final String serviceId = getPluginConfig().getString(DiffService.SERVICE_ID);
         return context.getService(serviceId, DefaultHtmlDiffService.class);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-
-        final String modeFromConfig = getPluginConfig().getString("mode");
-        final IEditor.Mode mode = IEditor.Mode.fromString(modeFromConfig, IEditor.Mode.VIEW);
-        if (IEditor.Mode.COMPARE == mode) {
-            response.render(CssHeaderItem.forReference(DIFF_CSS));
-        }
     }
 
     private static class NewLinesToBrModel extends AbstractReadOnlyModel<String> {
