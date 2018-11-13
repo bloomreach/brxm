@@ -209,7 +209,6 @@ to the terms and conditions of the following licenses.
 ------------------------------------------------------------------------------------------------------------------------
 frontend/
 frontend-api/
-test/
 
     The above modules make use of, but do not bundle, the GPLv3 licensed ExtJS JavaScript framework
     under the Open Source License Exception for Development, http://www.sencha.com/license
