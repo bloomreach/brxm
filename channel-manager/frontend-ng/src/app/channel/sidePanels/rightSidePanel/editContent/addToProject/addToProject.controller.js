@@ -27,8 +27,10 @@ class AddToProjectController {
     this.CmsService = CmsService;
     this.EditContentService = EditContentService;
     this.ProjectService = ProjectService;
+  }
 
-    ProjectService.beforeChange('addToProject', () => this.close());
+  $onInit() {
+    this.ProjectService.beforeChange('addToProject', () => this.close());
   }
 
   getSelectedProject() {
