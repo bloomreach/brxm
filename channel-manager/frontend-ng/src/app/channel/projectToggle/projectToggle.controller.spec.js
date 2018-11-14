@@ -50,12 +50,15 @@ describe('projectToggle component', () => {
     ProjectService.selectedProject = projectMock;
   });
 
-  describe('getProjects', () => {
+  describe('get projects', () => {
     it('return projects list from projectService', () => {
-      ProjectService.projects = [];
-      $ctrl.$onInit();
-      const projectList = $ctrl.projects;
-      expect(projectList).toEqual([]);
+      const projects = [
+        { id: 'test1' },
+        { id: 'test1' },
+      ];
+
+      ProjectService.projects = projects;
+      expect($ctrl.projects).toEqual(projects);
     });
   });
 
@@ -67,8 +70,6 @@ describe('projectToggle component', () => {
 
   describe('sets selectedProject', () => {
     beforeEach(() => {
-      // init to get core project
-      $ctrl.$onInit();
       spyOn(ProjectService, 'updateSelectedProject');
       spyOn(CmsService, 'reportUsageStatistic');
     });
