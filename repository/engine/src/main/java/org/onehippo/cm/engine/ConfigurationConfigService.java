@@ -126,8 +126,8 @@ public class ConfigurationConfigService {
 
             final WebFilesWatcherService webFilesWatcherService = HippoServiceRegistry.getService(WebFilesWatcherService.class);
             final AutoReloadService autoReloadService = HippoServiceRegistry.getService(AutoReloadService.class);
-            final List<String> watchedModules = autoReloadService != null && autoReloadService.isEnabled() ?
-                    collectWatchedWebfileModules(webFilesWatcherService) :Collections.emptyList();
+            final List<String> watchedBundles = autoReloadService != null && autoReloadService.isEnabled() ?
+                    collectWatchedWebfileBundles(webFilesWatcherService) :Collections.emptyList();
 
             final WebFilesService webFilesService = HippoServiceRegistry.getService(WebFilesService.class);
             if (webFilesService == null) {
@@ -143,7 +143,7 @@ public class ConfigurationConfigService {
                 final Module module = webFileBundleDefinition.getSource().getModule();
 
                 //check if webfile service already loaded this module
-                if (watchedModules.contains(module.getFullName())) {
+                if (watchedBundles.contains(webFileBundleDefinition.getName())) {
                     //Module was already loaded by WebFileService
                     continue;
                 }
@@ -173,11 +173,11 @@ public class ConfigurationConfigService {
     }
 
     /**
-     * Collect all webfilebundle modules watched by WebFileWatcherService
+     * Collect all webfilebundles watched by WebFileWatcherService
      */
-    private static List<String> collectWatchedWebfileModules(final WebFilesWatcherService webFilesWatcherService) {
+    private static List<String> collectWatchedWebfileBundles(final WebFilesWatcherService webFilesWatcherService) {
 
-        final List<String> webfileModules = new ArrayList<>();
+        final List<String> webfileBundles = new ArrayList<>();
         if (webFilesWatcherService != null) {
             final List<Path> webFilesDirectories = webFilesWatcherService.getWebFilesDirectories();
             for (final Path webFilesDirectory : webFilesDirectories) {
@@ -185,13 +185,17 @@ public class ConfigurationConfigService {
                 try {
                     // TODO: this is somewhat excessive -- we could load just the module descriptor instead of all the sources
                     final ModuleImpl moduleImpl = new ModuleReader().read(moduleDescriptorPath, false).getModule();
-                    webfileModules.add(moduleImpl.getFullName());
+                    final List<String> moduleBundles = moduleImpl.getSources().stream()
+                            .flatMap(s -> s.getDefinitions().stream())
+                            .filter(d -> d instanceof WebFileBundleDefinition)
+                            .map(d -> ((WebFileBundleDefinition) d).getName()).collect(Collectors.toList());
+                    webfileBundles.addAll(moduleBundles);
                 } catch (Exception e) {
                     throw new RuntimeException(String.format("Failed to read webfile bundle module: %s", moduleDescriptorPath), e);
                 }
             }
         }
-        return webfileModules;
+        return webfileBundles;
     }
 
     /**
