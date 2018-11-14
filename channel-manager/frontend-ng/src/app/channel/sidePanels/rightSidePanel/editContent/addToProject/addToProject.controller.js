@@ -30,7 +30,11 @@ class AddToProjectController {
   }
 
   $onInit() {
-    this.ProjectService.beforeChange('addToProject', () => this.close());
+    this.ProjectService.beforeChange('addToProject', (projectIdIdentical) => {
+      if (!projectIdIdentical) {
+        this.close();
+      }
+    });
   }
 
   getSelectedProject() {
