@@ -26,12 +26,8 @@ class ProjectToggleController {
     this.ProjectService = ProjectService;
   }
 
-  $onInit() {
-    this.getProjects();
-  }
-
-  getProjects() {
-    this.projects = this.ProjectService.projects;
+  get projects() {
+    return this.ProjectService.projects;
   }
 
   get selectedProject() {
