@@ -40,7 +40,6 @@ describe('HstService', () => {
       apiUrlPrefix,
       cmsUser: 'testUser',
       getCmsContextPath: () => cmsContextPath,
-      contextPaths: [contextPath, '/anotherContextPath'],
       rootUuid,
     };
 
@@ -58,10 +57,6 @@ describe('HstService', () => {
   afterEach(() => {
     $httpBackend.verifyNoOutstandingRequest();
     $httpBackend.verifyNoOutstandingExpectation();
-  });
-
-  it('initializes the context path', () => {
-    expect(hstService.contextPath).toBe(contextPath);
   });
 
   it('prefixes all API urls with the context path and api url prefix', () => {

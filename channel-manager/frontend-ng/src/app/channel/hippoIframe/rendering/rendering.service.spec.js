@@ -92,11 +92,10 @@ describe('RenderingService', () => {
       spyOn(PageStructureService, 'attachEmbeddedLinks');
       spyOn(HstCommentsProcessorService, 'run');
       spyOn(RenderingService, 'updateDragDrop');
-      spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
     });
 
-    xit('handles the loading of a new page', () => {
+    it('handles the loading of a new page', () => {
       spyOn(DomService, 'addCss');
 
       RenderingService.createOverlay();
@@ -107,7 +106,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -122,7 +120,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -137,7 +134,6 @@ describe('RenderingService', () => {
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-      expect(ChannelService.getPreviewPaths).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });

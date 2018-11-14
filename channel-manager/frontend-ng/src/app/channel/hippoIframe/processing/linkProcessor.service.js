@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-// function startsWith(str, prefix) {
-//   return str !== undefined && str !== null
-//     && prefix !== undefined && prefix !== null
-//     && prefix === str.slice(0, prefix.length);
-// }
-
-// function isInternalLink(link, internalLinks) {
-//   if (!angular.isArray(internalLinks)) {
-//     return false;
-//   }
-//   return internalLinks.some(internalLink => startsWith(link, internalLink));
-// }
-
 class LinkProcessorService {
   constructor($translate, $window) {
     'ngInject';
@@ -38,26 +25,28 @@ class LinkProcessorService {
   run(document) {
     angular.element(document).find('a').each((index, el) => {
       const link = angular.element(el);
-      let url = link.prop('href');
+      const url = link.attr('href') || link.attr('xlink:href');
 
-      // handle links within SVG elements
-      if (url instanceof SVGAnimatedString) {
-        url = url.baseVal;
+      if (!this._isExternal(url)) {
+        return;
       }
 
-      // intercept all clicks on external links: open them in a new tab if confirmed by the user
-      // console.log("TODO CHANNELMGR-2188");
-
-      // if (url && !isInternalLink(url, internalLinkPrefixes)) {
-      //   link.attr('target', '_blank');
-      //   link.click((event) => {
-      //     // TODO: should use proper dialog!!
-      //     if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
-      //       event.preventDefault();
-      //     }
-      //   });
-      // }
+      // Intercept all clicks on external links: open them in a new tab if confirmed by the user
+      link
+        .attr('target', '_blank')
+        .click((event) => {
+          // TODO: should use proper dialog!!
+          if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
+            event.preventDefault();
+          }
+        });
     });
+  }
+
+  _isExternal(url) {
+    // In preview mode the HST will render all internal links as paths, even the fully qualified
+    // ones. So any link that starts with a scheme is an external one.
+    return /^(?:[a-z][a-z0-9]+:)?\/\//.test(url);
   }
 }
 

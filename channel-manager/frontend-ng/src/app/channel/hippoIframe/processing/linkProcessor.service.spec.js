@@ -17,11 +17,10 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-xdescribe('LinkProcessorService', () => {
+describe('LinkProcessorService', () => {
   let LinkProcessorService;
   let $document;
   let $window;
-  const previewUrl = ['http://localhost:8080/site'];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -37,47 +36,27 @@ xdescribe('LinkProcessorService', () => {
     jasmine.getFixtures().load('channel/hippoIframe/processing/linkProcessor.service.fixture.html');
   });
 
-  function expectTargetAttrToBeBlank(selector) {
-    $j(selector, $document).each(function checkTarget() {
-      expect(this).toHaveAttr('target', '_blank');
-    });
-  }
+  it('does not set the attribute "target" for internal links', () => {
+    LinkProcessorService.run($document);
 
-  function expectTargetAttrNotToBeBlank(selector) {
-    $j(selector, $document).each(function checkTarget() {
+    $j('.qa-internal-link', $document).each(function checkTarget() {
       expect(this).not.toHaveAttr('target', '_blank');
     });
-  }
+  });
 
-  describe('running with a valid internalLinkPrefix', () => {
-    it('should set attribute target to _blank for external links', () => {
-      LinkProcessorService.run($document);
-      expectTargetAttrToBeBlank('.qa-external-link');
-      expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
+  it('does not set the attribute "target" for local links', () => {
+    LinkProcessorService.run($document);
+
+    $j('.qa-local-link', $document).each(function checkTarget() {
+      expect(this).not.toHaveAttr('target', '_blank');
     });
   });
 
-  describe('running with two valid internalLinkPrefixes', () => {
-    it('should set attribute target to _blank for external links', () => {
-      LinkProcessorService.run($document);
-      expectTargetAttrToBeBlank('.qa-external-link');
-      expectTargetAttrNotToBeBlank('.qa-internal-link, .qa-local-link');
-    });
-  });
+  it('sets attribute "target" to _blank for external links', () => {
+    LinkProcessorService.run($document);
 
-  describe('running with an undefined internalLinkPrefix', () => {
-    it('should set attribute target to _blank for both internal and external links', () => {
-      LinkProcessorService.run($document);
-      expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
-      expectTargetAttrNotToBeBlank('.qa-local-link');
-    });
-  });
-
-  describe('running with a null internalLinkPrefix', () => {
-    it('should set attribute target to _blank for both internal and external links', () => {
-      LinkProcessorService.run($document);
-      expectTargetAttrToBeBlank('.qa-external-link, .qa-internal-link');
-      expectTargetAttrNotToBeBlank('.qa-local-link');
+    $j('.qa-external-link', $document).each(function checkTarget() {
+      expect(this).toHaveAttr('target', '_blank');
     });
   });
 

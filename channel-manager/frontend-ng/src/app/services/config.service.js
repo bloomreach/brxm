@@ -24,7 +24,6 @@ class ConfigService {
 
     this.locale = 'en';
     this.rootUuid = 'cafebabe-cafe-babe-cafe-babecafebabe';
-    this.contextPaths = ['/site'];
 
     Object.assign(this, CmsService.getConfig());
   }

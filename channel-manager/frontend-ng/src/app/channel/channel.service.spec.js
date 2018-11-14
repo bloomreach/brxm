@@ -52,7 +52,6 @@ describe('ChannelService', () => {
       apiUrlPrefix: '/testApiUrlPrefix',
       rootUuid: 'testRootUuid',
       cmsUser: 'testUser',
-      contextPaths: ['/testContextPath1', '/'],
       locale: 'en',
       projectsEnabled: false,
     };
@@ -338,16 +337,7 @@ describe('ChannelService', () => {
     expect(ChannelService.makePath('/mountPath/testPath')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/testPath');
   });
 
-  it('should compile a list of preview paths', () => {
-    loadChannel();
-    expect(ChannelService.getPreviewPaths()).toEqual(['/testContextPath1', '/']);
-
-    channelMock.cmsPreviewPrefix = 'cmsPreviewPrefix';
-    loadChannel();
-    expect(ChannelService.getPreviewPaths()).toEqual(['/testContextPath1/cmsPreviewPrefix', '/cmsPreviewPrefix']);
-  });
-
-  it('should return the Id of the current channel', () => {
+  it('should return the id of the current channel', () => {
     channelMock.id = 'testId';
     loadChannel();
     expect(ChannelService.getId()).toEqual('testId');
