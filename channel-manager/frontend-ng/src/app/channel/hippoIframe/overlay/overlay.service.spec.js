@@ -231,6 +231,16 @@ describe('OverlayService', () => {
     });
   });
 
+  it('highlights selected element', (done) => {
+    OverlayService.selectComponent('aaaa');
+    loadIframeFixture(() => {
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active [data-qa-name="component A"]').length).toBe(1);
+      done();
+    });
+  });
+
+
   it('sets specific CSS classes on the box- and overlay elements of containers', (done) => {
     loadIframeFixture(() => {
       const vboxContainerBox = iframe('#container-vbox');

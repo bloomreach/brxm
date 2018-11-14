@@ -27,6 +27,7 @@ describe('EditComponentService', () => {
   let ConfigService;
   let EditComponentService;
   let MaskService;
+  let OverlayService;
   let PageMetaDataService;
   let RightSidePanelService;
 
@@ -55,12 +56,14 @@ describe('EditComponentService', () => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
     ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'kill', 'open', 'updatePreview']);
+    OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
     mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
     mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited', 'getId']);
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentEditor', ComponentEditor);
+      $provide.value('OverlayService', OverlayService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
 
@@ -122,6 +125,7 @@ describe('EditComponentService', () => {
       expect(RightSidePanelService.clearContext).toHaveBeenCalled();
       expect($translate.instant).toHaveBeenCalledWith('COMPONENT');
       expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('COMPONENT');
+      expect(OverlayService.sync).toHaveBeenCalled();
     });
 
     it('starts the loading state of the right side panel', () => {

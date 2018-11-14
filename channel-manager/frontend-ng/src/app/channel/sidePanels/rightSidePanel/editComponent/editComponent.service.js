@@ -25,6 +25,7 @@ class EditComponentService {
     ComponentEditor,
     ConfigService,
     MaskService,
+    OverlayService,
     PageMetaDataService,
     RightSidePanelService,
   ) {
@@ -39,6 +40,7 @@ class EditComponentService {
     this.ComponentEditor = ComponentEditor;
     this.ConfigService = ConfigService;
     this.MaskService = MaskService;
+    this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.RightSidePanelService = RightSidePanelService;
 
@@ -104,6 +106,7 @@ class EditComponentService {
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
+        this.OverlayService.sync();
       })
       .catch(() => this.stopEditing());
   }

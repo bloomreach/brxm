@@ -163,19 +163,31 @@ class OverlayService {
     // don't call sync() explicitly: the DOM mutation will trigger it automatically
   }
 
+  selectComponent(componentId) {
+    this._current = componentId;
+  }
+
+  deselectComponent() {
+    delete this._current;
+  }
+
+  _isSelected(element) {
+    return element.type === 'component' && element.metaData.uuid === this._current;
+  }
+
   sync() {
-    if (this.overlay) {
-      const currentOverlayElements = new Set();
-
-      this._forAllStructureElements((structureElement) => {
-        this._syncElement(structureElement);
-
-        const overlayElement = structureElement.getOverlayElement()[0];
-        currentOverlayElements.add(overlayElement);
-      });
-
-      this._tidyOverlay(currentOverlayElements);
+    if (!this.overlay) {
+      return;
     }
+
+    const currentOverlayElements = this._getAllStructureElements()
+      .reduce((overlayElements, element) => {
+        this._syncElement(element);
+
+        return overlayElements.add(element.getOverlayElement()[0]);
+      }, new Set());
+
+    this._tidyOverlay(currentOverlayElements);
   }
 
   attachComponentMouseDown(callback) {
@@ -196,12 +208,13 @@ class OverlayService {
     }
   }
 
-  _forAllStructureElements(callback) {
-    this.PageStructureService.getContainers().forEach((container) => {
-      callback(container);
-      container.getComponents().forEach(callback);
-    });
-    this.PageStructureService.getEmbeddedLinks().forEach(callback);
+  _getAllStructureElements() {
+    return this.PageStructureService.getContainers().reduce((result, container) => {
+      result.push(container, ...container.getComponents());
+
+      return result;
+    }, [])
+      .concat(this.PageStructureService.getEmbeddedLinks());
   }
 
   _syncElement(structureElement) {
@@ -607,6 +620,7 @@ class OverlayService {
     switch (structureElement.getType()) {
       case 'component':
         this._syncLabel(structureElement, overlayElement);
+        overlayElement.toggleClass('hippo-overlay-element-component-active', this._isSelected(structureElement));
         break;
       case 'container': {
         const isEmptyInDom = structureElement.isEmptyInDom();
