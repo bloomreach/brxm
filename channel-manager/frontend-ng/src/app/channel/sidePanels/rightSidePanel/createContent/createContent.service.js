@@ -65,7 +65,11 @@ class CreateContentService {
       this._stopStep2(documentId);
     });
 
-    ProjectService.beforeChange('createContent', () => this._beforeSwitchProject());
+    ProjectService.beforeChange('createContent', (projectIdIdentical) => {
+      if (!projectIdIdentical) {
+        this._beforeSwitchProject();
+      }
+    });
   }
 
   start(config) {
