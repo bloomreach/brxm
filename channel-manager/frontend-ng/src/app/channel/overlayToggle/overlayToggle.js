@@ -19,4 +19,5 @@ import './overlayToggle.scss';
 
 const overlayToggleModule = angular.module('hippo-cm.channel.overlayToggle', [])
   .component('overlayToggle', overlayToggleComponent);
+
 export default overlayToggleModule;

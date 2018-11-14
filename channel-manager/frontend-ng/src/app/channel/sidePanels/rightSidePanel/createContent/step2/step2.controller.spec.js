@@ -29,14 +29,19 @@ describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
   let $scope;
+  let $translate;
   let CmsService;
   let ContentEditor;
   let CreateContentService;
+  let DialogService;
   let FeedbackService;
   let RightSidePanelService;
   let Step2Service;
 
   let $ctrl;
+  let form;
+
+  const $element = angular.element('<form></form>');
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContent.step2');
@@ -44,32 +49,41 @@ describe('Create content step 2 controller', () => {
     inject((
       $controller,
       _$rootScope_,
+      _$translate_,
       _$q_,
       _CmsService_,
       _ContentEditor_,
       _CreateContentService_,
+      _DialogService_,
       _FeedbackService_,
       _Step2Service_,
     ) => {
       $rootScope = _$rootScope_;
       $q = _$q_;
       $scope = $rootScope.$new();
+      $translate = _$translate_;
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
       CreateContentService = _CreateContentService_;
+      DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['startLoading', 'stopLoading']);
       Step2Service = _Step2Service_;
 
+      form = jasmine.createSpyObj('form', ['$setPristine', 'focus']);
       $ctrl = $controller('step2Ctrl as $ctrl', {
         $scope,
+        $element,
         RightSidePanelService,
-      });
+      },
+      { form },
+      );
     });
 
     spyOn(CmsService, 'reportUsageStatistic');
     spyOn(ContentEditor, 'getDocument').and.returnValue(testDocument);
     spyOn(ContentEditor, 'getDocumentId').and.returnValue(testDocument.id);
+    spyOn(DialogService, 'show');
     spyOn(FeedbackService, 'showError');
     spyOn(FeedbackService, 'showNotification');
   });
@@ -79,6 +93,13 @@ describe('Create content step 2 controller', () => {
       $ctrl.documentIsSaved = true;
       $ctrl.$onInit();
       expect($ctrl.documentIsSaved).toBe(false);
+    });
+
+    it('does focus the form', () => {
+      spyOn($element, 'find').and.returnValue(form);
+      $ctrl.$onInit();
+      expect($element.find).toHaveBeenCalledWith('form');
+      expect(form.focus).toHaveBeenCalled();
     });
   });
 
@@ -115,6 +136,16 @@ describe('Create content step 2 controller', () => {
     });
   });
 
+  it('knows when the content editor is editing', () => {
+    spyOn(ContentEditor, 'isEditing');
+
+    ContentEditor.isEditing.and.returnValue(true);
+    expect($ctrl.isEditing()).toBe(true);
+
+    ContentEditor.isEditing.and.returnValue(false);
+    expect($ctrl.isEditing()).toBe(false);
+  });
+
   it('can switch the editor', () => {
     spyOn(CmsService, 'publish');
     spyOn(ContentEditor, 'close');
@@ -127,18 +158,22 @@ describe('Create content step 2 controller', () => {
     expect(CreateContentService.stop).toHaveBeenCalled();
   });
 
-  it('discards the editable instance, saves the component parameter and finishes create-content on save', () => {
+  it('discards the editable instance, saves the component parameter and finishes create-content on save', (done) => {
     spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
     spyOn(CreateContentService, 'finish');
-    $ctrl.onSave();
+    spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
+
+    $ctrl.save().then(() => {
+      expect($ctrl.documentIsSaved).toBe(true);
+      expect(ContentEditor.discardChanges).toHaveBeenCalled();
+      expect(FeedbackService.showNotification).toHaveBeenCalled();
+      expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
+      done();
+    });
 
     $rootScope.$digest();
-    expect($ctrl.documentIsSaved).toBe(true);
-    expect(ContentEditor.discardChanges).toHaveBeenCalled();
-    expect(FeedbackService.showNotification).toHaveBeenCalled();
-    expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
   });
 
   it('stops create content when close is called', () => {
@@ -155,6 +190,42 @@ describe('Create content step 2 controller', () => {
     spyOn(Step2Service, 'openEditNameUrlDialog');
     $ctrl.openEditNameUrlDialog();
     expect(Step2Service.openEditNameUrlDialog).toHaveBeenCalled();
+  });
+
+  describe('confirm discard changes', () => {
+    const showPromise = {};
+
+    beforeEach(() => {
+      ContentEditor.document = {
+        displayName: 'Test',
+      };
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'confirm').and.callThrough();
+      DialogService.show.and.returnValue(showPromise);
+    });
+
+    it('shows a dialog with a title', () => {
+      const result = $ctrl.confirmDiscardChanges('MESSAGE_KEY', 'TITLE_KEY');
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
+        documentName: 'Test',
+      });
+      expect($translate.instant).toHaveBeenCalledWith('TITLE_KEY', {
+        documentName: 'Test',
+      });
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(result).toBe(showPromise);
+    });
+
+    it('does not show a dialog when the editor is killed', (done) => {
+      ContentEditor.kill();
+      $ctrl.confirmDiscardChanges().then(() => {
+        expect(DialogService.show).not.toHaveBeenCalled();
+        done();
+      });
+      $rootScope.$digest();
+    });
   });
 
   describe('uiCanExit', () => {
@@ -178,12 +249,13 @@ describe('Create content step 2 controller', () => {
     });
 
     it('calls confirmDiscardChanges if document is not yet saved', () => {
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
       $ctrl.uiCanExit();
-      expect(ContentEditor.confirmDiscardChanges).toHaveBeenCalled();
+      expect($ctrl.confirmDiscardChanges).toHaveBeenCalled();
     });
 
     it('does not discard the changes if confirmDiscardChanges is canceled', (done) => {
-      ContentEditor.confirmDiscardChanges.and.returnValue($q.reject());
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.reject());
 
       $ctrl.uiCanExit().then(
         () => fail('Dialog promise should not be resolved'),
@@ -195,7 +267,7 @@ describe('Create content step 2 controller', () => {
     });
 
     it('deletes the document when confirmDiscardChanges is resolved', (done) => {
-      ContentEditor.confirmDiscardChanges.and.returnValue($q.resolve());
+      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(deleteDocumentSpy).toHaveBeenCalled();

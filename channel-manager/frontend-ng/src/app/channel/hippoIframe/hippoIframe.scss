@@ -65,9 +65,7 @@ hippo-iframe {
   user-select: none;
 
   &.hippo-dragging {
-    // IE does not support the grabbing cursor so we show 'move' instead
-    cursor: move;
-    cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+    cursor: grabbing;
   }
 
   &.iframe-lifted {

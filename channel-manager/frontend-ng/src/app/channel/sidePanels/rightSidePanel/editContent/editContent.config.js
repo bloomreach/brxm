@@ -16,6 +16,7 @@
 
 import './addToProject/addToProject.scss';
 import addToProjectTemplate from './addToProject/addToProject.html';
+import editContentIconTemplate from './editContentIcon.html';
 import editContentMainTemplate from './editContentMain.html';
 import editContentToolsTemplate from './editContentTools.html';
 
@@ -36,6 +37,9 @@ function config($stateProvider) {
       tools: {
         template: '',
       },
+      icon: {
+        template: '', // no icon
+      },
     },
   });
 
@@ -54,6 +58,11 @@ function config($stateProvider) {
         controller: 'editContentToolsCtrl',
         controllerAs: '$ctrl',
         template: editContentToolsTemplate,
+      },
+      icon: {
+        controller: 'editContentIconCtrl',
+        controllerAs: '$ctrl',
+        template: editContentIconTemplate,
       },
     },
   });

@@ -16,15 +16,15 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
+const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
+
 class RenderingService {
   constructor(
     $q,
     ChannelService,
-    CmsService,
-    ConfigService,
     DomService,
     DragDropService,
-    EditComponentService,
+    Emittery,
     HippoIframeService,
     HstCommentsProcessorService,
     LinkProcessorService,
@@ -37,11 +37,8 @@ class RenderingService {
 
     this.$q = $q;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
-    this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
-    this.EditComponentService = EditComponentService;
     this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.LinkProcessorService = LinkProcessorService;
@@ -49,22 +46,28 @@ class RenderingService {
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
+
+    this.emitter = new Emittery();
   }
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
+  onOverlayCreated(callback) {
+    return this.emitter.on(OVERLAY_CREATED_EVENT_NAME, callback);
+  }
+
   createOverlay() {
     this.PageStructureService.clearParsedElements();
 
-    this._insertCss()
+    return this._insertCss()
       .then(() => {
         this._parseHstComments();
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
-        this.EditComponentService.syncPreview();
+        return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
       })
       .finally(() => {
         this.HippoIframeService.signalPageLoadCompleted();

@@ -111,7 +111,6 @@ public class FieldTypeUtils {
         FIELD_VALIDATOR_WHITELIST.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
-        FIELD_TYPE_MAP.put("Label", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));

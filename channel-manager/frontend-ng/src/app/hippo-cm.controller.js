@@ -43,9 +43,9 @@ class HippoCmCtrl {
     // don't log state transition errors
     this.$state.defaultErrorHandler(angular.noop);
 
-    // add ie11 class for ie11 specific hacks
-    if (this.BrowserService.isIE()) {
-      $('body').addClass('ie11');
+    // add CSS classes to the body for browser-specific hacks
+    if (this.BrowserService.isChrome()) {
+      $('body').addClass('chrome');
     }
 
     this.CmsService.subscribe('load-channel', (channelId, contextPath, hostGroup, branchId, initialPath) => {

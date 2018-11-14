@@ -67,8 +67,7 @@ class EditContentService {
 
   _beforeSwitchProject() {
     if (this._isEditingDocument()) {
-      const projectName = this.ProjectService.selectedProject.name;
-      return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_PROJECT_SWITCH', { projectName })
+      return this.ContentEditor.confirmClose('SAVE_CHANGES_TO_DOCUMENT')
         .then(() => this.stopEditing());
     }
     return this.$q.resolve();
@@ -134,7 +133,7 @@ class EditContentService {
   }
 
   _onCloseChannel() {
-    return this.ContentEditor.confirmClose('SAVE_CHANGES_ON_CLOSE_CHANNEL');
+    return this.ContentEditor.confirmClose('SAVE_CHANGES_TO_DOCUMENT');
   }
 }
 

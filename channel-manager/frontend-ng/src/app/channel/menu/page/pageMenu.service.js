@@ -21,9 +21,12 @@ class PageMenuService extends MenuService {
     $translate,
     ChannelService,
     DialogService,
+    ExtensionService,
     FeedbackService,
     HippoIframeService,
+    PageInfoService,
     PageMetaDataService,
+    PathService,
     SessionService,
     SiteMapItemService,
     SiteMapService,
@@ -35,51 +38,69 @@ class PageMenuService extends MenuService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
+    this.ExtensionService = ExtensionService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageInfoService = PageInfoService;
     this.PageMetaDataService = PageMetaDataService;
+    this.PathService = PathService;
     this.SessionService = SessionService;
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
 
-    this.defineMenu('page', {
+    const menu = this.defineMenu('page', {
       translationKey: 'TOOLBAR_BUTTON_PAGE',
-      isVisible: () => this._canEditChannel(),
+      isVisible: () => this._canAccessMenuItem(),
       isEnabled: () => !this.ChannelService.isConfigurationLocked(),
       onClick: () => this.onOpenMenu(),
-    })
-      .addAction('properties', {
-        translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._pageProperties(),
-      })
-      .addDivider()
-      .addAction('copy', {
-        translationKey: 'TOOLBAR_MENU_PAGE_COPY',
-        isEnabled: () => this._canCopyPage(),
-        onClick: () => this._copyPage(),
-      })
-      .addAction('move', {
-        translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._movePage(),
-      })
-      .addAction('delete', {
-        translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
-        isEnabled: () => this._canEditPage(),
-        onClick: () => this._deletePage(),
-      })
-      .addDivider()
-      .addAction('new', {
-        translationKey: 'TOOLBAR_MENU_PAGE_NEW',
-        isEnabled: () => this._canAddNewPage(),
-        onClick: () => this._newPage(),
+    });
+
+    if (this._hasPageExtensions()) {
+      menu.addAction('info', {
+        translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
+        onClick: () => this._pageInfo(),
       });
+    }
+
+    if (this._hasWriteAccess()) {
+      menu
+        .addAction('properties', {
+          translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._pageProperties(),
+        })
+        .addDivider()
+        .addAction('copy', {
+          translationKey: 'TOOLBAR_MENU_PAGE_COPY',
+          isEnabled: () => this._canCopyPage(),
+          onClick: () => this._copyPage(),
+        })
+        .addAction('move', {
+          translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._movePage(),
+        })
+        .addAction('delete', {
+          translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
+          isEnabled: () => this._canEditPage(),
+          onClick: () => this._deletePage(),
+        })
+        .addDivider()
+        .addAction('new', {
+          translationKey: 'TOOLBAR_MENU_PAGE_NEW',
+          isEnabled: () => this._canAddNewPage(),
+          onClick: () => this._newPage(),
+        });
+    }
   }
 
   onOpenMenu() {
     this.SiteMapItemService.loadAndCache(this.ChannelService.getSiteMapId(), this.PageMetaDataService.getSiteMapItemId());
     this.ChannelService.loadPageModifiableChannels();
+  }
+
+  _pageInfo() {
+    this.PageInfoService.showPageInfo();
   }
 
   _pageProperties() {
@@ -96,6 +117,18 @@ class PageMenuService extends MenuService {
 
   _newPage() {
     this.showSubPage('page-new');
+  }
+
+  _hasPageExtensions() {
+    return this.ExtensionService.hasExtensions('channel.page.tools');
+  }
+
+  _hasWriteAccess() {
+    return this.SessionService.hasWriteAccess();
+  }
+
+  _canAccessMenuItem() {
+    return this._canEditChannel() || this._hasPageExtensions();
   }
 
   _canEditChannel() {

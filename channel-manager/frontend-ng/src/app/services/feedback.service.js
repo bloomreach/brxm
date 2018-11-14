@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-const NOTIFICATION_HIDE_DELAY_IN_MS = 1000;
-const ERROR_HIDE_DELAY_IN_MS = 3000;
+const DELAY_NOTIFICATION = 1000;
+const DELAY_ERROR = 3 * 1000;
+const DELAY_DISMISSIBLE = 30 * 1000;
 
 class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
@@ -27,17 +28,43 @@ class FeedbackService {
     this.$mdToast = $mdToast;
   }
 
+  _showToast({
+    text,
+    delay,
+    dismissal = false,
+  }) {
+    const toast = this.$mdToast.simple()
+      .textContent(text)
+      .position('top right')
+      .hideDelay(delay);
+
+    if (dismissal) {
+      toast.action(this.$translate.instant('ERROR_TOAST_DISMISS'));
+    }
+
+    this.$mdToast.show(toast);
+  }
+
   showNotification(key, params) {
-    this._showTranslatedText(key, params, NOTIFICATION_HIDE_DELAY_IN_MS);
+    this._showToast({
+      text: this.$translate.instant(key, params),
+      delay: DELAY_NOTIFICATION,
+    });
   }
 
   showError(key, params) {
-    this._showTranslatedText(key, params, ERROR_HIDE_DELAY_IN_MS);
+    this._showToast({
+      text: this.$translate.instant(key, params),
+      delay: DELAY_ERROR,
+    });
   }
 
-  _showTranslatedText(key, params, hideDelay) {
-    const text = this.$translate.instant(key, params);
-    this._showText(text, hideDelay);
+  showDismissible(key, params) {
+    this._showToast({
+      text: this.$translate.instant(key, params),
+      delay: DELAY_DISMISSIBLE,
+      dismissal: true,
+    });
   }
 
   showErrorResponse(response, defaultKey, errorMap = {}, defaultParams = {}) {
@@ -65,16 +92,7 @@ class FeedbackService {
       text = this.$translate.instant(key, responseParams);
     }
 
-    this._showText(text, ERROR_HIDE_DELAY_IN_MS);
-  }
-
-  _showText(text, hideDelay) {
-    const toast = this.$mdToast.simple()
-      .textContent(text)
-      .position('top right')
-      .hideDelay(hideDelay);
-
-    this.$mdToast.show(toast);
+    this._showToast({ text, delay: DELAY_ERROR });
   }
 }
 

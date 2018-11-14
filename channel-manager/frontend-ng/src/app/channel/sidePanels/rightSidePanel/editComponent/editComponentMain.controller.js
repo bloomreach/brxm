@@ -28,36 +28,42 @@ class EditComponentMainCtrl {
     $log,
     $q,
     $scope,
-    $translate,
     ChannelService,
     CmsService,
     ComponentEditor,
+    ContainerService,
     EditComponentService,
     FeedbackService,
     HippoIframeService,
     OverlayService,
+    RenderingService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$q = $q;
     this.$scope = $scope;
-    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
+    this.ContainerService = ContainerService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.OverlayService = OverlayService;
+    this.RenderingService = RenderingService;
   }
 
   $onInit() {
-    this._overrrideSelectDocumentHandler();
+    this._overrideSelectDocumentHandler();
+    this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
+    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => this.ComponentEditor.updatePreview());
   }
 
   $onDestroy() {
     this._restoreSelectDocumentHandler();
+    this._offComponentMoved();
+    this._offOverlayCreated();
   }
 
   getPropertyGroups() {
@@ -84,11 +90,10 @@ class EditComponentMainCtrl {
       .then(() => this.form.$setPristine())
       .then(() => this.CmsService.reportUsageStatistic('CMSChannelsSaveComponent'))
       .catch((error) => {
-        const message = SAVE_ERRORS[error.data.error]
-          ? this.$translate.instant(SAVE_ERRORS[error.data.error], error.data.parameterMap)
-          : this.$translate.instant(SAVE_ERRORS.GENERAL_ERROR);
-
-        this.FeedbackService.showError(message);
+        this.FeedbackService.showError(
+          SAVE_ERRORS[error.data.error] || SAVE_ERRORS.GENERAL_ERROR,
+          error.data.parameterMap,
+        );
         this.HippoIframeService.reload();
         if (error.message && error.message.startsWith('javax.jcr.ItemNotFoundException')) {
           this.EditComponentService.killEditor();
@@ -106,13 +111,10 @@ class EditComponentMainCtrl {
             this.EditComponentService.killEditor();
           })
           .catch((error) => {
-            const messageParameters = error.parameterMap;
-            messageParameters.component = this.ComponentEditor.getComponentName();
-            const message = DELETE_ERRORS[error.error]
-              ? this.$translate.instant(DELETE_ERRORS[error.error], messageParameters)
-              : this.$translate.instant(DELETE_ERRORS.GENERAL_ERROR, messageParameters);
-
-            this.FeedbackService.showError(message);
+            this.FeedbackService.showError(
+              DELETE_ERRORS[error.error] || DELETE_ERRORS.GENERAL_ERROR,
+              Object.assign(error.parameterMap, { component: this.ComponentEditor.getComponentName() }),
+            );
             this.HippoIframeService.reload();
           });
       },
@@ -166,7 +168,7 @@ class EditComponentMainCtrl {
     return this.$q.resolve();
   }
 
-  _overrrideSelectDocumentHandler() {
+  _overrideSelectDocumentHandler() {
     this.defaultSelectDocumentHandler = this.OverlayService.onSelectDocument(this._onSelectDocument.bind(this));
   }
 

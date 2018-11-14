@@ -49,7 +49,7 @@ describe('hippoCm', () => {
 
       $state = jasmine.createSpyObj('$state', ['defaultErrorHandler', 'includes', 'go']);
 
-      BrowserService = jasmine.createSpyObj('$state', ['isIE']);
+      BrowserService = jasmine.createSpyObj('$state', ['isChrome', 'isIE']);
 
       ChannelService = jasmine.createSpyObj('ChannelService', [
         'initializeChannel',
@@ -79,27 +79,9 @@ describe('hippoCm', () => {
     spyOn(CmsService, 'publish');
   });
 
-  afterEach(() => {
-    $('body').removeClass('ie11');
-  });
-
   it('prevents uiRouter state transition errors from polluting the JavaScript console', () => {
     $ctrl.$onInit();
     expect($state.defaultErrorHandler).toHaveBeenCalledWith(angular.noop);
-  });
-
-  describe('"ie11" CSS class on the body', () => {
-    it('is added in IE', () => {
-      BrowserService.isIE.and.returnValue(true);
-      $ctrl.$onInit();
-      expect($('body')).toHaveClass('ie11');
-    });
-
-    it('is not added in other browsers', () => {
-      BrowserService.isIE.and.returnValue(false);
-      $ctrl.$onInit();
-      expect($('body')).not.toHaveClass('ie11');
-    });
   });
 
   describe('the load-channel event', () => {

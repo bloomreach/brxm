@@ -148,6 +148,14 @@ describe('OverlayService', () => {
     });
   });
 
+  it('deletes iframe referrence on iframe unload', () => {
+    loadIframeFixture(() => {
+      OverlayService.iframeWindow = {};
+      $iframe.triggerHandler('unload');
+      expect(OverlayService.iframeWindow).toBeUndefined();
+    });
+  });
+
   it('syncs when the iframe DOM is changed', (done) => {
     spyOn(OverlayService, 'sync');
     loadIframeFixture(() => {
@@ -253,7 +261,8 @@ describe('OverlayService', () => {
   it('generates box elements for re-rendered components without any markup in an HST.NoMarkup container', (done) => {
     loadIframeFixture(() => {
       const markupComponentC = iframe('#componentC');
-      const boxElement = PageStructureService.getComponentById('cccc').getBoxElement();
+      const componentC = PageStructureService.getComponentById('cccc');
+      const boxElement = componentC.getBoxElement();
 
       expect(boxElement.is(markupComponentC)).toBe(true);
 
@@ -263,7 +272,7 @@ describe('OverlayService', () => {
       `;
       spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: emptyMarkup }));
 
-      PageStructureService.renderComponent('cccc');
+      PageStructureService.renderComponent(componentC);
       $rootScope.$digest();
 
       const generatedBoxElement = PageStructureService.getComponentById('cccc').getBoxElement();
@@ -378,8 +387,8 @@ describe('OverlayService', () => {
 
   it('starts showing the experiment state of a component for which an experiment was just created', (done) => {
     loadIframeFixture(() => {
-      const componentA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
-      const labelText = componentA.find('.hippo-overlay-label-text');
+      const componentElementA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
+      const labelText = componentElementA.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('component A');
 
       const componentMarkupWithExperiment = `
@@ -389,10 +398,11 @@ describe('OverlayService', () => {
       `;
       spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
 
-      PageStructureService.renderComponent('aaaa');
+      const componentA = PageStructureService.getComponentById('aaaa');
+      PageStructureService.renderComponent(componentA);
       $rootScope.$digest();
 
-      const label = componentA.find('.hippo-overlay-label');
+      const label = componentElementA.find('.hippo-overlay-label');
       expect(label.attr('data-qa-experiment-id')).toBe('567');
       expect(labelText.html()).toBe('EXPERIMENT_LABEL_CREATED');
 
@@ -635,7 +645,8 @@ describe('OverlayService', () => {
       `;
       spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
 
-      PageStructureService.renderComponent('aaaa');
+      const componentA = PageStructureService.getComponentById('aaaa');
+      PageStructureService.renderComponent(componentA);
       $rootScope.$digest();
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
