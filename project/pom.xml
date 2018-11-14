@@ -25,7 +25,7 @@
   <description>Hippo CMS7 Project POM</description>
   <packaging>pom</packaging>
 
-  <url>http://www.onehippo.org/</url>
+  <url>https://www.onehippo.org/</url>
 
   <organization>
     <name>Hippo B.V. (http://www.onehippo.com)</name>
@@ -157,7 +157,7 @@
 
   <issueManagement>
     <system>Jira</system>
-    <url>https://issues.onehippo.com/browse/CMS7</url>
+    <url>https://issues.onehippo.com/browse/CMS</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
@@ -178,24 +178,9 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <ciManagement>
-    <system>Hudson</system>
-    <url>https://builds.onehippo.org/</url>
-  </ciManagement>
-
   <prerequisites>
     <maven>${maven.required.version}</maven>
   </prerequisites>
-
-  <mailingLists>
-    <mailingList>
-      <name>Hippo Community </name>
-      <subscribe>hippo-community+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>hippo-community+unsubscribe@googlegroups.com</unsubscribe>
-      <!--<post>hippo-community@googlegroups.com</post>-->
-      <archive>https://groups.google.com/d/forum/hippo-community</archive>
-    </mailingList>
-  </mailingLists>
 
   <repositories>
     <repository>
