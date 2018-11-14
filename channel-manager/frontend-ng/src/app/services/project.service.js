@@ -50,12 +50,11 @@ class ProjectService {
   }
 
   updateSelectedProject(projectId) {
-    if (projectId !== this.selectedProject.id) {
-      return this._callListeners(this.beforeChangeListeners)
-        .then(() => this._selectProject(projectId))
-        .then(() => this._callListeners(this.afterChangeListeners));
-    }
-    return this.$q.resolve();
+    const projectIdIdentical = projectId === this.selectedProject.id;
+
+    return this._callListeners(this.beforeChangeListeners, projectIdIdentical)
+      .then(() => this._selectProject(projectId))
+      .then(() => this._callListeners(this.afterChangeListeners, projectIdIdentical));
   }
 
   beforeChange(id, cb) {
@@ -84,9 +83,9 @@ class ProjectService {
     return channels && !!channels.find(c => c.id === baseChannelId);
   }
 
-  _callListeners(listeners) {
+  _callListeners(listeners, projectIdIdentical) {
     const promises = Array.from(listeners.values())
-      .map(listener => listener());
+      .map(listener => listener(projectIdIdentical));
 
     return this.$q.all(promises);
   }
