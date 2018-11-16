@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private String name;
     private String canonicalIdentifier;
     private String canonicalPath;
-    private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
+    private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<>();
     private String siteMapItemPath;
     private String externalLink;
     private String mountAlias;
@@ -53,8 +53,8 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private boolean repositoryBased;
     private Map<String, Object> properties;
     private Set<String> roles;
-    private Map<String,String> parameters = new HashMap<String,String>();
-    private Map<String,String> localParameters = new HashMap<String,String>();
+    private Map<String,String> parameters = new HashMap<>();
+    private Map<String,String> localParameters = new HashMap<>();
     
     public HstSiteMenuItemConfigurationService(HstNode siteMenuItem,
                                                HstSiteMenuItemConfiguration parent,
@@ -83,11 +83,6 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }
 
-        if (siteMenuItem.getValueProvider().hasProperty("hst:refidsitemapitem")) {
-            log.warn("Propery hst:refidsitemapitem on sitemenuitem '{}' is unused and deprecated since 2.24.08/2.25.05. It will be ignored. You should use '{}' property instead " +
-                    "to point to a sitemapitem refId.",siteMenuItem.getValueProvider().getPath(), HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
-        }
-        
         this.mountAlias = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_MOUNTALIAS);
         
         if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
@@ -109,9 +104,9 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
         if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES)) {
             String [] rolesProp = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES);
-            this.roles = new HashSet<String>(Arrays.asList(rolesProp));
+            this.roles = new HashSet<>(Arrays.asList(rolesProp));
         } else if (this.parent != null && parent.getRoles() != null){
-            this.roles = new HashSet<String>(parent.getRoles());
+            this.roles = new HashSet<>(parent.getRoles());
         } else {
             this.roles = null;
         }
