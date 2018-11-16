@@ -12,4 +12,5 @@ content/.classpath
 content/.project
 content/.settings
 content/target
+hcm-site/target
 /target
