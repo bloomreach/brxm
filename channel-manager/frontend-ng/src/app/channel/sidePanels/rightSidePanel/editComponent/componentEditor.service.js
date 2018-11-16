@@ -49,7 +49,9 @@ class ComponentEditorService {
     PageStructureService.registerChangeListener(this._onStructureChange.bind(this));
   }
 
-  open({ channel, component, container, page }) {
+  open({
+    channel, component, container, page,
+  }) {
     this.close();
 
     return this.HstComponentService.getProperties(component.id, component.variant)
@@ -244,7 +246,11 @@ class ComponentEditorService {
   }
 
   save() {
-    return this.HstComponentService.setParameters(this.component.id, this.component.variant, this._propertiesAsFormData());
+    return this.HstComponentService.setParameters(
+      this.component.id,
+      this.component.variant,
+      this._propertiesAsFormData(),
+    );
   }
 
   _propertiesAsFormData() {
@@ -281,7 +287,8 @@ class ComponentEditorService {
       channel: this.channel,
       component: this.component,
       container: this.container,
-      page: this.page });
+      page: this.page,
+    });
   }
 
   close() {
@@ -343,7 +350,8 @@ class ComponentEditorService {
   }
 
   _alertFieldErrors() {
-    const message = this.$translate.instant('FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES', { componentLabel: this.component.label });
+    const params = { componentLabel: this.component.label };
+    const message = this.$translate.instant('FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES', params);
     const ok = this.$translate.instant('OK');
     const alert = this.DialogService.alert()
       .textContent(message)

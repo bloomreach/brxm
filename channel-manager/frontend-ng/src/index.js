@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import './vendor.scss';
 import './index.scss';
 import './app/hippo-cm';
 

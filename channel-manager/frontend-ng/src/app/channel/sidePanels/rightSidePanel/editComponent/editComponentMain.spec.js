@@ -149,7 +149,8 @@ describe('EditComponentMainCtrl', () => {
       OverlayService.onSelectDocument.and.returnValue(defaultOnSelectDocument);
 
       $ctrl.$onInit();
-      onSelectDocument = OverlayService.onSelectDocument.calls.mostRecent().args[0];
+      const { args } = OverlayService.onSelectDocument.calls.mostRecent();
+      [onSelectDocument] = args;
 
       component = jasmine.createSpyObj('component', ['getId']);
     });
@@ -170,7 +171,13 @@ describe('EditComponentMainCtrl', () => {
 
       onSelectDocument(component, 'parameterName', '/base/currentPath', {}, '/base');
 
-      expect(defaultOnSelectDocument).toHaveBeenCalledWith(component, 'parameterName', '/base/currentPath', {}, '/base');
+      expect(defaultOnSelectDocument).toHaveBeenCalledWith(
+        component,
+        'parameterName',
+        '/base/currentPath',
+        {},
+        '/base',
+      );
     });
 
     it('restores the default behavior when destroyed', () => {
@@ -288,7 +295,9 @@ describe('EditComponentMainCtrl', () => {
 
       $ctrl.save()
         .then(() => {
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap);
+          expect(FeedbackService.showError).toHaveBeenCalledWith(
+            'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED', parameterMap,
+          );
           expect(HippoIframeService.reload).toHaveBeenCalled();
           expect(ComponentEditor.save).toHaveBeenCalled();
           done();
@@ -534,7 +543,9 @@ describe('EditComponentMainCtrl', () => {
         $ctrl.deleteComponent();
         $scope.$digest();
 
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters);
+        expect(FeedbackService.showError).toHaveBeenCalledWith(
+          'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED', resultParameters,
+        );
         expect(HippoIframeService.reload).toHaveBeenCalled();
       });
 

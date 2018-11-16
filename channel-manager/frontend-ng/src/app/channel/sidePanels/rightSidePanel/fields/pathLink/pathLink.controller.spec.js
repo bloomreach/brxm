@@ -89,7 +89,7 @@ describe('pathLinkController', () => {
       spyOn($ctrl, 'openLinkPicker');
 
       $ctrl.$onInit();
-      onSelectDocument = $scope.$on.calls.mostRecent().args[1];
+      [, onSelectDocument] = $scope.$on.calls.mostRecent().args;
     });
 
     it('opens the link picker when the parameter name matches', () => {

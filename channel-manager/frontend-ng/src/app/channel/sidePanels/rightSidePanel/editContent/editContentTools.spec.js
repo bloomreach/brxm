@@ -32,7 +32,13 @@ describe('EditContentToolsCtrl', () => {
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
-        'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocumentId', 'getError', 'getPublicationState', 'isEditing',
+        'close',
+        'confirmSaveOrDiscardChanges',
+        'discardChanges',
+        'getDocumentId',
+        'getError',
+        'getPublicationState',
+        'isEditing',
       ]);
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
 

@@ -141,47 +141,47 @@ describe('iframeExtension', () => {
     describe('for extensions from the same origin', () => {
       it('works when the CMS location has a context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the CMS location has no context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/');
-        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path contains search parameters', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
         extension.url = '/testUrl?customParam=X';
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path does not start with a slash', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
         extension.url = 'testUrl';
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path contains dots', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
         extension.url = '../testUrl';
-        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
     });
 
     describe('for extensions from a different origin', () => {
       it('works for URLs without parameters', () => {
         extension.url = 'http://www.bloomreach.com';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for URLs with parameters', () => {
         extension.url = 'http://www.bloomreach.com?customParam=X';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for HTTPS URLs', () => {
         extension.url = 'https://www.bloomreach.com';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443');
+        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
     });
   });
@@ -191,7 +191,8 @@ describe('iframeExtension', () => {
 
     beforeEach(() => {
       $ctrl.$onInit();
-      methods = Penpal.connectToChild.calls.mostRecent().args[0].methods;
+      const [args] = Penpal.connectToChild.calls.mostRecent().args;
+      ({ methods } = args);
     });
 
     describe('getProperties', () => {

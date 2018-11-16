@@ -77,7 +77,8 @@ hippo-iframe {
   background-color: $grey-50;
   box-shadow: 0 0 20px $black-shadow;
 
-  // center the sheet on the canvas; use margin instead of flexbox to properly center fixed-width viewports (Tablet etc.)
+  // center the sheet on the canvas; use margin instead of flexbox
+  // to properly center fixed-width viewports (Tablet etc.)
   position: relative;
   margin-left: auto;
   margin-right: auto;

@@ -27,6 +27,8 @@ describe('InternalLinkPickerCtrl', () => {
   let getCtrl;
   let testData;
   let testPickerTypes;
+  let testPickerTypeA;
+  let testPickerTypeB;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -35,7 +37,8 @@ describe('InternalLinkPickerCtrl', () => {
       id: 'root',
       items: [
         { id: 'item1' },
-        { id: 'item2',
+        {
+          id: 'item2',
           items: [
             { id: 'item2-1' },
           ],
@@ -43,10 +46,9 @@ describe('InternalLinkPickerCtrl', () => {
       ],
     };
 
-    testPickerTypes = [
-      { id: 'pickerTypeA', name: 'Type A', type: 'typeA' },
-      { id: 'pickerTypeB', name: 'Type B', type: 'typeB' },
-    ];
+    testPickerTypeA = { id: 'pickerTypeA', name: 'Type A', type: 'typeA' };
+    testPickerTypeB = { id: 'pickerTypeB', name: 'Type B', type: 'typeB' };
+    testPickerTypes = [testPickerTypeA, testPickerTypeB];
 
     inject(($controller, _$q_, _$rootScope_, _$mdDialog_) => {
       $mdDialog = _$mdDialog_;
@@ -155,7 +157,7 @@ describe('InternalLinkPickerCtrl', () => {
       expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB');
       InternalLinkPickerService.loadDataForLink.calls.reset();
 
-      PickerCtrl.pickerType = testPickerTypes[0];
+      PickerCtrl.pickerType = testPickerTypeA;
       PickerCtrl.changePickerType();
       expect(InternalLinkPickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
     });
@@ -164,7 +166,7 @@ describe('InternalLinkPickerCtrl', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       PickerCtrl.selectedItem = { type: 'typeA' };
       PickerCtrl.selectedDocument = {};
-      PickerCtrl.pickerType = testPickerTypes[1];
+      PickerCtrl.pickerType = testPickerTypeB;
       PickerCtrl.changePickerType();
       $rootScope.$digest();
       expect(PickerCtrl.selectedDocument).toBeNull();
@@ -173,7 +175,7 @@ describe('InternalLinkPickerCtrl', () => {
     it('should set the selected item to root when switching picker types', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       PickerCtrl.selectedItem = { type: 'typeA' };
-      PickerCtrl.pickerType = testPickerTypes[1];
+      PickerCtrl.pickerType = testPickerTypeB;
       PickerCtrl.changePickerType();
       $rootScope.$digest();
       expect(PickerCtrl.selectedItem).toEqual(testData);

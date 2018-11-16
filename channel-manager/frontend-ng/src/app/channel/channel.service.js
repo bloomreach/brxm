@@ -63,9 +63,7 @@ class ChannelService {
       .then(channel => this.SessionService.initialize(channel)
         .then(() => this._ensurePreviewHstConfigExists(channel))
         .then(previewChannel => this._loadProject(channel, branchId || this.ProjectService.selectedProject.id)
-          .then(() => this._setChannel(previewChannel)),
-        ),
-      )
+          .then(() => this._setChannel(previewChannel))))
       .catch((error) => {
         if (this.hasChannel()) {
           // restore the session for the previous channel, but still reject the promise chain
@@ -148,7 +146,12 @@ class ChannelService {
   }
 
   reload() {
-    return this.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup, this.channel.branchId);
+    return this.initializeChannel(
+      this.channel.id,
+      this.channel.contextPath,
+      this.channel.hostGroup,
+      this.channel.branchId,
+    );
   }
 
   makeRenderPath(channelRelativePath) {

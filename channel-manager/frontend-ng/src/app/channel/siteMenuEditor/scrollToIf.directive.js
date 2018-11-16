@@ -53,8 +53,9 @@ function scrollToIfDirective($timeout) {
           $timeout(() => {
             const parent = getParentOfScrollItem(elem[0]);
             if (parent) {
-              const topPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-top'), 10) || 0;
-              const leftPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-left'), 10) || 0;
+              const parentStyle = window.getComputedStyle(parent, null);
+              const topPadding = parseInt(parentStyle.getPropertyValue('padding-top'), 10) || 0;
+              const leftPadding = parseInt(parentStyle.getPropertyValue('padding-left'), 10) || 0;
               const elemOffsetTop = elem[0].offsetTop;
               const elemOffsetLeft = elem[0].offsetLeft;
               let elemHeight = elem[0].clientHeight;

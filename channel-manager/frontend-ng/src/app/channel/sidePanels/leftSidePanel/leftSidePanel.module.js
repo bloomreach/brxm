@@ -32,4 +32,3 @@ const leftSidePanelModule = angular
   .service('LeftSidePanelService', leftSidePanelService);
 
 export default leftSidePanelModule.name;
-

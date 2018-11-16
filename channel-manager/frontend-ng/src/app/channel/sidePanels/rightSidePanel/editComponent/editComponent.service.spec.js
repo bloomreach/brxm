@@ -55,11 +55,19 @@ describe('EditComponentService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
-    ComponentEditor = jasmine.createSpyObj('ComponentEditor', ['getComponentName', 'kill', 'open', 'updatePreview']);
+    ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
+      'getComponentName', 'kill', 'open', 'updatePreview',
+    ]);
     OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
-    mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel', 'getLastModified', 'getRenderVariant']);
-    mockComponent.container = jasmine.createSpyObj('ContainerElement', ['isDisabled', 'isInherited', 'getId']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
+      'clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading',
+    ]);
+    mockComponent = jasmine.createSpyObj('ComponentElement', [
+      'getId', 'getLabel', 'getLastModified', 'getRenderVariant',
+    ]);
+    mockComponent.container = jasmine.createSpyObj('ContainerElement', [
+      'isDisabled', 'isInherited', 'getId',
+    ]);
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentEditor', ComponentEditor);

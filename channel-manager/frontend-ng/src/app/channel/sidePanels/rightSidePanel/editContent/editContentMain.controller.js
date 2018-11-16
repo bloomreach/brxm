@@ -59,13 +59,12 @@ class EditContentMainCtrl {
   }
 
   save() {
-    return this.showLoadingIndicator(() =>
-      this.ContentEditor.save()
-        .then(() => {
-          this.form.$setPristine();
-          this.HippoIframeService.reload();
-          this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-        }));
+    return this.showLoadingIndicator(() => this.ContentEditor.save()
+      .then(() => {
+        this.form.$setPristine();
+        this.HippoIframeService.reload();
+        this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
+      }));
   }
 
   showLoadingIndicator(action) {
@@ -94,8 +93,7 @@ class EditContentMainCtrl {
   _doPublish() {
     return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
       ? this.save().then(() => this.ContentEditor.publish())
-      : this.ContentEditor.publish()),
-    );
+      : this.ContentEditor.publish()));
   }
 
   isEditing() {
@@ -127,8 +125,7 @@ class EditContentMainCtrl {
           // ignore errors of discardChanges: if it fails (e.g. because an admin unlocked the document)
           // the editor should still be closed.
         })
-        .finally(() => this.ContentEditor.close()),
-      );
+        .finally(() => this.ContentEditor.close()));
   }
 
   _confirmExit() {

@@ -26,7 +26,7 @@ describe('HippoIframeService', () => {
   let PageMetaDataService;
   let PageInfoService;
   let ScrollService;
-  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
+  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`; // eslint-disable-line max-len
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');

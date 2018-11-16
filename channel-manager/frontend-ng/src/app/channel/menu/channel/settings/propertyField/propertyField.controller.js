@@ -78,8 +78,11 @@ class PropertyFieldCtrl {
   }
 
   getSetPath(...args) {
-    const path = args.length ? (this.value = args[0]) : this.PathService.baseName(this.value);
-    return path;
+    if (args.length) {
+      [this.value] = args;
+      return this.value;
+    }
+    return this.PathService.baseName(this.value);
   }
 
   _getType() {
@@ -109,7 +112,8 @@ class PropertyFieldCtrl {
     return fieldAnnotations[0];
   }
 
-  // Replace (subsequent) space and double quote characters with a hyphen. We could do more, but for now this is good enough
+  // Replace (subsequent) space and double quote characters with a hyphen.
+  // We could do more, but for now this is good enough.
   _getQaClass() {
     return `qa-field-${this.field.replace(/(\s|")+/g, '-')}`;
   }

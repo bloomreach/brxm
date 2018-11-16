@@ -131,7 +131,7 @@ class SiteMenuService {
 
     function findNumberedSuffixes(collection) {
       for (let i = 0; i < collection.length; i += 1) {
-        const title = collection[i].title;
+        const { title } = collection[i];
         const match = title.match(/\((\d+)\)/);
         if (match) {
           numberedSuffixes.push(match[1]);

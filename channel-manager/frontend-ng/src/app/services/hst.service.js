@@ -92,8 +92,8 @@ class HstService {
     return this._callHst('PUT', uuid, pathElements, data);
   }
 
-  // The legacy HST endpoints (like org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource#moveAndUpdateVariant)
-  // expect FormData instead of JSON objects
+  // The legacy HST endpoints expect FormData instead of JSON objects
+  // e.g. org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource#moveAndUpdateVariant
   doPutForm(data, uuid, ...pathElements) {
     data = this._serializeParams(data);
     return this._callHst('PUT', uuid, pathElements, data, null, FORM_HEADERS);
@@ -116,7 +116,9 @@ class HstService {
     headers.hostGroup = this.hostGroup;
 
     return q((resolve, reject) => {
-      http({ method, url, headers, data })
+      http({
+        method, url, headers, data,
+      })
         .then(response => resolve(response.data))
         .catch(error => reject(error.data));
     });

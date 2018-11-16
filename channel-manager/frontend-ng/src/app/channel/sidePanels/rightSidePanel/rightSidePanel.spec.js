@@ -33,7 +33,16 @@ describe('RightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$state_, _$timeout_, _$transitions_, _$window_, _RightSidePanelService_) => {
+    inject((
+      _$componentController_,
+      _$q_,
+      _$rootScope_,
+      _$state_,
+      _$timeout_,
+      _$transitions_,
+      _$window_,
+      _RightSidePanelService_,
+    ) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -44,7 +53,9 @@ describe('RightSidePanel', () => {
       RightSidePanelService = _RightSidePanelService_;
     });
 
-    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', [
+      'initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen',
+    ]);
 
     $element = angular.element('<div></div>');
     sideNavElement = angular.element('<div class="right-side-panel"></div>');
@@ -224,13 +235,15 @@ describe('RightSidePanel', () => {
       $rootScope.$digest();
     });
 
-    it('focuses the sidepanel again when transitioning to the parent state fails (e.g. because a confirmation dialog is cancelled)', () => {
+    it('focuses the sidepanel again when transitioning to the parent state fails '
+      + '(e.g. because a confirmation dialog is cancelled)', () => {
       $transitions.onBefore({ to: 'hippo-cm.channel' }, () => false);
       $state.go('hippo-cm.channel');
       $rootScope.$digest();
     });
 
-    it('focuses the sidepanel again when transitioning to a sibling state fails (e.g. because a confirmation dialog is cancelled)', () => {
+    it('focuses the sidepanel again when transitioning to a sibling state fails '
+      + '(e.g. because a confirmation dialog is cancelled)', () => {
       $transitions.onBefore({ to: 'hippo-cm.channel.edit-content' }, () => false);
       $state.go('hippo-cm.channel.edit-content', { documentId: 'docId2' });
       $rootScope.$digest();

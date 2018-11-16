@@ -148,7 +148,9 @@ class HippoIframeCtrl {
     const componentName = component.getLabel();
     const componentVariant = component.getRenderVariant();
 
-    return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, path, parameterBasePath)
+    return this.HstComponentService.setPathParameter(
+      componentId, componentVariant, parameterName, path, parameterBasePath,
+    )
       .then(() => {
         this.ComponentRenderingService.renderComponent(componentId);
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
@@ -158,7 +160,9 @@ class HippoIframeCtrl {
         const defaultErrorParams = { componentName };
         const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
 
-        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
+        this.FeedbackService.showErrorResponse(
+          response && response.data, defaultErrorKey, errorMap, defaultErrorParams,
+        );
 
         // probably the container got locked by another user, so reload the page to show new locked containers
         this.HippoIframeService.reload();

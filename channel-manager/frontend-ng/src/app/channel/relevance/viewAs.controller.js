@@ -17,7 +17,18 @@
 const ALTER_EGO_ID = 'hippo-alter-ego';
 
 class ViewAsCtrl {
-  constructor($element, $scope, $translate, CmsService, ConfigService, FeedbackService, HippoIframeService, HstService, PageMetaDataService, SessionService) {
+  constructor(
+    $element,
+    $scope,
+    $translate,
+    CmsService,
+    ConfigService,
+    FeedbackService,
+    HippoIframeService,
+    HstService,
+    PageMetaDataService,
+    SessionService,
+  ) {
     'ngInject';
 
     this.$element = $element;

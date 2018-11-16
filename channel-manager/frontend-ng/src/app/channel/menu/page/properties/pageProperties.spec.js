@@ -158,7 +158,7 @@ describe('PagePropertiesComponent', () => {
       expect($ctrl.availableDocuments[0].path).toBe('');
     });
 
-    it('selects the first available document as primary document if none is specified by "siteMapItem.primaryDocumentRepresentation"', () => {
+    it('selects the first available document as primary document if none is specified by "siteMapItem.primaryDocumentRepresentation"', () => { // eslint-disable-line max-len
       $ctrl.$onInit();
       $rootScope.$digest();
 
@@ -174,7 +174,7 @@ describe('PagePropertiesComponent', () => {
       expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
     });
 
-    it('selects the empty document (NONE) as primary document if "availableDocumentRepresentations" is undefined', () => {
+    it('selects the empty document (NONE) as primary document if "availableDocumentRepresentations" is undefined', () => { // eslint-disable-line max-len
       delete siteMapItem.availableDocumentRepresentations;
       $ctrl.$onInit();
       $rootScope.$digest();
@@ -183,7 +183,7 @@ describe('PagePropertiesComponent', () => {
       expect($ctrl.primaryDocument).toBe($ctrl.availableDocuments[0]);
     });
 
-    it('selects the first available document as primary document if document specified by "siteMapItem.primaryDocumentRepresentation" is not available', () => {
+    it('selects the first available document as primary document if document specified by "siteMapItem.primaryDocumentRepresentation" is not available', () => { // eslint-disable-line max-len
       siteMapItem.primaryDocumentRepresentation = { path: '/test/c' }; // no match, fallback to none-document
       $ctrl.$onInit();
       $rootScope.$digest();
@@ -214,9 +214,9 @@ describe('PagePropertiesComponent', () => {
     $rootScope.$digest();
 
     $ctrl.title = 'newTitle';
-    $ctrl.primaryDocument = $ctrl.availableDocuments[1];
+    [, $ctrl.primaryDocument] = $ctrl.availableDocuments;
     $ctrl.isAssigningNewTemplate = true;
-    $ctrl.prototype = pageModel.prototypes[1];
+    [, $ctrl.prototype] = pageModel.prototypes;
 
     const savedItem = {
       id: 'siteMapItemId',
@@ -266,7 +266,7 @@ describe('PagePropertiesComponent', () => {
     $rootScope.$digest();
 
     $ctrl.title = 'newTitle';
-    $ctrl.primaryDocument = $ctrl.availableDocuments[0];
+    [$ctrl.primaryDocument] = $ctrl.availableDocuments;
 
     const savedItem = {
       id: 'siteMapItemId',
@@ -333,7 +333,7 @@ describe('PagePropertiesComponent', () => {
     mockAlert.textContent.calls.reset();
     siteMapItem.hasContainerItemInPageDefinition = true;
     $ctrl.isAssigningNewTemplate = true;
-    $ctrl.prototype = pageModel.prototypes[0]; // has containers
+    [$ctrl.prototype] = pageModel.prototypes; // has containers
     $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
     expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING');
@@ -342,7 +342,7 @@ describe('PagePropertiesComponent', () => {
     mockAlert.textContent.calls.reset();
     siteMapItem.hasContainerItemInPageDefinition = true;
     $ctrl.isAssigningNewTemplate = true;
-    $ctrl.prototype = pageModel.prototypes[1]; // has no
+    [, $ctrl.prototype] = pageModel.prototypes; // has no
     $ctrl.evaluatePrototype();
     expect($mdDialog.show).toHaveBeenCalledWith(mockAlert);
     expect(mockAlert.textContent).toHaveBeenCalledWith('SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL');

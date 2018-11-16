@@ -28,9 +28,24 @@ describe('EditContentService', () => {
     angular.mock.module('hippo-cm');
 
     ContentEditor = jasmine.createSpyObj('ContentEditor', [
-      'confirmClose', 'close', 'confirmSaveOrDiscardChanges', 'discardChanges', 'getDocument', 'getDocumentId', 'getDocumentDisplayName', 'getError', 'kill', 'open',
+      'confirmClose',
+      'close',
+      'confirmSaveOrDiscardChanges',
+      'discardChanges',
+      'getDocument',
+      'getDocumentId',
+      'getDocumentDisplayName',
+      'getError',
+      'kill',
+      'open',
     ]);
-    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
+      'clearContext',
+      'setContext',
+      'setTitle',
+      'startLoading',
+      'stopLoading',
+    ]);
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);

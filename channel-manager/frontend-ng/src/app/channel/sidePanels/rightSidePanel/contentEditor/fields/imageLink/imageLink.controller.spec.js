@@ -122,20 +122,22 @@ describe('imageLinkController', () => {
       spyOn($ctrl, 'onFocusFromParent').and.callThrough();
     });
 
-    it('calls "onFocusFromParent" when parent component broadcasts event "primitive-field:focus" and index is 0', () => {
-      $ctrl.index = 0;
-      init();
+    describe('when parent broadcasts event "primitive-field:focus"', () => {
+      it('calls "onFocusFromParent" when index is 0', () => {
+        $ctrl.index = 0;
+        init();
 
-      $rootScope.$broadcast('primitive-field:focus', { preventDefault });
-      expect($ctrl.onFocusFromParent).toHaveBeenCalled();
-    });
+        $rootScope.$broadcast('primitive-field:focus', { preventDefault });
+        expect($ctrl.onFocusFromParent).toHaveBeenCalled();
+      });
 
-    it('does not call "onFocusFromParent" when parent component broadcasts event "primitive-field:focus" and index is not 0', () => {
-      $ctrl.index = 1;
-      init();
+      it('does not call "onFocusFromParent" when index is not 0', () => {
+        $ctrl.index = 1;
+        init();
 
-      $rootScope.$broadcast('primitive-field:focus');
-      expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
+        $rootScope.$broadcast('primitive-field:focus');
+        expect($ctrl.onFocusFromParent).not.toHaveBeenCalled();
+      });
     });
 
     it('prevents default event behavior when receiving focus from parent', () => {

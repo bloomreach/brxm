@@ -153,7 +153,8 @@ class CKEditorController {
     });
 
     const relatedTarget = angular.element($event.relatedTarget);
-    if (!this.FieldService.shouldPreserveFocus(relatedTarget) && this.SharedSpaceToolbarService.isToolbarPinned === false) {
+    if (!this.FieldService.shouldPreserveFocus(relatedTarget)
+      && this.SharedSpaceToolbarService.isToolbarPinned === false) {
       this.SharedSpaceToolbarService.hideToolbar();
     }
 

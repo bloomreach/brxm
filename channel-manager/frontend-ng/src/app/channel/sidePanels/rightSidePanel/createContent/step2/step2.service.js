@@ -66,7 +66,9 @@ class Step2Service {
   _reportUnsupportedRequiredFieldTypes(documentType) {
     if (documentType.unsupportedRequiredFieldTypes) {
       const unsupportedMandatoryFieldTypes = documentType.unsupportedRequiredFieldTypes.join(',');
-      const unsupportedFieldTypes = documentType.unsupportedFieldTypes ? documentType.unsupportedFieldTypes.join(',') : '';
+      const unsupportedFieldTypes = documentType.unsupportedFieldTypes
+        ? documentType.unsupportedFieldTypes.join(',')
+        : '';
 
       this.CmsService.reportUsageStatistic(
         'CreateContentUnsupportedFields',
@@ -108,7 +110,7 @@ class Step2Service {
   }
 
   saveComponentParameter() {
-    const parameterName = this.componentInfo.parameterName;
+    const { parameterName } = this.componentInfo;
 
     if (!parameterName) {
       // no component parameter to update
@@ -118,20 +120,22 @@ class Step2Service {
     const componentId = this.componentInfo.id;
     const componentName = this.componentInfo.label;
     const componentVariant = this.componentInfo.variant;
-    const parameterBasePath = this.componentInfo.parameterBasePath;
+    const { parameterBasePath } = this.componentInfo;
     const document = this.ContentEditor.getDocument();
 
-    return this.HstComponentService.setPathParameter(componentId, componentVariant, parameterName, document.repositoryPath, parameterBasePath)
-      .then(() => {
-        this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
-      })
-      .catch((response) => {
-        const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
-        const defaultErrorParams = { componentName };
-        const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
+    return this.HstComponentService.setPathParameter(
+      componentId, componentVariant, parameterName, document.repositoryPath, parameterBasePath,
+    ).then(() => {
+      this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
+    }).catch((response) => {
+      const defaultErrorKey = 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT';
+      const defaultErrorParams = { componentName };
+      const errorMap = { ITEM_ALREADY_LOCKED: 'ERROR_DOCUMENT_SELECTED_FOR_COMPONENT_ALREADY_LOCKED' };
 
-        this.FeedbackService.showErrorResponse(response && response.data, defaultErrorKey, errorMap, defaultErrorParams);
-      });
+      this.FeedbackService.showErrorResponse(
+        response && response.data, defaultErrorKey, errorMap, defaultErrorParams,
+      );
+    });
   }
 
   killEditor(documentId) {

@@ -196,7 +196,7 @@ describe('PageMoveComponent', () => {
     $ctrl.$onInit();
     $rootScope.$digest();
 
-    $ctrl.location = pageModel.locations[2];
+    [,, $ctrl.location] = pageModel.locations;
     $ctrl.lastPathInfoElement = 'tobi';
     $ctrl.move();
 

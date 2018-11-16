@@ -19,6 +19,9 @@ const targetDir = path.resolve('./target/classes/angular/hippo-cm/');
 const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
+  entry: {
+    'vendor-styles': 'vendors',
+  },
   typeScript: false,
   dist: targetDir,
   publicPath: '',

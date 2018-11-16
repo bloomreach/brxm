@@ -110,7 +110,7 @@ class HstCommentsProcessorService {
   }
 
   locateComponent(id, startingDomElement) {
-    let nextSibling = startingDomElement.nextSibling;
+    let { nextSibling } = startingDomElement;
     let boxDomElement;
 
     while (nextSibling !== null) {
@@ -120,7 +120,7 @@ class HstCommentsProcessorService {
       if (this._isEndMarker(nextSibling, id)) {
         return [boxDomElement, nextSibling];
       }
-      nextSibling = nextSibling.nextSibling;
+      ({ nextSibling } = nextSibling);
     }
 
     throw new Error(`No component end marker found for '${id}'.`);

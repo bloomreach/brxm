@@ -387,8 +387,9 @@ class OverlayService {
     // Passing the full config through privileges to adjust buttons for authors
     const documentUuid = structureElement.getUuid();
     const parameterName = structureElement.getParameterName();
-    const parameterBasePath =
-      structureElement.isParameterValueRelativePath() ? this.ChannelService.getChannel().contentRoot : '';
+    const parameterBasePath = structureElement.isParameterValueRelativePath()
+      ? this.ChannelService.getChannel().contentRoot
+      : '';
 
     const config = {
       containerItem: structureElement.getEnclosingElement(),
@@ -423,7 +424,9 @@ class OverlayService {
     }
 
     if (config.parameterName && !config.containerItem) {
-      this.$log.warn(`Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`);
+      this.$log.warn(
+        `Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`,
+      );
       delete config.parameterName;
     }
 
@@ -450,7 +453,9 @@ class OverlayService {
         mainIcon: searchSvg,
         optionIcon: searchSvg,
         callback: () => this._selectDocument(config),
-        tooltip: config.isLockedByOtherUser ? this.$translate.instant('SELECT_DOCUMENT_LOCKED') : this.$translate.instant('SELECT_DOCUMENT'),
+        tooltip: config.isLockedByOtherUser
+          ? this.$translate.instant('SELECT_DOCUMENT_LOCKED')
+          : this.$translate.instant('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(selectDocumentButton);
@@ -462,7 +467,9 @@ class OverlayService {
         mainIcon: plusSvg,
         optionIcon: plusSvg,
         callback: () => this._createContent(config),
-        tooltip: config.isLockedByOtherUser ? this.$translate.instant('CREATE_DOCUMENT_LOCKED') : this.$translate.instant('CREATE_DOCUMENT'),
+        tooltip: config.isLockedByOtherUser
+          ? this.$translate.instant('CREATE_DOCUMENT_LOCKED')
+          : this.$translate.instant('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(createContentButton);
@@ -515,34 +522,24 @@ class OverlayService {
 
   _openOptionsAboveMainButton(manageContentStructureElement, optionsCount) {
     const boxElement = manageContentStructureElement.prepareBoxElement();
-    const elementPosition = this._getElementPosition(boxElement);
-    const viewportPosition = this._getViewportPosition();
+    const element = this._getElementPosition(boxElement);
+    const viewport = this._getViewportPosition();
 
     const optionsHeight = optionsCount * (32 + 5); // 32px button height plus 5px margin between buttons
 
-    const enoughRoomBelow = () => (elementPosition.top + elementPosition.height + optionsHeight) <= viewportPosition.bottom;
-    const enoughRoomAbove = () => (elementPosition.top - optionsHeight) >= viewportPosition.top;
+    const enoughRoomBelow = () => (element.top + element.height + optionsHeight) <= viewport.bottom;
+    const enoughRoomAbove = () => (element.top - optionsHeight) >= viewport.top;
 
     return !enoughRoomBelow() && enoughRoomAbove();
   }
 
   _getElementPosition(boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
-
-    let top = rect.top;
-    let left = rect.left;
-    const width = rect.width;
-    const height = rect.height;
-
-    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
-    left += this.iframeWindow.scrollX;
-    top += this.iframeWindow.scrollY;
-
     return {
-      top,
-      left,
-      width,
-      height,
+      top: rect.top + this.iframeWindow.scrollY,
+      left: rect.left + this.iframeWindow.scrollX,
+      width: rect.width,
+      height: rect.height,
     };
   }
 

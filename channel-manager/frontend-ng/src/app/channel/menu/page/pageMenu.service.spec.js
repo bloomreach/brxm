@@ -112,13 +112,13 @@ describe('PageMenuService', () => {
       // menu button
       it('shows the menu button if the channel is editable', () => {
         ChannelService.isEditable.and.returnValue(true);
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         expect(menu.isVisible()).toBe(true);
       });
 
       it('hides the menu button if the channel is not editable', () => {
         ChannelService.isEditable.and.returnValue(false);
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         expect(menu.isVisible()).toBe(false);
       });
 
@@ -166,7 +166,7 @@ describe('PageMenuService', () => {
 
       // menu button
       it('only shows the menu button if the channel is editable', () => {
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         expect(menu.isVisible()).toBe(true);
 
         ChannelService.isEditable.and.returnValue(true);
@@ -188,7 +188,7 @@ describe('PageMenuService', () => {
 
       // all other menu options
       it('loads the meta data of the current page when opening the page menu', () => {
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         menu.onClick();
 
         expect(SiteMapItemService.loadAndCache).toHaveBeenCalledWith('siteMapId', 'siteMapItemId');
@@ -392,7 +392,7 @@ describe('PageMenuService', () => {
 
       // menu button
       it('shows the menu button', () => {
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         expect(menu.isVisible()).toBe(true);
       });
 
@@ -412,7 +412,7 @@ describe('PageMenuService', () => {
 
       // menu button
       it('hides the menu button', () => {
-        const menu = PageMenuService.menu;
+        const { menu } = PageMenuService;
         expect(menu.isVisible()).toBe(false);
       });
     });

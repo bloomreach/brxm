@@ -140,8 +140,8 @@ class ChannelMenuService extends MenuService {
   }
 
   _isChannelSettingsAvailable() {
-    return this.ChannelService.isEditable() &&
-           this.ChannelService.getChannel().hasCustomProperties;
+    return this.ChannelService.isEditable()
+           && this.ChannelService.getChannel().hasCustomProperties;
   }
 
   // Changes

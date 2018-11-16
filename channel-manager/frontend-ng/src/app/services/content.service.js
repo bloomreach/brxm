@@ -65,7 +65,9 @@ class ContentService {
     const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
     const url = encodeURI(path);
     const headers = {};
-    const opts = { method, url, headers, data, params };
+    const opts = {
+      method, url, headers, data, params,
+    };
     const promise = async ? this.$http(opts) : this._schedule(opts);
 
     return promise.then(result => result.data);
@@ -78,7 +80,8 @@ class ContentService {
       this.$http(opts)
         .then(
           result => defer.resolve(result),
-          result => defer.reject(result))
+          result => defer.reject(result),
+        )
         .finally(() => this._next());
     });
 

@@ -103,7 +103,9 @@ class RenderingService {
     if (this.OverlayService.isComponentsOverlayDisplayed) {
       this.DragDropService.enable()
         .then(() => {
-          this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+          this.OverlayService.attachComponentMouseDown((e, component) => {
+            this.DragDropService.startDragOrClick(e, component);
+          });
         });
     } else {
       this.DragDropService.disable();
@@ -122,7 +124,12 @@ class RenderingService {
       if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
         // Current channel is a branch, but new channel has no branch of that project
         // therefore load master
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel, this.ProjectService.masterId);
+        this.ChannelService.initializeChannel(
+          channelIdFromPage,
+          contextPathFromPage,
+          hostGroupFromPreviousChannel,
+          this.ProjectService.masterId,
+        );
       } else {
         // otherwise load new channel within current project
         this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);

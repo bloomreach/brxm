@@ -15,7 +15,7 @@
  */
 
 import searchComponent from './search.component';
-import searchFilter from '../search/search.filter';
+import searchFilter from './search.filter';
 
 const searchModule = angular
   .module('hippo-cm.channel.search', [])

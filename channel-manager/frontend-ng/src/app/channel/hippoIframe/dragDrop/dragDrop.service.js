@@ -172,7 +172,7 @@ class DragDropService {
     return this.dragulaPromise.then(() => {
       const oldIndex = this.drake.containers.indexOf(oldContainer.getBoxElement()[0]);
       if (oldIndex >= 0 && newContainer) {
-        this.drake.containers[oldIndex] = newContainer.getBoxElement()[0];
+        [this.drake.containers[oldIndex]] = newContainer.getBoxElement();
       }
     });
   }

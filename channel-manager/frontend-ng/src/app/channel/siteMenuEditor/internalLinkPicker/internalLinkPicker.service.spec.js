@@ -89,4 +89,3 @@ describe('InternalLinkPickerService', () => {
     expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining(dialogCfg));
   });
 });
-

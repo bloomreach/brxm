@@ -87,7 +87,8 @@ describe('DocumentLocationField', () => {
 
       it('throws an error if rootPath is a relative path', () => {
         component.rootPath = 'relative/path';
-        expect(() => component.$onInit()).toThrowError('The rootPath option can only be an absolute path: relative/path');
+        expect(() => component.$onInit())
+          .toThrowError('The rootPath option can only be an absolute path: relative/path');
       });
 
       it('throws an error if defaultPath is absolute', () => {
@@ -171,17 +172,27 @@ describe('DocumentLocationField', () => {
 
       it('stores the pickerPath, i.e. the deepest nested folder that exists in the repository', () => {
         component.onLoadFolders([
-          { displayName: 'A', name: 'a', path: '/a', exists: true },
-          { displayName: 'B', name: 'b', path: '/a/b', exists: true },
-          { displayName: 'C', name: 'c', path: '/a/b/c', exists: false },
+          {
+            displayName: 'A', name: 'a', path: '/a', exists: true,
+          },
+          {
+            displayName: 'B', name: 'b', path: '/a/b', exists: true,
+          },
+          {
+            displayName: 'C', name: 'c', path: '/a/b/c', exists: false,
+          },
         ]);
         expect(component.pickerPath).toBe('/a/b');
       });
 
       it('stores / as the pickerPath if none of the folders already exist in the repository', () => {
         component.onLoadFolders([
-          { displayName: 'A', name: 'a', path: '/a', exists: false },
-          { displayName: 'B', name: 'b', path: '/a/b', exists: false },
+          {
+            displayName: 'A', name: 'a', path: '/a', exists: false,
+          },
+          {
+            displayName: 'B', name: 'b', path: '/a/b', exists: false,
+          },
         ]);
         expect(component.pickerPath).toBe('/');
       });

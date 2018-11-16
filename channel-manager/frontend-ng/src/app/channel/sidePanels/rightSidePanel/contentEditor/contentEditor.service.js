@@ -87,7 +87,16 @@ const ERROR_MAP = {
 };
 
 class ContentEditorService {
-  constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService, WorkflowService) {
+  constructor(
+    $q,
+    $translate,
+    CmsService,
+    ContentService,
+    DialogService,
+    FeedbackService,
+    FieldService,
+    WorkflowService,
+  ) {
     'ngInject';
 
     this.$q = $q;
@@ -427,7 +436,8 @@ class ContentEditorService {
   }
 
   confirmPublication() {
-    const textContent = this.$translate.instant(this._confirmPublicationTextKey(), { documentName: this.document.displayName });
+    const params = { documentName: this.document.displayName };
+    const textContent = this.$translate.instant(this._confirmPublicationTextKey(), params);
     const ok = this.$translate.instant(this._confirmPublicationOkKey());
     const cancel = this.$translate.instant('CANCEL');
 
@@ -450,11 +460,11 @@ class ContentEditorService {
 
   _confirmPublicationTextKey() {
     if (this.canPublish) {
-      return this.documentDirty ?
-        'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
+      return this.documentDirty
+        ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
     }
-    return this.documentDirty ?
-      'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
+    return this.documentDirty
+      ? 'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
   }
 
   _confirmPublicationOkKey() {
@@ -472,32 +482,28 @@ class ContentEditorService {
 
     return this.ContentService
       .discardChanges(this.documentId)
-      .then(() =>
-        this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
-          .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
-          .then(() => this._reportPublishAction())
-          .finally(() =>
-            this.ContentService.getEditableDocument(this.documentId)
-              .then((saveDocument) => {
-                this._onLoadSuccess(saveDocument, this.documentType);
-              })
-              .catch((response) => {
-                if (this.canPublish) {
-                  // Document published. Getting an editable document should not have failed, so set the same error as
-                  // when getting an editable document fails.
-                  this._setErrorDocumentInvalid();
-                } else {
-                  // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
-                  // error and remove the document so the 'document not editable' message is shown and the editor is
-                  // removed.
-                  this._onLoadFailure(response);
-                }
-                // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
-                // action has succeeded. The error that has been set will make it clear to the user that the document
-                // could not be created.
-              }),
-          ),
-      )
+      .then(() => this.WorkflowService.createWorkflowAction(this.documentId, workflowAction)
+        .then(() => this.FeedbackService.showNotification(notificationKey, messageParams))
+        .then(() => this._reportPublishAction())
+        .finally(() => this.ContentService.getEditableDocument(this.documentId)
+          .then((saveDocument) => {
+            this._onLoadSuccess(saveDocument, this.documentType);
+          })
+          .catch((response) => {
+            if (this.canPublish) {
+              // Document published. Getting an editable document should not have failed, so set the same error as
+              // when getting an editable document fails.
+              this._setErrorDocumentInvalid();
+            } else {
+              // Publication requested. Getting an editable document is expected to fail; _onLoadFailure will set an
+              // error and remove the document so the 'document not editable' message is shown and the editor is
+              // removed.
+              this._onLoadFailure(response);
+            }
+            // Don't reject the promise: that would show the "workflow action failed" message, yet the workflow
+            // action has succeeded. The error that has been set will make it clear to the user that the document
+            // could not be created.
+          })))
       .catch(() => {
         this.FeedbackService.showError(errorKey, messageParams);
         return this.$q.reject();

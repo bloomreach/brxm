@@ -36,7 +36,7 @@ class LinkProcessorService {
         .attr('target', '_blank')
         .click((event) => {
           // TODO: should use proper dialog!!
-          if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
+          if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
             event.preventDefault();
           }
         });

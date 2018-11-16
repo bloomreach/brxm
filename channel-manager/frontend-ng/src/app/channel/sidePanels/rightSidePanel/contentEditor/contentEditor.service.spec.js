@@ -99,7 +99,9 @@ describe('ContentEditorService', () => {
       },
     };
 
-    ContentService = jasmine.createSpyObj('ContentService', ['getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument']);
+    ContentService = jasmine.createSpyObj('ContentService', [
+      'getEditableDocument', 'getDocumentType', 'saveDocument', 'discardChanges', 'deleteDocument',
+    ]);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError', 'showNotification']);
     FieldService = jasmine.createSpyObj('FieldService', ['setDocumentId']);
     WorkflowService = jasmine.createSpyObj('WorkflowService', ['createWorkflowAction']);
@@ -1103,7 +1105,9 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' });
+        expect(FeedbackService.showNotification).toHaveBeenCalledWith(
+          'NOTIFICATION_DOCUMENT_PUBLISHED', { documentName: 'Test' },
+        );
       });
 
       it('reports a publication event', () => {
@@ -1120,7 +1124,9 @@ describe('ContentEditorService', () => {
         $rootScope.$digest();
 
         expect(FeedbackService.showNotification).not.toHaveBeenCalled();
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PUBLISH_DOCUMENT_FAILED', { documentName: 'Test' });
+        expect(FeedbackService.showError).toHaveBeenCalledWith(
+          'ERROR_PUBLISH_DOCUMENT_FAILED', { documentName: 'Test' },
+        );
       });
 
       it('gets an editable document again after publication succeeds', () => {
@@ -1218,7 +1224,9 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(FeedbackService.showNotification).toHaveBeenCalledWith('NOTIFICATION_PUBLICATION_REQUESTED', { documentName: 'Test' });
+        expect(FeedbackService.showNotification).toHaveBeenCalledWith(
+          'NOTIFICATION_PUBLICATION_REQUESTED', { documentName: 'Test' },
+        );
       });
 
       it('reports a request publication event', () => {
@@ -1234,7 +1242,9 @@ describe('ContentEditorService', () => {
         ContentEditor.publish();
         $rootScope.$digest();
 
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
+        expect(FeedbackService.showError).toHaveBeenCalledWith(
+          'ERROR_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' },
+        );
       });
 
       it('fails to get an editable document after publication request succeeds', () => {
@@ -1306,7 +1316,9 @@ describe('ContentEditorService', () => {
         ContentEditor.cancelRequestPublication().catch(done);
         $rootScope.$digest();
 
-        expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' });
+        expect(FeedbackService.showError).toHaveBeenCalledWith(
+          'ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', { documentName: 'Test' },
+        );
       });
 
       it('(re)loads the document and document type after a successful workflow call', () => {

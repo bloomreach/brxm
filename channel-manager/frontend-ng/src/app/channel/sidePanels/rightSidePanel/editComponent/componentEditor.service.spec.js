@@ -96,7 +96,7 @@ describe('ComponentEditorService', () => {
     beforeEach(() => {
       spyOn(ComponentEditor, 'reopen');
       spyOn(PageStructureService, 'getComponentById');
-      onStructureChange = PageStructureService.registerChangeListener.calls.mostRecent().args[0];
+      [onStructureChange] = PageStructureService.registerChangeListener.calls.mostRecent().args;
 
       ComponentEditor.component = { id: 'some-id' };
       ComponentEditor.container = {
@@ -310,7 +310,7 @@ describe('ComponentEditorService', () => {
       expectGroup(groups[2], null, 2, false);
     });
 
-    it('adds the template chooser property into a non-collapsible group with label "org.hippoecm.hst.core.component.template"', () => {
+    it('adds the template chooser property into a non-collapsible group with label "org.hippoecm.hst.core.component.template"', () => { // eslint-disable-line max-len
       openComponentEditor([
         { name: 'org.hippoecm.hst.core.component.template', groupLabel: 'Group' },
       ]);
@@ -406,8 +406,8 @@ describe('ComponentEditorService', () => {
     function loadProperty(property) {
       openComponentEditor([property]);
 
-      const fields = ComponentEditor.getPropertyGroups()[0].fields;
-      const field = fields[0];
+      const { fields } = ComponentEditor.getPropertyGroups()[0];
+      const [field] = fields;
       return {
         andExpect: fieldName => expect(field[fieldName]),
       };
@@ -436,14 +436,17 @@ describe('ComponentEditorService', () => {
     describe('linkpicker fields', () => {
       const type = 'linkpicker';
 
-      it('sets the default display value for "linkpicker" fields to the last segment of a path if the default value is set and differs from the value', () => {
+      it('sets the default display value for "linkpicker" fields to the last segment of a path if the default value is set and differs from the value', () => { // eslint-disable-line max-len
         loadProperty({ defaultValue: 'a', type }).andExpect('defaultDisplayValue').toBe('a');
         loadProperty({ defaultValue: '/a/b/c', type }).andExpect('defaultDisplayValue').toBe('c');
       });
 
       it('does not change the default display value if default value is empty', () => {
-        emptyValues.forEach(defaultValue => loadProperty({ defaultValue, defaultDisplayValue: 'default-display-value', type })
-          .andExpect('defaultDisplayValue').toBe('default-display-value'));
+        emptyValues.forEach(defaultValue => loadProperty({
+          defaultValue,
+          defaultDisplayValue: 'default-display-value',
+          type,
+        }).andExpect('defaultDisplayValue').toBe('default-display-value'));
       });
     });
   });
@@ -722,7 +725,7 @@ describe('ComponentEditorService', () => {
     });
 
     describe('with valid data', () => {
-      it('resolves with "SAVE" when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => {
+      it('resolves with "SAVE" when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => { // eslint-disable-line max-len
         spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
         spyOn(ComponentRenderingService, 'renderComponent');
         DialogService.show.and.returnValue($q.resolve('SAVE'));

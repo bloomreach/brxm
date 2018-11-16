@@ -17,6 +17,8 @@
 // Open Sans font
 @import '~open-sans-fontface/sass/variables';
 @import '~open-sans-fontface/sass/mixins';
+$OpenSansPath: '~open-sans-fontface/fonts';
+
 @import '~open-sans-fontface/sass/Regular';
 @import '~open-sans-fontface/sass/Bold';
 @import '~open-sans-fontface/sass/BoldItalic';
@@ -26,7 +28,7 @@
 @import '~@bloomreach/dragula/dist/dragula.css';
 
 // Angular Material framework
-@import '~angular-material/angular-material.css';
+@import '~angular-material/angular-material';
 
 // Material Design Icons
 @import '~@mdi/font/scss/materialdesignicons';

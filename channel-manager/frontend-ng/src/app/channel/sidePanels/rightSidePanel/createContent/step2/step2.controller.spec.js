@@ -76,8 +76,7 @@ describe('Create content step 2 controller', () => {
         $element,
         RightSidePanelService,
       },
-      { form },
-      );
+      { form });
     });
 
     spyOn(CmsService, 'reportUsageStatistic');
@@ -262,7 +261,8 @@ describe('Create content step 2 controller', () => {
         () => {
           expect(deleteDocumentSpy).not.toHaveBeenCalled();
           done();
-        });
+        },
+      );
       $rootScope.$digest();
     });
 

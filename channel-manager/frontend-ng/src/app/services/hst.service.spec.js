@@ -64,15 +64,18 @@ describe('HstService', () => {
   });
 
   it('trims concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['  foo ', ' bar'])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
+    expect(hstService._createApiUrl('1234', ['  foo ', ' bar']))
+      .toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
   });
 
   it('ignores undefined path elements', () => {
-    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./bar`);
+    expect(hstService._createApiUrl('1234', [undefined, 'bar', undefined]))
+      .toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./bar`);
   });
 
   it('removes clashing slashes from concatenated path elements', () => {
-    expect(hstService._createApiUrl('1234', ['/foo/', '/bar'])).toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
+    expect(hstService._createApiUrl('1234', ['/foo/', '/bar']))
+      .toEqual(`${cmsContextPath}${apiUrlPrefix}/1234./foo/bar`);
   });
 
   it('can create an API URL with only a UUID', () => {
@@ -174,12 +177,13 @@ describe('HstService', () => {
         param1: 'value1',
         'param/2': 'value/2',
       };
-      $httpBackend.expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
-        'CMS-User': 'testUser',
-        contextPath,
-        hostGroup,
-        Accept: 'application/json, text/plain, */*',
-      }).respond(200);
+      $httpBackend
+        .expectGET(`${cmsContextPath}${apiUrlPrefix}/some-uuid./one/two/three?param1=value1&param%2F2=value%2F2`, {
+          'CMS-User': 'testUser',
+          contextPath,
+          hostGroup,
+          Accept: 'application/json, text/plain, */*',
+        }).respond(200);
       hstService.doGetWithParams('some-uuid', params, 'one', 'two', 'three').catch(fail);
       $httpBackend.flush();
     });

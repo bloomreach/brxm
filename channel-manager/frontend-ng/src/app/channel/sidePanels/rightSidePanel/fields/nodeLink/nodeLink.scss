@@ -64,8 +64,8 @@ node-link {
       }
     }
 
-    // the hippo-internallink-buttons container overlays the input and (optional) hint icon so it should ignore pointer events
-    // unless they are triggered on the buttons themselves
+    // the hippo-internallink-buttons container overlays the input and (optional) hint icon
+    // so it should ignore pointer events unless they are triggered on the buttons themselves
     pointer-events: none;
 
     button {

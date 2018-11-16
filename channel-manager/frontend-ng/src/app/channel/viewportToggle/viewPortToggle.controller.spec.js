@@ -21,14 +21,16 @@ describe('ViewportToggleCtrl', () => {
   let $componentController;
   let $translate;
   let ChannelService;
+  let ViewportService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$translate_, _ChannelService_) => {
+    inject((_$componentController_, _$translate_, _ChannelService_, _ViewportService_) => {
       $componentController = _$componentController_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
+      ViewportService = _ViewportService_;
     });
 
     spyOn($translate, 'instant');
@@ -43,6 +45,18 @@ describe('ViewportToggleCtrl', () => {
       ChannelService,
     });
   }
+
+  describe('activate', () => {
+    it('selects the "ANY_DEVICE" viewport and uses it to set the viewport', () => {
+      spyOn(ViewportService, 'setWidth');
+      const $ctrl = createController();
+      $ctrl.setViewports();
+      $ctrl.activate();
+
+      expect($ctrl.selectedViewport.id).toBe('ANY_DEVICE');
+      expect(ViewportService.setWidth).toHaveBeenCalledWith(0);
+    });
+  });
 
   describe('setViewports', () => {
     it('should set the viewport widths from the backend', () => {

@@ -66,8 +66,7 @@ describe('EditContentMainCtrl', () => {
         HippoIframeService,
         RightSidePanelService,
       },
-      { form },
-      );
+      { form });
 
       $ctrl.$onInit();
       $scope.$digest();
@@ -262,7 +261,7 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after confirmation of saving changes', (done) => { // eslint-disable-line max-len
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('SAVE'));
         ContentEditor.discardChanges.and.returnValue($q.reject());
 
@@ -290,7 +289,7 @@ describe('EditContentMainCtrl', () => {
         $scope.$digest();
       });
 
-      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => {
+      it('succeeds and still closes the editor when discarding changes fails after discard changes confirmation', (done) => { // eslint-disable-line max-len
         ContentEditor.confirmSaveOrDiscardChanges.and.returnValue($q.resolve('DISCARD'));
         ContentEditor.discardChanges.and.returnValue($q.reject());
 
