@@ -14,7 +14,7 @@
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "baseUrl": "./src",
-    "declarationDir": "./target/classes"
+    "declarationDir": "./dist"
   },
   "typeRoots": [
     "node_modules/@types"
