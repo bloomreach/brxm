@@ -194,8 +194,8 @@
     <profile>
       <id>cargo.run</id>
       <properties>
-        <!--Already defined in hippo-cms-project POM. Override here for project, if necessary-->
-        <!--<repo.bootstrap>true</repo.bootstrap>-->
+        <!-- Already defined in the cms project POM. Override here for your project, if necessary -->
+        <!-- <repo.bootstrap>true</repo.bootstrap> -->
       </properties>
       <build>
         <plugins>

@@ -4,9 +4,9 @@
 
   <Appenders>
 
-    <!-- hippo-cms.log -->
-    <RollingFile name="cms" fileName="${dollar}{sys:catalina.base}/logs/hippo-cms.log"
-                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-cms.log.%i">
+    <!-- cms.log -->
+    <RollingFile name="cms" fileName="${dollar}{sys:catalina.base}/logs/cms.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/cms.log.%i">
       <LookupFilter key="jndi:logging/contextName" value="cms" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
       <Policies>
@@ -15,9 +15,9 @@
       <DefaultRolloverStrategy max="1" fileIndex="min"/>
     </RollingFile>
 
-    <!-- hippo-site.log -->
-    <RollingFile name="site" fileName="${dollar}{sys:catalina.base}/logs/hippo-site.log"
-                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-site.log.yyyy-MM-dd">
+    <!-- site.log -->
+    <RollingFile name="site" fileName="${dollar}{sys:catalina.base}/logs/site.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/site.log.yyyy-MM-dd">
       <LookupFilter key="jndi:logging/contextName" value="site" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
       <Policies>
@@ -26,9 +26,9 @@
       <DefaultRolloverStrategy max="4" fileIndex="min"/>
     </RollingFile>
 
-    <!-- hippo-audit.log -->
-    <RollingFile name="audit" fileName="${dollar}{sys:catalina.base}/logs/hippo-audit.log"
-                 filePattern="${dollar}{sys:catalina.base}/logs/hippo-audit.log.%d{yyyy-MM-dd}">
+    <!-- audit.log -->
+    <RollingFile name="audit" fileName="${dollar}{sys:catalina.base}/logs/audit.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/audit.log.%d{yyyy-MM-dd}">
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>

@@ -23,7 +23,7 @@
     <version>30-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo CMS7 Project Archetype</name>
+  <name>BloomReach CMS Project Archetype</name>
   <description>This project enables you to start with a skeleton project
     gluing together all the necessary components and compatible versions.
   </description>
@@ -34,7 +34,7 @@
 
   <properties>
     <release.essentials.version>${project.version}</release.essentials.version>
-    <notice.project.name>Hippo CMS7 Project Archetype</notice.project.name>
+    <notice.project.name>BloomReach CMS Project Archetype</notice.project.name>
     <gettingstarted.app.groupId>org.onehippo.cms7.hst</gettingstarted.app.groupId>
     <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
     <gettingstarted.app.version>0.1.0</gettingstarted.app.version>
