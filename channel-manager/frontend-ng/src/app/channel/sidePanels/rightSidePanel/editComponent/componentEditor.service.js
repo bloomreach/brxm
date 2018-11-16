@@ -30,6 +30,7 @@ class ComponentEditorService {
     FeedbackService,
     HippoIframeService,
     HstComponentService,
+    OverlayService,
     PageStructureService,
   ) {
     'ngInject';
@@ -41,6 +42,7 @@ class ComponentEditorService {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
+    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
@@ -72,6 +74,8 @@ class ComponentEditorService {
     this.page = page;
     this.properties = this._normalizeProperties(properties);
     this.propertyGroups = this._groupProperties(this.properties);
+
+    this.OverlayService.selectComponent(component.id);
   }
 
   _onLoadFailure() {
@@ -289,6 +293,7 @@ class ComponentEditorService {
 
   close() {
     this._clearData();
+    this.OverlayService.deselectComponent();
     delete this.error;
   }
 
@@ -319,8 +324,8 @@ class ComponentEditorService {
             return this._alertFieldErrors()
               .then(() => this.$q.reject());
           case 'DISCARD':
-            this.discardChanges();
-            return this.$q.resolve(action);
+            return this.discardChanges()
+              .then(this.$q.resolve(action));
           default:
             return this.$q.resolve(action); // let caller know that changes should not be saved
         }

@@ -25,7 +25,7 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './target/classes/ui-extension.d.ts',
+      main: './dist/ui-extension.d.ts',
       out: 'ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
@@ -45,7 +45,7 @@ const config = {
     extensions: ['.ts', '.js', '.json'],
   },
   output: {
-    path: path.resolve(__dirname, 'target/classes'),
+    path: path.resolve(__dirname, 'dist'),
     library: 'UiExtension',
   },
   module: {

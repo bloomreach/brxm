@@ -34,7 +34,6 @@ describe('ConfigService', () => {
     CmsServiceMock.getConfig.and.returnValue({
       locale: 'nl',
       apiUrlPrefix: 'https://127.0.0.1:9080/web/one/two',
-      contextPaths: ['/one', '/two'],
     });
 
     angular.mock.module(($provide) => {

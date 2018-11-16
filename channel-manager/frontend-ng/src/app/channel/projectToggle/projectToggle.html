@@ -23,7 +23,6 @@
   <md-select aria-label="{{ ::'TOOLBAR_PROJECT_LABEL' | translate }}"
              class="md-no-underline qa-project-toggle-select"
              ng-model-options="{ trackBy: '$value.id' }"
-             md-on-open="$ctrl.getProjects()"
              ng-model="$ctrl.selectedProject">
     <md-option class="qa-project-toggle-option"
                ng-repeat="project in $ctrl.projects track by project.id"

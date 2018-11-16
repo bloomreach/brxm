@@ -24,6 +24,7 @@ describe('ComponentEditorService', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
+  let OverlayService;
   let PageStructureService;
 
   let testData;
@@ -53,6 +54,7 @@ describe('ComponentEditorService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
+      _OverlayService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -64,11 +66,14 @@ describe('ComponentEditorService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
+      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
     });
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
+    spyOn(OverlayService, 'selectComponent');
+    spyOn(OverlayService, 'deselectComponent');
 
     testData = {
       channel: 'channel',
@@ -170,6 +175,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container).toBe(testData.container);
       expect(ComponentEditor.page).toBe(testData.page);
       expect(ComponentEditor.properties).toBe(properties);
+      expect(OverlayService.selectComponent).toHaveBeenCalledWith('componentId');
     });
 
     it('reloads the page and shows a message when retrieving properties returns an error', () => {
@@ -635,6 +641,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();
       expect(ComponentEditor.error).toBeUndefined();
+      expect(OverlayService.deselectComponent).toHaveBeenCalled();
     });
   });
 
@@ -734,7 +741,7 @@ describe('ComponentEditorService', () => {
       });
 
       it('discards the changes when the dialog resolves with "DISCARD"', (done) => {
-        spyOn(ComponentEditor, 'discardChanges');
+        spyOn(ComponentEditor, 'discardChanges').and.returnValue($q.resolve('DISCARD'));
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
@@ -773,7 +780,7 @@ describe('ComponentEditorService', () => {
       });
 
       it('discards the changes when the dialog resolves with "DISCARD" and does not save', (done) => {
-        spyOn(ComponentEditor, 'discardChanges');
+        spyOn(ComponentEditor, 'discardChanges').and.returnValue($q.resolve('DISCARD'));
         spyOn(ComponentEditor, 'save');
         DialogService.show.and.returnValue($q.resolve('DISCARD'));
 

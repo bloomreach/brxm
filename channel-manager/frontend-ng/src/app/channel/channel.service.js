@@ -154,10 +154,6 @@ class ChannelService {
     );
   }
 
-  getPreviewPaths() {
-    return this.ConfigService.contextPaths.map(path => this._makeContextPrefix(path));
-  }
-
   makeRenderPath(channelRelativePath) {
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
