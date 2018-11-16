@@ -25,6 +25,7 @@ class ComponentEditorService {
   constructor(
     $q,
     $translate,
+    ChannelService,
     ComponentRenderingService,
     DialogService,
     FeedbackService,
@@ -39,6 +40,7 @@ class ComponentEditorService {
 
     this.$q = $q;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
@@ -76,7 +78,12 @@ class ComponentEditorService {
       return;
     }
 
-    this.HippoIframeService.load(this.page[this.HstConstants.PATH_INFO]);
+    if (!this.ChannelService.matchesChannel(this.channel.id)) {
+      this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup, this.channel.branchId)
+        .then(() => this.HippoIframeService.initializePath(this.page[this.HstConstants.PATH_INFO]));
+    } else {
+      this.HippoIframeService.load(this.page[this.HstConstants.PATH_INFO]);
+    }
   }
 
   isForeignPage() {

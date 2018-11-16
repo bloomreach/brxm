@@ -17,7 +17,9 @@
 describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
+  let $timeout;
   let $translate;
+  let ChannelService;
   let ComponentEditor;
   let ComponentRenderingService;
   let DialogService;
@@ -49,7 +51,9 @@ describe('ComponentEditorService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _$timeout_,
       _$translate_,
+      _ChannelService_,
       _ComponentEditor_,
       _ComponentRenderingService_,
       _DialogService_,
@@ -63,7 +67,9 @@ describe('ComponentEditorService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       $translate = _$translate_;
+      ChannelService = _ChannelService_;
       ComponentEditor = _ComponentEditor_;
       ComponentRenderingService = _ComponentRenderingService_;
       DialogService = _DialogService_;
@@ -477,13 +483,36 @@ describe('ComponentEditorService', () => {
   describe('open a component page', () => {
     beforeEach(() => {
       spyOn(HippoIframeService, 'load');
+      spyOn(HippoIframeService, 'initializePath');
+      spyOn(ChannelService, 'matchesChannel');
+      spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
     });
 
-    it('opens a component page', () => {
+    it('opens a component page in the same channel', () => {
+      ComponentEditor.channel = { id: 'test-id-1' };
       ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
+      ChannelService.matchesChannel.and.returnValue(true);
       ComponentEditor.openComponentPage();
 
-      expect(HippoIframeService.load).toHaveBeenCalled();
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/path');
+    });
+
+    it('opens a component page in a different channel', () => {
+      ComponentEditor.channel = {
+        id: 'test-id-1',
+        contextPath: 'context-path',
+        hostGroup: 'host-group',
+        branchId: 'branch-id',
+      };
+      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
+      ChannelService.matchesChannel.and.returnValue(false);
+      ComponentEditor.openComponentPage();
+      $timeout.flush();
+
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('test-id-1', 'context-path', 'host-group', 'branch-id');
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/path');
     });
 
     it('does not open a component page', () => {
