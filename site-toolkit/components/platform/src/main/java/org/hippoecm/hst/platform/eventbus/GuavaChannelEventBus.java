@@ -158,7 +158,7 @@ public class GuavaChannelEventBus implements ChannelEventBus, ServiceTracker<Obj
 
             if (eventBus == null) {
                 log.debug("No channel event listener registered for class loader ({}), not posting: {}", classLoader, event);
-                return;
+                continue;
             }
 
             log.info("Posting channel event to class loader ({}) event listener: {}", classLoader, event);
