@@ -15,4 +15,4 @@ definitions:
           jcr:primaryType: hipposysedit:nodetype
           jcr:mixinTypes: ['hipposysedit:remodel']
           hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
-          hipposysedit:uri: http://www.onehippo.org/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0
+          hipposysedit:uri: http://www.${rootArtifactId.replace($hyphen,$empty)}.com/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0
