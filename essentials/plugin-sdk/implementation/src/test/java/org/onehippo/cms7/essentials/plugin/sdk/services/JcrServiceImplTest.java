@@ -49,7 +49,7 @@ public class JcrServiceImplTest extends BaseRepositoryTest {
 
         // Make sure interpolation took place
         Node nodeTypeNode = testNamespace.getNode("testdocument/hipposysedit:nodetype/hipposysedit:nodetype");
-        assertEquals("http://www.onehippo.org/testnamespace/nt/1.0", nodeTypeNode.getProperty("hipposysedit:uri").getString());
+        assertEquals("http://www.testnamespace.com/testnamespace/nt/1.0", nodeTypeNode.getProperty("hipposysedit:uri").getString());
 
         jcrService.destroySession(session);
 
