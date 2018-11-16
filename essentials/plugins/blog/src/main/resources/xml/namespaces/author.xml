@@ -47,7 +47,7 @@
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.onehippo.org/{{namespace}}/nt/1.0</sv:value>
+        <sv:value>http://www.{{namespace}}.com/{{namespace}}/nt/1.0</sv:value>
       </sv:property>
       <sv:node sv:name="fullname">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
