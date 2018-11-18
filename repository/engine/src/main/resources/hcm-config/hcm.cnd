@@ -98,9 +98,8 @@
 [hcm:webbundles]
 - hcm:bundlesDigest (string) multiple
 
-// Root node for baseline and locking etc.
+// Root node for baseline
 [hcm:hcm]
   + hcm:baseline (hcm:baseline)
   + hcm:content (hcm:content)
   + hcm:webbundles (hcm:webbundles)
-  + hippo:lock (hippo:lock) // obsolete
