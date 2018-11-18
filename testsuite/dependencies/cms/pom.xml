@@ -15,7 +15,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -32,59 +33,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-platform</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-server-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-spring-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-client-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-      <artifactId>hst-page-composer</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-repository-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-cms-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-repository</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <type>pom</type>
@@ -97,25 +45,25 @@
     </dependency>
 
     <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-testsuite-repository-data-site</artifactId>-->
-      <!--<version>${project.version}</version>-->
+    <!--<groupId>org.onehippo.cms7</groupId>-->
+    <!--<artifactId>hippo-testsuite-repository-data-site</artifactId>-->
+    <!--<version>${project.version}</version>-->
     <!--</dependency>-->
 
     <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>-->
-      <!--<version>${project.version}</version>-->
+    <!--<groupId>org.onehippo.cms7</groupId>-->
+    <!--<artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>-->
+    <!--<version>${project.version}</version>-->
     <!--</dependency>-->
 
     <dependency>
-    <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
-    <version>${project.version}</version>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-configuration</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-    <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-intranet-bootstrap-content</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-intranet-bootstrap-content</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -127,14 +75,14 @@
 
     <!-- Related documents plugin -->
     <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-relateddocs</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-relateddocs</artifactId>
     </dependency>
 
     <!-- Resourcebundle Editor plugin -->
     <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
     </dependency>
 
   </dependencies>
