@@ -158,6 +158,7 @@
                   <log4j.configurationFile>file://${project.basedir}/conf/log4j2-dev.xml</log4j.configurationFile>
                   <project.basedir>${project.basedir}</project.basedir>
                   <repo.bootstrap>true</repo.bootstrap>
+                  <use.hcm.sites>false</use.hcm.sites>
                 </systemProperties>
              </container>
             </configuration>
