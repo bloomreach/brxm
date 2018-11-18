@@ -23,12 +23,22 @@
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Repository Dependencies</name>
-  <description>Hippo CMS Repository Dependencies</description>
-  <artifactId>hippo-cms-repository-dependencies</artifactId>
+  <name>CMS Platform Dependencies</name>
+  <description>Hippo CMS Platform Dependencies</description>
+  <artifactId>hippo-cms-platform-dependencies</artifactId>
   <packaging>pom</packaging>
 
   <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-translation-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -86,5 +96,9 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+  </build>
 
 </project>
