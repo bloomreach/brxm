@@ -152,7 +152,6 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
-    String VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH = "hst:defaultcontextpath";
     String VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX = "hst:cmspreviewprefix";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED = "hst:diagnosticsenabled";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS = "hst:diagnosticsforips";

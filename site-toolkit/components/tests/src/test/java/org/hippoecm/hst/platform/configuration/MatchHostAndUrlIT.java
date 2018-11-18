@@ -100,8 +100,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     public void testMatchRootContextPath() throws Exception {
         Session session = createSession();
         createHstConfigBackup(session);
-        // because hst:hosts contains hst:defaultcontextpath = /site we first need to set that property to ""
-        session.getNode("/hst:hst/hst:hosts").setProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH, "");
         session.save();
         Thread.sleep(100);
         try {
@@ -160,8 +158,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         }
         Session session = createSession();
         createHstConfigBackup(session);
-        // because hst:hosts contains hst:defaultcontextpath = /site we first need to set that property to ""
-        session.getNode("/hst:hst/hst:hosts").setProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH, "");
         session.save();
         Thread.sleep(100);
         try {
@@ -276,8 +272,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         final HstModel hstModel = modelRegistry.getHstModel("/site");
 
-        // because hst:hosts contains hst:defaultcontextpath = /site we first need to remove that property
-        session.getNode("/hst:hst/hst:hosts").getProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH).remove();
         session.save();
         Thread.sleep(100);
         try {
