@@ -28,11 +28,9 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>spring-dependencies</module>
-    <module>server-dependencies</module>
-    <module>client-dependencies</module>
+    <module>site-dependencies</module>
+    <module>platform-dependencies</module>
     <module>cms-dependencies</module>
-    <module>repository-dependencies</module>
   </modules>
 
 </project>
