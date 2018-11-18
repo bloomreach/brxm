@@ -31,6 +31,13 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-package-platform-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-cms-dependencies</artifactId>
       <version>${hippo.hst.version}</version>
@@ -45,43 +52,22 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-shared-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-shared-dependencies</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-dependencies</artifactId>
       <version>${hippo.cms.version}</version>
       <type>pom</type>
     </dependency>
 
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-repository-dependencies</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>pom</type>
+      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-dependencies</artifactId>
-      <version>${hippo.repository.version}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-servlets</artifactId>
-      <version>${hippo.repository.version}</version>
+      <artifactId>hippo-addon-channel-manager-repository</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
     </dependency>
 
   </dependencies>

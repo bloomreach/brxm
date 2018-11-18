@@ -43,6 +43,7 @@
     <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-channel-manager.version>13.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.services.webfiles.version>13.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.contenttype.version>13.0.0-SNAPSHOT</hippo.services.contenttype.version>
@@ -66,8 +67,7 @@
   </repositories>
 
   <modules>
-    <module>package-shared-dependencies</module>
-    <module>package-app-dependencies</module>
+    <module>package-platform-dependencies</module>
     <module>package-cms-dependencies</module>
   </modules>
 
