@@ -438,6 +438,12 @@ describe('OverlayService', () => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
       expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
+      expect(contentLink.css('top')).toBe('0px');
+      expect(contentLink.css('left')).toBe(`${300 - 40}px`);
+      expect(contentLink.css('width')).toBe('40px');
+      expect(contentLink.css('height')).toBe('40px');
+
       const componentB = $(components[1]);
       expect(componentB).not.toHaveClass('hippo-overlay-element-visible');
 
