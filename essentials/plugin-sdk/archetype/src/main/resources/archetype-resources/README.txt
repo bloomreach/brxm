@@ -1,6 +1,6 @@
-Hippo Essentials Plugin Feature
+Essentials Plugin Feature
 ===============================
-This project is a Hippo Essentials Plugin Feature. Add it as a dependency to the Essentials module of a Hippo
+This project is a Essentials Plugin Feature. Add it as a dependency to the Essentials module of a CMS
 project. After a (re)build, it will show up as a Feature in the Feature Library.
 
 <dependency>
