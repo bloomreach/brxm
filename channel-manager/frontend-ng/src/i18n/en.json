@@ -131,7 +131,7 @@
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be (de)published.",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
   "FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES": "Cannot save component '{{componentLabel}}', there are errors in field values",
   "FEEDBACK_NO_EDITABLE_COMPONENT_PROPERTIES": "This component has no editable properties",
