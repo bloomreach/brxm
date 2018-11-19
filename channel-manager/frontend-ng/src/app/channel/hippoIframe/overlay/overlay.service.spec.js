@@ -25,7 +25,6 @@ describe('OverlayService', () => {
   let CmsService;
   let CreateContentService;
   let DomService;
-  let EditContentService;
   let ExperimentStateService;
   let HstCommentsProcessorService;
   let MarkupService;
@@ -49,7 +48,6 @@ describe('OverlayService', () => {
       _CmsService_,
       _CreateContentService_,
       _DomService_,
-      _EditContentService_,
       _ExperimentStateService_,
       _HstCommentsProcessorService_,
       _MarkupService_,
@@ -62,7 +60,6 @@ describe('OverlayService', () => {
       CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
       DomService = _DomService_;
-      EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
