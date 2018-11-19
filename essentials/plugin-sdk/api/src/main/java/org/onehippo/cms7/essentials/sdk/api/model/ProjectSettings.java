@@ -71,6 +71,11 @@ public interface ProjectSettings {
     String getWebfilesSubModule();
 
     /**
+     * The (unix) path to the site data module, or null if not specified.
+     */
+    String getSiteDataModule();
+
+    /**
      * The name of hst root node.
      */
     String getHstRoot();

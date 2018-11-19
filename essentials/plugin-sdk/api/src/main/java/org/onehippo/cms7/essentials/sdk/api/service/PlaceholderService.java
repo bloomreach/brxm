@@ -70,10 +70,16 @@ public interface PlaceholderService {
     String WEBFILES_IMAGES_ROOT = "webfilesImagesRoot";
     String WEBFILES_PREFIX = "webfilesPrefix";
     String ESSENTIALS_ROOT = "essentialsRoot";
-    String APPLICATION_CONFIG = "applicationConfig";
-    String APPLICATION_CONTENT = "applicationContent";
-    String DEVELOPMENT_CONFIG = "developmentConfig";
-    String DEVELOPMENT_CONTENT = "developmentContent";
+    @Deprecated String APPLICATION_CONFIG = "applicationConfig"; // Use PLATFORM_APPLICATION_CONFIG instead
+    String PLATFORM_APPLICATION_CONFIG = "platformApplicationConfig";
+    @Deprecated String APPLICATION_CONTENT = "applicationContent"; // Use PLATFORM_APPLICATION_CONTENT instead
+    String PLATFORM_APPLICATION_CONTENT = "platformApplicationContent";
+    @Deprecated String DEVELOPMENT_CONFIG = "developmentConfig"; // Use PLATFORM_DEVELOPMENT_CONFIG instead
+    String PLATFORM_DEVELOPMENT_CONFIG = "platformDevelopmentConfig";
+    @Deprecated String DEVELOPMENT_CONTENT = "developmentContent"; // Use PLATFORM_DEVELOPMENT_CONTENT instead
+    String PLATFORM_DEVELOPMENT_CONTENT = "platformDevelopmentContent";
+    String SITE_APPLICATION_CONFIG = "siteApplicationConfig";
+    String SITE_APPLICATION_CONTENT = "siteApplicationContent";
     String HST_ROOT = "hstRoot";
 
     /**

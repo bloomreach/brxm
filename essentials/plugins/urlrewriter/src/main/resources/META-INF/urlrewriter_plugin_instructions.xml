@@ -27,6 +27,6 @@
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <file action="copy" source="instructions/yaml/sample-rewriter-rules.yaml" target="{{developmentContent}}/essentials/urlrewriter/sample-rewriter-rules.yaml"/>
+    <file action="copy" source="instructions/yaml/sample-rewriter-rules.yaml" target="{{platformDevelopmentContent}}/essentials/urlrewriter/sample-rewriter-rules.yaml"/>
   </instructionSet>
 </instructions>

@@ -55,9 +55,10 @@ public class ProjectServiceImpl implements ProjectService {
     private static final String MODULE_NAME_DEVELOPMENT = "development";
     private static final String MODULE_NAME_REPOSITORY_DATA = "repository-data";
     private static final String MODULE_NAME_SITE = "site";
-    private static final String MODULE_NAME_SITE_COMPONENTS = "site/components";
-    private static final String MODULE_NAME_SITE_WEBAPP = "site/webapp";
+    private static final String MODULE_NAME_SITE_COMPONENTS = MODULE_NAME_SITE + "/components";
+    private static final String MODULE_NAME_SITE_WEBAPP = MODULE_NAME_SITE + "/webapp";
     private static final String MODULE_NAME_WEB_FILES = "webfiles";
+    private static final String MODULE_NAME_SITE_DATA = MODULE_NAME_REPOSITORY_DATA + "/site";
     private static final Logger log = LoggerFactory.getLogger(ProjectServiceImpl.class);
 
     private final SettingsService settingsService;
@@ -80,6 +81,8 @@ public class ProjectServiceImpl implements ProjectService {
                 return projectPath.resolve(nativePath(getSiteModuleName()));
             case SITE_COMPONENTS:
                 return projectPath.resolve(nativePath(getSiteComponentsModuleName()));
+            case SITE_DATA:
+                return projectPath.resolve(nativePath(getSiteDataModuleName()));
             case SITE_WEBAPP:
                 return projectPath.resolve(nativePath(getSiteWebappModuleName()));
             case CMS:
@@ -222,6 +225,11 @@ public class ProjectServiceImpl implements ProjectService {
     private String getWebFilesModuleName() {
         final String webFilesModuleName = settingsService.getSettings().getWebfilesSubModule();
         return StringUtils.isNotBlank(webFilesModuleName) ? webFilesModuleName : MODULE_NAME_WEB_FILES;
+    }
+
+    private String getSiteDataModuleName() {
+        final String siteDataModuleName = settingsService.getSettings().getSiteDataModule();
+        return StringUtils.isNotBlank(siteDataModuleName) ? siteDataModuleName : MODULE_NAME_SITE_DATA;
     }
 
     private Path getConfDirPath() {
