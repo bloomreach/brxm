@@ -78,11 +78,13 @@ class ComponentEditorService {
       return;
     }
 
+    const pagePath = this.page[this.HstConstants.PATH_INFO];
+
     if (!this.ChannelService.matchesChannel(this.channel.id)) {
-      this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup, this.channel.branchId)
-        .then(() => this.HippoIframeService.initializePath(this.page[this.HstConstants.PATH_INFO]));
+      this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup)
+        .then(() => this.HippoIframeService.initializePath(pagePath));
     } else {
-      this.HippoIframeService.load(this.page[this.HstConstants.PATH_INFO]);
+      this.HippoIframeService.load(pagePath);
     }
   }
 

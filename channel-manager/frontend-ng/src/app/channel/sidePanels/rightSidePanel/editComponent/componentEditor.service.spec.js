@@ -503,7 +503,6 @@ describe('ComponentEditorService', () => {
         id: 'test-id-1',
         contextPath: 'context-path',
         hostGroup: 'host-group',
-        branchId: 'branch-id',
       };
       ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
       ChannelService.matchesChannel.and.returnValue(false);
@@ -511,7 +510,7 @@ describe('ComponentEditorService', () => {
       $timeout.flush();
 
       expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
-      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('test-id-1', 'context-path', 'host-group', 'branch-id');
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('test-id-1', 'context-path', 'host-group');
       expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/path');
     });
 
