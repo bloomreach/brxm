@@ -42,7 +42,6 @@
       <directory/>
       <includes>
         <include>README.txt</include>
-        <include>pom.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
