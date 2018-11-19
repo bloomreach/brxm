@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -82,11 +82,7 @@
 + * (hst:abstractcomponent)
 
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
-// deprecate 'hst:referencecomponent' : not allowed for containeritemcomponent
-- hst:referencecomponent(string)
 - hst:xtype (string) mandatory
-// deprecated and unused : do not use
-- hst:dummycontent (string)
 // the label of the hst:containeritemcomponent
 - hst:label (string)
 // icon path relative to the sites webapp
@@ -153,8 +149,6 @@
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
 - hst:pagetitle (string)
-// deprecated and unused: do not use
-- hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
@@ -192,8 +186,6 @@
 [hst:sitemenuitem] > nt:base, mix:referenceable orderable
 // sitemap item by path or by refid. This can be a path including wildcards when setting by path, but this cannot include wildcard when setting by refid.
 - hst:referencesitemapitem (string)
-// deprecated and unused : do not use
-- hst:refidsitemapitem (string)
 - hst:externallink (string)
 // if this sitemenu item should link to a specific mount, you can specify it through the mountalias below
 - hst:mountalias (string)
@@ -242,9 +234,6 @@
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 
-[hst:channels] > nt:base, mix:referenceable, mix:versionable
-+ * (hst:channel)
-
 [hst:workspace] > nt:base orderable
 + hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
@@ -262,11 +251,7 @@
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
-// deprecated : not used any more as only fine grained locking
-- hst:lockedby (string)
-// deprecated : not used any more as only fine grained locking
 - hst:locked (boolean)
-- hst:lockedon (date)
 + hst:components (hst:components) = hst:components
 + hst:abstractpages (hst:pages) = hst:pages
 + hst:pages (hst:pages) = hst:pages
@@ -289,8 +274,6 @@
 - hst:version (long)
 // absolute path
 - hst:content (string)
-// deprecated and unused: do not use
-- hst:portalconfigurationenabled (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable
 + * (hst:site) = hst:site version
@@ -310,12 +293,8 @@
 // if you do not want to mount to run with the default hst pipeline, you can configure the pipeline to be used here
 - hst:namedpipeline (string)
 - hst:showcontextpath (boolean)
-// deprecated : use hst:contextpath instead
-- hst:onlyforcontextpath (string)
-// if this mount can only be used for a certain contextpath
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath
-// deprecated and unused: do not use
-- hst:embeddedmountpath
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
 - hst:schemeagnostic (boolean)
@@ -329,8 +308,6 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// hst:isSite property deprecated and not used any more
-- hst:isSite (boolean)
 - hst:authenticated (boolean)
 - hst:roles (string) multiple
 - hst:users (string) multiple
@@ -346,8 +323,6 @@
 - hst:sessionstateful (boolean)
 // form login page for this site mount, to which the request can be redirected for non-authenticated user.
 - hst:formloginpage (string)
-// deprecated : not used and more since CMS 12.0
-- hst:channelpath (string)
 // nochannelinfo can be used to exclude a certain (sub)mount that inherits
 // the hst site from a parent mount but should not have the same channel info, for
 // example because it is a rest api mount (that does use an hst sitemap)
@@ -379,9 +354,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// deprecated : use hst:contextpath instead
-- hst:onlyforcontextpath (string)
-// if the mounts for this host can only be used for a certain contextpath
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
@@ -392,7 +365,7 @@
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable
 // the fully qualified cms url, for example http://localhost:8080/cms
-// multiple comma separated urls are supported
+// Deprecated: Not used any more
 - hst:cmslocation (string)
 - hst:defaultport (long)
 + * (hst:virtualhost)
@@ -401,10 +374,6 @@
 - hst:showcontextpath (boolean)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
-// Not used since CMS 10.0. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
-- hst:prefixexclusions (string) multiple
-// Not used since CMS 10.0. Use a (hst:default) sitemap item to account for prefixes/suffixes that need special handling.
-- hst:suffixexclusions (string) multiple
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
 - hst:defaulthostname (string)
@@ -414,12 +383,10 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// The default contextpath for all sites.
+// deprecated : hst:contextpath is not used any more
 - hst:defaultcontextpath (string)
 // Configurable override of the default _cmsinternal pathInfo prefix for the preview in the cms
 - hst:cmspreviewprefix (string)
-// deprecated : not used any more. Can be removed from configuration
-- hst:channelmanagerhostgroup (string)
 // the sites the channel manager should use: Default is 'hst:sites'
 - hst:channelmanagersites (string)
 - hst:diagnosticsenabled (boolean)
@@ -446,7 +413,7 @@
 // prototype for the channel properties.
 // Used for default values
 // if the blueprint is meant for a different contextpath than configured in
-// hst:hosts/@hst:defaultcontextpath
+// deprecated : hst:contextpath is not used any more
 - hst:contextpath (string)
 + hst:channel (hst:channel)
 + hst:configuration (hst:configuration)
@@ -461,7 +428,6 @@
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
 + hst:blueprints (hst:blueprints) = hst:blueprints version
-+ hst:channels (hst:channels) = hst:channels version
 + * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
