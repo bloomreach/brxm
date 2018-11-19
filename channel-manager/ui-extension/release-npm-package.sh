@@ -33,9 +33,9 @@ fi
 version=$1
 
 # Did we run the build?
-if [ "`ls -A dist 2>/dev/null | head -1`" = "" ]; then
-    echo "Please run the build first"
-    exit 1;
+if [[ ! -d "dist" || -z "$(ls -A dist)" ]]; then
+  echo "Please run the build first"
+  exit 1;
 fi
 
 # Is NPM installed?
