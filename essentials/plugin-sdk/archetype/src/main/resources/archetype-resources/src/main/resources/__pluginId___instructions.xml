@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions/instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+
+  <!--
+     The examples below use property placeholders, with double {{curly-braces}} around it.
+     For a complete list, see org.onehippo.cms7.essentials.sdk.api.service.PlaceholderService
+
+     Note: the files mentioned in the source attributes below do not exist in this project. The instructions are added
+     as examples for how to write instructions.
+  -->
+
+  <instructionSet>
+    <!-- Add a Maven dependency -->
+    <!--<mavenDependency targetPom="site" groupId="${groupId}" artifactId="my-site-artifact"/>-->
+    
+    <!-- Load CND -->
+    <!--<cnd documentType="mydocumenttype" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>-->
+
+    <!-- Repo-based localization -->
+    <!--<translations source="json/translations/mydocumenttype-translations.json" />-->
+
+    <!-- Copy files into project -->
+    <!--<file action="copy" source="example.css" target="{{webfilesRoot}}/css/example.css"/>-->
+    <!--<file action="copy" overwrite="true" binary="true" source="image.jpg" target="{{webfilesRoot}}/images/image.jpg"/>-->
+
+    <!-- Import data into the repository (and have auto-export export it into project YAML sources -->
+    <!--<xml action="copy" source="example-data.xml" target="/path/to/base/node"/>-->
+
+    <execute class="${groupId}.ExampleInstruction"/>
+  </instructionSet>
+
+  <!-- This instruction set is only executed if your Essentials settings specify that sample data should be installed. -->
+  <instructionSet group="sampleData">
+    <!--<file action="copy" source="sample-content.yaml" target="{{developmentContent}}/essentials/${pluginId}/sample-content.yaml"/>-->
+  </instructionSet>
+
+</instructions>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-essentials-plugin-sdk</artifactId>
+    <version>13.0.0-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo Essentials Plugin Archetype</name>
+  <description>This archetype will create a project that contains the base structure for an Essentials Plugin.</description>
+  <artifactId>hippo-essentials-plugin-archetype</artifactId>
+  <packaging>maven-archetype</packaging>
+
+  <properties>
+    <notice.project.name>Essentials Plugin Project Archetype</notice.project.name>
+    <gettingstarted.app.groupId>org.example</gettingstarted.app.groupId>
+    <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
+    <gettingstarted.app.version>0.1.0</gettingstarted.app.version>
+    <gettingstarted.app.pluginName>Getting Started</gettingstarted.app.pluginName>
+    <gettingstarted.app.pluginId>gettingStarted</gettingstarted.app.pluginId>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+      </extension>
+    </extensions>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-archetype-plugin</artifactId>
+        <!--<version>${maven.archetype.plugin.version}</version>-->
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
+            <id>copy-resources</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/gettingstarted</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>${project.build.directory}/test-classes/projects/gettingstarted/project/gettingstarted</directory>
+                </resource>
+              </resources>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            </configuration>            
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <replace summary="true"
+                         failOnNoReplacements="true"
+                         token= "@project.version@"
+                         value="${project.version}"
+                         dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml"/>
+                </replace>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
