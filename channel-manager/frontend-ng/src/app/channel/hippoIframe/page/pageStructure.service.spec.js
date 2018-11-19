@@ -660,7 +660,7 @@ describe('PageStructureService', () => {
     expect(attachedEmbeddedLinks[5].getEnclosingElement()).toBe(containerVBox);
 
     expect(attachedEmbeddedLinks[0].getBoxElement().length).toBe(1);
-    expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-cmseditlink');
+    expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
   });
 
   it('re-renders a component with an edit menu link', () => {
