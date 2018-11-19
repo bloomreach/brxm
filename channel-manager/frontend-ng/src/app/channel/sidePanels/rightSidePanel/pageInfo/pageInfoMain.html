@@ -24,9 +24,9 @@
     </md-tab-label>
     <md-tab-body>
       <ui-view class="retain-iframe-scroll-position-when-hiding-in-chrome"
-               name="{{ ::extension.id }}"
-               flex="grow"
-               layout="column">
+              name="{{ ::extension.id }}"
+              layout="column"
+              layout-fill>
         {{ ::extension }}
       </ui-view>
     </md-tab-body>
