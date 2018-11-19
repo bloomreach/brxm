@@ -30,8 +30,18 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdPubWfNodeType.DEPUBLISH;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.PUBLISH;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.SCHEDDEPUBLISH;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.SCHEDPUBLISH;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_METHOD_NAME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_COMMIT_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_DISPOSE_EDITABLE_INSTANCE;
 import static org.onehippo.cms.channelmanager.content.document.util.EditingUtils.HINT_OBTAIN_EDITABLE_INSTANCE;
@@ -82,6 +92,12 @@ public class HintsInspectorImpl implements HintsInspector {
 
         if (hints.containsKey(HINT_REQUESTS)) {
             if (hasCancelablePublicationRequest(hints, session)) {
+                // TODO (meggermont): add reasons for the different types of requests
+                // Currently the user will always see the message "The document is waiting to be published."
+                // This information is incorrect if there is a
+                // - de-publication request pending
+                // - scheduled publication request pending
+                // - scheduled de-publication request pending
                 return errorInfo(ErrorInfo.Reason.CANCELABLE_PUBLICATION_REQUEST_PENDING, null);
             }
             return errorInfo(ErrorInfo.Reason.REQUEST_PENDING, null);
@@ -102,9 +118,15 @@ public class HintsInspectorImpl implements HintsInspector {
                 final String requestNodeId = entry.getKey();
                 try {
                     final Node requestNode = session.getNodeByIdentifier(requestNodeId);
-                    final String type = requestNode.getProperty(HIPPOSTDPUBWF_TYPE).getString();
-                    if (type.equals(PUBLISH)) {
-                        return true;
+                    if (requestNode.isNodeType(NT_HIPPOSTDPUBWF_REQUEST)) {
+                        final String type = getStringProperty(requestNode, HIPPOSTDPUBWF_TYPE, null);
+                        return PUBLISH.equals(type) || SCHEDPUBLISH.equals(type) || DEPUBLISH.equals(type) || SCHEDDEPUBLISH.equals(type);
+                    } else if (requestNode.isNodeType(HIPPOSCHED_WORKFLOW_JOB)) {
+                        final String methodName = getHippoSchedMethodName(requestNode);
+                        return PUBLISH.equals(methodName) || DEPUBLISH.equals(methodName);
+                    } else {
+                        log.warn("Expected request node with identifier '{}' to be of type {} or {}, but it is {}",
+                                requestNodeId, NT_HIPPOSTDPUBWF_REQUEST, HIPPOSCHED_WORKFLOW_JOB, requestNode.getPrimaryNodeType().getName());
                     }
                 } catch (final RepositoryException e) {
                     log.warn("Failed to determine whether node with identifier '{}' is a cancelable publication request, assuming it's not",
@@ -113,6 +135,17 @@ public class HintsInspectorImpl implements HintsInspector {
             }
         }
         return false;
+    }
+
+    private String getHippoSchedMethodName(final Node requestNode) throws RepositoryException {
+        final String[] attributeNames = getMultipleStringProperty(requestNode, HIPPOSCHED_ATTRIBUTE_NAMES, new String[0]);
+        final String[] attributeValues = getMultipleStringProperty(requestNode, HIPPOSCHED_ATTRIBUTE_VALUES, new String[0]);
+        for (int i = 0; i < attributeNames.length; i++) {
+            if (HIPPOSCHED_METHOD_NAME.equals(attributeNames[i])) {
+                return attributeValues[i];
+            }
+        }
+        return null;
     }
 
     protected Optional<ErrorInfo> errorInfo(ErrorInfo.Reason reason, Map<String, Serializable> params) {
