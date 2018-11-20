@@ -73,6 +73,7 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hst:abstractcomponent", FontAwesomeIcon.PUZZLE_PIECE);
         primaryTypeNameIcons.put("hst:blueprint", FontAwesomeIcon.DROPBOX);
         primaryTypeNameIcons.put("hst:blueprints", FontAwesomeIcon.DROPBOX);
+        primaryTypeNameIcons.put("hst:channels", FontAwesomeIcon.LAPTOP);
         primaryTypeNameIcons.put("hst:channel", FontAwesomeIcon.LAPTOP);
         primaryTypeNameIcons.put("hst:channelinfo", FontAwesomeIcon.INFO_CIRCLE);
         primaryTypeNameIcons.put("hst:sites", FontAwesomeIcon.STAR_O);
