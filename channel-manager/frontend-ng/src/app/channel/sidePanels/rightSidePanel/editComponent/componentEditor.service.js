@@ -25,24 +25,30 @@ class ComponentEditorService {
   constructor(
     $q,
     $translate,
+    ChannelService,
     ComponentRenderingService,
     DialogService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
     OverlayService,
+    HstConstants,
+    PageMetaDataService,
     PageStructureService,
   ) {
     'ngInject';
 
     this.$q = $q;
     this.$translate = $translate;
+    this.ChannelService = ChannelService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.OverlayService = OverlayService;
+    this.HstConstants = HstConstants;
+    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
@@ -65,6 +71,28 @@ class ComponentEditorService {
 
   isReadOnly() {
     return this.container && this.container.isDisabled;
+  }
+
+  openComponentPage() {
+    if (!this.page) {
+      return;
+    }
+
+    const pagePath = this.page[this.HstConstants.PATH_INFO];
+
+    if (!this.ChannelService.matchesChannel(this.channel.id)) {
+      this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup)
+        .then(() => this.HippoIframeService.initializePath(pagePath));
+    } else {
+      this.HippoIframeService.load(pagePath);
+    }
+  }
+
+  isForeignPage() {
+    const currentPage = this.PageMetaDataService.get();
+
+    return currentPage && this.page
+      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID];
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {

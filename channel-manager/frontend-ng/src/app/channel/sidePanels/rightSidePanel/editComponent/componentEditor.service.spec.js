@@ -17,14 +17,18 @@
 describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
+  let $timeout;
   let $translate;
+  let ChannelService;
   let ComponentEditor;
   let ComponentRenderingService;
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
+  let HstConstants;
   let OverlayService;
+  let PageMetaDataService;
   let PageStructureService;
 
   let testData;
@@ -47,26 +51,34 @@ describe('ComponentEditorService', () => {
     inject((
       _$q_,
       _$rootScope_,
+      _$timeout_,
       _$translate_,
+      _ChannelService_,
       _ComponentEditor_,
       _ComponentRenderingService_,
       _DialogService_,
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
+      _HstConstants_,
       _OverlayService_,
+      _PageMetaDataService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       $translate = _$translate_;
+      ChannelService = _ChannelService_;
       ComponentEditor = _ComponentEditor_;
       ComponentRenderingService = _ComponentRenderingService_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
+      HstConstants = _HstConstants_;
       OverlayService = _OverlayService_;
+      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -465,6 +477,65 @@ describe('ComponentEditorService', () => {
       testData.container.isDisabled = true;
       openComponentEditor([]);
       expect(ComponentEditor.isReadOnly()).toBe(true);
+    });
+  });
+
+  describe('open a component page', () => {
+    beforeEach(() => {
+      spyOn(HippoIframeService, 'load');
+      spyOn(HippoIframeService, 'initializePath');
+      spyOn(ChannelService, 'matchesChannel');
+      spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
+    });
+
+    it('opens a component page in the same channel', () => {
+      ComponentEditor.channel = { id: 'test-id-1' };
+      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
+      ChannelService.matchesChannel.and.returnValue(true);
+      ComponentEditor.openComponentPage();
+
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
+      expect(HippoIframeService.load).toHaveBeenCalledWith('/path');
+    });
+
+    it('opens a component page in a different channel', () => {
+      ComponentEditor.channel = {
+        id: 'test-id-1',
+        contextPath: 'context-path',
+        hostGroup: 'host-group',
+      };
+      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
+      ChannelService.matchesChannel.and.returnValue(false);
+      ComponentEditor.openComponentPage();
+      $timeout.flush();
+
+      expect(ChannelService.matchesChannel).toHaveBeenCalledWith('test-id-1');
+      expect(ChannelService.initializeChannel).toHaveBeenCalledWith('test-id-1', 'context-path', 'host-group');
+      expect(HippoIframeService.initializePath).toHaveBeenCalledWith('/path');
+    });
+
+    it('does not open a component page', () => {
+      ComponentEditor.openComponentPage();
+
+      expect(HippoIframeService.load).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('foreign page state', () => {
+    beforeEach(() => {
+      spyOn(PageMetaDataService, 'get').and.returnValue({ [HstConstants.PAGE_ID]: 'id1' });
+    });
+
+    it('should not be on a foreign page', () => {
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id1' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
+    it('should be on a foreign page', () => {
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(true);
     });
   });
 

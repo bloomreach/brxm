@@ -18,8 +18,8 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DomService', () => {
-  let BrowserService;
   let DomService;
+  let $window;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
   const documentMock = [{
     location: {
@@ -27,6 +27,7 @@ describe('DomService', () => {
       host: 'localhost:8080',
     },
   }];
+
   documentMock.on = angular.noop;
   documentMock.off = angular.noop;
 
@@ -37,9 +38,9 @@ describe('DomService', () => {
       $provide.value('$document', documentMock);
     });
 
-    inject((_BrowserService_, _DomService_) => {
-      BrowserService = _BrowserService_;
+    inject((_DomService_, _$window_) => {
       DomService = _DomService_;
+      $window = _$window_;
     });
 
     jasmine.getFixtures().load('services/dom.service.fixture.html');
@@ -213,8 +214,8 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
-  it('creates a mousedown event in Edge', () => {
-    spyOn(BrowserService, 'isEdge').and.returnValue(true);
+  it('creates a pointer event', () => {
+    $window.navigator.pointerEnabled = true;
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('pointerdown');
     expect(mouseDownEvent.bubbles).toEqual(true);

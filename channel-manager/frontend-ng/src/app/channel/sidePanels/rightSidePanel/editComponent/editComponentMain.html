@@ -21,6 +21,15 @@
 >
   <md-tab label="{{ ::'RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES' | translate }}">
     <md-tab-body>
+      <md-subheader
+        class="md-no-sticky"
+        md-colors="{background: 'hippo-grey-200'}"
+        ng-if="$ctrl.ComponentEditor.isForeignPage()">
+        <div>
+          {{ 'COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT' | translate }}
+          <a href="#" ng-click="$ctrl.ComponentEditor.openComponentPage()" translate="COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK"></a>.
+        </div>
+      </md-subheader>
       <md-subheader class="md-no-sticky"
                     md-colors="{background: 'hippo-grey-200'}"
                     ng-if="$ctrl.hasNoProperties()">

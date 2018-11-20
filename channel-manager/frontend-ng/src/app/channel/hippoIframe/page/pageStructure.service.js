@@ -16,7 +16,6 @@
 
 import ComponentElement from './element/componentElement';
 import ContainerElement from './element/containerElement';
-import ContentLink from './element/contentLink';
 import HstConstants from '../hst.constants';
 import ManageContentLink from './element/manageContentLink';
 import MenuLink from './element/menuLink';
@@ -75,9 +74,6 @@ class PageStructureService {
       case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
         this._registerHeadContributions(metaData);
         break;
-      case HstConstants.TYPE_CONTENT_LINK:
-        this._registerContentLink(commentDomElement, metaData);
-        break;
       case HstConstants.TYPE_MANAGE_CONTENT_LINK:
         this._registerManageContentLink(commentDomElement, metaData);
         break;
@@ -116,10 +112,6 @@ class PageStructureService {
 
   _registerHeadContributions(metaData) {
     this.headContributions = this.headContributions.concat(metaData[HstConstants.HEAD_ELEMENTS]);
-  }
-
-  _registerContentLink(commentDomElement, metaData) {
-    this.embeddedLinks.push(new ContentLink(commentDomElement, metaData));
   }
 
   _registerManageContentLink(commentDomElement, metaData) {
@@ -494,10 +486,6 @@ class PageStructureService {
             }
             break;
 
-          case HstConstants.TYPE_CONTENT_LINK:
-            this._registerContentLink(commentDomElement, metaData);
-            break;
-
           case HstConstants.TYPE_MANAGE_CONTENT_LINK:
             this._registerManageContentLink(commentDomElement, metaData);
             break;
@@ -544,10 +532,6 @@ class PageStructureService {
             const unprocessedElements = metaData[HstConstants.HEAD_ELEMENTS];
             component.setHeadContributions(unprocessedElements);
           }
-          break;
-
-        case HstConstants.TYPE_CONTENT_LINK:
-          this._registerContentLink(commentDomElement, metaData);
           break;
 
         case HstConstants.TYPE_MANAGE_CONTENT_LINK:

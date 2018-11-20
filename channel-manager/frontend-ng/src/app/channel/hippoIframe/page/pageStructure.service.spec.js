@@ -34,13 +34,6 @@ function itemComment(label, uuid) {
   } -->`;
 }
 
-function contentLinkComment(uuid) {
-  return `<!-- {
-    "HST-Type": "CONTENT_LINK",
-    "uuid": "${uuid}"
-  } -->`;
-}
-
 function manageContentLinkComment(documentTemplateQuery) {
   return `<!-- {
     "HST-Type": "MANAGE_CONTENT_LINK",
@@ -278,13 +271,6 @@ describe('PageStructureService', () => {
     expect(containers[1].getComponents()[1].container).toEqual(containers[1]);
   });
 
-  it('registers content links', () => {
-    registerEmbeddedLink('#content-in-page');
-    const contentLinks = PageStructureService.getEmbeddedLinks();
-    expect(contentLinks.length).toBe(1);
-    expect(contentLinks[0].getUuid()).toBe('content-in-page');
-  });
-
   it('registers edit menu links', () => {
     registerEmbeddedLink('#edit-menu-in-page');
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
@@ -345,13 +331,12 @@ describe('PageStructureService', () => {
 
   it('clears the page structure', () => {
     registerVBoxContainer();
-    registerEmbeddedLink('#content-in-page');
     registerEmbeddedLink('#manage-content-in-page');
     registerEmbeddedLink('#edit-menu-in-page');
     registerHeadContributions('#processed-head-contributions');
 
     expect(PageStructureService.getContainers().length).toEqual(1);
-    expect(PageStructureService.getEmbeddedLinks().length).toEqual(3);
+    expect(PageStructureService.getEmbeddedLinks().length).toEqual(2);
     expect(PageStructureService.headContributions.length).toBe(2);
 
     PageStructureService.clearParsedElements();
@@ -634,16 +619,14 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentB');
     registerEmbeddedLink('#edit-menu-in-component-a');
     registerEmbeddedLink('#edit-menu-in-page');
-    registerEmbeddedLink('#content-in-page');
     registerEmbeddedLink('#manage-content-in-page');
-    registerEmbeddedLink('#content-in-container-vbox');
     registerEmbeddedLink('#manage-content-in-container-vbox');
 
     const containerVBox = PageStructureService.getContainers()[0];
     const componentA = containerVBox.getComponents()[0];
     const embeddedLinks = PageStructureService.getEmbeddedLinks();
 
-    expect(embeddedLinks.length).toBe(6);
+    expect(embeddedLinks.length).toBe(4);
     embeddedLinks.forEach(embeddedLink => expect(embeddedLink.getEnclosingElement()).toBeUndefined());
 
     expect(embeddedLinks[0].getBoxElement().length).toBe(0);
@@ -651,16 +634,14 @@ describe('PageStructureService', () => {
     PageStructureService.attachEmbeddedLinks();
 
     const attachedEmbeddedLinks = PageStructureService.getEmbeddedLinks();
-    expect(attachedEmbeddedLinks.length).toBe(6);
+    expect(attachedEmbeddedLinks.length).toBe(4);
     expect(attachedEmbeddedLinks[0].getEnclosingElement()).toBe(componentA);
     expect(attachedEmbeddedLinks[1].getEnclosingElement()).toBe(null);
     expect(attachedEmbeddedLinks[2].getEnclosingElement()).toBe(null);
-    expect(attachedEmbeddedLinks[3].getEnclosingElement()).toBe(null);
-    expect(attachedEmbeddedLinks[4].getEnclosingElement()).toBe(containerVBox);
-    expect(attachedEmbeddedLinks[5].getEnclosingElement()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[3].getEnclosingElement()).toBe(containerVBox);
 
     expect(attachedEmbeddedLinks[0].getBoxElement().length).toBe(1);
-    expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-cmseditlink');
+    expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
   });
 
   it('re-renders a component with an edit menu link', () => {
@@ -695,7 +676,6 @@ describe('PageStructureService', () => {
     // set up page structure with component and content link in it
     registerNoMarkupContainer();
     registerNoMarkupComponent();
-    registerEmbeddedLink('#content-in-component-no-markup');
     registerEmbeddedLink('#manage-content-in-component-no-markup');
     PageStructureService.attachEmbeddedLinks();
 
@@ -992,9 +972,7 @@ describe('PageStructureService', () => {
     registerVBoxComponent('componentA');
     registerEmbeddedLink('#edit-menu-in-component-a');
     registerEmbeddedLink('#edit-menu-in-page');
-    registerEmbeddedLink('#content-in-page');
     registerEmbeddedLink('#manage-content-in-page');
-    registerEmbeddedLink('#content-in-container-vbox');
     registerEmbeddedLink('#manage-content-in-container-vbox');
 
     PageStructureService.attachEmbeddedLinks();
@@ -1008,9 +986,6 @@ describe('PageStructureService', () => {
           <p id="test">Some markup in component A</p>
           ${endComment('aaaa')}
         </div>
-        <p id="new-content-in-container-vbox">
-          ${contentLinkComment('new-content-in-container-vbox')}
-        </p>
         <p id="new-manage-content-in-container-vbox">
           ${manageContentLinkComment('new-manage-content-in-container-vbox')}
         </p>
@@ -1024,14 +999,11 @@ describe('PageStructureService', () => {
 
       // edit menu link in component A is no longer there
       const embeddedLinks = PageStructureService.getEmbeddedLinks();
-      expect(embeddedLinks.length).toBe(5);
+      expect(embeddedLinks.length).toBe(3);
       expect(embeddedLinks[0].getUuid()).toBe('menu-in-page');
-      expect(embeddedLinks[1].getUuid()).toBe('content-in-page');
-      expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-test-document');
-      expect(embeddedLinks[3].getUuid()).toBe('new-content-in-container-vbox');
-      expect(embeddedLinks[3].getEnclosingElement()).toBe(newContainer);
-      expect(embeddedLinks[4].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
-      expect(embeddedLinks[4].getEnclosingElement()).toBe(newContainer);
+      expect(embeddedLinks[1].getDocumentTemplateQuery()).toBe('new-test-document');
+      expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
+      expect(embeddedLinks[2].getEnclosingElement()).toBe(newContainer);
       done();
     });
     $rootScope.$digest();

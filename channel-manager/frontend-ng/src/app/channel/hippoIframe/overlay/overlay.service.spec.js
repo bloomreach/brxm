@@ -25,7 +25,6 @@ describe('OverlayService', () => {
   let CmsService;
   let CreateContentService;
   let DomService;
-  let EditContentService;
   let ExperimentStateService;
   let HstCommentsProcessorService;
   let MarkupService;
@@ -49,7 +48,6 @@ describe('OverlayService', () => {
       _CmsService_,
       _CreateContentService_,
       _DomService_,
-      _EditContentService_,
       _ExperimentStateService_,
       _HstCommentsProcessorService_,
       _MarkupService_,
@@ -62,7 +60,6 @@ describe('OverlayService', () => {
       CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
       DomService = _DomService_;
-      EditContentService = _EditContentService_;
       ExperimentStateService = _ExperimentStateService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
@@ -220,11 +217,10 @@ describe('OverlayService', () => {
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       // Total overlay elements
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(27);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
 
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(15);
       done();
@@ -321,14 +317,13 @@ describe('OverlayService', () => {
 
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(1);
       done();
     });
   });
 
   it('renders a title for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('EDIT_CONTENT');
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
       done();
     });
@@ -440,12 +435,6 @@ describe('OverlayService', () => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
       expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
-      expect(contentLink.css('top')).toBe(`${4 + 100}px`);
-      expect(contentLink.css('left')).toBe(`${200 - 40}px`);
-      expect(contentLink.css('width')).toBe('40px');
-      expect(contentLink.css('height')).toBe('40px');
-
       const componentB = $(components[1]);
       expect(componentB).not.toHaveClass('hippo-overlay-element-visible');
 
@@ -474,11 +463,11 @@ describe('OverlayService', () => {
       expect(menuLink.css('width')).toBe('40px');
       expect(menuLink.css('height')).toBe('40px');
 
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
       expect(contentLink).not.toHaveClass('hippo-overlay-element-visible');
 
       const componentB = components.eq(1);
-      expect(componentB.css('top')).toBe(`${4 + 100 + 60}px`);
+      expect(componentB.css('top')).toBe(`${4 + 100}px`);
       expect(componentB.css('left')).toBe('2px');
       expect(componentB.css('width')).toBe(`${200 - 2}px`);
       expect(componentB.css('height')).toBe('200px');
@@ -488,27 +477,6 @@ describe('OverlayService', () => {
       expect(emptyContainer.css('left')).toBe('0px');
       expect(emptyContainer.css('width')).toBe('200px');
       expect(emptyContainer.css('height')).toBe('40px'); // minimum height of empty container
-
-      done();
-    });
-  });
-
-  it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
-    OverlayService.showContentOverlay(true);
-    loadIframeFixture(() => {
-      // enlarge body so the iframe can scroll
-      const body = iframe('body');
-      body.width('200%');
-      body.height('200%');
-
-      iframeWindow.scrollTo(1, 2);
-      OverlayService.sync();
-
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
-      expect(contentLink.css('top')).toBe(`${4 + 100}px`);
-      expect(contentLink.css('left')).toBe(`${200 - 40}px`);
-      expect(contentLink.css('width')).toBe('40px');
-      expect(contentLink.css('height')).toBe('40px');
 
       done();
     });
@@ -552,23 +520,6 @@ describe('OverlayService', () => {
 
       overlayComponentElement.mousedown();
       expect(mousedownSpy).not.toHaveBeenCalled();
-
-      done();
-    });
-  });
-
-  it('can edit content', (done) => {
-    spyOn(EditContentService, 'startEditing');
-    spyOn(CmsService, 'reportUsageStatistic');
-
-    loadIframeFixture(() => {
-      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
-
-      expectNoPropagatedClicks();
-      contentLink.click();
-
-      expect(EditContentService.startEditing).toHaveBeenCalledWith('content-in-container-vbox');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
 
       done();
     });
@@ -654,7 +605,7 @@ describe('OverlayService', () => {
     OverlayService.showComponentsOverlay(true);
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(27);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -668,7 +619,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent(componentA);
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(25);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();

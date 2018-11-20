@@ -15,14 +15,14 @@
  */
 
 class DomService {
-  constructor($q, $rootScope, $document, BrowserService) {
+  constructor($q, $rootScope, $document, $window) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$document = $document;
+    this.$window = $window;
     this._scrollBarWidth = 0;
-    this.BrowserService = BrowserService;
   }
 
   getAppRootUrl() {
@@ -146,8 +146,9 @@ class DomService {
     const button = 0;
     const relatedTarget = null;
 
-    // Dragula attaches a pointerdown listener to the DOM for Edge
-    const type = this.BrowserService.isEdge() ? 'pointerdown' : 'mousedown';
+    const type = this.$window.navigator.pointerEnabled
+      ? 'pointerdown'
+      : 'mousedown';
     return new MouseEvent(type, {
       bubbles,
       cancelable,

@@ -60,10 +60,7 @@ class EditComponentService {
 
     const channel = this.ChannelService.getChannel();
     const properties = {
-      channel: {
-        contextPath: channel.contextPath,
-        mountId: channel.mountId,
-      },
+      channel,
       // TODO: move this logic to ComponentEditorService upon `relevancePresent` flag removal
       component: {
         id: componentElement.getId(),
