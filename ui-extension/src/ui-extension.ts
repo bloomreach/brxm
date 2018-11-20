@@ -32,6 +32,10 @@ interface UiProperties {
   version: string;
 }
 
+export interface Ui extends UiProperties {
+  channel: Channel;
+}
+
 export interface PageProperties {
   channel: {
     id: string;
@@ -153,7 +157,8 @@ class Channel extends UiScope {
   }
 }
 
-export class Ui extends UiScope implements UiProperties {
+export class RootScope extends UiScope implements Ui {
+
   baseUrl: string;
   channel: Channel;
   extension: {
@@ -169,7 +174,7 @@ export class Ui extends UiScope implements UiProperties {
     this.channel = new Channel(parent, eventEmitter);
   }
 
-  init(): Promise<Ui> {
+  init(): Promise<RootScope> {
     return this.call('getProperties')
       .then(properties => Object.assign(this, properties));
   }
@@ -180,7 +185,7 @@ export default class UiExtension {
     const eventEmitter = new Emittery();
 
     return UiExtension.connect(eventEmitter)
-      .then(parent => new Ui(parent, eventEmitter).init());
+      .then(parent => new RootScope(parent, eventEmitter).init());
   }
 
   private static connect(eventEmitter: Emittery): Promise<Parent> {
