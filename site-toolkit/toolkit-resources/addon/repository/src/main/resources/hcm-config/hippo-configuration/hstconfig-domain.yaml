@@ -321,15 +321,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hst:channel
-      /hst-channels:
-        jcr:primaryType: hipposys:domainrule
-        /type-hst-channels:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:primaryType
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hst:channels
       /hst-channelinfo:
         jcr:primaryType: hipposys:domainrule
         /type-hst-channelinfo:
