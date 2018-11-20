@@ -60,7 +60,6 @@
     <httpcomponents-httpclient.version>4.5.5</httpcomponents-httpclient.version>
 
     <spring.security.version>4.2.5.RELEASE</spring.security.version>
-    <spring-security-jwt.version>1.0.9.RELEASE</spring-security-jwt.version>
     <spring-security-oauth2.version>2.1.0.RELEASE</spring-security-oauth2.version>
 
     <junit.version>4.12</junit.version>
@@ -325,12 +324,6 @@
             <artifactId>spring-core</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.springframework.security</groupId>
-        <artifactId>spring-security-jwt</artifactId>
-        <version>${spring-security-jwt.version}</version>
       </dependency>
 
       <dependency>
