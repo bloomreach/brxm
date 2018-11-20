@@ -28,6 +28,6 @@
   </instructionSet>
 
   <instructionSet group="sampleData">
-    <file action="copy" source="yaml/sample-robotstxt-document.yaml" target="{{platformApplicationContent}}/essentials/robotstxt/sample-robotstxt-document.yaml"/>
+    <file action="copy" source="yaml/sample-robotstxt-document.yaml" target="{{applicationContent}}/essentials/robotstxt/sample-robotstxt-document.yaml"/>
   </instructionSet>
 </instructions>

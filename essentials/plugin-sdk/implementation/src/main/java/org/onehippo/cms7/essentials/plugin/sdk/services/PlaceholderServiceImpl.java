@@ -154,17 +154,13 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         // essentials
         data.put(ESSENTIALS_ROOT, projectService.getBasePathForModule(Module.ESSENTIALS));
 
-        // platform application
-        data.put(PLATFORM_APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-config"));
-        data.put(APPLICATION_CONFIG, data.get(PLATFORM_APPLICATION_CONFIG));
-        data.put(PLATFORM_APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-content"));
-        data.put(APPLICATION_CONTENT, data.get(PLATFORM_APPLICATION_CONTENT));
+        // application
+        data.put(APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-config"));
+        data.put(APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-content"));
 
-        // platform development
-        data.put(PLATFORM_DEVELOPMENT_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-config"));
-        data.put(DEVELOPMENT_CONFIG, data.get(PLATFORM_DEVELOPMENT_CONFIG));
-        data.put(PLATFORM_DEVELOPMENT_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-content"));
-        data.put(DEVELOPMENT_CONTENT, data.get(PLATFORM_DEVELOPMENT_CONTENT));
+        // development
+        data.put(DEVELOPMENT_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-config"));
+        data.put(DEVELOPMENT_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-content"));
 
         // site application
         data.put(SITE_APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.SITE_DATA).resolve("hcm-config"));
