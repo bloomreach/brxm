@@ -14,7 +14,7 @@
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
     "baseUrl": "./src",
-    "declarationDir": "./dist"
+    "declarationDir": "./dist/typings"
   },
   "typeRoots": [
     "node_modules/@types"
