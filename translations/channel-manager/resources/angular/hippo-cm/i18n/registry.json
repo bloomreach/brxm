@@ -1149,7 +1149,7 @@
         "es" : "UNRESOLVED"
       }
     },
-    "CONFIRM_DISCARD_CHANGES_TO COMPONENT" : {
+    "CONFIRM_DISCARD_CHANGES_TO_COMPONENT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
@@ -1250,6 +1250,26 @@
       }
     },
     "PAGE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
