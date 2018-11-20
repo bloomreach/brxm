@@ -299,7 +299,7 @@ class ComponentEditorService {
     };
 
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TO COMPONENT', translateParams))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TO_COMPONENT', translateParams))
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.$translate.instant('CANCEL'));
 
