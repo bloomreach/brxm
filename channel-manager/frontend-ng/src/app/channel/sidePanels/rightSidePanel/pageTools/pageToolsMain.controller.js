@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-class PageInfoMainCtrl {
-  constructor(ExtensionService, PageInfoService) {
+class pageToolsMainCtrl {
+  constructor(ExtensionService, PageToolsService) {
     'ngInject';
 
     this.ExtensionService = ExtensionService;
-    this.PageInfoService = PageInfoService;
+    this.PageToolsService = PageToolsService;
   }
 
   $onInit() {
@@ -27,12 +27,12 @@ class PageInfoMainCtrl {
   }
 
   get selectedTab() {
-    return this.extensions.findIndex(item => item.id === this.PageInfoService.selectedExtensionId);
+    return this.extensions.findIndex(item => item.id === this.PageToolsService.selectedExtensionId);
   }
 
   set selectedTab(index) {
-    this.PageInfoService.selectedExtensionId = this.extensions[index].id;
+    this.PageToolsService.selectedExtensionId = this.extensions[index].id;
   }
 }
 
-export default PageInfoMainCtrl;
+export default pageToolsMainCtrl;

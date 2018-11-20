@@ -16,19 +16,19 @@
 
 import Penpal from 'penpal';
 
-import config from './pageInfo.config';
+import config from './pageTools.config';
 import iframeExtensionComponent from './iframeExtension.component';
 import pageExtensionComponent from './pageExtension.component';
-import pageInfoMainCtrl from './pageInfoMain.controller';
-import PageInfoService from './pageInfo.service';
+import pageToolsMainCtrl from './pageToolsMain.controller';
+import PageToolsService from './pageTools.service';
 
-const pageInfoModule = angular
-  .module('hippo-cm.channel.pageInfo', [])
+const pageToolsModule = angular
+  .module('hippo-cm.channel.pageTools', [])
   .config(config)
   .constant('Penpal', Penpal)
-  .service('PageInfoService', PageInfoService)
-  .controller('pageInfoMainCtrl', pageInfoMainCtrl)
+  .service('PageToolsService', PageToolsService)
+  .controller('pageToolsMainCtrl', pageToolsMainCtrl)
   .component('iframeExtension', iframeExtensionComponent)
   .component('pageExtension', pageExtensionComponent);
 
-export default pageInfoModule.name;
+export default pageToolsModule.name;

@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-describe('pageInfoMainCtrl', () => {
+describe('pageToolsMainCtrl', () => {
   let ExtensionService;
-  let PageInfoService;
+  let PageToolsService;
   let $ctrl;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.pageInfo');
+    angular.mock.module('hippo-cm.channel.pageTools');
 
     inject(($controller, $rootScope) => {
       ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
-      PageInfoService = {};
+      PageToolsService = {};
 
       const $scope = $rootScope.$new();
-      $ctrl = $controller('pageInfoMainCtrl', {
+      $ctrl = $controller('pageToolsMainCtrl', {
         $scope,
         ExtensionService,
-        PageInfoService,
+        PageToolsService,
       });
     });
   });
@@ -52,10 +52,10 @@ describe('pageInfoMainCtrl', () => {
     $ctrl.$onInit();
 
     $ctrl.selectedTab = 0;
-    expect(PageInfoService.selectedExtensionId).toEqual('a');
+    expect(PageToolsService.selectedExtensionId).toEqual('a');
 
     $ctrl.selectedTab = 1;
-    expect(PageInfoService.selectedExtensionId).toEqual('b');
+    expect(PageToolsService.selectedExtensionId).toEqual('b');
   });
 
   it('sets the selected tab to the selected extension', () => {
@@ -64,10 +64,10 @@ describe('pageInfoMainCtrl', () => {
 
     $ctrl.$onInit();
 
-    PageInfoService.selectedExtensionId = 'a';
+    PageToolsService.selectedExtensionId = 'a';
     expect($ctrl.selectedTab).toBe(0);
 
-    PageInfoService.selectedExtensionId = 'b';
+    PageToolsService.selectedExtensionId = 'b';
     expect($ctrl.selectedTab).toBe(1);
   });
 });

@@ -27,7 +27,7 @@ describe('PageMenuService', () => {
   let FeedbackService;
   let HippoIframeService;
   let PageMenuService;
-  let PageInfoService;
+  let PageToolsService;
   let PageMetaDataService;
   let SiteMapItemService;
   let SiteMapService;
@@ -74,7 +74,7 @@ describe('PageMenuService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageMenuService_,
-      _PageInfoService_,
+      _PageToolsService_,
       _PageMetaDataService_,
       _SiteMapItemService_,
       _SiteMapService_,
@@ -87,7 +87,7 @@ describe('PageMenuService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageMenuService = _PageMenuService_;
-      PageInfoService = _PageInfoService_;
+      PageToolsService = _PageToolsService_;
       PageMetaDataService = _PageMetaDataService_;
       SiteMapItemService = _SiteMapItemService_;
       SiteMapService = _SiteMapService_;
@@ -179,11 +179,11 @@ describe('PageMenuService', () => {
       });
 
       it('shows page info when clicked', () => {
-        spyOn(PageInfoService, 'showPageInfo');
+        spyOn(PageToolsService, 'showPageTools');
 
         getItem('info').onClick();
 
-        expect(PageInfoService.showPageInfo).toHaveBeenCalled();
+        expect(PageToolsService.showPageTools).toHaveBeenCalled();
       });
 
       // all other menu options
