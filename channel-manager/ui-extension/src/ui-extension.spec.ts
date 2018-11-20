@@ -19,8 +19,10 @@
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
 // tslint:disable:import-name
-import Penpal from 'penpal';
-import UiExtension, { Ui, PageProperties, Parent } from './ui-extension';
+import Penpal from 'penpal';  // TODO: mock the parent module instead of Penpal
+import { PageProperties, UiScope } from './api';
+import { Parent } from './parent'; // TODO: remove this import and move parent-related tests to a parent.spec.ts file
+import UiExtension from './ui-extension';
 // tslint:enable:import-name
 
 jest.mock('penpal');
@@ -55,7 +57,7 @@ describe('register', () => {
   });
 
   describe('on success', () => {
-    let ui: Ui;
+    let ui: UiScope;
 
     beforeEach(() => UiExtension.register().then(api => (ui = api)));
 
