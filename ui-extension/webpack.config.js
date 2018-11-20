@@ -25,8 +25,8 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './dist/ui-extension.d.ts',
-      out: 'ui-extension.d.ts',
+      main: './dist/typings/ui-extension.d.ts',
+      out: '../ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
     }));
