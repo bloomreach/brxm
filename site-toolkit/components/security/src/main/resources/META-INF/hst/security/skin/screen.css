@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,13 +118,6 @@ body.hippo-root #doc3 {
   vertical-align: bottom
 }
 
-/* Auke's hippo skin global css */
-/* ================================================ */
-.hippo-root {
-  background: url("images/headerBack.png") repeat-x top left;
-  background-attachment: scroll
-}
-
 /* remove the background in dialog windows */
 .hippo-window {
   background: none
@@ -168,9 +161,6 @@ body.hippo-root #doc3 {
 
 /* Login */
 /* ================================================ */
-
-
-
 .hippo-body-back-hack {
   background: white;
   position: absolute;
@@ -320,11 +310,6 @@ body.hippo-root #doc3 {
 
 /* Header */
 /* ================================================ */
-.hippo-header {
-  height: 45px;
-  background: url("images/headerBack.png") repeat-x top left;
-}
-
 .hippo-header-home {
   background: url("images/hippologo.png") no-repeat;
   text-indent: -9999px;
@@ -347,10 +332,6 @@ body.hippo-root #doc3 {
 /* ================================================ */
 .tabbed-panel-layout-left {
   background: url("images/tabs-vertical-back.png") repeat-y
-}
-
-.tabbed-panel-layout-left .hippo-tabs-perspective-tabs {
-  background: url("images/headerBack.png") no-repeat 0px -50px;
 }
 
 .hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
@@ -729,7 +710,6 @@ body.hippo-root #doc3 {
   padding-right: 4px;
   font-weight: bold;
   border-bottom: 1px dotted #afafaf;
-  background: url("images/hippo-panels-headerback.png") repeat-x
 }
 
 .hippo-perspective-dashboard .hippo-list-details {
@@ -1569,9 +1549,7 @@ body .hippo-picker-properties div.text-input input {
   background: transparent
 }
 
-.hippo-browser-documents-small .hippo-browser-docum
-ents-small-folders h3 {
-  background: transparent url(images/filelistHeaderback.png) repeat-x;
+.hippo-browser-documents-small .hippo-browser-documents-small-folders h3 {
   font-weight: normal;
   padding: 2px;
   padding-left: 6px;
@@ -2771,7 +2749,6 @@ table.hippo-controlpanel-body {
 }
 
 .hippo-controlpanel-table-default tr th {
-  background: url("images/hippo-panels-headerback.png") repeat-x;
   border-bottom: 1px solid #afafaf;
   border-left: none;
   border-right: 1px solid #afafaf;
@@ -2864,7 +2841,6 @@ table.hippo-controlpanel-body {
 }
 
 .hippo-controlpanel-breadcrumbs {
-  background: url("images/hippo-panels-headerback.png") repeat-x;
   border-bottom: 1px dotted #afafaf;
   font-weight: bold
 }
