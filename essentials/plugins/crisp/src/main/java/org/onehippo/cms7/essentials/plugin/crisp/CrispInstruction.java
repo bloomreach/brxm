@@ -48,7 +48,7 @@ public class CrispInstruction implements Instruction {
                 }
                 oldContent += "\n";
                 oldContent += "# Repository base path for this site application's CRISP configuration\n";
-                oldContent += "crisp.moduleconfig.path = /crisp/site/hippo:moduleconfig\n";
+                oldContent += "# crisp.moduleconfig.path = /crisp/site/hippo:moduleconfig\n";
                 Files.write(hstConfigProperties, oldContent.getBytes());
             }
         } catch (IOException e) {
