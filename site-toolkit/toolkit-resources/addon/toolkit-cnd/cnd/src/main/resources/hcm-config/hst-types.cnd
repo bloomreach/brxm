@@ -241,7 +241,7 @@
 - * (date)
 - * (date) multiple
 
-[hst:channel] > nt:base, mix:referenceable, mix:versionable
+[hst:channel] > nt:base, mix:referenceable
 - hst:name (string)
 - hst:channelinfoclass (string)
 - hst:channelinfomixins (string) multiple
@@ -257,7 +257,7 @@
 + hst:channelinfo (hst:channelinfo)
 
 // hst:channels is deprecated and not to be used any more since 5.0.0 (CMS 12.0)
-[hst:channels] > nt:base, mix:referenceable, mix:versionable
+[hst:channels] > nt:base, mix:referenceable
 + * (hst:channel)
 
 [hst:workspace] > nt:base
@@ -275,7 +275,7 @@
 - hst:branchid (string) mandatory
 + hst:upstream (hst:workspace) = hst:workspace
 
-[hst:configuration] > nt:base, mix:referenceable, mix:versionable
+[hst:configuration] > nt:base, mix:referenceable
 - hst:inheritsfrom (string) multiple
 // deprecated : not used any more as only fine grained locking
 - hst:lockedby (string)
@@ -295,11 +295,11 @@
 + hst:workspace (hst:workspace) = hst:workspace
 + hst:channel (hst:channel) = hst:channel
 
-[hst:configurations] > nt:base, mix:referenceable, mix:versionable
+[hst:configurations] > nt:base, mix:referenceable
 + * (hst:configuration) = hst:configuration version
 + hst:catalog (hst:catalog) = hst:catalog
 
-[hst:site] > nt:base, mix:referenceable, mix:versionable
+[hst:site] > nt:base, mix:referenceable
 + hst:content (hippo:facetselect)
 - hst:configurationpath (string)
 - hst:version (long)
@@ -308,7 +308,7 @@
 // deprecated and unused: do not use
 - hst:portalconfigurationenabled (boolean)
 
-[hst:sites] > nt:base, mix:referenceable, mix:versionable
+[hst:sites] > nt:base, mix:referenceable
 + * (hst:site) = hst:site version
 
 [hst:primarydomain] mixin
@@ -419,7 +419,7 @@
 - hst:defaultport (long)
 + * (hst:virtualhost)
 
-[hst:virtualhosts] > nt:base, mix:referenceable, mix:versionable
+[hst:virtualhosts] > nt:base, mix:referenceable
 - hst:showcontextpath (boolean)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
@@ -458,7 +458,7 @@
 - hst:channelmanagersiteauthenticationskipped (boolean)
 + * (hst:virtualhostgroup)
 
-[hst:blueprint] > nt:base, mix:referenceable, mix:versionable
+[hst:blueprint] > nt:base, mix:referenceable
 //"User-friendly" Name of the Blueprint that is used in Channel Manager
 - hst:name (string)
 - hst:description (string)
@@ -475,10 +475,10 @@
 + hst:mount (hst:mount)
 
 
-[hst:blueprints] > nt:base, mix:referenceable, mix:versionable
+[hst:blueprints] > nt:base, mix:referenceable
 + * (hst:blueprint)
 
-[hst:hst] > nt:base, mix:referenceable, mix:versionable
+[hst:hst] > nt:base, mix:referenceable
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
 + hst:blueprints (hst:blueprints) = hst:blueprints version
