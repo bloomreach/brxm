@@ -28,6 +28,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.repository.mock.MockNode;
@@ -126,8 +127,35 @@ public class HintsInspectorImplTest {
     @Test
     public void determineEditingFailureCancelRequestPublicationPending() throws Exception {
         final Session session = createMock(Session.class);
-        final MockNode requestNode = new MockNode("requestNode");
+        final MockNode requestNode = new MockNode("requestNode", HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST);
         requestNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE, HippoStdPubWfNodeType.PUBLISH);
+        expect(session.getNodeByIdentifier("request-node-id")).andReturn(requestNode);
+        replayAll();
+
+        final Map<String, Serializable> hints = new HashMap<>();
+        final Map<String, Serializable> requests = new HashMap<>();
+        final Map<String, Boolean> request = new HashMap<>();
+        hints.put("requests", (Serializable) requests);
+        requests.put("request-node-id", (Serializable) request);
+        request.put("cancelRequest", Boolean.TRUE);
+
+        final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
+        assertThat("Errorinfo should be present", errorInfoOptional.isPresent());
+        if (errorInfoOptional.isPresent()) {
+            final ErrorInfo errorInfo = errorInfoOptional.get();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.CANCELABLE_PUBLICATION_REQUEST_PENDING));
+            assertNull(errorInfo.getParams());
+        }
+
+        verifyAll();
+    }
+
+    @Test
+    public void determineEditingFailureCancelRequestScheduledPublicationPending() throws Exception {
+        final Session session = createMock(Session.class);
+        final MockNode requestNode = new MockNode("requestNode", HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB);
+        requestNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES, new String[]{HippoSchedJcrConstants.HIPPOSCHED_METHOD_NAME});
+        requestNode.setProperty(HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES, new String[]{HippoStdPubWfNodeType.PUBLISH});
         expect(session.getNodeByIdentifier("request-node-id")).andReturn(requestNode);
         replayAll();
 
