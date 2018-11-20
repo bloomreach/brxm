@@ -89,20 +89,6 @@ public class HstManageContentTag extends TagSupport {
         this.hippoBean = hippoBean;
     }
 
-    /**
-     * @deprecated This method is deprecated since 12.6, use {@link #setDocumentTemplateQuery} instead.
-     */
-    @Deprecated
-    public void setTemplateQuery(final String templateQuery) {
-        log.warn("The templateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
-                + " This attribute is deprecated since 12.6, use documentTemplateQuery instead.",
-                getComponentRenderPath(), documentTemplateQuery);
-
-        if (StringUtils.isNotBlank(templateQuery)) {
-            setDocumentTemplateQuery(templateQuery);
-        }
-    }
-
     public void setDocumentTemplateQuery(final String documentTemplateQuery) {
         if (StringUtils.isBlank(documentTemplateQuery)) {
             log.warn("The documentTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
