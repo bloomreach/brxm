@@ -799,16 +799,6 @@ public class HstManageContentTagTest {
                 + "} -->"));
     }
 
-    @Test
-    public void testDeprecatedTemplateQuery() throws Exception {
-        try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
-            tag.setTemplateQuery("new-newsdocument");
-            tag.doEndTag();
-
-            assertLogged(listener, "The templateQuery attribute of a manageContent tag in template 'webfile:/freemarker/test.ftl' is set to 'null'. This attribute is deprecated since 12.6, use documentTemplateQuery instead.");
-        }
-    }
-
     private static void assertLogged(final Log4jInterceptor listener, final String expectedMessage) {
         final List<String> messages = listener.messages().collect(Collectors.toList());
         assertThat(messages.size(), is(1));
