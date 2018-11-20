@@ -52,8 +52,8 @@ public class Author extends HippoDocument implements AuthorEntry {
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:image")
-    public HippoGalleryImage getImage() {
-        return getLinkedBean(IMAGE, HippoGalleryImage.class);
+    public HippoGalleryImageSet getImage() {
+        return getLinkedBean(IMAGE, HippoGalleryImageSet.class);
     }
 
   	@HippoEssentialsGenerated(internalName = "{{namespace}}:accounts")
