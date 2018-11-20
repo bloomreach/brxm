@@ -1,5 +1,5 @@
 <#--
-  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 <html>
   <head>
     <title>Login failure</title>
-    <link rel="shortcut icon" href="hst/security/skin/images/hippo-cms.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="hst/security/skin/images/icon.png" type="image/png"/>
     <link rel="stylesheet" type="text/css" href="hst/security/skin/screen.css" />
   </head>
   <body class="hippo-root" style="text-align:center">
     <div>
       <div class="hippo-login-panel">
         <form class="hippo-login-panel-form" name="signInForm" method="post" action="..${request.servletPath}/proxy">
-          <h2><div class="hippo-global-hideme"><span>Hippo CMS</span></div></h2>
+          <h2><div class="hippo-global-hideme"><span>BloomReach Experience</span></div></h2>
           <div class="hippo-login-form-container">
             <table>
               <tr>
@@ -40,7 +40,7 @@
           </div>
         </form>
         <div class="hippo-login-panel-copyright">
-          &copy; 1999-2016 Hippo B.V.
+          &copy; 1999-2018 BloomReach B.V.
         </div>
       </div>
     </div>
