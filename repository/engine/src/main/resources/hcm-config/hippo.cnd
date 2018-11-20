@@ -125,6 +125,46 @@
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
+// obsolete
+[hippo:lockable] mixin
+- hippo:lockExpirationTime (date)
+
+// obsolete
+[hippo:lock] > nt:base, mix:lockable, hippo:lockable
+
+// obsolete
+[hippo:initializeitem] > nt:base
+- hippo:sequence (double)
+- hippo:namespace (string)
+- hippo:nodetypesresource (string)
+- hippo:nodetypes (binary)
+- hippo:contentresource (string)
+- hippo:content (string)
+- hippo:contentroot (string)
+- hippo:contentdelete (string)
+- hippo:contentpropdelete (string)
+- hippo:contentpropset (string) multiple
+- hippo:contentpropadd (string) multiple
+- hippo:reloadonstartup (boolean)
+- hippo:status (string) < 'pending', 'reload', 'done', 'disabled', 'missing', 'failed'
+- hippo:errormessage (string)
+- hippo:contextnodename (string) // deprecated, replaced by hippo:contextpaths
+- hippo:contextpaths (string) multiple
+- hippo:upstreamitems (string) multiple
+- hippo:version (string)
+- hippo:timestamp (long) // deprecated, replaced by hippo:lastprocessedtime
+- hippo:lastprocessedtime (date)
+- hippo:webfilebundle (string)
+- hippo:resourcebundles (string)
+- hippo:changerecord (string)
+
+// obsolete
+[hippo:initializefolder] > nt:base orderable
+- hippo:version (string) multiple // deprecated, no replacement
+- hippo:sequence (double) // deprecated, no replacement
++ * (hippo:initializeitem) = hippo:initializeitem
++ hippo:lock (hippo:lock) = hippo:lock
+
 [hippo:deleted] > hippo:document, mix:versionable
 - hippo:deletedDate (date)
 - hippo:deletedBy (string)
