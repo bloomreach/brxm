@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,20 +20,49 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onehippo.cms7.demo</groupId>
-    <artifactId>hippo-addon-crisp-demo</artifactId>
+    <artifactId>crispdemo</artifactId>
     <version>13.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>hippo-addon-crisp-demo-example-commerce</artifactId>
+  <artifactId>crispdemo-example-commerce</artifactId>
   <packaging>war</packaging>
-  <name>Hippo Addon CRISP Demo Example Commerce</name>
-  <description>Hippo Addon CRISP Demo Example Commerce</description>
+  <name>CRISP Demo Example Commerce</name>
+  <description>CRISP Demo Example Commerce</description>
 
   <dependencies>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-spring-dependencies</artifactId>
-      <type>pom</type>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
     </dependency>
 
     <dependency>

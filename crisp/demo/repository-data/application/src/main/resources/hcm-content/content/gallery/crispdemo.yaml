@@ -1,0 +1,7 @@
+/content/gallery/crispdemo:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  jcr:uuid: a4ae82e3-dd36-4aa2-9f78-b02aead1d6f9
+  hippo:name: CRISP Demo
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['hippogallery:imageset']

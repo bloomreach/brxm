@@ -1,0 +1,15 @@
+definitions:
+  config:
+    /hippo:namespaces/crispdemo/basedocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: b14ecfac-f23e-47fd-b805-5bf21f85bf86
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: b6c76e28-61ce-4a39-ab1b-4fa6c5e4bf9c
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['hipposysedit:remodel']
+          hipposysedit:supertype: ['hippo:document', 'hippostdpubwf:document', 'hippostd:publishableSummary']
+          hipposysedit:uri: http://www.crispdemo.com/crispdemo/nt/1.0

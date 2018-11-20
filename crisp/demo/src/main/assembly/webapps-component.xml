@@ -7,7 +7,7 @@
       <destName>cms.war</destName>
     </file>
     <file>
-      <source>site/target/site.war</source>
+      <source>site/webapp/target/site.war</source>
       <outputDirectory>webapps</outputDirectory>
       <destName>site.war</destName>
     </file>

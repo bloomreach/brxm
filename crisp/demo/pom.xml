@@ -8,10 +8,10 @@
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Addon CRISP Demo</name>
-  <description>Hippo Addon CRISP Demo</description>
+  <name>CRISP Demo</name>
+  <description>CRISP Demo</description>
   <groupId>org.onehippo.cms7.demo</groupId>
-  <artifactId>hippo-addon-crisp-demo</artifactId>
+  <artifactId>crispdemo</artifactId>
   <version>13.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
@@ -67,17 +67,12 @@
 
     <hystrix-javanica.version>1.5.12</hystrix-javanica.version>
 
-    <forge.exdocpickerbase.version>5.0.2</forge.exdocpickerbase.version>
-
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.5</commons-io.version>
 
-    <essentials.version>4.1.0</essentials.version>
+    <essentials.version>13.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
-    <xalan.version>2.7.2</xalan.version>
-    <junit.version>4.12</junit.version>
-    <easymock.version>3.4</easymock.version>
 
     <development-module-deploy-dir>shared/lib</development-module-deploy-dir>
 
@@ -90,12 +85,6 @@
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
-    </repository>
-    <repository>
-      <id>hippo-maven2-forge</id>
-      <name>Hippo Maven 2 Forge repository</name>
-      <url>http://maven.onehippo.com/maven2-forge/</url>
-      <snapshots />
     </repository>
   </repositories>
 
@@ -134,18 +123,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.onehippo.forge.exdocpickerbase</groupId>
-        <artifactId>exdocpickerbase-field</artifactId>
-        <version>${forge.exdocpickerbase.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>${jsp-api.version}</version>
@@ -167,19 +144,6 @@
         <scope>runtime</scope>
       </dependency>
 
-      <dependency>
-        <groupId>xalan</groupId>
-        <artifactId>xalan</artifactId>
-        <version>${xalan.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>xalan</groupId>
-        <artifactId>serializer</artifactId>
-        <version>${xalan.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-
       <!-- other predefined compile scope versioned dependencies -->
       <dependency>
         <groupId>org.freemarker</groupId>
@@ -188,10 +152,63 @@
       </dependency>
 
       <dependency>
-        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-        <artifactId>hst-spring-dependencies</artifactId>
-        <type>pom</type>
-        <version>${hippo.hst.version}</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
@@ -222,20 +239,6 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>${easymock.version}</version>
-        <scope>test</scope>
       </dependency>
 
     </dependencies>
@@ -277,23 +280,6 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <revisionOnScmFailure>-1</revisionOnScmFailure>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -321,6 +307,7 @@
         </property>
       </activation>
       <modules>
+        <module>cms-dependencies</module>
         <module>repository-data</module>
         <module>cms</module>
         <module>site</module>
@@ -332,16 +319,9 @@
     <profile>
       <id>cargo.run</id>
       <properties>
-        <!--Already defined in hippo-cms-project POM. Override here for project, if necessary-->
-        <!--<repo.bootstrap>true</repo.bootstrap>-->
+        <!-- Already defined in the cms project POM. Override here for your project, if necessary -->
+        <!-- <repo.bootstrap>true</repo.bootstrap> -->
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-addon-crisp-api</artifactId>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -363,7 +343,7 @@
                 </configfiles>
                 <files>
                   <file>
-                    <file>${project.basedir}/repository-data/development/target/hippo-addon-crisp-demo-repository-data-development-${project.version}.jar</file>
+                    <file>${project.basedir}/repository-data/development/target/crispdemo-repository-data-development-${project.version}.jar</file>
                     <todir>${development-module-deploy-dir}</todir>
                   </file>
                 </files>
@@ -377,10 +357,10 @@
                   <location>${project.basedir}/cms/target/cms.war</location>
                 </deployable>
                 <deployable>
-                  <location>${project.basedir}/site/target/site.war</location>
+                  <location>${project.basedir}/site/webapp/target/site.war</location>
                   <type>war</type>
                   <properties>
-                    <context>/site</context>
+                    <context>/crispdemo</context>
                   </properties>
                 </deployable>
                 <deployable>
@@ -404,15 +384,7 @@
                   <!-- enables auto export and web files watch: -->
                   <project.basedir>${project.basedir}</project.basedir>
                   <send.usage.statistics.to.hippo>true</send.usage.statistics.to.hippo>
-                  <use.hcm.sites>false</use.hcm.sites>
                 </systemProperties>
-                <dependencies>
-                  <dependency>
-                    <groupId>org.onehippo.cms7</groupId>
-                    <artifactId>hippo-addon-crisp-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                </dependencies>
               </container>
             </configuration>
           </plugin>

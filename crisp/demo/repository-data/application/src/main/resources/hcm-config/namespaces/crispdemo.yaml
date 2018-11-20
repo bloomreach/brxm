@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:namespaces/crispdemo:
+      jcr:primaryType: hipposysedit:namespace
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: f20970b8-7b22-48ef-992e-85157a4ee0fb

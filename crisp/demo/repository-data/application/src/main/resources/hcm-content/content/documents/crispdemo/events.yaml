@@ -1,0 +1,144 @@
+/content/documents/crispdemo/events:
+  jcr:primaryType: hippostd:folder
+  jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+  jcr:uuid: 3d08c4e2-dfde-40d3-a8c4-eba51f9ddae8
+  hippostd:foldertype: [new-events-document, new-events-folder]
+  hippotranslation:id: 1b84fcb5-7200-4f81-83ed-3bb7cea2296b
+  hippotranslation:locale: en
+  /2018:
+    jcr:primaryType: hippostd:folder
+    jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+    jcr:uuid: ea13e396-988f-4d16-adda-d6125ef92db0
+    hippostd:foldertype: [new-events-document, new-events-folder]
+    hippotranslation:id: 5d9c4848-382e-440f-ae38-35a762ed5426
+    hippotranslation:locale: en
+    /11:
+      jcr:primaryType: hippostd:folder
+      jcr:mixinTypes: ['hippotranslation:translated', 'mix:referenceable']
+      jcr:uuid: c585c476-f1ec-4186-a72c-bf8edda1c23b
+      hippostd:foldertype: [new-events-document, new-events-folder]
+      hippotranslation:id: 520a98f4-e80c-4d48-9ef4-374e621e1c1d
+      hippotranslation:locale: en
+      /breakfast:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: b8f5eb45-7200-452a-b26e-3118a0dc60b8
+        hippo:name: Breakfast
+        /breakfast:
+          jcr:primaryType: crispdemo:eventsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: cb993d34-e157-4a9a-b2c8-e5c14f33a8c1
+          crispdemo:date: 2013-11-12T08:00:00+01:00
+          crispdemo:documenttype: event
+          crispdemo:enddate: 2019-11-20T03:26:00-05:00
+          crispdemo:introduction: Start the day with a nice breakfast.
+          crispdemo:location: Room 101
+          crispdemo:title: Breakfast
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T11:00:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T11:11:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T12:16:00+01:00
+          hippotranslation:id: bf0c28f4-9938-42c6-b1e1-c35bdce47296
+          hippotranslation:locale: en
+          /crispdemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+
+                        <p>Breakfast is served starting from 8:00 until 9:30.</p>
+
+                        </body>
+                        </html>
+          /crispdemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: c8f03498-56eb-46c9-83b2-cf014f2e03d7
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /introduction-speech:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+        jcr:uuid: 18e36c35-429d-4fee-b76e-eeabcbfc08bb
+        hippo:name: Introduction speech
+        /introduction-speech:
+          jcr:primaryType: crispdemo:eventsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 334affe5-1b23-48bf-a901-4ff91759679d
+          crispdemo:date: 2013-11-12T10:00:00+01:00
+          crispdemo:documenttype: event
+          crispdemo:enddate: 2019-11-20T03:26:00-05:00
+          crispdemo:introduction: After breakfast there will be an introductory speech.
+          crispdemo:location: Room 400
+          crispdemo:title: Introduction speech
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T11:02:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T11:16:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T12:16:00+01:00
+          hippotranslation:id: 82cfb8f9-7ba8-465a-aa06-fc39d50d5364
+          hippotranslation:locale: en
+          /crispdemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+
+                        <p>Speech will be about the workshop.</p>
+
+                        </body>
+                        </html>
+          /crispdemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: 9f32434e-84e3-4150-a6f2-d89a67be2fb1
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+      /workshop:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 7a29ec60-2689-48b2-aca2-49696c5c23eb
+        /workshop:
+          jcr:primaryType: crispdemo:eventsdocument
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 2e2af9dc-28a9-4651-b1f4-8d53e43212e3
+          crispdemo:date: 2013-11-12T13:00:00+01:00
+          crispdemo:documenttype: event
+          crispdemo:enddate: 2019-11-20T03:26:00-05:00
+          crispdemo:introduction: Workshop starts at 1:00
+          crispdemo:location: Room 600
+          crispdemo:title: Workshop
+          hippo:availability: [live, preview]
+          hippostd:holder: admin
+          hippostd:state: published
+          hippostdpubwf:createdBy: admin
+          hippostdpubwf:creationDate: 2013-11-12T11:16:00+01:00
+          hippostdpubwf:lastModificationDate: 2013-11-12T11:18:00+01:00
+          hippostdpubwf:lastModifiedBy: admin
+          hippostdpubwf:publicationDate: 2013-11-12T12:16:00+01:00
+          hippotranslation:id: 294fc02f-2140-42f0-805e-5878ee665241
+          hippotranslation:locale: en
+          /crispdemo:content:
+            jcr:primaryType: hippostd:html
+            hippostd:content: |-
+              <html>
+                        <body>
+                        <strong>Everybody </strong>
+                        <p>can join the workshop and start practicing what they learned during the last
+                        week.</p>
+
+                        </body>
+                        </html>
+          /crispdemo:image:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: d035387b-f9ce-49f6-bcb0-9ab6915a2d5f
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []

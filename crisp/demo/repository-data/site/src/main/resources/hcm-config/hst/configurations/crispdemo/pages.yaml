@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/crispdemo/hst:pages:
+      jcr:primaryType: hst:pages

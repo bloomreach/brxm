@@ -3,9 +3,9 @@
 
   <Appenders>
 
-    <!-- hippo-cms.log -->
-    <RollingFile name="cms" fileName="${sys:catalina.base}/logs/hippo-cms.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-cms.log.%d{yyyy-MM-dd}">
+    <!-- cms.log -->
+    <RollingFile name="cms" fileName="${sys:catalina.base}/logs/cms.log"
+                 filePattern="${sys:catalina.base}/logs/cms.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="cms" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
@@ -13,9 +13,9 @@
       </Policies>
     </RollingFile>
 
-    <!-- hippo-site.log -->
-    <RollingFile name="site" fileName="${sys:catalina.base}/logs/hippo-site.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-site.log.%d{yyyy-MM-dd}">
+    <!-- site.log -->
+    <RollingFile name="site" fileName="${sys:catalina.base}/logs/site.log"
+                 filePattern="${sys:catalina.base}/logs/site.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="site" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
@@ -23,9 +23,9 @@
       </Policies>
     </RollingFile>
 
-    <!-- hippo-audit.log -->
-    <RollingFile name="audit" fileName="${sys:catalina.base}/logs/hippo-audit.log"
-                 filePattern="${sys:catalina.base}/logs/hippo-audit.log.%d{yyyy-MM-dd}">
+    <!-- audit.log -->
+    <RollingFile name="audit" fileName="${sys:catalina.base}/logs/audit.log"
+                 filePattern="${sys:catalina.base}/logs/audit.log.%d{yyyy-MM-dd}">
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy/>
@@ -107,9 +107,11 @@
     <Logger name="org.hippoecm.repository.updater" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
+
     <Logger name="org.onehippo.cms7.autoexport" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
+
     <Logger name="org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
@@ -119,12 +121,6 @@
     <Logger name="org.hippoecm.hst.core.container.WebFileValve" additivity="false" level="info">
       <AppenderRef ref="messages"/>
     </Logger>
-
-    <Logger name="org.apache.http" level="debug" />
-    <Logger name="org.apache.http.wire" level="debug" />
-    <Logger name="org.onehippo.cms7.crisp" level="debug" />
-
-    <Logger name="org.springframework.oxm.jaxb" level="error" />
 
     <!-- project logging -->
     <Logger name="org.onehippo.cms7.crisp.demo" level="debug"/>

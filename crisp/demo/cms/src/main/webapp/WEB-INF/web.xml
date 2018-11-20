@@ -6,8 +6,8 @@
          id="cms">
 
   <!-- General configuration -->
-  <display-name>Hippo Addon CRISP Demo CMS</display-name>
-  <description>Hippo Addon CRISP Demo CMS</description>
+  <display-name>CRISP Demo CMS</display-name>
+  <description>CRISP Demo CMS</description>
 
   <context-param>
     <param-name>hst-beans-annotated-classes</param-name>

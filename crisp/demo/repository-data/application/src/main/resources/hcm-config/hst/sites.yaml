@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:sites:
-      /hippoaddoncrispdemo:
-        jcr:primaryType: hst:site
-        hst:content: /content/documents/hippoaddoncrispdemo
