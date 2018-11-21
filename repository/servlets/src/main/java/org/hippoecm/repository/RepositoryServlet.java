@@ -254,16 +254,6 @@ public class RepositoryServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        // close repository
-        log.info("Closing repository.");
-        if (repository != null) {
-            repository.close();
-            repository = null;
-        }
-
-        // done
-        log.info("Repository closed.");
-
         if (startRemoteServer) {
             // unbinding from registry
             String name = null;
@@ -294,7 +284,25 @@ public class RepositoryServlet extends HttpServlet {
                     log.error("Error during rmi shutdown for address: " + bindingAddress, e);
                 }
             }
+        }
 
+        if (repositoryClusterService != null) {
+            HippoServiceRegistry.unregister(repositoryClusterService, RepositoryClusterService.class);
+        }
+        if (repositoryService != null) {
+            HippoServiceRegistry.unregister(repositoryService, RepositoryService.class);
+        }
+
+        // close repository
+        log.info("Closing repository.");
+        if (repository != null) {
+            repository.close();
+            repository = null;
+        }
+        // done
+        log.info("Repository closed.");
+
+        if (startRemoteServer) {
             // force the distributed GC to fire, otherwise in tomcat with embedded
             // rmi registry the process won't end
             // this procedure is necessary specifically for Tomcat
@@ -312,15 +320,8 @@ public class RepositoryServlet extends HttpServlet {
             };
             garbageClearThread.setDaemon(true);
             garbageClearThread.start();
-
         }
 
-        if (repositoryService != null) {
-            HippoServiceRegistry.unregister(repositoryService, RepositoryService.class);
-        }
-        if (repositoryClusterService != null) {
-            HippoServiceRegistry.unregister(repositoryClusterService, RepositoryClusterService.class);
-        }
         HippoEventListenerRegistry.get().unregister(listener);
         HippoServiceRegistry.unregister(hippoEventBus, HippoEventBus.class);
         hippoEventBus.destroy();
