@@ -656,7 +656,7 @@
           <version>${maven.plugin.enforcer.version}</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
+          <groupId>org.codehaus.gmavenplus</groupId>
           <artifactId>gmavenplus-plugin</artifactId>
           <version>${maven.plugin.gmavenplus.version}</version>
           <dependencies>
