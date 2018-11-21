@@ -972,6 +972,12 @@
           <artifactId>hippo-services-autoreload</artifactId>
           <scope>provided</scope>
         </dependency>
+        <dependency>
+          <groupId>org.onehippo.cms</groupId>
+          <artifactId>hippo-cargo-extensions</artifactId>
+          <version>${hippo.commons.version}</version>
+          <scope>runtime</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
