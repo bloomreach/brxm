@@ -67,8 +67,8 @@ limitations under the License. -->
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-site-dependencies</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-package-site-dependencies</artifactId>
       <type>pom</type>
     </dependency>
 
