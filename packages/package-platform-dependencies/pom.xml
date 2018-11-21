@@ -86,6 +86,13 @@
       <artifactId>hippo-essentials-components-repository</artifactId>
       <version>${hippo.essentials-components.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-addon-channel-manager-repository</artifactId>
+      <version>${hippo.addon-channel-manager.version}</version>
+    </dependency>
+
   </dependencies>
 
 </project>

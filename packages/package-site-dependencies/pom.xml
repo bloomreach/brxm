@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,46 +23,23 @@
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Package CMS Dependencies</name>
-  <description>Hippo Package CMS Dependencies</description>
-  <artifactId>hippo-package-cms-dependencies</artifactId>
+  <name>Hippo Dependencies Platform Package</name>
+  <description>Hippo Dependencies Platform Package</description>
+  <artifactId>hippo-package-site-dependencies</artifactId>
   <packaging>pom</packaging>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-platform-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-cms-dependencies</artifactId>
-      <version>${hippo.hst.version}</version>
+      <artifactId>hst-site-dependencies</artifactId>
       <type>pom</type>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms7-utilities</artifactId>
-      <version>${hippo.utilities.version}</version>
+      <artifactId>hippo-essentials-components-hst</artifactId>
+      <version>${hippo.essentials-components.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-dependencies</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-      <version>${hippo.addon-channel-manager.version}</version>
-    </dependency>
-
   </dependencies>
 
 </project>

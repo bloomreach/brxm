@@ -69,6 +69,7 @@
   <modules>
     <module>package-platform-dependencies</module>
     <module>package-cms-dependencies</module>
+    <module>package-site-dependencies</module>
   </modules>
 
   <profiles>
