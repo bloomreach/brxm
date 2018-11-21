@@ -39,7 +39,7 @@ const testPage: PageProperties = {
   url: 'http://www.example.com',
 };
 
-const parent: Parent = {
+export const parent: Parent = {
   getProperties: () => Promise.resolve(uiProperties),
   getPage: () => Promise.resolve(testPage),
   refreshChannel: () => Promise.resolve(),
