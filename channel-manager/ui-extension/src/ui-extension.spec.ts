@@ -56,31 +56,31 @@ describe('register', () => {
     });
 
     describe('ui.channel.refresh()', () => {
-      it('refreshes the current channel', () => {
-        return ui.channel.refresh().then(() => {
+      it('refreshes the current channel', () =>
+        ui.channel.refresh().then(() => {
           expect(ParentConnection.call).toHaveBeenCalledWith('refreshChannel');
-        });
-      });
+        }),
+      );
     });
 
     describe('ui.channel.page.get()', () => {
-      it('returns the current page', () => {
-        return ui.channel.page.get()
+      it('returns the current page', () =>
+        ui.channel.page.get()
           .then((page) => {
             expect(page.channel.id).toBe('testChannelId');
             expect(page.id).toBe('testPageId');
             expect(page.sitemapItem.id).toBe('testSitemapItemId');
             expect(page.url).toBe('http://www.example.com');
-          });
-      });
+          }),
+      );
     });
 
     describe('ui.channel.page.refresh()', () => {
-      it('refreshes the current page', () => {
-        return ui.channel.page.refresh().then(() => {
+      it('refreshes the current page', () =>
+        ui.channel.page.refresh().then(() => {
           expect(ParentConnection.call).toHaveBeenCalledWith('refreshPage');
-        });
-      });
+        }),
+      );
     });
 
     describe('ui.channel.page.on(\'navigate\', listener)', () => {
