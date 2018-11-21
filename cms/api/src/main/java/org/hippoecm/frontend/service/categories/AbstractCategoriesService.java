@@ -19,15 +19,17 @@ import javax.jcr.Node;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 
-public interface CategoriesBuilder {
+public abstract class AbstractCategoriesService implements CategoriesService {
 
-    String[] build();
+    @Override
+    public String[] getCategories(final Node node, final IPluginContext context, final String[] workflowCategories, final String[] versionCategories) {
+        return getCategoriesBuilder()
+                .node(node)
+                .context(context)
+                .versionCategories(versionCategories)
+                .workflowCategories(workflowCategories)
+                .build();
+    }
 
-    CategoriesBuilder node(Node node);
-
-    CategoriesBuilder context(IPluginContext context);
-
-    CategoriesBuilder versionCategories(String[] versionCategories);
-
-    CategoriesBuilder workflowCategories(String[] workflowCategories);
+    protected abstract CategoriesBuilder getCategoriesBuilder();
 }

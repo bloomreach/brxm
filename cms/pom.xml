@@ -71,9 +71,8 @@
     <module>translation</module>
     <module>workflow</module>
 
-    <module>shared-dependencies</module>
+    <module>platform-dependencies</module>
     <module>dependencies</module>
-    <module>repository-dependencies</module>
 
     <module>scripts</module>
 

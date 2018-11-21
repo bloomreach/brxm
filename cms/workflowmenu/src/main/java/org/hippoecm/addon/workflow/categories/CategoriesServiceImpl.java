@@ -13,21 +13,15 @@
  *
  */
 
-package org.hippoecm.frontend.service.categories;
+package org.hippoecm.addon.workflow.categories;
 
-import javax.jcr.Node;
+import org.hippoecm.frontend.service.categories.AbstractCategoriesService;
+import org.hippoecm.frontend.service.categories.CategoriesBuilder;
 
-import org.hippoecm.frontend.plugin.IPluginContext;
+public class CategoriesServiceImpl extends AbstractCategoriesService {
 
-public interface CategoriesBuilder {
-
-    String[] build();
-
-    CategoriesBuilder node(Node node);
-
-    CategoriesBuilder context(IPluginContext context);
-
-    CategoriesBuilder versionCategories(String[] versionCategories);
-
-    CategoriesBuilder workflowCategories(String[] workflowCategories);
+    @Override
+    protected CategoriesBuilder getCategoriesBuilder() {
+        return new CategoriesBuilderImpl();
+    }
 }
