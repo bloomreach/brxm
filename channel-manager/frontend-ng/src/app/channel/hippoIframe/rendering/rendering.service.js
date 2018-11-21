@@ -21,6 +21,7 @@ const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
 class RenderingService {
   constructor(
     $q,
+    $rootScope,
     ChannelService,
     DomService,
     DragDropService,
@@ -36,6 +37,7 @@ class RenderingService {
     'ngInject';
 
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
@@ -55,7 +57,9 @@ class RenderingService {
   }
 
   onOverlayCreated(callback) {
-    return this.emitter.on(OVERLAY_CREATED_EVENT_NAME, callback);
+    return this.emitter.on(OVERLAY_CREATED_EVENT_NAME, (argument) => {
+      this.$rootScope.$apply(callback(argument));
+    });
   }
 
   createOverlay() {

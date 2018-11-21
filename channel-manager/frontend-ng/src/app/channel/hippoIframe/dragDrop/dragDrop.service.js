@@ -62,11 +62,15 @@ class DragDropService {
   }
 
   onDrop(callback) {
-    return this.emitter.on(COMPONENT_DROP_EVENT_NAME, callback);
+    return this.emitter.on(COMPONENT_DROP_EVENT_NAME, (argument) => {
+      this.$rootScope.$apply(callback(argument));
+    });
   }
 
   onClick(callback) {
-    return this.emitter.on(COMPONENT_CLICK_EVENT_NAME, callback);
+    return this.emitter.on(COMPONENT_CLICK_EVENT_NAME, (argument) => {
+      this.$rootScope.$apply(callback(argument));
+    });
   }
 
   _sync() {

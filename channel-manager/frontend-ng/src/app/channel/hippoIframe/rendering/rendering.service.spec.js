@@ -80,9 +80,8 @@ describe('RenderingService', () => {
 
   describe('onOverlayCreated', () => {
     it('registers an "overlay-created" callback', () => {
-      const overlayCreatedCallback = jasmine.createSpy('overlayCreatedCallback');
-      RenderingService.onOverlayCreated(overlayCreatedCallback);
-      expect(RenderingService.emitter.on).toHaveBeenCalledWith('overlay-created', overlayCreatedCallback);
+      RenderingService.onOverlayCreated(angular.noop);
+      expect(RenderingService.emitter.on).toHaveBeenCalledWith('overlay-created', jasmine.any(Function));
     });
   });
 

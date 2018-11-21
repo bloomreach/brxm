@@ -73,9 +73,8 @@ describe('ContainerService', () => {
 
   describe('onComponentMoved', () => {
     it('registers a "component-moved" callback', () => {
-      const componentMovedCallback = jasmine.createSpy('componentMovedCallback');
-      ContainerService.onComponentMoved(componentMovedCallback);
-      expect(ContainerService.emitter.on).toHaveBeenCalledWith('component-moved', componentMovedCallback);
+      ContainerService.onComponentMoved(angular.noop);
+      expect(ContainerService.emitter.on).toHaveBeenCalledWith('component-moved', jasmine.any(Function));
     });
   });
 
