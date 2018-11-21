@@ -18,13 +18,20 @@ package org.hippoecm.frontend;
 import java.io.Serializable;
 
 import org.apache.wicket.page.IManageablePage;
+import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
 
 public class AmnesicPageStore implements IPageStore {
 
+    private final IDataStore dataStore;
+
+    public AmnesicPageStore(final IDataStore dataStore) {
+        this.dataStore = dataStore;
+    }
+
     @Override
     public void destroy() {
-
+        dataStore.destroy();
     }
 
     @Override
