@@ -357,13 +357,15 @@ public class Main extends PluginApplication {
                         final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
                                 ? destinationPathParams.get(0).toString() : null;
 
-                        PluginUserSession userSession = (PluginUserSession) Session.get();
-                        final UserCredentials userCredentials = userSession.getUserCredentials();
-
-                        HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
+                        HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
                         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-                        if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
+                        if (cmsSessionContext == null) {
+                            throw new IllegalStateException("SSO handshake not possible since there is no valid CMS session " +
+                                    "Context");
+                        }
+
+                        if (destinationPath != null && destinationPath.startsWith("/")) {
 
                             requestTarget = new IRequestHandler() {
 
@@ -383,17 +385,10 @@ public class Main extends PluginApplication {
                                         }
                                         return;
                                     }
-                                    String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
-                                    if (cmsSessionContextId == null) {
-                                        CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
-                                        CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
-                                        cmsSessionContextId = newCmsSessionContext.getId();
-
-                                    }
                                     if (destinationUrl.contains("?")) {
-                                        response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                        response.sendRedirect(destinationUrl + "&cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
                                     } else {
-                                        response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContextId);
+                                        response.sendRedirect(destinationUrl + "?cmsCSID=" + cmsContextService.getId() + "&cmsSCID=" + cmsSessionContext.getId());
                                     }
                                 }
 

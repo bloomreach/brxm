@@ -108,13 +108,14 @@ public class LoginPanel extends Panel {
             }
         }
 
+        userSession.setLocale(getSelectedLocale());
+
         final char[] pwdAsChars = password == null ? new char[]{} : password.toCharArray();
         userSession.login(new UserCredentials(new SimpleCredentials(username, pwdAsChars)));
 
         HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
         ConcurrentLoginFilter.validateSession(session, username, false);
 
-        userSession.setLocale(getSelectedLocale());
     }
 
     private boolean isDevMode() {
@@ -268,7 +269,7 @@ public class LoginPanel extends Panel {
 
             response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
             final String preventResubmitScript = String.format("if (Hippo && Hippo.PreventResubmit) { " +
-                            "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
+                    "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
             response.render(OnDomReadyHeaderItem.forScript(preventResubmitScript));
         }
 

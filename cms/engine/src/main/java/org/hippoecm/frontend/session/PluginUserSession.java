@@ -49,6 +49,7 @@ import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.session.LoginException.Cause;
+import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.HippoRepository;
@@ -56,6 +57,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,10 +332,31 @@ public class PluginUserSession extends UserSession {
             pageId = 0;
         } else {
             // Set the username to facilitate two-factor authentication filters
-            getHttpSession().setAttribute("hippo:username", credentials.getUsername());
+            final HttpSession httpSession = getHttpSession();
+            httpSession.setAttribute("hippo:username", credentials.getUsername());
             increaseAppCount();
             pageId = 1;
+
+            if (getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {
+                createCmsSessionContext(httpSession);
+            }
         }
+    }
+
+    private void createCmsSessionContext(final HttpSession httpSession) {
+        final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
+        if (cmsContextService == null) {
+            log.debug("cmsContextService does not exist, cannot populate cms session context");
+            return;
+        }
+        CmsSessionContext context = CmsSessionContext.getContext(httpSession);
+        if (context != null) {
+            log.error("A non null CmsSessionContext for a new cms login should not be possible");
+            cmsContextService.detach(getHttpSession());
+        }
+
+        context = cmsContextService.create(httpSession);
+        CmsSessionUtil.populateCmsSessionContext(cmsContextService, context, this);
     }
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
@@ -363,7 +388,12 @@ public class PluginUserSession extends UserSession {
                 invalidate();
             } else {
                 if (PluginApplication.get().getPluginApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {
-                    getHttpSession().removeAttribute(CmsSessionContext.SESSION_KEY);
+                    final CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
+                    if (cmsContextService == null) {
+                        log.debug("cmsContextService does not exist, cannot detach cms session context");
+                        return;
+                    }
+                    cmsContextService.detach(getHttpSession());
                 }
             }
         } finally {

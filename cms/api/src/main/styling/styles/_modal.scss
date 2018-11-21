@@ -20,6 +20,19 @@
 
 .hippo-root .wicket-modal {
 
+  // Wicket Modal bottom direction cursor image fixes
+  .w_bottom {
+    cursor: s-resize;
+  }
+
+  .w_bottomLeft {
+    cursor: sw-resize;
+  }
+
+  .w_bottomRight {
+    cursor: se-resize;
+  }
+
   // Set border width, height and color
   .w_topLeft,
   .w_top,
