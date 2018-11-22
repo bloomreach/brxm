@@ -86,6 +86,27 @@ const ERROR_MAP = {
   },
 };
 
+function isDocument(object) {
+  return object && object.id; // Document has an ID field, ErrorInfo doesn't.
+}
+
+function isErrorInfo(object) {
+  return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
+}
+
+function hasFields(document) {
+  return document.fields && Object.keys(document.fields).length > 0;
+}
+
+function createNoContentResponse({ displayName }) {
+  return {
+    data: {
+      reason: 'NO_CONTENT',
+      params: { displayName },
+    },
+  };
+}
+
 class ContentEditorService {
   constructor(
     $q,
@@ -109,9 +130,9 @@ class ContentEditorService {
     this.WorkflowService = WorkflowService;
   }
 
-  open(documentId) {
-    this.close();
-    return this._loadDocument(documentId);
+  _setDocumentId(id) {
+    this.documentId = id;
+    this.FieldService.setDocumentId(this.documentId);
   }
 
   getDocumentId() {
@@ -126,30 +147,28 @@ class ContentEditorService {
     return this.documentType;
   }
 
-  isDocumentDirty() {
-    return this.documentDirty;
-  }
-
   getDocumentDisplayName() {
     if (this.document) {
       return this.document.displayName;
     }
-    if (this.error && this.error.messageParams) {
-      return this.error.messageParams.displayName;
-    }
-    return undefined;
+
+    return this.error && this.error.messageParams && this.error.messageParams.displayName;
   }
 
   getPublicationState() {
     return this.publicationState;
   }
 
+  getError() {
+    return this.error;
+  }
+
   markDocumentDirty() {
     this.documentDirty = true;
   }
 
-  getError() {
-    return this.error;
+  isDocumentDirty() {
+    return this.documentDirty;
   }
 
   isEditing() {
@@ -160,49 +179,46 @@ class ContentEditorService {
     return this.canPublish || this.canRequestPublication;
   }
 
+  kill() {
+    this.killed = true;
+  }
+
+  isKilled() {
+    return this.killed;
+  }
+
+  open(documentId) {
+    this.close();
+
+    return this._loadDocument(documentId);
+  }
+
   _loadDocument(id) {
     this._setDocumentId(id);
 
     return this.CmsService.closeDocumentWhenValid(id)
       .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
-          if (this._hasFields(document)) {
+          if (hasFields(document)) {
             return this.loadDocumentType(document);
           }
-          return this.$q.reject(this._noContentResponse(document));
+
+          return this.$q.reject(createNoContentResponse(document));
         })
         .catch(response => this._onLoadFailure(response)))
       .catch(() => this._setErrorDocumentInvalid());
   }
 
-  _setDocumentId(id) {
-    this.documentId = id;
-    this.FieldService.setDocumentId(this.documentId);
-  }
-
-  _hasFields(document) {
-    return document.fields && Object.keys(document.fields).length > 0;
-  }
-
   loadDocumentType(document) {
     this._setDocumentId(document.id);
+
     return this.ContentService.getDocumentType(document.info.type.id)
       .then((documentType) => {
         this._onLoadSuccess(document, documentType);
         this._reportUnsupportedFieldTypes(documentType);
+
         return documentType;
       });
-  }
-
-  _noContentResponse(document) {
-    return {
-      data: {
-        reason: 'NO_CONTENT',
-        params: {
-          displayName: document.displayName,
-        },
-      },
-    };
   }
 
   _setErrorDocumentInvalid() {
@@ -227,12 +243,14 @@ class ContentEditorService {
   }
 
   _reportUnsupportedFieldTypes(documentType) {
-    if (documentType.unsupportedFieldTypes) {
-      this.CmsService.reportUsageStatistic(
-        'VisualEditingUnsupportedFields',
-        { unsupportedFieldTypes: documentType.unsupportedFieldTypes.join(',') },
-      );
+    if (!documentType.unsupportedFieldTypes) {
+      return;
     }
+
+    this.CmsService.reportUsageStatistic(
+      'VisualEditingUnsupportedFields',
+      { unsupportedFieldTypes: documentType.unsupportedFieldTypes.join(',') },
+    );
   }
 
   _onLoadFailure(response) {
@@ -241,7 +259,7 @@ class ContentEditorService {
     let errorKey;
     let params = null;
 
-    if (this._isErrorInfo(response.data)) {
+    if (isErrorInfo(response.data)) {
       const errorInfo = response.data;
       errorKey = errorInfo.reason;
       params = this._extractErrorParams(errorInfo);
@@ -249,10 +267,10 @@ class ContentEditorService {
       if (errorInfo.params) {
         this.publicationState = errorInfo.params.publicationState;
       }
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
     } else {
-      errorKey = 'UNAVAILABLE';
+      errorKey = response.status === 404
+        ? 'NOT_FOUND'
+        : 'UNAVAILABLE';
     }
 
     this.error = ERROR_MAP[errorKey];
@@ -267,11 +285,11 @@ class ContentEditorService {
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
-        if (this._isErrorInfo(response.data)) {
+        if (isErrorInfo(response.data)) {
           const errorInfo = response.data;
           errorKey = `ERROR_${errorInfo.reason}`;
           params = this._extractErrorParams(errorInfo);
-        } else if (this._isDocument(response.data)) {
+        } else if (isDocument(response.data)) {
           errorKey = 'ERROR_INVALID_DATA';
           this._reloadDocumentType();
         }
@@ -290,16 +308,9 @@ class ContentEditorService {
     if (!force && !this.documentDirty) {
       return this.$q.resolve();
     }
+
     return this.ContentService.saveDocument(this.document)
       .then(savedDocument => this._onLoadSuccess(savedDocument, this.documentType));
-  }
-
-  _isDocument(obj) {
-    return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
-  }
-
-  _isErrorInfo(obj) {
-    return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
   _extractErrorParams(errorInfo) {
@@ -336,16 +347,8 @@ class ContentEditorService {
       });
   }
 
-  kill() {
-    this.killed = true;
-  }
-
-  isKilled() {
-    return this.killed;
-  }
-
   confirmDiscardChanges(messageKey, titleKey) {
-    if (this._doNotConfirm()) {
+    if (this._isPristine()) {
       return this.$q.resolve();
     }
     const translateParams = {
@@ -379,18 +382,17 @@ class ContentEditorService {
   confirmSaveOrDiscardChanges(messageKey, messageParams) {
     return this._askSaveOrDiscardChanges(messageKey, messageParams)
       .then((action) => {
-        switch (action) {
-          case 'SAVE':
-            return this._saveDocument()
-              .then(() => action); // let caller know that changes have been saved
-          default:
-            return this.$q.resolve(action); // let caller know that changes have not been saved
+        if (action === 'SAVE') {
+          return this._saveDocument()
+            .then(() => action); // let caller know that changes have been saved
         }
+
+        return this.$q.resolve(action); // let caller know that changes have not been saved
       });
   }
 
   _askSaveOrDiscardChanges(messageKey, messageParams = {}) {
-    if (this._doNotConfirm()) {
+    if (this._isPristine()) {
       return this.$q.resolve('DISCARD');
     }
 
@@ -413,26 +415,27 @@ class ContentEditorService {
     });
   }
 
-  _doNotConfirm() {
-    return !this.documentDirty // no pending changes, no dialog, continue normally
-      || this.killed; // editor was killed, don't show dialog
+  _isPristine() {
+    return !this.isDocumentDirty() || this.isKilled();
   }
 
   discardChanges() {
-    if (this.isEditing() && !this.killed) {
-      return this.ContentService.discardChanges(this.document.id);
+    if (!this.isEditing() || this.isKilled()) {
+      return this.$q.resolve();
     }
-    return this.$q.resolve();
+
+    return this.ContentService.discardChanges(this.document.id);
   }
 
   deleteDocument() {
-    if (this.isEditing() && !this.killed) {
-      return this.ContentService.deleteDocument(this.document.id)
-        .catch((error) => {
-          this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
-        });
+    if (!this.isEditing() || this.isKilled()) {
+      return this.$q.resolve();
     }
-    return this.$q.resolve();
+
+    return this.ContentService.deleteDocument(this.document.id)
+      .catch((error) => {
+        this.FeedbackService.showError(`ERROR_${error.data.reason}`, error.data.params);
+      });
   }
 
   confirmPublication() {
@@ -449,6 +452,7 @@ class ContentEditorService {
     return this.DialogService.show(confirm)
       .catch(() => {
         this._reportPublishCancelAction();
+
         return this.$q.reject();
       });
   }
@@ -463,15 +467,17 @@ class ContentEditorService {
       return this.documentDirty
         ? 'CONFIRM_PUBLISH_DIRTY_DOCUMENT' : 'CONFIRM_PUBLISH_DOCUMENT';
     }
+
     return this.documentDirty
       ? 'CONFIRM_REQUEST_PUBLICATION_OF_DIRTY_DOCUMENT' : 'CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT';
   }
 
   _confirmPublicationOkKey() {
     if (this.canPublish) {
-      return this.documentDirty ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
+      return this.isDocumentDirty() ? 'SAVE_AND_PUBLISH' : 'PUBLISH';
     }
-    return this.documentDirty ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
+
+    return this.isDocumentDirty() ? 'SAVE_AND_REQUEST_PUBLICATION' : 'REQUEST_PUBLICATION';
   }
 
   publish() {
@@ -506,6 +512,7 @@ class ContentEditorService {
           })))
       .catch(() => {
         this.FeedbackService.showError(errorKey, messageParams);
+
         return this.$q.reject();
       });
   }
@@ -518,21 +525,20 @@ class ContentEditorService {
   cancelRequestPublication() {
     return this.WorkflowService.createWorkflowAction(this.documentId, 'cancelRequest')
       .catch(() => {
-        const errorData = {
-          documentName: this.error && this.error.messageParams && this.error.messageParams.displayName
-            ? this.error.messageParams.displayName
-            : null,
-        };
-        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', errorData);
+        this.FeedbackService.showError('ERROR_CANCEL_REQUEST_PUBLICATION_FAILED', {
+          documentName: this.error && this.error.messageParams && this.error.messageParams.displayName,
+        });
+
         return this.$q.reject();
       })
       .finally(() => this._loadDocument(this.documentId));
   }
 
   close() {
+    this._clearDocument();
+
     delete this.documentId;
     delete this.documentType;
-    this._clearDocument();
     delete this.error;
     delete this.killed;
   }
