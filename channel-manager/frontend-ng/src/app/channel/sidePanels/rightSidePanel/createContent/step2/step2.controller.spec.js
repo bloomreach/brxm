@@ -177,7 +177,7 @@ describe('Create content step 2 controller', () => {
 
   it('saves the document even if there are no field updates', (done) => {
     spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
-    
+
     $ctrl.save().then(() => {
       expect(ContentEditor.save).toHaveBeenCalledWith(true);
       done();
