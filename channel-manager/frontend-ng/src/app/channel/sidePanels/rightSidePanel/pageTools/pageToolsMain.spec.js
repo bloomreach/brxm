@@ -14,60 +14,57 @@
  * limitations under the License.
  */
 
-describe('pageInfoMainCtrl', () => {
-  let ExtensionService;
-  let PageInfoService;
+describe('pageToolsMainCtrl', () => {
+  let PageToolsService;
   let $ctrl;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.pageInfo');
+    angular.mock.module('hippo-cm.channel.pageTools');
 
     inject(($controller, $rootScope) => {
-      ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
-      PageInfoService = {};
+      PageToolsService = jasmine.createSpyObj('PageToolsService', ['getExtensions']);
 
       const $scope = $rootScope.$new();
-      $ctrl = $controller('pageInfoMainCtrl', {
+      $ctrl = $controller('pageToolsMainCtrl', {
         $scope,
-        ExtensionService,
-        PageInfoService,
+        PageToolsService,
       });
     });
   });
 
   it('initializes the page extensions', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 
-    expect(ExtensionService.getExtensions).toHaveBeenCalledWith('channel.page.tools');
+    expect(PageToolsService.getExtensions).toHaveBeenCalled();
     expect($ctrl.extensions).toEqual(extensions);
   });
 
   it('changes the app state when a tab is selected', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 
     $ctrl.selectedTab = 0;
-    expect(PageInfoService.selectedExtensionId).toEqual('a');
+    expect(PageToolsService.selectedExtensionId).toEqual('a');
 
     $ctrl.selectedTab = 1;
-    expect(PageInfoService.selectedExtensionId).toEqual('b');
+    expect(PageToolsService.selectedExtensionId).toEqual('b');
   });
 
   it('sets the selected tab to the selected extension', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 
-    PageInfoService.selectedExtensionId = 'a';
+    PageToolsService.selectedExtensionId = 'a';
     expect($ctrl.selectedTab).toBe(0);
 
-    PageInfoService.selectedExtensionId = 'b';
+    PageToolsService.selectedExtensionId = 'b';
     expect($ctrl.selectedTab).toBe(1);
   });
 });

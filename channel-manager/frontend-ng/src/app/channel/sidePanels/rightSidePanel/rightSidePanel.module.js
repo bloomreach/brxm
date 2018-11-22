@@ -20,7 +20,7 @@ import createContentModule from './createContent/createContent.module';
 import editComponentModule from './editComponent/editComponent.module';
 import editContentModule from './editContent/editContent.module';
 import fieldsModule from './fields/fields.module';
-import pageInfoModule from './pageInfo/pageInfo.module';
+import pageToolsModule from './pageTools/pageTools.module';
 import resizeHandleModule from '../resizeHandle/resizeHandle.module';
 import rightSidePanelComponent from './rightSidePanel.component';
 import rightSidePanelService from './rightSidePanel.service';
@@ -32,7 +32,7 @@ const rightSidePanelModule = angular
     editComponentModule,
     editContentModule,
     fieldsModule,
-    pageInfoModule,
+    pageToolsModule,
     resizeHandleModule,
   ])
   .component('rightSidePanel', rightSidePanelComponent)

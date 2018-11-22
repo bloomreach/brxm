@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
+const PAGE_TOOLS = 'channel.page.tools';
+
 /**
- * Determines which page info extension is shown. Each page info extension is registered as a separate UI router state
- * below 'hippo-cm.channel.page-info'. These states are sticky so switching between them keeps the DOM state alive.
- * As a result, each page extension is initialized when viewed (i.e. when the tab is selected), but then kept alive
- * until the page-info parent state is left again.
+ * Determines which page tool extension is shown. Each page tool extension is registered as a separate UI router state
+ * below 'hippo-cm.channel.page-tools'. These states are sticky so switching between them keeps the DOM state alive.
+ * As a result, each page tool extension is initialized when viewed (i.e. when the tab is selected), but then kept
+ * alive until the page-tool parent state is left again.
  */
-class PageInfoService {
+class PageToolsService {
   constructor(
     $state,
     $stateRegistry,
@@ -46,15 +48,15 @@ class PageInfoService {
   }
 
   _registerPageExtensionStates() {
-    this.ExtensionService.getExtensions('channel.page.tools').forEach((pageExtension) => {
+    this.getExtensions().forEach((pageToolExtension) => {
       this.$stateRegistry.register({
-        name: `hippo-cm.channel.page-info.${pageExtension.id}`,
+        name: `hippo-cm.channel.page-tools.${pageToolExtension.id}`,
         params: {
-          extensionId: pageExtension.id,
+          extensionId: pageToolExtension.id,
         },
         sticky: true,
         views: {
-          [pageExtension.id]: {
+          [pageToolExtension.id]: {
             component: 'pageExtension',
           },
         },
@@ -68,13 +70,21 @@ class PageInfoService {
     });
   }
 
-  showPageInfo() {
+  getExtensions() {
+    return this.ExtensionService.getExtensions(PAGE_TOOLS);
+  }
+
+  hasExtensions() {
+    return this.ExtensionService.hasExtensions(PAGE_TOOLS);
+  }
+
+  showPageTools() {
     this._setTitle();
     this._loadFirstPageExtension();
   }
 
-  updatePageInfo() {
-    if (this._isPageInfoShown()) {
+  updatePageTools() {
+    if (this._isPageToolsShown()) {
       this._setTitle();
       this._updateLoadedPageExtensions();
     }
@@ -110,13 +120,13 @@ class PageInfoService {
   }
 
   _loadFirstPageExtension() {
-    const pageExtensions = this.ExtensionService.getExtensions('channel.page.tools');
+    const pageExtensions = this.getExtensions();
     const pageUrl = this._getPageUrl();
-    this.$state.go(`hippo-cm.channel.page-info.${pageExtensions[0].id}`, { pageUrl });
+    this.$state.go(`hippo-cm.channel.page-tools.${pageExtensions[0].id}`, { pageUrl });
   }
 
-  _isPageInfoShown() {
-    return this.$state.includes('hippo-cm.channel.page-info');
+  _isPageToolsShown() {
+    return this.$state.includes('hippo-cm.channel.page-tools');
   }
 
   _updateLoadedPageExtensions() {
@@ -125,9 +135,9 @@ class PageInfoService {
   }
 
   _loadPageExtension(extensionId) {
-    // N.B. the current pageUrl is inherited from the page-info parent state
-    this.$state.go(`hippo-cm.channel.page-info.${extensionId}`);
+    // N.B. the current pageUrl is inherited from the page-tools parent state
+    this.$state.go(`hippo-cm.channel.page-tools.${extensionId}`);
   }
 }
 
-export default PageInfoService;
+export default PageToolsService;

@@ -21,12 +21,10 @@ class PageMenuService extends MenuService {
     $translate,
     ChannelService,
     DialogService,
-    ExtensionService,
     FeedbackService,
     HippoIframeService,
-    PageInfoService,
+    PageToolsService,
     PageMetaDataService,
-    PathService,
     SessionService,
     SiteMapItemService,
     SiteMapService,
@@ -38,12 +36,10 @@ class PageMenuService extends MenuService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
-    this.ExtensionService = ExtensionService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.PageInfoService = PageInfoService;
+    this.PageToolsService = PageToolsService;
     this.PageMetaDataService = PageMetaDataService;
-    this.PathService = PathService;
     this.SessionService = SessionService;
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
@@ -56,9 +52,9 @@ class PageMenuService extends MenuService {
     });
 
     if (this._hasPageExtensions()) {
-      menu.addAction('info', {
+      menu.addAction('tools', {
         translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
-        onClick: () => this._pageInfo(),
+        onClick: () => this._pageTools(),
       });
     }
 
@@ -101,8 +97,8 @@ class PageMenuService extends MenuService {
     this.ChannelService.loadPageModifiableChannels();
   }
 
-  _pageInfo() {
-    this.PageInfoService.showPageInfo();
+  _pageTools() {
+    this.PageToolsService.showPageTools();
   }
 
   _pageProperties() {
@@ -122,7 +118,7 @@ class PageMenuService extends MenuService {
   }
 
   _hasPageExtensions() {
-    return this.ExtensionService.hasExtensions('channel.page.tools');
+    return this.PageToolsService.hasExtensions();
   }
 
   _hasWriteAccess() {

@@ -21,7 +21,7 @@ class HippoIframeService {
     ChannelService,
     CmsService,
     ConfigService,
-    PageInfoService,
+    PageToolsService,
     PageMetaDataService,
     ProjectService,
     ScrollService,
@@ -34,7 +34,7 @@ class HippoIframeService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.PageInfoService = PageInfoService;
+    this.PageToolsService = PageToolsService;
     this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
@@ -125,7 +125,7 @@ class HippoIframeService {
     this.pageLoaded = true;
 
     this.ScrollService.restoreScrollPosition();
-    this.PageInfoService.updatePageInfo();
+    this.PageToolsService.updatePageTools();
 
     const deferred = this.deferredReload;
     if (deferred) {

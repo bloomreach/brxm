@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-describe('PageInfoService', () => {
+describe('PageToolsService', () => {
   let $rootScope;
   let $state;
   let $stateRegistry;
   let $translate;
   let ChannelService;
-  let PageInfoService;
+  let ExtensionService;
+  let PageToolsService;
   let PageMetaDataService;
   let RightSidePanelService;
 
@@ -39,10 +40,10 @@ describe('PageInfoService', () => {
       context: 'page',
     };
 
-    const ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
+    ExtensionService = jasmine.createSpyObj('ExtensionService', ['hasExtensions', 'getExtensions']);
     ExtensionService.getExtensions.and.returnValue([extension1, extension2]);
 
-    angular.mock.module('hippo-cm.channel.pageInfo', ($provide) => {
+    angular.mock.module('hippo-cm.channel.pageTools', ($provide) => {
       $provide.value('ExtensionService', ExtensionService);
     });
 
@@ -52,7 +53,7 @@ describe('PageInfoService', () => {
       _$stateRegistry_,
       _$translate_,
       _ChannelService_,
-      _PageInfoService_,
+      _PageToolsService_,
       _PageMetaDataService_,
       _RightSidePanelService_,
     ) => {
@@ -61,7 +62,7 @@ describe('PageInfoService', () => {
       $stateRegistry = _$stateRegistry_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
-      PageInfoService = _PageInfoService_;
+      PageToolsService = _PageToolsService_;
       PageMetaDataService = _PageMetaDataService_;
       RightSidePanelService = _RightSidePanelService_;
     });
@@ -72,13 +73,13 @@ describe('PageInfoService', () => {
 
   function pageName(pagePath) {
     PageMetaDataService.getPathInfo.and.returnValue(pagePath);
-    return PageInfoService._getPageName();
+    return PageToolsService._getPageName();
   }
 
   function pageUrl(channelUrl, pagePath) {
     ChannelService.getChannel.and.returnValue({ url: channelUrl });
     PageMetaDataService.getPathInfo.and.returnValue(pagePath);
-    return PageInfoService._getPageUrl();
+    return PageToolsService._getPageUrl();
   }
 
   it('generates the correct page name', () => {
@@ -104,15 +105,39 @@ describe('PageInfoService', () => {
     expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
   });
 
+  describe('hasExtensions', () => {
+    it('uses the ExtensionService to check for "channel.page.tools" extensions', () => {
+      PageToolsService.hasExtensions();
+      expect(ExtensionService.hasExtensions).toHaveBeenCalledWith('channel.page.tools');
+    });
+
+    it('returns true if there are extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(true);
+      expect(PageToolsService.hasExtensions()).toBe(true);
+    });
+
+    it('returns false if there are no extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(false);
+      expect(PageToolsService.hasExtensions()).toBe(false);
+    });
+  });
+
+  describe('getExtensions', () => {
+    it('returns "channel.page.tools" extensions', () => {
+      expect(PageToolsService.getExtensions()).toEqual([extension1, extension2]);
+      expect(ExtensionService.getExtensions).toHaveBeenCalledWith('channel.page.tools');
+    });
+  });
+
   describe('state per page extension', () => {
     it('is registered', () => {
-      expect($stateRegistry.states['hippo-cm.channel.page-info.extension1']).toBeDefined();
-      expect($stateRegistry.states['hippo-cm.channel.page-info.extension2']).toBeDefined();
+      expect($stateRegistry.states['hippo-cm.channel.page-tools.extension1']).toBeDefined();
+      expect($stateRegistry.states['hippo-cm.channel.page-tools.extension2']).toBeDefined();
     });
 
     it('has certain properties', () => {
-      const state = $stateRegistry.states['hippo-cm.channel.page-info.extension1'];
-      expect(state.name).toEqual('hippo-cm.channel.page-info.extension1');
+      const state = $stateRegistry.states['hippo-cm.channel.page-tools.extension1'];
+      expect(state.name).toEqual('hippo-cm.channel.page-tools.extension1');
       expect(state.parameter('extensionId').value()).toEqual('extension1');
       expect(state.sticky).toEqual(true);
       expect(state.views.extension1).toBeDefined();
@@ -121,7 +146,7 @@ describe('PageInfoService', () => {
     });
   });
 
-  describe('showPageInfo', () => {
+  describe('showPageTools', () => {
     beforeEach(() => {
       const pagePath = '/news/2018/my-page.html';
       pageName(pagePath);
@@ -133,7 +158,7 @@ describe('PageInfoService', () => {
       spyOn(RightSidePanelService, 'setContext');
       spyOn(RightSidePanelService, 'setTitle');
 
-      PageInfoService.showPageInfo();
+      PageToolsService.showPageTools();
 
       expect($translate.instant).toHaveBeenCalledWith('PAGE');
       expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
@@ -144,24 +169,24 @@ describe('PageInfoService', () => {
 
     it('goes to the state of the first page extension', () => {
       spyOn($state, 'go');
-      PageInfoService.showPageInfo();
+      PageToolsService.showPageTools();
       expect($state.go).toHaveBeenCalledWith(
-        'hippo-cm.channel.page-info.extension1',
+        'hippo-cm.channel.page-tools.extension1',
         { pageUrl: 'https://example.com/news/2018/my-page.html' },
       );
     });
   });
 
-  describe('updatePageInfo', () => {
+  describe('updatePageTools', () => {
     beforeEach(() => {
       const pagePath = '/news/2018/my-page.html';
       pageName(pagePath);
       pageUrl('https://example.com', pagePath);
     });
 
-    describe('when page info is already shown', () => {
+    describe('when page tools are already shown', () => {
       beforeEach(() => {
-        PageInfoService.showPageInfo();
+        PageToolsService.showPageTools();
         $rootScope.$digest();
 
         const anotherPagePath = '/events/latest';
@@ -174,7 +199,7 @@ describe('PageInfoService', () => {
         spyOn(RightSidePanelService, 'setContext');
         spyOn(RightSidePanelService, 'setTitle');
 
-        PageInfoService.updatePageInfo();
+        PageToolsService.updatePageTools();
 
         expect($translate.instant).toHaveBeenCalledWith('PAGE');
         expect(RightSidePanelService.setContext).toHaveBeenCalledWith('PAGE');
@@ -183,21 +208,21 @@ describe('PageInfoService', () => {
 
       it('updates the state of all loaded page extensions', () => {
         spyOn($state, 'go');
-        PageInfoService.updatePageInfo();
+        PageToolsService.updatePageTools();
         expect($state.go).toHaveBeenCalledWith(
-          'hippo-cm.channel.page-info.extension1',
+          'hippo-cm.channel.page-tools.extension1',
           { pageUrl: 'https://example.com/events/latest' },
         );
       });
     });
 
-    describe('when no page info is shown', () => {
+    describe('when no page tools are shown', () => {
       it('does nothing', () => {
         spyOn($translate, 'instant').and.callThrough();
         spyOn(RightSidePanelService, 'setTitle');
         spyOn($state, 'go');
 
-        PageInfoService.updatePageInfo();
+        PageToolsService.updatePageTools();
 
         expect($translate.instant).not.toHaveBeenCalled();
         expect(RightSidePanelService.setTitle).not.toHaveBeenCalled();
@@ -208,19 +233,19 @@ describe('PageInfoService', () => {
 
   describe('selectedExtensionId', () => {
     it('returns the extension ID of the current state', () => {
-      $state.go('hippo-cm.channel.page-info.extension2', { pageUrl: '' });
+      $state.go('hippo-cm.channel.page-tools.extension2', { pageUrl: '' });
       $rootScope.$digest();
-      expect(PageInfoService.selectedExtensionId).toEqual('extension2');
+      expect(PageToolsService.selectedExtensionId).toEqual('extension2');
     });
 
     it('navigates to another page extension state when set', () => {
-      $state.go('hippo-cm.channel.page-info.extension1', { pageUrl: '/test' });
+      $state.go('hippo-cm.channel.page-tools.extension1', { pageUrl: '/test' });
       $rootScope.$digest();
 
-      PageInfoService.selectedExtensionId = 'extension2';
+      PageToolsService.selectedExtensionId = 'extension2';
       $rootScope.$digest();
 
-      expect($state.current.name).toEqual('hippo-cm.channel.page-info.extension2');
+      expect($state.current.name).toEqual('hippo-cm.channel.page-tools.extension2');
     });
   });
 });

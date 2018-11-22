@@ -15,7 +15,7 @@
  */
 
 import { StickyStatesPlugin } from '@uirouter/sticky-states';
-import pageInfoMainTemplate from './pageInfoMain.html';
+import pageToolsMainTemplate from './pageToolsMain.html';
 
 function config($stateProvider, $uiRouterProvider) {
   'ngInject';
@@ -23,7 +23,7 @@ function config($stateProvider, $uiRouterProvider) {
   $uiRouterProvider.plugin(StickyStatesPlugin);
 
   $stateProvider.state({
-    name: 'hippo-cm.channel.page-info',
+    name: 'hippo-cm.channel.page-tools',
     abstract: true,
     params: {
       pageUrl: {
@@ -36,9 +36,9 @@ function config($stateProvider, $uiRouterProvider) {
         template: '', // no tools
       },
       main: {
-        controller: 'pageInfoMainCtrl',
+        controller: 'pageToolsMainCtrl',
         controllerAs: '$ctrl',
-        template: pageInfoMainTemplate,
+        template: pageToolsMainTemplate,
       },
     },
   });
