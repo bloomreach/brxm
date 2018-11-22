@@ -76,7 +76,7 @@
     <freemarker.version>2.3.28</freemarker.version>
 
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.2.3</maven.required.version>
+    <maven.required.version>3.5.0</maven.required.version>
 
     <maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
     <!-- maven.plugin.assembly.version kept on 2.6. 3.0.0 shows snapshot download warnings, see CMS-10817 -->
@@ -85,27 +85,27 @@
     <maven.plugin.cargo.version>1.7.0</maven.plugin.cargo.version>
     <maven.plugin.changes.version>2.12.1</maven.plugin.changes.version>
     <maven.plugin.changelog.version>2.3</maven.plugin.changelog.version>
-    <maven.plugin.clean.version>3.0.0</maven.plugin.clean.version>
-    <maven.plugin.compiler.version>3.6.1</maven.plugin.compiler.version>
-    <maven.plugin.dependency.version>3.0.1</maven.plugin.dependency.version>
+    <maven.plugin.clean.version>3.1.0</maven.plugin.clean.version>
+    <maven.plugin.compiler.version>3.8.0</maven.plugin.compiler.version>
+    <maven.plugin.dependency.version>3.1.1</maven.plugin.dependency.version>
     <maven.plugin.deploy.version>2.8.2</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
     <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M1</maven.plugin.failsafe.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
-    <maven.plugin.jar.version>3.0.2</maven.plugin.jar.version>
-    <maven.plugin.javadoc.version>2.10.4</maven.plugin.javadoc.version>
+    <maven.plugin.jar.version>3.1.0</maven.plugin.jar.version>
+    <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
     <maven.plugin.jrebel.version>1.1.7</maven.plugin.jrebel.version>
-    <maven.plugin.project-info.version>2.9</maven.plugin.project-info.version>
+    <maven.plugin.project-info.version>3.0.0</maven.plugin.project-info.version>
     <maven.plugin.release.version>2.5.3</maven.plugin.release.version>
     <maven.plugin.rat.version>0.13</maven.plugin.rat.version>
     <maven.plugin.remote-resources.version>1.5</maven.plugin.remote-resources.version>
-    <maven.plugin.resources.version>3.0.2</maven.plugin.resources.version>
+    <maven.plugin.resources.version>3.1.0</maven.plugin.resources.version>
     <maven.plugin.source.version>3.0.1</maven.plugin.source.version>
     <maven.plugin.surefire.version>3.0.0-M1</maven.plugin.surefire.version>
     <maven.plugin.surefire-report.version>3.0.0-M1</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
-    <maven.plugin.war.version>3.1.0</maven.plugin.war.version>
+    <maven.plugin.war.version>3.2.2</maven.plugin.war.version>
     <!-- don't bump enforcer to 1.4.1 (yet), see commit message -->
     <maven.plugin.enforcer.version>1.4</maven.plugin.enforcer.version>
     <maven.plugin.gmavenplus.version>1.6.2</maven.plugin.gmavenplus.version>
@@ -180,9 +180,11 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <!-- Set the prerequisites to list relevant plugin updates with mvn versions:display-plugin-updates
   <prerequisites>
     <maven>${maven.required.version}</maven>
   </prerequisites>
+  -->
 
   <repositories>
     <repository>
