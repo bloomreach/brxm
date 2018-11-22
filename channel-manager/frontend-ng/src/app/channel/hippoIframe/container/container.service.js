@@ -20,6 +20,7 @@ class ContainerService {
   constructor(
     $log,
     $q,
+    $rootScope,
     $translate,
     CmsService,
     DialogService,
@@ -35,6 +36,7 @@ class ContainerService {
 
     this.$log = $log;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
@@ -49,7 +51,11 @@ class ContainerService {
   }
 
   onComponentMoved(callback) {
-    return this.emitter.on(COMPONENT_MOVED_EVENT_NAME, callback);
+    return this._on(COMPONENT_MOVED_EVENT_NAME, callback);
+  }
+
+  _on(eventName, callback) {
+    return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
   addComponent(catalogComponent, containerOverlayElement) {

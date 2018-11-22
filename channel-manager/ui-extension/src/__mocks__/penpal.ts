@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-const uiProperties = {
+import { PageProperties, UiProperties } from '../api';
+import { Parent } from '../parent';
+
+const uiProperties: UiProperties = {
   baseUrl: 'https://cms.example.com',
   extension: {
     config: 'testConfig',
@@ -25,7 +28,7 @@ const uiProperties = {
   version: '13.0.0',
 };
 
-const testPage = {
+const testPage: PageProperties = {
   channel: {
     id: 'testChannelId',
   },
@@ -36,7 +39,7 @@ const testPage = {
   url: 'http://www.example.com',
 };
 
-const parent = {
+export const parent: Parent = {
   getProperties: () => Promise.resolve(uiProperties),
   getPage: () => Promise.resolve(testPage),
   refreshChannel: () => Promise.resolve(),
