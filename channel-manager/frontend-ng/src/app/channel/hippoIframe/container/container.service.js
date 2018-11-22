@@ -51,9 +51,11 @@ class ContainerService {
   }
 
   onComponentMoved(callback) {
-    return this.emitter.on(COMPONENT_MOVED_EVENT_NAME, (argument) => {
-      this.$rootScope.$apply(callback(argument));
-    });
+    return this._on(COMPONENT_MOVED_EVENT_NAME, callback);
+  }
+
+  _on(eventName, callback) {
+    return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
   addComponent(catalogComponent, containerOverlayElement) {

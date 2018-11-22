@@ -57,9 +57,11 @@ class RenderingService {
   }
 
   onOverlayCreated(callback) {
-    return this.emitter.on(OVERLAY_CREATED_EVENT_NAME, (argument) => {
-      this.$rootScope.$apply(callback(argument));
-    });
+    return this._on(OVERLAY_CREATED_EVENT_NAME, callback);
+  }
+
+  _on(eventName, callback) {
+    return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
   createOverlay() {
