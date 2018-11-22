@@ -478,6 +478,16 @@ describe('ContentEditorService', () => {
       expect(ContentService.saveDocument).not.toHaveBeenCalled();
     });
 
+    it('happens with forced save even if the document is pristine', () => {
+      ContentEditor.document = testDocument;
+      ContentService.saveDocument.and.returnValue($q.resolve());
+
+      ContentEditor.save(true);
+      $rootScope.$digest();
+
+      expect(ContentService.saveDocument).toHaveBeenCalled();
+    });
+
     describe('shows error feedback when it', () => {
       it('fails', () => {
         const response = {

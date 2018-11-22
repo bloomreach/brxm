@@ -76,7 +76,7 @@ class Step2Controller {
   }
 
   save() {
-    return this.showLoadingIndicator(() => this.ContentEditor.save()
+    return this.showLoadingIndicator(() => this.ContentEditor.save(true)
       .then(() => {
         this.form.$setPristine();
         this.documentIsSaved = true;

@@ -261,8 +261,8 @@ class ContentEditorService {
     }
   }
 
-  save() {
-    return this._saveDocument()
+  save(force) {
+    return this._saveDocument(force)
       .catch((response) => {
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
@@ -286,8 +286,8 @@ class ContentEditorService {
       });
   }
 
-  _saveDocument() {
-    if (!this.documentDirty) {
+  _saveDocument(force) {
+    if (!force && !this.documentDirty) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDocument(this.document)
