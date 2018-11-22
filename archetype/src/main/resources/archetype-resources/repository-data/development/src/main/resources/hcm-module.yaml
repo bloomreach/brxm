@@ -1,7 +1,0 @@
-group: 
-  name: ${artifactId}
-  <!-- GROUP_AFTER -->
-project: ${artifactId}
-module: 
-  name: ${artifactId}-repository-data-development
-  after: ${artifactId}-repository-data-application
