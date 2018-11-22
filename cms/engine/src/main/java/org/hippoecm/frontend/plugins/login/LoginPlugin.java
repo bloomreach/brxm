@@ -154,8 +154,10 @@ public class LoginPlugin extends RenderPlugin {
 
         @Override
         public void localeChanged(final String selectedLocale, final AjaxRequestTarget target) {
-            // show a localized privacy & terms link when the selected locale changes
-            target.add(privacyTerms);
+            if (privacyTerms.isVisible()) {
+                // show a localized privacy & terms link when the selected locale changes
+                target.add(privacyTerms);
+            }
         }
 
         @Override
