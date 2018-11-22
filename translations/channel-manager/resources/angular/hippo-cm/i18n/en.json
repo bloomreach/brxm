@@ -7,7 +7,7 @@
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Primary Document",
   "SAVE_DOCUMENT_CHANGES_TITLE": "Save document changes?",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "SEARCH_SITEMAP_ITEMS_NAME": "items",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
   "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK": "External link",
