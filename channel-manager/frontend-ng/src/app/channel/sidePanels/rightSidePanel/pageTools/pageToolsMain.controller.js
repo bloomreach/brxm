@@ -15,15 +15,14 @@
  */
 
 class pageToolsMainCtrl {
-  constructor(ExtensionService, PageToolsService) {
+  constructor(PageToolsService) {
     'ngInject';
 
-    this.ExtensionService = ExtensionService;
     this.PageToolsService = PageToolsService;
   }
 
   $onInit() {
-    this.extensions = this.ExtensionService.getExtensions('channel.page.tools');
+    this.extensions = this.PageToolsService.getExtensions();
   }
 
   get selectedTab() {

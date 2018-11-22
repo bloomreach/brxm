@@ -43,11 +43,6 @@ describe('PageMenuService', () => {
     'isCrossChannelPageCopySupported',
   ]);
 
-  const ExtensionServiceMock = jasmine.createSpyObj('ExtensionServiceMock', [
-    'hasExtensions',
-    'getExtensions',
-  ]);
-
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
@@ -55,11 +50,14 @@ describe('PageMenuService', () => {
       $provide.value('SessionService', SessionServiceMock);
     });
 
-    angular.mock.module(($provide) => {
-      $provide.value('ExtensionService', ExtensionServiceMock);
-    });
+    PageToolsService = jasmine.createSpyObj('PageToolsService', [
+      'hasExtensions',
+      'showPageTools',
+    ]);
 
-    ExtensionServiceMock.getExtensions.and.returnValue([]);
+    angular.mock.module(($provide) => {
+      $provide.value('PageToolsService', PageToolsService);
+    });
   });
 
   const getItem = name => PageMenuService.menu.items.find(item => item.name === name);
@@ -74,7 +72,6 @@ describe('PageMenuService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageMenuService_,
-      _PageToolsService_,
       _PageMetaDataService_,
       _SiteMapItemService_,
       _SiteMapService_,
@@ -87,7 +84,6 @@ describe('PageMenuService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageMenuService = _PageMenuService_;
-      PageToolsService = _PageToolsService_;
       PageMetaDataService = _PageMetaDataService_;
       SiteMapItemService = _SiteMapItemService_;
       SiteMapService = _SiteMapService_;
@@ -102,7 +98,7 @@ describe('PageMenuService', () => {
 
     describe('when there are no page extensions', () => {
       beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(false);
+        PageToolsService.hasExtensions.and.returnValue(false);
 
         doInject();
 
@@ -122,15 +118,15 @@ describe('PageMenuService', () => {
         expect(menu.isVisible()).toBe(false);
       });
 
-      it('hides the "info" option', () => {
-        const info = getItem('info');
-        expect(info).not.toBeDefined();
+      it('hides the "tools" option', () => {
+        const tools = getItem('tools');
+        expect(tools).not.toBeDefined();
       });
     });
 
     describe('when there are page extensions', () => {
       beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(true);
+        PageToolsService.hasExtensions.and.returnValue(true);
 
         doInject();
 
@@ -173,15 +169,13 @@ describe('PageMenuService', () => {
         expect(menu.isVisible()).toBe(true);
       });
 
-      it('shows the "info" option', () => {
-        const info = getItem('info');
-        expect(info).toBeDefined();
+      it('shows the "tools" option', () => {
+        const tools = getItem('tools');
+        expect(tools).toBeDefined();
       });
 
-      it('shows page info when clicked', () => {
-        spyOn(PageToolsService, 'showPageTools');
-
-        getItem('info').onClick();
+      it('shows page tools when clicked', () => {
+        getItem('tools').onClick();
 
         expect(PageToolsService.showPageTools).toHaveBeenCalled();
       });
@@ -383,7 +377,7 @@ describe('PageMenuService', () => {
 
     describe('when there are page extensions', () => {
       beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(true);
+        PageToolsService.hasExtensions.and.returnValue(true);
 
         doInject();
 
@@ -396,16 +390,16 @@ describe('PageMenuService', () => {
         expect(menu.isVisible()).toBe(true);
       });
 
-      it('the menu has only the info option', () => {
-        const info = getItem('info');
-        expect(info).toBeDefined();
+      it('the menu has only the tools option', () => {
+        const tools = getItem('tools');
+        expect(tools).toBeDefined();
         expect(PageMenuService.menu.items.length).toBe(1);
       });
     });
 
     describe('when there are no page extensions', () => {
       beforeEach(() => {
-        ExtensionServiceMock.hasExtensions.and.returnValue(false);
+        PageToolsService.hasExtensions.and.returnValue(false);
 
         doInject();
       });

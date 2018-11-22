@@ -15,7 +15,6 @@
  */
 
 describe('pageToolsMainCtrl', () => {
-  let ExtensionService;
   let PageToolsService;
   let $ctrl;
 
@@ -23,13 +22,11 @@ describe('pageToolsMainCtrl', () => {
     angular.mock.module('hippo-cm.channel.pageTools');
 
     inject(($controller, $rootScope) => {
-      ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
-      PageToolsService = {};
+      PageToolsService = jasmine.createSpyObj('PageToolsService', ['getExtensions']);
 
       const $scope = $rootScope.$new();
       $ctrl = $controller('pageToolsMainCtrl', {
         $scope,
-        ExtensionService,
         PageToolsService,
       });
     });
@@ -37,17 +34,17 @@ describe('pageToolsMainCtrl', () => {
 
   it('initializes the page extensions', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 
-    expect(ExtensionService.getExtensions).toHaveBeenCalledWith('channel.page.tools');
+    expect(PageToolsService.getExtensions).toHaveBeenCalled();
     expect($ctrl.extensions).toEqual(extensions);
   });
 
   it('changes the app state when a tab is selected', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 
@@ -60,7 +57,7 @@ describe('pageToolsMainCtrl', () => {
 
   it('sets the selected tab to the selected extension', () => {
     const extensions = [{ id: 'a' }, { id: 'b' }];
-    ExtensionService.getExtensions.and.returnValue(extensions);
+    PageToolsService.getExtensions.and.returnValue(extensions);
 
     $ctrl.$onInit();
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const PAGE_TOOLS = 'channel.page.tools';
+
 /**
  * Determines which page tool extension is shown. Each page tool extension is registered as a separate UI router state
  * below 'hippo-cm.channel.page-tools'. These states are sticky so switching between them keeps the DOM state alive.
@@ -46,7 +48,7 @@ class PageToolsService {
   }
 
   _registerPageExtensionStates() {
-    this.ExtensionService.getExtensions('channel.page.tools').forEach((pageToolExtension) => {
+    this.getExtensions().forEach((pageToolExtension) => {
       this.$stateRegistry.register({
         name: `hippo-cm.channel.page-tools.${pageToolExtension.id}`,
         params: {
@@ -66,6 +68,14 @@ class PageToolsService {
         },
       });
     });
+  }
+
+  getExtensions() {
+    return this.ExtensionService.getExtensions(PAGE_TOOLS);
+  }
+
+  hasExtensions() {
+    return this.ExtensionService.hasExtensions(PAGE_TOOLS);
   }
 
   showPageTools() {
@@ -110,7 +120,7 @@ class PageToolsService {
   }
 
   _loadFirstPageExtension() {
-    const pageExtensions = this.ExtensionService.getExtensions('channel.page.tools');
+    const pageExtensions = this.getExtensions();
     const pageUrl = this._getPageUrl();
     this.$state.go(`hippo-cm.channel.page-tools.${pageExtensions[0].id}`, { pageUrl });
   }

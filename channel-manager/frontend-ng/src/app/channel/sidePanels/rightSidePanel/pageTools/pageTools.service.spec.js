@@ -20,6 +20,7 @@ describe('PageToolsService', () => {
   let $stateRegistry;
   let $translate;
   let ChannelService;
+  let ExtensionService;
   let PageToolsService;
   let PageMetaDataService;
   let RightSidePanelService;
@@ -39,7 +40,7 @@ describe('PageToolsService', () => {
       context: 'page',
     };
 
-    const ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtensions']);
+    ExtensionService = jasmine.createSpyObj('ExtensionService', ['hasExtensions', 'getExtensions']);
     ExtensionService.getExtensions.and.returnValue([extension1, extension2]);
 
     angular.mock.module('hippo-cm.channel.pageTools', ($provide) => {
@@ -102,6 +103,30 @@ describe('PageToolsService', () => {
     expect(pageUrl('https://example.com/', '/news')).toEqual('https://example.com/news');
     expect(pageUrl('https://example.com/en', '/news')).toEqual('https://example.com/en/news');
     expect(pageUrl('https://example.com/en/', '/news/page.html')).toEqual('https://example.com/en/news/page.html');
+  });
+
+  describe('hasExtensions', () => {
+    it('uses the ExtensionService to check for "channel.page.tools" extensions', () => {
+      PageToolsService.hasExtensions();
+      expect(ExtensionService.hasExtensions).toHaveBeenCalledWith('channel.page.tools');
+    });
+
+    it('returns true if there are extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(true);
+      expect(PageToolsService.hasExtensions()).toBe(true);
+    });
+
+    it('returns false if there are no extensions', () => {
+      ExtensionService.hasExtensions.and.returnValue(false);
+      expect(PageToolsService.hasExtensions()).toBe(false);
+    });
+  });
+
+  describe('getExtensions', () => {
+    it('returns "channel.page.tools" extensions', () => {
+      expect(PageToolsService.getExtensions()).toEqual([extension1, extension2]);
+      expect(ExtensionService.getExtensions).toHaveBeenCalledWith('channel.page.tools');
+    });
   });
 
   describe('state per page extension', () => {
