@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,9 @@ public abstract class AbstractLockManager implements InternalLockManager {
     @Override
     public synchronized LockResource lock(final String key) throws LockException {
         checkLive();
+        if (destroyInProgress) {
+            throw new LockManagerException("Cannot obtain lcok, LockManager is being destroyed");
+        }
         validateKey(key);
         final MutableLock lock = localLocks.get(key);
         if (lock == null) {
@@ -119,7 +122,12 @@ public abstract class AbstractLockManager implements InternalLockManager {
         public synchronized void close() {
             if (!closed) {
                 closed = true;
-                unlock(this);
+                try {
+                    unlock(this);
+                } catch (RuntimeException e) {
+                    getLogger().info("Ignoring unlock failure in auto closeable: most likely lock already closed or " +
+                            "LockManager is already destroyed");
+                }
             }
         }
 
@@ -287,12 +295,10 @@ public abstract class AbstractLockManager implements InternalLockManager {
         }
 
         // try graceful shutdown for the interrupted threads
-        long waitMax = 10_000;
+        final long waitMax = 10_000;
         for (Thread thread : waitForThreads) {
             try {
-                long start = System.currentTimeMillis();
                 thread.join(waitMax);
-                waitMax -= System.currentTimeMillis() - start;
             } catch (InterruptedException e) {
                 getLogger().info("Thread '{}' already interrupted");
                 thread.interrupt();
