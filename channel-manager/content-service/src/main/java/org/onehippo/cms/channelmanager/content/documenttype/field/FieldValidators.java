@@ -15,6 +15,11 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Constants for the names of known field validators.
  */
@@ -31,4 +36,5 @@ public interface FieldValidators {
     String RESOURCE_REQUIRED = "resource-required";
     String CONTENT_BLOCKS = "contentblocks-validator";
 
+    Set<String> REQUIRED_VALIDATORS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED, RESOURCE_REQUIRED)));
 }
