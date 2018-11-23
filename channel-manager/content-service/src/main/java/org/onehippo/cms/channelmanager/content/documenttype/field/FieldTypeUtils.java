@@ -83,7 +83,7 @@ public class FieldTypeUtils {
     private static final Map<String, Validator> VALIDATOR_MAP;
 
     // Unsupported validators of which we know they have field-scope only
-    private static final Set<String> FIELD_VALIDATOR_WHITELIST;
+    private static final Set<String> UNSUPPORTED_FIELD_VALIDATORS;
 
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
@@ -101,14 +101,14 @@ public class FieldTypeUtils {
         VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, Validator.REQUIRED);
         // Apparently, making a String field required puts above two(!) values onto the validator property.
 
-        FIELD_VALIDATOR_WHITELIST = new HashSet<>();
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.EMAIL);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.ESCAPED);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.HTML);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.IMAGE_REFERENCES);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.REFERENCES);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.REQUIRED);
-        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.RESOURCE_REQUIRED);
+        UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.EMAIL);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.ESCAPED);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.HTML);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.IMAGE_REFERENCES);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REFERENCES);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REQUIRED);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("Label", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -180,7 +180,7 @@ public class FieldTypeUtils {
                 // Do nothing
             } else if (VALIDATOR_MAP.containsKey(validator)) {
                 fieldType.addValidator(VALIDATOR_MAP.get(validator));
-            } else if (FIELD_VALIDATOR_WHITELIST.contains(validator)) {
+            } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validator)) {
                 fieldType.addValidator(Validator.UNSUPPORTED);
             } else {
                 docType.setReadOnlyDueToUnknownValidator(true);

@@ -81,6 +81,17 @@ public class FieldsInformationTest {
     }
 
     @Test
+    public void addCustomResourceRequiredField() {
+        final FieldsInformation info = FieldsInformation.allSupported();
+        info.addUnsupportedField("Test", Collections.singletonList("resource-required"));
+
+        assertFalse(info.isAllFieldsIncluded());
+        assertFalse(info.getCanCreateAllRequiredFields());
+        assertThat(info.getUnsupportedFieldTypes(), equalTo(Collections.singleton("Custom")));
+        assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("Custom")));
+    }
+
+    @Test
     public void addReportableRequiredField() {
         final FieldsInformation info = FieldsInformation.allSupported();
         info.addUnsupportedField("DynamicDropdown", Collections.singletonList("required"));
