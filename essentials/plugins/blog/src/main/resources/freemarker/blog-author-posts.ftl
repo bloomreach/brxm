@@ -11,6 +11,12 @@
       <h3 class="panel-title"><@fmt.message key="blog.moreby" var="moreby"/>${moreby?html}&nbsp;${author.fullName?html}</h3>
       <@hst.manageContent hippobean=author/>
     </div>
+    <#if author.image??>
+      <div>
+        <@hst.link var="img" hippobean=author.image.original/>
+        <img src="${img?html}" title="${author.fullName?html}" alt="${author.fullName?html}" class="img-responsive"/>
+      </div>
+    </#if>
     <#if pageable?? && (pageable.total > 0)>
       <div class="panel-body">
         <#list pageable.items as item>
