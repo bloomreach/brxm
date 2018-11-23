@@ -175,6 +175,15 @@
               <commandlineArgs>ci</commandlineArgs>
             </configuration>
           </execution>
+          <execution>
+            <id>npm-build</id>
+            <phase>process-resources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>run build</commandlineArgs>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
