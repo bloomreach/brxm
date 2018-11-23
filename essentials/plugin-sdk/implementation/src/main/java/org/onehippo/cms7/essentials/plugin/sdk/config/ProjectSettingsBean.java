@@ -52,6 +52,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     private String applicationSubModule;
     private String developmentSubModule;
     private String webfilesSubModule;
+    private String siteDataModule;
     private String beansFolder;
 
     private String hstRoot;
@@ -189,6 +190,15 @@ public class ProjectSettingsBean implements ProjectSettings {
 
     public void setWebfilesSubModule(final String webfilesSubModule) {
         this.webfilesSubModule = webfilesSubModule;
+    }
+
+    @Override
+    public String getSiteDataModule() {
+        return siteDataModule;
+    }
+
+    public void setSiteDataModule(final String siteDataModule) {
+        this.siteDataModule = siteDataModule;
     }
 
     @Override

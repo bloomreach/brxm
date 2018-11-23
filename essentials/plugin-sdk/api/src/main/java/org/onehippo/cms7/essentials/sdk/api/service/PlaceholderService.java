@@ -74,6 +74,8 @@ public interface PlaceholderService {
     String APPLICATION_CONTENT = "applicationContent";
     String DEVELOPMENT_CONFIG = "developmentConfig";
     String DEVELOPMENT_CONTENT = "developmentContent";
+    String SITE_APPLICATION_CONFIG = "siteApplicationConfig";
+    String SITE_APPLICATION_CONTENT = "siteApplicationContent";
     String HST_ROOT = "hstRoot";
 
     /**

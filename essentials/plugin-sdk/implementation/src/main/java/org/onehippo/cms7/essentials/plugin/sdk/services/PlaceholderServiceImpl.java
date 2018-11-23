@@ -161,5 +161,9 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         // development
         data.put(DEVELOPMENT_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-config"));
         data.put(DEVELOPMENT_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-content"));
+
+        // site application
+        data.put(SITE_APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.SITE_DATA).resolve("hcm-config"));
+        data.put(SITE_APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.SITE_DATA).resolve("hcm-content"));
     }
 }

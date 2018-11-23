@@ -23,6 +23,7 @@ public enum Module {
     INVALID(null),
     SITE("site"),
     SITE_COMPONENTS("site-components"),
+    SITE_DATA("site-data"),
     SITE_WEBAPP("site-webapp"),
     CMS("cms"),
     CMS_DEPENDENCIES("cms-dependencies"),
