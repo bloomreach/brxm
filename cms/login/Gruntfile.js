@@ -124,14 +124,14 @@ module.exports = function (grunt) {
             src: ['**/*.{eot,svg,ttf,woff,woff2}'],
             dest: '<%= build.skin %>/fonts/open-sans/'
           },
-          // {
-          //   // images go into the package relative to Icons.java
-          //   expand: true,
-          //   nonull: true,
-          //   cwd: '<%= build.src %>/images',
-          //   src: ['**/*'],
-          //   dest: '<%= build.images %>'
-          // },
+          {
+            // images go into the package relative to Icons.java
+            expand: true,
+            nonull: true,
+            cwd: '<%= build.src %>/images',
+            src: ['**/*'],
+            dest: '<%= build.images %>'
+          },
         ]
       }
     },
