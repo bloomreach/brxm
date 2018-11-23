@@ -136,7 +136,7 @@ public class FieldsInformation {
 
         // Unsupported fields cannot be created, so only when the unsupported field is not required
         // it may still be possible to create all required fields
-        final boolean isRequired = validators.contains(FieldValidators.REQUIRED);
+        final boolean isRequired = validators.stream().anyMatch(FieldValidators.REQUIRED_VALIDATORS::contains);
         canCreateAllRequiredFields &= !isRequired;
 
         if (isRequired) {
