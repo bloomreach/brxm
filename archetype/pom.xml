@@ -34,8 +34,8 @@
   <properties>
     <release.essentials.version>${project.version}</release.essentials.version>
     <notice.project.name>BloomReach CMS Site Project Archetype</notice.project.name>
-    <main.app.groupId>org.onehippo.cms7.main</main.app.groupId>
-    <main.app.artifactId>main</main.app.artifactId>
+    <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
+    <main.app.artifactId>gettingstarted</main.app.artifactId>
     <main.app.version>0.1.0</main.app.version>
     <main.app.name>Getting Started Main Site</main.app.name>
 

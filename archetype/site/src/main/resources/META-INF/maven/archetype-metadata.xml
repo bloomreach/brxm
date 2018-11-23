@@ -7,23 +7,28 @@
   partial="false">
   <requiredProperties>
     <requiredProperty key="groupId">
-      <!--<defaultValue>org.example.site</defaultValue>-->
+      <defaultValue>org.example.site</defaultValue>
     </requiredProperty>
     <requiredProperty key="artifactId">
       <validationRegex><![CDATA[^[a-zA-Z0-9]+$]]></validationRegex>
-      <!--<defaultValue>mysiteproject</defaultValue>-->
+      <defaultValue>mysiteproject</defaultValue>
     </requiredProperty>
     <requiredProperty key="version">
-      <!--<defaultValue>0.1.0-SNAPSHOT</defaultValue>-->
+      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
     </requiredProperty>
     <requiredProperty key="projectName">
-      <!--<defaultValue>My Site Project</defaultValue>-->
+      <defaultValue>My Site Project</defaultValue>
     </requiredProperty>
-    <requiredProperty key="parentGroupId"/>
+    <requiredProperty key="parentGroupId">
+      <defaultValue>org.example</defaultValue>
+    </requiredProperty>
     <requiredProperty key="parentArtifactId">
       <validationRegex><![CDATA[^[a-zA-Z0-9]+$]]></validationRegex>
+      <defaultValue>myproject</defaultValue>
     </requiredProperty>
-    <requiredProperty key="parentVersion"/>
+    <requiredProperty key="parentVersion">
+      <defaultValue>0.1.0-SNAPSHOT</defaultValue>
+    </requiredProperty>
   </requiredProperties>
   <fileSets>
     <fileSet filtered="false" encoding="UTF-8">
