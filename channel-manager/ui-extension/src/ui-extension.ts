@@ -27,70 +27,10 @@
  * Disable TSLint for imports that start with an uppercase letter
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
-import Emittery = require('emittery'); // tslint:disable-line:import-name
-import { ChannelScope, Emitter, EventCallback, PageScope, PageScopeEvents, UiScope } from './api';
-import { connect, ParentConnection } from './parent';
-
-abstract class Scope {
-  protected constructor(protected _parent: ParentConnection) {
-  }
-}
-
-abstract class ScopeEmitter<Events> extends Scope implements Emitter<Events> {
-  constructor(parent: ParentConnection, private _eventEmitter: Emittery, private _eventScope: string) {
-    super(parent);
-  }
-
-  on(eventName: keyof Events, listener: EventCallback<Events>) {
-    const scopedEventName = `${this._eventScope}.${eventName}`;
-    return this._eventEmitter.on(scopedEventName, listener);
-  }
-}
-
-class Page extends ScopeEmitter<PageScopeEvents> implements PageScope {
-  get() {
-    return this._parent.call('getPage');
-  }
-
-  refresh() {
-    return this._parent.call('refreshPage');
-  }
-}
-
-class Channel extends Scope implements ChannelScope {
-  page: Page;
-
-  constructor(parent: ParentConnection, eventEmitter: Emittery) {
-    super(parent);
-    this.page = new Page(parent, eventEmitter, 'channel.page');
-  }
-
-  refresh() {
-    return this._parent.call('refreshChannel');
-  }
-}
-
-class Ui extends Scope implements UiScope {
-  baseUrl: string;
-  channel: ChannelScope;
-  extension: {
-    config: string,
-  };
-  locale: string;
-  timeZone: string;
-  user: string;
-  version: string;
-
-  constructor(parent: ParentConnection, eventEmitter: Emittery) {
-    super(parent);
-    this.channel = new Channel(parent, eventEmitter);
-  }
-
-  init(): Promise<Ui> {
-    return this._parent.call('getProperties')
-      .then(properties => Object.assign(this, properties));
-  }
-}
+import Emittery = require('emittery');  // tslint:disable-line:import-name
+import { UiScope } from './api';
+import { connect } from './parent';
+import { Ui } from './ui';
 
 export default class UiExtension {
   static register(): Promise<UiScope> {
@@ -102,5 +42,8 @@ export default class UiExtension {
   }
 }
 
-// enable UiExtension.register() in ui-extension.min.js
+/**
+ * Enable UiExtension.register() in ui-extension.min.js
+ * @hidden don't include in the generated documentation since it duplicates UiExtension.register()
+ */
 export const register = UiExtension.register;
