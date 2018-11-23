@@ -24,7 +24,9 @@ const uiProperties: UiProperties = {
   },
   locale: 'en',
   timeZone: 'Europe/Amsterdam',
-  user: 'admin',
+  user: {
+    id: 'admin',
+  },
   version: '13.0.0',
 };
 
