@@ -1,0 +1,33 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import "../../../../../api/src/main/styling/styles/variables";
+@import "../../../../../api/src/main/styling/styles/mixins";
+
+// Login
+$login-extend-bgcolor:               $primary;
+$login-panel-bgcolor:                $lightest-shade;
+$login-panel-border:                 $dark-shade;
+$login-panel-width:                  305px;
+$login-panel-left:                   80px;
+$login-panel-header-height:          84px;
+$login-panel-header-bgcolor:         $white;
+$login-panel-center-h2-color:        $darker-shade;
+$login-panel-center-input-border:    $dark-gray;
+$login-panel-center-button-border:   $primary;
+$login-panel-center-button-bgcolor:  $primary;
+$login-panel-center-button-color:    $white;
+$login-panel-footer-color:           $dark-shade;
+$login-panel-feedback-border:        $dark-gray;
+$login-panel-feedback-bgcolor:       $warning-light;
