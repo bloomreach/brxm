@@ -23,120 +23,50 @@
     <version>30-SNAPSHOT</version>
   </parent>
 
-  <name>BloomReach CMS Project Archetype</name>
-  <description>This project enables you to start with a skeleton project
-    gluing together all the necessary components and compatible versions.
-  </description>
+  <name>BloomReach CMS Project Archetype Parent</name>
+  <description>BloomReach CMS Project Archetype Parent</description>
 
-  <artifactId>hippo-project-archetype</artifactId>
+  <artifactId>hippo-project-archetype-parent</artifactId>
   <version>13.0.0-SNAPSHOT</version>
-  <packaging>maven-archetype</packaging>
+  <packaging>pom</packaging>
+
 
   <properties>
     <release.essentials.version>${project.version}</release.essentials.version>
-    <notice.project.name>BloomReach CMS Project Archetype</notice.project.name>
-    <gettingstarted.app.groupId>org.onehippo.cms7.hst</gettingstarted.app.groupId>
-    <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
-    <gettingstarted.app.version>0.1.0</gettingstarted.app.version>
-    <gettingstarted.app.name>Getting Started</gettingstarted.app.name>
-    <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
+    <notice.project.name>BloomReach CMS Site Project Archetype</notice.project.name>
+    <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
+    <main.app.artifactId>gettingstarted</main.app.artifactId>
+    <main.app.version>0.1.0</main.app.version>
+    <main.app.name>Getting Started Main Site</main.app.name>
+
+    <extra.app.groupId>org.onehippo.cms7.extra</extra.app.groupId>
+    <extra.app.artifactId>extra</extra.app.artifactId>
+    <extra.app.version>0.1.0</extra.app.version>
+    <extra.app.name>Getting Started Extra Site</extra.app.name>
+
+    <maven.archetype.plugin.version>2.4</maven.archetype.plugin.version>
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
+    <maven.dependency.plugin.version>3.1.1</maven.dependency.plugin.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <name>Hippo Maven 2</name>
-      <url>https://maven.onehippo.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-  </repositories>
-
-  <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-project-archetype.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-project-archetype.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
-  </scm>
 
   <build>
-    <defaultGoal>package</defaultGoal>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.archetype</groupId>
-        <artifactId>archetype-packaging</artifactId>
-        <version>${maven.archetype.plugin.version}</version>
-      </extension>
-    </extensions>
-
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <configuration>
-              <target>
-                <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                  <include name="pom.xml"/>
-                </replace>
-                <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                  <include name="pom.xml"/>
-                </replace>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-archetype-plugin</artifactId>
-        <version>${maven.archetype.plugin.version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <skip>${skipITs}</skip>
-        </configuration>     
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
-        <executions>
-          <execution>
-            <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
-            <id>copy-resources</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/gettingstarted</outputDirectory>
-              <resources>          
-                <resource>
-                  <directory>${project.build.directory}/test-classes/projects/gettingstarted/project/gettingstarted</directory>
-                </resource>
-              </resources>
-              <includeEmptyDirs>true</includeEmptyDirs>
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>${maven.dependency.plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+
+  <modules>
+    <module>main</module>
+    <module>site</module>
+  </modules>
 
   <profiles>
     <profile>
@@ -151,7 +81,10 @@
               <excludes combine.children="append">
                 <!-- skip archetype resources itself (but should not contain 3rd party copyrighted/licensed content) -->
                 <exclude>src/**</exclude>
+                <exclude>main/src/**</exclude>
+                <exclude>site/src/**</exclude>
                 <exclude>sync-marker.txt</exclude>
+                <exclude>**/target/**</exclude>
               </excludes>
             </configuration>
           </plugin>
