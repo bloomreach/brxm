@@ -106,6 +106,19 @@
               <goal>run</goal>
             </goals>
           </execution>
+          <execution>
+            <id>Rename webfile bundle dir</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target name="moveDirs">
+                <move file="${project.build.outputDirectory}/archetype-resources/repository-data/webfiles/src/main/resources/__rootArtifactId__"
+                      tofile="${project.build.outputDirectory}/archetype-resources/repository-data/webfiles/src/main/resources/site" includeEmptyDirs="yes" verbose="true"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
 

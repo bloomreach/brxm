@@ -4,4 +4,4 @@
 #set($hyphen = '-')
 #set($empty = '')
 definitions:
-  webfilebundle: site
+  webfilebundle: ${rootArtifactId.replace($hyphen,$empty)}

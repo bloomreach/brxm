@@ -213,7 +213,7 @@
                   <artifactId>${parentArtifactId}-webapp</artifactId>
                   <type>war</type>
                   <properties>
-                    <context>/${parentArtifactId.replace($hyphen,$empty)}</context>
+                    <context>/site</context>
                   </properties>
                 </deployable>
               </deployables>

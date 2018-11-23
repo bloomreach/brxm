@@ -235,7 +235,7 @@
                   <location>${dollar}{project.basedir}/site/webapp/target/site.war</location>
                   <type>war</type>
                   <properties>
-                    <context>/${rootArtifactId.replace($hyphen,$empty)}</context>
+                    <context>/site</context>
                   </properties>
                 </deployable>
                 <deployable>
