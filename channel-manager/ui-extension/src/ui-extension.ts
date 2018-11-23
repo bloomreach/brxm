@@ -78,7 +78,9 @@ class Ui extends Scope implements UiScope {
   };
   locale: string;
   timeZone: string;
-  user: string;
+  user:  {
+    id: string,
+  };
   version: string;
 
   constructor(parent: ParentConnection, eventEmitter: Emittery) {

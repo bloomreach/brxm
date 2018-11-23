@@ -114,7 +114,9 @@ class IframeExtensionCtrl {
       },
       locale: this.ConfigService.locale,
       timeZone: this.ConfigService.timeZone,
-      user: this.ConfigService.cmsUser,
+      user: {
+        id: this.ConfigService.cmsUser,
+      },
       version: this.ConfigService.cmsVersion,
     };
   }

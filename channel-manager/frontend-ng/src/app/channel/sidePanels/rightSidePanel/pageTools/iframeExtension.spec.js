@@ -233,7 +233,7 @@ describe('iframeExtension', () => {
       describe('user', () => {
         it('is set to the current CMS user', () => {
           ConfigService.cmsUser = 'editor';
-          expect(methods.getProperties().user).toBe('editor');
+          expect(methods.getProperties().user.id).toBe('editor');
         });
       });
 
