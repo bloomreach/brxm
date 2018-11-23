@@ -161,26 +161,4 @@
     </plugins>
   </build>
 
-  <!--<profiles>-->
-    <!--<profile>-->
-      <!--<id>pedantic</id>-->
-      <!--<build>-->
-        <!--<plugins>-->
-          <!--<plugin>-->
-            <!--<groupId>org.apache.rat</groupId>-->
-            <!--<artifactId>apache-rat-plugin</artifactId>-->
-            <!--<inherited>false</inherited>-->
-            <!--<configuration>-->
-              <!--<excludes combine.children="append">-->
-                <!--&lt;!&ndash; skip archetype resources itself (but should not contain 3rd party copyrighted/licensed content) &ndash;&gt;-->
-                <!--<exclude>src/**</exclude>-->
-                <!--<exclude>sync-marker.txt</exclude>-->
-              <!--</excludes>-->
-            <!--</configuration>-->
-          <!--</plugin>-->
-        <!--</plugins>-->
-      <!--</build>-->
-    <!--</profile>-->
-  <!--</profiles>-->
-
 </project>
