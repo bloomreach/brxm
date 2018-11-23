@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,11 +20,15 @@ import java.util.Collections;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.HippoHeaderItem;
 
 public class LoginHeaderItem extends HippoHeaderItem {
 
     private static final LoginHeaderItem INSTANCE = new LoginHeaderItem();
+
+    protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-login-theme.css");
+    protected static final ResourceReference THEME_MIN_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-login-theme.min.css");
 
     public static LoginHeaderItem get() {
         return INSTANCE;
