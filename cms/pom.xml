@@ -54,6 +54,7 @@
     <module>engine</module>
     <module>test</module>
 
+    <module>login</module>
     <module>console</module>
     <module>config</module>
 
