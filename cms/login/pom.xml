@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@
     <version>13.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Engine</name>
-  <description>Hippo CMS Wicket plugin framework for use by frontend applications and components</description>
-  <artifactId>hippo-cms-engine</artifactId>
+  <name>CMS Login</name>
+  <description>Hippo CMS Login Module</description>
+  <artifactId>hippo-cms-login</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -54,6 +54,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
@@ -69,6 +74,7 @@
     </dependency>
 
     <!-- Dependencies for the CMS-HST REST API -->
+    <!--
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
@@ -85,21 +91,22 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-proxy</artifactId>
     </dependency>
+    -->
     <dependency>
       <groupId>org.apache.wicket</groupId>
       <artifactId>wicket-core</artifactId>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-extensions</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-datetime</artifactId>
-      <scope>compile</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.apache.wicket</groupId>-->
+      <!--<artifactId>wicket-extensions</artifactId>-->
+      <!--<scope>compile</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.wicket</groupId>-->
+      <!--<artifactId>wicket-datetime</artifactId>-->
+      <!--<scope>compile</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
@@ -121,13 +128,6 @@
       <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -138,10 +138,6 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.js</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
@@ -149,10 +145,50 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
-          <include>**/*.xml</include>
+          <include>**/*.png</include>
+          <include>**/*.js</include>
+        </includes>
+      </resource>
+      <!-- package resources fetched via NPM -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/node_modules/jstimezonedetect/dist</directory>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/plugins/login</targetPath>
+        <includes>
+          <include>jstz.min.js</include>
         </includes>
       </resource>
     </resources>
+    <plugins>
+      <!-- Use NPM to fetch external JavaScript dependencies -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec.version}</version>
+        <executions>
+          <execution>
+            <id>npm-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>ci</commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>node_modules</directory>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

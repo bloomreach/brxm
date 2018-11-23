@@ -55,7 +55,7 @@ public class LoginPlugin extends RenderPlugin {
     private static final String AUTOCOMPLETE = "signin.form.autocomplete";
     private static final String LOCALES = "locales";
     private static final String SUPPORTED_BROWSERS = "browsers.supported";
-    
+
     public static final String[] DEFAULT_LOCALES = {"en"};
 
     private ResourceReference editionCss;
