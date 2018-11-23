@@ -38,12 +38,14 @@
       </includes>
       <excludes>
         <exclude>shared-lib-development-data-component.xml</exclude>
+        <exclude>webapps-component.xml</exclude>
       </excludes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/assembly</directory>
       <includes>
         <include>shared-lib-development-data-component.xml</include>
+        <include>webapps-component.xml</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
