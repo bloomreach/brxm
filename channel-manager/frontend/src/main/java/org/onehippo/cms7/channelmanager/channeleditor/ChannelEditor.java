@@ -185,27 +185,22 @@ public class ChannelEditor extends ExtPanel {
         this.ckeditorUrl = CKEditorConstants.getCKEditorJsReference().getUrl().toString();
         this.ckeditorTimestamp = CKEditorConstants.CKEDITOR_TIMESTAMP;
 
+        final String channelEditorId = getMarkupId();
+
         String variantsPath = null;
         if (config != null) {
             variantsPath = config.getString("variantsPath");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
+            getUuid(config.getString("projectsPath")).ifPresent(uuid -> this.projectsEnabled = true);
+            addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
+            addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, channelEditorId));
         }
         getUuid(variantsPath).ifPresent(uuid -> { 
             this.variantsUuid = uuid; 
             this.relevancePresent = true;
         });
-        Optional.of(config).ifPresent(
-                (c -> getUuid(c.getString("projectsPath"))
-                        .ifPresent(uuid -> this.projectsEnabled = true))
-        );
-
-        final String channelEditorId = getMarkupId();
-
-        addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
-        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, channelEditorId));
-
 
         imagePicker = new ImagePicker(context, channelEditorId);
         add(imagePicker.getBehavior());
