@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.onehippo.cms7.essentials.components.model.AuthorEntry;
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImage;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
