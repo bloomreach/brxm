@@ -242,30 +242,30 @@ describe('Create content step 2 controller', () => {
     let deleteDocumentSpy;
 
     beforeEach(() => {
-      spyOn(ContentEditor, 'confirmDiscardChanges').and.callThrough();
+      spyOn($ctrl, 'confirmDiscardChanges');
       deleteDocumentSpy = spyOn(ContentEditor, 'deleteDocument').and.returnValue($q.resolve());
     });
 
     it('allows ui-exit without dialog if document is already saved', () => {
       $ctrl.documentIsSaved = true;
       expect($ctrl.uiCanExit()).toBe(true);
-      expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
+      expect($ctrl.confirmDiscardChanges).not.toHaveBeenCalled();
     });
 
     it('allows ui-exit without dialog when switching editor', () => {
       $ctrl.switchingEditor = true;
       expect($ctrl.uiCanExit()).toBe(true);
-      expect(ContentEditor.confirmDiscardChanges).not.toHaveBeenCalled();
+      expect($ctrl.confirmDiscardChanges).not.toHaveBeenCalled();
     });
 
     it('calls confirmDiscardChanges if document is not yet saved', () => {
-      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
+      $ctrl.confirmDiscardChanges.and.returnValue($q.resolve());
       $ctrl.uiCanExit();
       expect($ctrl.confirmDiscardChanges).toHaveBeenCalled();
     });
 
     it('does not discard the changes if confirmDiscardChanges is canceled', (done) => {
-      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.reject());
+      $ctrl.confirmDiscardChanges.and.returnValue($q.reject());
 
       $ctrl.uiCanExit().then(
         () => fail('Dialog promise should not be resolved'),
@@ -278,7 +278,7 @@ describe('Create content step 2 controller', () => {
     });
 
     it('deletes the document when confirmDiscardChanges is resolved', (done) => {
-      spyOn($ctrl, 'confirmDiscardChanges').and.returnValue($q.resolve());
+      $ctrl.confirmDiscardChanges.and.returnValue($q.resolve());
 
       $ctrl.uiCanExit().then(() => {
         expect(deleteDocumentSpy).toHaveBeenCalled();

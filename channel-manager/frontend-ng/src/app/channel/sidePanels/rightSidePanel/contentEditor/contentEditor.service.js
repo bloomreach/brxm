@@ -171,6 +171,10 @@ class ContentEditorService {
     return this.documentDirty;
   }
 
+  isPristine() {
+    return !this.isDocumentDirty() || this.isKilled();
+  }
+
   isEditing() {
     return angular.isDefined(this.document) && angular.isDefined(this.documentType);
   }
@@ -347,26 +351,6 @@ class ContentEditorService {
       });
   }
 
-  confirmDiscardChanges(messageKey, titleKey) {
-    if (this._isPristine()) {
-      return this.$q.resolve();
-    }
-    const translateParams = {
-      documentName: this.document.displayName,
-    };
-
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant(messageKey, translateParams))
-      .ok(this.$translate.instant('DISCARD'))
-      .cancel(this.$translate.instant('CANCEL'));
-
-    if (titleKey) {
-      confirm.title(this.$translate.instant(titleKey, translateParams));
-    }
-
-    return this.DialogService.show(confirm);
-  }
-
   confirmClose(messageKey, messageParams) {
     return this.confirmSaveOrDiscardChanges(messageKey, messageParams)
       .then(() => this.discardChanges())
@@ -392,7 +376,7 @@ class ContentEditorService {
   }
 
   _askSaveOrDiscardChanges(messageKey, messageParams = {}) {
-    if (this._isPristine()) {
+    if (this.isPristine()) {
       return this.$q.resolve('DISCARD');
     }
 
@@ -413,10 +397,6 @@ class ContentEditorService {
       },
       bindToController: true,
     });
-  }
-
-  _isPristine() {
-    return !this.isDocumentDirty() || this.isKilled();
   }
 
   discardChanges() {

@@ -22,6 +22,7 @@ class EditContentMainCtrl {
     CmsService,
     ConfigService,
     ContentEditor,
+    DialogService,
     EditContentService,
     HippoIframeService,
     ProjectService,
@@ -31,9 +32,11 @@ class EditContentMainCtrl {
 
     this.$q = $q;
     this.$scope = $scope;
+    this.$translate = $translate;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
+    this.DialogService = DialogService;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
@@ -75,8 +78,22 @@ class EditContentMainCtrl {
       });
   }
 
+  _confirmDiscardChanges(messageKey) {
+    if (this.ContentEditor.isPristine()) {
+      return this.$q.resolve();
+    }
+
+    const translateParams = { documentName: this.ContentEditor.getDocumentDisplayName() };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant(messageKey, translateParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
   discard() {
-    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
+    return this._confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
       .then(() => {
         this.form.$setPristine();
         this.ContentEditor.discardChanges()
