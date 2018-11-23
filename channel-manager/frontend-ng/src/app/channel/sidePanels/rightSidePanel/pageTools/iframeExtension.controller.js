@@ -116,6 +116,9 @@ class IframeExtensionCtrl {
       timeZone: this.ConfigService.timeZone,
       user: {
         id: this.ConfigService.cmsUser,
+        firstName: this.ConfigService.cmsUserFirstName,
+        lastName: this.ConfigService.cmsUserLastName,
+        displayName: this.ConfigService.cmsUserDisplayName,
       },
       version: this.ConfigService.cmsVersion,
     };

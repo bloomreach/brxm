@@ -80,6 +80,9 @@ class Ui extends Scope implements UiScope {
   timeZone: string;
   user:  {
     id: string,
+    firstName: string,
+    lastName: string,
+    displayName: string,
   };
   version: string;
 
