@@ -51,7 +51,10 @@ describe('register', () => {
       expect(ui.extension.config).toBe('testConfig');
       expect(ui.locale).toBe('en');
       expect(ui.timeZone).toBe('Europe/Amsterdam');
-      expect(ui.user).toBe('admin');
+      expect(ui.user.id).toBe('admin');
+      expect(ui.user.firstName).toBe('Ad');
+      expect(ui.user.lastName).toBe('Min');
+      expect(ui.user.displayName).toBe('Ad Min');
       expect(ui.version).toBe('13.0.0');
     });
 
