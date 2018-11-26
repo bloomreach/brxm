@@ -20,4 +20,4 @@ Build with snapshot dependencies:
        http://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
 
 # Develop AngularJS UI
-See the frontent-ng/README.md
+See the frontend-ng/README.md

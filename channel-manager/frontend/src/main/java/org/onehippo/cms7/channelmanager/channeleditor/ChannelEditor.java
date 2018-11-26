@@ -42,6 +42,8 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.util.UserUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,11 +53,12 @@ import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
 import org.onehippo.cms7.channelmanager.extensions.ChannelEditorUiExtensionValidator;
+import org.onehippo.cms7.channelmanager.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.channelmanager.extensions.UiExtension;
 import org.onehippo.cms7.channelmanager.extensions.UiExtensionLoader;
 import org.onehippo.cms7.channelmanager.extensions.UiExtensionValidator;
-import org.onehippo.cms7.channelmanager.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
@@ -101,6 +104,18 @@ public class ChannelEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String cmsUser;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String cmsUserFirstName;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String cmsUserLastName;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String cmsUserDisplayName;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -161,7 +176,8 @@ public class ChannelEditor extends ExtPanel {
             this.timeZone = timeZone.getID();
         }
 
-        this.cmsUser = userSession.getJcrSession().getUserID();
+        setUserData(userSession.getJcrSession());
+        
         this.cmsVersion = new SystemInfoDataProvider().getReleaseVersion();
 
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
@@ -169,27 +185,22 @@ public class ChannelEditor extends ExtPanel {
         this.ckeditorUrl = CKEditorConstants.getCKEditorJsReference().getUrl().toString();
         this.ckeditorTimestamp = CKEditorConstants.CKEDITOR_TIMESTAMP;
 
+        final String channelEditorId = getMarkupId();
+
         String variantsPath = null;
         if (config != null) {
             variantsPath = config.getString("variantsPath");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             registerEditorOpenListener(context, config);
+            getUuid(config.getString("projectsPath")).ifPresent(uuid -> this.projectsEnabled = true);
+            addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
+            addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, channelEditorId));
         }
         getUuid(variantsPath).ifPresent(uuid -> { 
             this.variantsUuid = uuid; 
             this.relevancePresent = true;
         });
-        Optional.of(config).ifPresent(
-                (c -> getUuid(c.getString("projectsPath"))
-                        .ifPresent(uuid -> this.projectsEnabled = true))
-        );
-
-        final String channelEditorId = getMarkupId();
-
-        addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
-        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, channelEditorId));
-
 
         imagePicker = new ImagePicker(context, channelEditorId);
         add(imagePicker.getBehavior());
@@ -202,6 +213,21 @@ public class ChannelEditor extends ExtPanel {
 
         richTextImagePicker = new RichTextImageVariantPicker(context, channelEditorId);
         add(richTextImagePicker.getBehavior());
+    }
+
+    private void setUserData(final javax.jcr.Session session) {
+        this.cmsUser = session.getUserID();
+        final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+        try {
+            final User user = workspace.getSecurityService().getUser(session.getUserID());
+            this.cmsUserFirstName = user.getFirstName();
+            this.cmsUserLastName = user.getLastName();
+        } catch (RepositoryException e) {
+            log.error("Unable to retrieve information of user '{}'.", session.getUserID(), e);
+        }
+
+        UserUtils.getUserName(this.cmsUser, session)
+                 .ifPresent(userName -> this.cmsUserDisplayName = userName);
     }
 
     @Override

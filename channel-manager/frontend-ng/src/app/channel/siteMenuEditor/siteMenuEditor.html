@@ -81,7 +81,8 @@
               </md-input-container>
             </div>
             <div>
-              <md-radio-group ng-model="$ctrl.editingItem.linkType">
+              <md-radio-group class="md-primary" 
+                              ng-model="$ctrl.editingItem.linkType">
                 <md-radio-button ng-disabled="$ctrl.isLockedByOther()"
                                  value="SITEMAPITEM">{{ ::'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
                 <md-radio-button ng-disabled="$ctrl.isLockedByOther()"
@@ -124,7 +125,9 @@
               </md-input-container>
             </div>
             <div ng-if="$ctrl.hasLocalParameters()" class="qa-advanced-settings">
-              <md-switch ng-model="$ctrl.showLocalParameters" aria-label="{{ ::'ADVANCED_SETTINGS' | translate }}">
+              <md-switch
+                class="md-primary"
+                ng-model="$ctrl.showLocalParameters" aria-label="{{ ::'ADVANCED_SETTINGS' | translate }}">
                 {{ ::'ADVANCED_SETTINGS' | translate }}
               </md-switch>
               <div ng-if="$ctrl.showLocalParameters" layout="row" data-ng-repeat="(key, value) in $ctrl.editingItem.localParameters">

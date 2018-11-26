@@ -230,10 +230,25 @@ describe('iframeExtension', () => {
         });
       });
 
-      describe('user', () => {
-        it('is set to the current CMS user', () => {
+      describe('in user data', () => {
+        it('sets the id to the current CMS user name', () => {
           ConfigService.cmsUser = 'editor';
-          expect(methods.getProperties().user).toBe('editor');
+          expect(methods.getProperties().user.id).toBe('editor');
+        });
+
+        it('sets the firstName to the current CMS users first name', () => {
+          ConfigService.cmsUserFirstName = 'Ed';
+          expect(methods.getProperties().user.firstName).toBe('Ed');
+        });
+
+        it('sets the lastName to the current CMS users last name', () => {
+          ConfigService.cmsUserLastName = 'Itor';
+          expect(methods.getProperties().user.lastName).toBe('Itor');
+        });
+
+        it('sets the displayName to the current CMS users display name', () => {
+          ConfigService.cmsUserDisplayName = 'Ed Itor';
+          expect(methods.getProperties().user.displayName).toBe('Ed Itor');
         });
       });
 
