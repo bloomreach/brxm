@@ -28,13 +28,16 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.repository.api.HippoNodeType;
+
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.NON_EMPTY_VALIDATOR;
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.RESOURCE_REQUIRED_VALIDATOR;
 
 public class FieldEditor extends Panel {
 
@@ -103,27 +106,24 @@ public class FieldEditor extends Panel {
 
             @Override
             public Boolean getObject() {
-                return getDescriptor().getValidators().contains(ValidatorUtils.REQUIRED);
+                return getDescriptor().getValidators().contains(REQUIRED_VALIDATOR);
             }
 
             @Override
             public void setObject(final Boolean isRequired) {
                 final IFieldDescriptor field = getDescriptor();
                 final ITypeDescriptor typeDescriptor = field.getTypeDescriptor();
-                final String validatorDescription;
-                if (typeDescriptor.isType(HippoNodeType.NT_RESOURCE)) {
-                    validatorDescription = ValidatorUtils.RESOURCE_REQUIRED;
-                } else {
-                    validatorDescription = ValidatorUtils.REQUIRED;
-                }                
+                final String validatorDescription = typeDescriptor.isType(HippoNodeType.NT_RESOURCE)
+                        ? RESOURCE_REQUIRED_VALIDATOR
+                        : REQUIRED_VALIDATOR;
                 if (isRequired) {
                     field.addValidator(validatorDescription);
                     if (typeDescriptor.isType("String")) {
-                        field.addValidator(ValidatorUtils.NON_EMPTY);
+                        field.addValidator(NON_EMPTY_VALIDATOR);
                     }
                 } else {
                     if (typeDescriptor.isType("String")) {
-                        field.removeValidator(ValidatorUtils.NON_EMPTY);
+                        field.removeValidator(NON_EMPTY_VALIDATOR);
                     }
                     field.removeValidator(validatorDescription);
                 }
@@ -178,7 +178,7 @@ public class FieldEditor extends Panel {
                 if (descriptor.isMandatory()) {
                     return false;
                 }
-                if (descriptor.getValidators().contains(ValidatorUtils.REQUIRED)) {
+                if (descriptor.getValidators().contains(REQUIRED_VALIDATOR)) {
                     return false;
                 }
                 if (descriptor.isMultiple()) {

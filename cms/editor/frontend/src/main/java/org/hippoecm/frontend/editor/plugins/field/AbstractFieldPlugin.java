@@ -41,7 +41,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
-import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -66,6 +65,8 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
@@ -344,7 +345,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
                 if (IEditor.Mode.EDIT == mode && provider.size() == 0
-                        && (!field.isMultiple() || field.getValidators().contains(ValidatorUtils.REQUIRED))
+                        && (!field.isMultiple() || field.getValidators().contains(REQUIRED_VALIDATOR))
                         && !field.getValidators().contains("optional")
                         && isNotAbstractNodeType(subType.getType())) {
                     provider.addNew();
@@ -394,7 +395,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (!field.isMultiple() && !field.getValidators().contains("optional")) {
             return false;
         }
-        if (field.getValidators().contains(ValidatorUtils.REQUIRED) && provider.size() == 1) {
+        if (field.getValidators().contains(REQUIRED_VALIDATOR) && provider.size() == 1) {
             return false;
         }
         return true;

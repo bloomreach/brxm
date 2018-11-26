@@ -41,6 +41,8 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+
 public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     private static final long serialVersionUID = 1L;
@@ -86,7 +88,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         }
         Set<Violation> violations = new HashSet<>();
         Set<String> validators = field.getValidators();
-        boolean required = validators.contains(ValidatorUtils.REQUIRED);
+        boolean required = validators.contains(REQUIRED_VALIDATOR);
         if ((required || fieldType.isNode() || validators.size() > 0) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if (log.isDebugEnabled() && validators.size() > 0) {
