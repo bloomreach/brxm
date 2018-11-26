@@ -83,11 +83,6 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
         }
 
-        if (siteMenuItem.getValueProvider().hasProperty("hst:refidsitemapitem")) {
-            log.warn("Propery hst:refidsitemapitem on sitemenuitem '{}' is unused and deprecated since 2.24.08/2.25.05. It will be ignored. You should use '{}' property instead " +
-                    "to point to a sitemapitem refId.",siteMenuItem.getValueProvider().getPath(), HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
-        }
-
         this.mountAlias = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_MOUNTALIAS);
         
         if(siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED)) {
