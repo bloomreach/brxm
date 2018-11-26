@@ -125,6 +125,13 @@
 [hippo:translated] mixin
 + hippo:translation (hippo:translation) multiple
 
+// obsolete
+[hippo:lockable] mixin
+- hippo:lockExpirationTime (date)
+
+// obsolete
+[hippo:lock] > nt:base, mix:lockable, hippo:lockable
+
 [hippo:deleted] > hippo:document, mix:versionable
 - hippo:deletedDate (date)
 - hippo:deletedBy (string)

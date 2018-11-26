@@ -37,6 +37,7 @@ import javax.jcr.query.QueryResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -82,12 +83,19 @@ public class MigrateToV13 {
             log.debug("No migration needed");
             return;
         }
-        ensureNodeTypeNotInUse("hippo:lockable", true, new String[] {"hippo:lock"});
-        ensureNodeTypeNotInUse("hippo:lock", false, null);
-        ensureNodeTypeNotInUse("hippo:initializefolder", false, null);
-        ensureNodeTypeNotInUse("hipposys:initializeitem", false, null);
-        ensureNodeTypeNotInUse("hippo:initializeitem", false, null);
-        ensureNodeTypeNotInUse("hst:channels", false, null);
+
+        final List<Node> extraNodes = new ArrayList<>();
+        if (ntm.hasNodeType("targeting:dataflow") && session.nodeExists("/targeting:targeting/targeting:dataflow")) {
+            // collect targeting dataflow hippo:lockable nodes through navigation (hippo:skipindex usage may have disabled searching them)
+            collectHippoLockableNodes(session.getNode("/targeting:targeting/targeting:dataflow"), extraNodes);
+        }
+        ensureNodeTypeNotInUse("hippo:lockable", true, new String[] {"hippo:lock"}, extraNodes);
+        extraNodes.clear();
+        ensureNodeTypeNotInUse("hippo:lock", false, null, extraNodes);
+        ensureNodeTypeNotInUse("hippo:initializefolder", false, null, extraNodes);
+        ensureNodeTypeNotInUse("hipposys:initializeitem", false, null, extraNodes);
+        ensureNodeTypeNotInUse("hippo:initializeitem", false, null, extraNodes);
+        ensureNodeTypeNotInUse("hst:channels", false, null, extraNodes);
 
         removeVersionableMixinFromNodeTypes();
 
@@ -111,9 +119,6 @@ public class MigrateToV13 {
             removeNodeType("hst:channels", false);
             removeNodeType("hippo:initializefolder", false);
             removeNodeType("hipposys:initializeitem", false);
-            removeNodeType("hippo:lock", false);
-            removeNodeType("hippo:lockable", true);
-
             removeNodeType("hippo:initializeitem", false);
             log.info("MigrateToV13 completed.");
         }
@@ -231,14 +236,48 @@ public class MigrateToV13 {
         }
     }
 
-    private void ensureNodeTypeNotInUse(final String nodeType, boolean mixin, final String[] mixinPrimaryTypes) throws RepositoryException {
+    private void collectHippoLockableNodes(final Node baseNode, final List<Node> nodes) throws RepositoryException {
+        for (final Node child : new NodeIterable(baseNode.getNodes())) {
+            if (child.isNodeType("hippo:lockable")) {
+                nodes.add(child);
+                collectHippoLockableNodes(child, nodes);
+            }
+        }
+    }
+
+    private void ensureNodeTypeNotInUse(final String nodeType, boolean mixin, final String[] mixinPrimaryTypes,
+                                        final List<Node> extraNodes) throws RepositoryException {
         if (!ntm.hasNodeType(nodeType)) {
             return;
         }
+        final List<Node> nodes = new ArrayList<>();
+        nodes.addAll(extraNodes);
         final Query query = qm.createQuery("//element(*, " + nodeType + ")", Query.XPATH);
-        final QueryResult queryResult = query.execute();
+        for (final Node node : new NodeIterable(query.execute().getNodes())) {
+            boolean alreadyAdded = false;
+            // skip if already in extraNodes
+            for (final Node extraNode : extraNodes) {
+                if (extraNode.isSame(node)) {
+                    alreadyAdded = true;
+                    break;
+                }
+            }
+            if (!alreadyAdded) {
+                nodes.add(node);
+            }
+        }
+        if (nodes.size() > 1) {
+            // sort result to process children before parents: prevents error if removing the type impacts children
+            Collections.sort(nodes, (o1, o2) -> {
+                try {
+                    return o2.getDepth() - o1.getDepth();
+                } catch (RepositoryException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
         boolean save = false;
-        for (final Node node : new NodeIterable(queryResult.getNodes())) {
+        for (final Node node : nodes) {
             if (mixinPrimaryTypes != null && mixin && !Arrays.stream(node.getMixinNodeTypes()).map(nt -> nt.getName()).anyMatch(nodeType::equals)) {
                 if (Arrays.stream(mixinPrimaryTypes).anyMatch(node.getPrimaryNodeType().getName()::equals)) {
                     log.info("Mixin {} is part of the primary type {} of node at '{}' which will be removed during the actual migration to v13.",
@@ -258,6 +297,28 @@ public class MigrateToV13 {
             } else {
                 log.info("Removing still in use {} type {} at '{}'.", type, nodeType, node.getPath());
             }
+            if (node.isLocked()) {
+                final Node lockNode = node.getLock().getNode();
+                if (!dryRun) {
+                    if (session.hasPendingChanges()) {
+                        session.save();
+                    }
+                    if (lockNode.isSame(node)) {
+                        log.info("Unlocking node {}", node.getPath());
+                    } else {
+                        log.info("Unlocking node {} locked at {}", node.getPath(), lockNode.getPath());
+                    }
+                    lockNode.unlock();;
+                } else {
+                    if (lockNode.isSame(node)) {
+                        log.info("Node {} is locked. Will be unlocked first during the actual migration to v13",
+                                node.getPath());
+                    } else {
+                        log.info("Node {} is locked at {}. Will be unlocked first during the actual migration to v13",
+                                node.getPath(), lockNode.getPath());
+                    }
+                }
+            }
             boolean skip = false;
             if (!node.isCheckedOut()) {
                 if (dryRun) {
@@ -270,6 +331,11 @@ public class MigrateToV13 {
             if (!skip) {
                 if (mixin) {
                     node.removeMixin(nodeType);
+                    // for some usages of hippo:lockable the node itself may have a relaxed nodetype, resulting
+                    // in hippo:lockable property hippo:lockExpirationTime being retained. If so, delete it directly
+                    if ("hippo:lockable".equals(nodeType) && node.hasProperty("hippo:lockExpirationTime")) {
+                        node.getProperty("hippo:lockExpirationTime").remove();
+                    }
                 } else {
                     node.remove();
                 }
