@@ -33,6 +33,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
+import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -69,10 +70,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
-            if (!field.getValidators().contains("required")) {
-                required.setVisible(false);
-            }
-
+            required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
+            
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(CssClass.append("hippo-node-field-name-" + name));
 
