@@ -300,6 +300,7 @@
                 <exclude>frontend-ng/*.md</exclude>
 
                 <exclude>ui-extension/.*</exclude>
+                <exclude>ui-extension/src/docs/*.md</exclude>
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
