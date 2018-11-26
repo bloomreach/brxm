@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ObservableModel;
@@ -188,6 +189,10 @@ public class BrowserPerspective extends Perspective {
         super.onDeactivated();
         tabs.blurTabs();
         tabs.disableTabRefocus();
+        IContextMenuManager manager = findParent(IContextMenuManager.class);
+        if (manager != null) {
+            manager.collapseAllContextMenus();
+        }
     }
 
     private boolean hasOpenTabs() {
