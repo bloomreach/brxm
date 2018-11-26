@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
+import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
@@ -74,7 +75,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe(field);
-            if (!field.getValidators().contains("required")) {
+            if (!field.getValidators().contains(ValidatorUtils.REQUIRED)) {
                 required.setVisible(false);
             }
 
