@@ -45,6 +45,8 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+
 public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrPropertyValueModel> {
 
     private JcrNodeModel nodeModel;
@@ -75,7 +77,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe(field);
-            if (!field.getValidators().contains(ValidatorUtils.REQUIRED)) {
+            if (!field.getValidators().contains(REQUIRED_VALIDATOR)) {
                 required.setVisible(false);
             }
 

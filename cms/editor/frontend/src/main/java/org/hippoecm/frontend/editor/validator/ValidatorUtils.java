@@ -22,12 +22,12 @@ import java.util.Set;
 
 public class ValidatorUtils {
 
-    public static final String REQUIRED = "required";
-    public static final String RESOURCE_REQUIRED = "resource-required";
-    public static final String NON_EMPTY = "non-empty";
+    public static final String REQUIRED_VALIDATOR = "required";
+    public static final String RESOURCE_REQUIRED_VALIDATOR = "resource-required";
+    public static final String NON_EMPTY_VALIDATOR = "non-empty";
     
     public static final Set<String> REQUIRED_VALIDATORS = 
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED, RESOURCE_REQUIRED)));
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED_VALIDATOR, RESOURCE_REQUIRED_VALIDATOR)));
 
     public static boolean hasRequiredValidator(final Set<String> validators) {
         return validators.stream().anyMatch(REQUIRED_VALIDATORS::contains);
