@@ -28,7 +28,7 @@
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
 import Emittery = require('emittery'); // tslint:disable-line:import-name
-import { ChannelScope, Emitter, EventCallback, PageScope, PageScopeEvents, UiScope } from './api';
+import { ChannelScope, Emitter, EventHandler, PageScope, PageScopeEvents, UiScope } from './api';
 import { ParentConnection } from './parent';
 
 abstract class Scope {
@@ -41,9 +41,9 @@ abstract class ScopeEmitter<Events> extends Scope implements Emitter<Events> {
     super(parent);
   }
 
-  on(eventName: keyof Events, listener: EventCallback<Events>) {
+  on(eventName: keyof Events, callback: EventHandler<Events>) {
     const scopedEventName = `${this._eventScope}.${eventName}`;
-    return this._eventEmitter.on(scopedEventName, listener);
+    return this._eventEmitter.on(scopedEventName, callback);
   }
 }
 
