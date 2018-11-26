@@ -184,8 +184,6 @@ public interface HippoNodeType {
 
     public static final String NT_DELETED = "hippo:deleted";
 
-    public static final String NT_SKIPINDEX = "hippo:skipindex";
-
     public static final String NT_NAMED = "hippo:named";
 
     public static final String NT_COMPOUND = "hippo:compound";

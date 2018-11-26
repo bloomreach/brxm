@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -422,30 +422,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         appendDocumentsThatHaveChangedChildNodesOrChangedHandles(augmentedRemove, augmentedAdd);
 
-        //  now filter out documents that have a 'skip index' marker
-        Map<NodeId, NodeState> includedNodeStates = getSkipIndexFilteredNodeStates(augmentedAdd);
+        super.updateNodes(augmentedRemove.iterator(), augmentedAdd.values().iterator());
 
-        super.updateNodes(augmentedRemove.iterator(),
-                includedNodeStates.values().iterator());
-
-    }
-
-    private Map<NodeId, NodeState> getSkipIndexFilteredNodeStates(final Map<NodeId, NodeState> augmentedAdd) throws RepositoryException {
-        Map<NodeId, NodeState> includedNodeStates = new HashMap<>();
-        // since NodeState does not have hashcode/equals impls, we need to use NodeId for caches
-        Set<NodeId> excludedIdsCache = new HashSet<>();
-        Set<NodeId> includedIdsCache = new HashSet<>();
-
-        for (NodeState nodeState : augmentedAdd.values()) {
-            if (nodeState != null) {
-                if (!skipIndexing(nodeState, excludedIdsCache, includedIdsCache)) {
-                    includedNodeStates.put(nodeState.getNodeId(), nodeState);
-                } else {
-                    log.debug("Nodestate '{}' is marked to be skipped for indexing.", nodeState.getId());
-                }
-            }
-        }
-        return includedNodeStates;
     }
 
     /*
@@ -549,62 +527,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         return doc;
-    }
-
-
-    private boolean skipIndexing(final NodeState node,
-                                 final Set<NodeId> excludedIdsCache,
-                                 final Set<NodeId> includedIdsCache) throws RepositoryException {
-        return skipIndexing(node, excludedIdsCache, includedIdsCache, new ArrayList<NodeId>());
-    }
-
-    /*
-     * checks recursively all ancestor states whether non of them is marked to be excluded for indexing
-     * once a state is found to be excluded for indexing, all the states that were checked are added to the
-     * 'excludedIdsCache' to avoid pointless double checking.
-     * The nodeIdHierarchy keeps track of checked nodes
-     */
-    private boolean skipIndexing(final NodeState node,
-                                 final Set<NodeId> excludedIdsCache,
-                                 final Set<NodeId> includedIdsCache,
-                                 final List<NodeId> nodeIdHierarchy) throws RepositoryException {
-
-        final NodeId parentId = node.getParentId();
-        if (parentId == null) {
-            // no 'skip index' node was found, add this nodeIdHierarchy list to the include set
-            includedIdsCache.addAll(nodeIdHierarchy);
-            return false;
-        }
-
-        final NodeId nodeId = node.getNodeId();
-        nodeIdHierarchy.add(nodeId);
-
-
-        if (includedIdsCache.contains(nodeId)) {
-            includedIdsCache.addAll(nodeIdHierarchy);
-            return false;
-        } else if (excludedIdsCache.contains(nodeId)) {
-            // an ancestor was already found to be excluded for indexing
-            excludedIdsCache.addAll(nodeIdHierarchy);
-            return true;
-        }
-
-        if (node.getMixinTypeNames().contains(getIndexingConfig().getSkipIndexName())) {
-            excludedIdsCache.addAll(nodeIdHierarchy);
-            return true;
-        }
-
-        try {
-            final NodeState parent = getNodeState(parentId);
-            return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
-        } catch (ItemNotFoundException e) {
-            log.debug("Node with id '{}' not found, not skipping indexing", parentId);
-            return false;
-        } catch (ItemStateException e) {
-            String msg = "Error while indexing node: " + nodeId + " of "
-                    + "type: " + node.getNodeTypeName();
-            throw new RepositoryException(msg, e);
-        }
     }
 
     /**

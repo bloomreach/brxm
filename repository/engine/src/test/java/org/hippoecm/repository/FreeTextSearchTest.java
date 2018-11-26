@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -414,59 +414,6 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             final NodeIterator nodes = queryResult.getNodes();
             assertEquals(1L, nodes.getSize());
         }
-    }
-
-    @Test
-    public void testSkipNodeForIndexing() throws Exception {
-        String[] extraSkipIndexDocument = new String[] {
-                "/test/Document2",             "hippo:handle",
-                "jcr:mixinTypes",             "mix:referenceable",
-                    "/test/Document2/Document2",        "hippo:testsearchdocument",
-                    "jcr:mixinTypes",                   "mix:referenceable,hippo:skipindex",
-                    "title",                            "This is the title of document 2 containing " + DOCUMENT_TITLE_PART,
-                        "/test/Document2/Document2/compoundchild",    "hippo:testcompoundstructure",
-                        "compoundtitle", "This is the compoundtitle containing " + COMPOUNDDOCUMENT_TITLE_PART,
-                            "/test/Document2/Document2/compoundchild/hippo:testhtml",    "hippo:testhtml",
-                            "hippo:testcontent", "The content property of testhtml node containing " + HTML_CONTENT_PART
-        };
-        createContent(defaultContent, extraSkipIndexDocument);
-
-        // since the Document2 has mixin hippo:skipindex we should not find that document and only find Document1
-        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+DOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
-        QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-
-        NodeIterator nodes = queryResult.getNodes();
-        assertEquals(1L, nodes.getSize());
-        Node doc = nodes.nextNode();
-        assertTrue(doc.getName().equals("Document1"));
-
-
-        // and we should not find nodes ***BELOW*** Document2 either:
-        xpath = "/jcr:root/test/Document2/Document2//* order by @jcr:score descending";
-        queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        assertEquals(0L, queryResult.getNodes().getSize());
-
-        // after removing the mixin 'hippo:skipindex', the node should be found again.
-        session.getNode("/test/Document2/Document2").removeMixin("hippo:skipindex");
-        session.save();
-
-        xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+DOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
-        queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        assertEquals(2L, queryResult.getNodes().getSize());
-
-        // below is tricky : since the child nodes below Document2 are not changed *AFTER* the skipindex mixin was removed,
-        // they are still not indexed!!
-        xpath = "/jcr:root/test/Document2/Document2//* order by @jcr:score descending";
-        queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        assertEquals(0L, queryResult.getNodes().getSize());
-
-        // after touching and saving the child nodes below Document2, they get indexed
-        session.getNode("/test/Document2/Document2/compoundchild").setProperty("compoundtitle", "foo");
-        session.getNode("/test/Document2/Document2/compoundchild/hippo:testhtml").setProperty("hippo:testcontent", "foo");
-        session.save();
-        queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
-        assertEquals(2L, queryResult.getNodes().getSize());
-
     }
 
     @Test

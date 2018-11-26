@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,6 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_TEXT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_NAMED;
-import static org.hippoecm.repository.api.HippoNodeType.NT_SKIPINDEX;
 
 public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImpl implements ServicingIndexingConfiguration {
 
@@ -119,9 +118,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * Cache of property names that are excluded from being indexed as a single term
      */
     private final Map<String, Boolean> isExcludedSingleIndexTerm = new HashMap<String, Boolean>();
-
-    private Name skipIndex;
-
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
@@ -203,7 +199,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         hippoNamed = nameResolver.getQName(NT_NAMED);
         hippoName = nameResolver.getQName(HIPPO_NAME);
         hippoNameFieldName = nameResolver.getJCRName(hippoName);
-        skipIndex = nameResolver.getQName(NT_SKIPINDEX);
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
         aggregateRules = super.getAggregateRules();
         if (aggregateRules == null) {
@@ -340,8 +335,8 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     }
 
     @Override
-    public Name getSkipIndexName() {
-        return skipIndex;
+    public final Name getSkipIndexName() {
+        return null;
     }
 
     @Override

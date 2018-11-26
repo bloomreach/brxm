@@ -107,6 +107,11 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      */
     String getHippoNamespaceURI();
 
+    /**
+     * @deprecated since 13.0.0, feature no longer used
+     * @return
+     */
+    @Deprecated
     Name getSkipIndexName();
 
 }

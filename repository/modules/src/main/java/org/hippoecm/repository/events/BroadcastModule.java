@@ -31,7 +31,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.cms7.event.HippoEvent;
@@ -136,11 +135,6 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
                 clusterNode = moduleConfigNode.getNode(clusterId);
             } else {
                 clusterNode = moduleConfigNode.addNode(clusterId, BroadcastConstants.NT_CLUSTERNODE);
-            }
-            if (!clusterNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-                // make sure the frequently updated clusterNode is not indexed as we do not need to search
-                // for it but it would otherwise pollute the search index
-                clusterNode.addMixin(HippoNodeType.NT_SKIPINDEX);
             }
 
             Node channelNode;
