@@ -31,14 +31,14 @@
       <div ng-show="isGenericContentRestApiEnabled">
         <p>Choose the base URL for the generic REST resources</p>
         <div class="input-group">
-          <span class="input-group-addon">http://localhost:8080/site/</span>
+          <span class="input-group-addon">http://localhost:8080{{siteContextPath}}/</span>
           <input type="text" class="form-control" placeholder="<Endpoint name>"
                  ng-model="genericRestName" ng-pattern="/^[a-z\-]{1,}$/"
                  ng-required="isGenericContentRestApiEnabled"/>
         </div>
         <p style="padding-top: 8px">The following REST resource will be available:
-          <a href="http://localhost:8080/site/{{genericRestName}}/documents" target="_blank">
-            http://localhost:8080/site/{{genericRestName}}/documents
+          <a href="http://localhost:8080{{siteContextPath}}/{{genericRestName}}/documents" target="_blank">
+            http://localhost:8080{{siteContextPath}}/{{genericRestName}}/documents
           </a>
         </p>
       </div>
@@ -52,7 +52,7 @@
       <div ng-show="isManualRestResourcesEnabled">
         <p>Choose the base URL for the manual REST resources</p>
         <div class="input-group">
-          <span class="input-group-addon">http://localhost:8080/site/</span>
+          <span class="input-group-addon">http://localhost:8080{{siteContextPath}}/</span>
           <input type="text" class="form-control" placeholder="<Endpoint name>"
                  ng-model="manualRestName" ng-pattern="/^[a-z\-]{1,}$/"
                  ng-required="isManualRestResourcesEnabled" ng-change="onChangeManualRestName()"/>

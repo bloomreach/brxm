@@ -17,7 +17,7 @@
 (function () {
     "use strict";
     angular.module('hippo.essentials')
-        .controller('restServicesCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService) {
+        .controller('restServicesCtrl', function ($scope, $http, essentialsRestService, essentialsContentTypeService, essentialsProjectService) {
             $scope.endpoint = essentialsRestService.baseUrl + '/restservices';
             $scope.genericRestName = "api";
             $scope.manualRestName = "api-manual";
@@ -25,6 +25,9 @@
             $scope.checkedDocuments = 0;
             $scope.isGenericContentRestApiEnabled = true;
             $scope.isManualRestResourcesEnabled = false;
+            essentialsProjectService.getProjectSettings().then(function(settings) {
+              $scope.siteContextPath = settings.siteContextPath;
+            });
 
             $scope.onChangeManualRestName = function () {
                 updateManualEndPoints();
@@ -93,7 +96,7 @@
                 angular.forEach($scope.documentTypes, function (docType) {
                     if (docType.javaName) {
                         if ($scope.manualRestName) {
-                            docType.endpoint = "http://localhost:8080/site/"
+                            docType.endpoint = "http://localhost:8080" + $scope.siteContextPath + "/"
                             + $scope.manualRestName + "/" + docType.javaName.split('.')[0] + '/';
                         } else {
                             delete docType.endpoint;

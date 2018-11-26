@@ -44,6 +44,7 @@ public class ProjectSettingsBean implements ProjectSettings {
     private boolean extraTemplates;
 
     private String siteModule;
+    private String siteContextPath;
     private String siteComponentsSubModule;
     private String siteWebappSubModule;
     private String cmsModule;
@@ -195,6 +196,15 @@ public class ProjectSettingsBean implements ProjectSettings {
     @Override
     public String getSiteDataModule() {
         return siteDataModule;
+    }
+
+    @Override
+    public String getSiteContextPath() {
+        return Strings.isNullOrEmpty(siteContextPath) ? "/" + getWebfileBundleName() : siteContextPath;
+    }
+
+    public void setSiteContextPath(final String siteContextPath) {
+        this.siteContextPath = siteContextPath;
     }
 
     public void setSiteDataModule(final String siteDataModule) {

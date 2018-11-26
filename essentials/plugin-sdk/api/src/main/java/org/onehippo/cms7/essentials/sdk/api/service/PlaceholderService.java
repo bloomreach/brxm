@@ -46,6 +46,7 @@ public interface PlaceholderService {
     String DATE_JCR_NEXT_YEAR = "jcrDateNextYear";
 
     String PROJECT_ROOT = "projectRoot";
+    String SITE_CONTEXT_PATH = "siteContextPath";
     String SITE_ROOT = "siteRoot";
     String SITE_WEB_ROOT = "siteWebRoot";
     String SITE_WEB_INF_ROOT = "siteWebInfRoot";

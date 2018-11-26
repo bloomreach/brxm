@@ -123,6 +123,7 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         data.put(PROJECT_ROOT, projectService.getBasePathForModule(Module.PROJECT));
 
         // site
+        data.put(SITE_CONTEXT_PATH, settingsService.getSettings().getSiteContextPath());
         data.put(SITE_ROOT, projectService.getBasePathForModule(Module.SITE));
         data.put(SITE_WEB_ROOT, siteWebRoot);
         data.put(JAVASCRIPT_ROOT, siteWebRoot.resolve("js"));

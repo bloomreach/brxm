@@ -76,6 +76,12 @@ public interface ProjectSettings {
     String getSiteDataModule();
 
     /**
+     * Site context path, should start from '/', e.g. /site.
+     * <p>If not defined, then '/' + {@link #getWebfileBundleName() } value is used.</p>
+     */
+    String getSiteContextPath();
+
+    /**
      * The name of hst root node.
      */
     String getHstRoot();
