@@ -214,17 +214,6 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          * @return the parameterName from <code>parameterName</code> possibly prefixed by some value 
          */
         protected String getPrefixedParameterName(final String parameterName, final ParameterConfiguration parameterConfiguration, final HttpServletRequest req) {
-            final HttpSession session = req.getSession(false);
-            if (session != null && session.getAttribute(ContainerConstants.RENDER_VARIANT) != null) {
-                final String prefix = session.getAttribute(ContainerConstants.RENDER_VARIANT).toString();
-                if (ContainerConstants.DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
-                    return parameterName;
-                }
-                final String prefixedParameterName = prefix + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER + parameterName;
-                if (parameterConfiguration.getParameterNames().contains(prefixedParameterName)) {
-                    return prefixedParameterName;
-                }
-            }
             return parameterName;
         }
     }
