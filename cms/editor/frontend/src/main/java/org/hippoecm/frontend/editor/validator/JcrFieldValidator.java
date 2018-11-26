@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
 
 public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
@@ -84,9 +86,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         if (!(model instanceof JcrNodeModel)) {
             throw new ValidationException("Invalid model type; only JcrNodeModel is supported");
         }
-        Set<Violation> violations = new HashSet<Violation>();
+        Set<Violation> violations = new HashSet<>();
         Set<String> validators = field.getValidators();
-        boolean required = validators.contains("required");
+        boolean required = validators.contains(REQUIRED_VALIDATOR);
         if ((required || fieldType.isNode() || validators.size() > 0) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
                 if (log.isDebugEnabled() && validators.size() > 0) {
@@ -215,7 +217,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     private Set<ModelPath> getModelPaths(final ModelPathElement child) {
         ModelPathElement[] elements = new ModelPathElement[1];
         elements[0] = child;
-        Set<ModelPath> paths = new HashSet<ModelPath>();
+        Set<ModelPath> paths = new HashSet<>();
         paths.add(new ModelPath(elements));
         return paths;
     }
