@@ -15,8 +15,8 @@
  */
 
 /**
- * @module parent
  * Handles all interaction with the parent frame using the Penpal library.
+ * @module parent
  * @see https://github.com/Aaronius/penpal
  */
 

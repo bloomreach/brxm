@@ -21,3 +21,10 @@ Build with snapshot dependencies:
 
 # Develop AngularJS UI
 See the frontend-ng/README.md
+
+# Generate Documentation
+
+    $ cd ui-extension
+    $ npm run docs
+    
+The generated documentation is placed in a folder 'docs'.

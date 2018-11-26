@@ -15,7 +15,7 @@
  */
 
 import { connect, ParentConnection } from './parent';
-import { PageProperties, UiScope } from './api';
+import { Ui } from './ui';
 import UiExtension from './ui-extension';
 
 jest.mock('./parent');
@@ -24,13 +24,13 @@ afterEach(() => {
   (connect as jest.Mock).mockClear();
 });
 
-describe('register', () => {
-  it('connects to the parent API', () => {
-    return UiExtension.register()
+describe('UiExtension.register()', () => {
+  it('connects to the parent API', () =>
+    UiExtension.register()
       .then(() => {
         expect(connect).toHaveBeenCalled();
-      });
-  });
+      }),
+  );
 
   it('uses the parent origin provided as a URL search parameter', () => {
     window.history.pushState({}, 'Test Title', '/?br.parentOrigin=http%3A%2F%2Fcms.example.com%3A8080');
@@ -42,12 +42,13 @@ describe('register', () => {
   });
 
   describe('on success', () => {
-    let ui: UiScope;
+    let ui: Ui;
 
-    beforeEach(() => UiExtension.register().then(api => (ui = api)));
+    beforeEach(() => UiExtension.register().then(api => (ui = (api as Ui))));
 
-    it('initializes the UI properties', () => {
+    it('resolves with an initialized UI object', () => {
       expect(ui.baseUrl).toBe('https://cms.example.com');
+      expect(ui.channel).toBeDefined();
       expect(ui.extension.config).toBe('testConfig');
       expect(ui.locale).toBe('en');
       expect(ui.timeZone).toBe('Europe/Amsterdam');
@@ -56,76 +57,6 @@ describe('register', () => {
       expect(ui.user.lastName).toBe('Min');
       expect(ui.user.displayName).toBe('Ad Min');
       expect(ui.version).toBe('13.0.0');
-    });
-
-    describe('ui.channel.refresh()', () => {
-      it('refreshes the current channel', () =>
-        ui.channel.refresh().then(() => {
-          expect(ParentConnection.call).toHaveBeenCalledWith('refreshChannel');
-        }),
-      );
-    });
-
-    describe('ui.channel.page.get()', () => {
-      it('returns the current page', () =>
-        ui.channel.page.get()
-          .then((page) => {
-            expect(page.channel.id).toBe('testChannelId');
-            expect(page.id).toBe('testPageId');
-            expect(page.sitemapItem.id).toBe('testSitemapItemId');
-            expect(page.url).toBe('http://www.example.com');
-          }),
-      );
-    });
-
-    describe('ui.channel.page.refresh()', () => {
-      it('refreshes the current page', () =>
-        ui.channel.page.refresh().then(() => {
-          expect(ParentConnection.call).toHaveBeenCalledWith('refreshPage');
-        }),
-      );
-    });
-
-    describe('ui.channel.page.on(\'navigate\', listener)', () => {
-      let nextPage: PageProperties;
-
-      beforeEach(() => {
-        nextPage = {
-          channel: {
-            id: 'channelId',
-          },
-          id: 'pageId',
-          sitemapItem: {
-            id: 'sitemapItemId',
-          },
-          url: 'http://www.example.com/page',
-        };
-      });
-
-      it('calls the listener whenever the parent emits a \'channel.page.navigate\' event', () => {
-        const eventEmitter = (connect as jest.Mock).mock.calls[0][1];
-        const listener = jest.fn();
-
-        ui.channel.page.on('navigate', listener);
-
-        return eventEmitter.emit('channel.page.navigate', nextPage)
-          .then(() => {
-            expect(listener).toHaveBeenCalledWith(nextPage);
-          });
-      });
-
-      it('returns an unbind function', () => {
-        const eventEmitter = (connect as jest.Mock).mock.calls[0][1];
-        const listener = jest.fn();
-
-        const unbind = ui.channel.page.on('navigate', listener);
-        unbind();
-
-        return eventEmitter.emit('channel.page.navigate', nextPage)
-          .then(() => {
-            expect(listener).not.toHaveBeenCalled();
-          });
-      });
     });
   });
 

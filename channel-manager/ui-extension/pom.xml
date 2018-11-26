@@ -101,6 +101,9 @@
               <directory>dist</directory>
             </fileset>
             <fileset>
+              <directory>docs</directory>
+            </fileset>
+            <fileset>
               <directory>node_modules</directory>
               <followSymlinks>false</followSymlinks>
             </fileset>

@@ -29,5 +29,15 @@
     "node_modules",
     "**/__mocks__/*",
     "**/*.spec.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "exclude": "!**/+(api|ui-extension).ts",
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "mode": "file",
+    "out": "docs",
+    "readme": "src/docs/index.md"
+  }
 }
