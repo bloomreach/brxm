@@ -66,6 +66,8 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
 
@@ -343,7 +345,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
                 if (IEditor.Mode.EDIT == mode && provider.size() == 0
-                        && (!field.isMultiple() || field.getValidators().contains("required"))
+                        && (!field.isMultiple() || field.getValidators().contains(REQUIRED_VALIDATOR))
                         && !field.getValidators().contains("optional")
                         && isNotAbstractNodeType(subType.getType())) {
                     provider.addNew();
@@ -393,7 +395,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (!field.isMultiple() && !field.getValidators().contains("optional")) {
             return false;
         }
-        if (field.getValidators().contains("required") && provider.size() == 1) {
+        if (field.getValidators().contains(REQUIRED_VALIDATOR) && provider.size() == 1) {
             return false;
         }
         return true;
