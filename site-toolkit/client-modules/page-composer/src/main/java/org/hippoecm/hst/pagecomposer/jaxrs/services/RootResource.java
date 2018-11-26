@@ -305,7 +305,8 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
-        servletRequest.getSession().setAttribute(ContainerConstants.RENDER_VARIANT, variant);
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
+        cmsSessionContext.getContextPayload().put(ContainerConstants.RENDER_VARIANT, variant);
         log.info("Variant '{}' set", variant);
         return ok("Variant set");
     }
@@ -315,7 +316,8 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response clearVariant(@Context HttpServletRequest servletRequest) {
-        servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
+        cmsSessionContext.getContextPayload().remove(ContainerConstants.RENDER_VARIANT);
         log.info("Variant cleared");
         return ok("Variant cleared");
     }
