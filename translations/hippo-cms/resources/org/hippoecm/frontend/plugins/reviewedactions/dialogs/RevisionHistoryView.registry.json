@@ -20,6 +20,16 @@
     "history-name" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "history-state" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
