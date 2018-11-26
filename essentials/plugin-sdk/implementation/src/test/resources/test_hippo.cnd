@@ -99,5 +99,5 @@
 - hippo:deletedDate (date)
 - hippo:deletedBy (string)
 
-// marker mixin that excludes the node from being indexed
+// obsolete
 [hippo:skipindex] mixin
