@@ -38,6 +38,6 @@
     "hideGenerator": true,
     "mode": "file",
     "out": "docs",
-    "readme": "none"
+    "readme": "src/docs/index.md"
   }
 }

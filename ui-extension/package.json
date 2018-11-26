@@ -22,7 +22,7 @@
     "build": "webpack --config=webpack.config.js && rimraf dist/typings",
     "lint": "tslint --project .",
     "test": "npm run lint && jest",
-    "docs": "typedoc && minicat typedoc.css >> docs/assets/css/main.css"
+    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
   },
   "jest": {
     "testEnvironment": "jsdom",
