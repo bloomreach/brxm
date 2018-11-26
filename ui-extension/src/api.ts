@@ -41,7 +41,12 @@ export interface UiProperties {
   };
   locale: string;
   timeZone: string;
-  user: string;
+  user: {
+    id: string,
+    firstName: string,
+    lastName: string,
+    displayName: string,
+  };
   version: string;
 }
 
