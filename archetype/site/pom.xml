@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-project-archetype-parent</artifactId>
+    <version>13.0.0-SNAPSHOT</version>
+  </parent>
+
+  <name>BloomReach Site Project Archetype</name>
+  <description>This project enables you to add a site skeleton project
+    gluing together all the necessary components and compatible versions.
+  </description>
+
+  <artifactId>hippo-site-project-archetype</artifactId>
+  <packaging>maven-archetype</packaging>
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo Maven 2</name>
+      <url>https://maven.onehippo.com/maven2/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-project-archetype.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-project-archetype.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hippo-project-archetype</artifactId>
+      <version>13.0.0-SNAPSHOT</version>
+      <classifier>resources</classifier>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>${maven.archetype.plugin.version}</version>
+      </extension>
+    </extensions>
+
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-shared-resources</id>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifacIds>hippo-project-archetype</includeArtifacIds>
+              <excludeTransitive>true</excludeTransitive>
+              <classifier>resources</classifier>
+              <type>zip</type>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml"/>
+                </replace>
+                <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml"/>
+                </replace>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-archetype-plugin</artifactId>
+        <version>${maven.archetype.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <skip>${skipITs}</skip>
+        </configuration>     
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <overwrite>true</overwrite>
+        </configuration>
+        <executions>
+          <execution>
+            <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
+            <id>copy-resources</id>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/${extra.app.artifactId}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/test-classes/projects/gettingstarted/project/${extra.app.artifactId}</directory>
+                </resource>
+              </resources>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
