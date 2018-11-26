@@ -41,6 +41,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
+import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -343,7 +344,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
                 if (IEditor.Mode.EDIT == mode && provider.size() == 0
-                        && (!field.isMultiple() || field.getValidators().contains("required"))
+                        && (!field.isMultiple() || field.getValidators().contains(ValidatorUtils.REQUIRED))
                         && !field.getValidators().contains("optional")
                         && isNotAbstractNodeType(subType.getType())) {
                     provider.addNew();
@@ -393,7 +394,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (!field.isMultiple() && !field.getValidators().contains("optional")) {
             return false;
         }
-        if (field.getValidators().contains("required") && provider.size() == 1) {
+        if (field.getValidators().contains(ValidatorUtils.REQUIRED) && provider.size() == 1) {
             return false;
         }
         return true;
