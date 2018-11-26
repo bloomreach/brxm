@@ -460,9 +460,6 @@
                 <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/MyHomePage.java</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.less</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.11.0.js</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.class.js</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java</exclude>
@@ -486,36 +483,21 @@
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/night.css</exclude>
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/theme/rubyblue.css</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
-                <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
-                <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
-                <exclude>console/frontend/src/main/resources/org/hippoecm/frontend/plugins/console/font-awesome/**/*</exclude>
                 <!-- code templates -->
                 <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/updater/UpdaterTemplate.groovy</exclude>
-                <!-- files in which apache-rat does not recognize the license header -->
-                <exclude>tools/eclipse/createlinks.bat</exclude>
                 <!-- files in which no comments are possible -->
                 <exclude>translation/frontend/flags.txt</exclude>
                 <exclude>gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
-                <!-- repository content XML -->
-                <exclude>automatic-export/repository/src/main/resources/**/*.xml</exclude>
-                <exclude>automatic-export/repository/src/test/resources/**/*.xml</exclude>
-                <exclude>translations/repository/src/main/resources/*.xml</exclude>
-                <exclude>workflow/repository/src/main/resources/*.xml</exclude>
                 <!-- front-end build configuration files without license header -->
-                <exclude>api/.bowerrc</exclude>
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/.npmrc</exclude>
-                <exclude>console/frontend/.bowerrc</exclude>
                 <exclude>console/frontend/.npmrc</exclude>
                 <exclude>engine/.npmrc</exclude>
                 <!-- front-end build external dependencies -->
                 <exclude>api/node_modules/**</exclude>
                 <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>engine/node_modules/**</exclude>
-                <!-- files without license header  -->
-                <exclude>upgrade_notes.txt</exclude>
-                <exclude>engine/src/main/resources/org/hippoecm/frontend/plugins/login/jstz.min.js</exclude>
               </excludes>
             </configuration>
           </plugin>
