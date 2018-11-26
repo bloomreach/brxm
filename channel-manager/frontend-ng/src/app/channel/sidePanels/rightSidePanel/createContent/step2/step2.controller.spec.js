@@ -29,6 +29,7 @@ describe('Create content step 2 controller', () => {
   let $rootScope;
   let $q;
   let $scope;
+  let $timeout;
   let $translate;
   let CmsService;
   let ContentEditor;
@@ -51,6 +52,7 @@ describe('Create content step 2 controller', () => {
       _$rootScope_,
       _$translate_,
       _$q_,
+      _$timeout_,
       _CmsService_,
       _ContentEditor_,
       _CreateContentService_,
@@ -61,6 +63,7 @@ describe('Create content step 2 controller', () => {
       $rootScope = _$rootScope_;
       $q = _$q_;
       $scope = $rootScope.$new();
+      $timeout = _$timeout_;
       $translate = _$translate_;
       CmsService = _CmsService_;
       ContentEditor = _ContentEditor_;
@@ -157,22 +160,20 @@ describe('Create content step 2 controller', () => {
     expect(CreateContentService.stop).toHaveBeenCalled();
   });
 
-  it('discards the editable instance, saves the component parameter and finishes create-content on save', (done) => {
+  it('discards the editable instance, saves the component parameter and finishes create-content on save', () => {
     spyOn(ContentEditor, 'discardChanges').and.returnValue($q.resolve());
     spyOn(Step2Service, 'saveComponentParameter').and.returnValue($q.resolve());
     spyOn(CreateContentService, 'finish');
     spyOn(ContentEditor, 'save').and.returnValue($q.resolve());
 
-    $ctrl.save().then(() => {
-      expect($ctrl.documentIsSaved).toBe(true);
-      expect(ContentEditor.discardChanges).toHaveBeenCalled();
-      expect(FeedbackService.showNotification).toHaveBeenCalled();
-      expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
-      done();
-    });
+    $ctrl.save();
+    $timeout.flush();
 
-    $rootScope.$digest();
+    expect($ctrl.documentIsSaved).toBe(true);
+    expect(ContentEditor.discardChanges).toHaveBeenCalled();
+    expect(FeedbackService.showNotification).toHaveBeenCalled();
+    expect(CreateContentService.finish).toHaveBeenCalledWith('testId');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CreateContent2Done');
   });
 
   it('saves the document even if there are no field updates', (done) => {

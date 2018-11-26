@@ -62,20 +62,19 @@ class EditContentMainCtrl {
   }
 
   save() {
-    return this.showLoadingIndicator(() => this.ContentEditor.save()
+    return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      }));
+      })
+      .finally(this.switchLoading());
   }
 
-  showLoadingIndicator(action) {
+  switchLoading() {
     this.loading = true;
-    return this.$q.resolve(action())
-      .finally(() => {
-        this.loading = false;
-      });
+
+    return () => { this.loading = false; };
   }
 
   _confirmDiscardChanges(messageKey) {
@@ -104,13 +103,14 @@ class EditContentMainCtrl {
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish());
+      .then(() => this._doPublish()
+        .finally(this.switchLoading()));
   }
 
   _doPublish() {
-    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+    return this.ContentEditor.isDocumentDirty()
       ? this.save().then(() => this.ContentEditor.publish())
-      : this.ContentEditor.publish()));
+      : this.ContentEditor.publish();
   }
 
   isEditing() {

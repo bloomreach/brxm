@@ -125,12 +125,12 @@ describe('EditContentMainCtrl', () => {
 
     it('shows the loading indicator while saving and resets it once done', () => {
       ContentEditor.save.and.returnValue($q.resolve());
-      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+      spyOn($ctrl, 'switchLoading').and.callThrough();
 
       $ctrl.save();
       $scope.$digest();
 
-      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.switchLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
     });
   });
@@ -238,15 +238,19 @@ describe('EditContentMainCtrl', () => {
       expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
 
-    it('shows the loading indicator while publishing and resets it once done', () => {
+    it('shows the loading indicator while publishing and resets it once done', (done) => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
-      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+      ContentEditor.publish.and.returnValue($q.resolve());
+      spyOn($ctrl, 'switchLoading').and.callThrough();
 
-      $ctrl.publish();
+      $ctrl.publish().then(() => {
+        expect($ctrl.switchLoading).toHaveBeenCalled();
+        expect($ctrl.loading).toBe(false);
+
+        done();
+      });
+
       $scope.$digest();
-
-      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
-      expect($ctrl.loading).toBe(false);
     });
   });
 
