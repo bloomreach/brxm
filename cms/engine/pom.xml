@@ -167,17 +167,26 @@
     <plugins>
       <!-- Use NPM to fetch external JavaScript dependencies -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${maven.plugin.exec.version}</version>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>npm-install</id>
-            <phase>generate-sources</phase>
-            <goals><goal>exec</goal></goals>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>ci</commandlineArgs>
+              <nodeVersion>${nodejs.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm ci</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>ci</arguments>
             </configuration>
           </execution>
         </executions>
@@ -187,8 +196,10 @@
         <configuration>
           <filesets>
             <fileset>
+              <directory>node</directory>
+            </fileset>
+            <fileset>
               <directory>node_modules</directory>
-              <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
         </configuration>
