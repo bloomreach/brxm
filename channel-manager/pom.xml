@@ -306,10 +306,6 @@
                 <exclude>frontend-ng/coverage/**/*</exclude>
                 <exclude>ui-extension/coverage/**/*</exclude>
                 <exclude>**/target/**/*</exclude>
-
-                <!-- repository content XML -->
-                <exclude>content-service/src/main/resources/**/*.xml</exclude>
-                <exclude>repository/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
