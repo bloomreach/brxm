@@ -76,6 +76,8 @@ class Step2Controller {
   }
 
   save() {
+    const stopLoading = this.startLoading();
+
     return this.ContentEditor.save(true)
       .then(() => {
         this.form.$setPristine();
@@ -90,10 +92,10 @@ class Step2Controller {
             this.CmsService.reportUsageStatistic('CreateContent2Done');
           });
       })
-      .finally(this.switchLoading());
+      .finally(stopLoading);
   }
 
-  switchLoading() {
+  startLoading() {
     this.loading = true;
 
     return () => { this.loading = false; };

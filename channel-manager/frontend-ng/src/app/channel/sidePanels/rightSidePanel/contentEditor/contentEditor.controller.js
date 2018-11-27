@@ -60,11 +60,12 @@ class ContentEditorCtrl {
   cancelRequestPublication() {
     this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
 
+    const stopLoading = this.startLoading();
     return this.ContentEditor.cancelRequestPublication()
-      .finally(this.switchLoading());
+      .finally(stopLoading);
   }
 
-  switchLoading() {
+  startLoading() {
     this.loading = true;
 
     return () => { this.loading = false; };

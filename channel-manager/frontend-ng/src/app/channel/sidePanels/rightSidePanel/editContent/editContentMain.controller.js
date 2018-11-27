@@ -62,16 +62,18 @@ class EditContentMainCtrl {
   }
 
   save() {
+    const stopLoading = this.startLoading();
+
     return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       })
-      .finally(this.switchLoading());
+      .finally(stopLoading);
   }
 
-  switchLoading() {
+  startLoading() {
     this.loading = true;
 
     return () => { this.loading = false; };
@@ -103,8 +105,11 @@ class EditContentMainCtrl {
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish()
-        .finally(this.switchLoading()));
+      .then(() => {
+        const stopLoading = this.startLoading();
+
+        return this._doPublish().finally(stopLoading);
+      });
   }
 
   _doPublish() {

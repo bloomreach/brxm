@@ -96,14 +96,14 @@ describe('ContentEditorCtrl', () => {
 
   describe('cancelRequestPublication', () => {
     it('cancels the publication request showing a loading indicator', () => {
-      spyOn($ctrl, 'switchLoading').and.callThrough();
+      spyOn($ctrl, 'startLoading').and.callThrough();
       ContentEditor.cancelRequestPublication.and.returnValue($q.resolve());
 
       $ctrl.cancelRequestPublication();
       $scope.$digest();
 
       expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
-      expect($ctrl.switchLoading).toHaveBeenCalled();
+      expect($ctrl.startLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingCancelRequest');
     });
