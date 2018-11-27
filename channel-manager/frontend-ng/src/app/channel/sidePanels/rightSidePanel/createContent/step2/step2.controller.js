@@ -76,7 +76,9 @@ class Step2Controller {
   }
 
   save() {
-    return this.showLoadingIndicator(() => this.ContentEditor.save(true)
+    const stopLoading = this.startLoading();
+
+    return this.ContentEditor.save(true)
       .then(() => {
         this.form.$setPristine();
         this.documentIsSaved = true;
@@ -89,15 +91,14 @@ class Step2Controller {
           .finally(() => {
             this.CmsService.reportUsageStatistic('CreateContent2Done');
           });
-      }));
+      })
+      .finally(stopLoading);
   }
 
-  showLoadingIndicator(action) {
+  startLoading() {
     this.loading = true;
-    return this.$q.resolve(action())
-      .finally(() => {
-        this.loading = false;
-      });
+
+    return () => { this.loading = false; };
   }
 
   isEditing() {

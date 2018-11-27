@@ -617,66 +617,6 @@ describe('ContentEditorService', () => {
     });
   });
 
-  describe('confirm discard changes', () => {
-    const showPromise = {};
-
-    beforeEach(() => {
-      ContentEditor.document = {
-        displayName: 'Test',
-      };
-      spyOn($translate, 'instant');
-      spyOn(DialogService, 'confirm').and.callThrough();
-      DialogService.show.and.returnValue(showPromise);
-    });
-
-    it('shows a dialog', () => {
-      ContentEditor.markDocumentDirty();
-
-      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY');
-
-      expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
-        documentName: 'Test',
-      });
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(result).toBe(showPromise);
-    });
-
-    it('shows a dialog with a title', () => {
-      ContentEditor.markDocumentDirty();
-
-      const result = ContentEditor.confirmDiscardChanges('MESSAGE_KEY', 'TITLE_KEY');
-
-      expect(DialogService.confirm).toHaveBeenCalled();
-      expect($translate.instant).toHaveBeenCalledWith('MESSAGE_KEY', {
-        documentName: 'Test',
-      });
-      expect($translate.instant).toHaveBeenCalledWith('TITLE_KEY', {
-        documentName: 'Test',
-      });
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(result).toBe(showPromise);
-    });
-
-    it('does not show a dialog when the document has not changed', (done) => {
-      ContentEditor.confirmDiscardChanges().then(() => {
-        expect(DialogService.show).not.toHaveBeenCalled();
-        done();
-      });
-      $rootScope.$digest();
-    });
-
-    it('does not show a dialog when the editor is killed', (done) => {
-      ContentEditor.markDocumentDirty();
-      ContentEditor.kill();
-      ContentEditor.confirmDiscardChanges().then(() => {
-        expect(DialogService.show).not.toHaveBeenCalled();
-        done();
-      });
-      $rootScope.$digest();
-    });
-  });
-
   describe('confirm close', () => {
     beforeEach(() => {
       testDocument.displayName = 'Test';
