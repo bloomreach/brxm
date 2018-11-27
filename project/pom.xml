@@ -74,6 +74,8 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.15</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
+    <nodejs.version>v8.13.0</nodejs.version>
+    <npm.version>6.4.1</npm.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.5.0</maven.required.version>
@@ -92,6 +94,7 @@
     <maven.plugin.eclipse.version>2.10</maven.plugin.eclipse.version>
     <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M1</maven.plugin.failsafe.version>
+    <maven.plugin.frontend.version>1.6</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.1.0</maven.plugin.jar.version>
     <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
@@ -675,6 +678,11 @@
           <groupId>org.zeroturnaround</groupId>
           <artifactId>jrebel-maven-plugin</artifactId>
           <version>${maven.plugin.jrebel.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${maven.plugin.frontend.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
