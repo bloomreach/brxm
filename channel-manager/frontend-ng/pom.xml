@@ -35,45 +35,54 @@
     <defaultGoal>validate</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${maven.plugin.exec.version}</version>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>npm-install</id>
-            <phase>generate-sources</phase>
-            <goals><goal>exec</goal></goals>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>ci</commandlineArgs>
+              <nodeVersion>${nodejs.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
             </configuration>
           </execution>
           <execution>
-            <id>npm-lint</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
+            <id>npm ci</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>run lint</commandlineArgs>
+              <arguments>ci</arguments>
             </configuration>
           </execution>
           <execution>
-            <id>npm-build</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
+            <id>npm run lint</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>run build</commandlineArgs>
+              <arguments>run lint</arguments>
             </configuration>
           </execution>
           <execution>
-            <id>npm-test</id>
+            <id>npm run build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run test</id>
             <phase>test</phase>
-            <goals><goal>exec</goal></goals>
+            <goals>
+              <goal>npm</goal>
+            </goals>
             <configuration>
-              <executable>npm</executable>
-              <commandlineArgs>run test:single-run</commandlineArgs>
-              <skip>${skipTests}</skip>
+              <arguments>run test:single-run</arguments>
             </configuration>
           </execution>
         </executions>
@@ -94,8 +103,10 @@
               <directory>coverage</directory>
             </fileset>
             <fileset>
+              <directory>node</directory>
+            </fileset>
+            <fileset>
               <directory>node_modules</directory>
-              <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
         </configuration>

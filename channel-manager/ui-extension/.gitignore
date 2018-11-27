@@ -1,5 +1,6 @@
 /coverage
 /dist
 /docs
+/node
 /node_modules
 /target
