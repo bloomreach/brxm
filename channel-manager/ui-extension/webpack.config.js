@@ -25,8 +25,8 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './dist/typings/ui-extension.d.ts',
-      out: '../ui-extension.d.ts',
+      main: './dist/ui-extension.d.ts',
+      out: 'ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
     }));
@@ -54,6 +54,9 @@ const config = {
       { test: /\.js$/, use: 'babel-loader' },
     ],
   },
+  plugins: [
+    new DtsBundlePlugin(),
+  ],
 };
 
 module.exports = [
@@ -64,9 +67,6 @@ module.exports = [
       filename: 'ui-extension.js',
       libraryTarget: 'umd',
     },
-    plugins: [
-      new DtsBundlePlugin(),
-    ],
   }),
 
   merge(config, {

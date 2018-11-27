@@ -19,7 +19,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "webpack --config=webpack.config.js && rimraf dist/typings",
+    "build": "webpack --config=webpack.config.js",
     "lint": "tslint --project .",
     "test": "npm run lint && jest",
     "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
@@ -60,7 +60,6 @@
     "jest": "^23.0",
     "js-beautify": "^1.0",
     "minicat": "^1.0",
-    "rimraf": "^2.6",
     "ts-jest": "^23.0",
     "ts-loader": "^5.0",
     "tslint": "^5.0",
