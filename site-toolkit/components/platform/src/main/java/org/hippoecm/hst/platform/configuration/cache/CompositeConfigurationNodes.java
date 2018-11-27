@@ -287,13 +287,12 @@ public class CompositeConfigurationNodes {
     /**
      * @return the cachekey for this {@link CompositeConfigurationNodes} object : It is the UUIDs of all main
      * configuration nodes (like hst:pages, hst:templates) *PLUS* their direct children (and thus not
-     * descendants of those children)
+     * descendants of those children) plus the UUID of the 'configurationRootNode'
      */
     public List<UUID> getCacheKey() {
         if (cacheKey != null) {
             return cacheKey;
         }
-        long start = System.currentTimeMillis();
         List<UUID> uuids = new ArrayList<>();
         for (CompositeConfigurationNode compositeConfigurationNode : getCompositeConfigurationNodes().values()) {
             uuids.add(UUID.fromString(compositeConfigurationNode.getMainConfigNode().getValueProvider().getIdentifier()));
@@ -301,9 +300,7 @@ public class CompositeConfigurationNodes {
                 uuids.add(UUID.fromString(compositeChild.getValueProvider().getIdentifier()));
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Creating cachekey took {} ms.", System.currentTimeMillis() - start);
-        }
+        uuids.add(UUID.fromString(configurationRootNode.getValueProvider().getIdentifier()));
         cacheKey = uuids;
         return cacheKey;
     }
