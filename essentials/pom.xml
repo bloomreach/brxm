@@ -48,6 +48,10 @@
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
+    <maven.plugin.frontend.version>1.6</maven.plugin.frontend.version>
+    <nodejs.version>v8.13.0</nodejs.version>
+    <npm.version>6.4.1</npm.version>
+
     <maven.plugin.jacoco.version>0.8.1</maven.plugin.jacoco.version>
     <!-- Tells Sonar to run the unit tests -->
     <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
