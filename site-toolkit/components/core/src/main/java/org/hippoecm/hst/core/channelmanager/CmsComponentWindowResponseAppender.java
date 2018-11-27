@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.channelmanager;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +59,14 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             return;
         }
 
-        HttpSession session = request.getSession(false);
+        final HttpSession session = request.getSession(false);
         if (session == null) {
             throw new IllegalStateException("HttpSession should never be null here.");
+        }
+
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        if (cmsSessionContext == null) {
+            throw new IllegalStateException("cmsSessionContext should never be null here.");
         }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
@@ -70,11 +77,11 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                 populateComponentMetaData(request, response, window);
             }
         } else if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
-            populatePageMetaData(request, response, session, compConfig);
+            populatePageMetaData(request, response, cmsSessionContext, compConfig);
         }
     }
 
-    private void populatePageMetaData(final HstRequest request, final HstResponse response, final HttpSession session, final HstComponentConfiguration compConfig) {
+    private void populatePageMetaData(final HstRequest request, final HstResponse response, final CmsSessionContext cmsSessionContext, final HstComponentConfiguration compConfig) {
         final HstRequestContext requestContext = request.getRequestContext();
         final Mount mount = requestContext.getResolvedMount().getMount();
         final Map<String, String> pageMetaData = new HashMap<>();
@@ -103,7 +110,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
         }
 
-        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
+        Serializable variant = cmsSessionContext.getContextPayload().get(ContainerConstants.RENDER_VARIANT);
         if (variant == null) {
             variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
         }
