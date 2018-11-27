@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
     protected static final String DEFAULT_OPTIMIZE = "quality";
     protected static final double DEFAULT_COMPRESSION = 1.0;
 
-    private static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<>();
+    protected static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<>();
     static {
         SCALING_STRATEGY_MAP.put("auto", ImageUtils.ScalingStrategy.AUTO);
         SCALING_STRATEGY_MAP.put("speed", ImageUtils.ScalingStrategy.SPEED);
