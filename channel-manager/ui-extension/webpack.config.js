@@ -50,6 +50,12 @@ const config = {
   },
   module: {
     rules: [
+      {
+        enforce: 'pre',
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: 'tslint-loader?typeCheck=true&emitErrors=true',
+      },
       { test: /\.ts$/, use: ['babel-loader', 'ts-loader'] },
       { test: /\.js$/, use: 'babel-loader' },
     ],

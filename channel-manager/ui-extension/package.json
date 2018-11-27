@@ -21,7 +21,7 @@
   "scripts": {
     "build": "webpack --config=webpack.config.js",
     "lint": "tslint --project .",
-    "test": "npm run lint && jest",
+    "test": "jest",
     "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
   },
   "jest": {
@@ -64,6 +64,7 @@
     "ts-loader": "^5.0",
     "tslint": "^5.0",
     "tslint-config-airbnb": "^5.0",
+    "tslint-loader": "^3.5",
     "typedoc": "^0.13",
     "typescript": "^3.0",
     "webpack": "^4.0",
