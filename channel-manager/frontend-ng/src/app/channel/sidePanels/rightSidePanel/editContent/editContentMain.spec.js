@@ -17,8 +17,10 @@
 describe('EditContentMainCtrl', () => {
   let $q;
   let $scope;
+  let $translate;
   let CmsService;
   let ContentEditor;
+  let DialogService;
   let EditContentService;
   let HippoIframeService;
   let RightSidePanelService;
@@ -29,25 +31,28 @@ describe('EditContentMainCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$q_, $rootScope) => {
+    inject(($controller, _$q_, $rootScope, _$translate_, _DialogService_) => {
       $q = _$q_;
+      $translate = _$translate_;
 
       CmsService = jasmine.createSpyObj('CmsService', ['publish', 'reportUsageStatistic']);
       ContentEditor = jasmine.createSpyObj('ContentEditor', [
         'close',
-        'confirmDiscardChanges',
         'confirmPublication',
         'confirmSaveOrDiscardChanges',
         'discardChanges',
         'getDocumentId',
         'getDocumentType',
+        'getDocumentDisplayName',
         'isDocumentDirty',
         'isEditing',
         'isPublishAllowed',
         'isEditing',
+        'isPristine',
         'publish',
         'save',
       ]);
+      DialogService = _DialogService_;
       EditContentService = jasmine.createSpyObj('EditContentService', ['stopEditing']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
@@ -120,12 +125,12 @@ describe('EditContentMainCtrl', () => {
 
     it('shows the loading indicator while saving and resets it once done', () => {
       ContentEditor.save.and.returnValue($q.resolve());
-      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+      spyOn($ctrl, 'startLoading').and.callThrough();
 
       $ctrl.save();
       $scope.$digest();
 
-      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.startLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
     });
   });
@@ -233,15 +238,19 @@ describe('EditContentMainCtrl', () => {
       expect(ContentEditor.publish).not.toHaveBeenCalled();
     });
 
-    it('shows the loading indicator while publishing and resets it once done', () => {
+    it('shows the loading indicator while publishing and resets it once done', (done) => {
       ContentEditor.confirmPublication.and.returnValue($q.resolve());
-      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+      ContentEditor.publish.and.returnValue($q.resolve());
+      spyOn($ctrl, 'startLoading').and.callThrough();
 
-      $ctrl.publish();
+      $ctrl.publish().then(() => {
+        expect($ctrl.startLoading).toHaveBeenCalled();
+        expect($ctrl.loading).toBe(false);
+
+        done();
+      });
+
       $scope.$digest();
-
-      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
-      expect($ctrl.loading).toBe(false);
     });
   });
 
@@ -322,6 +331,33 @@ describe('EditContentMainCtrl', () => {
 
       $ctrl.uiCanExit().then(done);
       $scope.$digest();
+    });
+  });
+
+  describe('confirm discard changes', () => {
+    beforeEach(() => {
+      ContentEditor.getDocumentDisplayName.and.returnValue('Test');
+      spyOn($translate, 'instant');
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(DialogService, 'show').and.returnValue($q.resolve());
+    });
+
+    it('shows a dialog', () => {
+      ContentEditor.isPristine.and.returnValue(false);
+      $ctrl.discard();
+
+      expect(DialogService.confirm).toHaveBeenCalled();
+      expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+        documentName: 'Test',
+      });
+      expect(DialogService.show).toHaveBeenCalled();
+    });
+
+    it('does not show a dialog when the document has not changed', () => {
+      ContentEditor.isPristine.and.returnValue(true);
+      $ctrl.discard();
+
+      expect(DialogService.show).not.toHaveBeenCalled();
     });
   });
 });

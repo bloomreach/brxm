@@ -21,14 +21,16 @@ describe('ContentEditorCtrl', () => {
   let ContentEditor;
 
   let $ctrl;
+  let $q;
   let $scope;
   let form;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$rootScope_, _CmsService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _CmsService_) => {
       $componentController = _$componentController_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       CmsService = _CmsService_;
     });
@@ -94,13 +96,14 @@ describe('ContentEditorCtrl', () => {
 
   describe('cancelRequestPublication', () => {
     it('cancels the publication request showing a loading indicator', () => {
-      spyOn($ctrl, 'showLoadingIndicator').and.callThrough();
+      spyOn($ctrl, 'startLoading').and.callThrough();
+      ContentEditor.cancelRequestPublication.and.returnValue($q.resolve());
 
       $ctrl.cancelRequestPublication();
       $scope.$digest();
 
       expect(ContentEditor.cancelRequestPublication).toHaveBeenCalled();
-      expect($ctrl.showLoadingIndicator).toHaveBeenCalled();
+      expect($ctrl.startLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('VisualEditingCancelRequest');
     });

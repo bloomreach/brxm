@@ -18,7 +18,6 @@ class ContentEditorCtrl {
   constructor(
     $q,
     $scope,
-    $translate,
     CmsService,
     ContentEditor,
   ) {
@@ -60,15 +59,16 @@ class ContentEditorCtrl {
 
   cancelRequestPublication() {
     this.CmsService.reportUsageStatistic('VisualEditingCancelRequest');
-    return this.showLoadingIndicator(() => this.ContentEditor.cancelRequestPublication());
+
+    const stopLoading = this.startLoading();
+    return this.ContentEditor.cancelRequestPublication()
+      .finally(stopLoading);
   }
 
-  showLoadingIndicator(action) {
+  startLoading() {
     this.loading = true;
-    return this.$q.resolve(action())
-      .finally(() => {
-        this.loading = false;
-      });
+
+    return () => { this.loading = false; };
   }
 }
 
