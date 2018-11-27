@@ -80,7 +80,10 @@ public class CompositeConfigurationNodes {
     private void addInherited(final HstNode currentConfigurationRootNode, final HstNode configurationsNode,
                               final String inheritPath, final String[] relPaths, final Set<String> alreadyInherited) {
 
-
+        if (!inheritPath.equals("../")) {
+            log.warn("Skipping invalid hst:inheritsfrom '{}' for '{}'. Property should start with '../'", inheritPath,
+                    currentConfigurationRootNode.getValueProvider().getPath());
+        }
         String hstConfigsInheritedRelPath = inheritPath.substring(3);
         String absHstConfigsInheritedPath = configurationsNode.getValueProvider().getPath() + "/" + hstConfigsInheritedRelPath;
         HstNode inheritConfig = configurationsNode.getNode(hstConfigsInheritedRelPath);
