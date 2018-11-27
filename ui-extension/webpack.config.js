@@ -57,6 +57,9 @@ const config = {
   plugins: [
     new DtsBundlePlugin(),
   ],
+  watchOptions: {
+    ignored: ['**/*.d.ts', 'node_modules'],
+  }
 };
 
 module.exports = [
