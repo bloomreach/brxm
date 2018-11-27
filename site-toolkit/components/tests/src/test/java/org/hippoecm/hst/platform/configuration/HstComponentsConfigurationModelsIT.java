@@ -69,20 +69,13 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
 
     /**
-     * All the mounts that share the same items for:
-     * <ol>
-     * <li>hst:pages</li>
-     * <li>hst:components</li>
-     * <li>hst:templates</li>
-     * <li>hst:catalog</li>
-     * <li>hst:workspace</li>
-     * </ol>
-     * <p/>
-     * MUST also share the same {@link HstComponentsConfigurationService}. This also
-     * holds of course of the items above are coming from inherited configuration. If the {@link
-     * HstComponentConfigurationService}
+     * All the mounts that point to the exact same hst:configuration node MUST also share the same
+     * {@link HstComponentsConfigurationService}. This does not
+     * hold for the from inherited configuration: namely if a configuration inherits from another one, the
+     *  org.hippoecm.hst.configuration.components.HstComponentConfiguration#isInherited() flag is typically differently .
+     *  If the {@link HstComponentConfigurationService}
      * is not shared, memory footprint of the HST model will become very large and loading of the model
-     * becomes slow. The model MUST always be shared. This unit test verifies that
+     * becomes slow. The model MUST always be shared. This integration test verifies that
      * <p/>
      * For the unittest content we have all the available hst:configuration inherit from the hst:configuration
      * 'unittestcommon' :
@@ -150,13 +143,15 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
 
         assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service2);
         assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service4);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service5);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service6);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service7);
-        assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service8);
+        // service 5-8 have an hst config that inherits from service1 hence must have different inherit flag
+        assertNotSame("Expected different HstComponentsConfiguration objects failed", service1, service5);
+        assertNotSame("Expected different HstComponentsConfiguration objects failed", service1, service6);
+        assertNotSame("Expected different HstComponentsConfiguration objects failed", service1, service7);
+        assertNotSame("Expected different HstComponentsConfiguration objects failed", service1, service8);
         assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service9);
         assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service10);
         assertSame("Expected shared HstComponentsConfiguration objects failed", service1, service11);
+        assertSame("Expected shared HstComponentsConfiguration objects failed", service9, service11);
 
         assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1, WithDiffHstCompServ1);
         assertNotSame("Expected non shared HstComponentsConfiguration objects failed", service1, WithDiffHstCompServ2);
@@ -184,7 +179,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         final HstComponentsConfiguration componenentConfigsBefore1 = hstSiteBefore1.getComponentsConfiguration();
         final HstComponentsConfiguration componenentConfigsBefore2 = hstSiteBefore2.getComponentsConfiguration();
 
-        assertSame(componenentConfigsBefore1, componenentConfigsBefore2);
+        // there is inheritance from global to unittest site hence not the same
+        assertNotSame(componenentConfigsBefore1, componenentConfigsBefore2);
 
         Node globalConfig = session.getNode("/hst:hst/hst:configurations/global");
         globalConfig.addNode("hst:pages", "hst:pages");
@@ -239,7 +235,9 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         final HstComponentsConfiguration componenentConfigsSecondAfter1 = hstSiteSecondAfter1.getComponentsConfiguration();
         final HstComponentsConfiguration componenentConfigsSecondAfter2 = hstSiteSecondAfter2.getComponentsConfiguration();
 
-        assertSame(componenentConfigsSecondAfter1, componenentConfigsSecondAfter2);
+        assertNotSame(componenentConfigsSecondAfter1, componenentConfigsSecondAfter2);
+
+        // for www.unit.test nothing changed
         assertSame(componenentConfigsSecondAfter1, componenentConfigsBefore1);
 
         // now we add a hst:sitemenus nodes : This node is not part of HstComponentsConfiguration and should thus not
@@ -251,7 +249,7 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
 
-        // now we expect still the same instance again from cache as only sitemenus has changed
+        // there is still inheritance from global to unittest site hence not the same
         final ResolvedMount mountThirdAfter1 = hstManager.getVirtualHosts().matchMount("www.unit.test",  "/");
         final ResolvedMount mountThirdAfter2 = hstManager.getVirtualHosts().matchMount("www.unit.partial",  "/");
 
@@ -266,7 +264,8 @@ public class HstComponentsConfigurationModelsIT extends AbstractTestConfiguratio
         final HstComponentsConfiguration componenentConfigsThirdAfter1 = hstSiteThirdAfter1.getComponentsConfiguration();
         final HstComponentsConfiguration componenentConfigsThirdAfter2 = hstSiteThirdAfter2.getComponentsConfiguration();
 
-        assertSame(componenentConfigsThirdAfter1, componenentConfigsThirdAfter2);
+        assertNotSame(componenentConfigsThirdAfter1, componenentConfigsThirdAfter2);
+        // for www.unit.test nothing changed
         assertSame(componenentConfigsThirdAfter1, componenentConfigsBefore1);
 
     }
