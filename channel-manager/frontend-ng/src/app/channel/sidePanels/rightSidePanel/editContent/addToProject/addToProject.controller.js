@@ -32,6 +32,7 @@ class AddToProjectController {
   $onInit() {
     this.ProjectService.beforeChange('addToProject', (projectIdIdentical) => {
       if (!projectIdIdentical) {
+        console.log('addtoproject beforechange');
         this.close();
       }
     });
