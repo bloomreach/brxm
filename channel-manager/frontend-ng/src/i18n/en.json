@@ -124,7 +124,7 @@
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "FEEDBACK_CANCEL_REQUEST": "Cancel request",
   "FEEDBACK_DEFAULT_MESSAGE": "Couldn't open the document for editing",
   "FEEDBACK_DEFAULT_TITLE": "Error",
