@@ -198,6 +198,9 @@ describe('RightSidePanel', () => {
   it('opens the panel when transitioning to state "hippo-cm.channel.*"', () => {
     $ctrl.$onInit();
 
+    $state.go('hippo-cm.channel');
+    $rootScope.$digest();
+
     $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
