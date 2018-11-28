@@ -272,7 +272,8 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
                 final MockHttpServletResponse response = render(null, requestResponse, admin);
                 assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
 
-                Object renderVariant = requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT);
+
+                Object renderVariant = requestResponse.getCmsSessionContext().getContextPayload().get(ContainerConstants.RENDER_VARIANT);
                 assertNotNull(renderVariant);
                 assertEquals("foo", renderVariant);
             }

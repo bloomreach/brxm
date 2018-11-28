@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -190,6 +191,15 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
         public MockHttpServletResponse getResponse() {
             return response;
+        }
+
+        public CmsSessionContext getCmsSessionContext() {
+            final HttpSession session = request.getSession();
+            if (session == null) {
+                return null;
+            }
+
+            return (CmsSessionContext)session.getAttribute(CmsSessionContext.SESSION_KEY);
         }
 
     }
