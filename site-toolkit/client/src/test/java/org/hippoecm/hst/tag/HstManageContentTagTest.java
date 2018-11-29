@@ -661,6 +661,19 @@ public class HstManageContentTagTest {
     }
 
     @Test
+    public void setFolderTemplateQueryWithoutDocumentTemplateQuery() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setParameterName("a-mandatory-parameter");
+            tag.setFolderTemplateQuery("new-folder");
+            tag.doEndTag();
+
+            assertLogged(listener, "The folderTemplateQuery attribute 'new-folder' is set on a manageContent tag, " +
+                    "but the documentTemplateQuery attribute is not set. FolderTemplateQuery attribute in template " +
+                    "'webfile:/freemarker/test.ftl' is ignored.");
+        }
+    }
+
+    @Test
     public void rootPathNodeNotFound() throws Exception {
         tag.setRootPath("/exists/not");
         tag.setDefaultPath("2018/09/23");

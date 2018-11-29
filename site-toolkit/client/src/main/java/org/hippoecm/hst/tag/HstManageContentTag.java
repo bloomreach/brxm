@@ -142,6 +142,7 @@ public class HstManageContentTag extends TagSupport {
 
             checkMandatoryParameters();
             checkRootPath();
+            checkObsoleteParameters();
 
             write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
             processHippoBean();
@@ -234,6 +235,14 @@ public class HstManageContentTag extends TagSupport {
         }
     }
 
+    private void checkObsoleteParameters() {
+        if (StringUtils.isNotEmpty(folderTemplateQuery) && StringUtils.isBlank(documentTemplateQuery)) {
+            log.warn("The folderTemplateQuery attribute '{}' is set on a manageContent tag, but the " + 
+                     "documentTemplateQuery attribute is not set. FolderTemplateQuery attribute in template '{}' is " +
+                     "ignored.", folderTemplateQuery, getComponentRenderPath());
+        }
+    }
+    
     private boolean isRelativePathParameter() {
         return jcrPath != null && jcrPath.isRelative();
     }
