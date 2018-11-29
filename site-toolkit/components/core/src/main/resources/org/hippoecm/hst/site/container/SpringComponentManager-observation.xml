@@ -387,6 +387,7 @@
   </bean>
 
   <!-- Default empty list of custom jcr observation event listener items to be overriden by projects. (e.g., classpath:META-INF/hst-assembly/overrides/*.xml) -->
+  <!-- Spring SPI id -->
   <bean id="customJcrObservationEventListenerItems" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
     <constructor-arg value="java.util.List" />
     <property name="targetClass" value="java.util.Collections" />

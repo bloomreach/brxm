@@ -19,6 +19,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <!-- Custom channel filters may be overriden in their project specific assembly. -->
+  <!-- Spring SPI id -->
   <bean id="customChannelFilters" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
@@ -54,6 +55,7 @@
   </bean>
 
   <!-- Custom channel manager event listeners in the following may be overriden in their project specific assembly. -->
+  <!-- Spring SPI id -->
   <bean id="customChannelManagerEventListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>

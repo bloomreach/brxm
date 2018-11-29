@@ -17,8 +17,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
-    
-    
+
+
+  <!-- Spring API id -->
   <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.HippoAuthenticationProvider">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('java.security.auth.login.config')" />
@@ -40,7 +41,6 @@
     it fallbacks to classpath:/org/hippoecm/hst/security/impl/login.conf by default.
     You can customize this behavior by overriding the following beans in your hst-assembly XML.
   -->
-
   <bean id="defaultHstJaasLoginModuleConfigUrlString" class="org.hippoecm.hst.site.container.ResourceFactoryBean">
     <constructor-arg value="classpath:/org/hippoecm/hst/security/impl/login.conf" />
     <constructor-arg value="java.lang.String" />

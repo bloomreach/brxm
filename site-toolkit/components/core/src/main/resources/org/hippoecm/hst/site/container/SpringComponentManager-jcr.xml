@@ -21,6 +21,7 @@
   <!-- it is known that 'hstJmvEnabledUsers' should had been 'hstJvmEnabledUsers' but end-projects
        rely on that it is called 'hstJmvEnabledUsers', hence keep as is.
   -->
+  <!-- Spring API id -->
   <bean id="hstJmvEnabledUsers" class="org.springframework.beans.factory.config.SetFactoryBean">
     <property name="sourceSet">
       <set>
@@ -32,6 +33,7 @@
     </property>
   </bean>
 
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.default" class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${default.repository.user.name}"/>
     <property name="separator" value="${repository.pool.user.name.separator}"/>
@@ -41,12 +43,14 @@
   </bean>
 
  <!-- default cred that can be used in delegating repository -->
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.default.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${default.repository.user.name}"/>
     <property name="password" value="${default.repository.password}"/>
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
+
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.preview"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${preview.repository.user.name}"/>
     <property name="separator" value="${repository.pool.user.name.separator}"/>
@@ -56,12 +60,14 @@
   </bean>
 
   <!-- preview cred that can be used in delegating repository -->
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.preview.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${preview.repository.user.name}"/>
     <property name="password" value="${preview.repository.password}"/>
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
 
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.writable"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${writable.repository.user.name}"/>
     <property name="separator" value="${repository.pool.user.name.separator}"/>
@@ -69,7 +75,8 @@
     <property name="password" value="${writable.repository.password}"/>
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
+
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.hstconfigreader"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${hstconfigreader.repository.user.name}"/>
     <property name="separator" value="${repository.pool.user.name.separator}"/>
@@ -79,12 +86,14 @@
   </bean>
 
   <!-- hstconfigreader cred that can be used in delegating repository -->
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.hstconfigreader.delegating"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${hstconfigreader.repository.user.name}"/>
     <property name="password" value="${hstconfigreader.repository.password}"/>
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
-  
+
+  <!-- Spring API id -->
   <bean id="javax.jcr.Credentials.binaries"  class="org.hippoecm.hst.core.jcr.SimpleCredentialsFactoryBean">
     <property name="userId" value="${binaries.repository.user.name}"/>
     <property name="separator" value="${repository.pool.user.name.separator}"/>
@@ -101,6 +110,7 @@
     <property name="enabled" value="${repository.pool.counter.enabled}" />
   </bean>
 
+  <!-- Spring API id -->
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl" destroy-method="close">
     <!-- Delegating session pool repositories -->
     <constructor-arg>
@@ -301,12 +311,14 @@
   </bean>
   
   <!-- Delegating repository to the raw hippo repository -->
+  <!-- Spring API id -->
   <bean id="javax.jcr.Repository.delegating" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
     <constructor-arg value="${default.repository.address}" />
     <property name="hstJmvEnabledUsers" ref="hstJmvEnabledUsers"/>
   </bean>
   
   <!-- Subject based non-pooling delegating repository -->
+  <!-- Spring API id -->
   <bean id="javax.jcr.Repository.subjectBased" class="org.hippoecm.hst.core.jcr.SubjectBasedRepository">
     <constructor-arg ref="javax.jcr.Repository.delegating" />
     <property name="logoutOnSessionUnbound" value="true" />

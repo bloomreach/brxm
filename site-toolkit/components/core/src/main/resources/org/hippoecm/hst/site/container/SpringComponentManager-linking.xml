@@ -18,6 +18,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+  <!-- Spring API/SPI id -->
   <bean id="org.hippoecm.hst.core.linking.HstLinkCreator.binaryLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
@@ -28,9 +29,11 @@
   </bean>
 
   <!--  End projects can inject a custom  RewriteContextResolver used in the platform webapp -->
+  <!-- Spring SPI id -->
   <bean id="org.hippoecm.hst.core.linking.RewriteContextResolver" abstract="true"/>
 
   <!-- overridable -->
+  <!-- Spring SPI id -->
   <bean id="customResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
@@ -40,6 +43,7 @@
 
 
   <!-- overridable -->
+  <!-- Spring SPI id -->
   <bean id="customResourceContainers" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>

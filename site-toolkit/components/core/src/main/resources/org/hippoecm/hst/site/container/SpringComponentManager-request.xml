@@ -19,6 +19,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
   
   <!-- Default request context based credentials provider -->
+  <!-- Spring API id -->
   <bean id="org.hippoecm.hst.core.request.ContextCredentialsProvider" class="org.hippoecm.hst.site.request.DefaultContextCredentialsProvider">
     <constructor-arg ref="javax.jcr.Credentials.default" />
     <constructor-arg ref="javax.jcr.Credentials.preview" />
