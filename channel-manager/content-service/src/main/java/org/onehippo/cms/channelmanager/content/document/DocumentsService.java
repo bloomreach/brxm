@@ -85,11 +85,10 @@ public interface DocumentsService {
      * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
      *                 pending.
      * @param locale   Locale of the CMS user
-     * @param branchId id of branch
      * @return JSON-serializable representation of the persisted document.
      * @throws ErrorWithPayloadException If updating the editable document failed
      */
-    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale, final String branchId) throws ErrorWithPayloadException;
+    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Update a single field value in the editable version of a document.

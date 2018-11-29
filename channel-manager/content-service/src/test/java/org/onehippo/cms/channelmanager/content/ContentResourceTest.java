@@ -218,7 +218,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq("master"))).andReturn(testDocument);
+        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale))).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");

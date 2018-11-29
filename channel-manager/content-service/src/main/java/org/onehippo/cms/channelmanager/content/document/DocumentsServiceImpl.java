@@ -240,16 +240,17 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document updateEditableDocument(final String uuid, final Document document, final Session session, final Locale locale, final String branchId)
+    public Document updateEditableDocument(final String uuid, final Document document, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
+        final String branchId = document.getBranchId();
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new NotFoundException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
-        final Map<String, Serializable> hints = HintsUtils.getHints(workflow, branchId);
-        if (!hintsInspector.canUpdateDocument(branchId, hints)) {
-            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(branchId, hints, session));
+        final Map<String, Serializable> hints = HintsUtils.getHints(workflow, document.getBranchId());
+        if (!hintsInspector.canUpdateDocument(document.getBranchId(), hints)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(document.getBranchId(), hints, session));
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
