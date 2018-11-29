@@ -64,7 +64,7 @@ const config = {
     new DtsBundlePlugin(),
   ],
   watchOptions: {
-    ignored: ['**/*.d.ts', 'node_modules'],
+    ignored: ['**/*.d.ts', /node_modules/],
   }
 };
 
