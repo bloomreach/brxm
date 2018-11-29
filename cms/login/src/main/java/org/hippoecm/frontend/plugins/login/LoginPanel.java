@@ -60,14 +60,14 @@ import static org.hippoecm.frontend.session.LoginException.Cause;
 
 public class LoginPanel extends Panel {
 
-    public static final Logger log = LoggerFactory.getLogger(LoginPanel.class);
+    private static final Logger log = LoggerFactory.getLogger(LoginPanel.class);
 
     public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
             new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
     private static final String CONSOLE_LOCALE = "en";
     private static final String LOCALE_COOKIE = "loc";
-    private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
+    private static final int LOCALE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
     private final static String DEFAULT_KEY = "invalid.login";
 
     private final LoginHandler handler;
@@ -92,7 +92,7 @@ public class LoginPanel extends Panel {
     }
 
     protected void login() throws LoginException {
-        PluginUserSession userSession = PluginUserSession.get();
+        final PluginUserSession userSession = PluginUserSession.get();
 
         if (userSession.getAuthorizedAppCounter() == 0) {
             log.debug("Invalidating user session to make sure a new session id is created");
@@ -113,7 +113,7 @@ public class LoginPanel extends Panel {
         final char[] pwdAsChars = password == null ? new char[]{} : password.toCharArray();
         userSession.login(new UserCredentials(new SimpleCredentials(username, pwdAsChars)));
 
-        HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
+        final HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
         ConcurrentLoginFilter.validateSession(session, username, false);
 
     }
@@ -131,7 +131,7 @@ public class LoginPanel extends Panel {
     }
 
     protected void loginFailed(final Cause cause) {
-        Main main = (Main) Application.get();
+        final Main main = (Main) Application.get();
         main.resetConnection();
 
         info(getReason(cause));
@@ -144,7 +144,7 @@ public class LoginPanel extends Panel {
                 if (reason != null) {
                     return reason;
                 }
-            } catch (MissingResourceException ignore) {
+            } catch (final MissingResourceException ignore) {
             }
         }
         return getString(DEFAULT_KEY);
@@ -220,12 +220,12 @@ public class LoginPanel extends Panel {
                     locales,
                     // Display the language name from i18n properties
                     new IChoiceRenderer<String>() {
-                        public String getDisplayValue(String key) {
+                        public String getDisplayValue(final String key) {
                             final Locale locale = new Locale(key);
                             return StringUtils.capitalize(locale.getDisplayLanguage(locale));
                         }
 
-                        public String getIdValue(String object, int index) {
+                        public String getIdValue(final String object, final int index) {
                             return object;
                         }
 
@@ -237,9 +237,9 @@ public class LoginPanel extends Panel {
                     }
             ));
             locale.add(new OnChangeAjaxBehavior() {
-                protected void onUpdate(AjaxRequestTarget target) {
+                protected void onUpdate(final AjaxRequestTarget target) {
                     // Store locale in cookie
-                    setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
+                    setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAX_AGE);
 
                     // and update the session locale
                     getSession().setLocale(getSelectedLocale());
@@ -278,10 +278,10 @@ public class LoginPanel extends Panel {
             try {
                 login();
                 loginSuccess();
-            } catch (LoginException le) {
+            } catch (final LoginException le) {
                 log.debug("Login failure!", le);
                 loginFailed(le.getLoginExceptionCause());
-            } catch (AccessControlException ace) {
+            } catch (final AccessControlException ace) {
                 // Invalidate the current obtained JCR session and create an anonymous one
                 PluginUserSession.get().login();
                 loginFailed(Cause.ACCESS_DENIED);
@@ -296,15 +296,15 @@ public class LoginPanel extends Panel {
     }
 
     protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
-        Cookie localeCookie = new Cookie(cookieName, cookieValue);
+        final Cookie localeCookie = new Cookie(cookieName, cookieValue);
         localeCookie.setMaxAge(maxAge);
         WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
     }
 
     protected String getCookieValue(final String cookieName) {
-        Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
+        final Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
         if (cookies != null) {
-            for (Cookie cookie : cookies) {
+            for (final Cookie cookie : cookies) {
                 if (cookieName.equals(cookie.getName())) {
                     return cookie.getValue();
                 }

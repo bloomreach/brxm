@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
 
     public static final Cause INCORRECT_CAPTCHA = LoginException.newCause("invalid.captcha");
 
-    public SimpleLoginPlugin(IPluginContext context, IPluginConfig config) {
+    public SimpleLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
@@ -96,7 +96,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
             super.loginFailed(cause);
         }
 
-        protected void createAndAddCaptcha(boolean isVisible) {
+        protected void createAndAddCaptcha(final boolean isVisible) {
             // Prepare Captcha resources
             if (captchaImage != null) {
                 form.remove(captchaImage);
@@ -123,7 +123,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
                 // This method is overridden to properly forces the browser to refresh the image for the newly created
                 // captcha image component
                 @Override
-                protected void onComponentTag(ComponentTag tag) {
+                protected void onComponentTag(final ComponentTag tag) {
                     super.onComponentTag(tag);
                     String src = (String) tag.getAttributes().get("src");
                     src = src + "&rand=" + Math.random();
@@ -142,13 +142,13 @@ public class SimpleLoginPlugin extends LoginPlugin {
         }
     }
 
-    private static int randomInt(int min, int max) {
+    private static int randomInt(final int min, final int max) {
         return (int) (Math.random() * (max - min) + min);
     }
 
-    private String randomString(int min, int max) {
-        int num = randomInt(min, max);
-        byte b[] = new byte[num];
+    private String randomString(final int min, final int max) {
+        final int num = randomInt(min, max);
+        final byte[] b = new byte[num];
 
         for (int i = 0; i < num; i++) {
             b[i] = (byte) randomInt('a', 'z');
