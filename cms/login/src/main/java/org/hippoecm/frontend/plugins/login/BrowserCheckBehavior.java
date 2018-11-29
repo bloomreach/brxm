@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,23 +29,23 @@ import org.slf4j.LoggerFactory;
 
 public class BrowserCheckBehavior extends Behavior {
 
-    static Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
 
-    BrowserCheck check;
+    private final BrowserCheck check;
 
-    public static class BrowserCheck implements IClusterable {
+    static class BrowserCheck implements IClusterable {
 
         Browser[] browsers;
 
-        public BrowserCheck(String[] init) {
+        BrowserCheck(final String[] init) {
             browsers = new Browser[init.length];
             for (int i = 0; i < browsers.length; i++) {
                 browsers[i] = new Browser(init[i]);
             }
         }
 
-        public boolean isSupported(BrowserInfo info) {
-            for (Browser browser : browsers) {
+        boolean isSupported(final BrowserInfo info) {
+            for (final Browser browser : browsers) {
                 if (browser.is(info)) {
                     return true;
                 }
@@ -65,13 +65,13 @@ public class BrowserCheckBehavior extends Behavior {
         int minorVersion = -1;
         String modifier = "=";
 
-        public Browser(String init) {
-            StringTokenizer st = new StringTokenizer(init, " ");
+        Browser(final String init) {
+            final StringTokenizer st = new StringTokenizer(init, " ");
 
             agent = st.nextToken();
             if (st.hasMoreTokens()) {
                 String major = st.nextToken(), minor = null;
-                int idx = major.indexOf(".");
+                final int idx = major.indexOf(".");
                 if (idx > -1) {
                     minor = major.substring(idx + 1);
                     major = major.substring(0, idx);
@@ -89,14 +89,14 @@ public class BrowserCheckBehavior extends Behavior {
             }
         }
 
-        public boolean is(BrowserInfo info) {
+        public boolean is(final BrowserInfo info) {
             if (!isAgent(info)) {
                 return false;
             }
             return isVersion(info);
         }
 
-        private boolean isVersion(BrowserInfo info) {
+        private boolean isVersion(final BrowserInfo info) {
             if (majorVersion > -1 && !validVersion(majorVersion, info.getMajor())) {
                 return false;
             }
@@ -106,41 +106,45 @@ public class BrowserCheckBehavior extends Behavior {
             return true;
         }
 
-        private boolean validVersion(int configured, int provided) {
-            if (modifier.equals("=")) {
-                return configured == provided;
-            } else if (modifier.equals("<")) {
-                return provided < configured;
-            } else if (modifier.equals("<=")) {
-                return provided <= configured;
-            } else if (modifier.equals(">")) {
-                return provided > configured;
-            } else if (modifier.equals(">=")) {
-                return provided >= configured;
+        private boolean validVersion(final int configured, final int provided) {
+            switch (modifier) {
+                case "=":
+                    return configured == provided;
+                case "<":
+                    return provided < configured;
+                case "<=":
+                    return provided <= configured;
+                case ">":
+                    return provided > configured;
+                case ">=":
+                    return provided >= configured;
+                default:
+                    return false;
             }
-            return false;
         }
 
-        private boolean isAgent(BrowserInfo info) {
-            if (agent.equals("ie")) {
-                return info.isInternetExplorer();
-            } else if (agent.equals("firefox")) {
-                return info.isFirefox();
-            } else if (agent.equals("safari")) {
-                return info.isSafari();
-            } else if (agent.equals("chrome")) {
-                return info.isChrome();
-            } else if (agent.equals("opera")) {
-                return info.isOpera();
-            } else if (agent.equals("edge")) {
-                return info.isEdge();
+        private boolean isAgent(final BrowserInfo info) {
+            switch (agent) {
+                case "ie":
+                    return info.isInternetExplorer();
+                case "firefox":
+                    return info.isFirefox();
+                case "safari":
+                    return info.isSafari();
+                case "chrome":
+                    return info.isChrome();
+                case "opera":
+                    return info.isOpera();
+                case "edge":
+                    return info.isEdge();
+                default:
+                    return false;
             }
-            return false;
         }
 
     }
 
-    public static interface BrowserInfo {
+    public interface BrowserInfo {
 
         boolean isOpera();
 
@@ -166,11 +170,12 @@ public class BrowserCheckBehavior extends Behavior {
         private static final String SHIRETOKO = "Shiretoko";
         private static final String FIREFOX = "Firefox";
         private static final String EDGE = "Edge";
-        private WebClientInfo info;
+
+        private final WebClientInfo info;
         private int major;
         private int minor;
 
-        public WicketBrowserInfo(WebClientInfo info) {
+        WicketBrowserInfo(final WebClientInfo info) {
             this.info = info;
 
             major = info.getProperties().getBrowserVersionMajor();
@@ -179,7 +184,7 @@ public class BrowserCheckBehavior extends Behavior {
                 if (isFirefox()) {
                     if (info.getProperties().isBrowserMozillaFirefox()) {
                         setVersions(FIREFOX);
-                    } else if (info.getUserAgent().indexOf(SHIRETOKO) > -1) {
+                    } else if (info.getUserAgent().contains(SHIRETOKO)) {
                         setVersions(SHIRETOKO);
                     }
                 } else if (isChrome()) {
@@ -187,9 +192,9 @@ public class BrowserCheckBehavior extends Behavior {
                 } else if (isSafari() || isOpera()) {
                     setVersions("Version");
                 } else if (isInternetExplorer()) {
-                    String ua = info.getUserAgent();
+                    final String ua = info.getUserAgent();
                     if (ua.indexOf(MSIE) > 0) {
-                        String v = ua.substring(ua.indexOf(MSIE));
+                        final String v = ua.substring(ua.indexOf(MSIE));
                         parseMajorMinor(v.substring(5, v.indexOf(';')));
                     }
                 } else if(isEdge()) {
@@ -198,24 +203,24 @@ public class BrowserCheckBehavior extends Behavior {
             }
         }
 
-        private void setVersions(String string) {
-            String ua = info.getUserAgent();
-            if (ua.indexOf(string) == -1) {
+        private void setVersions(final String string) {
+            final String ua = info.getUserAgent();
+            if (!ua.contains(string)) {
                 return;
             }
             parseMajorMinor(ua.substring(ua.indexOf(string) + string.length() + 1));
         }
 
-        private void parseMajorMinor(String parse) {
+        private void parseMajorMinor(final String parse) {
             try {
-                StringTokenizer st = new StringTokenizer(parse.trim(), ". ");
+                final StringTokenizer st = new StringTokenizer(parse.trim(), ". ");
                 if (st.hasMoreTokens()) {
                     major = Integer.parseInt(st.nextToken());
                     if (st.hasMoreTokens()) {
                         minor = Integer.parseInt(st.nextToken());
                     }
                 }
-            } catch (NumberFormatException ex) {
+            } catch (final NumberFormatException ex) {
                 log.info("Could not parse " + parse + ": " + ex.getMessage());
             }
         }
@@ -226,7 +231,7 @@ public class BrowserCheckBehavior extends Behavior {
 
         public boolean isFirefox() {
             return info.getProperties().isBrowserMozillaFirefox()
-                    || (info.getProperties().isBrowserMozilla() && info.getUserAgent().indexOf(SHIRETOKO) > -1);
+                    || (info.getProperties().isBrowserMozilla() && info.getUserAgent().contains(SHIRETOKO));
         }
 
         public boolean isInternetExplorer() {
@@ -256,16 +261,16 @@ public class BrowserCheckBehavior extends Behavior {
 
     }
 
-    public BrowserCheckBehavior(String[] supported) {
+    BrowserCheckBehavior(final String[] supported) {
         check = new BrowserCheck(supported);
     }
 
     @Override
-    public void bind(Component component) {
+    public void bind(final Component component) {
         super.bind(component);
 
-        WebClientInfo info = WebSession.get().getClientInfo();
-        if (check != null && !check.isSupported(new WicketBrowserInfo(info))) {
+        final WebClientInfo info = WebSession.get().getClientInfo();
+        if (!check.isSupported(new WicketBrowserInfo(info))) {
             component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class).getObject());
         }
     }

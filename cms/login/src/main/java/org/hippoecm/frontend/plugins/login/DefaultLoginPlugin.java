@@ -110,7 +110,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         }
 
         @Override
-        public void internalRenderHead(HtmlHeaderContainer container) {
+        public void internalRenderHead(final HtmlHeaderContainer container) {
             super.internalRenderHead(container);
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM) && useBrowserTimeZoneIfAvailable) {
                 container.getHeaderResponse().render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
@@ -129,7 +129,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             super.loginSuccess();
         }
 
-        private boolean isTimeZoneValid(String timeZone) {
+        private boolean isTimeZoneValid(final String timeZone) {
             return timeZone != null && availableTimeZones != null
                     && availableTimeZones.contains(timeZone);
         }

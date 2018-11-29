@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -61,7 +60,7 @@ public class LoginPlugin extends RenderPlugin {
     private ResourceReference editionCss;
     private PageParameters parameters;
 
-    public LoginPlugin(IPluginContext context, IPluginConfig config) {
+    public LoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(CssClass.append("hippo-login-plugin"));
@@ -71,7 +70,7 @@ public class LoginPlugin extends RenderPlugin {
         final ResourceReference iconReference = getFaviconReference();
         add(new ResourceLink("faviconLink", iconReference));
 
-        String[] supported = config.getStringArray(SUPPORTED_BROWSERS);
+        final String[] supported = config.getStringArray(SUPPORTED_BROWSERS);
         if (supported != null) {
             add(new BrowserCheckBehavior(supported));
         }
@@ -82,7 +81,7 @@ public class LoginPlugin extends RenderPlugin {
             editionCss = new CssResourceReference(LoginPlugin.class, "login_" + edition + ".css");
         }
 
-        ExternalLink termsAndConditions = new ExternalLink("termsAndConditions", TERMS_AND_CONDITIONS_LINK) {
+        final ExternalLink termsAndConditions = new ExternalLink("termsAndConditions", TERMS_AND_CONDITIONS_LINK) {
             @Override
             public boolean isVisible() {
                 return UsageStatisticsSettings.get().isEnabled();
@@ -115,16 +114,14 @@ public class LoginPlugin extends RenderPlugin {
     protected void onBeforeRender() {
         super.onBeforeRender();
 
-        Request request = RequestCycle.get().getRequest();
+        final Request request = RequestCycle.get().getRequest();
 
-        /**
-         * Strip the first query parameter from URL if it is empty
-         * Copied from {@link AbstractComponentMapper#removeMetaParameter}
-         */
-        Url urlCopy = new Url(request.getUrl());
+        // Strip the first query parameter from URL if it is empty
+        // Copied from {@link AbstractComponentMapper#removeMetaParameter}
+        final Url urlCopy = new Url(request.getUrl());
         if (!urlCopy.getQueryParameters().isEmpty() &&
                 Strings.isEmpty(urlCopy.getQueryParameters().get(0).getValue())) {
-            String pageComponentInfoCandidate = urlCopy.getQueryParameters().get(0).getName();
+            final String pageComponentInfoCandidate = urlCopy.getQueryParameters().get(0).getName();
             if (PageComponentInfo.parse(pageComponentInfoCandidate) != null) {
                 urlCopy.getQueryParameters().remove(0);
             }
@@ -148,7 +145,7 @@ public class LoginPlugin extends RenderPlugin {
 
         private final ExternalLink privacyTerms;
 
-        public LoginPluginHandler(final ExternalLink privacyTerms) {
+        LoginPluginHandler(final ExternalLink privacyTerms) {
             this.privacyTerms = privacyTerms;
         }
 
