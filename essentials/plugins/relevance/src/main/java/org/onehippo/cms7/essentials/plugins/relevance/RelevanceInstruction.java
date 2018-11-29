@@ -23,8 +23,10 @@ import java.util.function.BiConsumer;
 import javax.inject.Inject;
 
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
+import org.onehippo.cms7.essentials.sdk.api.model.rest.MavenDependency;
 import org.onehippo.cms7.essentials.sdk.api.service.ContextXmlService;
 import org.onehippo.cms7.essentials.sdk.api.service.LoggingService;
+import org.onehippo.cms7.essentials.sdk.api.service.MavenAssemblyService;
 import org.onehippo.cms7.essentials.sdk.api.service.MavenCargoService;
 import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 
@@ -38,6 +40,9 @@ public class RelevanceInstruction implements Instruction {
     private static final String TARGETING_LOGGER = "com.onehippo.cms7.targeting";
     private static final Map<String, String> TARGETING_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
     private static final Map<String, String> TARGETING_ENVIRONMENT_ATTRIBUTES = new LinkedHashMap<>();
+    private static final String TARGETING_SHARED_API_ARTIFACT_ID = "hippo-addon-targeting-shared-api";
+    private static final MavenDependency TARGETING_SHARED_API_DEPENDENCY
+            = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, TARGETING_SHARED_API_ARTIFACT_ID);
 
     static {
         TARGETING_RESOURCE_ATTRIBUTES.put("auth", "Container");
@@ -64,6 +69,7 @@ public class RelevanceInstruction implements Instruction {
     @Inject private LoggingService loggingService;
     @Inject private ProjectService projectService;
     @Inject private MavenCargoService mavenCargoService;
+    @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
@@ -75,6 +81,8 @@ public class RelevanceInstruction implements Instruction {
 
         mavenCargoService.mergeCargoProfile(getClass().getResource("/relevance-pom-overlay.xml"));
 
+        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", TARGETING_SHARED_API_DEPENDENCY);
+
         return Status.SUCCESS;
     }
 
@@ -83,5 +91,6 @@ public class RelevanceInstruction implements Instruction {
         changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add shared dependency '" + TARGETING_SHARED_API_ARTIFACT_ID + "' to distribution assembly.");
     }
 }
