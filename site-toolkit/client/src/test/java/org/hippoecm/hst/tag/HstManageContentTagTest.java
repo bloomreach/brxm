@@ -140,7 +140,7 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void templateQuery() throws Exception {
+    public void documentTemplateQuery() throws Exception {
         tag.setDocumentTemplateQuery("new-document");
 
         assertThat(tag.doEndTag(), is(EVAL_PAGE));
@@ -148,6 +148,20 @@ public class HstManageContentTagTest {
         assertThat(response.getContentAsString(), is("<!-- {"
                 + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
                 + "\"documentTemplateQuery\":\"new-document\""
+                + "} -->"));
+    }
+
+    @Test
+    public void folderTemplateQuery() throws Exception {
+        tag.setDocumentTemplateQuery("new-document"); // a mandatory parameter
+        tag.setFolderTemplateQuery("new-folder");
+
+        assertThat(tag.doEndTag(), is(EVAL_PAGE));
+
+        assertThat(response.getContentAsString(), is("<!-- {"
+                + "\"HST-Type\":\"MANAGE_CONTENT_LINK\","
+                + "\"documentTemplateQuery\":\"new-document\","
+                + "\"folderTemplateQuery\":\"new-folder\""
                 + "} -->"));
     }
 
@@ -579,7 +593,7 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void setTemplateQueryToNull() throws Exception {
+    public void setDocumentTemplateQueryToNull() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             tag.setDocumentTemplateQuery(null);
             tag.doEndTag();
@@ -591,7 +605,7 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void setTemplateQueryToEmpty() throws Exception {
+    public void setDocumentTemplateQueryToEmpty() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             tag.setDocumentTemplateQuery("");
             tag.doEndTag();
@@ -602,12 +616,46 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void setTemplateQueryToSpaces() throws Exception {
+    public void setDocumentTemplateQueryToSpaces() throws Exception {
         try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
             tag.setDocumentTemplateQuery("  ");
             tag.doEndTag();
 
             assertLogged(listener, "The documentTemplateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to '  '. Expected the name of a template query instead.");
+        }
+    }
+
+    @Test
+    public void setFolderTemplateQueryToNull() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setFolderTemplateQuery(null);
+            tag.doEndTag();
+
+            assertLogged(listener, "The folderTemplateQuery attribute of a manageContent tag"
+                    + " in template 'webfile:/freemarker/test.ftl' is set to 'null'." +
+                    " Expected the name of a template query instead.");
+        }
+    }
+
+    @Test
+    public void setFolderTemplateQueryToEmpty() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setFolderTemplateQuery("");
+            tag.doEndTag();
+
+            assertLogged(listener, "The folderTemplateQuery attribute of a manageContent tag in template"
+                    + " 'webfile:/freemarker/test.ftl' is set to ''. Expected the name of a template query instead.");
+        }
+    }
+
+    @Test
+    public void setFolderTemplateQueryToSpaces() throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(HstManageContentTag.class).build()) {
+            tag.setFolderTemplateQuery("  ");
+            tag.doEndTag();
+
+            assertLogged(listener, "The folderTemplateQuery attribute of a manageContent tag in template"
                     + " 'webfile:/freemarker/test.ftl' is set to '  '. Expected the name of a template query instead.");
         }
     }

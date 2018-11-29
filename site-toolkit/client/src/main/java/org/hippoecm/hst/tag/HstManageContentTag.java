@@ -53,6 +53,7 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_T
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE_MANAGE_CONTENT_LINK;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DEFAULT_PATH;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_FOLDER_TEMPLATE_QUERY;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_NAME;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.MANAGE_CONTENT_PARAMETER_VALUE_IS_RELATIVE_PATH;
@@ -77,6 +78,7 @@ public class HstManageContentTag extends TagSupport {
 
     private HippoBean hippoBean;
     private String documentTemplateQuery;
+    private String folderTemplateQuery;
     private String parameterName;
     private String rootPath;
     private String defaultPath;
@@ -95,6 +97,14 @@ public class HstManageContentTag extends TagSupport {
                     + " Expected the name of a template query instead.", getComponentRenderPath(), documentTemplateQuery);
         }
         this.documentTemplateQuery = documentTemplateQuery;
+    }
+
+    public void setFolderTemplateQuery(final String folderTemplateQuery) {
+        if (StringUtils.isBlank(folderTemplateQuery)) {
+            log.warn("The folderTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
+                    + " Expected the name of a template query instead.", getComponentRenderPath(), folderTemplateQuery);
+        }
+        this.folderTemplateQuery = folderTemplateQuery;
     }
 
     public void setParameterName(final String parameterName) {
@@ -136,6 +146,7 @@ public class HstManageContentTag extends TagSupport {
             write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
             processHippoBean();
             processDocumentTemplateQuery();
+            processFolderTemplateQuery();
             processParameterName();
             processPaths();
 
@@ -255,6 +266,10 @@ public class HstManageContentTag extends TagSupport {
 
     private void processDocumentTemplateQuery() {
         write(MANAGE_CONTENT_DOCUMENT_TEMPLATE_QUERY, documentTemplateQuery);
+    }
+
+    private void processFolderTemplateQuery() {
+        write(MANAGE_CONTENT_FOLDER_TEMPLATE_QUERY, folderTemplateQuery);
     }
 
     private void processParameterName() {
