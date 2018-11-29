@@ -35,6 +35,7 @@ const nodeLinkComponent = {
   },
   require: {
     ngModel: 'ngModel',
+    mdInputContainer: '?^^mdInputContainer',
   },
 };
 

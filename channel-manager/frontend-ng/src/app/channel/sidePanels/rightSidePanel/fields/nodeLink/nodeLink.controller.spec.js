@@ -147,12 +147,24 @@ describe('nodeLinkController', () => {
       expect(clearBtn.focus).toHaveBeenCalled();
     });
 
+    it('sets focus on parent container', () => {
+      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
+      $ctrl.focus('event');
+      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
+    });
+
     it('emits focus event and set hasFocus to true', () => {
       const event = {};
       $ctrl.focus(event);
 
       expect($ctrl.hasFocus).toBe(true);
       expect(onFocus).toHaveBeenCalledWith(event);
+    });
+
+    it('blurs parent container', () => {
+      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
+      $ctrl.blur('event');
+      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
 
     it('emits blur event and set hasFocus to false after timeout', () => {
