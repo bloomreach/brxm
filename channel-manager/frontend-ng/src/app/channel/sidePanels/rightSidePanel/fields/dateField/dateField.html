@@ -66,6 +66,8 @@
   aria-label="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}"
   ng-click="$ctrl.setToNow()"
   ng-disabled="$ctrl.disabled"
+  ng-focus="$ctrl.onFieldFocus()"
+  ng-blur="$ctrl.onFieldBlur()"
   title="{{ ::$ctrl.fieldType.type === 'DATE_ONLY' ? 'SET_TO_TODAY' : 'SET_TO_NOW' | translate }}"
 >
   <md-icon md-font-icon="mdi-sync"></md-icon>
