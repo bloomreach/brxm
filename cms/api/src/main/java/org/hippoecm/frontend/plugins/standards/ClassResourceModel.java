@@ -25,7 +25,9 @@ import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 
 /**
@@ -36,7 +38,7 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
 
     private final Class<?> clazz;
     private final String key;
-    private final Locale locale;
+    private final IModel<Locale> localeModel;
     private final String style;
     private final Object[] parameters;
 
@@ -45,9 +47,13 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
     }
 
     public ClassResourceModel(final String key, final Class<?> clazz, final Locale locale, final String style, final Object... parameters) {
+        this(key, clazz, Model.of(locale), style, parameters);
+    }
+
+    public ClassResourceModel(final String key, final Class<?> clazz, final IModel<Locale> localeModel, final String style, final Object... parameters) {
         this.clazz = clazz;
         this.key = key;
-        this.locale = locale;
+        this.localeModel = localeModel;
         this.style = style;
         this.parameters = parameters;
     }
@@ -56,6 +62,7 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
     protected String load() {
         final Iterator<IStringResourceLoader> iter = Application.get().getResourceSettings().getStringResourceLoaders()
                 .iterator();
+        final Locale locale = localeModel.getObject();
         String value = null;
         while (iter.hasNext()) {
             final IStringResourceLoader loader = iter.next();
@@ -80,12 +87,17 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
     }
 
     @Override
+    protected void onDetach() {
+        localeModel.detach();
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-            .append("class", clazz.getName())
-            .append("key", key)
-            .append("locale", locale)
-            .append("style", style)
-            .toString();
+                .append("class", clazz.getName())
+                .append("key", key)
+                .append("locale", localeModel.getObject())
+                .append("style", style)
+                .toString();
     }
 }
