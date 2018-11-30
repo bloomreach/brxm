@@ -81,6 +81,7 @@ public class RelevanceInstruction implements Instruction {
 
         mavenCargoService.mergeCargoProfile(getClass().getResource("/relevance-pom-overlay.xml"));
 
+        mavenCargoService.addDependencyToCargoSharedClasspath(TARGETING_SHARED_API_DEPENDENCY);
         mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", TARGETING_SHARED_API_DEPENDENCY);
 
         return Status.SUCCESS;
@@ -91,6 +92,8 @@ public class RelevanceInstruction implements Instruction {
         changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
-        changeMessageQueue.accept(Type.EXECUTE, "Add shared dependency '" + TARGETING_SHARED_API_ARTIFACT_ID + "' to distribution assembly.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
+                + ":" + TARGETING_SHARED_API_ARTIFACT_ID + "' to shared classpath of the Maven cargo plugin configuration.");
+        changeMessageQueue.accept(Type.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
     }
 }
