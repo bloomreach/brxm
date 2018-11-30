@@ -349,12 +349,15 @@ public class DocumentsServiceImpl implements DocumentsService {
         final String name = checkNotEmpty("name", newDocumentInfo.getName());
         final String slug = checkNotEmpty("slug", newDocumentInfo.getSlug());
         final String documentTemplateQuery = checkNotEmpty("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
+        final String folderTemplateQuery = newDocumentInfo.getFolderTemplateQuery();
         final String documentTypeId = checkNotEmpty("documentTypeId", newDocumentInfo.getDocumentTypeId());
         final String rootPath = checkNotEmpty("rootPath", newDocumentInfo.getRootPath());
         final String defaultPath = newDocumentInfo.getDefaultPath();
 
         final Node rootFolder = FolderUtils.getFolder(rootPath, session);
-        final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
+        final Node folder = StringUtils.isEmpty(defaultPath) 
+                ? rootFolder 
+                : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session, folderTemplateQuery);
         final String folderLocale = FolderUtils.getLocale(folder);
 
         final String encodedName = DocumentNameUtils.encodeDisplayName(name, folderLocale);

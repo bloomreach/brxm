@@ -132,11 +132,15 @@ public class FolderUtils {
     }
 
     public static Node getOrCreateFolder(final Node parentFolder, final String relPath, final Session session) throws BadRequestException, InternalServerErrorException {
+        return getOrCreateFolder(parentFolder, relPath, session, null);
+    }
+    
+    public static Node getOrCreateFolder(final Node parentFolder, final String relPath, final Session session, final String folderTemplateQuery) throws BadRequestException, InternalServerErrorException {
         try {
             if (parentFolder.hasNode(relPath)) {
                 return getExistingFolder(getAbsPath(parentFolder, relPath), session);
             } else {
-                return createFolder(parentFolder, relPath, session);
+                return createFolder(parentFolder, relPath, session, folderTemplateQuery);
             }
         } catch (final RepositoryException e) {
             log.warn("Failed to get or create folder '{}' below '{}'", relPath, JcrUtils.getNodePathQuietly(parentFolder), e);
@@ -163,7 +167,7 @@ public class FolderUtils {
         return folderNode;
     }
 
-    private static Node createFolder(final Node parentFolder, final String relPath, final Session session) throws RepositoryException, InternalServerErrorException {
+    private static Node createFolder(final Node parentFolder, final String relPath, final Session session, final String folderTemplateQuery) throws RepositoryException, InternalServerErrorException {
         final List<String> newFolderNames = new ArrayList<>();
         Node folderNode = parentFolder;
 
@@ -183,7 +187,7 @@ public class FolderUtils {
         if (!newFolderNames.isEmpty()) {
             final WorkflowManager workflowMgr = getWorkflowManager(session);
             for (final String newFolderName : newFolderNames) {
-                folderNode = createFolder(newFolderName, folderNode, workflowMgr);
+                folderNode = createFolder(newFolderName, folderNode, workflowMgr, folderTemplateQuery, session);
             }
         }
 
@@ -195,13 +199,15 @@ public class FolderUtils {
         return workspace.getWorkflowManager();
     }
 
-    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr) throws RepositoryException, InternalServerErrorException {
+    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr, final String folderTemplateQuery, final Session session) throws RepositoryException, InternalServerErrorException {
         final Workflow workflow = workflowMgr.getWorkflow("internal", parentNode);
 
         if (workflow instanceof FolderWorkflow) {
-            final Node newFolder = createFolder(name, parentNode, (FolderWorkflow) workflow);
-            copyFolderTypes(parentNode, newFolder);
-            return newFolder;
+            if (StringUtils.isNotBlank(folderTemplateQuery)) {
+                return creatFolderByTemplateQuery(name, parentNode, folderTemplateQuery, (FolderWorkflow) workflow, session);
+            } else {
+                return createFolderFromParent(name, parentNode, (FolderWorkflow) workflow);
+            }
         } else {
             log.warn("Failed to create folder '{}': workflow 'internal' of node '{}' has type {},"
                             + " which is not an instance of FolderWorkflow",
@@ -210,12 +216,36 @@ public class FolderUtils {
         }
     }
 
-    private static Node createFolder(final String name, final Node parentNode, final FolderWorkflow workflow) throws RepositoryException, InternalServerErrorException {
+    /**
+     * Create a new folder by using a template query.
+     */
+    private static Node creatFolderByTemplateQuery(final String name, final Node parentNode, 
+                                                   final String folderTemplateQuery, final FolderWorkflow workflow, 
+                                                   final Session session) 
+            throws RepositoryException, InternalServerErrorException {
+        final String parentNodeType = parentNode.getPrimaryNodeType().getName();
+        try {
+            final String newNodePath = workflow.add(folderTemplateQuery, parentNodeType, name);
+            return session.getNode(newNodePath);
+        } catch (WorkflowException | RemoteException e) {
+            log.warn("Failed to execute 'add' with template query '{}', type '{}' and relPath '{}' in folder workflow {}",
+                    folderTemplateQuery, parentNodeType, parentNode, workflow.getClass().getCanonicalName(), e);
+            throw new InternalServerErrorException();
+        } 
+    }
+
+    /**
+     * Create a new folder by copying the parent folder.
+     */
+    private static Node createFolderFromParent(final String name, final Node parentNode, final FolderWorkflow workflow) 
+            throws RepositoryException, InternalServerErrorException {
         final String category = getNewFolderWorkflowCategory(parentNode);
         final String parentNodeType = parentNode.getPrimaryNodeType().getName();
         try {
             workflow.add(category, parentNodeType, name);
-            return parentNode.getNode(name);
+            final Node newFolder = parentNode.getNode(name);
+            copyFolderTypes(parentNode, newFolder);
+            return newFolder;
         } catch (RemoteException | WorkflowException e) {
             log.warn("Failed to execute 'add' with category '{}', type '{}' and relPath '{}' in folder workflow {}",
                     category, parentNodeType, name, workflow.getClass().getCanonicalName(), e);
