@@ -22,4 +22,29 @@ property-group {
   .collapsible > component-fields {
     padding-left: $icon-size - 6px;
   }
+
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+    display: flex;
+
+    &::after {
+      content: '' !important; // hide material required mark
+    }
+  }
+
+  .hippo-hint-icon {
+    margin: 0 4px;
+  }
+
+  .checkbox-hint {
+    font-size: 18px;
+    height: 18px;
+    min-height: 18px;
+    min-width: 18px;
+    vertical-align: baseline;
+    width: 18px;
+  }
 }
