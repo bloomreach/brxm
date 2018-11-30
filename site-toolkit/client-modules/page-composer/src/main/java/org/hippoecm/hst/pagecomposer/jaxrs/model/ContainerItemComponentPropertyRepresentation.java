@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ public class ContainerItemComponentPropertyRepresentation {
     private String displayValue;
     private ParameterType type;
     private String label;
+    private String hint;
     private String defaultValue;
     private String description;
     private boolean required;
@@ -100,6 +101,14 @@ public class ContainerItemComponentPropertyRepresentation {
 
     public String getDefaultValue() {
         return defaultValue;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(final String hint) {
+        this.hint = hint;
     }
 
     public void setDefaultValue(String defaultValue) {

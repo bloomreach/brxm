@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_PARAMET
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getProperties;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTestParametersInfoProcessor {
 
@@ -38,17 +37,20 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
         final ContainerItemComponentPropertyRepresentation prop = properties.get(0);
         assertEquals("bar", prop.getName());
         assertEquals("Bar", prop.getLabel());
-        assertTrue(prop.getValue().length() == 0);
+        assertEquals("Bar Hint", prop.getHint());
+        assertEquals(0, prop.getValue().length());
 
         {
             List<ContainerItemComponentPropertyRepresentation> propertiesFr = getProperties(parameterInfo, Locale.FRENCH, null);
             final ContainerItemComponentPropertyRepresentation propFr = propertiesFr.get(0);
             assertEquals("Bar (fr)", propFr.getLabel());
+            assertEquals("BAR hint (fr)", propFr.getHint());
         }
         {
             List<ContainerItemComponentPropertyRepresentation> propertiesFrFR = getProperties(parameterInfo, Locale.FRANCE, null);
             final ContainerItemComponentPropertyRepresentation propFrFR = propertiesFrFR.get(0);
             assertEquals("Bar (fr_FR)", propFrFR.getLabel());
+            assertEquals("Bar Hint (fr_FR)", propFrFR.getHint());
         }
     }
 
@@ -81,7 +83,7 @@ public class ParametersInfoProcessorPopulatedPropertiesTest extends AbstractTest
             assertEquals(1, prefixedProperties.size());
             final ContainerItemComponentPropertyRepresentation prefixedProp = prefixedProperties.get(0);
             assertEquals("bar", prefixedProp.getName());
-            assertTrue(prefixedProp.getValue().length() == 0);
+            assertEquals(0, prefixedProp.getValue().length());
         }
 
         containerItemNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, new String[]{"bar", "bar"});
