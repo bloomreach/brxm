@@ -688,6 +688,7 @@ describe('OverlayService', () => {
         const structureElement = {
           getDefaultPath: () => null,
           getEnclosingElement: () => enclosing,
+          getFolderTemplateQuery: () => null,
           getParameterName: () => parameterName,
           getParameterValue: () => null,
           getPickerConfig: () => null,

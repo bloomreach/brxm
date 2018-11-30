@@ -102,7 +102,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({});
   });
@@ -126,7 +126,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',

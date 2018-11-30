@@ -87,18 +87,20 @@ describe('Step1Service', () => {
 
   describe('open', () => {
     it('stores the input values', () => {
-      Step1Service.open('tpl-query', '/root/path', 'default/path');
+      Step1Service.open('dcmt-tpl-query', 'fldr-tpl-query', '/root/path', 'default/path');
       expect(Step1Service.defaultPath).toBe('default/path');
       expect(Step1Service.rootPath).toBe('/root/path');
-      expect(Step1Service.documentTemplateQuery).toBe('tpl-query');
+      expect(Step1Service.documentTemplateQuery).toBe('dcmt-tpl-query');
+      expect(Step1Service.folderTemplateQuery).toBe('fldr-tpl-query');
     });
 
     it('resets the values before storing new values', () => {
-      Step1Service.open('tpl-query', '/root/path', 'default/path');
+      Step1Service.open('dcmt-tpl-query', 'fldr-tpl-query', '/root/path', 'default/path');
       Step1Service.name = 'name';
 
-      Step1Service.open('tpl-query2', '/root/path2');
-      expect(Step1Service.documentTemplateQuery).toBe('tpl-query2');
+      Step1Service.open('dcmt-tpl-query2', undefined, '/root/path2');
+      expect(Step1Service.documentTemplateQuery).toBe('dcmt-tpl-query2');
+      expect(Step1Service.folderTemplateQuery).toBeUndefined();
       expect(Step1Service.rootPath).toBe('/root/path2');
       expect(Step1Service.defaultPath).toBeUndefined();
       expect(Step1Service.name).toBeUndefined();
@@ -143,20 +145,20 @@ describe('Step1Service', () => {
 
     describe('parsing the rootPath', () => {
       it('overrides the channel root path if absolute', () => {
-        Step1Service.open('tpl-query', '/root/path');
+        Step1Service.open('tpl-query', undefined, '/root/path');
         expect(Step1Service.rootPath).toBe('/root/path');
       });
 
       it('is concatenated wth the channel\'s root path if relative', () => {
-        Step1Service.open('tpl-query', 'some/path');
+        Step1Service.open('tpl-query', undefined, 'some/path');
         expect(Step1Service.rootPath).toBe('/channel/content/some/path');
       });
 
       it('never ends with a slash', () => {
-        Step1Service.open('tpl-query', '/root/path/');
+        Step1Service.open('tpl-query', undefined, '/root/path/');
         expect(Step1Service.rootPath).toBe('/root/path');
 
-        Step1Service.open('tpl-query', 'some/path/');
+        Step1Service.open('tpl-query', undefined, 'some/path/');
         expect(Step1Service.rootPath).toBe('/channel/content/some/path');
       });
     });
@@ -167,6 +169,7 @@ describe('Step1Service', () => {
       Step1Service.name = 'test-name';
       Step1Service.url = 'test-url';
       Step1Service.documentTemplateQuery = 'test-tpl-query';
+      Step1Service.folderTemplateQuery = 'test-fldr-tpl-query';
       Step1Service.documentType = 'test-doctype';
       Step1Service.rootPath = 'test-rootpath';
       Step1Service.defaultPath = 'test-defaultpath';
@@ -176,6 +179,7 @@ describe('Step1Service', () => {
         name: 'test-name',
         slug: 'test-url',
         documentTemplateQuery: 'test-tpl-query',
+        folderTemplateQuery: 'test-fldr-tpl-query',
         documentTypeId: 'test-doctype',
         rootPath: 'test-rootpath',
         defaultPath: 'test-defaultpath',
