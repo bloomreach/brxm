@@ -152,6 +152,7 @@
           <include>**/*.xml</include>
           <include>**/*.png</include>
           <include>**/*.js</include>
+          <include>META-INF/ADDITIONAL-LICENSES.yml</include>
         </includes>
       </resource>
       <!-- package resources fetched via NPM -->

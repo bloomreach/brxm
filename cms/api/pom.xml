@@ -237,6 +237,7 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
+          <include>**/ADDITIONAL-LICENSES.yml</include>
           <include>**/*.js</include>
           <include>**/*.css</include>
           <include>**/*.png</include>

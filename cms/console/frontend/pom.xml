@@ -157,6 +157,7 @@
           <include>**/*.ttf</include>
           <include>**/*.woff</include>
           <include>**/*.woff2</include>
+          <include>META-INF/ADDITIONAL-LICENSES.yml</include>
         </includes>
       </resource>
     </resources>
