@@ -207,6 +207,22 @@ describe('RightSidePanel', () => {
     expect(SidePanelService.open).toHaveBeenCalledWith('right');
   });
 
+  it('does not open the panel when transitioning from state "hippo-cm.channel.*" to "hippo-cm.channel.*"', () => {
+    $ctrl.$onInit();
+
+    $state.go('hippo-cm.channel');
+    $rootScope.$digest();
+
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
+    $rootScope.$digest();
+
+    SidePanelService.open.calls.reset();
+    $state.go('hippo-cm.channel.another-state', { documentId: 'docId2' });
+    $rootScope.$digest();
+
+    expect(SidePanelService.open).not.toHaveBeenCalled();
+  });
+
   it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
     SidePanelService.open.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
@@ -215,10 +231,12 @@ describe('RightSidePanel', () => {
 
     $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
+    SidePanelService.open.calls.reset();
 
     $state.go('hippo-cm.channel');
     $rootScope.$digest();
 
+    expect(SidePanelService.open).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($element.hasClass('side-panel-open')).toBe(false);
     expect($element.hasClass('full-screen')).toBe(false);
