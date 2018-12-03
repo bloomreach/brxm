@@ -199,7 +199,9 @@ public class FolderUtils {
         return workspace.getWorkflowManager();
     }
 
-    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr, final String folderTemplateQuery, final Session session) throws RepositoryException, InternalServerErrorException {
+    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr, 
+                                     final String folderTemplateQuery, final Session session) 
+            throws RepositoryException, InternalServerErrorException {
         final Workflow workflow = workflowMgr.getWorkflow("internal", parentNode);
 
         if (workflow instanceof FolderWorkflow) {

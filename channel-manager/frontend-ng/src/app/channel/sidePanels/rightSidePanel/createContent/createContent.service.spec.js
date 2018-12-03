@@ -116,6 +116,7 @@ describe('CreateContentService', () => {
     component.getRenderVariant.and.returnValue('hippo-default');
     const config = {
       documentTemplateQuery: 'tpl-query',
+      folderTemplateQuery: 'fldr-tpl-query',
       containerItem: component,
       parameterName: 'document',
       parameterBasePath: '/content/documents/channel',
@@ -126,7 +127,7 @@ describe('CreateContentService', () => {
     expect(RightSidePanelService.clearContext).toHaveBeenCalled();
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('CREATE_CONTENT');
     expect(RightSidePanelService.startLoading).toHaveBeenCalled();
-    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', undefined, undefined, undefined);
+    expect(Step1Service.open).toHaveBeenCalledWith('tpl-query', 'fldr-tpl-query', undefined, undefined);
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     expect(CreateContentService.componentInfo).toEqual({
       id: '1234',

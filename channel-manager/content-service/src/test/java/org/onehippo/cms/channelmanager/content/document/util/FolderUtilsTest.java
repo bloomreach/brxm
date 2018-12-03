@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,17 +175,40 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void getOrCreateExistingFolder() throws Exception {
+    public void createNewFolderByTemplateQuery() throws Exception {
+        final WorkflowManager workflowManager = createMock(WorkflowManager.class);
+        root.getSession().getWorkspace().setWorkflowManager(workflowManager);
+        final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
+
+        expect(workflowManager.getWorkflow(eq("internal"), eq(root))).andReturn(folderWorkflow);
+        expect(folderWorkflow.add("folderTemplateQuery", "rep:root", "test")).andAnswer(
+                () -> root.addNode("test", "hippostd:folder").getPath()
+        );
+
+        replayAll();
+        
+        final Node newFolder = FolderUtils.getOrCreateFolder(root, "test", session, "folderTemplateQuery");
+        
+        verifyAll();
+        assertThat(newFolder.getPath(), equalTo("/test"));
+    }
+    
+    //
+    // The following tests cover the case that new folders will be created by copying the parent node.
+    //
+    
+    @Test
+    public void getOrCreateExistingFolderFromParent() throws Exception {
         final Node test = root.addNode("test", "hippostd:folder");
         final Node foo = test.addNode("foo", "hippostd:folder");
 
-        assertThat(FolderUtils.getOrCreateFolder(root, "test", session), equalTo(test));
-        assertThat(FolderUtils.getOrCreateFolder(root, "test/foo", session), equalTo(foo));
-        assertThat(FolderUtils.getOrCreateFolder(test, "foo", session), equalTo(foo));
+        assertThat(FolderUtils.getOrCreateFolder(root, "test", session, null), equalTo(test));
+        assertThat(FolderUtils.getOrCreateFolder(root, "test/foo", session, null), equalTo(foo));
+        assertThat(FolderUtils.getOrCreateFolder(test, "foo", session, null), equalTo(foo));
     }
 
     @Test
-    public void getOrCreateNonFolder() throws Exception {
+    public void getOrCreateNonFolderFromParent() throws Exception {
         root.addNode("test", "hippo:document");
         try {
             FolderUtils.getOrCreateFolder(root, "test", session);
@@ -198,7 +221,7 @@ public class FolderUtilsTest {
     }
 
     @Test(expected = InternalServerErrorException.class)
-    public void getOrCreateFolderThrowsException() throws Exception {
+    public void getOrCreateFolderFromParentThrowsException() throws Exception {
         final Node mockNode = createMock(Node.class);
         expect(mockNode.hasNode("test")).andThrow(new RepositoryException());
         expect(mockNode.getPath()).andThrow(new RepositoryException());
@@ -208,7 +231,7 @@ public class FolderUtilsTest {
     }
 
     @Test(expected = InternalServerErrorException.class)
-    public void createNewFolderWithoutFolderWorkflowOnParent() throws Exception {
+    public void createFromParentNewFolderWithoutFolderWorkflowOnParent() throws Exception {
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
         root.getSession().getWorkspace().setWorkflowManager(workflowManager);
 
@@ -221,7 +244,7 @@ public class FolderUtilsTest {
     }
 
     @Test(expected = InternalServerErrorException.class)
-    public void createNewFolderAndWorkflowFails() throws Exception {
+    public void createFromParentNewFolderAndWorkflowFails() throws Exception {
         root.setPrimaryType("hippostd:folder");
 
         final WorkflowManager workflowManager = createMock(WorkflowManager.class);
@@ -237,7 +260,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createNewFolder() throws Exception {
+    public void createFromParentNewFolder() throws Exception {
         root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", new String[]{"new-folder"});
 
@@ -261,7 +284,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createNewDirectory() throws Exception {
+    public void createFromParentNewDirectory() throws Exception {
         root.setPrimaryType("hippostd:directory");
         root.setProperty("hippostd:foldertype", new String[]{"new-folder"});
 
@@ -285,7 +308,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createNewFolderWithMultipleFolderTypes() throws Exception {
+    public void createFromParentNewFolderWithMultipleFolderTypes() throws Exception {
         root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", new String[]{"new-folder", "new-other-folder"});
 
@@ -313,7 +336,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createNewTranslatedFolder() throws Exception {
+    public void createFromParentNewTranslatedFolder() throws Exception {
         final MockNode translatedNode = root.addNode("translated", "hippostd:folder");
         translatedNode.addMixin("hippotranslation:translated");
         translatedNode.setProperty("hippostd:foldertype", new String[]{"new-translated-folder"});
@@ -338,7 +361,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createAllNewFolders() throws Exception {
+    public void createFromParentAllNewFolders() throws Exception {
         final String[] folderTypes = {"new-folder"};
         root.setPrimaryType("hippostd:folder");
         root.setProperty("hippostd:foldertype", folderTypes);
@@ -375,7 +398,7 @@ public class FolderUtilsTest {
     }
 
     @Test
-    public void createSomeNewFolders() throws Exception {
+    public void createFromParentSomeNewFolders() throws Exception {
         final MockNode one = root.addNode("one", "hippostd:folder");
         final String[] folderTypes = {"new-folder"};
         one.setProperty("hippostd:foldertype", folderTypes);
