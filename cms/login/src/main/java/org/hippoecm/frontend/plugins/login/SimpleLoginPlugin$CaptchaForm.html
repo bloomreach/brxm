@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -19,18 +19,20 @@
       <wicket:extend>
         <wicket:child/>
 
-        <!-- captcha image -->
-        <div class="hippo-login-form-input">
-          <img wicket:id="captchaImage" width="100%"/>
-        </div>
+        <wicket:enclosure child="captchaImage">
+          <!-- captcha image -->
+          <div class="login-form-captcha">
+            <img wicket:id="captchaImage" width="100%"/>
+          </div>
 
-        <!-- captcha input -->
-        <div class="hippo-login-form-label">
-          <label wicket:id="captchaLabel"></label>
-        </div>
-        <div class="hippo-login-form-input">
-          <input class="hippo-form-text" wicket:id="captcha" type="text" value=""/>
-        </div>
+          <!-- captcha input -->
+          <div class="login-form-label">
+            <label wicket:id="captchaLabel"></label>
+          </div>
+          <div class="login-form-input">
+            <input class="login-form-input-captcha" wicket:id="captcha" type="text" value=""/>
+          </div>
+        </wicket:enclosure>
       </wicket:extend>
     </wicket:panel>
   </body>

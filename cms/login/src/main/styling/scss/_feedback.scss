@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* stylelint-disable at-rule-empty-line-before */
-@import "variables";
-@import "normalize";
+.login-feedback ul {
+  background-color: $login-feedback-bg-color;
+  border-bottom: 1px solid $login-feedback-border-color;
+  border-top: 1px solid $login-feedback-border-color;
+  margin: 0;
+  padding: 8px 20px;
+}
 
-@import "../../../../node_modules/open-sans-fontface/open-sans.scss";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+.login-feedback ul li {
+  list-style-type: none;
+  padding-bottom: 4px;
+  text-align: center;
 
-@import "scaffolding";
-@import "browser_support";
-@import "plugin";
-@import "panel";
-@import "footer";
-@import "background";
-@import "extend";
-@import "form";
-@import "feedback";
-/* stylelint-enable */
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
