@@ -31,6 +31,7 @@
   <form name="$ctrl.form"
         class="form-dense-layout"
         layout="column"
+        flex         
         tabindex="-1">
     <md-subheader ng-if="!$ctrl.allMandatoryFieldsShown()"
                   class="md-no-sticky"
@@ -46,8 +47,6 @@
                     loading="$ctrl.loading">
     </content-editor>
   </form>
-  
-  <span flex></span>
   
   <md-toolbar>
     <div class="md-toolbar-tools">
