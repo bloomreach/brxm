@@ -20,27 +20,17 @@
         <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
         <div class="login-browser-support" wicket:id="browser-support" ></div>
         <div class="hippo-login-form-container">
-          <h2 wicket:id="header-label" />
 
           <!-- username -->
-          <div class="hippo-login-form-label">
-            <label wicket:id="username-label"></label>
-          </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-text" wicket:id="username" type="text" value="foo@goo.moo"/>
           </div>
           <!-- password -->
-          <div class="hippo-login-form-label">
-            <label wicket:id="password-label"></label>
-          </div>
           <div class="hippo-login-form-input">
             <input class="hippo-form-password" wicket:id="password" type="password" value="password"/>
           </div>
           <wicket:enclosure child="locale">
             <!-- locale dropdown-->
-            <div class="hippo-login-form-label">
-              <label wicket:id="locale-label"></label>
-            </div>
             <div class="hippo-login-form-input">
               <select name="locale" wicket:id="locale"></select>
             </div>
@@ -50,7 +40,7 @@
             <input class="btn btn-primary hippo-form-submit" type="submit" name="submit" wicket:id="submit" value="label"/>
           </div>
         </div>
-    </form>
+      </form>
     </wicket:panel>
   </body>
 </html>
