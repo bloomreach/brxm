@@ -23,7 +23,6 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -267,12 +266,7 @@ public class BrowserCheckBehavior extends Behavior {
 
     @Override
     public void bind(final Component component) {
-        super.bind(component);
-
         final WebClientInfo info = WebSession.get().getClientInfo();
-        if (!check.isSupported(new WicketBrowserInfo(info))) {
-            component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class).getObject());
-        }
+        component.setVisible(!check.isSupported(new WicketBrowserInfo(info)));
     }
-
 }

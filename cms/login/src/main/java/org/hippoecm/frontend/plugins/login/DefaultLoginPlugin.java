@@ -64,9 +64,8 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
     }
 
     @Override
-    protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                                          final LoginHandler handler) {
-        return new LoginForm(id, autoComplete, locales, handler);
+    protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
+        return new LoginForm(id, config, handler);
     }
 
     protected class LoginForm extends CaptchaForm {
@@ -78,15 +77,15 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         private List<String> availableTimeZones = Collections.emptyList();
         private boolean useBrowserTimeZoneIfAvailable;
 
-        public LoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
-            super(id, autoComplete, locales, handler);
+        public LoginForm(final String id, final LoginConfig config, final LoginHandler handler) {
+            super(id, config, handler);
 
-            final IPluginConfig config = getPluginConfig();
+            final IPluginConfig pluginConfig = getPluginConfig();
             final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
-            final boolean isTimeZoneVisible = !consoleLogin && config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
+            final boolean isTimeZoneVisible = !consoleLogin && pluginConfig.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
 
             if (isTimeZoneVisible) {
-                availableTimeZones = getSelectableTimezones(config.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
+                availableTimeZones = getSelectableTimezones(pluginConfig.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
 
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
