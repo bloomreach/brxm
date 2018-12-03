@@ -21,9 +21,6 @@ import template from './contentEditor.html';
 const contentEditorComponent = {
   controller,
   template,
-  transclude: {
-    message: '?contentEditorMessage',
-  },
   bindings: {
     enablePublish: '<',
     loading: '=',

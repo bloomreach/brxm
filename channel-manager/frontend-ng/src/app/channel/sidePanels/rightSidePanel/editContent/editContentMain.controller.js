@@ -22,6 +22,7 @@ class EditContentMainCtrl {
     CmsService,
     ConfigService,
     ContentEditor,
+    DialogService,
     EditContentService,
     HippoIframeService,
     ProjectService,
@@ -31,9 +32,11 @@ class EditContentMainCtrl {
 
     this.$q = $q;
     this.$scope = $scope;
+    this.$translate = $translate;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.ContentEditor = ContentEditor;
+    this.DialogService = DialogService;
     this.EditContentService = EditContentService;
     this.HippoIframeService = HippoIframeService;
     this.ProjectService = ProjectService;
@@ -59,24 +62,39 @@ class EditContentMainCtrl {
   }
 
   save() {
-    return this.showLoadingIndicator(() => this.ContentEditor.save()
+    const stopLoading = this.startLoading();
+
+    return this.ContentEditor.save()
       .then(() => {
         this.form.$setPristine();
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
-      }));
+      })
+      .finally(stopLoading);
   }
 
-  showLoadingIndicator(action) {
+  startLoading() {
     this.loading = true;
-    return this.$q.resolve(action())
-      .finally(() => {
-        this.loading = false;
-      });
+
+    return () => { this.loading = false; };
+  }
+
+  _confirmDiscardChanges(messageKey) {
+    if (this.ContentEditor.isPristine()) {
+      return this.$q.resolve();
+    }
+
+    const translateParams = { documentName: this.ContentEditor.getDocumentDisplayName() };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant(messageKey, translateParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
   }
 
   discard() {
-    return this.ContentEditor.confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
+    return this._confirmDiscardChanges('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE')
       .then(() => {
         this.form.$setPristine();
         this.ContentEditor.discardChanges()
@@ -87,13 +105,17 @@ class EditContentMainCtrl {
   publish() {
     this.CmsService.reportUsageStatistic('VisualEditingPublishButton');
     return this.ContentEditor.confirmPublication()
-      .then(() => this._doPublish());
+      .then(() => {
+        const stopLoading = this.startLoading();
+
+        return this._doPublish().finally(stopLoading);
+      });
   }
 
   _doPublish() {
-    return this.showLoadingIndicator(() => (this.ContentEditor.isDocumentDirty()
+    return this.ContentEditor.isDocumentDirty()
       ? this.save().then(() => this.ContentEditor.publish())
-      : this.ContentEditor.publish()));
+      : this.ContentEditor.publish();
   }
 
   isEditing() {

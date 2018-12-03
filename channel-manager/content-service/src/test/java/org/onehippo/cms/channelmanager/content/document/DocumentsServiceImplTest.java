@@ -29,8 +29,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.easymock.Mock;
-import org.easymock.MockType;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
@@ -46,8 +44,8 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
+import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
-import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImpl;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
@@ -81,7 +79,6 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
@@ -113,6 +110,7 @@ public class DocumentsServiceImplTest {
     private NewDocumentInfo info;
     private DocumentsServiceImpl documentsService;
     private HintsInspector hintsInspector;
+    private BranchingService branchingService;
 
     @Before
     public void setup() {
@@ -121,7 +119,8 @@ public class DocumentsServiceImplTest {
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl();
         documentsService.setHintsInspector(hintsInspector);
-        documentsService.setBranchingService(new BranchingServiceImpl());
+        branchingService = createMock(BranchingService.class);
+        documentsService.setBranchingService(branchingService);
 
         PowerMock.mockStatic(DocumentNameUtils.class);
         PowerMock.mockStatic(PublicationStateUtils.class);
@@ -148,7 +147,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -168,7 +167,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -188,7 +187,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -210,7 +209,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -232,13 +231,13 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.empty());
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -260,13 +259,13 @@ public class DocumentsServiceImplTest {
         expect(PublicationStateUtils.getPublicationStateFromHandle(handle)).andReturn(PublicationState.CHANGED);
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andStubReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
@@ -287,12 +286,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -315,14 +314,14 @@ public class DocumentsServiceImplTest {
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(handle.getSession()).andThrow(new RepositoryException());
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -343,7 +342,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
 
@@ -353,7 +352,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -373,14 +372,14 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -402,7 +401,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.empty());
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
@@ -410,7 +409,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -435,7 +434,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
@@ -460,7 +459,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, "master");
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -490,7 +489,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -511,7 +510,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, "master");
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -542,7 +541,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canObtainEditableDocument("master", emptyMap())).andReturn(true);
+        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
         expectLastCall();
 
@@ -566,7 +565,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, "master");
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -588,7 +587,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -611,7 +610,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -637,7 +636,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -649,6 +648,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentNotEditing() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -659,13 +659,13 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.empty());
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -680,6 +680,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentOtherHolder() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -691,13 +692,13 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
 
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -709,6 +710,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentNoDocumentType() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -720,12 +722,12 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -737,6 +739,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentUnknownValidator() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -747,14 +750,14 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
@@ -766,6 +769,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentWriteFailure() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -777,7 +781,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall().andThrow(badRequest);
 
@@ -788,7 +792,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -800,6 +804,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentSaveFailure() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -810,7 +815,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
@@ -822,7 +827,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -834,6 +839,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentValidationFailure() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -847,7 +853,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(false);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
@@ -857,7 +863,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e.getPayload(), equalTo(document));
@@ -869,6 +875,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentCopyToPreviewFailure() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -881,8 +888,8 @@ public class DocumentsServiceImplTest {
         workflow.commitEditableInstance();
         expectLastCall().andThrow(new WorkflowException("bla"));
 
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.empty());
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
@@ -896,7 +903,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+            documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -911,6 +918,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateEditableDocumentSuccess() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
@@ -922,7 +930,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
@@ -946,7 +954,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale);
 
         assertThat(persistedDocument, equalTo(document));
         assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
@@ -957,6 +965,7 @@ public class DocumentsServiceImplTest {
     @Test
     public void updateDirtyEditableDocumentSuccess() throws Exception {
         final Document document = new Document();
+        document.setBranchId(MASTER_BRANCH_ID);
         document.getInfo().setDirty(true);
 
         final String uuid = "uuid";
@@ -970,7 +979,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow)).times(1);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(workflow.commitEditableInstance()).andReturn(null);
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
@@ -993,7 +1002,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, "master");
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale);
 
         assertThat(persistedDocument.getId(), equalTo(document.getId()));
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
@@ -1015,7 +1024,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1039,7 +1048,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1066,7 +1075,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1089,13 +1098,13 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.empty());
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1122,13 +1131,13 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(false);
-        expect(hintsInspector.determineEditingFailure("master", emptyMap(), session)).andReturn(Optional.of(errorInfo));
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
+        expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.of(errorInfo));
 
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -1152,12 +1161,12 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1180,14 +1189,14 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
 
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
@@ -1212,7 +1221,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
@@ -1221,7 +1230,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -1245,14 +1254,14 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(false);
 
         replayAll();
 
-        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -1272,7 +1281,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
@@ -1282,7 +1291,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -1302,7 +1311,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canUpdateDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
@@ -1313,7 +1322,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, "master");
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1332,7 +1341,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, "master");
+            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1354,7 +1363,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, "master");
+            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1375,12 +1384,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canDisposeEditableDocument("master",emptyMap())).andReturn(false);
+        expect(hintsInspector.canDisposeEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(false);
 
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, "master");
+            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1401,14 +1410,14 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canDisposeEditableDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canDisposeEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(workflow.disposeEditableInstance()).andThrow(new WorkflowException("bla"));
 
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, "master");
+            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1427,13 +1436,13 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
-        expect(hintsInspector.canDisposeEditableDocument("master",emptyMap())).andReturn(true);
+        expect(hintsInspector.canDisposeEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
         expect(workflow.disposeEditableInstance()).andReturn(null);
 
         replayAll();
 
-        documentsService.discardEditableDocument(uuid, session, locale, "master");
+        documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -1729,14 +1738,14 @@ public class DocumentsServiceImplTest {
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutDisplayName() throws Exception {
         final Document document = new Document();
-        documentsService.updateDocumentNames("uuid", document, session, "master");
+        documentsService.updateDocumentNames("uuid", document, session, MASTER_BRANCH_ID);
     }
 
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutUrlName() throws Exception {
         final Document document = new Document();
         document.setDisplayName("Breaking News");
-        documentsService.updateDocumentNames("uuid", document, session, "master");
+        documentsService.updateDocumentNames("uuid", document, session, MASTER_BRANCH_ID);
     }
 
     @Test(expected = BadRequestException.class)
@@ -1747,7 +1756,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.updateDocumentNames(uuid, document, session, "master");
+        documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
     }
 
     @Test
@@ -1810,12 +1819,12 @@ public class DocumentsServiceImplTest {
 
         final EditableWorkflow editingWorkflow = createMock(EditableWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        expect(editingWorkflow.hints("master")).andReturn(hints);
+        expect(editingWorkflow.hints(MASTER_BRANCH_ID)).andReturn(hints);
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("editing"), eq(EditableWorkflow.class))).andReturn(Optional.of(editingWorkflow));
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, "master");
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
         assertThat(result.getDisplayName(), equalTo(displayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -1888,7 +1897,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, "master");
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(urlName));
 
@@ -1931,12 +1940,12 @@ public class DocumentsServiceImplTest {
 
         final EditableWorkflow editingWorkflow = createMock(EditableWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        expect(editingWorkflow.hints("master")).andReturn(hints);
+        expect(editingWorkflow.hints(MASTER_BRANCH_ID)).andReturn(hints);
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("editing"), eq(EditableWorkflow.class))).andReturn(Optional.of(editingWorkflow));
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, "master");
+        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -1985,7 +1994,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale, "master");
+        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
     }
 
     @Test
@@ -2001,7 +2010,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, "master");
+            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2017,7 +2026,7 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        expect(workflow.hints("master")).andReturn(hints);
+        expect(workflow.hints(MASTER_BRANCH_ID)).andReturn(hints);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
@@ -2031,7 +2040,7 @@ public class DocumentsServiceImplTest {
 
         try {
             hints.put(DocumentWorkflowAction.delete().getAction(), true);
-            documentsService.deleteDocument(uuid, session, locale, "master");
+            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
         } finally {
             verifyAll();
         }
@@ -2043,7 +2052,7 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        expect(workflow.hints("master")).andReturn(hints);
+        expect(workflow.hints(MASTER_BRANCH_ID)).andReturn(hints);
 
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andStubReturn(Optional.of(workflow));
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
@@ -2057,7 +2066,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale, "master");
+        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -2068,7 +2077,7 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
-        expect(workflow.hints("master")).andReturn(hints);
+        expect(workflow.hints(MASTER_BRANCH_ID)).andReturn(hints);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
@@ -2078,7 +2087,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(workflow);
 
-        documentsService.deleteDocument(uuid, session, locale, "master");
+        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -2091,7 +2100,7 @@ public class DocumentsServiceImplTest {
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
-        expect(workflow.hints("master")).andStubReturn(hints);
+        expect(workflow.hints(MASTER_BRANCH_ID)).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(workflow));
@@ -2104,7 +2113,7 @@ public class DocumentsServiceImplTest {
         replayAll(workflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, "master");
+            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2123,7 +2132,7 @@ public class DocumentsServiceImplTest {
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
-        expect(documentWorkflow.hints("master")).andStubReturn(hints);
+        expect(documentWorkflow.hints(MASTER_BRANCH_ID)).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
@@ -2138,7 +2147,7 @@ public class DocumentsServiceImplTest {
         replayAll(documentWorkflow, folderWorkflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, "master");
+            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
         } finally {
             verifyAll();
         }
@@ -2153,7 +2162,7 @@ public class DocumentsServiceImplTest {
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
-        expect(documentWorkflow.hints("master")).andStubReturn(hints);
+        expect(documentWorkflow.hints(MASTER_BRANCH_ID)).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
@@ -2173,7 +2182,7 @@ public class DocumentsServiceImplTest {
 
         try {
             hints.put(DocumentWorkflowAction.delete().getAction(), true);
-            documentsService.deleteDocument(uuid, session, locale, "master");
+            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
         } finally {
             verifyAll();
         }
@@ -2188,7 +2197,7 @@ public class DocumentsServiceImplTest {
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
         final Map<String, Serializable> hints = new HashMap<>();
 
-        expect(documentWorkflow.hints("master")).andStubReturn(hints);
+        expect(documentWorkflow.hints(MASTER_BRANCH_ID)).andStubReturn(hints);
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(eq(handle), eq("default"), eq(DocumentWorkflow.class))).andReturn(Optional.of(documentWorkflow));
@@ -2206,7 +2215,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(documentWorkflow, handle, folderWorkflow);
 
-        documentsService.deleteDocument(uuid, session, locale, "master");
+        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -2228,15 +2237,15 @@ public class DocumentsServiceImplTest {
 
         final Map<String, Serializable> hints = new HashMap<>();
         hints.put("some-key", "some value");
-        expect(hintsInspector.canObtainEditableDocument(eq("master"), anyObject())).andReturn(false);
+        expect(hintsInspector.canObtainEditableDocument(eq(MASTER_BRANCH_ID), anyObject())).andReturn(false);
 
         final Optional<ErrorInfo> errorInfo = Optional.of(new ErrorInfo(Reason.INVALID_DATA, hints));
-        expect(hintsInspector.determineEditingFailure(eq("master"), anyObject(), eq(session))).andReturn(errorInfo);
+        expect(hintsInspector.determineEditingFailure(eq(MASTER_BRANCH_ID), anyObject(), eq(session))).andReturn(errorInfo);
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, "master");
+            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
         } catch (ForbiddenException e) {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
@@ -2254,9 +2263,9 @@ public class DocumentsServiceImplTest {
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
-        expect(DocumentTypesService.get()).andReturn(documentTypesService);
-        expect(documentTypesService.getDocumentType(variantType, session, locale)).andReturn(docType);
-        expect(handle.getSession()).andReturn(session);
+        expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
+        expect(documentTypesService.getDocumentType(variantType, session, locale)).andReturn(docType).anyTimes();
+        expect(handle.getSession()).andReturn(session).anyTimes();
 
         return docType;
     }

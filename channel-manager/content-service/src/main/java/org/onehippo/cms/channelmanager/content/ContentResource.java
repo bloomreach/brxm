@@ -100,7 +100,7 @@ public class ContentResource {
                                            final Document document,
                                            @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale, getBranchId(servletRequest)));
+                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale));
     }
 
     @PUT

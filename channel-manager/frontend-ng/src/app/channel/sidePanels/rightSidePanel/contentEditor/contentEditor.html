@@ -18,9 +18,6 @@
 
 <md-content flex="grow"
             layout="column">
-
-  <div ng-transclude="message"></div>
-
   <div ng-if="$ctrl.getError()"
        class="md-padding feedback qa-feedback"
        md-colors="{background: $ctrl.getError().color ? $ctrl.getError().color : 'hippo-red-50'}">
