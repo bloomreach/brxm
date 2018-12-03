@@ -20,10 +20,14 @@
   </wicket:head>
   <body>
     <wicket:panel>
-      <div class="hippo-login-panel">
-        <div class="hippo-login-panel-header"></div>
-        <div wicket:id="login-panel"></div>
-        <div class="hippo-login-panel-footer">
+      <div class="login-wrap">
+        <div class="login-panel">
+          <div class="login-panel-header">
+            <div class="login-panel-header-logo"></div>
+          </div>
+          <div wicket:id="login-panel"></div>
+        </div>
+        <div class="login-footer">
           <label>
             <wicket:message key="edition.label"/>
           </label>
@@ -34,10 +38,13 @@
           </wicket:enclosure>
         </div>
       </div>
-      <div class="hippo-login-extend">
+      <div class="login-extend">
+        <div class="login-background">
+          <div></div>
+        </div>
         <wicket:child/>
       </div>
-      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
+      <div wicket:id="pinger" style="display: none;">[Prevents session timeouts]</div>
     </wicket:panel>
   </body>
 </html>

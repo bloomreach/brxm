@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* stylelint-disable at-rule-empty-line-before */
-@import "variables";
-@import "normalize";
-
-@import "../../../../node_modules/open-sans-fontface/open-sans.scss";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/buttons";
-
-@import "scaffolding";
-@import "browser_support";
-@import "plugin";
-@import "panel";
-@import "footer";
-@import "background";
-@import "extend";
-@import "form";
-@import "feedback";
-/* stylelint-enable */
+.login-extend {
+  background-color: $login-extend-bg-color;
+  display: flex;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}

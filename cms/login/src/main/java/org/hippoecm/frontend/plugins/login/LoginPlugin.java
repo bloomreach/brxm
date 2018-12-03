@@ -62,7 +62,7 @@ public class LoginPlugin extends RenderPlugin {
     public LoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(CssClass.append("hippo-login-plugin"));
+        add(CssClass.append("login-plugin"));
 
         add(new Label("pageTitle", getString("page.title")));
 

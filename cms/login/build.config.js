@@ -16,7 +16,7 @@
 
 module.exports = {
   npmDir:     'node_modules',
-  file:       'hippo-cms-login-theme',
+  file:       'br-login-theme',
   images:     'target/classes/org/hippoecm/frontend/skin/images',
   skin:       'target/classes/skin/hippo-cms',
   src:        'src/main/styling',

@@ -1,0 +1,154 @@
+// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.login-form-container {
+  padding: 20px;
+}
+
+.login-form-input {
+  background: $login-field-bg-color;
+  border: 1px solid $login-field-border-color;
+  border-radius: $login-field-border-radius;
+  margin-bottom: $login-field-margin-bottom;
+  position: relative;
+  transition-duration: $login-field-transition-duration;
+  transition-property: border-color;
+
+  &.input-focused {
+    border-color: $login-field-border-color-focus;
+  }
+
+  input {
+    border: 0;
+    border-radius: $login-field-border-radius;
+    box-sizing: border-box;
+    color: $login-field-text-color;
+    height: $login-field-height;
+    padding: 0 14px;
+    position: relative;
+    right: 0;
+    width: 100%;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+}
+
+.login-form-icon-input {
+  padding-left: 40px;
+
+  input {
+    border-radius: 0 $login-field-border-radius $login-field-border-radius 0;
+  }
+
+  svg {
+    font-size: 12px;
+    left: 14px;
+    position: absolute;
+    top: 13px;
+  }
+}
+
+.login-form-select {
+  margin-bottom: $login-field-margin-bottom;
+  position: relative;
+
+  select {
+    background-color: $white;
+    border-radius: $login-field-border-radius;
+    border: 1px solid $login-field-border-color;
+    height: $login-field-height;
+    transition-duration: $login-field-transition-duration;
+    transition-property: border-color;
+    width: 100%;
+
+    // Remove dotted outline in firefox
+    &:-moz-focusring {
+      color: transparent;
+      text-shadow: 0 0 0 $login-field-text-color;
+    }
+
+    &:focus,
+    &:focus option {
+      border-color: $login-field-border-color-focus;
+      outline: 0;
+    }
+  }
+}
+
+.login-form-label {
+  font-size: 13px;
+  line-height: 13px;
+
+  label {
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+}
+
+.login-form-submit {
+  background-color: $login-submit-bg-color;
+  border-color: $login-submit-border-color;
+  border-radius: 0 0 $login-panel-border-radius $login-panel-border-radius;
+  font-size: $login-submit-font-size;
+  height: $login-submit-height;
+  text-transform: uppercase;
+  transition-duration: $login-submit-transition-duration;
+  transition-property: font-weight, background-color;
+  width: 100%;
+
+  &:active,
+  &:active:hover,
+  &:active:focus,
+  &:focus,
+  &:hover {
+    background-color: $login-submit-bg-color-focus;
+    border-color: $login-submit-border-color-focus;
+    font-weight: $login-submit-font-weight-focus;
+    outline: none;
+
+    svg {
+      opacity: 1;
+    }
+  }
+
+  &.btn-primary[disabled],
+  &.btn-primary[disabled]:active,
+  &.btn-primary[disabled]:hover {
+    background-color: $login-submit-disabled-color !important;
+    border-color: $login-submit-disabled-color !important;
+    font-weight: inherit;
+    opacity: .5 !important;
+    transition-duration: .1s !important;
+    transition-property: font-weight, opacity !important;
+
+    svg {
+      opacity: 1;
+    }
+  }
+}
+
+.login-form-submit-icon {
+  position: relative;
+  top: 3.5px;
+
+  svg {
+    height: 18px;
+    opacity: 0;
+    transition-duration: $login-submit-transition-duration;
+    transition-property: opacity;
+    width: 18px;
+  }
+}

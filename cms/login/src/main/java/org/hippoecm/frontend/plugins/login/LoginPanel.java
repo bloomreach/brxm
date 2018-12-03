@@ -25,12 +25,15 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -45,7 +48,6 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -82,7 +84,7 @@ public class LoginPanel extends Panel {
 
         this.handler = handler;
 
-        add(CssClass.append("hippo-login-panel-center"));
+        add(CssClass.append("login-panel-center"));
 
         add(form = new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers()));
     }
@@ -158,7 +160,9 @@ public class LoginPanel extends Panel {
         protected final Label browserSupport;
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
+        protected final IModel<String> usernamePlaceholder;
         protected final PasswordTextField passwordTextField;
+        protected final IModel<String> passwordPlaceholder;
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
 
@@ -185,10 +189,15 @@ public class LoginPanel extends Panel {
             }
 
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
+            usernamePlaceholder = CapitalizedModel.of(new LoginResourceModel("username"));
+            usernameTextField.add(new PlaceholderAttribute(usernamePlaceholder));
             usernameTextField.setOutputMarkupId(true);
 
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
+            passwordPlaceholder = CapitalizedModel.of(new LoginResourceModel("password"));
+            passwordTextField.add(new PlaceholderAttribute(passwordPlaceholder));
             passwordTextField.setResetPassword(true);
+            passwordTextField.setOutputMarkupId(true);
 
             final String defaultLocale = locales.get(0);
 
@@ -249,14 +258,21 @@ public class LoginPanel extends Panel {
                     labels.stream().filter(Component::isVisible).forEach(target::add);
                     target.add(browserSupport);
                     target.add(feedback);
+
+                    target.appendJavaScript(updatePlaceHolderAttribute(usernameTextField, usernamePlaceholder));
+                    target.appendJavaScript(updatePlaceHolderAttribute(passwordTextField, passwordPlaceholder));
+
                     if (handler != null) {
                         handler.localeChanged(selectedLocale, target);
                     }
                 }
             });
 
-            submitButton = new Button("submit", new ResourceModel("submit-label"));
+            submitButton = new Button("submit");
             addLabelledComponent(submitButton);
+
+            final Label submitLabel = new Label("submit-label", new LoginResourceModel("submit-label"));
+            submitButton.add(submitLabel);
 
             // hide language selection for console app
             if (consoleLogin) {
@@ -264,15 +280,33 @@ public class LoginPanel extends Panel {
             }
         }
 
+        private String updatePlaceHolderAttribute(final Component component, final IModel<String> placeholder) {
+            return String.format("$('#%s').attr('placeholder', '%s');",
+                    component.getMarkupId(),
+                    StringEscapeUtils.escapeJavaScript(placeholder.getObject()));
+        }
+
         @Override
         public void renderHead(final IHeaderResponse response) {
-            final String focusScript = String.format("$('#%s').focus()", usernameTextField.getMarkupId());
-            response.render(OnDomReadyHeaderItem.forScript(focusScript));
-
             response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
-            final String preventResubmitScript = String.format("if (Hippo && Hippo.PreventResubmit) { " +
-                    "Hippo.PreventResubmit('#%s'); }", form.getMarkupId());
-            response.render(OnDomReadyHeaderItem.forScript(preventResubmitScript));
+
+            response.render(OnDomReadyHeaderItem.forScript(String.format(
+                "if (Hippo && Hippo.PreventResubmit) { " +
+                "  Hippo.PreventResubmit('#%s');" +
+                "}",
+                form.getMarkupId()
+            )));
+
+            response.render(OnDomReadyHeaderItem.forScript(
+                "$('.login-form-input input')" +
+                "  .focus(function() { $(this).parent().addClass('input-focused'); })" +
+                "  .blur(function() { $(this).parent().removeClass('input-focused'); });"
+            ));
+
+            response.render(OnDomReadyHeaderItem.forScript(String.format(
+                "$('#%s').focus()",
+                usernameTextField.getMarkupId()
+            )));
         }
 
         @Override
@@ -314,4 +348,24 @@ public class LoginPanel extends Panel {
         }
         return null;
     }
+
+    private static class PlaceholderAttribute extends Behavior {
+        private final IModel<String> placeholder;
+
+        PlaceholderAttribute(final IModel<String> placeholder) {
+            this.placeholder = placeholder;
+        }
+
+        @Override
+        public void onComponentTag(final Component component, final ComponentTag tag) {
+            tag.put("placeholder", placeholder.getObject());
+        }
+
+        @Override
+        public void detach(final Component component) {
+            placeholder.detach();
+            super.detach(component);
+        }
+    }
+
 }

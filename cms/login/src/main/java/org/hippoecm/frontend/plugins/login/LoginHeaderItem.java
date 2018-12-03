@@ -20,6 +20,7 @@ import java.util.Collections;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.HippoHeaderItem;
 
@@ -27,8 +28,9 @@ public class LoginHeaderItem extends HippoHeaderItem {
 
     private static final LoginHeaderItem INSTANCE = new LoginHeaderItem();
 
-    protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-login-theme.css");
-    protected static final ResourceReference THEME_MIN_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-login-theme.min.css");
+    protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/br-login-theme.css");
+    protected static final ResourceReference THEME_MIN_CSS = getUniqueResourceReference("skin/hippo-cms/css/br-login-theme.min.css");
+    protected static final ResourceReference INIT_JS = new JavaScriptResourceReference(LoginHeaderItem.class, "login-init.js");
 
     public static LoginHeaderItem get() {
         return INSTANCE;
@@ -39,12 +41,13 @@ public class LoginHeaderItem extends HippoHeaderItem {
 
     @Override
     public Iterable<?> getRenderTokens() {
-        return Collections.singletonList("hippo-login-header-item");
+        return Collections.singletonList("login-header-item");
     }
 
     @Override
     public void render(final Response response) {
         CssHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_CSS : THEME_CSS).render(response);
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(INIT_JS).render(response);
     }
 }

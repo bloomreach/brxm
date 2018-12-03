@@ -1,4 +1,4 @@
-// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/* stylelint-disable at-rule-empty-line-before */
-@import "variables";
-@import "normalize";
-
-@import "../../../../node_modules/open-sans-fontface/open-sans.scss";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/buttons";
-
-@import "scaffolding";
-@import "browser_support";
-@import "plugin";
-@import "panel";
-@import "footer";
-@import "background";
-@import "extend";
-@import "form";
-@import "feedback";
-/* stylelint-enable */
+.login-footer {
+  color: $login-footer-color;
+  font-size: $login-footer-font-size;
+  line-height: $login-footer-font-size + 4;
+  padding-top: $login-footer-padding-top;
+  text-align: center;
+}
