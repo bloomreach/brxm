@@ -15,7 +15,7 @@
  */
 
 describe('addToProjectComponent', () => {
-  let $controller;
+  let $componentController;
   let $ctrl;
   let $uiRouterGlobals;
   let ProjectService;
@@ -31,21 +31,39 @@ describe('addToProjectComponent', () => {
     angular.mock.module('hippo-cm');
 
     inject((
-      _$controller_,
+      _$componentController_,
       _$uiRouterGlobals_,
       _ProjectService_,
       _EditContentService_,
     ) => {
-      $controller = _$controller_;
+      $componentController = _$componentController_;
       $uiRouterGlobals = _$uiRouterGlobals_;
       ProjectService = _ProjectService_;
       EditContentService = _EditContentService_;
     });
 
     ProjectService.selectedProject = testProject;
+
+    spyOn(ProjectService, 'beforeChange');
+
     $uiRouterGlobals.params = { documentId: testDocumentId };
 
-    $ctrl = $controller('addToProjectCtrl');
+    $ctrl = $componentController('addToProject');
+    $ctrl.$onInit();
+  });
+
+  describe('life cycle method', () => {
+    it('should register a beforeChange callback', () => {
+      expect(ProjectService.beforeChange).toHaveBeenCalled();
+    });
+
+    it('should remove the beforeChange callback on component destruction', () => {
+      expect(ProjectService.beforeChangeListeners.size).toEqual(1);
+
+      $ctrl.$onDestroy();
+
+      expect(ProjectService.beforeChangeListeners.get('addToProject')).toEqual(undefined);
+    });
   });
 
   describe('getSelectedProject', () => {
