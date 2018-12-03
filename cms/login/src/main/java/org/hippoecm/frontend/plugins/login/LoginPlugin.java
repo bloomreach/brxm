@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -70,11 +69,6 @@ public class LoginPlugin extends RenderPlugin {
         final ResourceReference iconReference = getFaviconReference();
         add(new ResourceLink("faviconLink", iconReference));
 
-        final String[] supported = config.getStringArray(SUPPORTED_BROWSERS);
-        if (supported != null) {
-            add(new BrowserCheckBehavior(supported));
-        }
-
         // In case of using a different edition, add extra CSS rules to show the required styling
         if (config.containsKey(EDITION)) {
             final String edition = config.getString(EDITION);
@@ -95,7 +89,9 @@ public class LoginPlugin extends RenderPlugin {
         if (localeArray == null || localeArray.length == 0) {
             localeArray = DEFAULT_LOCALES;
         }
-        add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), new LoginPluginHandler(termsAndConditions)));
+        final String[] supported = config.getStringArray(SUPPORTED_BROWSERS);
+        final LoginConfig loginConfig = new LoginConfig(autoComplete, Arrays.asList(localeArray), supported);
+        add(createLoginPanel("login-panel", loginConfig, new LoginPluginHandler(termsAndConditions)));
 
         add(new Label("pinger"));
     }
@@ -136,9 +132,8 @@ public class LoginPlugin extends RenderPlugin {
         return reference != null ? reference: DEFAULT_FAVICON;
     }
 
-    protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                                          final LoginHandler handler) {
-        return new LoginPanel(id, autoComplete, locales, handler);
+    protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
+        return new LoginPanel(id, config, handler);
     }
 
     private class LoginPluginHandler implements LoginHandler {

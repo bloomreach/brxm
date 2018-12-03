@@ -77,18 +77,14 @@ public class LoginPanel extends Panel {
     protected String password;
     protected String selectedLocale;
 
-    public LoginPanel(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
+    public LoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
         super(id);
-
-        if (locales == null || locales.isEmpty()) {
-            throw new IllegalArgumentException("Argument locales can not be null or empty");
-        }
 
         this.handler = handler;
 
         add(CssClass.append("hippo-login-panel-center"));
 
-        add(form = new LoginForm(autoComplete, locales));
+        add(form = new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers()));
     }
 
     protected void login() throws LoginException {
@@ -159,13 +155,14 @@ public class LoginPanel extends Panel {
     protected class LoginForm extends Form {
 
         protected final FeedbackPanel feedback;
+        protected final Label browserSupport;
         protected final DropDownChoice<String> locale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
 
-        public LoginForm(final boolean autoComplete, final List<String> locales) {
+        public LoginForm(final boolean autoComplete, final List<String> locales, final String[] supportedBrowsers) {
             super("login-form");
 
             setOutputMarkupId(true);
@@ -176,6 +173,16 @@ public class LoginPanel extends Panel {
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
             feedback.setFilter(message -> !message.isRendered());
+
+            browserSupport = new Label("browser-support", new LoginResourceModel("browser.unsupported.warning"));
+            browserSupport.setVisible(false);
+            browserSupport.setEscapeModelStrings(false);
+            browserSupport.setOutputMarkupPlaceholderTag(true);
+            add(browserSupport);
+
+            if (supportedBrowsers != null && supportedBrowsers.length > 0) {
+                browserSupport.add(new BrowserCheckBehavior(supportedBrowsers));
+            }
 
             addLabelledComponent(new Label("header-label", new ResourceModel("header")));
 
@@ -246,6 +253,7 @@ public class LoginPanel extends Panel {
 
                     // redraw labels, feedback panel and provided components
                     labels.stream().filter(Component::isVisible).forEach(target::add);
+                    target.add(browserSupport);
                     target.add(feedback);
                     if (handler != null) {
                         handler.localeChanged(selectedLocale, target);

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.util.List;
-
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,9 +37,8 @@ public class SimpleLoginPlugin extends LoginPlugin {
     }
 
     @Override
-    protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
-                                         final LoginHandler handler) {
-        return new CaptchaForm(id, autoComplete, locales, handler);
+    protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
+        return new CaptchaForm(id, config, handler);
     }
 
     protected class CaptchaForm extends LoginPanel {
@@ -58,9 +55,8 @@ public class SimpleLoginPlugin extends LoginPlugin {
         private final boolean useCaptcha;
         private int failedAttempts;
 
-        public CaptchaForm(final String id, final boolean autoComplete, final List<String> locales,
-                           final LoginHandler handler) {
-            super(id, autoComplete, locales, handler);
+        public CaptchaForm(final String id, final LoginConfig config, final LoginHandler handler) {
+            super(id, config, handler);
 
             failedAttempts = 0;
             useCaptcha = getPluginConfig().getAsBoolean("use.captcha", false);
