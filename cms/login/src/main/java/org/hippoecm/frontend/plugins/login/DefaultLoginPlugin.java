@@ -25,11 +25,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
@@ -101,10 +99,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             final PropertyModel<String> selected = PropertyModel.of(this, "selectedTimeZone");
             final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone", selected, availableTimeZones);
             timeZone.setNullValid(false);
-
-            final Label timeZoneLabel = new Label("timezone-label", new ResourceModel("timezone-label", "Time zone:"));
-            timeZoneLabel.setVisible(isTimeZoneVisible);
-            form.addLabelledComponent(timeZoneLabel);
+            timeZone.setVisible(isTimeZoneVisible);
             form.add(timeZone);
         }
 

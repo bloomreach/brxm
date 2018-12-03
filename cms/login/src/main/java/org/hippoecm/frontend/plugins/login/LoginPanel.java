@@ -146,7 +146,7 @@ public class LoginPanel extends Panel {
         return getString(DEFAULT_KEY);
     }
 
-    protected  void loginSuccess() {
+    protected void loginSuccess() {
         if (handler != null) {
             handler.loginSuccess();
         }
@@ -184,25 +184,21 @@ public class LoginPanel extends Panel {
                 browserSupport.add(new BrowserCheckBehavior(supportedBrowsers));
             }
 
-            addLabelledComponent(new Label("header-label", new ResourceModel("header")));
-
-            addLabelledComponent(new Label("username-label", new ResourceModel("username-label")));
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
             usernameTextField.setOutputMarkupId(true);
 
-            addLabelledComponent(new Label("password-label", new ResourceModel("password-label")));
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
             passwordTextField.setResetPassword(true);
 
             final String defaultLocale = locales.get(0);
 
-            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
+            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(
+                    Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
 
             if (consoleLogin) {
                 // forced language (en) selection for console app
                 selectedLocale = CONSOLE_LOCALE;
-            }
-            else {
+            } else {
                 final String cookieLocale = getCookieValue(LOCALE_COOKIE);
                 final String sessionLocale = getSession().getLocale().getLanguage();
                 if (cookieLocale != null && locales.contains(cookieLocale)) {
@@ -215,8 +211,6 @@ public class LoginPanel extends Panel {
             }
             getSession().setLocale(getSelectedLocale());
 
-            final Label localeLabel = new Label("locale-label", new ResourceModel("locale-label"));
-            addLabelledComponent(localeLabel);
             add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(LoginPanel.this, "selectedLocale") {
                         @Override
