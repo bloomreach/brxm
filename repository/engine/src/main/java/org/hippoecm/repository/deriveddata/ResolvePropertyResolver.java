@@ -27,15 +27,40 @@ public class ResolvePropertyResolver implements PropertyResolver {
     private final HierarchyResolver.Entry lastNode;
     private final String relativePath;
     private final Node modified;
+    private Property property;
 
-    public ResolvePropertyResolver(final HierarchyResolver.Entry lastNode, final String relativePath, final Node modified) {
+    public ResolvePropertyResolver(final HierarchyResolver.Entry lastNode, final String relativePath
+            , final Node modified) {
         this.lastNode = lastNode;
         this.relativePath = relativePath;
         this.modified = modified;
     }
 
+    public static Property getProperty(final HierarchyResolver.Entry lastNode, final String relativePath
+            , final Node modified) throws RepositoryException {
+        ResolvePropertyResolver resolvePropertyResolver = new ResolvePropertyResolver(lastNode, relativePath, modified);
+        resolvePropertyResolver.resolve();
+        return resolvePropertyResolver.getProperty();
+    }
+
     @Override
-    public Property getProperty() throws RepositoryException {
-        return new HierarchyResolverImpl().getProperty(modified, relativePath, lastNode);
+    public Property getProperty() {
+        return this.property;
+    }
+
+    @Override
+    public String getRelativePath(){
+        return relativePath;
+    }
+
+    @Override
+    public Node getModified(){
+        return modified;
+    }
+
+    @Override
+    public void resolve() throws RepositoryException {
+        this.property = new HierarchyResolverImpl().getProperty(modified, relativePath, lastNode);
+
     }
 }
