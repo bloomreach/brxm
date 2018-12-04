@@ -1,12 +1,10 @@
 ========================================================================================================================
 
-Addon Channel Manager Frontend Next Generation includes and bundles the following sub-components which are available and
+Addon Channel Manager UI Extension includes and bundles the following sub-components which are available and
 licensed under the Apache License, Version 2.0. Your use of the code for these sub-components is subject to the terms
 and conditions of the Apache License, Version 2.0, as specified in the license text above:
 
-angular/hippo-cm/app.*
-angular/hippo-cm/packages.*
-angular/hippo-cm/vendor-styles.*
+../ui-extension.*
 
 For bundled sub-components also additional or separate copyright notices
 and license terms may apply. Your use of the code for these sub-components is also subject to the terms and conditions
