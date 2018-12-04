@@ -498,6 +498,7 @@
                 <exclude>api/node_modules/**</exclude>
                 <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>engine/node_modules/**</exclude>
+                <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>
           </plugin>
