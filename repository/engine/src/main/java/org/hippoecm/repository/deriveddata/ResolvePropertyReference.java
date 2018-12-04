@@ -39,8 +39,7 @@ public class ResolvePropertyReference extends PropertyReference {
         * however this is broken because of a cast exception as the session is not wrapped
         */
         HierarchyResolver.Entry lastNode = new HierarchyResolver.Entry();
-        PropertyResolver resolver = new BranchResolvePropertyResolver(new ResolvePropertyResolver(lastNode, getRelativePath(), modified));
-        Property property = resolver.getProperty();
+        Property property = BranchResolvePropertyResolver.getProperty(new ResolvePropertyResolver(lastNode, getRelativePath(), modified));
         if (property != null) {
             if (property.getParent().isNodeType("mix:referenceable")) {
                 dependencies.add(property.getParent().getIdentifier());

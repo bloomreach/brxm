@@ -15,17 +15,20 @@
 
 package org.hippoecm.repository.deriveddata;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-public interface PropertyResolver {
+public class DerivedDataConfigurationException extends RepositoryException {
 
-    Property getProperty() throws RepositoryException;
+    /**
+     * Constructs a new instance of this class with the specified detail
+     * message.
+     *
+     * @param message the detail message. The detail message is saved for later
+     *                retrieval by the {@link #getMessage()} method.
+     */
+    public DerivedDataConfigurationException(final String message) {
+        super(message);
+    }
 
-    String getRelativePath();
 
-    Node getModified();
-
-    void resolve() throws RepositoryException;
 }
