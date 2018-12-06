@@ -4,8 +4,9 @@
 .idea/
 .project/
 target/
-node_modules/
 coverage/
 cache/
 dll/
 .awcache/
+/frontend-ng/node/
+/frontend-ng/node_modules/
