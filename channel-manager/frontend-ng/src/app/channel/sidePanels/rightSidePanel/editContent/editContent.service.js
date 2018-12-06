@@ -85,9 +85,7 @@ class EditContentService {
       this.ContentService.getDocument(documentId, selectedProjectId).then(
         (document) => {
           if (selectedProjectId && document.branchId !== selectedProjectId) {
-            // set the title
-            const documentTitle = this.$translate.instant('EDIT_DOCUMENT', document);
-            this.RightSidePanelService.setTitle(documentTitle);
+            this._showDocumentTitle(document.displayName);
             this.$state.go('hippo-cm.channel.add-to-project', { documentId });
           } else {
             this.editDocument(documentId);
@@ -116,7 +114,7 @@ class EditContentService {
     this.ContentEditor.open(documentId)
       .then(() => {
         this.documentId = documentId;
-        this._showDocumentTitle();
+        this._showDocumentTitle(this.ContentEditor.getDocumentDisplayName());
         this.RightSidePanelService.stopLoading();
       });
   }
@@ -128,11 +126,9 @@ class EditContentService {
     this.RightSidePanelService.setTitle(documentLabel);
   }
 
-  _showDocumentTitle() {
+  _showDocumentTitle(documentName) {
     const documentLabel = this.$translate.instant('DOCUMENT');
     this.RightSidePanelService.setContext(documentLabel);
-
-    const documentName = this.ContentEditor.getDocumentDisplayName();
     this.RightSidePanelService.setTitle(documentName);
   }
 
