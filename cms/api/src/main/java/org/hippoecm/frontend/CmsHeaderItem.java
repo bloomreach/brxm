@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ public class CmsHeaderItem extends HippoHeaderItem {
             CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
         }
 
-        CssHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_CSS : THEME_CSS).render(response);
+        CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);
 
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(MESSAGE_BUS_JS).render(response);
-        JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_JS : THEME_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_JS : THEME_MIN_JS).render(response);
 
         if (isBrowserInternetExplorer() && getBrowserVersion() == 11) {
             JavaScriptReferenceHeaderItem.forReference(IE11_JS).render(response);
