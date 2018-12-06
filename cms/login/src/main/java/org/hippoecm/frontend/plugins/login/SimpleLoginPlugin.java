@@ -38,10 +38,10 @@ public class SimpleLoginPlugin extends LoginPlugin {
 
     @Override
     protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
-        return new CaptchaForm(id, config, handler);
+        return new CaptchaPanel(id, config, handler);
     }
 
-    protected class CaptchaForm extends LoginPanel {
+    protected class CaptchaPanel extends LoginPanel {
 
         // Random captcha password to match against
         private String imagePass;
@@ -55,7 +55,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
         private final boolean useCaptcha;
         private int failedAttempts;
 
-        public CaptchaForm(final String id, final LoginConfig config, final LoginHandler handler) {
+        public CaptchaPanel(final String id, final LoginConfig config, final LoginHandler handler) {
             super(id, config, handler);
 
             failedAttempts = 0;
@@ -112,7 +112,7 @@ public class SimpleLoginPlugin extends LoginPlugin {
             // Clear the value of the captcha text field
             captchaTextValue = "";
 
-            final PropertyModel<String> captchaTextValue = PropertyModel.of(CaptchaForm.this, "captchaTextValue");
+            final PropertyModel<String> captchaTextValue = PropertyModel.of(CaptchaPanel.this, "captchaTextValue");
             captchaTextField = new RequiredTextField<>("captcha", captchaTextValue);
             captchaImage = new Image("captchaImage", captchaImageResource) {
 

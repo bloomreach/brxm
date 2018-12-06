@@ -63,10 +63,10 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
     @Override
     protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
-        return new LoginForm(id, config, handler);
+        return new TimeZonePanel(id, config, handler);
     }
 
-    protected class LoginForm extends CaptchaForm {
+    protected class TimeZonePanel extends CaptchaPanel {
 
         private static final String TIMEZONE_COOKIE = "tzcookie";
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
@@ -75,7 +75,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         private List<String> availableTimeZones = Collections.emptyList();
         private boolean useBrowserTimeZoneIfAvailable;
 
-        public LoginForm(final String id, final LoginConfig config, final LoginHandler handler) {
+        public TimeZonePanel(final String id, final LoginConfig config, final LoginHandler handler) {
             super(id, config, handler);
 
             final IPluginConfig pluginConfig = getPluginConfig();
