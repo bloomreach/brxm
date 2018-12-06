@@ -110,6 +110,10 @@
   transition-property: font-weight, background-color;
   width: 100%;
 
+  .login-form-submit-label {
+    padding-left: 21px;
+  }
+
   &:active,
   &:active:hover,
   &:active:focus,
