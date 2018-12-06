@@ -46,7 +46,7 @@ public class LoginHeaderItem extends HippoHeaderItem {
 
     @Override
     public void render(final Response response) {
-        CssHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_CSS : THEME_CSS).render(response);
+        CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(INIT_JS).render(response);
     }
