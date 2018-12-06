@@ -23,7 +23,7 @@
                  aria-label="::$ctrl.label">
       {{ ::$ctrl.label }}
     </md-checkbox>
-    <help-icon text="{{ ::$ctrl.help }}"></help-icon>
+    <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="DropDownList" class="md-block {{::$ctrl.qaClass}}" flex>
@@ -39,7 +39,7 @@
     <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ ::$ctrl.help }}"></help-icon>
+    <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{::$ctrl.qaClass}}">
@@ -74,7 +74,7 @@
     <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ ::$ctrl.help }}"></help-icon>
+    <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{::$ctrl.qaClass}}">
@@ -104,7 +104,7 @@
     <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ ::$ctrl.help }}"></help-icon>
+    <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 
   <md-input-container ng-switch-default class="md-block {{::$ctrl.qaClass}}" flex>
@@ -116,6 +116,6 @@
     <div ng-messages="$ctrl.error">
       <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
     </div>
-    <help-icon text="{{ ::$ctrl.help }}"></help-icon>
+    <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 </div>

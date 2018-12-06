@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-.help-icon {
-  cursor: default;
-  position: absolute;
-  right: -24px;
-  top: 10px;
+import './hintIcon.scss';
+import template from './hintIcon.html';
+
+function hintIconDirective() {
+  'ngInject';
+
+  return {
+    restrict: 'E',
+    scope: {
+      text: '@',
+    },
+    template,
+  };
 }
+
+export default hintIconDirective;
