@@ -27,6 +27,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -101,6 +102,9 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             timeZone.setNullValid(false);
             timeZone.setVisible(isTimeZoneVisible);
             form.add(timeZone);
+
+            final IModel<String> timezoneTooltip = new LoginResourceModel("timezone-tooltip", DefaultLoginPlugin.class);
+            form.addAjaxAttributeModifier(timeZone, "title", timezoneTooltip);
         }
 
         @Override
