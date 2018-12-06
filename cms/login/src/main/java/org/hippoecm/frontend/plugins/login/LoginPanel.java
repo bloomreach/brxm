@@ -32,8 +32,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -165,6 +163,7 @@ public class LoginPanel extends Panel {
         protected final IModel<String> passwordPlaceholder;
         protected final Button submitButton;
         protected final List<Component> labels = new ArrayList<>();
+        protected final List<AjaxAttributeModifier> attributes = new ArrayList<>();
 
         public LoginForm(final boolean autoComplete, final List<String> locales, final String[] supportedBrowsers) {
             super("login-form");
@@ -182,20 +181,20 @@ public class LoginPanel extends Panel {
             browserSupport.setVisible(false);
             browserSupport.setEscapeModelStrings(false);
             browserSupport.setOutputMarkupPlaceholderTag(true);
-            add(browserSupport);
+            addLabelledComponent(browserSupport);
 
             if (supportedBrowsers != null && supportedBrowsers.length > 0) {
                 browserSupport.add(new BrowserCheckBehavior(supportedBrowsers));
             }
 
             add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
-            usernamePlaceholder = CapitalizedModel.of(new LoginResourceModel("username"));
-            usernameTextField.add(new PlaceholderAttribute(usernamePlaceholder));
+            usernamePlaceholder = new LoginResourceModel("username-label");
+            addAjaxAttributeModifier(usernameTextField, "placeholder", usernamePlaceholder);
             usernameTextField.setOutputMarkupId(true);
 
             add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
-            passwordPlaceholder = CapitalizedModel.of(new LoginResourceModel("password"));
-            passwordTextField.add(new PlaceholderAttribute(passwordPlaceholder));
+            passwordPlaceholder = new LoginResourceModel("password-label");
+            addAjaxAttributeModifier(passwordTextField, "placeholder", (passwordPlaceholder));
             passwordTextField.setResetPassword(true);
             passwordTextField.setOutputMarkupId(true);
 
@@ -255,18 +254,18 @@ public class LoginPanel extends Panel {
                     getSession().setLocale(getSelectedLocale());
 
                     // redraw labels, feedback panel and provided components
-                    labels.stream().filter(Component::isVisible).forEach(target::add);
-                    target.add(browserSupport);
                     target.add(feedback);
-
-                    target.appendJavaScript(updatePlaceHolderAttribute(usernameTextField, usernamePlaceholder));
-                    target.appendJavaScript(updatePlaceHolderAttribute(passwordTextField, passwordPlaceholder));
+                    labels.stream().filter(Component::isVisible).forEach(target::add);
+                    attributes.forEach(attribute -> attribute.update(target));
 
                     if (handler != null) {
                         handler.localeChanged(selectedLocale, target);
                     }
                 }
             });
+
+            final IModel<String> localeTooltip = new LoginResourceModel("locale-tooltip");
+            addAjaxAttributeModifier(locale, "title", localeTooltip);
 
             submitButton = new Button("submit");
             addLabelledComponent(submitButton);
@@ -278,12 +277,6 @@ public class LoginPanel extends Panel {
             if (consoleLogin) {
                 locale.setVisible(false);
             }
-        }
-
-        private String updatePlaceHolderAttribute(final Component component, final IModel<String> placeholder) {
-            return String.format("$('#%s').attr('placeholder', '%s');",
-                    component.getMarkupId(),
-                    StringEscapeUtils.escapeJavaScript(placeholder.getObject()));
         }
 
         @Override
@@ -329,6 +322,12 @@ public class LoginPanel extends Panel {
             add(component);
             labels.add(component);
         }
+
+        public void addAjaxAttributeModifier(final Component component, final String name, final IModel<String> value) {
+            final AjaxAttributeModifier modifier = new AjaxAttributeModifier(name, value);
+            attributes.add(modifier);
+            component.add(modifier);
+        }
     }
 
     protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
@@ -349,23 +348,22 @@ public class LoginPanel extends Panel {
         return null;
     }
 
-    private static class PlaceholderAttribute extends Behavior {
-        private final IModel<String> placeholder;
+    private static class AjaxAttributeModifier extends AttributeModifier {
 
-        PlaceholderAttribute(final IModel<String> placeholder) {
-            this.placeholder = placeholder;
+        private String markupId;
+
+        AjaxAttributeModifier(final String attribute, final IModel<String> replaceModel) {
+            super(attribute, replaceModel);
         }
 
         @Override
-        public void onComponentTag(final Component component, final ComponentTag tag) {
-            tag.put("placeholder", placeholder.getObject());
+        public void bind(final Component component) {
+            markupId = component.getMarkupId();
         }
 
-        @Override
-        public void detach(final Component component) {
-            placeholder.detach();
-            super.detach(component);
+        void update(final AjaxRequestTarget target) {
+            final String value = StringEscapeUtils.escapeJavaScript((String) getReplaceModel().getObject());
+            target.appendJavaScript(String.format("$('#%s').attr('%s', '%s');", markupId, getAttribute(), value));
         }
     }
-
 }
