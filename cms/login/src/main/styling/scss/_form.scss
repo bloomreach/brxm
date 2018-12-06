@@ -91,10 +91,11 @@
 .login-form-label {
   font-size: 13px;
   line-height: 13px;
+  padding: 4px 0;
 
   label {
     display: inline-block;
-    margin-bottom: 4px;
+    font-weight: bold;
   }
 }
 
