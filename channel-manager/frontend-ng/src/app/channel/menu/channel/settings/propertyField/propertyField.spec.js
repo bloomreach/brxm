@@ -45,7 +45,7 @@ describe('Property field component', () => {
     },
     i18nResources: {
       testField: 'Test Field',
-      'testField.help': 'Test Field help text',
+      'testField.hint': 'Test Field hint text',
     },
   };
 
@@ -98,7 +98,7 @@ describe('Property field component', () => {
 
     expect($ctrl.value).toBe('testValue');
     expect($ctrl.qaClass).toBe('qa-field-testField');
-    expect($ctrl.help).toBe('Test Field help text');
+    expect($ctrl.hint).toBe('Test Field hint text');
   });
 
   it('applies a fall-back strategy when determining the label', () => {
@@ -215,7 +215,7 @@ describe('Property field component', () => {
   it('shows translated display values in drop-downs for properties files', () => {
     channelInfoDescription.i18nResources = {
       testField: 'Test Field',
-      'testField.help': 'Test Field help text',
+      'testField.hint': 'Test Field hint text',
       'testField/small': 'Small',
       'testField/medium': 'Medium',
       'testField/large': 'Large',
@@ -229,7 +229,7 @@ describe('Property field component', () => {
   it('shows translated display values in drop-downs for repository resource bundles', () => {
     channelInfoDescription.i18nResources = {
       testField: 'Test Field',
-      'testField.help': 'Test Field help text',
+      'testField.hint': 'Test Field hint text',
       'testField#small': 'Small',
       'testField#medium': 'Medium',
       'testField#large': 'Large',
