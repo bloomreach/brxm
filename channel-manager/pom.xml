@@ -307,6 +307,7 @@
                 <exclude>frontend-ng/coverage/**/*</exclude>
                 <exclude>ui-extension/coverage/**/*</exclude>
                 <exclude>**/target/**/*</exclude>
+                <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>
           </plugin>
