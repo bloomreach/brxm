@@ -103,7 +103,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             timeZone.setVisible(isTimeZoneVisible);
             form.add(timeZone);
 
-            final IModel<String> timezoneTooltip = new LoginResourceModel("timezone-tooltip", DefaultLoginPlugin.class);
+            final IModel<String> timezoneTooltip = new LoginResourceModel("timezone-label", DefaultLoginPlugin.class);
             form.addAjaxAttributeModifier(timeZone, "title", timezoneTooltip);
         }
 
