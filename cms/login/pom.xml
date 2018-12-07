@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms</artifactId>
+    <version>13.0.0-SNAPSHOT</version>
+  </parent>
+
+  <name>CMS Login</name>
+  <description>Hippo CMS Login Module</description>
+  <artifactId>hippo-cms-login</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-engine</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.html</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*.png</include>
+          <include>**/*.js</include>
+          <include>META-INF/ADDITIONAL-LICENSES.yml</include>
+        </includes>
+      </resource>
+      <!-- package resources fetched via NPM -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/node_modules/jstimezonedetect/dist</directory>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/plugins/login</targetPath>
+        <includes>
+          <include>jstz.min.js</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <!-- Use NPM to fetch external JavaScript dependencies -->
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${nodejs.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm ci</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>ci</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run build</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>node</directory>
+            </fileset>
+            <fileset>
+              <directory>node_modules</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

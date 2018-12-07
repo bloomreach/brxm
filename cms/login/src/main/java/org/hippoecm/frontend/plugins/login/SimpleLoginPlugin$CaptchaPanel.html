@@ -1,0 +1,39 @@
+<!--
+    * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+    *
+    * Licensed under the Apache License, Version 2.0 (the  "License");
+    * you may not use this file except in compliance with the License.
+    * You may obtain a copy of the License at
+    *
+    * http://www.apache.org/licenses/LICENSE-2.0
+    *
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS,
+    * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    * See the License for the specific language governing permissions and
+    * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+  <body>
+    <wicket:panel>
+      <wicket:extend>
+        <wicket:child/>
+
+        <wicket:enclosure child="captchaImage">
+          <!-- captcha image -->
+          <div class="login-form-captcha">
+            <img wicket:id="captchaImage" width="100%"/>
+          </div>
+
+          <!-- captcha input -->
+          <div class="login-form-label">
+            <label wicket:id="captchaLabel"></label>
+          </div>
+          <div class="login-form-input">
+            <input class="login-form-input-captcha" wicket:id="captcha" type="text" value=""/>
+          </div>
+        </wicket:enclosure>
+      </wicket:extend>
+    </wicket:panel>
+  </body>
+</html>

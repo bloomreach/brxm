@@ -28,7 +28,7 @@ Build front-end code
 
     $ npm run build
 
-# Developing the front-end code (api module only)
+# Developing the front-end code (api, login and console/frontend modules only)
 After building the front-end code:
 
     $ npm start

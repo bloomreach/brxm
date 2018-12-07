@@ -54,6 +54,7 @@
     <module>engine</module>
     <module>test</module>
 
+    <module>login</module>
     <module>console</module>
     <module>config</module>
 
@@ -493,11 +494,12 @@
                 <exclude>api/.csslintrc</exclude>
                 <exclude>api/.npmrc</exclude>
                 <exclude>console/frontend/.npmrc</exclude>
-                <exclude>engine/.npmrc</exclude>
+                <exclude>login/.npmrc</exclude>
+                <exclude>login/.stylelintrc</exclude>
                 <!-- front-end build external dependencies -->
                 <exclude>api/node_modules/**</exclude>
                 <exclude>console/frontend/node_modules/**</exclude>
-                <exclude>engine/node_modules/**</exclude>
+                <exclude>login/node_modules/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>

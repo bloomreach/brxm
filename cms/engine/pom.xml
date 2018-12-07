@@ -150,62 +150,9 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
-          <include>**/*.png</include>
-          <include>**/*.js</include>
-          <include>META-INF/ADDITIONAL-LICENSES.yml</include>
-        </includes>
-      </resource>
-      <!-- package resources fetched via NPM -->
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/node_modules/jstimezonedetect/dist</directory>
-        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/plugins/login</targetPath>
-        <includes>
-          <include>jstz.min.js</include>
         </includes>
       </resource>
     </resources>
-    <plugins>
-      <!-- Use NPM to fetch external JavaScript dependencies -->
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install node and npm</id>
-            <goals>
-              <goal>install-node-and-npm</goal>
-            </goals>
-            <configuration>
-              <nodeVersion>${nodejs.version}</nodeVersion>
-              <npmVersion>${npm.version}</npmVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>npm ci</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <configuration>
-              <arguments>ci</arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>node</directory>
-            </fileset>
-            <fileset>
-              <directory>node_modules</directory>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-    </plugins>
   </build>
 
 </project>
