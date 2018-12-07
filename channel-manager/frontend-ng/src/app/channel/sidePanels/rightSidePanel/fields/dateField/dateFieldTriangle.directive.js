@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/**
+ * @note this directive can be safely removed when migrating to Angular
+ */
 class DateFieldTriangleDirective {
   constructor($mdUtil) {
     'ngInject';
