@@ -31,6 +31,7 @@ public class LoginHeaderItem extends HippoHeaderItem {
     protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/br-login-theme.css");
     protected static final ResourceReference THEME_MIN_CSS = getUniqueResourceReference("skin/hippo-cms/css/br-login-theme.min.css");
     protected static final ResourceReference INIT_JS = new JavaScriptResourceReference(LoginHeaderItem.class, "login-init.js");
+    protected static final ResourceReference PREVENT_RESUBMIT_JS = new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
     public static LoginHeaderItem get() {
         return INSTANCE;
@@ -47,7 +48,9 @@ public class LoginHeaderItem extends HippoHeaderItem {
     @Override
     public void render(final Response response) {
         CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);
+
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(INIT_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_JS).render(response);
     }
 }

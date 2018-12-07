@@ -62,9 +62,6 @@ public class LoginPanel extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(LoginPanel.class);
 
-    public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
-            new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
-
     private static final String CONSOLE_LOCALE = "en";
     private static final String LOCALE_COOKIE = "loc";
     private static final int LOCALE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
@@ -280,8 +277,6 @@ public class LoginPanel extends Panel {
 
         @Override
         public void renderHead(final IHeaderResponse response) {
-            response.render(JavaScriptReferenceHeaderItem.forReference(PREVENT_RESUBMIT_SCRIPT_REFERENCE));
-
             response.render(OnDomReadyHeaderItem.forScript(String.format(
                 "if (Hippo && Hippo.PreventResubmit) { " +
                 "  Hippo.PreventResubmit('#%s');" +
