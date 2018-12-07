@@ -101,17 +101,38 @@
 
 .login-form-submit {
   background-color: $login-submit-bg-color;
-  border-color: $login-submit-border-color;
+  border: 0;
   border-radius: 0 0 $login-panel-border-radius $login-panel-border-radius;
-  font-size: $login-submit-font-size;
   height: $login-submit-height;
-  text-transform: uppercase;
-  transition-duration: $login-submit-transition-duration;
-  transition-property: font-weight, background-color;
   width: 100%;
 
   .login-form-submit-label {
+    font-size: $login-submit-font-size;
     padding-left: 21px;
+    text-transform: uppercase;
+    transition-duration: $login-submit-transition-duration;
+    transition-property: text-shadow, letter-spacing;
+    will-change: text-shadow, letter-spacing;
+  }
+
+  .login-form-submit-icon {
+    position: relative;
+    top: 3.5px;
+
+    svg {
+      height: 18px;
+      opacity: 0;
+      transition-duration: $login-submit-transition-duration;
+      transition-property: opacity;
+      width: 18px;
+      will-change: opacity;
+    }
+  }
+
+  &:active,
+  &:active:focus,
+  &:focus {
+    outline: none;
   }
 
   &:active,
@@ -120,11 +141,13 @@
   &:focus,
   &:hover {
     background-color: $login-submit-bg-color-focus;
-    border-color: $login-submit-border-color-focus;
-    font-weight: $login-submit-font-weight-focus;
-    outline: none;
 
-    svg {
+    .login-form-submit-label {
+      letter-spacing: .8px;
+      text-shadow: 1px 0 0 currentColor;
+    }
+
+    .login-form-submit-icon svg {
       opacity: 1;
     }
   }
@@ -133,27 +156,14 @@
   &.btn-primary[disabled]:active,
   &.btn-primary[disabled]:hover {
     background-color: $login-submit-disabled-color !important;
-    border-color: $login-submit-disabled-color !important;
-    font-weight: inherit;
-    opacity: .5 !important;
-    transition-duration: .1s !important;
-    transition-property: font-weight, opacity !important;
 
-    svg {
+    .login-form-submit-label {
+      letter-spacing: .8px;
+      text-shadow: 1px 0 0 currentColor;
+    }
+
+    .login-form-submit-icon svg {
       opacity: 1;
     }
-  }
-}
-
-.login-form-submit-icon {
-  position: relative;
-  top: 3.5px;
-
-  svg {
-    height: 18px;
-    opacity: 0;
-    transition-duration: $login-submit-transition-duration;
-    transition-property: opacity;
-    width: 18px;
   }
 }
