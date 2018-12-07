@@ -59,10 +59,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "header" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "account.expired" : {
       "status" : "CLEAN",
       "locales" : null
