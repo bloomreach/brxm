@@ -1,4 +1,4 @@
-// Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,23 +35,6 @@ $line-height-base:                   1.2;
 // Common
 $top-bar-height:                     41px;
 $bottom-bar-height:                  40px;
-
-// Login
-$login-extend-bgcolor:               $primary;
-$login-panel-bgcolor:                $lightest-shade;
-$login-panel-border:                 $dark-shade;
-$login-panel-width:                  305px;
-$login-panel-left:                   80px;
-$login-panel-header-height:          84px;
-$login-panel-header-bgcolor:         $white;
-$login-panel-center-h2-color:        $darker-shade;
-$login-panel-center-input-border:    $dark-gray;
-$login-panel-center-button-border:   $primary;
-$login-panel-center-button-bgcolor:  $primary;
-$login-panel-center-button-color:    $white;
-$login-panel-footer-color:           $dark-shade;
-$login-panel-feedback-border:        $dark-gray;
-$login-panel-feedback-bgcolor:       $warning-light;
 
 // Main menu
 $main-menu-width:                    64px;
