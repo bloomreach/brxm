@@ -263,7 +263,7 @@ public class LoginPanel extends Panel {
                 }
             });
 
-            final IModel<String> localeTooltip = new LoginResourceModel("locale-tooltip");
+            final IModel<String> localeTooltip = new LoginResourceModel("locale-label");
             addAjaxAttributeModifier(locale, "title", localeTooltip);
 
             submitButton = new Button("submit");
