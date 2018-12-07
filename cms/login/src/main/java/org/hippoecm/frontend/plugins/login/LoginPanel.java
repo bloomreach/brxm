@@ -180,7 +180,6 @@ public class LoginPanel extends Panel {
             browserSupport = new Label("browser-support", new LoginResourceModel("browser.unsupported.warning"));
             browserSupport.setVisible(false);
             browserSupport.setEscapeModelStrings(false);
-            browserSupport.setOutputMarkupPlaceholderTag(true);
             addLabelledComponent(browserSupport);
 
             if (supportedBrowsers != null && supportedBrowsers.length > 0) {
@@ -318,7 +317,7 @@ public class LoginPanel extends Panel {
         }
 
         public void addLabelledComponent(final Component component) {
-            component.setOutputMarkupId(true);
+            component.setOutputMarkupPlaceholderTag(true);
             add(component);
             labels.add(component);
         }
