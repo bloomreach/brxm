@@ -35,6 +35,10 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.repository.api.HippoNodeType;
 
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.NON_EMPTY_VALIDATOR;
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.editor.validator.ValidatorUtils.RESOURCE_REQUIRED_VALIDATOR;
+
 public class FieldEditor extends Panel {
 
     private String prefix;
@@ -102,22 +106,24 @@ public class FieldEditor extends Panel {
 
             @Override
             public Boolean getObject() {
-                return getDescriptor().getValidators().contains("required");
+                return getDescriptor().getValidators().contains(REQUIRED_VALIDATOR);
             }
 
             @Override
             public void setObject(final Boolean isRequired) {
                 final IFieldDescriptor field = getDescriptor();
                 final ITypeDescriptor typeDescriptor = field.getTypeDescriptor();
-                final String validatorDescription = typeDescriptor.isType(HippoNodeType.NT_RESOURCE) ? "resource-required" : "required";
+                final String validatorDescription = typeDescriptor.isType(HippoNodeType.NT_RESOURCE)
+                        ? RESOURCE_REQUIRED_VALIDATOR
+                        : REQUIRED_VALIDATOR;
                 if (isRequired) {
                     field.addValidator(validatorDescription);
                     if (typeDescriptor.isType("String")) {
-                        field.addValidator("non-empty");
+                        field.addValidator(NON_EMPTY_VALIDATOR);
                     }
                 } else {
                     if (typeDescriptor.isType("String")) {
-                        field.removeValidator("non-empty");
+                        field.removeValidator(NON_EMPTY_VALIDATOR);
                     }
                     field.removeValidator(validatorDescription);
                 }
@@ -172,7 +178,7 @@ public class FieldEditor extends Panel {
                 if (descriptor.isMandatory()) {
                     return false;
                 }
-                if (descriptor.getValidators().contains("required")) {
+                if (descriptor.getValidators().contains(REQUIRED_VALIDATOR)) {
                     return false;
                 }
                 if (descriptor.isMultiple()) {

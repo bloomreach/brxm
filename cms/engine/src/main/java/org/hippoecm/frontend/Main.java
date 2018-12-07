@@ -462,7 +462,7 @@ public class Main extends PluginApplication {
 
                 @Override
                 protected IPageStore newPageStore(final IDataStore dataStore) {
-                    return new AmnesicPageStore();
+                    return new AmnesicPageStore(dataStore);
                 }
             });
 
