@@ -23,7 +23,7 @@
   width: calc(100vw - #{$login-background-padding-left});
 
   > div {
-    background: url('#{$images}/login/login-background.svg') no-repeat center center;
+    background: url('#{$images}/login/login-background-balloon.svg') no-repeat center center;
     background-size: contain;
     display: flex;
     align-items: center;
