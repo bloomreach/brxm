@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -22,17 +22,24 @@
   if (!Hippo.PreventResubmit) {
 
     Hippo.PreventResubmit = function(formSelector) {
-      var el = $(formSelector);
-      if (el === null || el.length === 0) {
+      var form = $(formSelector);
+      if (form === null || form.length === 0) {
         console.warn("Cannot find form element '" + formSelector + "' to prevent resubmit behavior");
       } else {
-        el.submitting = false;
-        el.submit(function (e) {
-          if (el.submitting) {
+        form.submitting = false;
+        form.submit(function (e) {
+          if (form.submitting) {
             e.preventDefault();
           } else {
-            $(':submit', el).prop('disabled', true);
-            el.submitting = true;
+            form.addClass('form-disabled');
+            // disable the submit button
+            $(':submit', form).prop('disabled', true);
+            // set all form fields to readonly so that they can't be changed but their values are still submitted
+            $(':input', form).prop('readonly', true);
+            // select element do no support the readonly attribute, but we can disable all option elements
+            // that are not selected which prevents the user from selecting a different option
+            $('option:not(:selected)', form).attr('disabled',true);
+            form.submitting = true;
           }
         });
       }

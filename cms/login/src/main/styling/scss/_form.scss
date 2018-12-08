@@ -16,6 +16,18 @@
   padding: 20px;
 }
 
+.form-disabled {
+  .login-form-input input,
+  .login-form-select select {
+    opacity: .5;
+  }
+
+  .login-form-select select:focus,
+  .login-form-input.input-focused {
+    border-color: $login-field-border-color;
+  }
+}
+
 .login-form-input {
   background: $login-field-bg-color;
   border: 1px solid $login-field-border-color;
