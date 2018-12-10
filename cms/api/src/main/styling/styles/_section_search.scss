@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,18 +26,16 @@
     padding-right: 22px;
     padding-bottom: 1px;
 
-    // Hide IE custom clear button
+    // Hide Edge custom clear button
     &::-ms-clear {
       display: none;
     }
   }
 
   > a {
-    //ie10: 'make clickable' workaround
     display: inline-block;
     position: relative;
     right: 24px;
-    @include empty-background();
 
     .hi {
       color: $search-input-icon-color;
