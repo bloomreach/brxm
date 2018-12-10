@@ -22,7 +22,7 @@
   "TOOLBAR_MENU_CHANNEL_SETTINGS": "Settings",
   "ERROR_TEMPLATE_QUERY_NOT_FOUND": "Template query '{{templateQuery}}' was not found",
   "EXPAND": "Expand",
-  "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING": "Components on this page will be repositioned when this page is saved with the new template",
+  "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING": "Container items on this page will be repositioned when this page is saved with this template",
   "PLACEHOLDER_DOCUMENT_TYPE": "Document Type",
   "NOTIFICATION_DOCUMENT_PUBLISHED": "Published '{{documentName}}'",
   "REQUEST_PUBLICATION": "Request publication",
