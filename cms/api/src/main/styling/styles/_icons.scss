@@ -242,8 +242,9 @@
   }
 }
 
-// CMS7-8642: IE11 becomes unresponsive after opening/closing several documents
-// Due to a bug in IE11 on Win7 (fixed in Win8.x) we have to set pointer events on the use element to none.
+// This was previously a IE11 fix for CMS7-8642: IE11 becomes unresponsive after opening/closing several documents
+// In Edge this should no longer be required, but it actually resolves the issue when icons are used in links
+// (like the tree context-menu button) and can only be clicked at certain points of the icon.
 // For more information see https://connect.microsoft.com/IE/feedback/details/796745/mouse-events-are-not-delivered-at-all-anymore-when-inside-an-svg-a-use-is-removed-from-the-dom
 svg use {
   pointer-events: none;
