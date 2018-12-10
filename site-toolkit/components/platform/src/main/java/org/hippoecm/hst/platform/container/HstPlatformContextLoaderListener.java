@@ -15,11 +15,13 @@
  */
 package org.hippoecm.hst.platform.container;
 
+import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.hippoecm.hst.platform.services.PlatformServicesImpl;
 import org.hippoecm.hst.site.container.HstContextLoaderListener;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.repository.RepositoryService;
 
@@ -46,6 +48,7 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
     private HstModelRegistryImpl hstModelRegistry = new HstModelRegistryImpl();
     private PlatformServicesImpl platformServices = new PlatformServicesImpl();
     private PreviewDecorator previewDecorator = new PreviewDecoratorImpl();
+    private PlatformModelAvailableService platformModelAvailableService = new PlatformModelAvailableService(){};
 
     protected HippoWebappContext.Type getContextType() {
         return HippoWebappContext.Type.PLATFORM;
@@ -56,22 +59,28 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         // HSTTWO-4355 TODO: we may wany to setup a separate *parent* Spring Context for platform specific Spring wiring
         //                   for now doing required wiring inline here, using the provided Repository but also temporarily
         //                   (mis?)using the hstconfigreader.delegating credentials from registering hst sites (see HstModelRegistryImpl)
-        hstModelRegistry.setRepository(repositoryService);
+
         platformServices.setHstModelRegistry(hstModelRegistry);
         platformServices.setPreviewDecorator(previewDecorator);
         platformServices.init();
-        configureHstSite(hstModelRegistry);
+        hstModelRegistry.setRepository(repositoryService);
         hstModelRegistry.init();
+
+        configureHstSite(hstModelRegistry);
+
+        HippoServiceRegistry.register(platformModelAvailableService, PlatformModelAvailableService.class);
     }
 
     @Override
     protected void untrackHstModelRegistry() {
+        HippoServiceRegistry.unregister(platformModelAvailableService, PlatformModelAvailableService.class);
         destroyHstSite();
-        platformServices.destroy();
-        platformServices.setPreviewDecorator(null);
-        platformServices.setHstModelRegistry(null);
         hstModelRegistry.destroy();
         hstModelRegistry.setRepository(null);
+        platformServices.destroy();
+
+        platformServices.setPreviewDecorator(null);
+        platformServices.setHstModelRegistry(null);
     }
 
 }

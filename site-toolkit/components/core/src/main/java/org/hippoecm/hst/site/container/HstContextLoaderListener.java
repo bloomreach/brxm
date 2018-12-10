@@ -19,6 +19,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ProxiedServiceHolder;
@@ -55,7 +56,7 @@ public class HstContextLoaderListener implements ServletContextListener {
 
     private HippoWebappContext webappContext;
     private ProxiedServiceTracker<RepositoryService> repositoryServiceTracker;
-    private ProxiedServiceTracker<HstModelRegistry> hstModelRegistryTracker;
+    private ProxiedServiceTracker<PlatformModelAvailableService> hstPlatformModelAvailableServiceTracker;
     private HstSiteConfigurer siteConfigurer;
 
     @Override
@@ -100,24 +101,25 @@ public class HstContextLoaderListener implements ServletContextListener {
     }
 
     protected void trackHstModelRegistry(final RepositoryService repository) {
-        hstModelRegistryTracker = new ProxiedServiceTracker<HstModelRegistry>() {
+        hstPlatformModelAvailableServiceTracker = new ProxiedServiceTracker<PlatformModelAvailableService>() {
             @Override
-            public void serviceRegistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
-                configureHstSite(serviceHolder.getServiceProxy());
+            public void serviceRegistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
+                final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                configureHstSite(modelRegistry);
             }
 
             @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
+            public void serviceUnregistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
                 destroyHstSite();
             }
         };
-        HippoServiceRegistry.addTracker(hstModelRegistryTracker, HstModelRegistry.class);
+        HippoServiceRegistry.addTracker(hstPlatformModelAvailableServiceTracker, PlatformModelAvailableService.class);
     }
 
     protected void untrackHstModelRegistry() {
-        if (hstModelRegistryTracker != null) {
-            HippoServiceRegistry.removeTracker(hstModelRegistryTracker, HstModelRegistry.class);
-            hstModelRegistryTracker = null;
+        if (hstPlatformModelAvailableServiceTracker != null) {
+            HippoServiceRegistry.removeTracker(hstPlatformModelAvailableServiceTracker, PlatformModelAvailableService.class);
+            hstPlatformModelAvailableServiceTracker = null;
             destroyHstSite();
         }
     }
