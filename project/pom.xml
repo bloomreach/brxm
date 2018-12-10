@@ -78,7 +78,7 @@
     <npm.version>6.4.1</npm.version>
 
     <!-- END properties versions with dependency management -->
-    <maven.required.version>3.5.0</maven.required.version>
+    <maven.required.version>3.3.9</maven.required.version>
 
     <maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
     <!-- maven.plugin.assembly.version kept on 2.6. 3.0.0 shows snapshot download warnings, see CMS-10817 -->
