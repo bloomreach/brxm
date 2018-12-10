@@ -37,4 +37,26 @@ public class RelativePathFinderTest {
         RelativePathFinder finder = new RelativePathFinder("/derive", "/derived/derived/test");
         Assert.assertEquals("derived/test", finder.getRelativePath());
     }
+
+    @Test
+    public void getRelativePath_sameNameSiblingPropertyWithCounter() {
+        RelativePathFinder finder = new RelativePathFinder(" /test/document/document"
+                , " /test/document/document[3]/hippostdpubwf:lastModificationDate");
+        Assert.assertEquals("hippostdpubwf:lastModificationDate", finder.getRelativePath());
+    }
+
+    @Test
+    public void getRelativePath_sameNameSiblingNodeWithCounter() {
+        RelativePathFinder finder = new RelativePathFinder(" /test/document/document[1]"
+                , " /test/document/document/hippostdpubwf:lastModificationDate");
+        Assert.assertEquals("hippostdpubwf:lastModificationDate", finder.getRelativePath());
+    }
+
+    @Test
+    public void getRelativePath_sameNameSiblingWithCounters() {
+        RelativePathFinder finder = new RelativePathFinder(" /test/document/document[1]"
+                , " /test/document/document[2]/hippostdpubwf:lastModificationDate");
+        Assert.assertEquals("hippostdpubwf:lastModificationDate", finder.getRelativePath());
+    }
+
 }

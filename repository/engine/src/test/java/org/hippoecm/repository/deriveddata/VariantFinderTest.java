@@ -25,6 +25,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class VariantFinderTest extends RepositoryTestCase {
             "\n" +
             "[accessedVariantFinderTest:basedocument] > hippo:document, hippostd:relaxed, hippostd:document \n" +
             "+ * (accessedVariantFinderTest:compound) \n";
-    private Node document;
+    private Node unpublished;
 
     @Override
     @Before
@@ -51,15 +52,15 @@ public class VariantFinderTest extends RepositoryTestCase {
         super.setUp();
         Reader reader = new InputStreamReader(new ByteArrayInputStream(cnd.getBytes()));
         CndImporter.registerNodeTypes(reader, session);
-        document = session.getRootNode().addNode("test", "accessedVariantFinderTest:basedocument");
+        unpublished = session.getRootNode().addNode("test", "accessedVariantFinderTest:basedocument");
     }
 
     @Test
     public void getAccessedVariant_variantIsParentOfProperty() throws RepositoryException {
-        document.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
-        document.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "A");
-        document.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "A");
-        final Property property = document.setProperty("test", "test");
+        unpublished.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+        unpublished.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "A");
+        unpublished.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "A");
+        final Property property = unpublished.setProperty("test", "test");
         VariantFinder finder = new VariantFinder(property);
         assertTrue(finder.find().map(this::isSame).orElse(false));
         session.refresh(false);
@@ -68,12 +69,20 @@ public class VariantFinderTest extends RepositoryTestCase {
 
     @Test
     public void getAccessedVariant_variantIsGrandFatherOfProperty() throws RepositoryException {
-        final Node compound = document.addNode("compound", "accessedVariantFinderTest:compound");
+        final Node compound = unpublished.addNode("compound", "accessedVariantFinderTest:compound");
         final Property property = compound.setProperty("test", "test");
         VariantFinder finder = new VariantFinder(property);
         assertTrue(finder.find().map(this::isSame).orElse(false));
         session.refresh(false);
     }
+
+    @Test
+    public void getAccessedVariant_isPRopertyOfVariant() throws RepositoryException {
+        VariantFinder finder = new VariantFinder(unpublished.setProperty("test", "test"));
+        assertTrue(finder.find().map(this::isSame).orElse(false));
+        session.refresh(false);
+    }
+
 
     @Test
     public void getAccessedVariant_propertyIsNotPartOfVariant() throws RepositoryException {
@@ -83,9 +92,33 @@ public class VariantFinderTest extends RepositoryTestCase {
         session.refresh(false);
     }
 
+
+    @Test
+    public void getUnpublishedVariant() throws RepositoryException{
+        unpublished.setProperty(HippoStdNodeType.HIPPOSTD_STATE,"unpublished");
+        unpublished.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+        unpublished.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "A");
+        unpublished.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "A");
+        final Node published = session.getRootNode().addNode("test2", "accessedVariantFinderTest:basedocument");
+        published.setProperty(HippoStdNodeType.HIPPOSTD_STATE,"published");
+        published.setProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY,"live");
+        published.addMixin(HippoNodeType.HIPPO_MIXIN_BRANCH_INFO);
+        published.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, "A");
+        published.setProperty(HippoNodeType.HIPPO_PROPERTY_BRANCH_NAME, "A");
+        published.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, "test");
+        final Property property = unpublished.setProperty("test", " test");
+        VariantFinder finder = new VariantFinder(property);
+        assertTrue(finder.findUnpublished().map(unpublished -> isSame(this.unpublished)).orElse(false));
+        session.refresh(false);
+
+
+    }
+
+
+
     private Boolean isSame(final Node variant) {
         try {
-            return variant.isSame(document);
+            return variant.isSame(unpublished);
         } catch (RepositoryException e) {
             return false;
         }

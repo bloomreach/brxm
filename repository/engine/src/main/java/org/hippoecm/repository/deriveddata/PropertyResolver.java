@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 
 public interface PropertyResolver {
 
-    Property getProperty() throws RepositoryException;
+    Property getProperty();
 
     String getRelativePath();
 
