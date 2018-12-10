@@ -28,16 +28,16 @@ public class RelativePathFinder {
     public RelativePathFinder(final String nodePath, final String propertyPath) {
         Validate.notNull(nodePath);
         Validate.notNull(propertyPath);
-        Validate.isTrue(propertyPath.startsWith(nodePath), "property path:%s does not start with property path:%s ", propertyPath, nodePath);
-        Validate.isTrue(propertyPath.substring(nodePath.length()).startsWith("/"));
         log.debug("nodePath:{}", nodePath);
         log.debug("propertyPath:{}", propertyPath);
-        this.nodePath = nodePath;
-        this.propertyPath = propertyPath;
+        this.nodePath = nodePath.replaceAll("\\[[1-3]\\]", "");;
+        this.propertyPath = propertyPath.replaceAll("\\[[1-3]\\]", "");
+        Validate.isTrue(this.propertyPath.startsWith(this.nodePath), "property path:%s does not start with property path:%s ", this.propertyPath, this.nodePath);
     }
 
     public String getRelativePath() {
-        final String relativePath = propertyPath.substring(nodePath.length()+1);
+        final String propertyPathWithoutSameNameSibblingsCounter = propertyPath.replaceAll("\\[[1-3]\\]","");
+        final String relativePath = propertyPathWithoutSameNameSibblingsCounter.substring(nodePath.length()+1);
         Validate.isTrue(!relativePath.startsWith("/"));
         return relativePath;
     }
