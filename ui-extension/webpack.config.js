@@ -25,8 +25,8 @@ class DtsBundlePlugin {
       stage: Infinity
     }, dts.bundle.bind(null, {
       name: 'ui-extension',
-      main: './dist/typings/ui-extension.d.ts',
-      out: '../ui-extension.d.ts',
+      main: './dist/ui-extension.d.ts',
+      out: 'ui-extension.d.ts',
       removeSource: true,
       outputAsModuleFolder: true,
     }));
@@ -50,10 +50,22 @@ const config = {
   },
   module: {
     rules: [
+      {
+        enforce: 'pre',
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: 'tslint-loader?typeCheck=true&emitErrors=true',
+      },
       { test: /\.ts$/, use: ['babel-loader', 'ts-loader'] },
       { test: /\.js$/, use: 'babel-loader' },
     ],
   },
+  plugins: [
+    new DtsBundlePlugin(),
+  ],
+  watchOptions: {
+    ignored: ['**/*.d.ts', /node_modules/],
+  }
 };
 
 module.exports = [
@@ -64,9 +76,6 @@ module.exports = [
       filename: 'ui-extension.js',
       libraryTarget: 'umd',
     },
-    plugins: [
-      new DtsBundlePlugin(),
-    ],
   }),
 
   merge(config, {
