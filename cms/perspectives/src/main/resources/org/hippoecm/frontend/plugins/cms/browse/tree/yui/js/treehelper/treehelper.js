@@ -85,14 +85,6 @@ if (!YAHOO.hippo.TreeHelper) {
                     YAHOO.hippo.LayoutManager.registerResizeListener(tree, self, function() {
                         self.render(id);
                     });
-
-                    if (YAHOO.env.ua.ie > 0) {
-                        YAHOO.hippo.LayoutManager.registerRenderListener(tree, self, function () {
-                            if (!exists(helper.layoutUnit)) {
-                                helper.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(tree);
-                            }
-                        });
-                    }
                 }
                 helper.wicketTree = byClass('wicket-tree', 'div', tree);
 

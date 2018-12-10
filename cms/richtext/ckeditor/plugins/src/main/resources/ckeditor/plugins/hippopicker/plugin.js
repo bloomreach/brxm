@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,7 +224,7 @@
       var editable = editor.editable(),
         mouseupTimeout;
 
-      editable.attachListener(CKEDITOR.env.ie ? editable : editor.document.getDocumentElement(), 'mouseup', function () {
+      editable.attachListener(editor.document.getDocumentElement(), 'mouseup', function () {
         mouseupTimeout = setTimeout(updateToolbarButtonState, 0);
       });
       editor.on('destroy', function () {
