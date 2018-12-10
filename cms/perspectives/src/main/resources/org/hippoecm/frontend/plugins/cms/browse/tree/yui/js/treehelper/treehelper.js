@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -113,12 +113,12 @@ if (!YAHOO.hippo.TreeHelper) {
                     helper.registered = true;
                 }
 
-                // Browser other than IE can use:
+                // Browser other than Edge can use:
                 //    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
                 //    width: -moz-max-content;    /* Firefox/Gecko */
                 //    width: -webkit-max-content; /* Chrome */
-                // which causes the child elements to define the width of the element, IE still needs help from javascript
-                if (YAHOO.env.ua.ie > 0) {
+                // which causes the child elements to define the width of the element, Edge still needs help from javascript
+                if (navigator.userAgent.indexOf('Edge') >= 0){
                     this.setTreeWidth(id, tree, helper);
                 }
 
@@ -227,7 +227,7 @@ if (!YAHOO.hippo.TreeHelper) {
                     if (helper.cfg.workflowEnabled) {
                         width += 25;
                     } else {
-                        width += 10;
+                        width += 16;
                     }
                 }
 
@@ -272,10 +272,6 @@ if (!YAHOO.hippo.TreeHelper) {
             cleanup: function(id) {
                 var tree = Dom.get(id);
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(tree, this);
-
-                if (YAHOO.env.ua.ie > 0) {
-                    YAHOO.hippo.LayoutManager.unregisterRenderListener(tree, this);
-                }
             }
         };
 
