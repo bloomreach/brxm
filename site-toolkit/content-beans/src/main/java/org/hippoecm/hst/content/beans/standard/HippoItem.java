@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.hst.util.NOOPELMap;
@@ -669,6 +670,12 @@ public class HippoItem implements HippoBean {
             return this.getPath().equals(((HippoBean)obj).getPath());
         }
         return false;
+    }
+
+    @Override
+    public boolean isVersionedNode() {
+        return getNode() instanceof HippoBeanFrozenNode;
+
     }
 
     /**
