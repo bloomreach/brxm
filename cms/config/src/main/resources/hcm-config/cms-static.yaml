@@ -8,7 +8,6 @@ definitions:
         plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
       /root:
         jcr:primaryType: frontend:plugin
-        browsers: browser.ie
         extension.tabs.documents: service.browse.tabscontainer
         item: header.bar.right
         max.inactive.interval.minutes: '30'
@@ -16,10 +15,6 @@ definitions:
         tabs: service.tab
         wicket.extensions: [extension.tabs.documents]
         wicket.id: service.root
-        /browser.ie:
-          jcr:primaryType: frontend:pluginconfig
-          stylesheets: skin/screen_ie.css
-          user.agent: ie
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
           center: id=tabbed-panel-layout-center,height=1000
