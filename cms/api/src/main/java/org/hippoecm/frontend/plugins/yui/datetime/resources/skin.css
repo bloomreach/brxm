@@ -257,7 +257,6 @@
 .hippo-root .yui-calcontainer .yui-cal-nav-mask {
     background-color:#000;
     opacity:0.25;
-    filter:alpha(opacity=25); /* IE */
 }
 
 /* NAVIGATOR BOUNDING BOX */
