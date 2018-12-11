@@ -68,7 +68,7 @@
 
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
-    <parent.project.version>${parentVersion}</parent.project.version>
+    <main.project.version>${parentVersion}</main.project.version>
     <essentials.version>@release.essentials.version@</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
@@ -197,7 +197,7 @@
         <dependency>
           <groupId>${parentGroupId}</groupId>
           <artifactId>${parentArtifactId}-webapp</artifactId>
-          <version>${dollar}{parent.project.version}</version>
+          <version>${dollar}{main.project.version}</version>
           <type>war</type>
         </dependency>
       </dependencies>
