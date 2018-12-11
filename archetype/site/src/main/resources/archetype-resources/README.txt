@@ -38,10 +38,6 @@ For example start your project with:
 
     mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo
 
-or with jrebel:
-
-    mvn -P cargo.run -Drepo.path=/home/usr/tmp/repo -Djrebel
-
 
 Running with "Main Site"
 ========================

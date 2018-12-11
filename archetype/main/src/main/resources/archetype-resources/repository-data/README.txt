@@ -1,4 +1,4 @@
-Intent of repository data submodules
+Intent of Repository Data Submodules
 ====================================
 
 The repository-data module contains all definitions to be bootstrapped into the repository.
