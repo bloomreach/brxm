@@ -90,11 +90,8 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
         this.updateUrl = function(record, value, async) {
             var xhr, handleResponse;
-            if (window.XMLHttpRequest) {    // Mozilla/Safari
-                xhr = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {     // IE
-                xhr = new window.ActiveXObject("Microsoft.XMLHTTP");
-            }
+
+            xhr = new XMLHttpRequest();
             handleResponse = function() {
                 var obj = Ext.decode(xhr.responseText);
                 if (!record.checked) {
