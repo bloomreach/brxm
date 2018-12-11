@@ -2,8 +2,10 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
     : /fr:
+        jcr:primaryType: hipposys:resourcebundle
         menu-name: Nom du menu
         group.titlesettings: Paramètres pour la balise 'title'
+        group.imagesettings: Paramètres de l'image
         site-dc-copyright-link: Lien 'DC.rights copyright'
         template-page-title: Modèle pour la balise 'title'
         dc-language: Contenu de la méta-balise 'DC.language'
@@ -12,8 +14,8 @@ definitions:
         group.descriptionsettings: Paramètres pour la balise 'meta-description'
         site-title-in-template: La balise 'title' est déterminée par le modèle
         menu-item-allow-expanded: Utiliser l'élément de menu le mieux adapté
+        document-image-bean-props: Champ(s) d'image dans les documents
         site-title: Titre du site
-        jcr:primaryType: hipposys:resourcebundle
         default-meta-description: Valeur 'meta-description' par défaut
         document-description-bean-props: Champ(s) 'meta-description' dans les documents
         dc-terms-link: Lien 'schema.DCTERMS'

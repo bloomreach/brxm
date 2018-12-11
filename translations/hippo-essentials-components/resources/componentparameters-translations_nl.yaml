@@ -2,16 +2,18 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         postScope: Blog post locatie
         sortField: Veld voor sortering
         pageSize: Aantal posts om te laten zien
-        jcr:primaryType: hipposys:resourcebundle
+        group.blogauthorposts: Blogposts auteur
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
     : /nl:
         document: Document
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: Terrein informatie
         mapType.help: Het type kaart die getoond moet worden
         address: Locatie / adres
@@ -26,8 +28,7 @@ definitions:
         mapType#ROADMAP: Wegenkaart
         mapType#HYBRID: Mengsel van normaal en satelliet
         width: Breedte (in pixels)
-        jcr:primaryType: hipposys:resourcebundle
-        location: Locatie informatie
+        location: Locatie
         longitude: Longitude
         height: Hoogte (in pixels)
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
@@ -75,20 +76,23 @@ definitions:
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        sorting.group: Sortering
         sortOrder#desc: Aflopend
         sortOrder: Sorteer volgorde
         sortField: Veld voor sortering
         sortOrder#asc: Oplopend
-        jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
     : /nl:
-        width: Video breedte
         jcr:primaryType: hipposys:resourcebundle
-        height: Video hoogte
+        video.group: Video
+        width: Breedte
+        height: Hoogte
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
     : /nl:
-        pageSize: Pagina grootte
         jcr:primaryType: hipposys:resourcebundle
+        pagination.group: Paginering
+        pageSize: Pagina grootte
         showPagination: Toon paginering
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
     : /nl:
@@ -105,9 +109,10 @@ definitions:
         document1: Document element 1
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         path: Document pad
         documentTypes: Document types (komma gescheiden)
-        jcr:primaryType: hipposys:resourcebundle
+        list.group: Contentselectie
         includeSubtypes: Inclusief document sub-types
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /nl:
@@ -119,3 +124,25 @@ definitions:
     : /nl:
         document: Afbeelding
         jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
+    : /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        address: Adres
+        map.canvas: Canvas
+        latitude: Breedtegraad
+        markerCustomText: Aangepaste tekst marker
+        mapType: Type kaart
+        map.size: Formaat kaart
+        zoomFactor: Zoomfactor
+        map.options: Kaartopties
+        showMarker#no: Geen marker
+        showMarker: Marker weergeven
+        mapOverlay: Overlay kaart
+        width: Breedte (in pixels)
+        showMarker#withoutText: Zonder tekst
+        map.focus: Focus kaart
+        location: Locatiegegevens
+        showMarker#withCustomText: Met aangepaste tekst
+        showMarker#withAddress: Met adres
+        height: Hoogte (in pixels)
+        longitude: Lengtegraad

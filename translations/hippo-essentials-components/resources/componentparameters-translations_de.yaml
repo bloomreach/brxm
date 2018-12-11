@@ -2,16 +2,18 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         postScope: Standort Blog-Posts
         sortField: Sortierfeld
         pageSize: Anzahl der anzuzeigenden Posts
-        jcr:primaryType: hipposys:resourcebundle
+        group.blogauthorposts: Autor Blogs
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
     : /de:
         document: Dokument
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: Geländeinformationen
         mapType.help: Anzuzeigender Kartentyp
         address: Standort/Adresse
@@ -26,8 +28,7 @@ definitions:
         mapType#ROADMAP: Straßenkarte
         mapType#HYBRID: Kombination normal und Satellit
         width: Breite (in Pixel)
-        jcr:primaryType: hipposys:resourcebundle
-        location: Standortinformationen
+        location: Standort
         longitude: Längengrad
         height: Höhe (in Pixel)
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
@@ -76,20 +77,23 @@ definitions:
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        sorting.group: Sortieren
         sortOrder#desc: Absteigend
         sortOrder: Sortierreihenfolge
         sortField: Sortierfeld
         sortOrder#asc: Aufsteigend
-        jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
     : /de:
-        width: Videobreite
         jcr:primaryType: hipposys:resourcebundle
-        height: Videohöhe
+        video.group: Video
+        width: Breite
+        height: Höhe
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
     : /de:
-        pageSize: Seitenformat
         jcr:primaryType: hipposys:resourcebundle
+        pagination.group: Nummerierung
+        pageSize: Seitenformat
         showPagination: Seitennummerierung anzeigen
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
     : /de:
@@ -106,9 +110,10 @@ definitions:
         document1: Dokument-Element 1
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         path: Dokumentpfad
         documentTypes: Dokumenttypen (kommagetrennt)
-        jcr:primaryType: hipposys:resourcebundle
+        list.group: Inhaltsauswahl
         includeSubtypes: Dokumentuntertypen einschließen
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /de:
@@ -120,3 +125,25 @@ definitions:
     : /de:
         document: Bild
         jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
+    : /de:
+        jcr:primaryType: hipposys:resourcebundle
+        address: Adresse
+        map.canvas: Map Canvas
+        latitude: Breite
+        markerCustomText: Markierung benutzerdefinierter Text
+        mapType: Kartentyp
+        map.size: Kartengröße
+        zoomFactor: Vergrößerungsfaktor
+        map.options: Kartenoptionen
+        showMarker#no: Keine Markierung
+        showMarker: Markierung anzeigen
+        mapOverlay: Kartenüberlagerung
+        width: Breite (in Pixel)
+        showMarker#withoutText: Ohne Text
+        map.focus: Kartenfokus
+        location: Standortinformationen
+        showMarker#withCustomText: Breite benutzerdefinierter Text
+        showMarker#withAddress: Breite Adresse
+        height: Höhe (in Pixel)
+        longitude: Länge

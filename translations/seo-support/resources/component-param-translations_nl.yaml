@@ -2,8 +2,10 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         menu-name: Menu Naam
         group.titlesettings: Instellingen voor de 'title' tag
+        group.imagesettings: Afbeeldingsinstellingen
         site-dc-copyright-link: '''DC.rights copyright'' link'
         template-page-title: Sjabloon voor 'title' tag
         dc-language: '''DC.language'' meta-tag content'
@@ -12,8 +14,8 @@ definitions:
         group.descriptionsettings: Instellingen voor de 'meta-description' tag
         site-title-in-template: '''title'' tag wordt door template bepaald'
         menu-item-allow-expanded: Gebruik best passend menu item
+        document-image-bean-props: Afbeeldingsveld(en) in de documenten
         site-title: Titel van deze site
-        jcr:primaryType: hipposys:resourcebundle
         default-meta-description: Standaard waarde voor 'meta-description'
         document-description-bean-props: '''meta-description'' veld(en) in documenten'
         dc-terms-link: '''schema.DCTERMS'' link'

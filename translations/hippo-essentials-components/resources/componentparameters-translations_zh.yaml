@@ -2,16 +2,18 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         postScope: 博客帖子的位置
         sortField: 排序字段
         pageSize: 要展示的帖子的数量
-        jcr:primaryType: hipposys:resourcebundle
+        group.blogauthorposts: 作者博客
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsDocumentComponentInfo
     : /zh:
         document: 文档
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsGoogleMapsComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: 地形信息
         mapType.help: 要显示的地图的类型
         address: 位置/地址
@@ -25,8 +27,7 @@ definitions:
         width: 宽度（单位为像素）
         mapType#ROADMAP: 路线图
         mapType#HYBRID: 普通地图和卫星地图的混合
-        jcr:primaryType: hipposys:resourcebundle
-        location: 位置信息
+        location: 位置
         longitude: 经度
         height: 高度（单位为像素）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
@@ -74,20 +75,23 @@ definitions:
         jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        sorting.group: 排序
         sortOrder#desc: 降序
         sortOrder: 排序顺序
         sortField: 排序字段
         sortOrder#asc: 升序
-        jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
     : /zh:
-        width: 视频宽度
         jcr:primaryType: hipposys:resourcebundle
-        height: 视频高度
+        video.group: 视频
+        width: 宽度
+        height: 高度
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
     : /zh:
-        pageSize: 页面大小
         jcr:primaryType: hipposys:resourcebundle
+        pagination.group: 分页
+        pageSize: 页面大小
         showPagination: 显示分页
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListPickerComponentInfo
     : /zh:
@@ -104,9 +108,10 @@ definitions:
         document1: 文档项1
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsListComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         path: 文档路径
         documentTypes: 文档类型（逗号分隔）
-        jcr:primaryType: hipposys:resourcebundle
+        list.group: 选择内容
         includeSubtypes: 包括文档子类型
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /zh:
@@ -118,3 +123,25 @@ definitions:
     : /zh:
         document: 图像
         jcr:primaryType: hipposys:resourcebundle
+    ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
+    : /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        address: 地址
+        map.canvas: 地图画布
+        latitude: 纬度
+        markerCustomText: 标记自定义文本
+        mapType: 地图类型
+        map.size: 地图大小
+        zoomFactor: 缩放系数
+        map.options: 地图选项
+        showMarker#no: 无标记
+        showMarker: 显示标记
+        mapOverlay: 地图叠加
+        width: 宽度（以像素为单位）
+        showMarker#withoutText: 无文本
+        map.focus: 地图焦点
+        location: 位置信息
+        showMarker#withCustomText: 有自定义文本
+        showMarker#withAddress: 有地址
+        height: 高度（以像素为单位）
+        longitude: 经度
