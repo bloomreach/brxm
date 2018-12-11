@@ -16,16 +16,18 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>hippo-addon-channel-manager</artifactId>
-    <groupId>org.onehippo.cms7</groupId>
-    <version>13.0.0-SNAPSHOT</version>
-  </parent>
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-project</artifactId>
+    <version>30-SNAPSHOT</version>
+  </parent>
 
   <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
   <name>BloomReach Open UI SDK</name>
+  <version>13.0.0-SNAPSHOT</version>
 
   <build>
     <defaultGoal>validate</defaultGoal>

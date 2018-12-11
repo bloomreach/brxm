@@ -11,7 +11,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://code.onehippo.org/cms-community/hippo-addon-channel-manager"
+    "url": "https://code.onehippo.org/cms-community/bloomreach-ui-extension"
   },
   "main": "dist/ui-extension.js",
   "types": "dist/ui-extension.d.ts",
