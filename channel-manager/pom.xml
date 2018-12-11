@@ -228,7 +228,6 @@
     <module>frontend</module>
     <module>frontend-ng</module>
     <module>repository</module>
-    <module>ui-extension</module>
   </modules>
 
   <scm>
@@ -299,13 +298,9 @@
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
 
-                <exclude>ui-extension/.*</exclude>
-                <exclude>ui-extension/src/docs/*.md</exclude>
-
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
-                <exclude>ui-extension/coverage/**/*</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>

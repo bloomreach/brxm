@@ -1,7 +1,0 @@
-{
-  "extends": "tslint-config-airbnb",
-  "rules": {
-    "variable-name": [true, "allow-leading-underscore"],
-    "max-line-length": [true, 120]
-  }
-}
