@@ -54,7 +54,7 @@ describe('RightSidePanel', () => {
     });
 
     SidePanelService = jasmine.createSpyObj('SidePanelService', [
-      'initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen',
+      'initialize', 'isOpen', 'close', 'focus', 'open', 'setFullScreen', 'isFullScreen',
     ]);
 
     $element = angular.element('<div></div>');
@@ -244,13 +244,8 @@ describe('RightSidePanel', () => {
   });
 
   describe('focus handling', () => {
-    let mdSidenav;
-
     beforeEach(() => {
       $ctrl.$onInit();
-
-      mdSidenav = jasmine.createSpyObj('mdSidenav', ['focus']);
-      spyOn($element, 'find').and.returnValue(mdSidenav);
 
       $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
       $rootScope.$digest();
@@ -271,7 +266,7 @@ describe('RightSidePanel', () => {
     });
 
     afterEach(() => {
-      expect(mdSidenav.focus).toHaveBeenCalled();
+      expect(SidePanelService.focus).toHaveBeenCalled();
     });
   });
 });

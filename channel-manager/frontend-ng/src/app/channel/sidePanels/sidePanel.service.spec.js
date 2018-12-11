@@ -16,6 +16,7 @@
 
 describe('SidePanelService', () => {
   let $mdSidenav;
+  let $mdUtil;
   let $q;
   let $rootScope;
   let $timeout;
@@ -44,7 +45,8 @@ describe('SidePanelService', () => {
       $provide.value('HippoIframeService', HippoIframeService);
     });
 
-    inject((_$q_, _$rootScope_, _$timeout_, _$window_, _ChannelService_, _CmsService_, _SidePanelService_) => {
+    inject((_$mdUtil_, _$q_, _$rootScope_, _$timeout_, _$window_, _ChannelService_, _CmsService_, _SidePanelService_) => {
+      $mdUtil = _$mdUtil_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
@@ -158,6 +160,17 @@ describe('SidePanelService', () => {
     }).not.toThrow(jasmine.any(Error));
   });
 
+  it('focuses panel if it is already opened', () => {
+    spyOn(SidePanelService, 'focus');
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    mockSideNav.isOpen.and.returnValue(true);
+
+    SidePanelService.open('left');
+
+    expect(mockSideNav.open).not.toHaveBeenCalled();
+    expect(SidePanelService.focus).toHaveBeenCalled();
+  });
+
   it('adds classNames "side-panel-open" and "side-panel-closed" to the sidePanelElement', () => {
     SidePanelService.initialize('left', sidePanelElement, sideNavElement);
 
@@ -185,6 +198,17 @@ describe('SidePanelService', () => {
         fail(e);
       }
     });
+  });
+
+  it('focuses element', () => {
+    const element = jasmine.createSpyObj('$element', ['focus']);
+    spyOn($mdUtil, 'findFocusTarget').and.returnValue(element);
+
+    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+    SidePanelService.focus('left');
+    $timeout.flush();
+
+    expect(element.focus).toHaveBeenCalled();
   });
 
   describe('side-panel full-screen behavior', () => {
