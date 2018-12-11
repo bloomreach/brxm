@@ -163,9 +163,9 @@ class PropertyValueEditor extends DataView {
         else {
             final StringConverter stringModel = new StringConverter(valueModel);
             final String asString = stringModel.getObject();
+            final TextAreaWidget editor = new TextAreaWidget("value", stringModel);
 
             if (asString.contains("\n")) {
-                final TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                 final String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
                 int rowCount = lines.length;
                 int columnCount = 1;
@@ -184,18 +184,13 @@ class PropertyValueEditor extends DataView {
                 }
 
                 editor.setRows(String.valueOf(rowCount + 1));
-                return editor;
             }
             else if (asString.length() > TEXT_AREA_MAX_COLUMNS) {
-                final TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                 editor.setRows(String.valueOf((asString.length() / 80)));
-                return editor;
-            }
-            else {
-                final TextAreaWidget editor = new TextAreaWidget("value", stringModel);
+            } else {
                 editor.setRows("1");
-                return editor;
             }
+            return editor;
         }
     }
 
