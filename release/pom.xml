@@ -956,12 +956,12 @@
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-dashboard-document-wizard,hippo-plugin-dashboard-document-wizard-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-gallerypicker,hippo-plugin-gallerypicker-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-cms-engine,hippo-cms-l10n</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-addon-hst-configuration-editor,hippo-addon-hst-configuration-editor-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-poll-addon-repository,hippo-plugin-poll-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-relateddocs,hippo-plugin-relateddocs-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor,hippo-plugin-resourcebundle-editor-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt,hippo-plugin-robotstxt-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections-addon-repository,hippo-plugin-selections-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-seo-support-repository,hippo-plugin-seo-support-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy-addon-repository,hippo-plugin-taxonomy-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-essentials-components,hippo-essentials-components-l10n</artifactPrefix>
                 </artifactPrefixes>
