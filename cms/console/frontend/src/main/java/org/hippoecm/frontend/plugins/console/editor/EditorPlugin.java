@@ -43,18 +43,21 @@ public class EditorPlugin extends RenderPlugin<Node> {
         add(editor);
         add(new ToggleBehavior());
 
-        add(CssClass.append(ReadOnlyModel.of(() -> {
-            final Node node = getModel().getObject();
-            try {
-                if (node != null && !node.isCheckedOut()) {
-                    return "checked-in";
-                }
-            } catch (final RepositoryException ignore) {
-            }
-            return "";
-        })));
+        final IModel<String> checkedInModel = ReadOnlyModel.of(() -> isCheckedIn() ? "checked-in" : "");
+        add(CssClass.append(checkedInModel));
 
         onModelChanged();
+    }
+
+    private boolean isCheckedIn() {
+        final Node node = getModel().getObject();
+        try {
+            if (node != null && !node.isCheckedOut()) {
+                return true;
+            }
+        } catch (final RepositoryException ignore) {
+        }
+        return false;
     }
 
     protected IPluginContext getPluginContext() {
