@@ -114,7 +114,7 @@
 
     <jetty.version>6.1.22</jetty.version>
 
-    <wicket.version>6.29.0</wicket.version>
+    <wicket.version>6.30.0</wicket.version>
     <wicketstuff.version>6.28.0</wicketstuff.version>
     <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <httpclient.version>4.5.5</httpclient.version>
