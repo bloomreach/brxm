@@ -18,6 +18,8 @@ target/
 /console/frontend/node/
 /console/frontend/node_modules/
 /editor/repository/workspaces/
+/engine/node
+/engine/node_modules
 /login/node/
 /login/node_modules/
 /richtext/frontend/repository/
