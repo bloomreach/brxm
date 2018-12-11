@@ -2,8 +2,10 @@ definitions:
   config:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/forge/seo/support/SEOHelperComponentParamsInfo
     : /es:
+        jcr:primaryType: hipposys:resourcebundle
         menu-name: Nombre del menú
         group.titlesettings: Ajustes del título para la etiqueta del título
+        group.imagesettings: Configuración de la imagen
         site-dc-copyright-link: Enlace al Copyright del sitio DC
         template-page-title: Plantilla del título de la página
         dc-language: Lenguaje DC
@@ -13,8 +15,8 @@ definitions:
         site-title-in-template: Usar etiqueta de título proporcionada por las plantillas
           de página
         menu-item-allow-expanded: Usar elemento del menú expandido
+        document-image-bean-props: Campo(s) de imagen del documento
         site-title: Título del sitio
-        jcr:primaryType: hipposys:resourcebundle
         default-meta-description: Metadescripción predeterminada
         document-description-bean-props: Campos de descripción en los documentos
         group.dcsettings: Ajustes de Dublin Core
