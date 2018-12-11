@@ -126,4 +126,32 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- 3rd-party licenses -->
+                <exclude>.*</exclude>
+                <exclude>src/docs/*.md</exclude>
+
+                <!-- Generated or pulled-in files which are not cleaned up -->
+                <exclude>node_modules/**/*</exclude>
+                <exclude>ui-extension/coverage/**/*</exclude>
+                <exclude>target/**/*</exclude>
+                <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
