@@ -60,7 +60,7 @@ public class AbstractDocumentWorkflowIntegrationTest extends RepositoryTestCase 
         session.save();
     }
 
-    private void createDocument(final Node test) throws RepositoryException {
+    protected void createDocument(final Node test) throws RepositoryException {
         handle = test.addNode("document", NT_HANDLE);
         document = handle.addNode("document", NT_DOCUMENT);
         document.addMixin(HIPPOSTDPUBWF_DOCUMENT);
