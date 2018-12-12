@@ -244,7 +244,12 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
             if (resolvedVirtualHost == null) {
-                log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
+                if (isLocalhostIpPlatformRequest(containerRequest, hostName)) {
+                    log.debug("'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it " +
+                            "is a hosting environment internal request, like a pinger. ", containerRequest);
+                } else {
+                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
+                }
                 chain.doFilter(request, response);
                 return;
             }
@@ -475,6 +480,20 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 HDC.cleanUp();
             }
         }
+    }
+
+    private boolean isLocalhostIpPlatformRequest(final HstContainerRequest containerRequest, final String hostName) {
+        if (hostName == null) {
+            return false;
+        }
+        if (!hostName.startsWith("127.0.0.1")) {
+            return false;
+        }
+        final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(containerRequest.getContextPath());
+        if (context == null) {
+            return false;
+        }
+        return context.getType() == HippoWebappContext.Type.CMS || context.getType() == HippoWebappContext.Type.PLATFORM;
     }
 
     private boolean skipHst(final HttpServletRequest req, HttpSession session) {
