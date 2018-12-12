@@ -74,7 +74,7 @@ module.exports = [
     target: 'node',
     output: {
       filename: 'ui-extension.js',
-      libraryTarget: 'umd',
+      libraryTarget: 'commonjs2',
     },
   }),
 
