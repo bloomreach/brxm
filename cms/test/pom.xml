@@ -80,6 +80,11 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
+
     <!-- test -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
