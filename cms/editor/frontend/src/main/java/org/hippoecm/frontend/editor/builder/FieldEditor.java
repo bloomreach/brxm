@@ -28,6 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.hippoecm.frontend.editor.validator.ValidatorUtils;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -106,7 +107,7 @@ public class FieldEditor extends Panel {
 
             @Override
             public Boolean getObject() {
-                return getDescriptor().getValidators().contains(REQUIRED_VALIDATOR);
+                return ValidatorUtils.hasRequiredValidator(getDescriptor().getValidators());
             }
 
             @Override
