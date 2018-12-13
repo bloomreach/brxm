@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -611,7 +612,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         final org.yaml.snakeyaml.nodes.Node node = contentSourceSerializer.representSource();
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         contentSourceSerializer.serializeNode(out, node);
-        return new String(out.toByteArray());
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
     }
 
     /**
