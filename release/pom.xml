@@ -963,6 +963,7 @@
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor,hippo-plugin-resourcebundle-editor-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt,hippo-plugin-robotstxt-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections-addon-repository,hippo-plugin-selections-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-seo-support-repository,hippo-plugin-seo-support-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy-addon-repository,hippo-plugin-taxonomy-l10n</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-essentials-components,hippo-essentials-components-l10n</artifactPrefix>
                 </artifactPrefixes>
