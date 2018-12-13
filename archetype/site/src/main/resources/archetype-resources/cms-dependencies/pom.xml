@@ -16,8 +16,9 @@
 
     <dependency>
       <groupId>${parentGroupId}</groupId>
-      <artifactId>${parentArtifactId}-repository-data-application</artifactId>
-      <version>${dollar}{parent.project.version}</version>
+      <artifactId>${parentArtifactId}-cms-dependencies</artifactId>
+      <version>${dollar}{main.project.version}</version>
+      <type>pom</type>
     </dependency>
 
     <dependency>
@@ -26,27 +27,5 @@
       <version>${dollar}{project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-cms-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-gallerypicker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-resourcebundle-editor</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
-    </dependency>
   </dependencies>
 </project>
