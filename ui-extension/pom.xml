@@ -29,6 +29,14 @@
   <name>BloomReach Open UI SDK</name>
   <version>13.0.0-SNAPSHOT</version>
 
+  <inceptionYear>2018</inceptionYear>
+
+  <scm>
+    <connection>scm:git:https://code.onehippo.org/cms-community-dev/bloomreach-ui-extension.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community-dev/bloomreach-ui-extension.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community-dev/bloomreach-ui-extension</url>
+  </scm>
+
   <build>
     <defaultGoal>validate</defaultGoal>
     <plugins>
