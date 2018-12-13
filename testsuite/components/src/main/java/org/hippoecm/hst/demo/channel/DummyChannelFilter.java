@@ -22,6 +22,8 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,25 @@ public class DummyChannelFilter implements BiPredicate<Session, Channel> {
             if (requestContext.getSession() != session) {
                 throw new IllegalStateException("The session from the request context SHOULD be same as the session " +
                         "which is provided as an argument!");
+            }
+
+            // assert the ClassLoader of the website webapp is used and NOT the one from the CMS webapp
+
+            if (Thread.currentThread().getContextClassLoader() == requestContext.getClass().getClassLoader()) {
+                throw new IllegalStateException("Expected that the current threads classloader would be the " +
+                        "site webapp classloader but the requestContext classloader was expected to be the CMS " +
+                        "webapp classloader");
+            }
+
+            final HippoWebappContext siteContext = HippoWebappContextRegistry.get().getContext("/site");
+            if (siteContext == null) {
+                throw new IllegalStateException("Expected the webapp for this DummyChannelFilter to have contextpath " +
+                        "/site");
+            }
+
+            if (Thread.currentThread().getContextClassLoader() != siteContext.getServletContext().getClassLoader()) {
+                throw new IllegalStateException("Expected the current Thread's classLoader to be the classLoader of the" +
+                        "");
             }
         } catch (RepositoryException e) {
             e.printStackTrace();
