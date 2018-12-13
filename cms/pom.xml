@@ -86,6 +86,7 @@
     <hippo.jackrabbit.version>2.16.2-h3-SNAPSHOT</hippo.jackrabbit.version>
     <hippo.commons.version>13.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>13.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.hst.version>13.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>13.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
@@ -197,6 +198,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services</artifactId>
         <version>${hippo.services.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
