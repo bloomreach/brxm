@@ -68,7 +68,7 @@
       </exclusions>
     </dependency>
 
-    <!-- Dependencies for the CMS-HST REST API -->
+    <!-- TODO are the dependencies for jaxrs below still needed? -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
