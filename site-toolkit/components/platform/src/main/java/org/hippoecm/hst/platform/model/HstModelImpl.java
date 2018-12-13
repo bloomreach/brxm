@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.platform.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -302,7 +304,8 @@ public class HstModelImpl implements InternalHstModel {
     private HstLinkProcessor getHstLinkProcessor(final ComponentManager websiteComponentManager) {
         HstLinkProcessor customLinkProcessor = websiteComponentManager.getComponent(HstLinkProcessor.class.getName());
         if (customLinkProcessor != null) {
-            return customLinkProcessor;
+            // wrap proxy for classloader
+            return createProxy(websiteServletContext.getClassLoader(), HstLinkProcessor.class, customLinkProcessor);
         }
         return new HstLinkProcessorChain();
     }
@@ -310,7 +313,8 @@ public class HstModelImpl implements InternalHstModel {
     private RewriteContextResolver getRewriteContextResolver(final ComponentManager websiteComponentManager) {
         final RewriteContextResolver customRewriteContextResolver = websiteComponentManager.getComponent(RewriteContextResolver.class.getName());
         if (customRewriteContextResolver != null) {
-            return customRewriteContextResolver;
+            // wrap proxy for classloader
+            return createProxy(websiteServletContext.getClassLoader(), RewriteContextResolver.class, customRewriteContextResolver);
         }
         return new DefaultRewriteContextResolver();
     }
@@ -342,7 +346,11 @@ public class HstModelImpl implements InternalHstModel {
         // the spring config id is customResourceResolvers instead of customLocationResolvers
         List<LocationResolver> customLocationResolvers = websiteComponentManager.getComponent("customResourceResolvers");
 
-        locationsResolvers.addAll(customLocationResolvers);
+        // wrap proxy for customLocationResolvers for classloader
+        final ClassLoader cl = websiteServletContext.getClassLoader();
+        customLocationResolvers.stream()
+                .map(locationResolver -> createProxy(cl, LocationResolver.class, locationResolver))
+                .forEach(proxy -> locationsResolvers.add(proxy));
 
         final HippoResourceLocationResolver hippoResourceLocationResolver = new HippoResourceLocationResolver();
         hippoResourceLocationResolver.setBinaryLocations(binaryLocations);
@@ -358,7 +366,13 @@ public class HstModelImpl implements InternalHstModel {
         List<ResourceContainer> resourceContainers = new ArrayList<>();
         // first add the custom resourceContainers, after that the fallback built in resource containers
         List<ResourceContainer> customResourceContainers = websiteComponentManager.getComponent("customResourceContainers");
-        resourceContainers.addAll(customResourceContainers);
+
+        // wrap proxy for customResourceContainers for classloader
+        final ClassLoader cl = websiteServletContext.getClassLoader();
+        customResourceContainers.stream()
+                .map(resourceContainer ->
+                        createProxy(cl, ResourceContainer.class, resourceContainer))
+                .forEach(proxy -> resourceContainers.add(proxy));
 
         final HippoGalleryImageSetContainer hippoGalleryImageSetContainer = new HippoGalleryImageSetContainer();
         hippoGalleryImageSetContainer.setPrimaryItem("hippogallery:original");
@@ -382,7 +396,9 @@ public class HstModelImpl implements InternalHstModel {
         List<BiPredicate<Session, Channel>> customChannelFilters = websiteComponentManager.getComponent("customChannelFilters");
 
         for (BiPredicate<Session, Channel> customChannelFilter : customChannelFilters) {
-            compositeFilter = compositeFilter.and(customChannelFilter);
+            // wrap proxy for classloader
+            final BiPredicate proxy = createProxy(websiteServletContext.getClassLoader(), BiPredicate.class, customChannelFilter);
+            compositeFilter = compositeFilter.and(proxy);
         }
 
         return compositeFilter;
@@ -394,4 +410,26 @@ public class HstModelImpl implements InternalHstModel {
                 "contextPath=" + websiteServletContext.getContextPath() +
                 '}';
     }
+
+    private <T> T createProxy(final ClassLoader objectClassLoader, final Class<T> proxyInterface, final T object) {
+        return  (T)Proxy.newProxyInstance(objectClassLoader, new Class[]{proxyInterface}, (proxy, method, args) -> {
+            final ClassLoader currentContextClassLoader = Thread.currentThread().getContextClassLoader();
+            if (currentContextClassLoader == objectClassLoader) {
+                try {
+                    return method.invoke(object, args);
+                } catch (InvocationTargetException ite) {
+                    throw (ite.getCause() != null) ? ite.getCause() : ite;
+                }
+            }
+            Thread.currentThread().setContextClassLoader(objectClassLoader);
+            try {
+                return method.invoke(object, args);
+            } catch (InvocationTargetException ite) {
+                throw (ite.getCause() != null) ? ite.getCause() : ite;
+            } finally {
+                Thread.currentThread().setContextClassLoader(currentContextClassLoader);
+            }
+        });
+    }
+
 }
