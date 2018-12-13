@@ -1,7 +1,8 @@
 # Community Translations
 
 This project contains translations for all projects that contain texts/labels for the CMS user. There should be 
-translations for every label in all supported languages.
+translations for every label in all supported languages. Changes and additions must be registered in this project. 
+When a new release is tagged the pending changes must be resolved so all language packs are complete.
 
 # Adding or removing a new project
 
