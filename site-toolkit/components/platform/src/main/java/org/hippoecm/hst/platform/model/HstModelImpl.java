@@ -382,7 +382,7 @@ public class HstModelImpl implements InternalHstModel {
         List<BiPredicate<Session, Channel>> customChannelFilters = websiteComponentManager.getComponent("customChannelFilters");
 
         for (BiPredicate<Session, Channel> customChannelFilter : customChannelFilters) {
-            compositeFilter = customChannelFilter.and(customChannelFilter);
+            compositeFilter = compositeFilter.and(customChannelFilter);
         }
 
         return compositeFilter;
