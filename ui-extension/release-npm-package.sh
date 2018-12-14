@@ -52,7 +52,7 @@ fi
 
 # Change version in package.json  file
 printf "Setting version: "
-if ! npm version "${version}"; then
+if ! npm --no-git-tag-version version "${version}"; then
   echo
   echo "Cannot set version to \"${version}\""
   echo
@@ -65,7 +65,7 @@ npm publish --access public
 
 # Revert version bump in package.json
 printf "Resetting development version: "
-npm version 0.0.0
+npm --no-git-tag-version version 0.0.0
 
 echo
 echo "Published version ${version}, see https://www.npmjs.com/package/@bloomreach/ui-extension?activeTab=versions"
