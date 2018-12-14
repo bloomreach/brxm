@@ -67,7 +67,7 @@ class CreateContentService {
 
     ProjectService.beforeChange('createContent', (projectIdIdentical) => {
       if (!projectIdIdentical) {
-        this._beforeSwitchProject();
+        return this._beforeSwitchProject();
       }
     });
   }

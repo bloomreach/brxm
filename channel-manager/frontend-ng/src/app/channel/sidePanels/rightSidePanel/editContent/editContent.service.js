@@ -53,7 +53,7 @@ class EditContentService {
 
     ProjectService.beforeChange('editContent', (projectIdIdentical) => {
       if (!projectIdIdentical) {
-        this._beforeSwitchProject();
+        return this._beforeSwitchProject();
       }
     });
   }
