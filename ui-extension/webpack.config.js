@@ -37,10 +37,6 @@ const config = {
   mode: 'production',
   entry: './src/ui-extension.ts',
   context: __dirname,
-  externals: {
-    document: 'document',
-    window: 'window',
-  },
   resolve: {
     extensions: ['.ts', '.js', '.json'],
   },
@@ -72,6 +68,7 @@ module.exports = [
   merge(config, {
     name: 'es5',
     target: 'node',
+    externals:  /^[^.]/,
     output: {
       filename: 'ui-extension.js',
       libraryTarget: 'commonjs2',
