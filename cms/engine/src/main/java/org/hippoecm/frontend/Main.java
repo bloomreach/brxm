@@ -99,8 +99,10 @@ import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.settings.GlobalSettings;
-import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.frontend.util.RequestUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -333,7 +335,7 @@ public class Main extends PluginApplication {
              *
              */
             cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
-            if ( cmsContextService == null) {
+            if (cmsContextService == null) {
                 cmsContextServiceImpl = new CmsContextServiceImpl();
                 cmsContextService = cmsContextServiceImpl;
                 HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class,CmsInternalCmsContextService.class);
@@ -348,6 +350,11 @@ public class Main extends PluginApplication {
 
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
+                    final HstRequestContext requestContext = RequestContextProvider.get();
+                    if (requestContext != null && requestContext instanceof HstMutableRequestContext) {
+                        ((HstMutableRequestContext) requestContext).setSession(PluginUserSession.get().getJcrSession());
+                    }
+
                     if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
                         IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
