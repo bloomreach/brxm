@@ -179,6 +179,8 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>DEVELOPER.md</exclude>
+
                 <!-- 3rd-party licenses -->
                 <exclude>.*</exclude>
                 <exclude>src/docs/*.md</exclude>
