@@ -28,7 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.editor.validator.ValidatorUtils;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -36,9 +36,10 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.repository.api.HippoNodeType;
 
-import static org.hippoecm.frontend.editor.validator.ValidatorUtils.NON_EMPTY_VALIDATOR;
-import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
-import static org.hippoecm.frontend.editor.validator.ValidatorUtils.RESOURCE_REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.NON_EMPTY_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.RESOURCE_REQUIRED_VALIDATOR;
 
 public class FieldEditor extends Panel {
 
@@ -140,7 +141,7 @@ public class FieldEditor extends Panel {
                 if (descriptor.isMandatory()) {
                     return false;
                 }
-                if (descriptor.getValidators().contains("optional")) {
+                if (descriptor.getValidators().contains(OPTIONAL_VALIDATOR)) {
                     return false;
                 }
                 return super.isEnabled();
@@ -156,16 +157,16 @@ public class FieldEditor extends Panel {
 
             @Override
             public Boolean getObject() {
-                return getDescriptor().getValidators().contains("optional");
+                return getDescriptor().getValidators().contains(OPTIONAL_VALIDATOR);
             }
 
             @Override
             public void setObject(final Boolean object) {
                 final IFieldDescriptor field = getDescriptor();
                 if (object) {
-                    field.addValidator("optional");
+                    field.addValidator(OPTIONAL_VALIDATOR);
                 } else {
-                    field.removeValidator("optional");
+                    field.removeValidator(OPTIONAL_VALIDATOR);
                 }
             }
 
@@ -205,7 +206,7 @@ public class FieldEditor extends Panel {
             public void setObject(final Boolean object) {
                 getDescriptor().setMultiple(object);
                 if (object) {
-                    getDescriptor().removeValidator("optional");
+                    getDescriptor().removeValidator(OPTIONAL_VALIDATOR);
                 }
             }
 
