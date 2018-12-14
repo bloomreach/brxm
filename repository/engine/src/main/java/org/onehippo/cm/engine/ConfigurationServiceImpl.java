@@ -133,35 +133,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * @return default true, or the value of the "use.hcm.sites" property
      */
     public static boolean checkHcmSitesMode() {
-        final Properties hcmProperties = new Properties();
-        final InputStream propsStream = ConfigurationServiceImpl.class.getResourceAsStream("/hcm.properties");
 
-        if (propsStream == null) {
-            log.info("No hcm.properties file found for platform. Checking for system property.");
-            final boolean sysPropValue = Boolean.parseBoolean(System.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
-
-            if (sysPropValue) {
-                log.info("Running in HCM multi-site mode.");
-            }
-            else {
-                log.info("Running in HCM single-site mode.");
+        try (final InputStream propsStream = ConfigurationServiceImpl.class.getResourceAsStream("/hcm.properties")) {
+            if (propsStream == null) {
+                log.info("No hcm.properties file found for platform. Checking for system property.");
+                final boolean multiSiteMode = Boolean.parseBoolean(System.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
+                log.info("Running in HCM {}-site mode.", multiSiteMode ? "multi" : "single");
+                return multiSiteMode;
             }
 
-            return sysPropValue;
-        }
-
-        try {
+            final Properties hcmProperties = new Properties();
             hcmProperties.load(propsStream);
-            final boolean value = Boolean.parseBoolean(hcmProperties.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
-            if (value) {
-                log.info("hcm.properties file found for platform. Running in HCM multi-site mode.");
-            }
-            else {
-                log.info("hcm.properties file found for platform. Running in HCM single-site mode.");
-            }
-            return value;
-        }
-        catch (IOException e) {
+            final boolean multiSiteMode = Boolean.parseBoolean(hcmProperties.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
+            log.info("hcm.properties file found for platform. Running in HCM {}-site mode.", multiSiteMode ? "multi" : "single");
+            return multiSiteMode;
+
+        } catch (IOException e) {
             log.warn("Error reading hcm.properties file for platform. Running in HCM multi-site mode.");
             return true;
         }
