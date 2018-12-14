@@ -41,6 +41,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -66,7 +67,7 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
@@ -342,8 +343,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 final AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
                 if (IEditor.Mode.EDIT == mode && provider.size() == 0
-                        && (!field.isMultiple() || field.getValidators().contains(REQUIRED_VALIDATOR))
-                        && !field.getValidators().contains("optional")
+                        && (!field.isMultiple() || ValidatorUtils.hasRequiredValidator(field.getValidators()))
+                        && !field.getValidators().contains(OPTIONAL_VALIDATOR)
                         && isNotAbstractNodeType(subType.getType())) {
                     provider.addNew();
                 }
@@ -389,10 +390,10 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (IEditor.Mode.EDIT != mode || field == null) {
             return false;
         }
-        if (!field.isMultiple() && !field.getValidators().contains("optional")) {
+        if (!field.isMultiple() && !field.getValidators().contains(OPTIONAL_VALIDATOR)) {
             return false;
         }
-        if (field.getValidators().contains(REQUIRED_VALIDATOR) && provider.size() == 1) {
+        if (ValidatorUtils.hasRequiredValidator(field.getValidators()) && provider.size() == 1) {
             return false;
         }
         return true;
