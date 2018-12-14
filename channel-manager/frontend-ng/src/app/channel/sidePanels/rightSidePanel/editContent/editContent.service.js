@@ -55,6 +55,7 @@ class EditContentService {
       if (!projectIdIdentical) {
         return this._beforeSwitchProject();
       }
+      return this.$q.resolve();
     });
   }
 

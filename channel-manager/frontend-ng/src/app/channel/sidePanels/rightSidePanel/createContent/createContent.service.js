@@ -69,6 +69,7 @@ class CreateContentService {
       if (!projectIdIdentical) {
         return this._beforeSwitchProject();
       }
+      return this.$q.resolve();
     });
   }
 
@@ -168,8 +169,7 @@ class CreateContentService {
 
   _beforeSwitchProject() {
     if (this._isStep2()) {
-      return this.Step2Service.closeEditor('SAVE_CHANGES_TO_DOCUMENT')
-        .then(() => this.stop());
+      return this.stop();
     }
     return this.$q.resolve();
   }

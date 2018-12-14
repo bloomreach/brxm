@@ -57,6 +57,7 @@ class EditComponentService {
       if (!projectIdIdentical) {
         return this.stopEditing();
       }
+      return this.$q.resolve();
     });
   }
 
