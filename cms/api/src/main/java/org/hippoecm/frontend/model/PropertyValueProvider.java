@@ -35,6 +35,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +99,7 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
                         node.getProperty(relPath).remove();
                     }
                     node.setProperty(relPath, newValues);
-                } else if (!descriptor.getValidators().contains("required")) {
+                } else if (!ValidatorUtils.hasRequiredValidator(descriptor.getValidators())) {
                     if (node.hasProperty(relPath)) {
                         log.error("cannot add more than one value to single-valued property");
                         return;
