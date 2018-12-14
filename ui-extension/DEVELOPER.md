@@ -42,8 +42,9 @@ The generated documentation is placed in a folder 'docs'.
 ## Release NPM package
 
 The Maven build only generates a JAR file. The main audience of this library are NPM users, though.
-The NPM package must be released with the Bash script:
+The NPM package must be released with the Bash script, after the build has run:
 
+     $ mvn clean verify
      $ ./release-npm-package.sh <semantic-version-to-release>
      
 The script releases the UI extension package on NPM central.
