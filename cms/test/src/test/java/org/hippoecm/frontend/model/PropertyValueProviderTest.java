@@ -38,6 +38,7 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Test;
 
+import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -59,7 +60,7 @@ public class PropertyValueProviderTest extends PluginTest {
         JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:value");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:value", new JavaTypeDescriptor("string",
                 "String", null));
-        field.addValidator("required");
+        field.addValidator(REQUIRED_VALIDATOR);
 
         PropertyValueProvider provider = new PropertyValueProvider(field, field.getTypeDescriptor(), propModel
                 .getItemModel());

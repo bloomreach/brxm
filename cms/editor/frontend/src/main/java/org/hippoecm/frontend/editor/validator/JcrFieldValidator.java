@@ -41,7 +41,7 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.validator.ValidatorUtils.REQUIRED_VALIDATOR;
+import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
 
 public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
