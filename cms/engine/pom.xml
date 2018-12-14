@@ -35,6 +35,10 @@
       <artifactId>hippo-repository-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
@@ -68,7 +72,7 @@
       </exclusions>
     </dependency>
 
-    <!-- Dependencies for the CMS-HST REST API -->
+    <!-- TODO are the dependencies for jaxrs below still needed? -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
