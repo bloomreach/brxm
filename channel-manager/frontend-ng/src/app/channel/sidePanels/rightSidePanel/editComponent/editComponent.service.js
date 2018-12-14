@@ -27,6 +27,7 @@ class EditComponentService {
     MaskService,
     OverlayService,
     PageMetaDataService,
+    ProjectService,
     RightSidePanelService,
   ) {
     'ngInject';
@@ -42,6 +43,7 @@ class EditComponentService {
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
+    this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
     $transitions.onEnter(
@@ -50,6 +52,12 @@ class EditComponentService {
     );
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
+
+    ProjectService.beforeChange('editComponent', (projectIdIdentical) => {
+      if (!projectIdIdentical) {
+        return this.stopEditing();
+      }
+    });
   }
 
   startEditing(componentElement) {
