@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -124,6 +125,35 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
+    static final boolean USE_HCM_SITES_MODE = checkHcmSitesMode();
+
+    /**
+     * Load the value of the "use.hcm.sites" property from an "hcm.properties" file in the root resource path of the
+     * current classloader for this class.
+     * @return default true, or the value of the "use.hcm.sites" property
+     */
+    public static boolean checkHcmSitesMode() {
+
+        try (final InputStream propsStream = ConfigurationServiceImpl.class.getResourceAsStream("/hcm.properties")) {
+            if (propsStream == null) {
+                log.info("No hcm.properties file found for platform. Checking for system property.");
+                final boolean multiSiteMode = Boolean.parseBoolean(System.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
+                log.info("Running in HCM {}-site mode.", multiSiteMode ? "multi" : "single");
+                return multiSiteMode;
+            }
+
+            final Properties hcmProperties = new Properties();
+            hcmProperties.load(propsStream);
+            final boolean multiSiteMode = Boolean.parseBoolean(hcmProperties.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
+            log.info("hcm.properties file found for platform. Running in HCM {}-site mode.", multiSiteMode ? "multi" : "single");
+            return multiSiteMode;
+
+        } catch (IOException e) {
+            log.warn("Error reading hcm.properties file for platform. Running in HCM multi-site mode.");
+            return true;
+        }
+    }
+
     private Session session;
     private ConfigurationLockManager lockManager;
     private ConfigurationBaselineService baselineService;
@@ -132,9 +162,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private AutoExportServiceImpl autoExportService;
     private Map<String, SiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
-    
-    static final boolean USE_HCM_SITES_MODE = Boolean
-            .parseBoolean(System.getProperty(SYSTEM_PARAMETER_USE_HCM_SITES, "true"));
 
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
