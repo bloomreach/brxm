@@ -45,7 +45,16 @@ describe('SidePanelService', () => {
       $provide.value('HippoIframeService', HippoIframeService);
     });
 
-    inject((_$mdUtil_, _$q_, _$rootScope_, _$timeout_, _$window_, _ChannelService_, _CmsService_, _SidePanelService_) => {
+    inject((
+      _$mdUtil_,
+      _$q_,
+      _$rootScope_,
+      _$timeout_,
+      _$window_,
+      _ChannelService_,
+      _CmsService_,
+      _SidePanelService_,
+    ) => {
       $mdUtil = _$mdUtil_;
       $q = _$q_;
       $rootScope = _$rootScope_;
