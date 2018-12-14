@@ -6,7 +6,7 @@
   "CLOSE": "Fermer",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Supprimer le composant '{{component}}' de ce modèle?",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Document primaire",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Le document est en attente de publication.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Le document est en attente de publication ou de non-publication.",
   "SEARCH_SITEMAP_ITEMS_NAME": "articles",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Paramètres du canal enregistrés correctement",
   "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK": "Lien externe",

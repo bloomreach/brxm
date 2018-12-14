@@ -6,7 +6,7 @@
   "CLOSE": "Sluit",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "{{component}}' uit het sjabloon verwijderen?",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Primair document",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Er staat een publicatieverzoek uit voor dit document.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Het document moet worden gepubliceerd of de publicatie moet ongedaan worden gemaakt.",
   "SEARCH_SITEMAP_ITEMS_NAME": "items",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channelinstellingen succesvol opgeslagen.",
   "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK": "Externe link",

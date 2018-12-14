@@ -6,7 +6,7 @@
   "CLOSE": "Schließen",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Komponente '{{component}}' aus dieser Vorlage entfernen?",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Primäres Dokument",
-  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Das Dokument wartet darauf, veröffentlicht zu werden.",
+  "FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE": "Das Dokument wartet darauf, veröffentlicht oder nicht veröffentlicht zu werden.",
   "SEARCH_SITEMAP_ITEMS_NAME": "Elemente",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel-Einstellungen erfolgreich gespeichert",
   "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK": "Externer Link",
