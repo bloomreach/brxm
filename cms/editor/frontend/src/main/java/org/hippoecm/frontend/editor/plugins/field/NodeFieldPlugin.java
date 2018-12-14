@@ -36,7 +36,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
-import org.hippoecm.frontend.editor.validator.ValidatorUtils;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
