@@ -35,6 +35,8 @@
     <gettingstarted.app.version>0.1.0</gettingstarted.app.version>
     <gettingstarted.app.pluginName>Getting Started</gettingstarted.app.pluginName>
     <gettingstarted.app.pluginId>gettingStarted</gettingstarted.app.pluginId>
+    <maven.archetype.plugin.version>3.0.1</maven.archetype.plugin.version>
+    <skipITs>false</skipITs>
   </properties>
   
   <dependencies>
@@ -66,8 +68,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>
-        <!--<version>${maven.archetype.plugin.version}</version>-->
+        <version>${maven.archetype.plugin.version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <skip>${skipITs}</skip>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
