@@ -350,11 +350,6 @@ public class Main extends PluginApplication {
 
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
-                    final HstRequestContext requestContext = RequestContextProvider.get();
-                    if (requestContext != null && requestContext instanceof HstMutableRequestContext) {
-                        ((HstMutableRequestContext) requestContext).setSession(PluginUserSession.get().getJcrSession());
-                    }
-
                     if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
                         IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 

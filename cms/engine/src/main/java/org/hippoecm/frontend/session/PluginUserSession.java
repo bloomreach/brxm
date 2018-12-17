@@ -50,6 +50,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.session.LoginException.Cause;
 import org.hippoecm.frontend.util.CmsSessionUtil;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.HippoRepository;
@@ -78,6 +81,7 @@ public class PluginUserSession extends UserSession {
 
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
     public static final String SESSION_CMS_APP_COUNT = "session-cms:appCount";
+    public static final String HST_REQUEST_CONTEXT_ATTR_JCR_SESSION = PluginUserSession.class.getName() + ".sessionObject";
 
     private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
@@ -229,6 +233,12 @@ public class PluginUserSession extends UserSession {
                     // expected
                     throw new InvalidSessionException("Invalid (non-live) session found.", e);
                 }
+            }
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            if (requestContext != null && requestContext.getAttribute(HST_REQUEST_CONTEXT_ATTR_JCR_SESSION) == null
+                    && requestContext instanceof HstMutableRequestContext) {
+                requestContext.setAttribute(HST_REQUEST_CONTEXT_ATTR_JCR_SESSION, Boolean.TRUE);
+                ((HstMutableRequestContext) requestContext).setSession(result);
             }
             return result;
         }
