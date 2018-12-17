@@ -117,7 +117,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-repository-dependencies</artifactId>
+      <artifactId>hippo-cms-platform-dependencies</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>pom</type>
