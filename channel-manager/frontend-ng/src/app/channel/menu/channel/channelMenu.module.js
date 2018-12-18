@@ -22,7 +22,7 @@ import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
 import changeManagementDirective from './manageChanges/manageChanges.directive';
 import channelMenuService from './channelMenu.service';
 import channelSettingsDirective from './settings/settings.directive';
-import hintIconDirective from './settings/hintIcon/hintIcon.directive';
+import hintIcon from './settings/hintIcon/hintIcon.component';
 import propertyField from './settings/propertyField/propertyField.component';
 
 const channelMenuModule = angular
@@ -35,7 +35,7 @@ const channelMenuModule = angular
   .controller('RejectPromptCtrl', RejectPromptCtrl)
   .directive('changeManagement', changeManagementDirective)
   .directive('channelSettings', channelSettingsDirective)
-  .directive('hintIcon', hintIconDirective)
+  .directive('hintIcon', hintIcon)
   .service('ChannelMenuService', channelMenuService);
 
 export default channelMenuModule;
