@@ -27,7 +27,7 @@
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>4.6.1</version>
+  <version>4.6.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
