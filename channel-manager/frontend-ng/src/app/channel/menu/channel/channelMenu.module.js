@@ -22,7 +22,7 @@ import ChannelSettingsComponent from './settings/settings.component';
 import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
-import changeManagementDirective from './manageChanges/manageChanges.directive';
+import changeManagementDirective from './manageChanges/manageChanges.component';
 import channelMenuService from './channelMenu.service';
 
 const channelMenuModule = angular
