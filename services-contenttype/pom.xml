@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.0</version>
+    <version>30-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Services - contenttype</name>
@@ -36,7 +36,6 @@
     
     <hippo.services.version>13.0.0-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>13.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.0.0-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <scm>
@@ -82,27 +81,37 @@
       <version>${jackson2-databind.version}</version>
     </dependency>
 
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-test</artifactId>
-      <version>${hippo.cms.version}</version>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${hippo.repository.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>jar</type>
-      <classifier>tests</classifier>
-      <scope>test</scope>
-      <optional>true</optional>
-    </dependency>
+
+    <!-- TODO Make sure HippoContentTypeServiceTest runs without these dependencies! this project is not allowed to
+         TODO depend on the CMS since HST depends on this service and CMS depends on HST-->
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-cms-test</artifactId>-->
+      <!--<version>${hippo.cms.version}</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-cms-editor-repository</artifactId>-->
+      <!--<version>${hippo.cms.version}</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-cms-editor-repository</artifactId>-->
+      <!--<version>${hippo.cms.version}</version>-->
+      <!--<type>jar</type>-->
+      <!--<classifier>tests</classifier>-->
+      <!--<scope>test</scope>-->
+      <!--<optional>true</optional>-->
+    <!--</dependency>-->
   </dependencies>
 
   <build>
