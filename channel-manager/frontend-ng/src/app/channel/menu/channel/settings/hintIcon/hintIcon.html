@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<div ng-if="::text" class="hint-icon">
-  <md-tooltip md-direction="left">{{ ::text }}</md-tooltip>
+<div ng-if="::$ctrl.text" class="hint-icon">
+  <md-tooltip md-direction="left">{{ ::$ctrl.text }}</md-tooltip>
   <md-icon md-font-icon="mdi-information-outline"></md-icon>
 </div>

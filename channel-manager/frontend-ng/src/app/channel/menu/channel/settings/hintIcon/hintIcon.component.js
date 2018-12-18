@@ -17,16 +17,11 @@
 import './hintIcon.scss';
 import template from './hintIcon.html';
 
-function hintIconDirective() {
-  'ngInject';
+const hintIconComponent = {
+  bindings: {
+    text: '@',
+  },
+  template,
+};
 
-  return {
-    restrict: 'E',
-    scope: {
-      text: '@',
-    },
-    template,
-  };
-}
-
-export default hintIconDirective;
+export default hintIconComponent;
