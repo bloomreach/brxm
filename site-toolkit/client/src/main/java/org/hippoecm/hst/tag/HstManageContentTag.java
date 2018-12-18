@@ -95,24 +95,27 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.isBlank(documentTemplateQuery)) {
             log.warn("The documentTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
                     + " Expected the name of a template query instead.", getComponentRenderPath(), documentTemplateQuery);
+        } else {
+            this.documentTemplateQuery = documentTemplateQuery;
         }
-        this.documentTemplateQuery = documentTemplateQuery;
     }
 
     public void setFolderTemplateQuery(final String folderTemplateQuery) {
         if (StringUtils.isBlank(folderTemplateQuery)) {
             log.warn("The folderTemplateQuery attribute of a manageContent tag in template '{}' is set to '{}'."
                     + " Expected the name of a template query instead.", getComponentRenderPath(), folderTemplateQuery);
+        } else {
+            this.folderTemplateQuery = folderTemplateQuery;
         }
-        this.folderTemplateQuery = folderTemplateQuery;
     }
 
     public void setParameterName(final String parameterName) {
         if (StringUtils.isBlank(parameterName)) {
             log.warn("The parameterName attribute of a manageContent tag in template '{}' is set to '{}'."
                     + " Expected the name of an HST component parameter instead.", getComponentRenderPath(), parameterName);
+        } else {
+            this.parameterName = parameterName;
         }
-        this.parameterName = parameterName;
     }
 
     public void setDefaultPath(final String defaultPath) {
@@ -140,9 +143,9 @@ public class HstManageContentTag extends TagSupport {
             jcrPath = getJcrPath();
             result = new TreeMap<>();
 
+            checkObsoleteParameters();
             checkMandatoryParameters();
             checkRootPath();
-            checkObsoleteParameters();
 
             write(HST_TYPE, HST_TYPE_MANAGE_CONTENT_LINK);
             processHippoBean();
@@ -196,7 +199,7 @@ public class HstManageContentTag extends TagSupport {
     private void checkMandatoryParameters() throws SkipManageContentTagException {
         if (documentTemplateQuery == null && hippoBean == null && parameterName == null) {
             throw new SkipManageContentTagException("Skipping manageContent tag because neither 'documentTemplateQuery', " +
-                    "'hippobean' or 'parameterName' attribute specified.");
+                    "'hippobean' nor 'parameterName' attribute specified correctly.");
         }
     }
 
@@ -236,13 +239,13 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private void checkObsoleteParameters() {
-        if (StringUtils.isNotEmpty(folderTemplateQuery) && StringUtils.isBlank(documentTemplateQuery)) {
-            log.warn("The folderTemplateQuery attribute '{}' is set on a manageContent tag, but the " + 
+        if (folderTemplateQuery != null && documentTemplateQuery == null) {
+            log.warn("The folderTemplateQuery attribute '{}' is set on a manageContent tag, but the " +
                      "documentTemplateQuery attribute is not set. FolderTemplateQuery attribute in template '{}' is " +
                      "ignored.", folderTemplateQuery, getComponentRenderPath());
         }
     }
-    
+
     private boolean isRelativePathParameter() {
         return jcrPath != null && jcrPath.isRelative();
     }
