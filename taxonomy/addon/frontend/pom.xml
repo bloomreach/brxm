@@ -91,6 +91,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-plugin-taxonomy-addon-repository</artifactId>
       <version>${project.version}</version>
