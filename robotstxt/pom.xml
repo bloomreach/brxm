@@ -26,7 +26,7 @@
   <name>Hippo Plugin Robots.txt Generator</name>
   <description>Hippo Plugin Robots.txt Generator</description>
   <artifactId>hippo-plugin-robotstxt</artifactId>
-  <version>4.6.1</version>
+  <version>4.6.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
