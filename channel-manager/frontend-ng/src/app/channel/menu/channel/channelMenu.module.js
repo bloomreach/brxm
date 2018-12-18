@@ -16,26 +16,26 @@
 
 import ngMessages from 'angular-messages';
 
+import ChangeManagementComponent from './manageChanges/manageChanges.component';
+import ChannelSettingsComponent from './settings/settings.component';
 import HintIconComponent from './settings/hintIcon/hintIcon.component';
 import PropertyFieldComponent from './settings/propertyField/propertyField.component';
-import ChannelSettingsComponent from './settings/settings.component';
 import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 import ChannelSettingsCtrl from './settings/settings.controller';
 import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
-import changeManagementDirective from './manageChanges/manageChanges.component';
 import channelMenuService from './channelMenu.service';
 
 const channelMenuModule = angular
   .module('hippo-cm.channel.menu.channel', [
     ngMessages,
   ])
+  .component('changeManagement', ChangeManagementComponent)
+  .component('channelSettings', ChannelSettingsComponent)
   .component('hintIcon', HintIconComponent)
   .component('propertyField', PropertyFieldComponent)
-  .component('channelSettings', ChannelSettingsComponent)
   .controller('ChangeManagementCtrl', ChangeManagementCtrl)
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .controller('RejectPromptCtrl', RejectPromptCtrl)
-  .directive('changeManagement', changeManagementDirective)
   .service('ChannelMenuService', channelMenuService);
 
 export default channelMenuModule;
