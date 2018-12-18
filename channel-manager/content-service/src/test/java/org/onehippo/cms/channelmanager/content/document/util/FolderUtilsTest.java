@@ -186,17 +186,17 @@ public class FolderUtilsTest {
         );
 
         replayAll();
-        
+
         final Node newFolder = FolderUtils.getOrCreateFolder(root, "test", session, "folderTemplateQuery");
-        
+
         verifyAll();
         assertThat(newFolder.getPath(), equalTo("/test"));
     }
-    
+
     //
     // The following tests cover the case that new folders will be created by copying the parent node.
     //
-    
+
     @Test
     public void getOrCreateExistingFolderFromParent() throws Exception {
         final Node test = root.addNode("test", "hippostd:folder");
@@ -211,7 +211,7 @@ public class FolderUtilsTest {
     public void getOrCreateNonFolderFromParent() throws Exception {
         root.addNode("test", "hippo:document");
         try {
-            FolderUtils.getOrCreateFolder(root, "test", session);
+            FolderUtils.getOrCreateFolder(root, "test", session, null);
             fail("No Exception");
         } catch (final BadRequestException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -227,7 +227,7 @@ public class FolderUtilsTest {
         expect(mockNode.getPath()).andThrow(new RepositoryException());
         replayAll();
 
-        FolderUtils.getOrCreateFolder(mockNode, "test", session);
+        FolderUtils.getOrCreateFolder(mockNode, "test", session, null);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -240,7 +240,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        FolderUtils.getOrCreateFolder(root, "test", session);
+        FolderUtils.getOrCreateFolder(root, "test", session, null);
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -256,7 +256,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        FolderUtils.getOrCreateFolder(root, "test", session);
+        FolderUtils.getOrCreateFolder(root, "test", session, null);
     }
 
     @Test
@@ -275,7 +275,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node test = FolderUtils.getOrCreateFolder(root, "test", session);
+        final Node test = FolderUtils.getOrCreateFolder(root, "test", session, null);
 
         verifyAll();
         assertSingleChild(root);
@@ -299,7 +299,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node test = FolderUtils.getOrCreateFolder(root, "test", session);
+        final Node test = FolderUtils.getOrCreateFolder(root, "test", session, null);
 
         verifyAll();
         assertSingleChild(root);
@@ -323,7 +323,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "test", session, null);
 
         verifyAll();
         assertSingleChild(root);
@@ -352,7 +352,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "translated/test", session);
+        final Node returnedNode = FolderUtils.getOrCreateFolder(root, "translated/test", session, null);
 
         verifyAll();
         assertSingleChild(translatedNode);
@@ -383,7 +383,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two", session, null);
 
         verifyAll();
 
@@ -418,7 +418,7 @@ public class FolderUtilsTest {
 
         replayAll();
 
-        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two/three", session);
+        final Node createdNode = FolderUtils.getOrCreateFolder(root, "one/two/three", session, null);
 
         verifyAll();
 

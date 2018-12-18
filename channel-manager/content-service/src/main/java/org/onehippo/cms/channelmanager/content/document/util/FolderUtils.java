@@ -131,10 +131,6 @@ public class FolderUtils {
         }
     }
 
-    public static Node getOrCreateFolder(final Node parentFolder, final String relPath, final Session session) throws BadRequestException, InternalServerErrorException {
-        return getOrCreateFolder(parentFolder, relPath, session, null);
-    }
-    
     public static Node getOrCreateFolder(final Node parentFolder, final String relPath, final Session session, final String folderTemplateQuery) throws BadRequestException, InternalServerErrorException {
         try {
             if (parentFolder.hasNode(relPath)) {
@@ -199,8 +195,8 @@ public class FolderUtils {
         return workspace.getWorkflowManager();
     }
 
-    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr, 
-                                     final String folderTemplateQuery, final Session session) 
+    private static Node createFolder(final String name, final Node parentNode, final WorkflowManager workflowMgr,
+                                     final String folderTemplateQuery, final Session session)
             throws RepositoryException, InternalServerErrorException {
         final Workflow workflow = workflowMgr.getWorkflow("internal", parentNode);
 
@@ -221,9 +217,9 @@ public class FolderUtils {
     /**
      * Create a new folder by using a template query.
      */
-    private static Node creatFolderByTemplateQuery(final String name, final Node parentNode, 
-                                                   final String folderTemplateQuery, final FolderWorkflow workflow, 
-                                                   final Session session) 
+    private static Node creatFolderByTemplateQuery(final String name, final Node parentNode,
+                                                   final String folderTemplateQuery, final FolderWorkflow workflow,
+                                                   final Session session)
             throws RepositoryException, InternalServerErrorException {
         final String parentNodeType = parentNode.getPrimaryNodeType().getName();
         try {
@@ -233,13 +229,13 @@ public class FolderUtils {
             log.warn("Failed to execute 'add' with template query '{}', type '{}' and relPath '{}' in folder workflow {}",
                     folderTemplateQuery, parentNodeType, parentNode, workflow.getClass().getCanonicalName(), e);
             throw new InternalServerErrorException();
-        } 
+        }
     }
 
     /**
      * Create a new folder by copying the parent folder.
      */
-    private static Node createFolderFromParent(final String name, final Node parentNode, final FolderWorkflow workflow) 
+    private static Node createFolderFromParent(final String name, final Node parentNode, final FolderWorkflow workflow)
             throws RepositoryException, InternalServerErrorException {
         final String category = getNewFolderWorkflowCategory(parentNode);
         final String parentNodeType = parentNode.getPrimaryNodeType().getName();
