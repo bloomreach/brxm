@@ -23,7 +23,7 @@ import ChannelSettingsCtrl from './settings/settings.controller';
 import RejectPromptCtrl from './rejectPrompt/reject-prompt.controller';
 import changeManagementDirective from './manageChanges/manageChanges.directive';
 import channelMenuService from './channelMenu.service';
-import channelSettingsDirective from './settings/settings.directive';
+import channelSettingsDirective from './settings/settings.component';
 
 const channelMenuModule = angular
   .module('hippo-cm.channel.menu.channel', [
