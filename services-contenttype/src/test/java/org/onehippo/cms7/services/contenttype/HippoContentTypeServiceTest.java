@@ -23,18 +23,18 @@ import javax.jcr.nodetype.NodeTypeTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.hippoecm.frontend.PluginTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class HippoContentTypeServiceTest extends PluginTest {
+public class HippoContentTypeServiceTest extends RepositoryTestCase {
 
     @Override
     @Before
