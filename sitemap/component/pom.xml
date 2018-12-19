@@ -14,7 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.onehippo.cms7</groupId>
@@ -24,53 +25,38 @@
   <name>Hippo Plugin Sitemap Component</name>
   <description>Hippo Plugin Sitemap Component</description>
   <artifactId>hippo-plugin-sitemap-component</artifactId>
-  
+
   <dependencies>
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-client-dependencies</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
+      <artifactId>hst-site-dependencies</artifactId>
       <type>pom</type>
     </dependency>
+
+    <!-- since we do not have release pom, we must mark hst-api explicitly as provided -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
-      <!-- <type>pom</type> -->
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-commons</artifactId>
-      <version>${hippo.hst.version}</version>
-      <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
-      <version>${hippo.commons.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.4</version>
-      <scope>test</scope>
     </dependency>
     <!-- For HippoNodeType constants -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
     </dependency>
     <!-- For HippoStdNodeType constants -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
