@@ -34,12 +34,6 @@
       <type>pom</type>
     </dependency>
 
-    <!-- since we do not have release pom, we must mark hst-api explicitly as provided -->
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
