@@ -96,7 +96,7 @@
 
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-spring-dependencies</artifactId>
+      <artifactId>hst-site-dependencies</artifactId>
       <type>pom</type>
     </dependency>
 
