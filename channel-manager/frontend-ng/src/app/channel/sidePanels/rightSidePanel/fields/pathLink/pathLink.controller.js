@@ -17,12 +17,6 @@
 import NodeLinkController from '../nodeLink/nodeLink.controller';
 
 class PathLinkController extends NodeLinkController {
-  constructor($element, $scope, $timeout, PickerService) {
-    'ngInject';
-
-    super($element, $scope, $timeout, PickerService);
-  }
-
   $onInit() {
     this.$scope.$on('edit-component:select-document', (event, parameterName) => this._onSelectDocument(parameterName));
   }
@@ -47,22 +41,6 @@ class PathLinkController extends NodeLinkController {
     this.linkPicked = true;
     this.displayName = displayName;
     this.ngModel.$setViewValue(path);
-  }
-
-  blur($event) {
-    if (this.mdInputContainer) {
-      this.mdInputContainer.setFocused(false);
-    }
-
-    super.blur($event);
-  }
-
-  focus($event) {
-    if (this.mdInputContainer) {
-      this.mdInputContainer.setFocused(true);
-    }
-
-    super.focus($event);
   }
 }
 
