@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -17,34 +17,34 @@
   <wicket:panel>
     <div class="hippo-editor-field hippo-editor-template-field-edit">
       <div class="hippo-editor-field-title">
-        <label for="text"><wicket:message key="path"/></label>
+        <label for="path-field"><wicket:message key="path"/></label>
       </div>
       <div class="hippo-editor-field-subfield">
-        <input type="text" wicket:id="path" size="20"/>
+        <input type="text" wicket:id="path" size="20" id="path-field"/>
       </div>
       <table>
         <tr>
           <td>
-            <input type="checkbox" wicket:id="mandatory"/>
+            <input type="checkbox" wicket:id="mandatory" id="mandatory-checkbox"/>
           </td>
           <td>
-            <label for="mandatory" wicket:id="mandatory-label"></label>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" wicket:id="optional"/>
-          </td>
-          <td>
-            <label for="optional" wicket:id="optional-label"></label>
+            <label for="mandatory-checkbox" wicket:id="mandatory-label"></label>
           </td>
         </tr>
         <tr>
           <td>
-            <input type="checkbox" wicket:id="multiple"/>
+            <input type="checkbox" wicket:id="optional" id="optional-checkbox"/>
           </td>
           <td>
-            <label for="multiple" wicket:id="multiple-label"></label>
+            <label for="optional-checkbox" wicket:id="optional-label"></label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="checkbox" wicket:id="multiple"  id="multiple-checkbox"/>
+          </td>
+          <td>
+            <label for="multiple-checkbox" wicket:id="multiple-label"></label>
           </td>
         </tr>
         <tr>
@@ -53,10 +53,10 @@
             <table class="ordered">
               <tr>
                 <td>
-                  <input type="checkbox" wicket:id="ordered"/>
+                  <input type="checkbox" wicket:id="ordered"  id="ordered-checkbox"/>
                 </td>
                 <td>
-                  <label for="ordered" wicket:id="ordered-label"></label>
+                  <label for="ordered-checkbox" wicket:id="ordered-label"></label>
                 </td>
               </tr>
             </table>

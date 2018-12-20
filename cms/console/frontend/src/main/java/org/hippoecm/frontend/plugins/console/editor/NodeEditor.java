@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,13 +54,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class NodeEditor extends Form<Node> {
-    private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
     private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
 
-    public static final String NONE_LABEL = "<none>";
+    static final String NONE_LABEL = "<none>";
 
     @SuppressWarnings("unused FieldCanBeLocal")
     private String name;
@@ -77,14 +76,14 @@ class NodeEditor extends Form<Node> {
     @SuppressWarnings("unused FieldCanBeLocal")
     private String mixinTypesOrigin;
 
-    private NamespaceProvider namespaceProvider;
-    private NamespacePropertiesEditor namespacePropertiesEditor;
-    private NodeTypesEditor typesEditor;
+    private final NamespaceProvider namespaceProvider;
+    private final NamespacePropertiesEditor namespacePropertiesEditor;
+    private final NodeTypesEditor typesEditor;
 
     // the (transient, not serializable) HCM ConfigurationService, which is repo-static, but not the model, which can be updated
     private transient ConfigurationService cfgService;
 
-    NodeEditor(String id, IModel<Node> model) {
+    NodeEditor(final String id, final IModel<Node> model) {
         super(id, model);
         setOutputMarkupId(true);
 
@@ -165,7 +164,7 @@ class NodeEditor extends Form<Node> {
                 primaryTypeOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:primaryType", cfgModel);
                 mixinTypesOrigin = PropertiesEditor.getPropertyOrigin((nodePath.equals("/")? "": nodePath) + "/jcr:mixinTypes", cfgModel);
 
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error(e.getMessage());
             }
         } else {
@@ -185,7 +184,7 @@ class NodeEditor extends Form<Node> {
         if (node != null) {
             try {
                 return node.getPrimaryNodeType().getName();
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             }
         }
@@ -193,39 +192,37 @@ class NodeEditor extends Form<Node> {
     }
 
     @SuppressWarnings("unused")
-    public void setPrimaryType(String primaryType) {
+    public void setPrimaryType(final String primaryType) {
         final Node node = getModelObject();
         if (node != null) {
             String oldPrimaryType = null;
             try {
                 oldPrimaryType = node.getPrimaryNodeType().getName();
                 node.setPrimaryType(primaryType);
-            } catch (ConstraintViolationException e) {
+            } catch (final ConstraintViolationException e) {
                 log.error("Cannot set primary type to {}", primaryType);
                 if (oldPrimaryType != null) {
                     try {
                         node.setPrimaryType(oldPrimaryType);
-                    } catch (RepositoryException e1) {
+                    } catch (final RepositoryException e1) {
                         log.error("Failed to set primary node type to previous value");
                     }
                 }
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.error("Failed to set primary node type", e);
             }
         }
     }
 
     private static class NamespacePropertiesEditor extends DataView<NamespacePropertiesProvider> {
-        @SuppressWarnings("unused")
-        private static final long serialVersionUID = 1L;
 
-        protected NamespacePropertiesEditor(String id, IDataProvider<NamespacePropertiesProvider> dataProvider) {
+        NamespacePropertiesEditor(final String id, final IDataProvider<NamespacePropertiesProvider> dataProvider) {
             super(id, dataProvider);
         }
 
         @Override
         protected void populateItem(final Item<NamespacePropertiesProvider> item) {
-            NamespacePropertiesProvider propertiesProvider = item.getModelObject();
+            final NamespacePropertiesProvider propertiesProvider = item.getModelObject();
 
             final String namespace = propertiesProvider.getNamespace();
 
@@ -246,18 +243,16 @@ class NodeEditor extends Form<Node> {
     }
 
     private static class NamespaceProvider implements IDataProvider<NamespacePropertiesProvider> {
-        @SuppressWarnings("unused")
-        private static final long serialVersionUID = 1L;
 
         private List<NamespacePropertiesProvider> namespaces;
         private IDataProvider<Property> wrapped;
 
-        NamespaceProvider(IDataProvider<Property> wrapped) {
+        NamespaceProvider(final IDataProvider<Property> wrapped) {
             this.wrapped = wrapped;
             namespaces = Collections.emptyList();
         }
 
-        void setWrapped(IDataProvider<Property> wrapped) {
+        void setWrapped(final IDataProvider<Property> wrapped) {
             this.wrapped = wrapped;
         }
 
@@ -287,12 +282,12 @@ class NodeEditor extends Form<Node> {
         private void load() {
             namespaces = new ArrayList<>();
 
-            Map<String, NamespacePropertiesProvider> namespaceMap = new TreeMap<>();
+            final Map<String, NamespacePropertiesProvider> namespaceMap = new TreeMap<>();
             try {
-                Iterator<? extends Property> it = wrapped.iterator(0, wrapped.size());
+                final Iterator<? extends Property> it = wrapped.iterator(0, wrapped.size());
                 while (it.hasNext()) {
-                    Property p = it.next();
-                    String propName = p.getName();
+                    final Property p = it.next();
+                    final String propName = p.getName();
                     if (!propName.equals("jcr:primaryType") && !propName.equals("jcr:mixinTypes")) {
                         String propNamespace = new JcrName(propName).getNamespace();
                         if (propNamespace == null) {
@@ -308,21 +303,19 @@ class NodeEditor extends Form<Node> {
                     }
                 }
                 namespaces.addAll(namespaceMap.values());
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error(ex.getMessage());
             }
         }
     }
 
     protected static class NamespacePropertiesProvider implements IDataProvider<Property> {
-        @SuppressWarnings("unused")
-        private static final long serialVersionUID = 1L;
 
         private final String namespace;
         private List<Property> properties;
         private boolean sorted;
 
-        NamespacePropertiesProvider(String namespace) {
+        NamespacePropertiesProvider(final String namespace) {
             this.namespace = namespace;
             properties = new ArrayList<>();
             sorted = true;
@@ -332,7 +325,7 @@ class NodeEditor extends Form<Node> {
             return namespace;
         }
 
-        void addProperty(Property p) {
+        void addProperty(final Property p) {
             properties.add(p);
             if (properties.size() > 1) {
                 sorted = false;
@@ -342,7 +335,7 @@ class NodeEditor extends Form<Node> {
         @Override
         public Iterator<Property> iterator(final long first, final long count) {
             if (!sorted) {
-                Collections.sort(properties, PROPERTY_COMPARATOR);
+                properties.sort(PROPERTY_COMPARATOR);
                 sorted = true;
             }
             return properties.subList((int) first, (int) (first + count)).iterator();
@@ -366,10 +359,8 @@ class NodeEditor extends Form<Node> {
     }
 
     private static class NamespacePropertyComparator implements Comparator<Property> {
-        @SuppressWarnings("unused")
-        private static final long serialVersionUID = 1L;
 
-        public int compare(Property p1, Property p2) {
+        public int compare(final Property p1, final Property p2) {
             try {
                 if (p1 == null) {
                     if (p2 == null) {
@@ -380,7 +371,7 @@ class NodeEditor extends Form<Node> {
                     return -1;
                 }
                 return p1.getName().compareTo(p2.getName());
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 throw new IllegalStateException("Error while comparing properties", e);
             }
         }
