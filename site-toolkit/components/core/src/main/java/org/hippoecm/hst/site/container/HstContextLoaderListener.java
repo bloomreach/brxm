@@ -19,13 +19,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.ProxiedServiceHolder;
 import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
-import org.onehippo.repository.RepositoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,9 +43,8 @@ import org.slf4j.LoggerFactory;
  *
  * <P>
  * This listener first {@link HippoWebappContextRegistry#register(HippoWebappContext) registers a HippoWebappContext}
- * of type {@link HippoWebappContext.Type#SITE}, and then waits for the services {@link RepositoryService} and
- * {@link HstModelRegistry} to be available before using a {@link DefaultHstSiteConfigurer} to load HST Context and
- * initialize the container.
+ * of type {@link HippoWebappContext.Type#SITE}, and then waits for the {@link PlatformModelAvailableService} to be
+ * available before using a {@link DefaultHstSiteConfigurer} to load HST Context and initialize the container.
  * Please refer to {@link DefaultHstSiteConfigurer} to see how it finds and loads configurations in detail.
  * </P>
  */
@@ -54,20 +53,19 @@ public class HstContextLoaderListener implements ServletContextListener {
     private static Logger log = LoggerFactory.getLogger(HstContextLoaderListener.class);
 
     private HippoWebappContext webappContext;
-    private ProxiedServiceTracker<RepositoryService> repositoryServiceTracker;
-    private ProxiedServiceTracker<HstModelRegistry> hstModelRegistryTracker;
+    private ProxiedServiceTracker<PlatformModelAvailableService> hstPlatformModelAvailableServiceTracker;
     private HstSiteConfigurer siteConfigurer;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         webappContext = new HippoWebappContext(getContextType(), sce.getServletContext());
         HippoWebappContextRegistry.get().register(webappContext);
-        trackRepositoryService();
+        initialize();
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        untrackRepositoryService();
+        destroy();
         HippoWebappContextRegistry.get().unregister(webappContext);
         webappContext = null;
     }
@@ -76,48 +74,26 @@ public class HstContextLoaderListener implements ServletContextListener {
         return HippoWebappContext.Type.SITE;
     }
 
-    protected void trackRepositoryService() {
-        repositoryServiceTracker = new ProxiedServiceTracker<RepositoryService>() {
+    protected void initialize() {
+        hstPlatformModelAvailableServiceTracker = new ProxiedServiceTracker<PlatformModelAvailableService>() {
             @Override
-            public void serviceRegistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
-                trackHstModelRegistry(serviceHolder.getServiceProxy());
+            public void serviceRegistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
+                final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                configureHstSite(modelRegistry);
             }
 
             @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
-                untrackHstModelRegistry();
-            }
-        };
-        HippoServiceRegistry.addTracker(repositoryServiceTracker, RepositoryService.class);
-    }
-
-    protected void untrackRepositoryService() {
-        if (repositoryServiceTracker != null) {
-            HippoServiceRegistry.removeTracker(repositoryServiceTracker, RepositoryService.class);
-            repositoryServiceTracker = null;
-            untrackHstModelRegistry();
-        }
-    }
-
-    protected void trackHstModelRegistry(final RepositoryService repository) {
-        hstModelRegistryTracker = new ProxiedServiceTracker<HstModelRegistry>() {
-            @Override
-            public void serviceRegistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
-                configureHstSite(serviceHolder.getServiceProxy());
-            }
-
-            @Override
-            public void serviceUnregistered(final ProxiedServiceHolder<HstModelRegistry> serviceHolder) {
+            public void serviceUnregistered(final ProxiedServiceHolder<PlatformModelAvailableService> serviceHolder) {
                 destroyHstSite();
             }
         };
-        HippoServiceRegistry.addTracker(hstModelRegistryTracker, HstModelRegistry.class);
+        HippoServiceRegistry.addTracker(hstPlatformModelAvailableServiceTracker, PlatformModelAvailableService.class);
     }
 
-    protected void untrackHstModelRegistry() {
-        if (hstModelRegistryTracker != null) {
-            HippoServiceRegistry.removeTracker(hstModelRegistryTracker, HstModelRegistry.class);
-            hstModelRegistryTracker = null;
+    protected void destroy() {
+        if (hstPlatformModelAvailableServiceTracker != null) {
+            HippoServiceRegistry.removeTracker(hstPlatformModelAvailableServiceTracker, PlatformModelAvailableService.class);
+            hstPlatformModelAvailableServiceTracker = null;
             destroyHstSite();
         }
     }

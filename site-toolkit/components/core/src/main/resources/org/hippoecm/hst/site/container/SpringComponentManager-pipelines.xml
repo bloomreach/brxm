@@ -28,7 +28,7 @@
     </property>
   </bean>
 
-  <!-- Spring API/SPI id -->
+  <!-- Spring SPI id -->
   <bean id="org.hippoecm.hst.core.container.PageErrorHandler" class="org.hippoecm.hst.core.container.DefaultPageErrorHandler">
   </bean>
 

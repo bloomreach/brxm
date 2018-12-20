@@ -39,12 +39,12 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentConfigurationService.class);
+    public static final String OLD_MOVED_BUILT_IN_STANDARD_CONTAINER_COMPONENT_CLASS = "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent";
 
     private Map<String, HstComponentConfiguration> componentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
 
@@ -244,7 +244,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         } else if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())) {
             type = Type.CONTAINER_COMPONENT;
             if (componentClassName == null) {
-                log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'", new String[]{"org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+                log.debug("Setting componentClassName to '{}' for a component of type '{}' because there is no explicit componentClassName configured on component '{}'",
+                        new String[]{StandardContainerComponent.class.getName(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT, id});
+                componentClassName = StandardContainerComponent.class.getName();
+            } else if (OLD_MOVED_BUILT_IN_STANDARD_CONTAINER_COMPONENT_CLASS.equals(componentClassName)) {
+                log.warn("For Component '{}' the configured property '{}' points to old location '{}'. Remove the " +
+                        "property completely because it is the default container component class anyway. Moved class '{}' " +
+                                "will be used instead", id, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT,
+                        "org.hippoecm.hst.pagecomposer.builtin.components.StandardContainerComponent", StandardContainerComponent.class.getName());
                 componentClassName = StandardContainerComponent.class.getName();
             }
         } else if (HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())) {

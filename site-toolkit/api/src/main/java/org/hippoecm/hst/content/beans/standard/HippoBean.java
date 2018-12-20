@@ -349,4 +349,9 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      */
     Map<Object,Object> getEqualComparator();
 
+    /**
+     * @return {@code true} if the backing node from {@link #getNode()} is a versioned node
+     */
+    boolean isVersionedNode();
+
 }
