@@ -566,6 +566,10 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 20px;
 }
 
+.hippo-console-editor.checked-in {
+  background-color: #ddd;
+}
+
 .hippo-console-editor .panel-message {
   background-image: url("dialog-information-16.png");
   background-repeat: no-repeat;

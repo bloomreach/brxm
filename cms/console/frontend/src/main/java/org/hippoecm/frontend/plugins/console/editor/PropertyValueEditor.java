@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,46 +51,43 @@ import org.slf4j.LoggerFactory;
 
 class PropertyValueEditor extends DataView {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
-    protected static final int TEXT_AREA_MAX_COLUMNS = 100;
+    private static final int TEXT_AREA_MAX_COLUMNS = 100;
 
-    private JcrPropertyModel propertyModel;
+    private final JcrPropertyModel propertyModel;
     private final DateConverter dateConverter = new ISO8601DateConverter();
 
     private boolean focusOnLastItem;
 
-    PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
+    PropertyValueEditor(final String id, final JcrPropertyModel dataProvider) {
         super(id, dataProvider);
+
         this.propertyModel = dataProvider;
         setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
     }
 
     @Override
-    protected void populateItem(Item item) {
+    protected void populateItem(final Item item) {
         try {
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
-            Component valueEditor = createValueEditor(valueModel);
+            final Component valueEditor = createValueEditor(valueModel);
 
             item.add(valueEditor);
 
             final AjaxLink removeLink = new AjaxLink("remove") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     try {
-                        Property prop = propertyModel.getProperty();
+                        final Property prop = propertyModel.getProperty();
                         Value[] values = prop.getValues();
                         values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
                         prop.getParent().setProperty(prop.getName(), values, prop.getType());
-                    } catch (RepositoryException e) {
+                    } catch (final RepositoryException e) {
                         log.error(e.getMessage());
                     }
 
-                    NodeEditor editor = findParent(NodeEditor.class);
+                    final NodeEditor editor = findParent(NodeEditor.class);
                     if (editor != null) {
                         target.add(editor);
                     }
@@ -99,7 +96,7 @@ class PropertyValueEditor extends DataView {
 
             removeLink.add(TitleAttribute.set(getString("property.value.remove")));
 
-            PropertyDefinition definition = propertyModel.getProperty().getDefinition();
+            final PropertyDefinition definition = propertyModel.getProperty().getDefinition();
             removeLink.setVisible(definition.isMultiple() && !definition.isProtected());
 
             item.add(removeLink);
@@ -107,27 +104,27 @@ class PropertyValueEditor extends DataView {
             if (focusOnLastItem && item.getIndex() == getItemCount() - 1) {
                 focusOnLastItem = false;
 
-                AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+                final AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (ajax != null && valueEditor instanceof AjaxUpdatingWidget) {
                     ajax.focusComponent(((AjaxUpdatingWidget) valueEditor).getFocusComponent());
                 }
             }
         }
-        catch (RepositoryException e) {
+        catch (final RepositoryException e) {
             log.error(e.getMessage());
             item.add(new Label("value", e.getClass().getName() + ":" + e.getMessage()));
             item.add(new Label("remove", ""));
         }
     }
 
-    public void setFocusOnLastItem(final boolean focusOnLastItem) {
+    void setFocusOnLastItem(final boolean focusOnLastItem) {
         this.focusOnLastItem = focusOnLastItem;
     }
 
     /**
      * Finds {@link EditorPlugin} containing this from ancestor components.
      */
-    protected EditorPlugin getEditorPlugin() {
+    private EditorPlugin getEditorPlugin() {
         return findParent(EditorPlugin.class);
     }
 
@@ -137,9 +134,9 @@ class PropertyValueEditor extends DataView {
      * @throws RepositoryException
      */
     protected Component createValueEditor(final JcrPropertyValueModel valueModel) throws RepositoryException {
-        List<ValueEditorFactory> factoryList = getEditorPlugin().getPluginContext().getServices(ValueEditorFactory.SERVICE_ID, ValueEditorFactory.class);
+        final List<ValueEditorFactory> factoryList = getEditorPlugin().getPluginContext().getServices(ValueEditorFactory.SERVICE_ID, ValueEditorFactory.class);
 
-        for (ValueEditorFactory factory : factoryList) {
+        for (final ValueEditorFactory factory : factoryList) {
             if (factory.canEdit(valueModel)) {
                 return factory.createEditor("value", valueModel);
             }
@@ -164,17 +161,17 @@ class PropertyValueEditor extends DataView {
             return new BooleanFieldWidget("value", valueModel);
         }
         else {
-            StringConverter stringModel = new StringConverter(valueModel);
-            String asString = stringModel.getObject();
+            final StringConverter stringModel = new StringConverter(valueModel);
+            final String asString = stringModel.getObject();
+            final TextAreaWidget editor = new TextAreaWidget("value", stringModel);
 
             if (asString.contains("\n")) {
-                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
-                String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
+                final String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
                 int rowCount = lines.length;
                 int columnCount = 1;
 
-                for (String line : lines) {
-                    int length = line.length();
+                for (final String line : lines) {
+                    final int length = line.length();
 
                     if (length > columnCount) {
                         if (length > TEXT_AREA_MAX_COLUMNS) {
@@ -187,25 +184,20 @@ class PropertyValueEditor extends DataView {
                 }
 
                 editor.setRows(String.valueOf(rowCount + 1));
-                return editor;
             }
             else if (asString.length() > TEXT_AREA_MAX_COLUMNS) {
-                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                 editor.setRows(String.valueOf((asString.length() / 80)));
-                return editor;
-            }
-            else {
-                TextAreaWidget editor = new TextAreaWidget("value", stringModel);
+            } else {
                 editor.setRows("1");
-                return editor;
             }
+            return editor;
         }
     }
 
     private static class ISO8601DateConverter extends DateConverter {
-        private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
+        private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         @Override
-        public DateFormat getDateFormat(Locale locale) {
+        public DateFormat getDateFormat(final Locale locale) {
             return dateFormat;
         }
     }
