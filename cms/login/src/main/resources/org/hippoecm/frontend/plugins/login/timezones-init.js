@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   var tz = jstz.determine();
   if (tz) {
     var tzName = tz.name();
-    $('#timezone').find('option').filter(function () {
+    $('select[name="timezone"]').find('option').filter(function () {
       return $(this).text() === tzName;
     }).prop('selected', true);
   }
