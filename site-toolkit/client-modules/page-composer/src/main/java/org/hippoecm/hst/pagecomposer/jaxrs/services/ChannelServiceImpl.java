@@ -460,14 +460,6 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
-        if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
-            return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
-        } else {
-            return channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
-        }
-    }
-
     private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
         return !previewConfigRequired || channel.isPreview();
     }

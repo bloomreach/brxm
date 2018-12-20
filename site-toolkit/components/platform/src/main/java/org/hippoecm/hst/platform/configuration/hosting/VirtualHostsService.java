@@ -999,12 +999,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         bluePrintsPrototypeChecked = true;
     }
 
-    private void logUnusedExclusionsProperty(String property) {
-        log.warn("Property '{}' not used any more. Remove it from hst:hosts node. Use a (hst:default) sitemap item to account for prefixes/suffixes " +
-                "that need special handling or use hst-config.properties to set comma separated list for filter.prefix.exclusions or " +
-                "filter.suffix.exclusions.", property);
-    }
-
     private ResourceBundle loadResourceBundle(final String channelInfoClassName,
                                               final ClassLoader classLoader, final Locale locale) {
         if (channelInfoClassName != null) {
