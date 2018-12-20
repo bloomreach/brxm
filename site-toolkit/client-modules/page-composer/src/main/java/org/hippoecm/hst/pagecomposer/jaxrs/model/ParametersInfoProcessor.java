@@ -70,7 +70,7 @@ public class ParametersInfoProcessor {
         if (classType == null) {
             return Collections.emptyList();
         }
-        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = createPropertyMap(contentPath, classType, resourceBundles);
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = createPropertyMap(contentPath, classType, resourceBundles, locale);
         return orderPropertiesByFieldGroup(classType, resourceBundles, propertyMap);
 
     }
@@ -167,7 +167,8 @@ public class ParametersInfoProcessor {
         }
     }
 
-    private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
+    private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, 
+            final Class<?> classType, final ResourceBundle[] resourceBundles, final Locale locale) {
         // although below the classType.getMethods() returns methods in random order (not in jdk 6 but it does in jdk 7 which is according spec)
         // we still create a LinkedHashMap because for jdk6 this works. For jdk 7, developers must (can only) use FieldGroup annotation
         // to specify the order of the component properties
@@ -233,8 +234,6 @@ public class ParametersInfoProcessor {
                         final List<String> valueList = valueListProvider.getValues();
                         values = valueList.toArray(new String[valueList.size()]);
                         displayValues = new String[values.length];
-                        final HstRequestContext requestContext = RequestContextProvider.get();
-                        final Locale locale = (requestContext != null) ? requestContext.getPreferredLocale() : null;
                         String value;
                         String displayValue;
                         for (int i = 0; i < values.length; i++) {
