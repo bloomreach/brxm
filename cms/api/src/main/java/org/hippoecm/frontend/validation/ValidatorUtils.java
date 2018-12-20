@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.validator;
+package org.hippoecm.frontend.validation;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,9 +22,10 @@ import java.util.Set;
 
 public class ValidatorUtils {
 
+    public static final String NON_EMPTY_VALIDATOR = "non-empty";
+    public static final String OPTIONAL_VALIDATOR = "optional";
     public static final String REQUIRED_VALIDATOR = "required";
     public static final String RESOURCE_REQUIRED_VALIDATOR = "resource-required";
-    public static final String NON_EMPTY_VALIDATOR = "non-empty";
     
     public static final Set<String> REQUIRED_VALIDATORS = 
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED_VALIDATOR, RESOURCE_REQUIRED_VALIDATOR)));
