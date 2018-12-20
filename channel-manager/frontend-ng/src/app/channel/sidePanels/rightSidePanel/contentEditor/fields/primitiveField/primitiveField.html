@@ -105,6 +105,22 @@
                 on-field-blur="$ctrl.blurPrimitive($event)">
     </date-field>
 
+    <md-select
+      ng-switch-when="STATIC_DROPDOWN"
+      aria-label="::$ctrl.fieldType.displayName"
+      name="::$ctrl.getFieldName($index)"
+      ng-change="$ctrl.valueChanged()"
+      ng-model="fieldValue.value"
+      ng-required="::$ctrl.fieldType.required"
+    >
+      <md-option
+        ng-repeat="dropDownValue in $ctrl.fieldType.dropDownValues"
+        value="{{ dropDownValue }}"
+      >
+        {{ $ctrl.fieldType.dropDownDisplayValues[$index] }}
+      </md-option>
+    </md-select>
+
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
