@@ -18,11 +18,12 @@ import './sidePanel.scss';
 
 const FULL_SCREEN_ANIMATION_DURATION = 600;
 class SidePanelService {
-  constructor($document, $mdSidenav, $q, $timeout, $window, ChannelService, CmsService, HippoIframeService) {
+  constructor($document, $mdSidenav, $mdUtil, $q, $timeout, $window, ChannelService, CmsService, HippoIframeService) {
     'ngInject';
 
     this.$document = $document;
     this.$mdSidenav = $mdSidenav;
+    this.$mdUtil = $mdUtil;
     this.$q = $q;
     this.$timeout = $timeout;
     this.$window = $window;
@@ -58,15 +59,39 @@ class SidePanelService {
     }
   }
 
+  focus(side) {
+    this.$mdUtil.nextTick(() => {
+      const panel = this.panels[side];
+      const focusElement = this.$mdUtil.findFocusTarget(panel.sidePanelElement)
+        || this.$mdUtil.findFocusTarget(panel.sidePanelElement, '[md-sidenav-focus]')
+        || panel.sidePanelElement.find('md-sidenav');
+
+      if (focusElement) {
+        focusElement.focus();
+      }
+    });
+  }
+
   open(side) {
     const panel = this.panels[side];
-    if (panel && !panel.sideNav.isOpen()) {
-      panel.sidePanelElement
-        .removeClass('side-panel-closed')
-        .addClass('side-panel-open');
-      return panel.sideNav.open();
+
+    if (!panel) {
+      return this.$q.resolve();
     }
-    return this.$q.resolve();
+
+    if (panel.sideNav.isOpen()) {
+      this.focus(side);
+
+      return this.$q.resolve();
+    }
+
+    panel.sidePanelElement
+      .removeClass('side-panel-closed')
+      .addClass('side-panel-open');
+
+    return panel.sideNav.open().then(() => {
+      panel.sidePanelElement.one('transitionend', () => this.focus(side));
+    });
   }
 
   isOpen(side) {
