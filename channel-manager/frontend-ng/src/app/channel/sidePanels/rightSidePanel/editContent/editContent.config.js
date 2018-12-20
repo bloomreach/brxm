@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import './addToProject/addToProject.scss';
-import addToProjectTemplate from './addToProject/addToProject.html';
 import editContentIconTemplate from './editContentIcon.html';
 import editContentMainTemplate from './editContentMain.html';
 import editContentToolsTemplate from './editContentTools.html';
@@ -30,9 +28,7 @@ function config($stateProvider) {
     },
     views: {
       main: {
-        controller: 'addToProjectCtrl',
-        controllerAs: '$ctrl',
-        template: addToProjectTemplate,
+        component: 'addToProject',
       },
       tools: {
         template: '',

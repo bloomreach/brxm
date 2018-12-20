@@ -54,7 +54,7 @@ describe('RightSidePanel', () => {
     });
 
     SidePanelService = jasmine.createSpyObj('SidePanelService', [
-      'initialize', 'isOpen', 'close', 'open', 'setFullScreen', 'isFullScreen',
+      'initialize', 'isOpen', 'close', 'focus', 'open', 'setFullScreen', 'isFullScreen',
     ]);
 
     $element = angular.element('<div></div>');
@@ -198,10 +198,29 @@ describe('RightSidePanel', () => {
   it('opens the panel when transitioning to state "hippo-cm.channel.*"', () => {
     $ctrl.$onInit();
 
+    $state.go('hippo-cm.channel');
+    $rootScope.$digest();
+
     $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
 
     expect(SidePanelService.open).toHaveBeenCalledWith('right');
+  });
+
+  it('does not open the panel when transitioning from state "hippo-cm.channel.*" to "hippo-cm.channel.*"', () => {
+    $ctrl.$onInit();
+
+    $state.go('hippo-cm.channel');
+    $rootScope.$digest();
+
+    $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
+    $rootScope.$digest();
+
+    SidePanelService.open.calls.reset();
+    $state.go('hippo-cm.channel.another-state', { documentId: 'docId2' });
+    $rootScope.$digest();
+
+    expect(SidePanelService.open).not.toHaveBeenCalled();
   });
 
   it('closes the panel when transitioning back to state "hippo-cm.channel"', () => {
@@ -212,10 +231,12 @@ describe('RightSidePanel', () => {
 
     $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
     $rootScope.$digest();
+    SidePanelService.open.calls.reset();
 
     $state.go('hippo-cm.channel');
     $rootScope.$digest();
 
+    expect(SidePanelService.open).not.toHaveBeenCalled();
     expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($element.hasClass('side-panel-open')).toBe(false);
     expect($element.hasClass('full-screen')).toBe(false);
@@ -223,13 +244,8 @@ describe('RightSidePanel', () => {
   });
 
   describe('focus handling', () => {
-    let mdSidenav;
-
     beforeEach(() => {
       $ctrl.$onInit();
-
-      mdSidenav = jasmine.createSpyObj('mdSidenav', ['focus']);
-      spyOn($element, 'find').and.returnValue(mdSidenav);
 
       $state.go('hippo-cm.channel.edit-content', { documentId: 'docId' });
       $rootScope.$digest();
@@ -250,7 +266,7 @@ describe('RightSidePanel', () => {
     });
 
     afterEach(() => {
-      expect(mdSidenav.focus).toHaveBeenCalled();
+      expect(SidePanelService.focus).toHaveBeenCalled();
     });
   });
 });

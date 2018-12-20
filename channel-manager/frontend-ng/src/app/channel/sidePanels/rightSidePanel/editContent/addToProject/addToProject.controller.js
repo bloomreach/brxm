@@ -37,6 +37,10 @@ class AddToProjectController {
     });
   }
 
+  $onDestroy() {
+    this.ProjectService.beforeChangeListeners.delete('addToProject');
+  }
+
   getSelectedProject() {
     return this.ProjectService.selectedProject;
   }

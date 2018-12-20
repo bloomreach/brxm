@@ -433,8 +433,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final String locale = Session.get().getLocale().toString();
         try {
             return getChannelService().getChannelResourceValues(getHostGroup(), channel.getId(), locale);
-        } catch (IllegalStateException e) {
-            log.info("Cannot get channel resources: {}", e.getMessage());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Cannot get channels resources", e);
+            } else {
+                log.warn("Cannot get channels resources: {}", e.getMessage());
+            }
             return new Properties();
         }
     }
@@ -462,8 +466,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         List<Channel> channelList;
         try {
             channelList = getChannelService().getPreviewChannels(getUserJcrSession(), getHostGroup());
-        } catch (IllegalStateException e) {
-            log.info("Cannot get channels : {}", e.getMessage());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Cannot get channels", e);
+            } else {
+                log.warn("Cannot get channels: {}", e.getMessage());
+            }
             channelList = Collections.emptyList();
         }
         channels = channelList.stream().map(channel -> {
