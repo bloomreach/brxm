@@ -126,10 +126,14 @@ class CreateContentService {
 
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
-    return this.Step1Service.open(config.documentTemplateQuery, config.rootPath, config.defaultPath)
-      .then(() => {
-        this.RightSidePanelService.stopLoading();
-      });
+    return this.Step1Service.open(
+      config.documentTemplateQuery,
+      config.folderTemplateQuery,
+      config.rootPath,
+      config.defaultPath,
+    ).then(() => {
+      this.RightSidePanelService.stopLoading();
+    });
   }
 
   _showStep1Title() {

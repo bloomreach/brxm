@@ -39,18 +39,20 @@ class Step1Service {
     delete this.rootPath;
     delete this.defaultPath;
     delete this.documentTemplateQuery;
+    delete this.folderTemplateQuery;
   }
 
   stop() {
     this._reset();
   }
 
-  open(documentTemplateQuery, rootPath, defaultPath) {
+  open(documentTemplateQuery, folderTemplateQuery, rootPath, defaultPath) {
     this._reset();
 
     this.rootPath = this._initRootPath(rootPath);
     this.defaultPath = defaultPath;
     this.documentTemplateQuery = documentTemplateQuery;
+    this.folderTemplateQuery = folderTemplateQuery;
 
     return this.ContentService._send('GET', ['documenttemplatequery', documentTemplateQuery], null, true)
       .then(documentTemplateQueryResult => this._onLoadDocumentTypes(documentTemplateQueryResult.documentTypes))
@@ -97,6 +99,7 @@ class Step1Service {
       slug: this.url,
       documentTemplateQuery: this.documentTemplateQuery,
       documentTypeId: this.documentType,
+      folderTemplateQuery: this.folderTemplateQuery,
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
     };

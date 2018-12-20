@@ -60,6 +60,10 @@ class ManageContentLink extends EmbeddedLink {
   getDocumentTemplateQuery() {
     return this.metaData.documentTemplateQuery;
   }
+
+  getFolderTemplateQuery() {
+    return this.metaData.folderTemplateQuery;
+  }
 }
 
 export default ManageContentLink;
