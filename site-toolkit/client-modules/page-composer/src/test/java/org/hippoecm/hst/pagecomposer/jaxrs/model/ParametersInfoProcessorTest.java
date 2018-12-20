@@ -137,7 +137,44 @@ public class ParametersInfoProcessorTest {
         assertEquals("Value 2", displayValues[1]);
     }
 
+    @ParametersInfo(type= TestValueListProviderInterface.class)
+    private static class DropDownComponent {
+    }
 
+    @Test
+    public void dropDownValueListProviderProcessing() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
+        ParametersInfo parameterInfo = DropDownComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, null, 
+                currentMountCanonicalContentPath);
+
+        assertEquals(1, properties.size());
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(0);
+
+        String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
+        assertEquals(2, displayValues.length);
+        assertEquals("Value One", displayValues[0]);
+        assertEquals("Value Two", displayValues[1]);
+    }
+    
+    @Test
+    public void dropDownValueListProviderLocalizedProcessing() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
+        ParametersInfo parameterInfo = DropDownComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parameterInfo, Locale.FRENCH, 
+                currentMountCanonicalContentPath);
+
+        assertEquals(1, properties.size());
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(0);
+
+        String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
+        assertEquals(2, displayValues.length);
+        assertEquals("Valeur un", displayValues[0]);
+        assertEquals("Valeur deux", displayValues[1]);
+    }
+    
     private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {
 
         @Override
