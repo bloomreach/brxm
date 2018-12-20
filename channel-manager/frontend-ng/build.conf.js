@@ -54,6 +54,10 @@ const customConfig = {
       'node_modules/@bloomreach/dragula/dist/dragula.min.css',
       'node_modules/jquery/dist/jquery.js',
     ],
+    junit: {
+      enabled: true,
+      outputDir: 'target/surefire-reports',
+    },
     proxies: {
       '/styles/dragula.min.css': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.css',
       '/scripts/dragula.min.js': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.js',

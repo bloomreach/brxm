@@ -160,8 +160,12 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             // TODO Validate this call!
             channelDocuments = HippoServiceRegistry.getService(PlatformServices.class)
                     .getDocumentService().getPreviewChannels(getUserJcrSession(), getHostGroup(), documentUuid, branchId);
-        } catch (IllegalStateException e) {
-            log.info("Cannot get channels for document: {}", e.getMessage());
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Cannot get channels for document", e);
+            } else {
+                log.warn("Cannot get channels for document: {}", e.getMessage());
+            }
             channelDocuments = new ArrayList<>();
         }
         channelDocuments.sort(getChannelDocumentComparator());

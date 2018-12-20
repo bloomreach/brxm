@@ -53,8 +53,9 @@ class RightSidePanelCtrl {
     this.sideNavElement = this.$element.find('.right-side-panel');
     this.sideNavElement.css('width', this.lastSavedWidth);
 
-    this.$transitions.onBefore({ to: 'hippo-cm.channel.**' }, () => this._openPanel());
+    this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*' }, () => this._focusPanel());
     this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
   }
 
@@ -101,7 +102,7 @@ class RightSidePanelCtrl {
   }
 
   _focusPanel() {
-    this.$element.find('md-sidenav').focus();
+    this.SidePanelService.focus('right');
   }
 
   isFullScreen() {

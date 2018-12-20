@@ -395,6 +395,7 @@ class OverlayService {
       containerItem: structureElement.getEnclosingElement(),
       defaultPath: structureElement.getDefaultPath(),
       documentTemplateQuery: structureElement.getDocumentTemplateQuery(),
+      folderTemplateQuery: structureElement.getFolderTemplateQuery(),
       documentUuid,
       parameterBasePath,
       parameterName,
@@ -408,6 +409,7 @@ class OverlayService {
 
       if (config.documentUuid) { // whenever uuid is available, only edit button for authors
         delete config.documentTemplateQuery;
+        delete config.folderTemplateQuery;
         return config;
       }
 

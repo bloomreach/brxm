@@ -23,6 +23,7 @@ const nameUrlFieldsComponent = {
   template,
   bindings: {
     locale: '<',
+    mdAutofocus: '<',
     nameField: '=',
     urlField: '=',
     isUrlUpdating: '=',
