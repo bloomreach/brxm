@@ -112,6 +112,7 @@
       ng-change="$ctrl.valueChanged()"
       ng-model="fieldValue.value"
       ng-required="::$ctrl.fieldType.required"
+      md-no-asterisk
     >
       <md-option
         ng-repeat="dropDownValue in $ctrl.fieldType.dropDownValues"
