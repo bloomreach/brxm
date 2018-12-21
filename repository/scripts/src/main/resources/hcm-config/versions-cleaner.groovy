@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,12 +41,12 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
   int defaultRetainCount = 2;
   /** The default number of days to keep versions.*/
   int defaultDaysToKeep = 30;
-  
+
   /** The number of versions to retain. Must be at least 1. */
   int retainCount;
   /** The number of days to keep versions. Must be at least 1 to keep history or 0 in which case only retainCount is used. */
   int daysToKeep;
-  
+
   void initialize(Session session) {
     retainCount = parametersMap.get("retainCount", defaultRetainCount)
     daysToKeep = parametersMap.get("daysToKeep", defaultDaysToKeep)
@@ -57,13 +57,13 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
       daysToKeep = 0
     }
     log.info "VersionsCleaner initialized with parameters: { retainCount: ${retainCount}, daysToKeep: ${daysToKeep} }"
-    
+
   }
 
   boolean skipCheckoutNodes() {
     return true; // we're changing version history, not current content
   }
-  
+
   boolean doUpdate(Node node) {
     if (node.getPrimaryNodeType().getName().startsWith("hst:")
             || node.getPath().startsWith("/hippo:configuration/")
@@ -73,7 +73,7 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
       return false
     }
     log.debug "Updating node ${node.path}"
-    
+
     // gather versions
     List versions = new ArrayList()
     VersionManager versionManager = node.getSession().getWorkspace().getVersionManager()
@@ -85,8 +85,10 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
       Calendar created = version.getCreated();
       Calendar daysOld = Calendar.getInstance();
       daysOld.add(Calendar.DAY_OF_MONTH, -daysToKeep);
+      def labels = versionHistory.getVersionLabels(version)
+      def isRevisionVariant = labels.length != 0
       if (created.before(daysOld)) {
-        if (!version.getName().equals("jcr:rootVersion")) {
+        if (!version.getName().equals("jcr:rootVersion") && !isRevisionVariant) {
           versions.add(version);
         }
       }
@@ -104,7 +106,7 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {
     }
     return remove
   }
-  
+
   boolean undoUpdate(Node node) {
     throw new UnsupportedOperationException('Updater does not implement undoUpdate method')
   }
