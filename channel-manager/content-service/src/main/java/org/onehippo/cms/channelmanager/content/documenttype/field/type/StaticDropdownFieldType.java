@@ -21,13 +21,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.jcr.PropertyType;
+
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
-public class StaticDropdownFieldType extends StringFieldType {
+public class StaticDropdownFieldType extends PrimitiveFieldType {
     
-    private List<String> dropDownValues = new LinkedList<>();
-    private List<String> dropDownDisplayValues = new LinkedList<>();
+    private List<String> optionValues = new LinkedList<>();
+    private List<String> optionDisplayValues = new LinkedList<>();
     
     public StaticDropdownFieldType() {
         setType(Type.STATIC_DROPDOWN);
@@ -40,30 +42,32 @@ public class StaticDropdownFieldType extends StringFieldType {
         selectableOptions.ifPresent(allOptions -> Stream.of(allOptions.split(","))
             .forEach(oneOption -> {
                 if (oneOption.contains("=")) {
-                    dropDownValues.add(StringUtils.substringBefore(oneOption, "="));
-                    dropDownDisplayValues.add(StringUtils.substringAfter(oneOption, "="));
+                    optionValues.add(StringUtils.substringBefore(oneOption, "="));
+                    optionDisplayValues.add(StringUtils.substringAfter(oneOption, "="));
                 } else {
-                    dropDownValues.add(oneOption);
-                    dropDownDisplayValues.add(oneOption);
+                    optionValues.add(oneOption);
+                    optionDisplayValues.add(oneOption);
                 }
             }));
         
         return super.init(fieldContext);
     }
 
-    public List<String> getDropDownValues() {
-        return dropDownValues;
+    public List<String> getOptionValues() {
+        return optionValues;
     }
 
-    public void setDropDownValues(final List<String> dropDownValues) {
-        this.dropDownValues = dropDownValues;
+    public List<String> getOptionDisplayValues() {
+        return optionDisplayValues;
     }
 
-    public List<String> getDropDownDisplayValues() {
-        return dropDownDisplayValues;
+    @Override
+    protected int getPropertyType() {
+        return PropertyType.STRING;
     }
 
-    public void setDropDownDisplayValues(final List<String> dropDownDisplayValues) {
-        this.dropDownDisplayValues = dropDownDisplayValues;
+    @Override
+    protected String getDefault() {
+        return StringUtils.EMPTY;
     }
 }

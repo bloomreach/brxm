@@ -69,12 +69,12 @@ public class StaticDropdownFieldTypeTest {
         final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
         fieldType.init(fieldTypeContext);
 
-        assertThat(fieldType.getDropDownDisplayValues().size(), equalTo(3));
-        assertThat(fieldType.getDropDownValues().size(), equalTo(3));
+        assertThat(fieldType.getOptionDisplayValues().size(), equalTo(3));
+        assertThat(fieldType.getOptionValues().size(), equalTo(3));
 
         final List<String> expected = Arrays.asList("ca", "us", "mx");
-        assertThat(fieldType.getDropDownValues(), equalTo(expected));
-        assertThat(fieldType.getDropDownDisplayValues(), equalTo(expected));
+        assertThat(fieldType.getOptionValues(), equalTo(expected));
+        assertThat(fieldType.getOptionDisplayValues(), equalTo(expected));
     }
     
     @Test
@@ -88,13 +88,13 @@ public class StaticDropdownFieldTypeTest {
         final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
         fieldType.init(fieldTypeContext);
 
-        assertThat(fieldType.getDropDownDisplayValues().size(), equalTo(3));
-        assertThat(fieldType.getDropDownValues().size(), equalTo(3));
+        assertThat(fieldType.getOptionDisplayValues().size(), equalTo(3));
+        assertThat(fieldType.getOptionValues().size(), equalTo(3));
 
         final List<String> expectedKeys = Arrays.asList("ca", "us", "mx");
         final List<String> expectedValues = Arrays.asList("Canada", "United States", "Mexico");
-        assertThat(fieldType.getDropDownValues(), equalTo(expectedKeys));
-        assertThat(fieldType.getDropDownDisplayValues(), equalTo(expectedValues));
+        assertThat(fieldType.getOptionValues(), equalTo(expectedKeys));
+        assertThat(fieldType.getOptionDisplayValues(), equalTo(expectedValues));
     }
     
     @Test

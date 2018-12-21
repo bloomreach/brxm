@@ -115,10 +115,10 @@
       md-no-asterisk
     >
       <md-option
-        ng-repeat="dropDownValue in $ctrl.fieldType.dropDownValues"
-        value="{{ dropDownValue }}"
+        ng-repeat="optionValue in $ctrl.fieldType.optionValues"
+        value="{{ optionValue }}"
       >
-        {{ $ctrl.fieldType.dropDownDisplayValues[$index] }}
+        {{ $ctrl.fieldType.optionDisplayValues[$index] }}
       </md-option>
     </md-select>
 
