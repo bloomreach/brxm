@@ -609,13 +609,24 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void setFolderTemplateQueryWithoutDocumentTemplateQuery() throws Exception {
+    public void setFolderTemplateQueryWithoutDefaultPath() throws Exception {
         assertWarned("The folderTemplateQuery attribute 'new-folder' is set on a manageContent tag, " +
-                "but the documentTemplateQuery attribute is not set. FolderTemplateQuery attribute in template " +
+                "but the defaultPath attribute is not set. The folderTemplateQuery attribute in template " +
                 "'webfile:/freemarker/test.ftl' is ignored.",
                 beforeEndTag(() -> {
                     tag.setParameterName("a-mandatory-parameter");
                     tag.setFolderTemplateQuery("new-folder");
+                }));
+    }
+
+    @Test
+    public void setDefaultPathWithoutDocumentTemplateQuery() throws Exception {
+        assertWarned("The defaultPath attribute '/default/path' is set on a manageContent tag, " +
+                "but the documentTemplateQuery attribute is not set. The defaultPath attribute in template " +
+                "'webfile:/freemarker/test.ftl' is ignored.",
+                beforeEndTag(() -> {
+                    tag.setParameterName("a-mandatory-parameter");
+                    tag.setDefaultPath("/default/path");
                 }));
     }
 
