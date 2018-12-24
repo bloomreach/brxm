@@ -1671,10 +1671,11 @@ public class DocumentsServiceImplTest {
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         info.setDefaultPath("2017/11");
+        info.setFolderTemplateQuery("folderTemplateQuery");
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(rootFolderNode);
-        expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session)))
+        expect(FolderUtils.getOrCreateFolder(eq(rootFolderNode), eq("2017/11"), eq(session), eq("folderTemplateQuery")))
                 .andReturn(folderNode);
         expect(FolderUtils.getLocale(folderNode))
                 .andReturn("en_GB");

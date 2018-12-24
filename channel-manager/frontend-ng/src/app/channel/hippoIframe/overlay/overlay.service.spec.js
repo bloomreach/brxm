@@ -681,6 +681,7 @@ describe('OverlayService', () => {
         documentTemplateQuery = false,
         parameterName = false,
         locked = false,
+        folderTemplateQuery = false,
       ) {
         const enclosing = {
           isLocked: () => locked,
@@ -688,6 +689,7 @@ describe('OverlayService', () => {
         const structureElement = {
           getDefaultPath: () => null,
           getEnclosingElement: () => enclosing,
+          getFolderTemplateQuery: () => folderTemplateQuery,
           getParameterName: () => parameterName,
           getParameterValue: () => null,
           getPickerConfig: () => null,
@@ -722,6 +724,14 @@ describe('OverlayService', () => {
 
           config = mockManageContentConfig(true, true);
           expect(config.documentTemplateQuery).not.toBeDefined();
+        });
+
+        it('filters out property folderTemplateQuery when documentUuid is set', () => {
+          let config = mockManageContentConfig(false, true, false, false, true);
+          expect(config.folderTemplateQuery).toBeDefined();
+
+          config = mockManageContentConfig(true, true, false, false, true);
+          expect(config.folderTemplateQuery).not.toBeDefined();
         });
 
         it('filters all properties when parameterName is set but documentId is not', () => {

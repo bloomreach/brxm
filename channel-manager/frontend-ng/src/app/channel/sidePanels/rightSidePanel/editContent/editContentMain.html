@@ -15,7 +15,8 @@
   -->
 <form name="$ctrl.form"
       class="form-dense-layout"
-      layout="column">
+      layout="column"
+      flex>
   <md-subheader ng-if="$ctrl.notAllFieldsShown()"
                 md-colors="{background: 'hippo-grey-200'}">
 
@@ -30,8 +31,6 @@
                   loading="$ctrl.loading">
   </content-editor>
 </form>
-
-  <span flex></span>
 
 <md-toolbar>
   <div class="md-toolbar-tools">

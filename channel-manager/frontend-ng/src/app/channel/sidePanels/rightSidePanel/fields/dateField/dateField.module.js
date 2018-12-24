@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 import dateFieldComponent from './dateField.component';
+import DateFieldTriangleDirective from './dateFieldTriangle.directive';
 
 const dateFieldModule = angular
   .module('hippo-cm.channel.rightSidePanel.fields.dateField', [])
+  .directive('mdDatepickerTriangleButton', DateFieldTriangleDirective)
   .component('dateField', dateFieldComponent);
 
 export default dateFieldModule.name;

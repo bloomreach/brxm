@@ -35,7 +35,7 @@ class PropertyFieldCtrl {
 
   $onInit() {
     this.label = this.info.i18nResources[this.field] || this.field;
-    this.help = this.info.i18nResources[`${this.field}.help`];
+    this.hint = this.info.i18nResources[`${this.field}.hint`];
 
     this.definition = this.info.propertyDefinitions[this.field];
     if (!this.definition) {

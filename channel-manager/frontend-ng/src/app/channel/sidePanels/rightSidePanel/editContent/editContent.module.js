@@ -16,7 +16,7 @@
 
 import './editContentMain.scss';
 import config from './editContent.config';
-import addToProjectCtrl from './addToProject/addToProject.controller';
+import addToProjectComponent from './addToProject/addToProject.component';
 import editContentService from './editContent.service';
 import editContentIconCtrl from './editContentIcon.controller';
 import editContentMainCtrl from './editContentMain.controller';
@@ -26,7 +26,7 @@ const editContentModule = angular
   .module('hippo-cm.channel.rightSidePanel.editContentModule', [])
   .config(config)
   .service('EditContentService', editContentService)
-  .controller('addToProjectCtrl', addToProjectCtrl)
+  .component('addToProject', addToProjectComponent)
   .controller('editContentIconCtrl', editContentIconCtrl)
   .controller('editContentMainCtrl', editContentMainCtrl)
   .controller('editContentToolsCtrl', editContentToolsCtrl);

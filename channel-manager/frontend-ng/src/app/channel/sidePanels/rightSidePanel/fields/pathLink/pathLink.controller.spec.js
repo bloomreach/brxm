@@ -19,7 +19,6 @@ describe('pathLinkController', () => {
   let $ctrl;
   let $q;
   let $scope;
-  let $timeout;
   let PickerService;
   let config;
   let ngModel;
@@ -35,10 +34,9 @@ describe('pathLinkController', () => {
       $provide.value('PickerService', PickerService);
     });
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
+    inject((_$componentController_, _$q_, _$rootScope_) => {
       $componentController = _$componentController_;
       $q = _$q_;
-      $timeout = _$timeout_;
       $scope = _$rootScope_.$new();
     });
 
@@ -134,41 +132,6 @@ describe('pathLinkController', () => {
         done();
       });
       $scope.$digest();
-    });
-  });
-
-  describe('focus', () => {
-    beforeEach(() => {
-      $ctrl.onFocus = jasmine.createSpy();
-    });
-
-    it('should forward focus event', () => {
-      $ctrl.focus('event');
-      expect($ctrl.onFocus).toHaveBeenCalledWith('event');
-    });
-
-    it('should focus container', () => {
-      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
-      $ctrl.focus('event');
-      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
-    });
-  });
-
-  describe('blur', () => {
-    beforeEach(() => {
-      $ctrl.onBlur = jasmine.createSpy();
-    });
-
-    it('should forward blur event', () => {
-      $ctrl.blur('event');
-      $timeout.flush();
-      expect($ctrl.onBlur).toHaveBeenCalledWith('event');
-    });
-
-    it('should blur container', () => {
-      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
-      $ctrl.blur('event');
-      expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
   });
 });

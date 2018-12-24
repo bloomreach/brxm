@@ -19,17 +19,10 @@ import nodeLinkComponent from '../nodeLink/nodeLink.component';
 import template from '../nodeLink/nodeLink.html';
 import './pathLink.scss';
 
-const pathLinkComponent = Object.assign(
-  {},
-  nodeLinkComponent,
-  {
-    controller,
-    template,
-    require: Object.assign(
-      { mdInputContainer: '?^^mdInputContainer' },
-      nodeLinkComponent.require,
-    ),
-  },
-);
+const pathLinkComponent = {
+  ...nodeLinkComponent,
+  controller,
+  template,
+};
 
 export default pathLinkComponent;

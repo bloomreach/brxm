@@ -67,8 +67,9 @@ class CreateContentService {
 
     ProjectService.beforeChange('createContent', (projectIdIdentical) => {
       if (!projectIdIdentical) {
-        this._beforeSwitchProject();
+        return this._beforeSwitchProject();
       }
+      return this.$q.resolve();
     });
   }
 
@@ -125,10 +126,14 @@ class CreateContentService {
 
     this._showStep1Title();
     this.RightSidePanelService.startLoading();
-    return this.Step1Service.open(config.documentTemplateQuery, config.rootPath, config.defaultPath)
-      .then(() => {
-        this.RightSidePanelService.stopLoading();
-      });
+    return this.Step1Service.open(
+      config.documentTemplateQuery,
+      config.folderTemplateQuery,
+      config.rootPath,
+      config.defaultPath,
+    ).then(() => {
+      this.RightSidePanelService.stopLoading();
+    });
   }
 
   _showStep1Title() {
@@ -168,8 +173,7 @@ class CreateContentService {
 
   _beforeSwitchProject() {
     if (this._isStep2()) {
-      return this.Step2Service.closeEditor('SAVE_CHANGES_TO_DOCUMENT')
-        .then(() => this.stop());
+      return this.stop();
     }
     return this.$q.resolve();
   }

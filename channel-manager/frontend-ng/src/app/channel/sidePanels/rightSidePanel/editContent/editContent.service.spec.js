@@ -20,8 +20,11 @@ describe('EditContentService', () => {
   let $state;
   let $translate;
   let $window;
+  let ConfigService;
   let ContentEditor;
+  let ContentService;
   let EditContentService;
+  let ProjectService;
   let RightSidePanelService;
 
   beforeEach(() => {
@@ -39,6 +42,7 @@ describe('EditContentService', () => {
       'kill',
       'open',
     ]);
+    ContentService = jasmine.createSpyObj('ContentService', ['getDocument']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext',
       'setContext',
@@ -49,16 +53,28 @@ describe('EditContentService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('ContentEditor', ContentEditor);
+      $provide.value('ContentService', ContentService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
 
-    inject((_$q_, _$rootScope_, _$state_, _$translate_, _$window_, _EditContentService_) => {
+    inject((
+      _$q_,
+      _$rootScope_,
+      _$state_,
+      _$translate_,
+      _$window_,
+      _ConfigService_,
+      _EditContentService_,
+      _ProjectService_,
+    ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $state = _$state_;
       $translate = _$translate_;
       $window = _$window_;
+      ConfigService = _ConfigService_;
       EditContentService = _EditContentService_;
+      ProjectService = _ProjectService_;
     });
 
     spyOn($translate, 'instant').and.callThrough();
@@ -79,6 +95,33 @@ describe('EditContentService', () => {
     ContentEditor.getDocumentDisplayName.and.returnValue(displayName);
 
     EditContentService.startEditing(documentId);
+    $rootScope.$digest();
+  }
+
+  function editNonProjectDocument(document) {
+    const documentNotInProject = {
+      id: '42',
+      branchId: 'master',
+      displayName: 'Non Project Document',
+    };
+    ConfigService.projectsEnabled = true;
+    ProjectService.selectedProject.id = 'q';
+    ContentService.getDocument.and.returnValue($q.resolve(documentNotInProject));
+
+    EditContentService.startEditing(document.id);
+    $rootScope.$digest();
+  }
+
+  function editProjectDocument(document) {
+    ConfigService.projectsEnabled = true;
+    ProjectService.selectedProject.id = 'q';
+    ContentService.getDocument.and.returnValue($q.resolve(document));
+
+    ContentEditor.open.and.returnValue($q.resolve());
+    ContentEditor.getDocument.and.returnValue(document);
+    ContentEditor.getDocumentId.and.returnValue(document.id);
+
+    EditContentService.startEditing(document.id);
     $rootScope.$digest();
   }
 
@@ -108,6 +151,38 @@ describe('EditContentService', () => {
     expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
     expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Locked document');
     expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+  });
+
+  describe('editing for projects', () => {
+    it('does not start editing a document that is not part of the current project', () => {
+      const document = {
+        id: '42',
+      };
+      spyOn($state, 'go');
+
+      editNonProjectDocument(document);
+
+      expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+      expect(RightSidePanelService.setContext).toHaveBeenCalledWith('DOCUMENT');
+      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('Non Project Document');
+      expect($state.go).toHaveBeenCalledWith('hippo-cm.channel.add-to-project', { documentId: '42' });
+    });
+
+    it('does start editing a document that is part of the current project', () => {
+      const document = {
+        id: '42',
+        branchId: 'q',
+      };
+
+      editProjectDocument(document);
+
+      expect(RightSidePanelService.clearContext).toHaveBeenCalled();
+      expect(RightSidePanelService.startLoading).toHaveBeenCalled();
+      expect(ContentEditor.open).toHaveBeenCalledWith(document.id);
+      expect($translate.instant).toHaveBeenCalledWith('DOCUMENT');
+      expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('DOCUMENT');
+      expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
+    });
   });
 
   it('stops editing', () => {

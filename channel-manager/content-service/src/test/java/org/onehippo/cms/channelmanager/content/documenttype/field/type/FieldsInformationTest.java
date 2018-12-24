@@ -114,13 +114,13 @@ public class FieldsInformationTest {
     @Test
     public void addMultipleReportableFields() {
         final FieldsInformation info = FieldsInformation.allSupported();
-        info.addUnsupportedField("StaticDropdown", Collections.emptyList());
+        info.addUnsupportedField("Docbase", Collections.emptyList());
         info.addUnsupportedField("DynamicDropdown", Collections.singletonList("required"));
 
         assertFalse(info.isAllFieldsIncluded());
         assertFalse(info.getCanCreateAllRequiredFields());
 
-        final Set<String> expectedUnsupportedTypes = new LinkedHashSet<>(Arrays.asList("DynamicDropdown", "StaticDropdown"));
+        final Set<String> expectedUnsupportedTypes = new LinkedHashSet<>(Arrays.asList("DynamicDropdown", "Docbase"));
         assertThat(info.getUnsupportedFieldTypes(), equalTo(expectedUnsupportedTypes));
 
         assertThat(info.getUnsupportedRequiredFieldTypes(), equalTo(Collections.singleton("DynamicDropdown")));
