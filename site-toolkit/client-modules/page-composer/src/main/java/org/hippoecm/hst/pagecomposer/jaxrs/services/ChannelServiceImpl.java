@@ -19,8 +19,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -288,7 +288,8 @@ public class ChannelServiceImpl implements ChannelService {
                                                       final String language, final String hostGroup) throws ChannelException, RepositoryException {
         final ResourceBundle resourceBundle = virtualHosts.getResourceBundle(getChannel(RequestContextProvider.get().getSession(), channelId, hostGroup), new Locale(language));
         if (resourceBundle == null) {
-            return Collections.EMPTY_MAP;
+            // Do not return Collections.EMPTY_MAP since the localized resources should be possible to get appended
+            return new HashMap<>();
         }
 
         return resourceBundle.keySet().stream()
@@ -456,14 +457,6 @@ public class ChannelServiceImpl implements ChannelService {
                 parentNode = parentNode.getParent();
                 removeNode.remove();
             }
-        }
-    }
-
-    private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
-        if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
-            return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
-        } else {
-            return channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
         }
     }
 

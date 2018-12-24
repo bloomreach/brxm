@@ -236,7 +236,7 @@ public class ChannelPropertyMapper {
             final Class<? extends ChannelInfo>[] channelInfoMixinClasses = getChannelInfoMixinClasses(
                     (channelInfoMixins != null) ? channelInfoMixins.toArray(new String[channelInfoMixins.size()])
                             : null,
-                    channel.getId(), null, false);
+                    channel.getId(), channel.getContextPath(), false);
 
             if (channelInfoClazz == null) {
                 throw new IllegalStateException("Could not find channel info class " + channelInfoType);

@@ -185,4 +185,8 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    @Override
+    public boolean isVersionedNode() {
+        return false;
+    }
 }

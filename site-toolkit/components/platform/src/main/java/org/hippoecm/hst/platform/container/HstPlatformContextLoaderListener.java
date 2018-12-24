@@ -15,12 +15,17 @@
  */
 package org.hippoecm.hst.platform.container;
 
+import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.hippoecm.hst.platform.services.PlatformServicesImpl;
 import org.hippoecm.hst.site.container.HstContextLoaderListener;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.ProxiedServiceHolder;
+import org.onehippo.cms7.services.ProxiedServiceTracker;
 import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.repository.RepositoryService;
 
 /**
@@ -36,42 +41,75 @@ import org.onehippo.repository.RepositoryService;
  * </CODE></PRE>
  *
  * <P>
- * This listener registers a {@link HippoWebappContext} of type {@link HippoWebappContext.Type#PLATFORM PLATFORM},
- * and <em>initializes</em> the platform provided {@link org.hippoecm.hst.platform.model.HstModelRegistry} before
- * delegating back to the default {@link HstContextLoaderListener} to load HST Context and initialize the container.
+ * This listener first {@link HippoWebappContextRegistry#register(HippoWebappContext) registers a HippoWebappContext}
+ * of type {@link HippoWebappContext.Type#PLATFORM}, and then waits for the {@link RepositoryService} to be available
+ * to initialize the HstPlaform. It will delegating back to the parent {@link HstContextLoaderListener} to load
+ * the platform HST Context and initialize the container. Finally it will register the (internal)
+ * {@link PlatformModelAvailableService} service to trigger regular {@link HippoWebappContext.Type#SITE}s to initialize
+ * thereafter.
  * </P>
  */
 public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
 
-    private HstModelRegistryImpl hstModelRegistry = new HstModelRegistryImpl();
-    private PlatformServicesImpl platformServices = new PlatformServicesImpl();
-    private PreviewDecorator previewDecorator = new PreviewDecoratorImpl();
+    private final HstModelRegistryImpl hstModelRegistry = new HstModelRegistryImpl();
+    private final PlatformServicesImpl platformServices = new PlatformServicesImpl();
+    private final PreviewDecorator previewDecorator = new PreviewDecoratorImpl();
+    private final PlatformModelAvailableService platformModelAvailableService = new PlatformModelAvailableService(){};
+    private ProxiedServiceTracker<RepositoryService> repositoryServiceTracker;
 
     protected HippoWebappContext.Type getContextType() {
         return HippoWebappContext.Type.PLATFORM;
     }
 
     @Override
-    protected void trackHstModelRegistry(final RepositoryService repositoryService) {
-        // HSTTWO-4355 TODO: we may wany to setup a separate *parent* Spring Context for platform specific Spring wiring
-        //                   for now doing required wiring inline here, using the provided Repository but also temporarily
-        //                   (mis?)using the hstconfigreader.delegating credentials from registering hst sites (see HstModelRegistryImpl)
-        hstModelRegistry.setRepository(repositoryService);
-        platformServices.setHstModelRegistry(hstModelRegistry);
-        platformServices.setPreviewDecorator(previewDecorator);
-        platformServices.init();
-        configureHstSite(hstModelRegistry);
-        hstModelRegistry.init();
+    protected void initialize() {
+        repositoryServiceTracker = new ProxiedServiceTracker<RepositoryService>() {
+            @Override
+            public void serviceRegistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
+                initializeHstPlaform(serviceHolder.getServiceProxy());
+            }
+
+            @Override
+            public void serviceUnregistered(final ProxiedServiceHolder<RepositoryService> serviceHolder) {
+                destroyHstPlatform();
+            }
+        };
+        HippoServiceRegistry.addTracker(repositoryServiceTracker, RepositoryService.class);
     }
 
     @Override
-    protected void untrackHstModelRegistry() {
-        destroyHstSite();
-        platformServices.destroy();
-        platformServices.setPreviewDecorator(null);
-        platformServices.setHstModelRegistry(null);
-        hstModelRegistry.destroy();
-        hstModelRegistry.setRepository(null);
+    protected void destroy() {
+        if (repositoryServiceTracker != null) {
+            HippoServiceRegistry.removeTracker(repositoryServiceTracker, RepositoryService.class);
+            repositoryServiceTracker = null;
+            destroyHstPlatform();
+        }
     }
 
+    protected void initializeHstPlaform(final RepositoryService repositoryService) {
+        // HSTTWO-4355 TODO: we may wany to setup a separate *parent* Spring Context for platform specific Spring wiring
+        //                   for now doing required wiring inline here, using the provided Repository but also temporarily
+        //                   (mis?)using the hstconfigreader.delegating credentials from registering hst sites (see HstModelRegistryImpl)
+
+        platformServices.setHstModelRegistry(hstModelRegistry);
+        platformServices.setPreviewDecorator(previewDecorator);
+        platformServices.init();
+        hstModelRegistry.setRepository(repositoryService);
+        hstModelRegistry.init();
+
+        configureHstSite(hstModelRegistry);
+
+        HippoServiceRegistry.register(platformModelAvailableService, PlatformModelAvailableService.class);
+    }
+
+    protected void destroyHstPlatform() {
+        HippoServiceRegistry.unregister(platformModelAvailableService, PlatformModelAvailableService.class);
+        destroyHstSite();
+        hstModelRegistry.destroy();
+        hstModelRegistry.setRepository(null);
+        platformServices.destroy();
+
+        platformServices.setPreviewDecorator(null);
+        platformServices.setHstModelRegistry(null);
+    }
 }

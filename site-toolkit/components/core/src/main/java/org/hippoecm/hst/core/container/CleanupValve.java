@@ -48,7 +48,7 @@ public class CleanupValve extends AbstractBaseOrderableValve {
             clearSubjectSession(context, requestContext, sessionStateful);
         }
 
-        // ensure Session isn't tried to reuse again (it has been returned to the pool anyway)
+        // ensure Session isn't tried to reuse again (it has been returned to the pool anyway if it was a pooled session)
         ((HstMutableRequestContext) requestContext).setSession(null);
 
         if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {

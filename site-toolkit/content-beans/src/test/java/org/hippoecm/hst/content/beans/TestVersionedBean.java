@@ -275,6 +275,10 @@ public class TestVersionedBean extends AbstractBeanTestCase {
                 .as("Expected live workspace version")
                 .isEqualTo("The new master Title");
 
+        assertThat(workspaceHomePage.isVersionedNode())
+                .as("Expected a non versioned node")
+                .isFalse();
+
         initContext("christmas");
 
         final PersistableTextPage versionedHomePage = (PersistableTextPage) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
@@ -289,6 +293,10 @@ public class TestVersionedBean extends AbstractBeanTestCase {
                 .as("Although the provided node is a versioned node, the path should still be the workspace path" +
                         "for example for link rewriting")
                 .startsWith("/unittestcontent");
+
+        assertThat(versionedHomePage.isVersionedNode())
+                .as("Expected a versioned node")
+                .isTrue();
 
         assertThat(versionedHomePage.getNode()).isInstanceOf(HippoBeanFrozenNode.class);
 

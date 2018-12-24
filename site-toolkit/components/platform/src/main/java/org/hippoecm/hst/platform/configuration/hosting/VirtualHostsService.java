@@ -64,6 +64,8 @@ import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
@@ -890,8 +892,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
         final List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
 
+        final HippoWebappContext webappContext = HippoWebappContextRegistry.get().getContext(channel.getContextPath());
+        if (webappContext == null) {
+            log.warn("Cannot find webapp context for '{}'. Return null.", channel.getContextPath());
+            return null;
+        }
         final String channelInfoClassName = channel.getChannelInfoClassName();
-        ResourceBundle bundle = loadResourceBundle(channelInfoClassName, locale);
+        ResourceBundle bundle = loadResourceBundle(channelInfoClassName, webappContext.getServletContext().getClassLoader(), locale);
 
         if (bundle != null) {
             bundles.add(bundle);
@@ -901,7 +908,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         if (channelInfoMixinNames != null) {
             for (String channelInfoMixinName : channelInfoMixinNames) {
-                bundle = loadResourceBundle(channelInfoMixinName, locale);
+                bundle = loadResourceBundle(channelInfoMixinName, webappContext.getServletContext().getClassLoader(), locale);
 
                 if (bundle != null) {
                     bundles.add(bundle);
@@ -992,13 +999,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         bluePrintsPrototypeChecked = true;
     }
 
-    private void logUnusedExclusionsProperty(String property) {
-        log.warn("Property '{}' not used any more. Remove it from hst:hosts node. Use a (hst:default) sitemap item to account for prefixes/suffixes " +
-                "that need special handling or use hst-config.properties to set comma separated list for filter.prefix.exclusions or " +
-                "filter.suffix.exclusions.", property);
-    }
-
-    private ResourceBundle loadResourceBundle(final String channelInfoClassName, final Locale locale) {
+    private ResourceBundle loadResourceBundle(final String channelInfoClassName,
+                                              final ClassLoader classLoader, final Locale locale) {
         if (channelInfoClassName != null) {
             final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
 
@@ -1013,10 +1015,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
 
             try {
-                return ResourceBundle.getBundle(channelInfoClassName, locale);
+                return ResourceBundle.getBundle(channelInfoClassName, locale, classLoader);
             } catch (MissingResourceException e) {
                 log.info("Could not load repository or Java resource bundle for class '{}' and locale '{}', using " +
-                         "untranslated labels for channel properties.", channelInfoClassName, locale);
+                        "untranslated labels for channel properties.", channelInfoClassName, locale);
             }
         }
 
