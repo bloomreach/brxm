@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 
 /**
- * Interface for providers that generate value lists.
+ * Interface for providers that generate value lists for an Apache Wicket application.
  *
  * A value list is a list of key/label pairs that can be used to populate lists, dropdowns etc.
  */
-public interface IValueListProvider extends IClusterable {
+public interface IValueListProvider extends ValueListProvider, IClusterable {
 
     /**
      * The name of the plugin configuration parameter that holds
