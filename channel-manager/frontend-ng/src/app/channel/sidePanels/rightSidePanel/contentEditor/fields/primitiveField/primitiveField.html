@@ -20,7 +20,7 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint }">
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint, 'md-input-has-value' : $ctrl.fieldType.type === 'RADIO_GROUP' }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
@@ -122,6 +122,19 @@
       </md-option>
     </md-select>
 
+    <md-radio-group ng-switch-when="RADIO_GROUP"
+                    class="md-primary"
+                    name="::$ctrl.getFieldName($index)"
+                    ng-blur="$ctrl.blurPrimitive($event)"
+                    ng-change="$ctrl.valueChanged()"
+                    ng-focus="$ctrl.focusPrimitive($event)"
+                    ng-model="fieldValue.value"
+                    ng-required="::$ctrl.fieldType.required">
+      <md-radio-button ng-repeat="buttonValue in $ctrl.fieldType.buttonValues" ng-value="buttonValue">
+        {{ ::$ctrl.fieldType.buttonDisplayValues[$index] }}
+      </md-radio-button>
+    </md-radio-group>
+      
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"

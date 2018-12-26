@@ -36,8 +36,10 @@ import org.onehippo.cms.channelmanager.content.document.util.BranchingServiceImp
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspector;
 import org.onehippo.cms.channelmanager.content.document.util.HintsInspectorImpl;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.valuelist.ValueListService;
 import org.onehippo.cms.channelmanager.content.workflows.WorkflowServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.forge.selection.frontend.Namespace;
 import org.onehippo.repository.jaxrs.api.JsonResourceServiceModule;
 import org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
@@ -81,6 +83,14 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
             @Override
             public void onEvent(final EventIterator events) {
                 DocumentTypesService.get().invalidateCache();
+            }
+        });
+        // when a value list has changed, also the document types cache must be invalidated
+        addEventListener(new ValueListsEventListener() {
+            @Override
+            public void onEvent(final EventIterator events) {
+                DocumentTypesService.get().invalidateCache();
+                ValueListService.get().invalidateCache();
             }
         });
     }
@@ -138,6 +148,12 @@ public class ChannelContentServiceModule extends JsonResourceServiceModule {
 
         HippoNamespacesEventListener() {
             super(ALL_EVENTS, HIPPO_NAMESPACES, true, null, null);
+        }
+    }
+
+    private abstract static class ValueListsEventListener extends JcrEventListener {
+        ValueListsEventListener() {
+            super(ALL_EVENTS, "/content/documents", true, null, new String[]{Namespace.Type.VALUE_LIST});
         }
     }
 }
