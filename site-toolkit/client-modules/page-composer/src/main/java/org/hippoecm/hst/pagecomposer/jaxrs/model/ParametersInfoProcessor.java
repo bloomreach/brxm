@@ -34,7 +34,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.FieldGroup;
@@ -43,7 +42,6 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
@@ -58,21 +56,23 @@ import com.google.common.collect.Multimap;
 
 public class ParametersInfoProcessor {
 
-    static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
     private static final String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
 
     private static final Set<CacheKey> FAILED_BUNDLES_TO_LOAD = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    public static List<ContainerItemComponentPropertyRepresentation> getProperties(final ParametersInfo parameterInfo, final Locale locale, final String contentPath) {
+    public static List<ContainerItemComponentPropertyRepresentation> getProperties(final ParametersInfo parameterInfo,
+            final Locale locale, final String contentPath) {
+        
         final ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
         final Class<?> classType = parameterInfo.type();
         if (classType == null) {
             return Collections.emptyList();
         }
-        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = createPropertyMap(contentPath, classType, resourceBundles);
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = 
+                createPropertyMap(contentPath, classType, resourceBundles, locale);
         return orderPropertiesByFieldGroup(classType, resourceBundles, propertyMap);
-
     }
 
     public static List<ContainerItemComponentPropertyRepresentation> getPopulatedProperties(
@@ -84,9 +84,11 @@ public class ParametersInfoProcessor {
             final ContainerItemHelper containerItemHelper,
             final List<PropertyRepresentationFactory> propertyPresentationFactories) throws RepositoryException {
 
-        final List<ContainerItemComponentPropertyRepresentation> properties = getProperties(parametersInfo, locale, contentPath);
+        final List<ContainerItemComponentPropertyRepresentation> properties = 
+                getProperties(parametersInfo, locale, contentPath);
 
-        final HstComponentParameters componentParameters = new HstComponentParameters(containerItemNode, containerItemHelper);
+        final HstComponentParameters componentParameters = 
+                new HstComponentParameters(containerItemNode, containerItemHelper);
 
         setValueForProperties(properties, prefix, componentParameters, contentPath);
 
@@ -94,17 +96,20 @@ public class ParametersInfoProcessor {
             int index = 0;
             for (final PropertyRepresentationFactory factory : propertyPresentationFactories) {
                 try {
-                    final ContainerItemComponentPropertyRepresentation property = factory.createProperty(parametersInfo, locale,
-                            contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, properties);
+                    final ContainerItemComponentPropertyRepresentation property = factory.createProperty(parametersInfo, 
+                            locale, contentPath, prefix, containerItemNode, containerItemHelper, componentParameters, 
+                            properties);
                     if (property != null) {
                         properties.add(index, property);
                         index++;
                     }
                 } catch (final RuntimeException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("PropertyRepresentationFactory '{}' threw exception.", factory.getClass().getName(), e);
+                        log.warn("PropertyRepresentationFactory '{}' threw exception.", factory.getClass().getName(), 
+                                e);
                     } else {
-                        log.warn("PropertyRepresentationFactory '{}' threw exception: {}", factory.getClass().getName(), e.toString());
+                        log.warn("PropertyRepresentationFactory '{}' threw exception: {}", factory.getClass().getName(), 
+                                e.toString());
                     }
                 }
             }
@@ -124,8 +129,8 @@ public class ParametersInfoProcessor {
     }
 
     public static void setValueForProperties(final List<ContainerItemComponentPropertyRepresentation> properties,
-                                             final String prefix,
-                                             final HstComponentParameters componentParameters, final String contentPath) {
+                                             final String prefix, final HstComponentParameters componentParameters, 
+                                             final String contentPath) {
         for (final ContainerItemComponentPropertyRepresentation prop : properties) {
             setValueForProperty(prop, prefix, componentParameters, contentPath);
         }
@@ -144,38 +149,45 @@ public class ParametersInfoProcessor {
     public static void setValueForProperty(final ContainerItemComponentPropertyRepresentation property,
                                            final String prefix,
                                            final HstComponentParameters componentParameters, final String contentPath) {
+        
         final String value = componentParameters.getValue(prefix, property.getName());
         if (value != null && !value.isEmpty()) {
             property.setValue(value);
-            if(contentPath != null && !contentPath.isEmpty() && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
+            if (contentPath != null 
+                    && !contentPath.isEmpty() 
+                    && property.getType().equals(ParameterType.JCR_PATH.xtype)) {
                 final String absPath;
                 if (value.startsWith("/")) {
                     absPath = value;
                 } else {
                     absPath = contentPath + "/" + value;
                 }
-                final DocumentRepresentation docRepresentation = DocumentUtils.getDocumentRepresentationHstConfigUser(absPath);
+                final DocumentRepresentation docRepresentation = 
+                        DocumentUtils.getDocumentRepresentationHstConfigUser(absPath);
                 final String displayName = docRepresentation.getDisplayName();
-                if(displayName != null && !displayName.isEmpty()) {
+                if (displayName != null && !displayName.isEmpty()) {
                     property.setDisplayValue(displayName);
                 } else if (docRepresentation.getPath() != null) {
-                    log.debug("Could not retrieve displayName for path '{}'. Possibly a removed node. Set the last path " +
-                            "segment as displayValue instead.", docRepresentation.getPath());
+                    log.debug("Could not retrieve displayName for path '{}'. Possibly a removed node. Set the last " +
+                            "path segment as displayValue instead.", docRepresentation.getPath());
                     property.setDisplayValue(StringUtils.substringAfterLast(docRepresentation.getPath(), "/"));
                 }
             }
         }
     }
 
-    private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
-        // although below the classType.getMethods() returns methods in random order (not in jdk 6 but it does in jdk 7 which is according spec)
-        // we still create a LinkedHashMap because for jdk6 this works. For jdk 7, developers must (can only) use FieldGroup annotation
-        // to specify the order of the component properties
+    private static Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String contentPath,
+            final Class<?> classType, final ResourceBundle[] resourceBundles, final Locale locale) {
+        // although below the classType.getMethods() returns methods in random order (not in jdk 6 but it does in jdk 7 
+        // which is according spec) we still create a LinkedHashMap because for jdk6 this works. For jdk 7, developers 
+        // must (can only) use FieldGroup annotation to specify the order of the component properties.
+        
         final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<>();
         for (final Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
+                final ContainerItemComponentPropertyRepresentation prop = 
+                        new ContainerItemComponentPropertyRepresentation();
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());
@@ -233,8 +245,6 @@ public class ParametersInfoProcessor {
                         final List<String> valueList = valueListProvider.getValues();
                         values = valueList.toArray(new String[valueList.size()]);
                         displayValues = new String[values.length];
-                        final HstRequestContext requestContext = RequestContextProvider.get();
-                        final Locale locale = (requestContext != null) ? requestContext.getPreferredLocale() : null;
                         String value;
                         String displayValue;
                         for (int i = 0; i < values.length; i++) {
@@ -257,13 +267,13 @@ public class ParametersInfoProcessor {
         return propertyMap;
     }
 
-    private static List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(final Class<?> classType,
-                                                                                           final ResourceBundle[] resourceBundles,
-                                                                                           final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap) {
-
+    private static List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(
+            final Class<?> classType, final ResourceBundle[] resourceBundles, final Map<String, 
+            ContainerItemComponentPropertyRepresentation> propertyMap) {
 
         // LinkedHashMultimap is a insertion ordered map that does not allow duplicate key-value entries
-        final Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = LinkedHashMultimap.create();
+        final Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = 
+                LinkedHashMultimap.create();
 
         for (final Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
             final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
@@ -281,15 +291,16 @@ public class ParametersInfoProcessor {
                         for (final String propertyName : fieldGroup.value()) {
                             final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
                             if (!uniquePropertiesForInterfaceClass.add(propertyName)) {
-                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
-                                        propertyName, titleKey, classType.getCanonicalName());
+                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info " +
+                                                "interface '{}'", propertyName, titleKey, classType.getCanonicalName());
                             } else if (property == null) {
-                                log.warn("Ignoring unknown parameter '{}' in field group '{}' of parameters info interface '{}'",
-                                        propertyName, titleKey, classType.getCanonicalName());
+                                log.warn("Ignoring unknown parameter '{}' in field group '{}' of parameters info " +
+                                                "interface '{}'", propertyName, titleKey, classType.getCanonicalName());
                             } else if (fieldGroupProperties.containsValue(property)) {
                                 // valid if FieldGroup is (re)defined in inherited Info Class
-                                log.debug("Parameter '{}' in field group '{}' of parameters info interface '{}' was already added to list.",
-                                         propertyName, fieldGroup.titleKey(), classType.getCanonicalName());
+                                log.debug("Parameter '{}' in field group '{}' of parameters info interface '{}' was " +
+                                                "already added to list.", propertyName, fieldGroup.titleKey(), 
+                                        classType.getCanonicalName());
                             } else {
                                 log.debug("Adding parameter '{}' to field group '{}' of parameters info interface '{}'",
                                         propertyName, titleKey, classType.getCanonicalName());
@@ -324,7 +335,8 @@ public class ParametersInfoProcessor {
         return orderedByFieldGroupProperties;
     }
 
-    private static String getResourceValue(final ResourceBundle[] bundles, final String key, final String defaultValue) {
+    private static String getResourceValue(final ResourceBundle[] bundles, final String key, 
+                                           final String defaultValue) {
         for (final ResourceBundle bundle : bundles) {
             if (bundle.containsKey(key)) {
                 return bundle.getString(key);
@@ -357,12 +369,13 @@ public class ParametersInfoProcessor {
     }
 
     /**
-     *
-     * @return the ResourceBundles for <code><parameterInfo.type()</code> including the bundles for the super interfaces for
-     * <code><parameterInfo.type()</code> and <code>locale</code>. The resource bundles are ordered according the interface
-     * hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
+     * @return the ResourceBundles for <code><parameterInfo.type()</code> including the bundles for the super interfaces
+     * for <code><parameterInfo.type()</code> and <code>locale</code>. The resource bundles are ordered according the 
+     * interface hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
      */
-    protected static final ResourceBundle[] getResourceBundles(final ParametersInfo parameterInfo, final Locale locale) {
+    protected static final ResourceBundle[] getResourceBundles(final ParametersInfo parameterInfo, 
+                                                               final Locale locale) {
+        
         final List<ResourceBundle> resourceBundles = new ArrayList<>();
 
         final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(parameterInfo.type());
@@ -376,16 +389,16 @@ public class ParametersInfoProcessor {
     }
 
     static List<Class<?>> getBreadthFirstInterfaceHierarchy(final Class<?> clazz) {
-        final List<Class<?>> interfaceHierarchList = new ArrayList<>();
-        interfaceHierarchList.add(clazz);
-        populateBreadthFirstSuperInterfaces(clazz.getInterfaces(), interfaceHierarchList);
-        return interfaceHierarchList;
+        final List<Class<?>> interfaceHierarchyList = new ArrayList<>();
+        interfaceHierarchyList.add(clazz);
+        populateBreadthFirstSuperInterfaces(clazz.getInterfaces(), interfaceHierarchyList);
+        return interfaceHierarchyList;
     }
 
-    private static void populateBreadthFirstSuperInterfaces(final Class<?>[] interfaces, final List<Class<?>> populatedSuperInterfaces) {
-        for (final Class<?> clazz : interfaces) {
-            populatedSuperInterfaces.add(clazz);
-        }
+    private static void populateBreadthFirstSuperInterfaces(final Class<?>[] interfaces, 
+                                                            final List<Class<?>> populatedSuperInterfaces) {
+        
+        populatedSuperInterfaces.addAll(Arrays.asList(interfaces));
         final List<Class<?>> superInterfaces = new ArrayList<>();
         for (final Class<?> clazz : interfaces) {
             superInterfaces.addAll(Arrays.asList(clazz.getInterfaces()));
@@ -393,12 +406,13 @@ public class ParametersInfoProcessor {
         if (superInterfaces.size() == 0) {
             return;
         }
-        populateBreadthFirstSuperInterfaces(superInterfaces.toArray(new Class[superInterfaces.size()]), populatedSuperInterfaces);
+        populateBreadthFirstSuperInterfaces(superInterfaces.toArray(new Class[superInterfaces.size()]), 
+                populatedSuperInterfaces);
     }
 
     /**
-     * @return the ResourceBundle for <code><parameterInfo.type()</code> and <code>locale</code> or <code>null</code> when
-     * it cannot be loaded
+     * @return the ResourceBundle for <code><parameterInfo.type()</code> and <code>locale</code> or <code>null</code>
+     * when it cannot be loaded
      */
     protected static final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
         return getResourceBundle(parameterInfo.type(), locale);
@@ -430,8 +444,8 @@ public class ParametersInfoProcessor {
         try {
             return ResourceBundle.getBundle(typeName, localeOrDefault);
         } catch (final MissingResourceException e) {
-            log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
-                    "properties panel will show displayName values instead of internationalized labels.", typeName, locale);
+            log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties " +
+                    "panel will show displayName values instead of internationalized labels.", typeName, locale);
             FAILED_BUNDLES_TO_LOAD.add(bundleKey);
             return null;
         }
@@ -463,5 +477,4 @@ public class ParametersInfoProcessor {
             return false;
         }
     }
-
 }
