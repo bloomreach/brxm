@@ -26,13 +26,15 @@
           <span ng-repeat="folder in $ctrl.folders track by folder.path"
                 ng-class="{ 'highlight': folder.exists }"><span>/</span>{{::folder.displayName }}</span>
         </div>
-        <md-icon md-font-icon="mdi-magnify"></md-icon>
       </div>
       <input ng-model="$ctrl.path"
              name="path"
              placeholder="{{ ::'PLACEHOLDER_DOCUMENT_LOCATION' | translate }}"
              disabled
              required>
+      <md-button type="button" class="md-icon-button" ng-click="$ctrl.openPicker()">
+        <md-icon md-font-icon="mdi-magnify"></md-icon>
+      </md-button>
       <div ng-messages="form.controls.path && form.controls.path.touched">
         <div ng-message="required">This field is required</div>
       </div>

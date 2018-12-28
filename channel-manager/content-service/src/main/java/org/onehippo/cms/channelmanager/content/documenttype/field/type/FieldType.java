@@ -41,6 +41,7 @@ public interface FieldType {
         MULTILINE_STRING,
         DATE_AND_TIME,
         DATE_ONLY,
+        STATIC_DROPDOWN,
         HTML,
         CHOICE, // "content blocks"
         COMPOUND,

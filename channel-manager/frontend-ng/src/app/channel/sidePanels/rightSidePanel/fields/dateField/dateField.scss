@@ -96,4 +96,8 @@ date-field {
   > div {
     display: none;
   }
+
+  > .md-button md-icon {
+    color: $icon-button-default !important;
+  }
 }

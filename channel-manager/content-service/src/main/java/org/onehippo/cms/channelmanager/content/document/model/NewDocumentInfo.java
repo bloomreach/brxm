@@ -21,6 +21,7 @@ public class NewDocumentInfo {
     private String slug;
     private String documentTemplateQuery;
     private String documentTypeId;
+    private String folderTemplateQuery;
     private String rootPath;
     private String defaultPath;
 
@@ -54,6 +55,14 @@ public class NewDocumentInfo {
 
     public void setDocumentTypeId(final String documentTypeId) {
         this.documentTypeId = documentTypeId;
+    }
+
+    public String getFolderTemplateQuery() {
+        return folderTemplateQuery;
+    }
+
+    public void setFolderTemplateQuery(final String folderTemplateQuery) {
+        this.folderTemplateQuery = folderTemplateQuery;
     }
 
     public String getRootPath() {

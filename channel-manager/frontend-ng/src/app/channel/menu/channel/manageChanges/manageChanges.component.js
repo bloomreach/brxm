@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import './hintIcon.scss';
-import template from './hintIcon.html';
+import controller from './manageChanges.controller';
+import template from './manageChanges.html';
 
-function hintIconDirective() {
-  'ngInject';
+const changeManagementComponent = {
+  bindings: {
+    onDone: '&',
+  },
+  controller,
+  template,
+};
 
-  return {
-    restrict: 'E',
-    scope: {
-      text: '@',
-    },
-    template,
-  };
-}
-
-export default hintIconDirective;
+export default changeManagementComponent;

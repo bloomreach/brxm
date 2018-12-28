@@ -346,15 +346,18 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session, final Locale locale) throws ErrorWithPayloadException {
-        final String name = checkNotEmpty("name", newDocumentInfo.getName());
-        final String slug = checkNotEmpty("slug", newDocumentInfo.getSlug());
-        final String documentTemplateQuery = checkNotEmpty("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
-        final String documentTypeId = checkNotEmpty("documentTypeId", newDocumentInfo.getDocumentTypeId());
-        final String rootPath = checkNotEmpty("rootPath", newDocumentInfo.getRootPath());
+        final String name = checkNotBlank("name", newDocumentInfo.getName());
+        final String slug = checkNotBlank("slug", newDocumentInfo.getSlug());
+        final String documentTemplateQuery = checkNotBlank("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
+        final String folderTemplateQuery = newDocumentInfo.getFolderTemplateQuery();
+        final String documentTypeId = checkNotBlank("documentTypeId", newDocumentInfo.getDocumentTypeId());
+        final String rootPath = checkNotBlank("rootPath", newDocumentInfo.getRootPath());
         final String defaultPath = newDocumentInfo.getDefaultPath();
 
         final Node rootFolder = FolderUtils.getFolder(rootPath, session);
-        final Node folder = StringUtils.isEmpty(defaultPath) ? rootFolder : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session);
+        final Node folder = StringUtils.isEmpty(defaultPath)
+                ? rootFolder
+                : FolderUtils.getOrCreateFolder(rootFolder, defaultPath, session, folderTemplateQuery);
         final String folderLocale = FolderUtils.getLocale(folder);
 
         final String encodedName = DocumentNameUtils.encodeDisplayName(name, folderLocale);
@@ -408,8 +411,8 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Document updateDocumentNames(final String uuid, final Document document, final Session session, final String branchId) throws ErrorWithPayloadException {
-        final String displayName = checkNotEmpty("displayName", document.getDisplayName());
-        final String urlName = checkNotEmpty("urlName", document.getUrlName());
+        final String displayName = checkNotBlank("displayName", document.getDisplayName());
+        final String urlName = checkNotBlank("urlName", document.getUrlName());
 
         final Node handle = getHandle(uuid, session);
         final Node folder = FolderUtils.getFolder(handle);
@@ -500,9 +503,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static String checkNotEmpty(final String propName, final String propValue) throws BadRequestException {
-        if (StringUtils.isEmpty(propValue)) {
-            final String errorMessage = "Property '" + propName + "' cannot be empty";
+    private static String checkNotBlank(final String propName, final String propValue) throws BadRequestException {
+        if (StringUtils.isBlank(propValue)) {
+            final String errorMessage = "Property '" + propName + "' cannot be blank or null";
             log.warn(errorMessage);
             throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA, "error", errorMessage));
         }

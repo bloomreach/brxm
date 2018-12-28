@@ -24,7 +24,8 @@
            ng-change="$ctrl.onNameChange($event)"
            type="text"
            required
-           autocomplete="off">
+           autocomplete="off"
+           md-autofocus="!!$ctrl.mdAutofocus">
     <div ng-messages="$ctrl.form.nameField.$error">
       <div ng-message="required">{{ ::'FIELD_REQUIRED' | translate }}</div>
     </div>

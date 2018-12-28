@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import controller from './settings.controller';
 import template from './settings.html';
 
-function channelSettingsDirective() {
-  'ngInject';
+const channelSettingsComponent = {
+  bindings: {
+    onDone: '&',
+    onSuccess: '&',
+    onError: '&',
+  },
+  controller,
+  template,
+};
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-      onSuccess: '&',
-      onError: '&',
-    },
-    template,
-    controller: 'ChannelSettingsCtrl',
-    controllerAs: 'channelSettings',
-  };
-}
-
-export default channelSettingsDirective;
+export default channelSettingsComponent;
