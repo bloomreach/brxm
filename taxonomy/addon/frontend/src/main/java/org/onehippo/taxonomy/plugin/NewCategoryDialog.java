@@ -24,20 +24,22 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.repository.api.StringCodec;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.KeyCodec;
 
-public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
+public abstract class NewCategoryDialog extends Dialog<Taxonomy> {
 
     private String key;
     private String name;
 
     public NewCategoryDialog(IModel<Taxonomy> taxonomyModel) {
         super(taxonomyModel);
+
+        setSize(DialogConstants.SMALL);
+        setTitle(new StringResourceModel("new-category", this));
 
         name = "new category";
 
@@ -110,23 +112,14 @@ public abstract class NewCategoryDialog extends AbstractDialog<Taxonomy> {
         return name;
     }
 
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
-    }
-
-    public IModel<String> getTitle() {
-        return new StringResourceModel("new-category", this);
-    }
-
     /**
      * Get the CMS's URL friendly node name encoder
      */
     protected abstract StringCodec getNodeNameCodec();
 
     /**
-     *
      * Check if we should use ULR ending
+     *
      * @return true if using url encoding
      */
     protected abstract boolean useKeyUrlEncoding();
