@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.systeminfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.PropertyPopulator;
@@ -23,18 +26,16 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Console system info dialog
  */
-public class SystemInfoDialog extends AbstractDialog<Void> {
+public class SystemInfoDialog extends Dialog<Void> {
 
     public SystemInfoDialog() {
+        setTitle(Model.of("System Information"));
         add(new Label("label", getTitle()));
 
         List<ICellPopulator> columns = new ArrayList<>(2);
@@ -49,12 +50,6 @@ public class SystemInfoDialog extends AbstractDialog<Void> {
         });
 
         setCancelVisible(false);
-        setOkLabel(new Model<>("Close"));
+        setOkLabel(Model.of("Close"));
     }
-
-    @Override
-    public IModel<String> getTitle() {
-        return new Model<>("System Information");
-    }
-
 }

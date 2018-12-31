@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,37 +42,33 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.GenerateNewTranslationIdsVisitor;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.LabelledBooleanFieldWidget;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class YamlImportDialog  extends AbstractDialog<Node> {
+public class YamlImportDialog extends Dialog<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(YamlImportDialog.class);
 
-    public class  LookupHashMap<K,V> extends HashMap<K,V> {
+    public class LookupHashMap<K, V> extends HashMap<K, V> {
         private static final long serialVersionUID = 9065806784464553409L;
 
         public K getFirstKey(Object value) {
             if (value == null) {
                 return null;
             }
-            for (Map.Entry<K, V> e: entrySet()) {
+            for (Map.Entry<K, V> e : entrySet()) {
                 if (value.equals(e.getValue())) {
                     return e.getKey();
                 }
@@ -80,8 +77,8 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         }
     }
 
-    private final LookupHashMap<Integer, String> uuidOpts = new LookupHashMap<Integer, String>();
-    private final LookupHashMap<Integer, String> derefOpts = new LookupHashMap<Integer, String>();
+    private final LookupHashMap<Integer, String> uuidOpts = new LookupHashMap<>();
+    private final LookupHashMap<Integer, String> derefOpts = new LookupHashMap<>();
 
     private final JcrNodeModel nodeModel;
     private FileUploadField fileUploadField;
@@ -94,25 +91,21 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     private String derefBehavior = "Throw error when not found";
 
     private void InitMaps() {
-//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING, "Remove existing node with same uuid");
-//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, "Replace existing node with same uuid");
-//        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW, "Throw error on uuid collision");
         uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, "Create new uuids on import");
-
-//        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, "Remove reference when not found");
         derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, "Throw error when not found");
-//        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT, "Add reference to root node when not found");
-
     }
 
     public YamlImportDialog(IModelReference<Node> modelReference) {
+        setTitle(Model.of("YAML Import"));
+        setSize(DialogConstants.LARGE);
+
         InitMaps();
         this.nodeModel = (JcrNodeModel) modelReference.getModel();
 
-        DropDownChoice<String> uuid = new DropDownChoice<>("uuidBehaviors", new PropertyModel<String>(this, "uuidBehavior"), new ArrayList<>(uuidOpts.values()));
-        DropDownChoice<String> reference = new DropDownChoice<>("derefBehaviors", new PropertyModel<String>(this, "derefBehavior"), new ArrayList<>(derefOpts.values()));
+        DropDownChoice<String> uuid = new DropDownChoice<>("uuidBehaviors", new PropertyModel<>(this, "uuidBehavior"), new ArrayList<>(uuidOpts.values()));
+        DropDownChoice<String> reference = new DropDownChoice<>("derefBehaviors", new PropertyModel<>(this, "derefBehavior"), new ArrayList<>(derefOpts.values()));
         LabelledBooleanFieldWidget save = new LabelledBooleanFieldWidget("saveBehavior",
-                new PropertyModel<Boolean>(this, "saveBehavior"),
+                new PropertyModel<>(this, "saveBehavior"),
                 Model.of("Immediate save after import"));
 
         add(uuid.setNullValid(false).setRequired(true));
@@ -120,7 +113,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         add(save);
 
         LabelledBooleanFieldWidget generate = new LabelledBooleanFieldWidget("generate",
-                new PropertyModel<Boolean>(this, "generate"),
+                new PropertyModel<>(this, "generate"),
                 Model.of("Generate new translation ids (only when adding a node)"));
         generate.setEnabled(false);
         add(generate);
@@ -131,7 +124,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         add(fileUploadField = new FileUploadField("fileInput"));
 
         //xml import
-        add(new TextArea<String>("xmlInput", new PropertyModel<String>(this, "xmlInput")));
+        add(new TextArea<String>("xmlInput", new PropertyModel<>(this, "xmlInput")));
 
         setOkLabel("Import");
         setFocus(uuid);
@@ -139,24 +132,15 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
         try {
             String path = this.nodeModel.getNode().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this).setParameters(path)));
-
-            //info("Import content from a file to node: " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {
-            log.error("Error getting node from model for contant import",e);
+            log.error("Error getting node from model for contant import", e);
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
         }
-    }
-
-    public IModel<String> getTitle() {
-        return new Model<>("YAML Import");
     }
 
     @Override
     protected void onOk() {
         final FileUpload upload = fileUploadField.getFileUpload();
-
-        int uuidOpt = uuidOpts.getFirstKey(uuidBehavior);
-        int derefOpt = derefOpts.getFirstKey(derefBehavior);
 
         try {
 
@@ -164,8 +148,6 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
                 warn("No file was uploaded and no yaml input provided. Nothing to import");
                 return;
             }
-
-            String absPath = nodeModel.getNode().getPath();
 
             // If save-after-import is enabled and the import fails, we do a Session.refresh(false) to revert any
             // changes done by the import. However, any changes done *before* the import will then also be lost.
@@ -178,14 +160,12 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
             File tempFile = null;
             ZipFile zipFile = null;
             InputStream in = null;
-            InputStream esvIn = null;
             OutputStream out = null;
             try {
-                final HippoSession session = (HippoSession) UserSession.get().getJcrSession();
                 List<String> nodesBefore = new ArrayList<>();
 
-                if(generate) {
-                    for(NodeIterator nodeIterator = nodeModel.getNode().getNodes(); nodeIterator.hasNext();) {
+                if (generate) {
+                    for (NodeIterator nodeIterator = nodeModel.getNode().getNodes(); nodeIterator.hasNext(); ) {
                         final Node node = nodeIterator.nextNode();
                         nodesBefore.add(node.getPath());
                     }
@@ -206,24 +186,21 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
 
                         configurationService.importZippedContent(tempFile, nodeModel.getNode());
 
-                    }
-                    else if (fileName.endsWith(".yaml")) {
+                    } else if (fileName.endsWith(".yaml")) {
                         in = new BufferedInputStream(upload.getInputStream());
                         configurationService.importPlainYaml(in, nodeModel.getNode());
-                    }
-                    else {
+                    } else {
                         warn("Unrecognized file: only .yaml and .zip can be processed");
                         return;
                     }
-                }
-                else {
-                    in = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
+                } else {
+                    in = new ByteArrayInputStream(xmlInput.getBytes(StandardCharsets.UTF_8));
                     configurationService.importPlainYaml(in, nodeModel.getNode());
                 }
 
                 if (generate) {
                     final Node newNode = findNewNode(nodesBefore, nodeModel.getNode());
-                    if(newNode != null) {
+                    if (newNode != null) {
                         log.debug("Applying new translation ids on node: " + newNode.getPath());
                         newNode.accept(new GenerateNewTranslationIdsVisitor());
                     }
@@ -237,7 +214,6 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
                     nodeModel.getNode().getSession().refresh(false);
                 }
                 IOUtils.closeQuietly(out);
-                IOUtils.closeQuietly(esvIn);
                 IOUtils.closeQuietly(in);
                 if (zipFile != null) {
                     try {
@@ -261,17 +237,18 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
 
     /**
      * Check all childnodes after the import and find the new node
+     *
      * @param nodesBefore list of nodepaths of the childnodes before the import
-     * @param node the node on which the import has been done
+     * @param node        the node on which the import has been done
      * @return the new child node or null (e.g. in case a merge was done and no new node was created)
      * @throws RepositoryException if iterating child nodes goes wrong
      */
     private Node findNewNode(final List<String> nodesBefore, final Node node) throws RepositoryException {
         // iterate all childnodes after the import
-        for(final NodeIterator nodesAfter = node.getNodes(); nodesAfter.hasNext();) {
+        for (final NodeIterator nodesAfter = node.getNodes(); nodesAfter.hasNext(); ) {
             final Node afterNode = nodesAfter.nextNode();
             // if its path is new, it is the new node
-            if(!nodesBefore.contains(afterNode.getPath())) {
+            if (!nodesBefore.contains(afterNode.getPath())) {
                 return afterNode;
             }
         }
@@ -281,6 +258,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     public void setDerefBehavior(String derefBehavior) {
         this.derefBehavior = derefBehavior;
     }
+
     public String getDerefBehavior() {
         return derefBehavior;
     }
@@ -288,6 +266,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     public void setUuidBehavior(String uuidBehavior) {
         this.uuidBehavior = uuidBehavior;
     }
+
     public String getUuidBehavior() {
         return uuidBehavior;
     }
@@ -295,6 +274,7 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     public void setSaveBehavior(boolean saveBehavior) {
         this.saveBehavior = saveBehavior;
     }
+
     public boolean getSaveBehavior() {
         return saveBehavior;
     }
@@ -306,10 +286,4 @@ public class YamlImportDialog  extends AbstractDialog<Node> {
     public void setXmlInput(String xmlInput) {
         this.xmlInput = xmlInput;
     }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=460").makeImmutable();
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,32 +18,29 @@ package org.hippoecm.frontend.plugins.console.menu.help;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.PropertyListView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugins.console.Shortcuts;
 
 /**
  * Console help dialog
  */
-public class HelpDialog extends AbstractDialog<Void> {
+public class HelpDialog extends Dialog<Void> {
 
     public HelpDialog() {
-        add(new Label("label", getTitle()));
+        final String TITLE = "Shortcut descriptions";
+        setTitle(Model.of(TITLE));
+
+        add(new Label("label", TITLE));
         add(new PropertyListView<HelpDescription>("listview", Shortcuts.HELP_ITEMS) {
             protected void populateItem(ListItem<HelpDescription> item) {
-                HelpDescription user = item.getModelObject();
-                item.add(new Label("name", user.getName()));
-                item.add(new Label("description", user.getDescription()));
-                item.add(new Label("shortcut", user.getShortcutName()));
+                HelpDescription helpDescription = item.getModelObject();
+                item.add(new Label("name", helpDescription.getName()));
+                item.add(new Label("description", helpDescription.getDescription()));
+                item.add(new Label("shortcut", helpDescription.getShortcutName()));
             }
         });
 
         setCancelVisible(false);
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return new Model<>("Shortcut descriptions");
     }
 }

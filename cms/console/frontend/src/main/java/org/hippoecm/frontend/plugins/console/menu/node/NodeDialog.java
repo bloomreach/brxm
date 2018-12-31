@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -44,7 +43,7 @@ import org.hippoecm.frontend.widgets.AutoCompleteTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NodeDialog extends AbstractDialog<Node> {
+public class NodeDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeDialog.class);
 
@@ -60,6 +59,9 @@ public class NodeDialog extends AbstractDialog<Node> {
     private final TextField<String> nameField;
 
     public NodeDialog(IModelReference<Node> modelReference) {
+        setTitle(Model.of("Add a new Node"));
+        setSize(DialogConstants.SMALL);
+
         this.modelReference = modelReference;
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
@@ -116,8 +118,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                     if (types.size() == 1) {
                         type = types.iterator().next();
                     }
-                }
-                else if (namesToTypes.size() == 1) {
+                } else if (namesToTypes.size() == 1) {
                     Collection<String> types = namesToTypes.values().iterator().next();
                     if (types.size() == 1) {
                         type = types.iterator().next();
@@ -142,16 +143,10 @@ public class NodeDialog extends AbstractDialog<Node> {
                     if (namesToTypes.get("*") != null) {
                         result.addAll(namesToTypes.get("*"));
                     }
-                }
-                else {
+                } else {
                     namesToTypes.values().forEach(result::addAll);
                 }
-                Iterator<String> resultIter = result.iterator();
-                while (resultIter.hasNext()) {
-                    if (!resultIter.next().toLowerCase().contains(input.toLowerCase())) {
-                        resultIter.remove();
-                    }
-                }
+                result.removeIf(s -> !s.toLowerCase().contains(input.toLowerCase()));
                 return result.iterator();
             }
 
@@ -178,8 +173,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                             }
                         }
                     }
-                }
-                else if (typesToNames.size() == 1) {
+                } else if (typesToNames.size() == 1) {
                     Collection<String> names = typesToNames.values().iterator().next();
                     if (names.size() == 1) {
                         String _name = names.iterator().next();
@@ -204,8 +198,7 @@ public class NodeDialog extends AbstractDialog<Node> {
                     if (typesToNames.get(type) != null) {
                         result.addAll(typesToNames.get(type));
                     }
-                }
-                else {
+                } else {
                     for (String nodeName : namesToTypes.keySet()) {
                         if (!nodeName.equals("*") && nodeName.toLowerCase().contains(input.toLowerCase())) {
                             result.add(nodeName);
@@ -239,16 +232,6 @@ public class NodeDialog extends AbstractDialog<Node> {
         }
     }
 
-    @Override
-    public IModel<String> getTitle() {
-        return Model.of("Add a new Node");
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
-    }
-
     private Collection<NodeType> getDescendantNodeTypes(NodeType nt) {
         Collection<NodeType> result = new HashSet<>();
         NodeTypeIterator subNodeTypes = nt.getDeclaredSubtypes();
@@ -263,17 +246,9 @@ public class NodeDialog extends AbstractDialog<Node> {
     }
 
     private void addNodeType(NodeDefinition nd, NodeType nt) {
-        Collection<String> types = namesToTypes.get(nd.getName());
-        if (types == null) {
-            types = new HashSet<>(5);
-            namesToTypes.put(nd.getName(), types);
-        }
+        Collection<String> types = namesToTypes.computeIfAbsent(nd.getName(), k -> new HashSet<>(5));
         types.add(nt.getName());
-        Collection<String> names = typesToNames.get(nt.getName());
-        if (names == null) {
-            names = new HashSet<>(5);
-            typesToNames.put(nt.getName(), names);
-        }
+        Collection<String> names = typesToNames.computeIfAbsent(nt.getName(), k -> new HashSet<>(5));
         names.add(nd.getName());
     }
 }

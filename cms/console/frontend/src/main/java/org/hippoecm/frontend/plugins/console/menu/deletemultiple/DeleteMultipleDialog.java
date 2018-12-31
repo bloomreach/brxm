@@ -27,7 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeProvider;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
@@ -35,16 +35,16 @@ import org.hippoecm.frontend.plugins.console.tree.StyledTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Opens a dialog with subtree of the node that's been selected and allows the user to select multiple nodes to delete
  * those.
  */
-public class DeleteMultipleDialog extends AbstractDialog<Node> {
+public class DeleteMultipleDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DeleteMultipleDialog.class);
     private static final long serialVersionUID = 1L;
-    
+    private static final IValueMap SIZE = new ValueMap("width=640,height=650").makeImmutable();
+
     private NodeModelReference modelReference;
     private DefaultNestedTree<Node> tree;
     private IModel<Node> selectedModel;
@@ -52,6 +52,9 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
     private ProviderSubset<Node> selectedNodes;
 
     public DeleteMultipleDialog(final NodeModelReference modelReference) {
+        setTitle(Model.of("Delete multiple nodes"));
+        setSize(SIZE);
+        
         this.modelReference = modelReference;
         selectedModel = modelReference.getModel();
 
@@ -132,15 +135,4 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
 
         modelReference.setModel(selectedModel);
     }
-
-    @Override
-    public IModel<String> getTitle() {
-        return Model.of("Delete multiple nodes");
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=640,height=650").makeImmutable();
-    }
-
 }

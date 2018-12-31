@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class MoveDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
     private String name;
     @SuppressWarnings("unused")
@@ -53,13 +53,15 @@ public class MoveDialog extends LookupDialog {
 
     public MoveDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
+        setTitle(Model.of("Move Node"));
+        
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
 
         try {
             if (model.getParentModel() != null) {
                 setSelectedNode(model.getParentModel());
-                
+
                 add(new Label("source", model.getNode().getPath()));
 
                 target = StringUtils.substringBeforeLast(model.getNode().getPath(), "/") + "/";
@@ -68,7 +70,7 @@ public class MoveDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name"));
+                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
             } else {
@@ -86,10 +88,6 @@ public class MoveDialog extends LookupDialog {
             setOkVisible(false);
             setFocusOnCancel();
         }
-    }
-
-    public IModel<String> getTitle() {
-        return Model.of("Move Node");
     }
 
     @Override
@@ -143,7 +141,7 @@ public class MoveDialog extends LookupDialog {
 
     private Node getParentDestNode() {
         IJcrTreeNode selectedTreeNode = getSelectedNode();
-        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null ) {
+        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null) {
             return null;
         }
         return selectedTreeNode.getNodeModel().getObject();
