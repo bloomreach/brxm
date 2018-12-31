@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,40 +33,40 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContentExportDialog extends AbstractDialog<Node> {
+public class ContentExportDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ContentExportDialog.class);
 
     private boolean skipBinary = false;
 
-    private static IValueMap SIZE = new ValueMap("width=855,height=475").makeImmutable();
-
     public ContentExportDialog(final IModelReference<Node> modelReference) {
+        setTitle(Model.of("XML Export " + getNodePath()));
+        setSize(DialogConstants.LARGE);
+        
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
         try {
             String path = nodeModel.getObject().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this).setParameters(path)));
-            //info("Export content from : " + );
         } catch (RepositoryException e) {
-            log.error("Error getting node from model for content export",e);
+            log.error("Error getting node from model for content export", e);
             throw new RuntimeException("Error getting node from model for content export: " + e.getMessage());
         }
 
         IModel<Boolean> skipBinaryModel = new PropertyModel<>(this, "skipBinary");
         AjaxCheckBox skipBinaries = new AjaxCheckBox("skip-binaries", skipBinaryModel) {
             private static final long serialVersionUID = 1L;
+
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
             }
@@ -116,27 +116,20 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         setOkVisible(false);
     }
 
-    public IModel<String> getTitle() {
-        IModel<Node> nodeModel = getModel();
-        String path;
+    private String getNodePath() {
+        final IModel<Node> nodeModel = getModel();
         try {
-            path = nodeModel.getObject().getPath();
+            return nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            path = e.getMessage();
+            return e.getMessage();
         }
-        return new Model<>("XML Export " + path);
     }
-    
+
     public boolean isSkipBinary() {
         return skipBinary;
     }
-    
+
     public void setSkipBinary(boolean skipBinary) {
         this.skipBinary = skipBinary;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return SIZE;
     }
 }

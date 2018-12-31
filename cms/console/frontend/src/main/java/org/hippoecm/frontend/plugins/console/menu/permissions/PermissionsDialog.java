@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,35 +15,40 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.permissions;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.jcr.*;
-import javax.jcr.query.Query;
 import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PermissionsDialog extends AbstractDialog<Node> {
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.jcr.query.Query;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class PermissionsDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * prededfined action constants in checkPermission
+     * predefined action constants in checkPermission
      */
     public static final String READ_ACTION = "read";
     public static final String REMOVE_ACTION = "remove";
     public static final String ADD_NODE_ACTION = "add_node";
     public static final String SET_PROPERTY_ACTION = "set_property";
 
-    public static final String[] JCR_ACTIONS = new String[] { READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
-            SET_PROPERTY_ACTION };
+    public static final String[] JCR_ACTIONS = new String[]{READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
+            SET_PROPERTY_ACTION};
 
     /**
      * Predefined jcr privileges
@@ -62,14 +67,16 @@ public class PermissionsDialog extends AbstractDialog<Node> {
     public static final String EDITOR_PRIVILEGE = "hippo:editor";
     public static final String ADMIN_PRIVILEGE = "hippo:admin";
 
-    public static final String[] JCR_PRIVILEGES = new String[] { READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
+    public static final String[] JCR_PRIVILEGES = new String[]{READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
             SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE,
-            ADMIN_PRIVILEGE };
+            ADMIN_PRIVILEGE};
 
-    static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(PermissionsPlugin plugin) {
-        final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
+        setTitle(Model.of("Permissions for " + getNodePath()));
+        
+        final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
@@ -89,29 +96,29 @@ public class PermissionsDialog extends AbstractDialog<Node> {
             Node subject = nodeModel.getObject();
 
             // FIXME: hardcoded workflowuser
-            privSession = subject.getSession().impersonate(new SimpleCredentials("workflowuser", new char[] {}));
+            privSession = subject.getSession().impersonate(new SimpleCredentials("workflowuser", new char[]{}));
 
             String userID = subject.getSession().getUserID();
             String[] memberships = getMemberships(privSession, userID);
             String[] actions = getAllowedActions(subject, JCR_ACTIONS);
             String[] roles = getAllowedActions(subject, JCR_PRIVILEGES);
 
-            usernameLabel.setDefaultModel(new Model(userID));
-            membershipsLabel.setDefaultModel(new Model(StringUtils.join(memberships, ", ")));
-            allActionsLabel.setDefaultModel(new Model(StringUtils.join(JCR_ACTIONS, ", ")));
-            allPrivilegesLabel.setDefaultModel(new Model(StringUtils.join(JCR_PRIVILEGES, ", ")));
-            actionsLabel.setDefaultModel(new Model(StringUtils.join(actions, ", ")));
-            privilegesLabel.setDefaultModel(new Model(StringUtils.join(roles, ", ")));
+            usernameLabel.setDefaultModel(Model.of(userID));
+            membershipsLabel.setDefaultModel(Model.of(StringUtils.join(memberships, ", ")));
+            allActionsLabel.setDefaultModel(Model.of(StringUtils.join(JCR_ACTIONS, ", ")));
+            allPrivilegesLabel.setDefaultModel(Model.of(StringUtils.join(JCR_PRIVILEGES, ", ")));
+            actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
+            privilegesLabel.setDefaultModel(Model.of(StringUtils.join(roles, ", ")));
 
         } catch (RepositoryException ex) {
-            actionsLabel.setDefaultModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
+            actionsLabel.setDefaultModel(Model.of(ex.getClass().getName() + ": " + ex.getMessage()));
         } finally {
-            if(privSession != null) {
+            if (privSession != null) {
                 privSession.logout();
             }
         }
         setOkVisible(false);
-        setFocusOnOk();
+        setFocusOnCancel();
     }
 
     private boolean hasPermission(Node node, String actions) throws RepositoryException {
@@ -124,24 +131,24 @@ public class PermissionsDialog extends AbstractDialog<Node> {
     }
 
     private String[] getAllowedActions(Node node, String[] actions) throws RepositoryException {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         for (String action : actions) {
             if (hasPermission(node, action)) {
                 list.add(action);
             }
         }
         Collections.sort(list);
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
-    private String[] getMemberships(Session session, String username) throws RepositoryException {
+    private String[] getMemberships(Session session, String username) {
         final String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposysedit:members, '" + username
                 + "')]";
         final String queryType = "xpath";
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         try {
-            Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryType);
-            NodeIterator nodeIter = query.execute().getNodes();
+            final Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryType);
+            final NodeIterator nodeIter = query.execute().getNodes();
             log.debug("Number of memberships found with query '{}' : {}", queryString, nodeIter.getSize());
             while (nodeIter.hasNext()) {
                 Node node = nodeIter.nextNode();
@@ -153,26 +160,15 @@ public class PermissionsDialog extends AbstractDialog<Node> {
             log.error("Error executing query[" + queryString + "]", e);
         }
         Collections.sort(list);
-        return list.toArray(new String[list.size()]);
+        return list.toArray(new String[0]);
     }
 
-    @Override
-    public void onOk() {
-    }
-
-    @Override
-    public void onCancel() {
-    }
-
-    public IModel getTitle() {
+    private String getNodePath() {
         final IModel<Node> nodeModel = getModel();
-        String path;
         try {
-            path = nodeModel.getObject().getPath();
+            return nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            path = e.getMessage();
-            log.warn("Unable to get path for : " + nodeModel);
+            return e.getMessage();
         }
-        return new Model("Permissions for " + path);
     }
 }

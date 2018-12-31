@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 
 /**
- * Simple {@link org.hippoecm.frontend.dialog.AbstractDialog} extension that adds multi-step capability. If you need wizard functionality
- * use {@link org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard} instead.
+ * Simple {@link org.hippoecm.frontend.dialog.AbstractDialog} extension that adds multi-step capability. If you need
+ * wizard functionality use {@link org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard} instead.
  */
-public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
+public abstract class MultiStepDialog<T> extends Dialog<T> {
 
     private int currentStep = 0;
 
@@ -78,11 +78,11 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
         protected abstract int execute();
 
         protected IModel<String> getOkLabel() {
-            return new Model<String>("OK");
+            return Model.of("OK");
         }
 
         protected IModel<String> getCancelLabel() {
-            return new Model<String>("Cancel");
+            return Model.of("Cancel");
         }
 
         public String getInfo() {
@@ -102,8 +102,7 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
         @Override
         protected IModel<String> getOkLabel() {
-            return new Model<String>("Done");
+            return Model.of("Done");
         }
     }
-
 }

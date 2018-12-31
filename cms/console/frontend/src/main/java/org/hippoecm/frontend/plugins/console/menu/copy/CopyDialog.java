@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 public class CopyDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(CopyDialog.class);
 
     private static final IValueMap SIZE = new ValueMap("width=515,height=540");
 
@@ -58,6 +58,7 @@ public class CopyDialog extends LookupDialog {
 
     public CopyDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
+        setSize(SIZE);
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setSelectedNode(model);
@@ -74,12 +75,12 @@ public class CopyDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name"));
+                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
 
                 LabelledBooleanFieldWidget checkbox = new LabelledBooleanFieldWidget("generate",
-                        new PropertyModel<Boolean>(this, "generate"),
+                        new PropertyModel<>(this, "generate"),
                         Model.of("Generate new translation ids"));
                 add(checkbox);
             } else {
@@ -170,10 +171,4 @@ public class CopyDialog extends LookupDialog {
         }
         return parentNode;
     }
-
-    @Override
-    public IValueMap getProperties() {
-        return SIZE;
-    }
-
 }
