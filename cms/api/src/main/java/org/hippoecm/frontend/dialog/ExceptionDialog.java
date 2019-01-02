@@ -64,10 +64,10 @@ public class ExceptionDialog extends Dialog {
     }
 
     /**
-     * Set the title of the exception dialog, by default it will use a translated value from
-     * the ExceptionDialog.properties file(s).
+     * Set the title of the exception dialog, by default it will use a translated value from the
+     * ExceptionDialog.properties file(s).
      *
-     * @param title  The title of the exception dialog
+     * @param title The title of the exception dialog
      */
     public void setTitle(final String title) {
         this.title = title;

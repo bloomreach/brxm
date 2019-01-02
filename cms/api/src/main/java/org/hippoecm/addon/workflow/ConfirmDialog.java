@@ -37,7 +37,7 @@ public abstract class ConfirmDialog extends Dialog implements IWorkflowInvoker {
         super();
         setTitle(Model.of(title));
         setSize(DialogConstants.SMALL);
-        
+
         if (intro == null) {
             Label component;
             add(component = new Label("intro"));
