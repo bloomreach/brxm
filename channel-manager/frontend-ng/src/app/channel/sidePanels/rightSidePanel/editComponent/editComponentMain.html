@@ -29,10 +29,8 @@
         <md-subheader
           md-colors="{background: 'hippo-grey-200'}"
           ng-if="$ctrl.ComponentEditor.isForeignPage()">
-          <div>
-            {{ 'COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT' | translate }}
-            <a href="#" ng-click="$ctrl.ComponentEditor.openComponentPage()" translate="COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK"></a>.
-          </div>
+          <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
+          <div translate="COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK" translate-value-click-action='$ctrl.ComponentEditor.openComponentPage()' translate-compile></div>
         </md-subheader>
         <md-subheader
           md-colors="{background: 'hippo-grey-200'}"
