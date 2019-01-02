@@ -274,8 +274,14 @@
       "locales" : null
     },
     "ERROR_MENU_SAME_NAME_SIBLING" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "RESOLVED",
+        "es" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
+      }
     },
     "ERROR_MENU_SAVE_FAILED" : {
       "status" : "CLEAN",
@@ -654,8 +660,14 @@
       "locales" : null
     },
     "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "RESOLVED",
+        "es" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
+      }
     },
     "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE" : {
       "status" : "CLEAN",
@@ -1006,8 +1018,14 @@
       "locales" : null
     },
     "ERROR_REQUEST_PUBLICATION_FAILED" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "RESOLVED",
+        "es" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
+      }
     },
     "DOCUMENT_NEW_TOOLTIP" : {
       "status" : "CLEAN",
