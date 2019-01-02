@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -224,6 +224,20 @@ describe('Property field component', () => {
       'testField#small': 'Small',
       'testField#medium': 'Medium',
       'testField#large': 'Large',
+    };
+    initComponentController();
+    expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'Small' },
+      { value: 'medium', displayName: 'Medium' },
+      { value: 'large', displayName: 'Large' }]);
+  });
+
+  it('shows translated display values in drop-downs for value list providers', () => {
+    channelInfoDescription.i18nResources = {
+      testField: 'Test Field',
+      'testField.hint': 'Test Field hint text',
+      'testField.small': 'Small',
+      'testField.medium': 'Medium',
+      'testField.large': 'Large',
     };
     initComponentController();
     expect($ctrl.dropDownValues).toEqual([{ value: 'small', displayName: 'Small' },
