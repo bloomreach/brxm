@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,7 +124,11 @@ class PropertyFieldCtrl {
       this.annotation.value.forEach((value) => {
         const key1 = `${this.field}/${value}`;
         const key2 = `${this.field}#${value}`;
-        const displayName = this.info.i18nResources[key1] || this.info.i18nResources[key2] || value;
+        const key3 = `${this.field}.${value}`;
+        const displayName = this.info.i18nResources[key1]
+          || this.info.i18nResources[key2]
+          || this.info.i18nResources[key3]
+          || value;
         this.dropDownValues.push({ value, displayName });
       });
     }
