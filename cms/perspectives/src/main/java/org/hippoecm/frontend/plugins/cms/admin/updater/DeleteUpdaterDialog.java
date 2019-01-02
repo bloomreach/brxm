@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ public class DeleteUpdaterDialog extends Dialog<Node> {
         super(defaultModel);
         setTitle(Model.of("Delete Updater"));
         setSize(DialogConstants.SMALL);
-        
+
         this.container = container;
         add(new Label("message", "Are you sure you want to delete updater '" + getUpdaterName() + "'?"));
     }
