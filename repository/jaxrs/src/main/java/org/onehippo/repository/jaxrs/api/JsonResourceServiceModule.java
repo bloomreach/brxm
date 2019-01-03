@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,13 @@ import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  * Registers a JsonResource with as endpoint the value of the {@link #ENDPOINT_ADDRESS} property.
- *
+ * <p>
  * Custom implementations should implement {@link #getRestResource(SessionRequestContextProvider)} to provide their own
  * Resource.
  */
@@ -68,13 +70,13 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         if (endpointAddress == null) {
-            throw new IllegalStateException(String.format("%s requires a hippo:moduleconfig",getClass().getSimpleName()));
+            throw new IllegalStateException(String.format("%s requires a hippo:moduleconfig", getClass().getSimpleName()));
         }
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
                 .invoker(managedUserSessionInvoker)
                 .singleton(getRestResource(managedUserSessionInvoker))
-                .singleton(new JacksonJsonProvider());
+                .singleton(createJacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
 
         final ObservationManager observationManager = session.getWorkspace().getObservationManager();
@@ -100,5 +102,12 @@ public abstract class JsonResourceServiceModule extends AbstractReconfigurableDa
 
     protected void addEventListener(final JcrEventListener listener) {
         listeners.add(listener);
+    }
+
+    static JacksonJsonProvider createJacksonJsonProvider() {
+        return new JacksonJsonProvider(
+                new ObjectMapper()
+                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                        .disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
     }
 }
