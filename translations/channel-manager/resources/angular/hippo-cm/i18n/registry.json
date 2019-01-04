@@ -1152,12 +1152,14 @@
       "locales" : null
     },
     "COMPONENT_EDITOR_GO_BACK_TO_PAGE_LINK" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "RESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

@@ -260,7 +260,6 @@
   "OK": "OK",
   "FEEDBACK_CANCEL_REQUEST": "Anfrage abbrechen",
   "CONFIRM_DISCARD_CHANGES_TO_COMPONENT": "Nicht gespeicherte Änderungen an Komponente '{{component}}' verwerfen?",
-  "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT": "Die Komponente ist nicht Teil der aktuellen Seite. Zur Ansicht der Komponente",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "Dieses Dokument kann nur im Inhaltseditor bearbeitet werden.",
   "CREATE_DOCUMENT": "Dokument erstellen",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Liste globaler Varianten konnte nicht abgerufen werden",

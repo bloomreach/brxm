@@ -261,7 +261,6 @@
   "OK": "Aceptar",
   "FEEDBACK_CANCEL_REQUEST": "Cancelar solicitud",
   "CONFIRM_DISCARD_CHANGES_TO_COMPONENT": "¿Descartar los cambios no guardados en el componente '{{component}}'?",
-  "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT": "El componente no forma parte de la página actual. Para ver este componente ",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "Este documento solo puede editarse en el editor de contenidos.",
   "CREATE_DOCUMENT": "Crear documento",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "No se pudo recuperar la lista de variantes mundiales",
