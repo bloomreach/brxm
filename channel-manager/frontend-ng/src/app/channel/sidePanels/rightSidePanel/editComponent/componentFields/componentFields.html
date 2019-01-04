@@ -1,5 +1,5 @@
 <!--
-  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -17,9 +17,21 @@
   ng-repeat="componentField in $ctrl.fields track by $index"
   ng-switch="::componentField.type"
   class="md-block qa-component-field component-field-type-{{ ::componentField.type }}"
+  ng-class="{ 'has-hint': componentField.hint }"
 >
 
-  <label ng-if="componentField.type !== 'checkbox'">{{ ::componentField.label }}</label>
+  <label ng-if="componentField.type !== 'checkbox'">
+    <span>{{ ::componentField.label }}
+      <span ng-if="::componentField.required">*</span>
+    </span>
+    <md-icon ng-if="::componentField.hint"
+             class="hippo-hint-icon"
+             md-font-icon="mdi-information-outline">
+      <md-tooltip>
+        {{ ::componentField.hint }}
+      </md-tooltip>
+    </md-icon>
+  </label>
 
   <input
     ng-switch-when="textfield"
@@ -43,6 +55,13 @@
       ng-true-value="'on'"
     >
       {{ ::componentField.label }}
+      <md-icon ng-if="componentField.hint"
+               class="checkbox-hint hippo-hint-icon"
+               md-font-icon="mdi-information-outline">
+        <md-tooltip>
+          {{ componentField.hint }}
+        </md-tooltip>
+      </md-icon>
     </md-checkbox>
   </div>
 
