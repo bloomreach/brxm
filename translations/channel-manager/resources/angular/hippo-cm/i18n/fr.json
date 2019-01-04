@@ -259,7 +259,6 @@
   "OK": "OK",
   "FEEDBACK_CANCEL_REQUEST": "Annuler la requête",
   "CONFIRM_DISCARD_CHANGES_TO_COMPONENT": "Ignorer les modifications non sauvegardées du composant '{{component}}' ?",
-  "COMPONENT_EDITOR_GO_BACK_TO_PAGE_TEXT": "Le composant ne fait pas partie de la page actuelle. Pour voir ce composant",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "Ce document ne peut être modifié que dans l’éditeur de contenu.",
   "CREATE_DOCUMENT": "Créer document",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "La liste des variantes globales n'a pas pu être récupérée",
