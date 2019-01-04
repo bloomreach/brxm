@@ -13,8 +13,8 @@
         <div class="has-edit-button">
           <h3><a href="<@hst.link hippobean=faq />">${faq.question?html}</a></h3>
           <@hst.html hippohtml=faq.answer/>
-          <#-- edit or create faq item -->
-          <@hst.manageContent hippobean=faq documentTemplateQuery="new-faq-item" rootPath="faq" defaultPath="${document.name}-items" folderTemplateQuery="new-faq-item-folder" />
+          <#-- edit faq item -->
+          <@hst.manageContent hippobean=faq />
         </div>
       </#list>
       <#-- create faq item -->
