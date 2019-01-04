@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,31 +31,37 @@ import java.lang.annotation.Target;
 public @interface Parameter {
 
     /**
-     * @return the name of the parameter used, also see org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter( String ). This element is mandatory.
+     * @return the name of the parameter used, also see 
+     * org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameter(String). This element is 
+     * mandatory.
      */
     String name();
 
     /**
-     * @return <code>true</code> if this is a required parameter for the org.hippoecm.hst.core.component.HstComponent to work
+     * @return <code>true</code> if this is a required parameter for the org.hippoecm.hst.core.component.HstComponent to
+     * work
      */
     boolean required() default false;
 
     /**
-     * @return the default value of this parameter when it is not present in the backing org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameters(). If there is
-     * no defaultValue defined, it is an empty String <code>""</code>
+     * @return the default value of this parameter when it is not present in the backing
+     * org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameters(). If there is no defaultValue
+     * defined, it is an empty String <code>""</code>
      */
     String defaultValue() default "";
 
     /**
-     * @return the displayName of this parameter. This can be the 'pretty' name for {@link #name()}. If missing, implementations can do
-     * a fallback to {@link #name()}
+     * @return the displayName of this parameter. This can be the 'pretty' name for {@link #name()}. If missing,
+     * implementations can do a fallback to {@link #name()}
      */
     String displayName() default "";
 
     /**
      * @return the description for this {@link org.hippoecm.hst.core.parameters.Parameter}
+     * @deprecated this value is not used anywhere. To provide extra information about a parameter to the user,
+     * configure component parameter hints in the ParametersInfo class resource bundle.
      */
-
+    @Deprecated
     String description() default "";
 
     /**
@@ -65,6 +71,7 @@ public @interface Parameter {
 
     /**
      * This is still experimental.
+     *
      * @return a PropertyEditor
      */
     Class<? extends PropertyEditor> customEditor() default EmptyPropertyEditor.class;
