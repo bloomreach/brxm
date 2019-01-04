@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,9 @@ public interface ValueListProvider {
     /**
      * Returns an immutable list of values.
      *
-     * @param name the name of a value list
-     * @param locale the locale by which to get a preferred version of the valuelist
+     * @param name    the name of a value list
+     * @param locale  the locale by which to get a preferred version of the valuelist
+     * @param session JCR session used to retrieve selection:valuelist nodes
      * @return a list of value items
      */
     ValueList getValueList(String name, Locale locale, Session session);

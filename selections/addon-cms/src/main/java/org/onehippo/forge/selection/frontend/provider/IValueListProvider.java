@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.onehippo.forge.selection.frontend.provider;
 
 import java.util.List;
 import java.util.Locale;
+
+import javax.jcr.Session;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -72,6 +74,10 @@ public interface IValueListProvider extends ValueListProvider, IClusterable {
      */
     ValueList getValueList(String name, Locale locale);
 
+    default ValueList getValueList(String name, Locale locale, Session session) {
+        return getValueList(name, locale);    
+    }
+   
     /**
      * Returns the names of available value lists
      *
