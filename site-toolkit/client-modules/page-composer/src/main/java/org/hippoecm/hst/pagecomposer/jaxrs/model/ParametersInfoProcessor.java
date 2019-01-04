@@ -58,6 +58,7 @@ public class ParametersInfoProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
+    public static final String HINT_POSTFIX = ".hint";
     private static final String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
 
     private static final Set<CacheKey> FAILED_BUNDLES_TO_LOAD = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -203,6 +204,7 @@ public class ParametersInfoProcessor {
                     }
                 }
                 prop.setLabel(label);
+                prop.setHint(getResourceValue(resourceBundles, propAnnotation.name() + HINT_POSTFIX, null));
 
                 final Annotation annotation = ParameterType.getTypeAnnotation(method);
                 if (annotation instanceof JcrPath) {
