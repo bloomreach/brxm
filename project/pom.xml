@@ -583,12 +583,12 @@
           <version>${maven.plugin.javadoc.version}</version>
           <configuration>
             <source>1.8</source>
-            <javadocVersion>1.8</javadocVersion>
+            <javadocVersion>1.8.0</javadocVersion>
             <links>
               <link>http://download.oracle.com/javase/8/docs/api</link>
             </links>
             <!-- disable JDK 8 doclint for javadoc -->
-            <additionalparam>-Xdoclint:none</additionalparam>
+            <doclint>none</doclint>
           </configuration>
         </plugin>
         <plugin>
