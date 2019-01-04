@@ -239,9 +239,14 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private void checkObsoleteParameters() {
-        if (folderTemplateQuery != null && documentTemplateQuery == null) {
+        if (defaultPath != null && documentTemplateQuery == null) {
+            log.warn("The defaultPath attribute '{}' is set on a manageContent tag, but the " +
+                     "documentTemplateQuery attribute is not set. The defaultPath attribute in template '{}' is " +
+                     "ignored.", defaultPath, getComponentRenderPath());
+        }
+        if (folderTemplateQuery != null && defaultPath == null) {
             log.warn("The folderTemplateQuery attribute '{}' is set on a manageContent tag, but the " +
-                     "documentTemplateQuery attribute is not set. FolderTemplateQuery attribute in template '{}' is " +
+                     "defaultPath attribute is not set. The folderTemplateQuery attribute in template '{}' is " +
                      "ignored.", folderTemplateQuery, getComponentRenderPath());
         }
     }
