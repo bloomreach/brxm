@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,50 +15,50 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ ::channelSettings.subpageTitle }}"
-                 on-back="channelSettings.onDone()"
+                 data-title="{{ ::$ctrl.subpageTitle }}"
+                 on-back="$ctrl.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
 <subpage-content flex
                  layout="row"
                  class="qa-channel-settings">
-  <form name="channelSettings.form"
+  <form name="$ctrl.form"
         flex="initial"
         class="qa-subpage"
-        ng-submit="channelSettings.saveIfValid()"
+        ng-submit="$ctrl.saveIfValid()"
         novalidate>
-    <div ng-repeat="fieldGroup in channelSettings.getFieldGroups() track by fieldGroup.titleKey">
-      <h3 class="md-title qa-fieldgroup">{{ ::channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
+    <div ng-repeat="fieldGroup in $ctrl.getFieldGroups() track by fieldGroup.titleKey">
+      <h3 class="md-title qa-fieldgroup">{{ ::$ctrl.getLabel(fieldGroup.titleKey) }}</h3>
 
       <property-field ng-repeat="field in fieldGroup.value"
                       field="::field"
-                      value="channelSettings.values[field]"
-                      read-only="::channelSettings.isReadOnly()"
+                      value="$ctrl.values[field]"
+                      read-only="::$ctrl.isReadOnly()"
                       error="form[field].$error"
-                      info="::channelSettings.channelInfoDescription">
+                      info="::$ctrl.channelInfoDescription">
       </property-field>
     </div>
 
-    <property-field ng-if="!channelSettings.getFieldGroups().length"
-                    ng-repeat="field in channelSettings.getUngroupedFields()"
+    <property-field ng-if="!$ctrl.getFieldGroups().length"
+                    ng-repeat="field in $ctrl.getUngroupedFields()"
                     field="::field"
-                    value="channelSettings.values[field]"
-                    read-only="::channelSettings.isReadOnly()"
+                    value="$ctrl.values[field]"
+                    read-only="::$ctrl.isReadOnly()"
                     error="form[field].$error"
-                    info="::channelSettings.channelInfoDescription">
+                    info="::$ctrl.channelInfoDescription">
     </property-field>
 
     <div layout="row"
          layout-align="end center">
       <md-button type="button"
                  class="qa-discard"
-                 ng-click="channelSettings.onDone()">
+                 ng-click="$ctrl.onDone()">
         {{ ::'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="qa-action md-raised md-primary"
-                 ng-disabled="channelSettings.isSaveDisabled()">
+                 ng-disabled="$ctrl.isSaveDisabled()">
         {{ ::'SAVE' | translate }}
       </md-button>
     </div>
