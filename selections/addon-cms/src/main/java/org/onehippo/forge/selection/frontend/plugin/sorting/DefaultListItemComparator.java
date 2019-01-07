@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.onehippo.forge.selection.frontend.plugin.sorting;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.forge.selection.frontend.model.ListItem;
 import org.onehippo.forge.selection.frontend.plugin.Config;
@@ -43,7 +45,7 @@ public class DefaultListItemComparator extends AbstractListItemComparator {
      */
     protected void createFieldProvider() {
         final String by = getConfig().getString(Config.SORT_BY);
-        final SortBy sortBy = (by != null) ? SortBy.valueOf(by) : null;
+        final SortBy sortBy = StringUtils.isNotBlank(by) ? SortBy.valueOf(by) : null;
         if (SortBy.key == sortBy) {
             fieldProvider = new KeyFieldProvider();
         }
@@ -57,7 +59,7 @@ public class DefaultListItemComparator extends AbstractListItemComparator {
      */
     protected void createFieldComparator() {
         final String order = getConfig().getString(Config.SORT_ORDER);
-        final SortOrder sortOrder = (order != null) ? SortOrder.valueOf(order) : null;
+        final SortOrder sortOrder = StringUtils.isNotBlank(order) ? SortOrder.valueOf(order) : null;
         if (SortOrder.descending == sortOrder) {
             fieldComparator = new DescendingComparator();
         }
