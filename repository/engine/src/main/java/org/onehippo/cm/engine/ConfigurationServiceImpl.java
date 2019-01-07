@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,12 @@ import org.onehippo.cm.engine.autoexport.AutoExportConfig;
 import org.onehippo.cm.engine.autoexport.AutoExportConstants;
 import org.onehippo.cm.engine.autoexport.AutoExportServiceImpl;
 import org.onehippo.cm.engine.migrator.ConfigurationMigrator;
+import org.onehippo.cm.engine.migrator.ConfigurationSiteMigrator;
 import org.onehippo.cm.engine.migrator.MigrationException;
 import org.onehippo.cm.engine.migrator.PostMigrator;
+import org.onehippo.cm.engine.migrator.PostSiteMigrator;
 import org.onehippo.cm.engine.migrator.PreMigrator;
+import org.onehippo.cm.engine.migrator.PreSiteMigrator;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.ConsoleExportModuleContext;
 import org.onehippo.cm.model.ExportModuleContext;
@@ -211,6 +214,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             }
         }
 
+        // Run pre site migrators for this site
+        applyPreMigrators(newRuntimeConfigModel, new SiteRecord[] { record }, ConfigurationSiteMigrator.class);
+
         //Reload baseline for bootstrap 2+
         final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
 
@@ -230,6 +236,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             }
 
             processHcmSiteWebFileBundles(record);
+
+            // Run post site migrators for this site
+            applyPostMigrators(newRuntimeConfigModel, new SiteRecord[] { record },
+                    autoExportService != null ? autoExportService.isRunning() : false, ConfigurationSiteMigrator.class);
+
             log.info("HCM Site Configuration '{}' was successfuly applied", record.siteName);
         } else {
             log.error("HCM Site '{}' failed to be applied", record.siteName);
@@ -324,8 +335,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
                     }
 
+                    applyPreMigrators(bootstrapModel, null, ConfigurationMigrator.class);
 
-                    applyPreMigrators(bootstrapModel);
+                    if (!hcmSiteRecords.isEmpty()) {
+                        // if the registered site list is not empty then run pre site migrators for the site(s)
+                        applyPreMigrators(bootstrapModel, hcmSiteRecords.values().toArray(new SiteRecord[] {}),
+                                ConfigurationSiteMigrator.class);
+                    }
 
                     // If use.hcm.sites == true and no hst sites are available yet & boostrap model has /hst:hst then consider this
                     // as error, since core bootstrap model should not contain any hst specific configuration
@@ -382,7 +398,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                     // post migrators need to run after the auto export service has been started because the
                     // changes of the migrators might have to be exported
-                    applyPostMigrators(bootstrapModel, autoExportRunning);
+                    applyPostMigrators(bootstrapModel, null, autoExportRunning, ConfigurationMigrator.class);
+
+                    if (!hcmSiteRecords.isEmpty()) {
+                        // if the registered site list is not empty then run post site migrators for the site(s)
+                        applyPostMigrators(bootstrapModel, hcmSiteRecords.values().toArray(new SiteRecord[] {}),
+                                autoExportRunning, ConfigurationSiteMigrator.class);
+                    }
 
                 } finally {
                     if (bootstrapModel != null) {
@@ -410,18 +432,30 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private void applyPreMigrators(final ConfigurationModelImpl bootstrapModel) {
+    private <T> void applyPreMigrators(final ConfigurationModelImpl bootstrapModel, final SiteRecord[] siteRecords,
+            Class<T> configurationMigratorClass) {
         log.info("Loading preMigrators");
-        final List<ConfigurationMigrator> preMigrators = loadMigrators(PreMigrator.class);
+        final boolean coreMigrators = configurationMigratorClass.equals(ConfigurationMigrator.class);
+        final List<T> preMigrators = loadMigrators(coreMigrators ? PreMigrator.class : PreSiteMigrator.class,
+                configurationMigratorClass);
         if (!preMigrators.isEmpty()) {
             log.info("Running preMigrators: {}", preMigrators);
-            runMigrators(bootstrapModel, preMigrators, false);
+            if (coreMigrators) {
+                runMigrators(bootstrapModel, preMigrators, null, false);
+            } else {
+                for (SiteRecord sideRecord : siteRecords) {
+                    runMigrators(bootstrapModel, preMigrators, sideRecord, false);
+                }
+            }
         }
     }
 
-    private void applyPostMigrators(final ConfigurationModelImpl bootstrapModel, final boolean autoExportRunning) throws RepositoryException {
+    private <T> void applyPostMigrators(final ConfigurationModelImpl bootstrapModel, final SiteRecord[] siteRecords,
+            final boolean autoExportRunning, Class<T> configurationMigratorClass) throws RepositoryException {
         log.info("Loading postMigrators");
-        final List<ConfigurationMigrator> postMigrators = loadMigrators(PostMigrator.class);
+        final boolean coreMigrators = configurationMigratorClass.equals(ConfigurationMigrator.class);
+        final List<T> postMigrators = loadMigrators(coreMigrators ? PostMigrator.class : PostSiteMigrator.class,
+                configurationMigratorClass);
         if (!postMigrators.isEmpty()) {
             try {
                 if (session.hasPendingChanges()) {
@@ -430,7 +464,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 log.debug("ConfigurationService: Resetting ObservationManager userData before running postMigrators to enable auto-export of their changes (if any).");
                 session.getWorkspace().getObservationManager().setUserData(null);
                 log.info("ConfigurationService: Running postMigrators: {}", postMigrators);
-                runMigrators(bootstrapModel, postMigrators, autoExportRunning);
+
+                if (coreMigrators) {
+                    runMigrators(bootstrapModel, postMigrators, null, autoExportRunning);
+                } else {
+                    for (SiteRecord sideRecord : siteRecords) {
+                        runMigrators(bootstrapModel, postMigrators, sideRecord, autoExportRunning);
+                    }
+                }
             } finally {
                 log.debug("ConfigurationService: Setting ObservationManager userData again to {} to skip further change events from this session for auto-export", Constants.HCM_ROOT);
                 session.getWorkspace().getObservationManager().setUserData(Constants.HCM_ROOT);
@@ -804,14 +845,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * and after it returns. Failure of one migrator is not expected to prevent any other from running unless the
      * migrator throws a {@link MigrationException} which causes the repository failing to start up.
      * @return {@code true} if all migrators ran without Exception. If one migrator
-     * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel, boolean)}, {@code false} is
+     * fails during their {@link ConfigurationMigrator#migrate(Session, ConfigurationModel, boolean)} or
+     * {@link ConfigurationSiteMigrator#migrate(Session, ConfigurationModel, JcrPath, boolean)}, {@code false} is
      * returned.
      */
-    private void runMigrators(final ConfigurationModel model, final List<ConfigurationMigrator> migrators,
-                              final boolean autoExportRunning) {
-        for (ConfigurationMigrator migrator : migrators) {
+
+    private <T> void runMigrators(final ConfigurationModel model, final List<T> migrators, SiteRecord sideRecord,
+            final boolean autoExportRunning) {
+        for (T migrator : migrators) {
             try {
-                migrator.migrate(session, model, autoExportRunning);
+                if (ConfigurationMigrator.class.isInstance(migrator)) {
+                    ((ConfigurationMigrator) migrator).migrate(session, model, autoExportRunning);
+
+                } else if (ConfigurationSiteMigrator.class.isInstance(migrator)) {
+                    ((ConfigurationSiteMigrator) migrator).migrate(session, model, sideRecord.hstRoot,
+                            autoExportRunning);
+                }
             } catch (MigrationException e) {
                 log.error("Short-circuiting repository startup due to MigrationException in " +
                         "migrator {}", migrator);
@@ -902,21 +951,23 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      *
      * @param annotationClazz
      */
-    private List<ConfigurationMigrator> loadMigrators(final Class<? extends Annotation> annotationClazz) {
+
+    private <T> List<T> loadMigrators(final Class<? extends Annotation> annotationClazz,
+            Class<T> configurationMigratorClass) {
         Set<String> migratorClassNames = new ClasspathResourceAnnotationScanner().scanClassNamesAnnotatedBy(annotationClazz,
                 "classpath*:org/hippoecm/**/*.class",
                 "classpath*:org/onehippo/**/*.class",
                 "classpath*:com/onehippo/**/*.class");
 
-        List<ConfigurationMigrator> migrators = new ArrayList<>();
+        List<T> migrators = new ArrayList<>();
         for (String migratorClassName : migratorClassNames) {
             try {
                 Class<?> migratorClass = Class.forName(migratorClassName);
 
                 Object object = migratorClass.newInstance();
 
-                if (object instanceof ConfigurationMigrator) {
-                    ConfigurationMigrator migrator = (ConfigurationMigrator)object;
+                if (configurationMigratorClass.isInstance(object)) {
+                    T migrator = (T) object;
                     log.info("Adding migrator '{}'", migrator);
                     migrators.add(migrator);
                 } else {
