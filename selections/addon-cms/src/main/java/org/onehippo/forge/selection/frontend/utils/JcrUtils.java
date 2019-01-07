@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package org.onehippo.forge.selection.frontend.utils;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.ItemNotFoundException;
@@ -24,6 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
@@ -149,6 +153,34 @@ public class JcrUtils {
 
         return variant;
     }
+
+    public static List<String> getValueListNames(final Session session) {
+        log.debug("Locating value lists.");
+        final LinkedList<String> valueLists = new LinkedList<>();
+        try {
+            final QueryManager qm = session.getWorkspace().getQueryManager();
+            @SuppressWarnings("deprecation")
+            final Query query = qm.createQuery("//element(*,"+ Namespace.Type.VALUE_LIST +")", Query.XPATH);
+            final NodeIterator iterator = query.execute().getNodes();
+            log.debug("Items in the list: {}", iterator.getSize());
+            while (iterator.hasNext()) {
+                final Node node = iterator.nextNode();
+                final Node parent = node.getParent();
+                if (parent.isNodeType(HippoNodeType.NT_HANDLE) && parent.isNodeType("mix:referenceable")) {
+                    final String identifier = parent.getIdentifier();
+                    valueLists.add(identifier);
+                    log.debug("Adding identifier: ", identifier);
+                } else if (log.isDebugEnabled()) {
+                    log.debug("Skipping {}, parent is not a referenceable handle", node.getPath());
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException occurred while trying to obtain names of value lists: {}", e.getMessage());
+        }
+
+        return Collections.unmodifiableList(valueLists);
+    }
+
 
     private JcrUtils() {}
 }

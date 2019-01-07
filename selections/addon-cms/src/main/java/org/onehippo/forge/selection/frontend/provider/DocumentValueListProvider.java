@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,16 @@
 
 package org.onehippo.forge.selection.frontend.provider;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.forge.selection.frontend.Namespace;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.utils.JcrUtils;
 import org.slf4j.Logger;
@@ -88,29 +80,7 @@ public class DocumentValueListProvider extends Plugin implements IValueListProvi
 
     @Override
     public List<String> getValueListNames() {
-        log.debug("Locating value lists.");
-        LinkedList<String> valueLists = new LinkedList<String>();
-        try {
-            QueryManager qm = obtainSession().getWorkspace().getQueryManager();
-            Query query = qm.createQuery("//element(*,"+ Namespace.Type.VALUE_LIST +")", Query.XPATH);
-            NodeIterator iterator = query.execute().getNodes();
-            log.debug("Items in the list: {}", iterator.getSize());
-            while (iterator.hasNext()) {
-                Node n = iterator.nextNode();
-                Node parent = n.getParent();
-                if (parent.isNodeType(HippoNodeType.NT_HANDLE) && parent.isNodeType("mix:referenceable")) {
-                    String uuid = parent.getIdentifier();
-                    valueLists.add(uuid);
-                    log.debug("Adding uuid: ", uuid);
-                } else if (log.isDebugEnabled()) {
-                    log.debug("skipping {}, parent is not a referenceable handle", n.getPath());
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("RepositoryException occurred while trying to obtain names of value lists: {}", e.getMessage());
-        }
-
-        return Collections.unmodifiableList(valueLists);
+        return JcrUtils.getValueListNames(obtainSession());
     }
 
     /**
