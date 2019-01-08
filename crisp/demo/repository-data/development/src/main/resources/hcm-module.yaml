@@ -1,7 +1,0 @@
-group: 
-  name: crispdemo
-  after: hippo-cms
-project: crispdemo
-module: 
-  name: crispdemo-repository-data-development
-  after: crispdemo-repository-data-application

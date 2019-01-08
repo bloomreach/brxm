@@ -1,5 +1,0 @@
-/hst:hst/hst:configurations/crispdemo/hst:workspace/hst:containers/eventspage/main/content:
-  jcr:primaryType: hst:containeritemcomponent
-  hst:componentclassname: org.onehippo.cms7.crisp.demo.components.EventsContentComponent
-  hst:template: eventspage-main
-  hst:xtype: hst.item

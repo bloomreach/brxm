@@ -1,5 +1,0 @@
-definitions:
-  namespace:
-    crispdemo:
-      uri: http://www.crispdemo.com/crispdemo/nt/1.0
-      cnd: namespaces/crispdemo.cnd

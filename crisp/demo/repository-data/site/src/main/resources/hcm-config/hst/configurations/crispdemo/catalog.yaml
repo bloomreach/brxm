@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/crispdemo/hst:catalog:
-      jcr:primaryType: hst:catalog
-      /crispdemo-catalog:
-        jcr:primaryType: hst:containeritempackage

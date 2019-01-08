@@ -1,5 +1,0 @@
-/hst:hst/hst:configurations/crispdemo/hst:workspace/hst:containers/newspage/main/content:
-  jcr:primaryType: hst:containeritemcomponent
-  hst:componentclassname: org.onehippo.cms7.crisp.demo.components.NewsContentComponent
-  hst:template: newspage-main
-  hst:xtype: hst.item

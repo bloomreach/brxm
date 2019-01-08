@@ -1,4 +1,0 @@
-/hst:hst/hst:configurations/crispdemo/hst:workspace/hst:sitemenus/main/home:
-  .meta:order-before: events
-  jcr:primaryType: hst:sitemenuitem
-  hst:referencesitemapitem: root
