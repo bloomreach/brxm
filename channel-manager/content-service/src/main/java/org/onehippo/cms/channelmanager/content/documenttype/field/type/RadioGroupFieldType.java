@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import javax.jcr.PropertyType;
-import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.valuelist.ValueListService;
 import org.onehippo.forge.selection.frontend.plugin.Config;
 
 public class RadioGroupFieldType extends PrimitiveFieldType {
 
-    private List<String> buttonValues = new LinkedList<>();
-    private List<String> buttonDisplayValues = new LinkedList<>();
+    private String source = null;
+    private String sortComparator = null;
+    private String sortBy = null;
+    private String sortOrder = null;
 
     public RadioGroupFieldType() {
         setType(Type.RADIO_GROUP);
@@ -39,30 +37,11 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        final Optional<String> source = fieldContext.getStringConfig(Config.SOURCE);
-        
-        // TODO: check if a custom provider will work with this code & use it correctly if we can
-        // final Optional<String> valueListProvider = fieldContext.getStringConfig(Config.VALUELIST_PROVIDER);
-        
-        // TODO: deal with the sorting and orientation paramaters of the field configuration
-        final Locale locale = fieldContext.getParentContext().getLocale();
-        final Session session = fieldContext.getParentContext().getSession();
-
-        source.ifPresent(src -> ValueListService.get().getValueList(src, locale, session)
-                .forEach(listItem -> {
-                    buttonValues.add(listItem.getKey());
-                    buttonDisplayValues.add(listItem.getLabel());
-                }));                
-
+        fieldContext.getStringConfig(Config.SOURCE).ifPresent(this::setSource);
+        fieldContext.getStringConfig(Config.SORT_COMPARATOR).ifPresent(this::setSortComparator);
+        fieldContext.getStringConfig(Config.SORT_BY).ifPresent(this::setSortBy);
+        fieldContext.getStringConfig(Config.SORT_ORDER).ifPresent(this::setSortOrder);
         return super.init(fieldContext);
-    }
-
-    public List<String> getButtonValues() {
-        return buttonValues;
-    }
-
-    public List<String> getButtonDisplayValues() {
-        return buttonDisplayValues;
     }
 
     @Override
@@ -73,5 +52,37 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
     @Override
     protected String getDefault() {
         return StringUtils.EMPTY;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(final String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public String getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(final String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public String getSortComparator() {
+        return sortComparator;
+    }
+
+    public void setSortComparator(final String sortComparator) {
+        this.sortComparator = sortComparator;
     }
 }
