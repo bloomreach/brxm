@@ -1,7 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:frontend/cms/cms-services/alternateClassificationDaoService:
-      jcr:primaryType: frontend:plugin
-      fieldPath: taxonomydemo:alternatekeys
-      plugin.class: org.onehippo.taxonomy.plugin.MixinClassificationDaoPlugin
-      taxonomy.classification.dao: service.taxonomy.dao.alternate
