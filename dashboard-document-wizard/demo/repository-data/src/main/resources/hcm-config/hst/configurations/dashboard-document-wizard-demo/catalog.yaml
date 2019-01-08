@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/dashboarddocumentwizarddemo/hst:catalog:
-      jcr:primaryType: hst:catalog
-      /dashboarddocumentwizarddemo-catalog:
-        jcr:primaryType: hst:containeritempackage

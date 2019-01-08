@@ -1,4 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/dashboarddocumentwizarddemo/hst:sitemenus:
-      jcr:primaryType: hst:sitemenus
