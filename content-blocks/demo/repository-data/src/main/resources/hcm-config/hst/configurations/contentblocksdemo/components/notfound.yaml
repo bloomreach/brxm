@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/contentblocksdemo/hst:components/notfound:
-      jcr:primaryType: hst:component
-      hst:componentclassname: org.onehippo.forge.contentblocksdemo.components.NotFound
-      hst:template: notfound.main.content

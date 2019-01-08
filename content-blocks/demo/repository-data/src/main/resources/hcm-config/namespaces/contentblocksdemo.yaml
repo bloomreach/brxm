@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hippo:namespaces/contentblocksdemo:
-      jcr:primaryType: hipposysedit:namespace
-      jcr:mixinTypes: ['mix:referenceable']
