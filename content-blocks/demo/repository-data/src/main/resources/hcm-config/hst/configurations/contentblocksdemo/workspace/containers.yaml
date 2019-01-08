@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/contentblocksdemo/hst:workspace/hst:containers:
-      jcr:primaryType: hst:containercomponentfolder
-      /home:
-        jcr:primaryType: hst:containercomponentfolder
-        /container:
-          jcr:primaryType: hst:containercomponent
-          hst:xtype: HST.vBox

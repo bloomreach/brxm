@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations/contentblocksdemo/hst:components/header:
-      jcr:primaryType: hst:component
-      hst:componentclassname: org.onehippo.forge.contentblocksdemo.components.Header
-      hst:template: base.header

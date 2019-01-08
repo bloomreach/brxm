@@ -1,5 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations:
-      /contentblocksdemo:
-        jcr:primaryType: hst:configuration
