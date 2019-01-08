@@ -1,7 +1,0 @@
-definitions:
-  config:
-    /hst:hst/hst:configurations:
-      /selectiondemo:
-        jcr:primaryType: hst:configuration
-      /selectiondemo-nl:
-        jcr:primaryType: hst:configuration
