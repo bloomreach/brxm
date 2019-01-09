@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend;
 
+import java.lang.StringBuilder;
+import java.util.TimeZone;
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
@@ -179,8 +181,18 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         final HttpSession httpSession = ((ServletWebRequest)getRequest()).getContainerRequest().getSession();
         final CmsSessionContext sessionContext = CmsSessionContext.getContext(httpSession);
         if (sessionContext != null) {
+        	final StringBuilder script = new StringBuilder();
+
             final String locale = sessionContext.getLocale().getLanguage();
-            final String script = "Hippo.Session = {}; Hippo.Session.locale = '" + locale + "';";
+            final TimeZone timezone = UserSession.get().getClientInfo().getProperties().getTimeZone();
+
+            script.append("Hippo.Session = {};");
+            script.append("Hippo.Session.locale = '" + locale + "';");
+
+            if (timezone != null) {
+                script.append("Hippo.Session.timezone = '" + timezone.getID() + "';");
+            }
+
             response.render(JavaScriptHeaderItem.forScript(script, "hippo-session-parameters"));
         }
     }
