@@ -15,19 +15,18 @@
  */
 
 import MutationSummary from 'mutation-summary';
-import contentLinkSvg from '../../../../images/html/edit-document.svg?url';
-import flaskSvg from '../../../../images/html/flask.svg?url';
-import lockSvg from '../../../../images/html/lock.svg?url';
-import menuLinkSvg from '../../../../images/html/edit-menu.svg?url';
-import dropSvg from '../../../../images/html/add.svg?url';
-import disabledSvg from '../../../../images/html/not-allowed.svg?url';
-import plusSvg from '../../../../images/html/plus.svg?url';
-import searchSvg from '../../../../images/html/search.svg?url';
+import contentLinkSvg from '../../../../images/html/edit-document.svg?sprite';
+import flaskSvg from '../../../../images/html/flask.svg?sprite';
+import lockSvg from '../../../../images/html/lock.svg?sprite';
+import menuLinkSvg from '../../../../images/html/edit-menu.svg?sprite';
+import dropSvg from '../../../../images/html/add.svg?sprite';
+import disabledSvg from '../../../../images/html/not-allowed.svg?sprite';
+import plusSvg from '../../../../images/html/plus.svg?sprite';
+import searchSvg from '../../../../images/html/search.svg?sprite';
 
 class OverlayService {
   constructor(
     $log,
-    $http,
     $rootScope,
     $translate,
     ChannelService,
@@ -39,11 +38,11 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
+    SvgService,
   ) {
     'ngInject';
 
     this.$log = $log;
-    this.$http = $http;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
@@ -55,6 +54,7 @@ class OverlayService {
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
+    this.SvgService = SvgService;
 
     this.editMenuHandler = angular.noop;
     this.selectDocumentHandler = angular.noop;
@@ -306,12 +306,8 @@ class OverlayService {
     }
   }
 
-  _getSvg(link) {
-    const referrence = angular.element('<svg>');
-    this.$http.get(link)
-      .then(({ data }) => referrence.replaceWith(data));
-
-    return referrence;
+  _getSvg(svg) {
+    return this.SvgService.getSvg(this.iframeWindow, svg);
   }
 
   _addDropIcon(container, overlayElement) {

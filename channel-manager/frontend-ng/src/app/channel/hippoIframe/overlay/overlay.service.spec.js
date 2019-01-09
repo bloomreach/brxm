@@ -16,10 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
-const DATA_URL = /^data:image\/svg\+xml;base64,(.*)$/;
-
 describe('OverlayService', () => {
-  let $httpBackend;
   let $iframe;
   let $q;
   let $rootScope;
@@ -35,6 +32,7 @@ describe('OverlayService', () => {
   let PageStructureService;
   let PickerService;
   let ScrollService;
+  let SvgService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -46,7 +44,6 @@ describe('OverlayService', () => {
     });
 
     inject((
-      _$httpBackend_,
       _$q_,
       _$rootScope_,
       _ChannelService_,
@@ -59,8 +56,8 @@ describe('OverlayService', () => {
       _OverlayService_,
       _PageStructureService_,
       _ScrollService_,
+      _SvgService_,
     ) => {
-      $httpBackend = _$httpBackend_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
@@ -73,12 +70,11 @@ describe('OverlayService', () => {
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       ScrollService = _ScrollService_;
-
-      $httpBackend.whenGET(DATA_URL)
-        .respond(200, '<svg>test</svg>');
+      SvgService = _SvgService_;
     });
 
     spyOn(CmsService, 'subscribe').and.callThrough();
+    spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $('.iframe');
@@ -328,8 +324,6 @@ describe('OverlayService', () => {
 
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
-      $httpBackend.flush();
-
       const svg = iframe('.hippo-overlay > .hippo-overlay-element-link > svg');
       expect(svg.length).toBe(1);
       expect(svg.eq(0)).toContainText('test');
