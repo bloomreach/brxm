@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,8 @@ public class DocumentInfo {
 
     private boolean canPublish;
     private boolean canRequestPublication;
-
+    private String locale;
+    
     public Type getType() {
         return type;
     }
@@ -94,5 +95,13 @@ public class DocumentInfo {
 
     public void setCanRequestPublication(final boolean canRequestPublication) {
         this.canRequestPublication = canRequestPublication;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public void setLocale(final String locale) {
+        this.locale = locale;
     }
 }

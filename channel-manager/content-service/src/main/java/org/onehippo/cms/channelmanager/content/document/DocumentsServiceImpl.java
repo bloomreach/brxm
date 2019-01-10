@@ -44,6 +44,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentLocaleUtils;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -533,6 +534,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
         setDocumentPublicationState(documentInfo, variant);
+        setDocumentLocale(documentInfo, variant);
         document.setInfo(documentInfo);
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
@@ -548,6 +550,10 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.warn("Failed to set state and branchId for document with id '{}'", uuid, e);
         }
         return document;
+    }
+
+    private static void setDocumentLocale(final DocumentInfo documentInfo, final Node variant) {
+        documentInfo.setLocale(DocumentLocaleUtils.getDocumentLocale(variant));
     }
 
     private static void setDocumentPublicationState(final DocumentInfo documentInfo, final Node variant) {
