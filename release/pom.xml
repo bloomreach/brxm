@@ -41,7 +41,10 @@
   <properties>
     <hippo.release.version>13.1.0-SNAPSHOT</hippo.release.version>
 
+    <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
+         should NOT be updated with product releases. -->
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
+    <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
     <hippo.configuration-management.version>13.1.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>13.1.0-SNAPSHOT</hippo.addon-channel-manager.version>
@@ -177,7 +180,7 @@
       <dependency>
         <groupId>org.onehippo.cms</groupId>
         <artifactId>hippo-cargo-extensions</artifactId>
-        <version>${hippo.commons.version}</version>
+        <version>${hippo.cargo-extensions.version}</version>
       </dependency>
 
       <!-- Hippo Configuration Management -->
@@ -986,7 +989,7 @@
         <dependency>
           <groupId>org.onehippo.cms</groupId>
           <artifactId>hippo-cargo-extensions</artifactId>
-          <version>${hippo.commons.version}</version>
+          <version>${hippo.cargo-extensions.version}</version>
           <scope>runtime</scope>
         </dependency>
       </dependencies>
@@ -1035,7 +1038,7 @@
               <dependency>
                 <groupId>org.onehippo.cms</groupId>
                 <artifactId>hippo-cargo-extensions</artifactId>
-                <version>${hippo.commons.version}</version>
+                <version>${hippo.cargo-extensions.version}</version>
               </dependency>
             </dependencies>
           </plugin>
