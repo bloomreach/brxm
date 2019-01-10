@@ -16,14 +16,17 @@
 
 import template from './nodes.template.html';
 
-const treeNodesComponent = {
+const treeNodesDirective = () => ({
+  restrict: 'E',
   require: {
     hippoTree: '^^hippoTree',
   },
-  bindings: {
+  bindToController: {
     items: '=',
   },
+  controller: angular.noop,
+  controllerAs: '$ctrl',
   template,
-};
+});
 
-export default treeNodesComponent;
+export default treeNodesDirective;

@@ -29,7 +29,7 @@ class TreeNodeCtrl {
     let treeScope = this.$scope;
     do {
       treeScope = treeScope.$parent;
-    } while (treeScope && !treeScope.hippoTree);
+    } while (treeScope && !treeScope.hasOwnProperty('hippoTree'));
 
     return treeScope;
   }

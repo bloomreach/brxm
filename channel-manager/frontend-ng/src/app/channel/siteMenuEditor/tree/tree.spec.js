@@ -71,7 +71,7 @@ describe('The tree rendered by the tree directive', () => {
       </hippo-tree>`,
     );
     $compile($element)($scope);
-    $scope.$digest();
+    $rootScope.$digest();
     const tree = $element.find('div.angular-ui-tree > hippo-tree-nodes > ol.angular-ui-tree-nodes');
     const ctrl = $element.controller('hippoTree');
 

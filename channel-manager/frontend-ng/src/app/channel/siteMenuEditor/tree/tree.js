@@ -16,7 +16,7 @@
 
 import uiTree from 'angular-ui-tree';
 import hippoTreeComponent from './tree.component';
-import hippoTreeNodesComponent from './nodes.component';
+import hippoTreeNodesDirective from './nodes.directive';
 import hippoTreeNodeComponent from './node.component';
 import HippoTreeCtrl from './tree.controller';
 import HippoTreeNodeCtrl from './node.controller';
@@ -26,7 +26,7 @@ const uiTreeModule = angular
     uiTree,
   ])
   .component('hippoTree', hippoTreeComponent)
-  .component('hippoTreeNodes', hippoTreeNodesComponent)
+  .directive('hippoTreeNodes', hippoTreeNodesDirective)
   .component('hippoTreeNode', hippoTreeNodeComponent)
   .controller('HippoTreeCtrl', HippoTreeCtrl)
   .controller('HippoTreeNodeCtrl', HippoTreeNodeCtrl);
