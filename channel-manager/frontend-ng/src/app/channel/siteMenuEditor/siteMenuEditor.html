@@ -42,10 +42,10 @@
                            class="md-icon-button"
                            ng-click="toggle(); hippoTree.toggle(item)"
                            ng-if="!hippoTree.isEmpty(item)"
-                           aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
+                           aria-label="{{ (item.collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
-                  <md-icon class="mdi-18" md-font-icon="{{ collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
+                  <md-icon class="mdi-18" md-font-icon="{{ item.collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
                 </md-button>
                 <div ng-class="{'empty-tree-item': hippoTree.isEmpty(item)}">{{ item.title }}</div>
               </div>
