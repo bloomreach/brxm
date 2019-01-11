@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-const REST_API_PATH = 'ws/content';
+const REST_API_CONTENT_PATH = 'ws/content';
+const REST_API_VALUELISTS_PATH = 'ws/valuelists';
 
 class ContentService {
   constructor($http, $q, ConfigService, PathService) {
@@ -30,39 +31,48 @@ class ContentService {
   }
 
   branchDocument(id) {
-    return this._send('POST', ['documents', id, 'branch']);
+    return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', id, 'branch']);
   }
 
   getEditableDocument(id) {
-    return this._send('POST', ['documents', id, 'editable']);
+    return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', id, 'editable']);
   }
 
   getDocument(id, branchId) {
-    return this._send('GET', ['documents', id, branchId]);
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId]);
   }
 
   saveDocument(doc) {
-    return this._send('PUT', ['documents', doc.id, 'editable'], doc);
+    return this._send(REST_API_CONTENT_PATH, 'PUT', ['documents', doc.id, 'editable'], doc);
   }
 
   discardChanges(id) {
-    return this._send('DELETE', ['documents', id, 'editable']);
+    return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', id, 'editable']);
   }
 
   saveField(documentId, fieldName, value) {
-    return this._send('PUT', ['documents', documentId, 'editable', fieldName], value);
+    return this._send(REST_API_CONTENT_PATH, 'PUT', ['documents', documentId, 'editable', fieldName], value);
   }
 
   deleteDocument(id) {
-    return this._send('DELETE', ['documents', id]);
+    return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', id]);
   }
 
   getDocumentType(id) {
-    return this._send('GET', ['documenttypes', id], null, true);
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['documenttypes', id], null, true);
   }
 
-  _send(method, pathElements, data = null, async = false, params = {}) {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+  getValueList(id, locale, sortComparator, sortBy, sortOrder) {
+    return this._send(REST_API_VALUELISTS_PATH, 'GET', [id], null, false, { 
+      'locale': locale,
+      'sortComparator' : sortComparator,
+      'sortBy': sortBy,
+      'sortOrder': sortOrder,
+    });
+  }
+
+  _send(restPath, method, pathElements, data = null, async = false, params = {}) {
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), restPath, ...pathElements);
     const url = encodeURI(path);
     const headers = {};
     const opts = {

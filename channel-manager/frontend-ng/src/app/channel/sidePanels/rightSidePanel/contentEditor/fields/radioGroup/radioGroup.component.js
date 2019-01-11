@@ -16,19 +16,27 @@
 
 import template from './radioGroup.html';
 import RadioGroupFieldCtrl from './radioGroup.controller';
+import './radioGroup.scss';
 
 const radioGroupComponent = {
   bindings: {
     fieldType: '<',
-    name: '<',
     isRequired: '<',
+    locale: '<',
+    name: '<',
+    ngModel: '<',
     onFieldBlur: '&',
     onFieldFocus: '&',
+    optionsSource: '<',
+    orientation: '<',
+    sortBy: '<',
+    sortComparator: '<',
+    sortOrder: '<',
   },
   controller: RadioGroupFieldCtrl,
   template,
   require: {
-    ngModel: 'ngModel',
+    ngModelCtrl: 'ngModel',
   },
 };
 

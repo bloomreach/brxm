@@ -14,11 +14,12 @@
   limitations under the License.
   -->
 <md-radio-group class="md-primary"
+                ng-class="{'horizontal': $ctrl.isOrientationHorizontal()}"
                 name="{{::$ctrl.name}}"
-                ng-change="$ctrl.valueChanged()"
                 ng-blur="$ctrl.onFieldBlur()"
+                ng-change="$ctrl.ngModelCtrl.$setViewValue($ctrl.ngModel)"
                 ng-focus="$ctrl.onFieldFocus()"
-                ng-model="$ctrl.ngModel.$modelValue"
+                ng-model="$ctrl.ngModel"
                 ng-required="$ctrl.isRequired">
   <md-radio-button ng-repeat="buttonValue in $ctrl.buttonValues()" ng-value="buttonValue">
     {{ ::$ctrl.buttonDisplayValues($index) }}

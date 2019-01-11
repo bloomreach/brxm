@@ -15,24 +15,38 @@
  */
 
 class RadioGroupFieldController {
-/*
-  constructor(ConfigService) {
+  constructor(ContentService) {
     'ngInject';
 
-    this.ConfigService = ConfigService;
+    this.ContentService = ContentService;
   }
 
   $onInit() {
+    this._loadOptionsList();
   }
-  
-*/
+
+  isOrientationHorizontal() {
+    return this.orientation !== 'vertical';
+  }
+
   buttonValues() {
-    return ['a', 'b', 'c'];
+    return this.keys;
   }
 
   buttonDisplayValues(index) {
-    const values = ['Aap', 'Boer', 'Coe'];
-    return values[index];
+    return this.labels[index];
+  }
+
+  _loadOptionsList() {
+    this.keys = [];
+    this.labels = [];
+    this.ContentService.getValueList(this.optionsSource, this.locale, this.sortComparator, this.sortBy, this.sortOrder)
+      .then((document) => {
+        document.forEach((item) => {
+          this.keys.push(item.key);
+          this.labels.push(item.label);
+        });
+      });
   }
 }
 

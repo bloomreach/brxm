@@ -15,9 +15,6 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +27,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
     private String sortComparator = null;
     private String sortBy = null;
     private String sortOrder = null;
+    private String orientation = null;
 
     public RadioGroupFieldType() {
         setType(Type.RADIO_GROUP);
@@ -41,6 +39,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         fieldContext.getStringConfig(Config.SORT_COMPARATOR).ifPresent(this::setSortComparator);
         fieldContext.getStringConfig(Config.SORT_BY).ifPresent(this::setSortBy);
         fieldContext.getStringConfig(Config.SORT_ORDER).ifPresent(this::setSortOrder);
+        fieldContext.getStringConfig(Config.ORIENTATION).ifPresent(this::setOrientation);
         return super.init(fieldContext);
     }
 
@@ -84,5 +83,13 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
 
     public void setSortComparator(final String sortComparator) {
         this.sortComparator = sortComparator;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(final String orientation) {
+        this.orientation = orientation;
     }
 }
