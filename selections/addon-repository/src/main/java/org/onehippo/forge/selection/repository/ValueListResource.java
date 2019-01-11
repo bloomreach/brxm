@@ -23,10 +23,15 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
+import org.onehippo.forge.selection.frontend.model.ValueList;
+import org.onehippo.forge.selection.frontend.plugin.sorting.IListItemComparator;
+import org.onehippo.forge.selection.repository.utils.SortUtils;
 import org.onehippo.forge.selection.repository.valuelist.ValueListService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
@@ -47,14 +52,38 @@ public class ValueListResource {
     }
 
     @GET
-    @Path("documents/{documentId}/{locale}")
+    @Path("{source:.*}")
     public Response getDocument(
-            @PathParam("documentId") final String id,
-            @PathParam("locale") final String locale,
+            @PathParam("source") final String source,
+            @QueryParam("locale") final String locale,
+            @QueryParam("sortComparator") final String sortComparator,
+            @QueryParam("sortBy") final String sortBy,
+            @QueryParam("sortOrder") final String sortOrder,
             @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK, NO_CACHE,
-                (session) -> ValueListService.get().getValueList(id, new Locale(locale), session)
+        return executeTask(servletRequest,
+                (session) -> {
+                    final String checkedSource = checkSource(source);
+                    final ValueList valueList = 
+                            ValueListService.get().getValueList(checkedSource, new Locale(locale), session);
+                    if (StringUtils.isNotBlank(sortComparator)) {
+                        IListItemComparator comparator = SortUtils.getComparator(sortComparator, sortBy, sortOrder);
+                        if (comparator != null) {
+                            valueList.sort(comparator);
+                        }
+                    }
+                    return valueList;
+                }
         );
+    }
+
+    /**
+     * Prepend a source that is a path with a starting slash. Source can also be a node identifier.
+     */
+    private String checkSource(final String source) {
+        if (StringUtils.contains(source, '/')) {
+            return "/" + source;
+        }
+        return source;
     }
 
     /**
@@ -62,21 +91,17 @@ public class ValueListResource {
      * (which may be an error, encapsulated in an Exception).
      *
      * @param servletRequest current HTTP servlet request to derive contextual input
-     * @param successStatus  HTTP status code in case of success
-     * @param cacheControl   HTTP Cache-Control response header
      * @param task           the EndPointTask to execute
      * @return a JAX-RS response towards the client
      */
     private Response executeTask(final HttpServletRequest servletRequest,
-                                 final Response.Status successStatus,
-                                 final CacheControl cacheControl,
                                  final EndPointTask task) {
         final Session session = sessionRequestContextProvider.getJcrSession(servletRequest);
         try {
             final Object result = task.execute(session);
-            return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
+            return Response.status(Response.Status.OK).cacheControl(NO_CACHE).entity(result).build();
         } catch (final ErrorWithPayloadException e) {
-            return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
+            return Response.status(e.getStatus()).cacheControl(NO_CACHE).entity(e.getPayload()).build();
         }
     }
 
