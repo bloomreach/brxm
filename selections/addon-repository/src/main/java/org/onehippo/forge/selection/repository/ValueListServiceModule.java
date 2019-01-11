@@ -43,7 +43,8 @@ public class ValueListServiceModule extends JsonResourceServiceModule {
 
     private abstract static class ValueListsEventListener extends JcrEventListener {
         ValueListsEventListener() {
-            super(ALL_EVENTS, "/content/documents", true, null, new String[]{Namespace.Type.VALUE_LIST});
+            super(ALL_EVENTS, "/content/documents", true, null,
+                    new String[]{Namespace.Type.VALUE_LIST, Namespace.Type.VALUE_LIST_ITEM});
         }
     }
 }
