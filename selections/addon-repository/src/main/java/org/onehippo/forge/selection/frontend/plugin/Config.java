@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,5 +32,6 @@ public class Config {
     public final static String NAME_PROVIDER = "nameProvider";
     public final static String OBSERVABLE_ID = "observableId";
     public final static String OBSERVER_ID = "observerId";
+    public final static String ORIENTATION = "orientation";
     public final static String SHOW_DEFAULT = "showDefault";
 }

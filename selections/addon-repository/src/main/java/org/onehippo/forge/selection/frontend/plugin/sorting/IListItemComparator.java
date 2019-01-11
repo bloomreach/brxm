@@ -31,7 +31,7 @@ public interface IListItemComparator extends Comparator<ListItem>, Serializable 
     /**
      * @param config as used by Wicket CMS plugins
      * @deprecated use {@link IListItemComparator#setSortOptions(SortBy, SortOrder)} setSort} instead. This method will
-     * be removed in version 14.0.0.
+     * be removed in a future version.
      */
     @Deprecated
     void setConfig(IPluginConfig config);
