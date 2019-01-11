@@ -37,8 +37,6 @@ public class DocumentValueListProvider extends Plugin implements IValueListProvi
     @Deprecated
     private final static String CONFIG_SOURCE = "source";
 
-    private static final long serialVersionUID = 452349519288021987L;
-
     private static final Logger log = LoggerFactory.getLogger(DocumentValueListProvider.class);
 
     public DocumentValueListProvider(IPluginContext context, IPluginConfig config) {

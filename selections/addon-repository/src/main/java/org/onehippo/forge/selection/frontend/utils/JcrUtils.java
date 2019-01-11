@@ -169,7 +169,7 @@ public class JcrUtils {
                 if (parent.isNodeType(HippoNodeType.NT_HANDLE) && parent.isNodeType("mix:referenceable")) {
                     final String identifier = parent.getIdentifier();
                     valueLists.add(identifier);
-                    log.debug("Adding identifier: ", identifier);
+                    log.debug("Adding identifier: {}", identifier);
                 } else if (log.isDebugEnabled()) {
                     log.debug("Skipping {}, parent is not a referenceable handle", node.getPath());
                 }

@@ -5,4 +5,4 @@ definitions:
       hipposys:className: org.onehippo.forge.selection.repository.ValueListServiceModule
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
-        jaxrs.endpoint.address: /valuelist
+        jaxrs.endpoint.address: /valuelists

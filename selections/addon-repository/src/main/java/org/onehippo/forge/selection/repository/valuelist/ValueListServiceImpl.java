@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 import javax.jcr.Session;
 
 import org.onehippo.forge.selection.frontend.model.ValueList;
-import org.onehippo.forge.selection.frontend.provider.ValueListProvider;
 import org.onehippo.forge.selection.frontend.utils.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-public class ValueListServiceImpl implements ValueListProvider, ValueListService {
+public class ValueListServiceImpl implements ValueListService {
 
     private static final Logger log = LoggerFactory.getLogger(ValueListServiceImpl.class);
     private static final ValueListServiceImpl INSTANCE = new ValueListServiceImpl();
@@ -64,6 +63,7 @@ public class ValueListServiceImpl implements ValueListProvider, ValueListService
     /**
      * Invalidate the value lists cache
      */
+    @Override
     public void invalidateCache() {
         VALUE_LISTS.invalidateAll();
     }
