@@ -96,20 +96,12 @@ describe('DomService', () => {
 
   it('rejects on failed loading', (done) => {
     testInIframe((iframeWindow) => {
-      const onSuccess = jasmine.createSpy();
-      const onFailure = jasmine.createSpy();
-
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
         'anotherFile.css',
       ])
-        .then(onSuccess)
-        .catch(onFailure)
-        .finally(() => {
-          expect(onSuccess).not.toHaveBeenCalled();
-          expect(onFailure).toHaveBeenCalled();
-          done();
-        });
+        .then(() => fail(' calling DomService.addCssLinks() should have rejected'))
+        .catch(done);
 
       const links = $j('head link[href$="File.css"]', iframeWindow.document);
       links.eq(0).trigger('load');
@@ -119,20 +111,12 @@ describe('DomService', () => {
 
   it('resolves on complete loading', (done) => {
     testInIframe((iframeWindow) => {
-      const onSuccess = jasmine.createSpy();
-      const onFailure = jasmine.createSpy();
-
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
         'anotherFile.css',
       ])
-        .then(onSuccess)
-        .catch(onFailure)
-        .finally(() => {
-          expect(onSuccess).toHaveBeenCalled();
-          expect(onFailure).not.toHaveBeenCalled();
-          done();
-        });
+        .then(done)
+        .catch(() => fail('calling DomService.addCssLinks() should have resolved'));
 
       const links = $j('head link[href$="File.css"]', iframeWindow.document);
       links.eq(0).trigger('load');
