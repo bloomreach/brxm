@@ -20,12 +20,11 @@ export default class SvgService {
 
     this.$http = $http;
     this.$q = $q;
+
+    this.cache = {};
   }
 
   _loadSprite(src) {
-    if (!this.cache) {
-      this.cache = {};
-    }
     if (!this.cache[src]) {
       this.cache[src] = this.$http.get(src).then(({ data }) => data);
     }
