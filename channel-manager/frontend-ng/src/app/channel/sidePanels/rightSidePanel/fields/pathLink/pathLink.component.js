@@ -16,13 +16,8 @@
 
 import controller from './pathLink.controller';
 import nodeLinkComponent from '../nodeLink/nodeLink.component';
-import template from '../nodeLink/nodeLink.html';
 import './pathLink.scss';
 
-const pathLinkComponent = {
-  ...nodeLinkComponent,
-  controller,
-  template,
-};
+const pathLinkComponent = { ...nodeLinkComponent, controller };
 
 export default pathLinkComponent;

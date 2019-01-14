@@ -18,6 +18,8 @@ import NodeLinkController from '../nodeLink/nodeLink.controller';
 
 class PathLinkController extends NodeLinkController {
   $onInit() {
+    super.$onInit();
+
     this.$scope.$on('edit-component:select-document', (event, parameterName) => this._onSelectDocument(parameterName));
   }
 
