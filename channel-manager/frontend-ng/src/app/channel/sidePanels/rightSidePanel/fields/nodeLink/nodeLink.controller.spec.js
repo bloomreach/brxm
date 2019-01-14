@@ -22,6 +22,7 @@ describe('nodeLinkController', () => {
   let $timeout;
   let PickerService;
   let config;
+  let mdInputContainer;
   let ngModel;
   let onBlur;
   let onFocus;
@@ -45,6 +46,7 @@ describe('nodeLinkController', () => {
     });
 
     ngModel = jasmine.createSpyObj('ngModel', [
+      '$setTouched',
       '$setViewValue',
       '$modelValue',
     ]);
@@ -57,6 +59,11 @@ describe('nodeLinkController', () => {
     onBlur = jasmine.createSpy('onBlur');
     onFocus = jasmine.createSpy('onFocus');
 
+    mdInputContainer = jasmine.createSpyObj('mdInputContainer', [
+      'setFocused',
+      'setInvalid',
+    ]);
+
     $ctrl = $componentController('nodeLink', {
       $scope,
       $element,
@@ -66,6 +73,7 @@ describe('nodeLinkController', () => {
       displayName: 'TestDisplayName',
       hint: 'TestHint',
       index: 0,
+      mdInputContainer,
       name: 'TestField',
       ngModel,
       onBlur,
@@ -90,6 +98,16 @@ describe('nodeLinkController', () => {
       expect($ctrl.linkPicked).toBeFalsy();
       expect($ctrl.name).toEqual('TestField');
       expect($ctrl.ngModel.$modelValue).toEqual('model-value');
+    });
+
+    it('reacts on model validity changes', () => {
+      init();
+
+      ngModel.$invalid = true;
+      ngModel.$touched = true;
+      $scope.$digest();
+
+      expect(mdInputContainer.setInvalid).toHaveBeenCalledWith(true);
     });
   });
 
@@ -148,7 +166,6 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on parent container', () => {
-      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
       $ctrl.focus('event');
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
     });
@@ -162,7 +179,6 @@ describe('nodeLinkController', () => {
     });
 
     it('blurs parent container', () => {
-      $ctrl.mdInputContainer = { setFocused: jasmine.createSpy() };
       $ctrl.blur('event');
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
@@ -255,6 +271,7 @@ describe('nodeLinkController', () => {
 
       expect($ctrl.displayName).toEqual('');
       expect($ctrl.linkPicked).toBe(false);
+      expect(ngModel.$setTouched).toHaveBeenCalled();
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('');
     });
   });
