@@ -523,16 +523,27 @@ describe('ComponentEditorService', () => {
 
   describe('foreign page state', () => {
     beforeEach(() => {
+      ComponentEditor.component = { id: 'id1' };
+
       spyOn(PageMetaDataService, 'get').and.returnValue({ [HstConstants.PAGE_ID]: 'id1' });
     });
 
     it('should not be on a foreign page', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
       ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id1' };
 
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
+    it('should not be on a foreign page for a shared container', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue({});
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
     it('should be on a foreign page', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
       ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
 
       expect(ComponentEditor.isForeignPage()).toBe(true);

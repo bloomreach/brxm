@@ -91,8 +91,9 @@ class ComponentEditorService {
   isForeignPage() {
     const currentPage = this.PageMetaDataService.get();
 
-    return currentPage && this.page
-      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID];
+    return currentPage && this.page && this.component
+      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID]
+      && !this.PageStructureService.getComponentById(this.component.id);
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
