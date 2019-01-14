@@ -19,7 +19,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
-public class NoRepositoryAvailablePage extends PluginPage {
+public class NoRepositoryAvailablePage extends NavAppPage {
 
     public NoRepositoryAvailablePage() {
         super(new IApplicationFactory() {

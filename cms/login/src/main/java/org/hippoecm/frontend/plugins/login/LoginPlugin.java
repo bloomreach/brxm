@@ -33,8 +33,8 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.NavAppPage;
 import org.hippoecm.frontend.PluginApplication;
-import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -133,7 +133,7 @@ public class LoginPlugin extends RenderPlugin {
     protected ResourceReference getFaviconReference() {
         final PluginApplication application = (PluginApplication) getApplication();
         final ResourceReference reference = application.getPluginApplicationFavIconReference();
-        return reference != null ? reference: DEFAULT_FAVICON;
+        return reference != null ? reference : DEFAULT_FAVICON;
     }
 
     protected LoginPanel createLoginPanel(final String id, final LoginConfig config, final LoginHandler handler) {
@@ -159,9 +159,9 @@ public class LoginPlugin extends RenderPlugin {
         @Override
         public void loginSuccess() {
             if (parameters != null) {
-                setResponsePage(PluginPage.class, parameters);
+                setResponsePage(NavAppPage.class, parameters);
             } else {
-                setResponsePage(PluginPage.class);
+                setResponsePage(NavAppPage.class);
             }
         }
     }
