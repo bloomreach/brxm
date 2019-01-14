@@ -43,20 +43,19 @@ class DomService {
     return iframeJQueryElement.contents()[0];
   }
 
-  addCss(window, css) {
-    const link = $(`<style>${css}</style>`);
-    $(window.document).find('head').append(link);
-  }
-
   addCssLinks(window, files) {
-    files.forEach((file) => {
-      const link = $('<link>', {
+    return this.$q.all(files.map(file => this.$q((resolve, reject) => {
+      const link = angular.element('<link>', {
         rel: 'stylesheet',
         href: file,
       });
 
-      $(window.document).find('head').append(link);
-    });
+      // resolves relative path in order to use absolute one inside the iframe
+      link.attr('href', link[0].href)
+        .on('load', () => this.$rootScope.$apply(resolve))
+        .on('error', () => this.$rootScope.$apply(reject))
+        .appendTo(angular.element('head', window.document));
+    })));
   }
 
   addScript(window, url) {

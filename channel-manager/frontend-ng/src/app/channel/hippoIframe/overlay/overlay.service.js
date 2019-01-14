@@ -15,14 +15,14 @@
  */
 
 import MutationSummary from 'mutation-summary';
-import contentLinkSvg from '../../../../images/html/edit-document.svg';
-import flaskSvg from '../../../../images/html/flask.svg';
-import lockSvg from '../../../../images/html/lock.svg';
-import menuLinkSvg from '../../../../images/html/edit-menu.svg';
-import dropSvg from '../../../../images/html/add.svg';
-import disabledSvg from '../../../../images/html/not-allowed.svg';
-import plusSvg from '../../../../images/html/plus.svg';
-import searchSvg from '../../../../images/html/search.svg';
+import contentLinkSvg from '../../../../images/html/edit-document.svg?sprite';
+import flaskSvg from '../../../../images/html/flask.svg?sprite';
+import lockSvg from '../../../../images/html/lock.svg?sprite';
+import menuLinkSvg from '../../../../images/html/edit-menu.svg?sprite';
+import dropSvg from '../../../../images/html/add.svg?sprite';
+import disabledSvg from '../../../../images/html/not-allowed.svg?sprite';
+import plusSvg from '../../../../images/html/plus.svg?sprite';
+import searchSvg from '../../../../images/html/search.svg?sprite';
 
 class OverlayService {
   constructor(
@@ -38,6 +38,7 @@ class OverlayService {
     HippoIframeService,
     MaskService,
     PageStructureService,
+    SvgService,
   ) {
     'ngInject';
 
@@ -53,6 +54,7 @@ class OverlayService {
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
+    this.SvgService = SvgService;
 
     this.editMenuHandler = angular.noop;
     this.selectDocumentHandler = angular.noop;
@@ -304,24 +306,24 @@ class OverlayService {
     }
   }
 
+  _getSvg(svg) {
+    return this.SvgService.getSvg(this.iframeWindow, svg);
+  }
+
   _addDropIcon(container, overlayElement) {
-    const iconMarkup = $('<div class="hippo-overlay-icon"></div>');
-
-    if (container.isDisabled()) {
-      iconMarkup.append(disabledSvg);
-    } else {
-      iconMarkup.append(dropSvg);
-    }
-
-    iconMarkup.appendTo(overlayElement);
+    angular.element('<div class="hippo-overlay-icon"></div>')
+      .append(this._getSvg(container.isDisabled()
+        ? disabledSvg
+        : dropSvg))
+      .appendTo(overlayElement);
   }
 
   _addLockIcon(container, overlayElement) {
     if (container.isDisabled()) {
       const lockedBy = this._getLockedByText(container);
-      const lockMarkup = $(`<div class="hippo-overlay-lock" data-locked-by="${lockedBy}"></div>`);
-      lockMarkup.append(lockSvg);
-      lockMarkup.appendTo(overlayElement);
+      angular.element(`<div class="hippo-overlay-lock" data-locked-by="${lockedBy}"></div>`)
+        .append(this._getSvg(lockSvg))
+        .appendTo(overlayElement);
     }
   }
 
@@ -336,7 +338,7 @@ class OverlayService {
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
     overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
-    overlayElement.append(svg);
+    overlayElement.append(this._getSvg(svg));
   }
 
   _initManageContentLink(structureElement, overlayElement) {
@@ -481,7 +483,8 @@ class OverlayService {
   }
 
   _createMainButton(button, manageContentConfig) {
-    const mainButton = $(`<button title="${button.tooltip}">${button.mainIcon}</button>`);
+    const mainButton = $(`<button title="${button.tooltip}"></button>`)
+      .append(this._getSvg(button.mainIcon));
 
     mainButton.addClass(`hippo-fab-main hippo-fab-main-${button.id} qa-manage-content-link`);
 
@@ -509,7 +512,8 @@ class OverlayService {
   }
 
   _createOptionButton(button, index) {
-    const optionButton = $(`<button title="${button.tooltip}">${button.optionIcon}</button>`);
+    const optionButton = $(`<button title="${button.tooltip}"></button>`)
+      .append(this._getSvg(button.optionIcon));
 
     optionButton.addClass(`hippo-fab-option hippo-fab-option-${button.id} hippo-fab-option-${index}`);
 
@@ -663,7 +667,7 @@ class OverlayService {
       labelElement.attr('data-qa-experiment-id', experimentId);
 
       if (iconElement.length === 0) {
-        labelElement.prepend(flaskSvg);
+        labelElement.prepend(this._getSvg(flaskSvg));
       }
 
       const experimentState = this.ExperimentStateService.getExperimentStateLabel(component);

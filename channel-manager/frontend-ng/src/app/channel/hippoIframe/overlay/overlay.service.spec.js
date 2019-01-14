@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
+import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
 describe('OverlayService', () => {
   let $iframe;
@@ -32,6 +32,7 @@ describe('OverlayService', () => {
   let PageStructureService;
   let PickerService;
   let ScrollService;
+  let SvgService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -55,6 +56,7 @@ describe('OverlayService', () => {
       _OverlayService_,
       _PageStructureService_,
       _ScrollService_,
+      _SvgService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -68,9 +70,11 @@ describe('OverlayService', () => {
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       ScrollService = _ScrollService_;
+      SvgService = _SvgService_;
     });
 
     spyOn(CmsService, 'subscribe').and.callThrough();
+    spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $('.iframe');
@@ -81,9 +85,9 @@ describe('OverlayService', () => {
   });
 
   function loadIframeFixture(callback) {
-    $iframe.one('load', () => {
+    $iframe.one('load', async () => {
       iframeWindow = $iframe[0].contentWindow;
-      DomService.addCss(iframeWindow, hippoIframeCss);
+      await DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
 
       try {
         PageStructureService.clearParsedElements();
@@ -320,7 +324,10 @@ describe('OverlayService', () => {
 
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(1);
+      const svg = iframe('.hippo-overlay > .hippo-overlay-element-link > svg');
+      expect(svg.length).toBe(1);
+      expect(svg.eq(0)).toContainText('test');
+
       done();
     });
   });
