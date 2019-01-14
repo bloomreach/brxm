@@ -210,22 +210,6 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
-            <configuration>
-              <images>
-                <image>
-                  <name>${project.groupId}:${project.artifactId}</name>
-                  <alias>${project.artifactId}</alias>
-                  <build>
-                    <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
-                    <assembly>
-                      <mode>dir</mode>
-                      <name>maven/</name>
-                      <descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker.xml</descriptor>
-                    </assembly>
-                  </build>
-                </image>
-              </images>
-            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -246,7 +230,11 @@
                 <image>
                   <run>
                     <env>
-                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-postgres.xml -Dproject.basedir=${brxm.project.path} -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file:///brxm/project/conf/log4j2-dev.xml -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
+                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-postgres.xml
+                        -Dproject.basedir=${brxm.project.path}
+                        -Drepo.autoexport.allowed=${repo.autoexport.allowed}
+                        -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
+                        -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
                       <POSTGRES_DB_HOST>${postgresql.db.host}</POSTGRES_DB_HOST>
                       <POSTGRES_DB_PORT>${postgresql.db.port}</POSTGRES_DB_PORT>
                       <POSTGRES_DB_USER>${postgresql.db.user}</POSTGRES_DB_USER>
@@ -278,7 +266,11 @@
                 <image>
                   <run>
                     <env>
-                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-mysql.xml -Dproject.basedir=${brxm.project.path} -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file:///brxm/project/conf/log4j2-dev.xml -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
+                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-mysql.xml
+                        -Dproject.basedir=${brxm.project.path}
+                        -Drepo.autoexport.allowed=${repo.autoexport.allowed}
+                        -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
+                        -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
                       <MYSQL_DB_HOST>${mysql.db.host}</MYSQL_DB_HOST>
                       <MYSQL_DB_PORT>${mysql.db.port}</MYSQL_DB_PORT>
                       <MYSQL_DB_USER>${mysql.db.user}</MYSQL_DB_USER>
