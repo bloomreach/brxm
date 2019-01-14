@@ -654,6 +654,14 @@ body.hippo-root div.yui-log-container {
 	font-weight: bold;
 }
 
+body.hippo-root .cms-iframe {
+  display: block;
+  background: #000;
+  border: none;
+  height: 100vh;
+  width: 100vw;
+}
+
 /*
 .hippo-referring-documents-list th.doclisting-name {
     width: 100%;
