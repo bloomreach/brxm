@@ -338,6 +338,16 @@
         <include>**/*.*</include>
         <include>Dockerfile</include>
       </includes>
+      <excludes>
+        <exclude>assembly/webapps-component-docker.xml</exclude>
+      </excludes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/docker/assembly</directory>
+      <includes>
+        <include>webapps-component-docker.xml</include>
+      </includes>
+    </fileSet>
+
   </fileSets>
 </archetype-descriptor>
