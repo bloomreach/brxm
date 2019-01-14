@@ -76,3 +76,53 @@ Distributing Additional Site Projects
 Note that if your organization is using multiple site projects, you must configure the assembly of a distribution to
 include all of the separate site webapps for deployment. This project is designed for stand-alone use and does not
 automatically include any additional, externally-maintained site webapps.
+
+
+Running the brXM Project in a Docker Container
+======================
+
+To run the brXM project in a docker container, you must install the project, build the docker image and run the docker
+image respectively.
+
+First install the project:
+
+    mvn clean install
+
+Then build the brXM docker image:
+
+    mvn -Pdocker.build
+
+This maven profile will create a docker image and register that to the local docker repository. It will use the
+repository name as groupId/artifactId and tag as version.
+
+To run the image with in-memory hsql database:
+
+    mvn -Pdocker.run
+
+To run the image with a mysql database, add the provided database name, username and password below to the properties
+section of your project's pom.xml:
+
+    <mysql.db.host>DATABASE_HOSTNAME</mysql.db.host>
+    <mysql.db.port>DATABASE_PORT</mysql.db.port>
+    <mysql.db.name>DATABASE_NAME</mysql.db.name>
+    <mysql.db.user>DATABASE_USERNAME</mysql.db.user>
+    <mysql.db.password>DATABASE_PASSWORD</mysql.db.password>
+
+Then run:
+
+    mvn -Pdocker.run,mysql
+
+To run the image with a postgresql database, add the provided database name, username and password below to the
+properties section of your project's pom.xml:
+
+    <postgresql.db.host>DATABASE_HOSTNAME</postgresql.db.host>
+    <postgresql.db.port>DATABASE_PORT</postgresql.db.port>
+    <postgresql.db.name>DATABASE_NAME</postgresql.db.name>
+    <postgresql.db.user>DATABASE_USERNAME</postgresql.db.user>
+    <postgresql.db.password>DATABASE_PASSWORD</postgresql.db.password>
+
+Then run:
+
+    mvn -Pdocker.run,postgres
+
+After running the docker image, application logs will be shown on the terminal window.
