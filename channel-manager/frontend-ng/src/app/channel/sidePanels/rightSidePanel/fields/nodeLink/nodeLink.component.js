@@ -28,7 +28,6 @@ const nodeLinkComponent = {
     displayName: '=',
     hint: '<',
     index: '<',
-    isRequired: '<',
     name: '@',
     onBlur: '&',
     onFocus: '&',

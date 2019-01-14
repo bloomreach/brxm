@@ -114,7 +114,7 @@
     config="::componentField.pickerConfig"
     disabled="$ctrl.readOnly"
     display-name="componentField.displayValue"
-    is-required="::componentField.required"
+    ng-required="::componentField.required"
     name="{{ ::componentField.name }}"
     on-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
