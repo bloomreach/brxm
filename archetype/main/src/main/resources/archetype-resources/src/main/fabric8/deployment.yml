@@ -1,0 +1,20 @@
+spec:
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: config
+          hostPath:
+            path: ${project.basedir}
+      containers:
+        - volumeMounts:
+            - name: config
+              mountPath: ${brxm.project.path}
+          image: ${project.groupId}/${project.artifactId}:${project.version}
+          env:
+            - name: JAVA_OPTS
+              value: -Drepo.path=${repo.path} -Dproject.basedir=${brxm.project.path}
+                -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
+                -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}
+            - name: profile
+              value: ${db.profile}

@@ -322,5 +322,14 @@
         <include>Dockerfile</include>
       </includes>
     </fileSet>
+ 
+    <!-- k8s -->
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>src/main/fabric8/</directory>
+      <includes>
+        <include>deployment.yml</include>
+        <include>service.yml</include>
+      </includes>
+    </fileSet>
   </fileSets>
 </archetype-descriptor>
