@@ -21,7 +21,7 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.utils.TagUtils;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;

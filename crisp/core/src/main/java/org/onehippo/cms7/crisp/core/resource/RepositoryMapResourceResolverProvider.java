@@ -29,7 +29,9 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
@@ -81,6 +83,16 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
     private Map<String, AbstractApplicationContext> childAppContexts = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
+     * {@link StrLookup} used when resolving variables in each value of <code>crisp:propvalues</code>.
+     */
+    private StrLookup<String> propertyVariableLookup;
+
+    /**
+     * Internal {@link StrSubstitutor} using {@link propertyVariableLookup}.
+     */
+    private StrSubstitutor propertyValueSubstitutor;
+
+    /**
      * Default constructor.
      */
     public RepositoryMapResourceResolverProvider() {
@@ -116,6 +128,26 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      */
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
+    }
+
+    /**
+     * Returns the {@link StrLookup} used when resolving variables in each value of <code>crisp:propvalues</code>.
+     * If null, no variable interpolation should be done.
+     * @return the {@link StrLookup} used when resolving variables in each value of <code>crisp:propvalues</code>
+     */
+    public StrLookup<String> getPropertyVariableLookup() {
+        return propertyVariableLookup;
+    }
+
+    /**
+     * Sets the {@link StrLookup} used when resolving variables in each value of <code>crisp:propvalues</code>.
+     * @param propertyVariableLookup the {@link StrLookup} used when resolving variables in each value of <code>crisp:propvalues</code>
+     */
+    public void setPropertyVariableLookup(StrLookup<String> propertyVariableLookup) {
+        this.propertyVariableLookup = propertyVariableLookup;
+        this.propertyValueSubstitutor = (this.propertyVariableLookup != null)
+                ? new StrSubstitutor(this.propertyVariableLookup)
+                : null;
     }
 
     /**
@@ -213,43 +245,31 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             AbstractApplicationContext oldChildContext;
             ResourceResolver resourceResolver;
 
-            for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
-                resourceResolverNode = nodeIt.nextNode();
+            for (Map.Entry<String, Node> entry : getResolverResolverConfigNodesMap(resourceReesolverContainerNode).entrySet()) {
+                resourceSpace = entry.getKey();
+                resourceResolverNode = entry.getValue();
 
-                if (resourceResolverNode != null) {
-                    resourceSpace = resourceResolverNode.getName();
-                    beanDef = JcrUtils.getStringProperty(resourceResolverNode,
-                            CrispConstants.BEAN_DEFINITION, null);
-                    propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                            CrispConstants.PROP_NAMES, null);
-                    propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
-                            CrispConstants.PROP_VALUES, null);
+                beanDef = JcrUtils.getStringProperty(resourceResolverNode,
+                        CrispConstants.BEAN_DEFINITION, null);
+                propNames = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                        CrispConstants.PROP_NAMES, null);
+                propValues = JcrUtils.getMultipleStringProperty(resourceResolverNode,
+                        CrispConstants.PROP_VALUES, null);
 
-                    if (StringUtils.isNotBlank(beanDef)) {
-                        try {
-                            newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
-                            resourceSpaceNames.add(resourceSpace);
-                            resourceResolver = newChildContext.getBean(ResourceResolver.class);
-                            setResourceResolver(resourceSpace, resourceResolver);
-                            oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
+                if (StringUtils.isNotBlank(beanDef)) {
+                    try {
+                        newChildContext = createChildApplicationContext(beanDef, propNames, propValues);
+                        resourceSpaceNames.add(resourceSpace);
+                        resourceResolver = newChildContext.getBean(ResourceResolver.class);
+                        setResourceResolver(resourceSpace, resourceResolver);
+                        oldChildContext = childAppContexts.put(resourceSpace, newChildContext);
 
-                            if (oldChildContext != null) {
-                                oldChildContext.close();
-                            }
-                        } catch (Exception childContextEx) {
-                            log.error("Failed to load child context for resource space, '{}'.",
-                                    resourceSpace, childContextEx);
+                        if (oldChildContext != null) {
+                            oldChildContext.close();
                         }
-                    }
-                }
-            }
-
-            for (String resourceSpaceNameInChildContexts : childAppContexts.keySet()) {
-                if (!resourceSpaceNames.contains(resourceSpaceNameInChildContexts)) {
-                    oldChildContext = childAppContexts.remove(resourceSpaceNameInChildContexts);
-
-                    if (oldChildContext != null) {
-                        oldChildContext.close();
+                    } catch (Exception childContextEx) {
+                        log.error("Failed to load child context for resource space, '{}'.",
+                                resourceSpace, childContextEx);
                     }
                 }
             }
@@ -300,11 +320,16 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         if (propNames != null && propValues != null) {
             for (int i = 0; i < propNames.length; i++) {
                 if (propValues.length > i) {
-                    props.setProperty(propNames[i], propValues[i]);
+                    final String propName = propNames[i];
+                    final String propValue = (propertyValueSubstitutor != null)
+                            ? propertyValueSubstitutor.replace(propValues[i])
+                            : propValues[i];
+                    props.setProperty(propName, propValue);
                 }
             }
         }
 
+        log.debug("Setting PropertyPlaceholderConfigurer for a CRISP ResourceResolver's appContext with properties: {}.", props);
         PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
         ppc.setIgnoreUnresolvablePlaceholders(true);
         ppc.setSystemPropertiesMode(PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK);
@@ -314,6 +339,40 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         childContext.refresh();
 
         return childContext;
+    }
+
+    private Map<String, Node> getResolverResolverConfigNodesMap(final Node resourceReesolverContainerNode) {
+        Map<String, Node> configNodesMap = new LinkedHashMap<>();
+
+        try {
+            for (NodeIterator nodeIt = resourceReesolverContainerNode.getNodes(); nodeIt.hasNext();) {
+                final Node resourceResolverNode = nodeIt.nextNode();
+
+                if (resourceResolverNode == null) {
+                    continue;
+                }
+
+                if (!resourceResolverNode.isNodeType(CrispConstants.NT_RESOURCE_RESOLVER)) {
+                    log.debug("Ignoring the non-CRISP-resource-resolver configuratin node at '{}'.",
+                            resourceResolverNode.getPath());
+                    continue;
+                }
+
+                final String resourceSpace = resourceResolverNode.getName();
+
+                if (configNodesMap.containsKey(resourceSpace)) {
+                    log.debug("Ignoring the duuplicate CRISP resource resolver configuratin node at '{}'.",
+                            resourceResolverNode.getPath());
+                    continue;
+                }
+
+                configNodesMap.put(resourceSpace, resourceResolverNode);
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to collect CRISP resource resolver configuration nodes.", e);
+        }
+
+        return configNodesMap;
     }
 
     /**

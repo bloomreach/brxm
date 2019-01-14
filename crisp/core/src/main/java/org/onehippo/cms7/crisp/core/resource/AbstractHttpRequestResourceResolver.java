@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceResolver;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.springframework.http.client.ClientHttpRequestFactory;
