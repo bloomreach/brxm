@@ -67,9 +67,10 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
+    <essentials.version>13.1.0-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
     <main.project.version>${parentVersion}</main.project.version>
-    <essentials.version>@release.essentials.version@</essentials.version>
+    <!--<essentials.version>@release.essentials.version@</essentials.version>-->
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
@@ -77,6 +78,9 @@
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
     <buildNumber>${maven.build.timestamp}</buildNumber>
+
+    <!-- Default DB profile -->
+    <db.profile>hsql</db.profile>
   </properties>
 
   <repositories>

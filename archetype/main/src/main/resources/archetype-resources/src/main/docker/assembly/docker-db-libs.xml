@@ -1,0 +1,21 @@
+<component xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2 http://maven.apache.org/xsd/component-1.1.2.xsd">
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>db-drivers/postgres</outputDirectory>
+      <scope>provided</scope>
+      <includes>
+        <include>org.postgresql:postgresql</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>db-drivers/mysql</outputDirectory>
+      <scope>provided</scope>
+      <includes>
+        <include>mysql:mysql-connector-java</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</component>

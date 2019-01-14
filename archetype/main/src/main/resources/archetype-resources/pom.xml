@@ -67,9 +67,10 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
+    <essentials.version>13.1.0-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
-    <essentials.version>@release.essentials.version@</essentials.version>
+    <!--<essentials.version>@release.essentials.version@</essentials.version>-->
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
@@ -77,6 +78,9 @@
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
     <buildNumber>${maven.build.timestamp}</buildNumber>
+
+    <!-- Default DB profile -->
+    <db.profile>hsql</db.profile>
   </properties>
 
   <repositories>
@@ -190,6 +194,141 @@
         <module>essentials</module>
       </modules>
     </profile>
+
+
+    <profile>
+      <id>docker.build</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-services-autoreload</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <name>${project.groupId}:${project.artifactId}</name>
+                  <alias>${project.artifactId}</alias>
+                  <build>
+                    <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+                    <assembly>
+                      <mode>dir</mode>
+                      <name>maven/</name>
+                      <descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker.xml</descriptor>
+                    </assembly>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!--<profile>-->
+    <!--<id>docker.run</id>-->
+    <!--<build>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<groupId>io.fabric8</groupId>-->
+    <!--<artifactId>docker-maven-plugin</artifactId>-->
+    <!--<configuration>-->
+    <!--<images>-->
+    <!--<image>-->
+    <!--&lt;!&ndash;<name>${project.groupId}:${project.artifactId}</name>&ndash;&gt;-->
+    <!--&lt;!&ndash;<run>&ndash;&gt;-->
+    <!--&lt;!&ndash;<env>&ndash;&gt;-->
+    <!--&lt;!&ndash;<profile>${db.profile}</profile>&ndash;&gt;-->
+    <!--&lt;!&ndash;</env>&ndash;&gt;-->
+    <!--&lt;!&ndash;</run>&ndash;&gt;-->
+    <!--</image>-->
+    <!--</images>-->
+    <!--</configuration>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
+    <!--</profile>-->
+
+    <profile>
+      <id>postgres</id>
+      <properties>
+        <db.profile>postgres</db.profile>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-postgres.xml -Dproject.basedir=${brxm.project.path} -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file:///brxm/project/conf/log4j2-dev.xml -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
+                      <POSTGRES_DB_HOST>${postgresql.db.host}</POSTGRES_DB_HOST>
+                      <POSTGRES_DB_PORT>${postgresql.db.port}</POSTGRES_DB_PORT>
+                      <POSTGRES_DB_USER>${postgresql.db.user}</POSTGRES_DB_USER>
+                      <POSTGRES_DB_PASSWORD>${postgresql.db.password}</POSTGRES_DB_PASSWORD>
+                      <POSTGRES_DB_NAME>${postgresql.db.name}</POSTGRES_DB_NAME>
+                      <POSTGRES_DB_DRIVER>org.postgresql.Driver</POSTGRES_DB_DRIVER>
+                    </env>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>mysql</id>
+      <properties>
+        <db.profile>mysql</db.profile>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <images>
+                <image>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-mysql.xml -Dproject.basedir=${brxm.project.path} -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file:///brxm/project/conf/log4j2-dev.xml -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
+                      <MYSQL_DB_HOST>${mysql.db.host}</MYSQL_DB_HOST>
+                      <MYSQL_DB_PORT>${mysql.db.port}</MYSQL_DB_PORT>
+                      <MYSQL_DB_USER>${mysql.db.user}</MYSQL_DB_USER>
+                      <MYSQL_DB_PASSWORD>${mysql.db.password}</MYSQL_DB_PASSWORD>
+                      <MYSQL_DB_NAME>${mysql.db.name}</MYSQL_DB_NAME>
+                      <MYSQL_DB_DRIVER>com.mysql.jdbc.Driver</MYSQL_DB_DRIVER>
+                    </env>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>hsql</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <db.profile>hsql</db.profile>
+      </properties>
+    </profile>
+
 
     <profile>
       <id>cargo.run</id>
