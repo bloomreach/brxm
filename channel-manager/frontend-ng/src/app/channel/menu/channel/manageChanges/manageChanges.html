@@ -15,8 +15,8 @@
   -->
 
 <subpage-toolbar flex="none"
-                 data-title="{{ ::changeMan.getPageTitle() }}"
-                 on-back="changeMan.goBack()">
+                 data-title="{{ ::$ctrl.getPageTitle() }}"
+                 on-back="$ctrl.goBack()">
 </subpage-toolbar>
 
 <subpage-content flex 
@@ -24,17 +24,17 @@
                  class="qa-change-management">
   <md-list>
     <md-list-item>
-      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ ::'DISCARD_ALL' | translate }}</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">{{ ::'PUBLISH_ALL' | translate }}</md-button>
+      <md-button class="md-secondary" ng-click="$ctrl.discardAllChanges()">{{ ::'DISCARD_ALL' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="$ctrl.publishAllChanges()">{{ ::'PUBLISH_ALL' | translate }}</md-button>
     </md-list-item>
 
     <md-divider></md-divider>
 
-    <md-list-item ng-repeat="user in changeMan.usersWithChanges">
-      {{ ::changeMan.getLabel(user) }}
+    <md-list-item ng-repeat="user in $ctrl.usersWithChanges">
+      {{ ::$ctrl.getLabel(user) }}
 
-      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">{{ ::'DISCARD' | translate }}</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ ::'PUBLISH' | translate }}</md-button>
+      <md-button class="md-secondary" ng-click="$ctrl.discardChanges(user)">{{ ::'DISCARD' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="$ctrl.publishChanges(user)">{{ ::'PUBLISH' | translate }}</md-button>
     </md-list-item>
   </md-list>
 </subpage-content>

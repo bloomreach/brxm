@@ -78,18 +78,6 @@ describe('DomService', () => {
     });
   });
 
-  it('adds a style file to the head', (done) => {
-    testInIframe((iframeWindow) => {
-      const cssFile = `${fixturesPath}/services/dom.service.fixture.css`;
-      $j.get(cssFile).done((cssData) => {
-        DomService.addCss(iframeWindow, cssData);
-        const red = $j(iframeWindow.document).find('#red');
-        expect(red.css('color')).toEqual('rgb(255, 0, 0)');
-        done();
-      }).fail(fail);
-    });
-  });
-
   it('adds a CSS link tag to the head', (done) => {
     testInIframe((iframeWindow) => {
       DomService.addCssLinks(iframeWindow, [
@@ -100,9 +88,39 @@ describe('DomService', () => {
       const head = $j(iframeWindow.document).find('head');
       const links = $j(head).children('link');
       expect(links.length).toEqual(2);
-      expect(links[0]).toHaveAttr('href', 'testFile.css');
-      expect(links[1]).toHaveAttr('href', 'anotherFile.css');
+      expect(links.eq(0).attr('href')).toContain('testFile.css');
+      expect(links.eq(1).attr('href')).toContain('anotherFile.css');
       done();
+    });
+  });
+
+  it('rejects on failed loading', (done) => {
+    testInIframe((iframeWindow) => {
+      DomService.addCssLinks(iframeWindow, [
+        'testFile.css',
+        'anotherFile.css',
+      ])
+        .then(() => fail(' calling DomService.addCssLinks() should have rejected'))
+        .catch(done);
+
+      const links = $j('head link[href$="File.css"]', iframeWindow.document);
+      links.eq(0).trigger('load');
+      links.eq(1).trigger('error');
+    });
+  });
+
+  it('resolves on complete loading', (done) => {
+    testInIframe((iframeWindow) => {
+      DomService.addCssLinks(iframeWindow, [
+        'testFile.css',
+        'anotherFile.css',
+      ])
+        .then(done)
+        .catch(() => fail('calling DomService.addCssLinks() should have resolved'));
+
+      const links = $j('head link[href$="File.css"]', iframeWindow.document);
+      links.eq(0).trigger('load');
+      links.eq(1).trigger('load');
     });
   });
 

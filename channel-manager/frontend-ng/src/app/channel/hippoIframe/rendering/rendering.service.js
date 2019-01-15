@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
+import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
 const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
 
@@ -90,8 +90,7 @@ class RenderingService {
         return this.$q.reject();
       }
       const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
-      this.DomService.addCss(iframeWindow, hippoIframeCss);
-      return this.$q.resolve();
+      return this.DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
     } catch (e) {
       return this.$q.reject();
     }
