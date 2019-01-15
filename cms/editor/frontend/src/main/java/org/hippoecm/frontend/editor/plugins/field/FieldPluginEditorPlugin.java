@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(FieldPluginEditorPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(FieldPluginEditorPlugin.class);
 
     private static final String TEMPLATE_PARAMETER_EDITOR = "templateParameterEditor";
     private static final String FIELD_PLUGIN_EDITOR = "fieldPluginEditor";
@@ -55,13 +55,13 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
     class PropertyEditor extends RenderService<IPluginConfig> {
 
-        private ITypeDescriptor type;
-        private IPluginConfig edited;
-        private IModel<IFieldDescriptor> fieldModel;
+        private final ITypeDescriptor type;
+        private final IPluginConfig edited;
+        private final IModel<IFieldDescriptor> fieldModel;
         private boolean shown = true;
 
-        public PropertyEditor(IPluginContext context, IPluginConfig properties, IPluginConfig edited,
-                              ITypeDescriptor type, boolean edit) throws TemplateEngineException {
+        PropertyEditor(final IPluginContext context, final IPluginConfig properties, final IPluginConfig edited,
+                       final ITypeDescriptor type, final boolean edit) {
             super(context, properties);
 
             this.type = type;
@@ -72,9 +72,8 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                     return PropertyEditor.this.edited;
                 }
 
-                public void onEvent(Iterator<? extends IEvent<IPluginConfig>> events) {
+                public void onEvent(final Iterator<? extends IEvent<IPluginConfig>> events) {
                     updatePreview();
-                    redraw();
                 }
 
             }, IObserver.class.getName());
@@ -97,19 +96,17 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
                     return PropertyEditor.this.type;
                 }
 
-                public void onEvent(Iterator<? extends IEvent<ITypeDescriptor>> events) {
+                public void onEvent(final Iterator<? extends IEvent<ITypeDescriptor>> events) {
                     while (events.hasNext()) {
-                        IEvent<ITypeDescriptor> event = events.next();
+                        final IEvent<ITypeDescriptor> event = events.next();
                         if (event instanceof TypeDescriptorEvent) {
-                            TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
-                            IFieldDescriptor field = tde.getField();
-                            switch (tde.getType()) {
-                                case FIELD_CHANGED:
-                                    if (PropertyEditor.this.edited.getString("field").equals(field.getName())) {
-                                        PropertyEditor.this.redraw();
-                                        FieldPluginEditorPlugin.this.updatePreview();
-                                        break;
-                                    }
+                            final TypeDescriptorEvent tde = (TypeDescriptorEvent) event;
+                            final IFieldDescriptor field = tde.getField();
+                            if (tde.getType() == TypeDescriptorEvent.EventType.FIELD_CHANGED) {
+                                if (PropertyEditor.this.edited.getString("field").equals(field.getName())) {
+                                    PropertyEditor.this.redraw();
+                                    FieldPluginEditorPlugin.this.updatePreview();
+                                }
                             }
                         }
                     }
@@ -121,16 +118,16 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
         @Override
         protected void onBeforeRender() {
-            IFieldDescriptor descriptor = fieldModel.getObject();
+            final IFieldDescriptor descriptor = fieldModel.getObject();
             // Field editor
             Panel panel = new EmptyPanel(TEMPLATE_PARAMETER_EDITOR);
             if (descriptor != null) {
-                ITemplateEngine engine = getTemplateEngine();
+                final ITemplateEngine engine = getTemplateEngine();
                 try {
-                    IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), IEditor.Mode.EDIT);
+                    final IClusterConfig target = engine.getTemplate(descriptor.getTypeDescriptor(), IEditor.Mode.EDIT);
                     panel = new TemplateParameterEditor(TEMPLATE_PARAMETER_EDITOR, getClusterParameters(edit), target,
                                                         edit);
-                } catch (TemplateEngineException e) {
+                } catch (final TemplateEngineException e) {
                     log.error("engine exception when rendering template parameter editor", e);
                 }
             }
@@ -138,7 +135,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             super.onBeforeRender();
         }
 
-        void show(boolean show) {
+        void show(final boolean show) {
             if (show != shown) {
                 if (shown) {
                     getPluginContext().unregisterService(this, getPluginConfig().getString("wicket.id"));
@@ -149,12 +146,12 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             }
         }
 
-        private IModel<IPluginConfig> getClusterParameters(boolean edit) {
+        private IModel<IPluginConfig> getClusterParameters(final boolean edit) {
             if (edit && edited.getPluginConfig("cluster.options") == null) {
                 edited.put("cluster.options", new JavaPluginConfig());
                 try {
                     UserSession.get().getJcrSession().save();
-                } catch (RepositoryException ex) {
+                } catch (final RepositoryException ex) {
                     log.error("failed to add child node to plugin config", ex);
                 }
             }
@@ -163,36 +160,32 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
 
     }
 
-    private PropertyEditor helper;
-    private boolean edit;
+    private final PropertyEditor helper;
+    private final boolean edit;
 
-    public FieldPluginEditorPlugin(IPluginContext context, IPluginConfig config) {
+    public FieldPluginEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         edit = (getBuilderContext().getMode() == EditorContext.Mode.EDIT);
 
-        try {
-            ITypeDescriptor type = getBuilderContext().getType();
-            IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
-            helperConfig.putAll(config);
-            helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
-            helper = new PropertyEditor(getPluginContext(), helperConfig, getBuilderContext().getEditablePluginConfig(),
-                                        type, edit);
-            helper.show(getBuilderContext().hasFocus());
-            getBuilderContext().addBuilderListener(new IBuilderListener() {
+        final ITypeDescriptor type = getBuilderContext().getType();
+        final IPluginConfig helperConfig = new JavaPluginConfig(config.getName() + ".helper");
+        helperConfig.putAll(config);
+        helperConfig.put("wicket.id", config.getString("wicket.helper.id"));
+        helper = new PropertyEditor(getPluginContext(), helperConfig, getBuilderContext().getEditablePluginConfig(),
+                                    type, edit);
+        helper.show(getBuilderContext().hasFocus());
+        getBuilderContext().addBuilderListener(new IBuilderListener() {
 
-                public void onFocus() {
-                    helper.show(true);
-                }
+            public void onFocus() {
+                helper.show(true);
+            }
 
-                public void onBlur() {
-                    helper.show(false);
-                }
-            });
-        } catch (TemplateEngineException ex) {
-            log.error("Unable to open property editor", ex);
-        }
-    }
+            public void onBlur() {
+                helper.show(false);
+            }
+        });
+}
 
     private ITemplateEngine getTemplateEngine() {
         return getPluginContext().getService(getEffectivePluginConfig().getString("engine"), ITemplateEngine.class);
