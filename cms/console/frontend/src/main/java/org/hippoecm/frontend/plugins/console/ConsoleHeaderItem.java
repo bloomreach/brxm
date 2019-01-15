@@ -51,10 +51,6 @@ public class ConsoleHeaderItem extends HippoHeaderItem {
         CssHeaderItem.forReference(TREE_CSS).render(response);
         CssHeaderItem.forReference(FA_CSS).render(response);
 
-        if (isBrowserInternetExplorer()) {
-            CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
-        }
-
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
     }
