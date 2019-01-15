@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.PublicationState;
 import org.onehippo.cms.channelmanager.content.document.util.BranchingService;
+import org.onehippo.cms.channelmanager.content.document.util.DocumentLocaleUtils;
 import org.onehippo.cms.channelmanager.content.document.util.DocumentNameUtils;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -94,6 +95,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({
         DocumentNameUtils.class,
+        DocumentLocaleUtils.class,
         PublicationStateUtils.class,
         DocumentTypesService.class,
         DocumentUtils.class,
@@ -123,6 +125,7 @@ public class DocumentsServiceImplTest {
         documentsService.setBranchingService(branchingService);
 
         PowerMock.mockStatic(DocumentNameUtils.class);
+        PowerMock.mockStatic(DocumentLocaleUtils.class);
         PowerMock.mockStatic(PublicationStateUtils.class);
         PowerMock.mockStatic(DocumentTypesService.class);
         PowerMock.mockStatic(DocumentUtils.class);
@@ -433,6 +436,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
+        expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
@@ -469,6 +473,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getInfo().isCanPublish(), equalTo(false));
         assertThat(document.getInfo().isCanRequestPublication(), equalTo(false));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
+        assertThat(document.getInfo().getLocale(), equalTo("en"));
 
         verifyAll();
     }
@@ -488,6 +493,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
+        expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -520,6 +526,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getInfo().isCanPublish(), equalTo(true));
         assertThat(document.getInfo().isCanRequestPublication(), equalTo(true));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
+        assertThat(document.getInfo().getLocale(), equalTo("en"));
 
         verifyAll();
     }
@@ -540,6 +547,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
+        expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         FieldTypeUtils.readFieldValues(eq(draft), eq(fields), isA(Map.class));
@@ -573,6 +581,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getInfo().getType().getId(), equalTo("document:type"));
         assertThat(document.getInfo().isDirty(), equalTo(true));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
+        assertThat(document.getInfo().getLocale(), equalTo("en"));
 
         verifyAll();
     }
@@ -1636,6 +1645,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
         expect(PublicationStateUtils.getPublicationStateFromVariant(documentDraft)).andReturn(PublicationState.LIVE);
+        expect(DocumentLocaleUtils.getDocumentLocale(documentDraft)).andReturn("en");
 
         session.save();
         expectLastCall();
@@ -1657,6 +1667,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.LIVE));
+        assertThat(document.getInfo().getLocale(), equalTo("en"));
         assertThat(document.getFields().size(), equalTo(0));
 
         verifyAll();
@@ -1709,6 +1720,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
         expect(JcrUtils.getNodePathQuietly(eq(documentHandle))).andReturn("/content/documents/news/breaking-news");
         expect(PublicationStateUtils.getPublicationStateFromVariant(documentDraft)).andReturn(PublicationState.NEW);
+        expect(DocumentLocaleUtils.getDocumentLocale(documentDraft)).andReturn("en");
 
         session.save();
         expectLastCall();
@@ -1732,6 +1744,7 @@ public class DocumentsServiceImplTest {
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
         assertThat(document.getFields().size(), equalTo(0));
         assertThat(document.getInfo().getPublicationState(), equalTo(PublicationState.NEW));
+        assertThat(document.getInfo().getLocale(), equalTo("en"));
 
         verifyAll();
     }
