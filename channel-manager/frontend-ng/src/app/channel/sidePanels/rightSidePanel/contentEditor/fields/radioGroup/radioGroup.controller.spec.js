@@ -35,14 +35,6 @@ describe('radioGroup', () => {
     });
   });
 
-  describe('onInit', () => {
-    it('loads the options list', () => {
-      spyOn($ctrl, '_loadOptionsList');
-      $ctrl.$onInit();
-      expect($ctrl._loadOptionsList).toHaveBeenCalled();
-    });
-  });
-
   describe('orientation', () => {
     it('is only vertical when config string is exactly equal to \'vertical\'', () => {
       $ctrl.orientation = 'vertical';

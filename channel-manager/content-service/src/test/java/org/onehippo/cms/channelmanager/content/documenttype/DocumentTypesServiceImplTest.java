@@ -43,6 +43,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
@@ -329,7 +330,7 @@ public class DocumentTypesServiceImplTest {
 
         final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, session, locale);
         final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, session, locale);
-        assertThat(documentType1, is(equalTo(documentType2)));
+        assertThat(documentType1, sameInstance(documentType2));
 
         verifyAll();
     }

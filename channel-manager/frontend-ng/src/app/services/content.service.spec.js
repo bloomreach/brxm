@@ -140,10 +140,10 @@ describe('ContentService', () => {
     };
     let result = null;
     const url = '/test/ws/valuelists/path/to/list';
-    const queryParms = '?locale=en&sortBy=key&sortComparator=comparator&sortOrder=descending';
+    const queryParms = '?locale=en&sortBy=key&sortComparator=com.brxm.Comparator&sortOrder=descending';
 
     $httpBackend.expectGET(url + queryParms).respond(200, valueList);
-    ContentService.getValueList('/path/to/list', 'en', 'comparator', 'key', 'descending').then((returned) => {
+    ContentService.getValueList('/path/to/list', 'en', 'com.brxm.Comparator', 'key', 'descending').then((returned) => {
       result = returned;
     });
     $httpBackend.flush();

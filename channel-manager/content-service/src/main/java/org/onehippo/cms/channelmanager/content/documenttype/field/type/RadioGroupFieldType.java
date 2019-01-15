@@ -57,7 +57,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         return source;
     }
 
-    void setSource(final String source) {
+    private void setSource(final String source) {
         this.source = source;
     }
 
@@ -65,7 +65,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         return sortBy;
     }
 
-    void setSortBy(final String sortBy) {
+    private void setSortBy(final String sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -73,7 +73,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         return sortOrder;
     }
 
-    void setSortOrder(final String sortOrder) {
+    private void setSortOrder(final String sortOrder) {
         this.sortOrder = sortOrder;
     }
 
@@ -81,7 +81,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         return sortComparator;
     }
 
-    void setSortComparator(final String sortComparator) {
+    private void setSortComparator(final String sortComparator) {
         this.sortComparator = sortComparator;
     }
 
@@ -89,7 +89,7 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
         return orientation;
     }
 
-    void setOrientation(final String orientation) {
+    private void setOrientation(final String orientation) {
         this.orientation = orientation;
     }
 }
