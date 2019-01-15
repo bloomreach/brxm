@@ -63,11 +63,11 @@ class ContentService {
   }
 
   getValueList(id, locale, sortComparator, sortBy, sortOrder) {
-    return this._send(REST_API_VALUELISTS_PATH, 'GET', [id], null, false, { 
-      'locale': locale,
-      'sortComparator' : sortComparator,
-      'sortBy': sortBy,
-      'sortOrder': sortOrder,
+    return this._send(REST_API_VALUELISTS_PATH, 'GET', [id], null, false, {
+      locale,
+      sortComparator,
+      sortBy,
+      sortOrder,
     });
   }
 

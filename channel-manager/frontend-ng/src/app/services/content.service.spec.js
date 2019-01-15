@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,6 +117,38 @@ describe('ContentService', () => {
     $httpBackend.flush();
 
     expect(result).toEqual(docType);
+  });
+
+  it('can get a value list', () => {
+    const valueList = {
+      id: 'test',
+    };
+    let result = null;
+
+    $httpBackend.expectGET('/test/ws/valuelists/path/to/list?locale=en').respond(200, valueList);
+    ContentService.getValueList('/path/to/list', 'en').then((returned) => {
+      result = returned;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(valueList);
+  });
+
+  it('can get a sorted value list', () => {
+    const valueList = {
+      id: 'test',
+    };
+    let result = null;
+    const url = '/test/ws/valuelists/path/to/list';
+    const queryParms = '?locale=en&sortBy=key&sortComparator=comparator&sortOrder=descending';
+
+    $httpBackend.expectGET(url + queryParms).respond(200, valueList);
+    ContentService.getValueList('/path/to/list', 'en', 'comparator', 'key', 'descending').then((returned) => {
+      result = returned;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(valueList);
   });
 
   it('can update a field', () => {
