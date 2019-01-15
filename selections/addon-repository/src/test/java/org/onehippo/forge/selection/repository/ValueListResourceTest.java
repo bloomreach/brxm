@@ -18,6 +18,7 @@ package org.onehippo.forge.selection.repository;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.jcr.Session;
@@ -76,7 +77,7 @@ public class ValueListResourceTest extends CXFTest {
     @Test
     public void getValueListWithoutLocale() {
         final String source = "/path/to/valuelist";
-        final String locale = null;
+        final Locale locale = null;
         final ValueList testValuelist = getTestValueList();
 
         expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
@@ -93,9 +94,28 @@ public class ValueListResourceTest extends CXFTest {
     }
 
     @Test
+    public void getValueListWithEmptyLocale() {
+        final String source = "/path/to/valuelist";
+        final Locale locale = null;
+        final ValueList testValuelist = getTestValueList();
+
+        expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
+        replay(valueListService);
+
+        final String expectedBody = normalizeJsonResource("/test-document.json");
+
+        when()
+                .get(source + "?locale=")
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
+
+    }
+
+    @Test
     public void getValueListWithLocale() {
         final String source = "/path/to/valuelist";
-        final String locale = "en";
+        final Locale locale = Locale.ENGLISH;
         final ValueList testValuelist = getTestValueList();
 
         expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
@@ -114,7 +134,7 @@ public class ValueListResourceTest extends CXFTest {
     @Test
     public void getValueListSorted() {
         final String source = "/path/to/valuelist";
-        final String locale = "en";
+        final Locale locale = Locale.ENGLISH;
         final ValueList testValuelist = getTestValueList();
 
         expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
@@ -127,7 +147,43 @@ public class ValueListResourceTest extends CXFTest {
         .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
+    }
 
+    @Test
+    public void getValueListWithEmptySortComparator() {
+        final String source = "/path/to/valuelist";
+        final Locale locale = Locale.ENGLISH;
+        final ValueList testValuelist = getTestValueList();
+
+        expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
+        replay(valueListService);
+
+        final String expectedBody = normalizeJsonResource("/test-document.json");
+
+        when()
+                .get(source + "?locale=en&sortComparator=")
+                .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void getValueListSortedWithEmptySortOptions() {
+        final String source = "/path/to/valuelist";
+        final Locale locale = Locale.ENGLISH;
+        final ValueList testValuelist = getTestValueList();
+
+        expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
+        replay(valueListService);
+
+        final String expectedBody = normalizeJsonResource("/test-document-sorted.json");
+
+        when()
+                .get(source + "?locale=en&sortComparator=org.onehipppo.forge.selection.comparator.TestComparator" +
+                        "&sortOrder=&sortBy=")
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
     }
 
     private String normalizeJsonResource(final String resourcePath) {

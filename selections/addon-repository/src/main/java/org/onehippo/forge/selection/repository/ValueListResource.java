@@ -15,6 +15,8 @@
  */
 package org.onehippo.forge.selection.repository;
 
+import java.util.Locale;
+
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -26,16 +28,21 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.IListItemComparator;
 import org.onehippo.forge.selection.repository.utils.SortUtils;
 import org.onehippo.forge.selection.repository.valuelist.ValueListService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Produces("application/json")
 @Path("/")
 public class ValueListResource {
+
+    private static final Logger log = LoggerFactory.getLogger(ValueListResource.class);
 
     private static final CacheControl NO_CACHE = new CacheControl();
 
@@ -61,8 +68,9 @@ public class ValueListResource {
         return executeTask(servletRequest,
                 (session) -> {
                     final String checkedSource = checkSource(source);
+                    final Locale checkedLocale = checkLocale(locale);
                     final ValueList valueList = 
-                            ValueListService.get().getValueList(checkedSource, locale, session);
+                            ValueListService.get().getValueList(checkedSource, checkedLocale, session);
                     if (StringUtils.isNotBlank(sortComparator)) {
                         IListItemComparator comparator = SortUtils.getComparator(sortComparator, sortBy, sortOrder);
                         if (comparator != null) {
@@ -84,6 +92,18 @@ public class ValueListResource {
         return source;
     }
 
+    private Locale checkLocale(final String locale) {
+        if (StringUtils.isBlank(locale)) {
+            return null;
+        }
+        try {
+            return LocaleUtils.toLocale(locale);
+        } catch (IllegalArgumentException e) {
+            log.debug("Locale {} is not valid.", locale);
+        }
+        return null;
+    }
+    
     /**
      * Shared logic for providing the EndPointTask with contextual input and handling the packaging of its response
      * (which may be an error, encapsulated in an Exception).

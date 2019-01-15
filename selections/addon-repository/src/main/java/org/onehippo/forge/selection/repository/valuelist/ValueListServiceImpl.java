@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
 
-import org.apache.commons.lang.LocaleUtils;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.utils.JcrUtils;
 import org.slf4j.Logger;
@@ -47,10 +46,10 @@ public class ValueListServiceImpl implements ValueListService {
     }
 
     @Override
-    public ValueList getValueList(final String source, final String locale, final Session session) {
+    public ValueList getValueList(final String source, final Locale locale, final Session session) {
         final String cacheKey = source + "-" + locale;
         try {
-            return VALUE_LISTS.get(cacheKey, () -> retrieveValueList(source, LocaleUtils.toLocale(locale), session));
+            return VALUE_LISTS.get(cacheKey, () -> retrieveValueList(source, locale, session));
         } catch (ExecutionException e) {
             log.warn("Value list could not be loaded. Returning empty Value list");
             return new ValueList();
