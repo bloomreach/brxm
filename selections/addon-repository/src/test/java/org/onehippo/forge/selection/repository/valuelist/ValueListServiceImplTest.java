@@ -32,7 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsSame.sameInstance;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.createPartialMock;
 import static org.powermock.api.easymock.PowerMock.expectPrivate;
@@ -102,7 +102,7 @@ public class ValueListServiceImplTest {
 
         final ValueList ValueList1 = valueListServiceMock.getValueList(source, locale, session);
         final ValueList ValueList2 = valueListServiceMock.getValueList(source, locale, session);
-        assertThat(ValueList1, is(equalTo(ValueList2)));
+        assertThat(ValueList1, sameInstance(ValueList2));
 
         verifyAll();
     }

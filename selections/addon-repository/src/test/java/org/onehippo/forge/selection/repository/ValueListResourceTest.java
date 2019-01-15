@@ -132,6 +132,25 @@ public class ValueListResourceTest extends CXFTest {
     }
 
     @Test
+    public void getValueListWithInvalidLocale() {
+        final String source = "/path/to/valuelist";
+        final Locale locale = null;
+        final ValueList testValuelist = getTestValueList();
+
+        expect(valueListService.getValueList(eq(source), eq(locale), eq(userSession))).andReturn(testValuelist);
+        replay(valueListService);
+
+        final String expectedBody = normalizeJsonResource("/test-document.json");
+
+        when()
+                .get(source + "?locale=7_9")
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
+
+    }
+
+    @Test
     public void getValueListSorted() {
         final String source = "/path/to/valuelist";
         final Locale locale = Locale.ENGLISH;
