@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -99,14 +99,10 @@ if (!YAHOO.hippo.ImageCropper) {
 
         }
         this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
-        // call second render phase after image has loaded completely and add a timeout
-        // to force IE to behave the same all the time.
         var img = new Image();
         var self = this;
         img.onload = function () {
-          window.setTimeout(function () {
-            self._render();
-          }, 200);
+          self._render();
         };
         img.src = this.el.src;
       },

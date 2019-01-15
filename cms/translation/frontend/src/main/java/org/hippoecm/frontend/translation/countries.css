@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,6 @@
   line-height: 16px;
 }
 
-.ext-ie #folder-path .hippo-translation-language {
-  padding-top: 0;
-}
-
 .hippo-root .x-tree-node .x-tree-node-disabled .x-tree-node-icon {
   opacity: 0.7;
 }
@@ -49,14 +45,6 @@
 .hippo-folder-translations .hippo-translated-folder-without-flag {
   position: relative;
   top: -1px;
-}
-
-.ext-ie .translation-field-set .hippo-translated-folder-without-flag {
-  top: 0;
-}
-
-.ext-ie .translation-field-set .hippo-translated-folder-with-flag {
-  top: 1px;
 }
 
 .hippo-root .x-tree-node .x-tree-node-disabled a span {
@@ -78,10 +66,6 @@
 #translations-break-link {
   margin-bottom: 6px;
   margin-left: 0;
-}
-
-.ext-ie .x-btn .hippo-t9n-breaklink {
-  padding-top: 0
 }
 
 .x-btn-text-icon.x-btn-text-icon-not-found .x-btn-icon-small-left .x-btn-text {
