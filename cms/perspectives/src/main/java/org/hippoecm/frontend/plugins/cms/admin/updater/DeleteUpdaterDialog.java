@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteUpdaterDialog extends AbstractDialog<Node> {
+public class DeleteUpdaterDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DeleteUpdaterDialog.class);
 
@@ -40,13 +39,11 @@ public class DeleteUpdaterDialog extends AbstractDialog<Node> {
 
     public DeleteUpdaterDialog(final IModel<Node> defaultModel, Panel container) {
         super(defaultModel);
+        setTitle(Model.of("Delete Updater"));
+        setSize(DialogConstants.SMALL);
+
         this.container = container;
         add(new Label("message", "Are you sure you want to delete updater '" + getUpdaterName() + "'?"));
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return Model.of("Delete Updater");
     }
 
     @Override
@@ -81,11 +78,6 @@ public class DeleteUpdaterDialog extends AbstractDialog<Node> {
             sibling = nextNode;
         }
         return parent;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
     }
 
     private String getUpdaterName() {

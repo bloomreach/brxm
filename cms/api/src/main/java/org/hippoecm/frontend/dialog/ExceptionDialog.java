@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-public class ExceptionDialog extends AbstractDialog {
+public class ExceptionDialog extends Dialog {
     private static final long serialVersionUID = 1L;
 
     private String title;
@@ -28,6 +28,13 @@ public class ExceptionDialog extends AbstractDialog {
 
     public ExceptionDialog() {
         this.title = getString("dialog-title", null, "Exception");
+        setTitle(new AbstractReadOnlyModel<String>() {
+
+            @Override
+            public String getObject() {
+                return title;
+            }
+        });
 
         add(new Label("message", new AbstractReadOnlyModel<String>() {
 
@@ -56,22 +63,11 @@ public class ExceptionDialog extends AbstractDialog {
         this.message = msg;
     }
 
-    @Override
-    public IModel getTitle() {
-        return new AbstractReadOnlyModel<String>() {
-
-            @Override
-            public String getObject() {
-                return title;
-            }
-        };
-    }
-
     /**
-     * Set the title of the exception dialog, by default it will use a translated value from
-     * the ExceptionDialog.properties file(s).
+     * Set the title of the exception dialog, by default it will use a translated value from the
+     * ExceptionDialog.properties file(s).
      *
-     * @param title  The title of the exception dialog
+     * @param title The title of the exception dialog
      */
     public void setTitle(final String title) {
         this.title = title;
