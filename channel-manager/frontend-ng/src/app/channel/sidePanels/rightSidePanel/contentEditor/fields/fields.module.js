@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
+import radioGroupFieldComponent from './radioGroup/radioGroup.component';
 
 import './fields.scss';
 
@@ -33,6 +34,7 @@ const fieldsModule = angular
   .component('documentFields', documentFieldsComponent)
   .component('imageLink', imageLinkComponent)
   .component('primitiveField', primitiveFieldComponent)
+  .component('radioGroup', radioGroupFieldComponent)
   .service('FieldService', fieldService);
 
 export default fieldsModule.name;

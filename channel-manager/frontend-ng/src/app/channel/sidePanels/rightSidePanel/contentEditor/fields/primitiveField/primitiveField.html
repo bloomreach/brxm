@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint }">
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint, 'md-input-has-value' : $ctrl.fieldType.type === 'RADIO_GROUP' }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
@@ -122,6 +122,21 @@
       </md-option>
     </md-select>
 
+    <radio-group ng-switch-when="RADIO_GROUP"
+                 locale="::$ctrl.locale"
+                 name="::$ctrl.getFieldName($index)"
+                 ng-change="$ctrl.valueChanged()"
+                 on-field-blur="$ctrl.blurPrimitive($event)"
+                 on-field-focus="$ctrl.focusPrimitive($event)"
+                 ng-model="fieldValue.value"
+                 options-source="::$ctrl.fieldType.source"
+                 sort-comparator="::$ctrl.fieldType.sortComparator"
+                 sort-by="::$ctrl.fieldType.sortBy"
+                 sort-order="::$ctrl.fieldType.sortOrder"
+                 orientation="::$ctrl.fieldType.orientation"
+                 is-required="::$ctrl.fieldType.required">
+    </radio-group>
+      
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"

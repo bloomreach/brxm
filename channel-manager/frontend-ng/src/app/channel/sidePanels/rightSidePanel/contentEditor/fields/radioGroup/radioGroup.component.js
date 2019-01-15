@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-import template from './documentFields.html';
-import DocumentFieldsCtrl from './documentFields.controller';
+import template from './radioGroup.html';
+import RadioGroupFieldCtrl from './radioGroup.controller';
+import './radioGroup.scss';
 
-const documentFieldsComponent = {
+const radioGroupComponent = {
   bindings: {
-    name: '<',
-    fieldTypes: '<',
-    fieldValues: '<',
+    fieldType: '<',
+    isRequired: '<',
     locale: '<',
-    onFieldFocus: '&',
+    name: '<',
+    ngModel: '<',
     onFieldBlur: '&',
+    onFieldFocus: '&',
+    optionsSource: '<',
+    orientation: '<',
+    sortBy: '<',
+    sortComparator: '<',
+    sortOrder: '<',
   },
-  controller: DocumentFieldsCtrl,
+  controller: RadioGroupFieldCtrl,
   template,
   require: {
-    form: '^^form',
+    ngModelCtrl: 'ngModel',
   },
 };
 
-export default documentFieldsComponent;
+export default radioGroupComponent;
