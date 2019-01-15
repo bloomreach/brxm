@@ -16,8 +16,6 @@
 
 package org.onehippo.forge.selection.repository.valuelist;
 
-import java.util.Locale;
-
 import javax.jcr.Session;
 
 import org.onehippo.forge.selection.frontend.model.ValueList;
@@ -28,7 +26,7 @@ public interface ValueListService {
         return ValueListServiceImpl.getInstance();
     }
 
-    ValueList getValueList(String source, Locale locale, Session session);
+    ValueList getValueList(String source, String locale, Session session);
 
     /**
      * Invalidate the value list cache

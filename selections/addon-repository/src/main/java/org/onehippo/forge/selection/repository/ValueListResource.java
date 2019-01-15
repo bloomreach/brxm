@@ -15,8 +15,6 @@
  */
 package org.onehippo.forge.selection.repository;
 
-import java.util.Locale;
-
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -64,7 +62,7 @@ public class ValueListResource {
                 (session) -> {
                     final String checkedSource = checkSource(source);
                     final ValueList valueList = 
-                            ValueListService.get().getValueList(checkedSource, new Locale(locale), session);
+                            ValueListService.get().getValueList(checkedSource, locale, session);
                     if (StringUtils.isNotBlank(sortComparator)) {
                         IListItemComparator comparator = SortUtils.getComparator(sortComparator, sortBy, sortOrder);
                         if (comparator != null) {

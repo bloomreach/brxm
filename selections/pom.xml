@@ -47,6 +47,9 @@
     <hippo.hst.version>13.1.0-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.12</junit.version>
+    <easymock.version>3.4</easymock.version>
+    <!-- Make sure that powermock and easymock are compatible -->
+    <powermock.version>1.6.5</powermock.version>
   </properties>
 
   <repositories>
@@ -169,6 +172,36 @@
         <version>${hippo.cms.version}</version>
         <scope>provided</scope>
       </dependency>
+  
+      <!-- test dependencies -->
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
 
   </dependencyManagement>
