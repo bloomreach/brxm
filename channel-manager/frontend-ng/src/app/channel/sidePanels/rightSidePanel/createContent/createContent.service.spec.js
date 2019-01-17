@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ describe('CreateContentService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContentModule');
 
-    ContentService = jasmine.createSpyObj('ContentService', ['_send']);
-    ContentService._send.and.returnValue(Promise.resolve());
+    ContentService = jasmine.createSpyObj('ContentService', ['generateDocumentUrl']);
+    ContentService.generateDocumentUrl.and.returnValue(Promise.resolve());
 
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext', 'setTitle', 'startLoading', 'stopLoading',
@@ -188,9 +188,9 @@ describe('CreateContentService', () => {
     });
   });
 
-  it('generates a document url by executing a "slugs" backend call', () => {
+  it('generates a document url by calling the content service', () => {
     CreateContentService.generateDocumentUrlByName('name', 'nl');
-    expect(ContentService._send).toHaveBeenCalledWith('POST', ['slugs'], 'name', true, { locale: 'nl' });
+    expect(ContentService.generateDocumentUrl).toHaveBeenCalledWith('name', 'nl');
   });
 
   describe('reacts to "kill-editor" events from the CMS', () => {

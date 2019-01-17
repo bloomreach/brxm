@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ describe('Step1Service', () => {
   let FeedbackService;
   let Step1Service;
 
-  function expectError(triggerError, errorData, defaultMessage) {
+  function expectError(spyObj, triggerError, errorData, defaultMessage) {
     // backend returns an error with passed data
-    ContentService._send.and.returnValue($q.reject(errorData));
+    spyObj.and.returnValue($q.reject(errorData));
     triggerError();
     $rootScope.$apply();
 
@@ -35,6 +35,18 @@ describe('Step1Service', () => {
       args.push(errorData.data.params);
     }
     expect(FeedbackService.showError).toHaveBeenCalledWith(...args);
+  }
+
+  function expectTemplateQueryError(triggerError, errorData, defaultMessage) {
+    expectError(ContentService.getDocumentTemplateQuery, triggerError, errorData, defaultMessage);
+  }
+
+  function expectCreateDocumentError(triggerError, errorData, defaultMessage) {
+    expectError(ContentService.createDocument, triggerError, errorData, defaultMessage);
+  }
+
+  function expectGetFoldersError(triggerError, errorData, defaultMessage) {
+    expectError(ContentService.getFolders, triggerError, errorData, defaultMessage);
   }
 
   function expectReset() {
@@ -52,8 +64,14 @@ describe('Step1Service', () => {
     ChannelService.getChannel.and.returnValue({
       contentRoot: '/channel/content',
     });
-    ContentService = jasmine.createSpyObj('ContentService', ['_send']);
-    ContentService._send.and.returnValue(Promise.resolve());
+    ContentService = jasmine.createSpyObj('ContentService', [
+      'createDocument',
+      'getDocumentTemplateQuery',
+      'getFolders',
+    ]);
+    ContentService.createDocument.and.returnValue(Promise.resolve());
+    ContentService.getDocumentTemplateQuery.and.returnValue(Promise.resolve());
+    ContentService.getFolders.and.returnValue(Promise.resolve());
 
     angular.mock.module(($provide) => {
       $provide.value('ChannelService', ChannelService);
@@ -107,13 +125,13 @@ describe('Step1Service', () => {
     });
 
     describe('loading document types by document-template-query', () => {
-      it('executes a backend call to /documenttemplatequery/{document-template-query}', () => {
+      it('calls the content service to get a document template query', () => {
         Step1Service.open('tpl-query');
-        expect(ContentService._send).toHaveBeenCalledWith('GET', ['documenttemplatequery', 'tpl-query'], null, true);
+        expect(ContentService.getDocumentTemplateQuery).toHaveBeenCalledWith('tpl-query');
       });
 
-      it('stores the document types returned by the backend', () => {
-        ContentService._send.and.returnValue($q.resolve({
+      it('stores the document types returned by the content service', () => {
+        ContentService.getDocumentTemplateQuery.and.returnValue($q.resolve({
           documentTypes: ['a', 'b'],
         }));
         Step1Service.open('tpl-query');
@@ -122,8 +140,8 @@ describe('Step1Service', () => {
         expect(Step1Service.documentType).toEqual('');
       });
 
-      it('pre-selects the documentType if there is only one returned by the backend', () => {
-        ContentService._send.and.returnValue($q.resolve({
+      it('pre-selects the documentType if there is only one returned by the content service', () => {
+        ContentService.getDocumentTemplateQuery.and.returnValue($q.resolve({
           documentTypes: [{
             id: 'a',
           }],
@@ -138,8 +156,10 @@ describe('Step1Service', () => {
 
       it('handles template query errors', () => {
         spyOn(FeedbackService, 'showError');
-        expectError(() => Step1Service.open('tpl-query'), {}, 'Unexpected error loading template query "tpl-query"');
-        expectError(() => Step1Service.open('tpl-query'), { data: { reason: 'the_cause' } }, 'ERROR_the_cause');
+        expectTemplateQueryError(() => Step1Service
+          .open('tpl-query'), {}, 'Unexpected error loading template query "tpl-query"');
+        expectTemplateQueryError(() => Step1Service
+          .open('tpl-query'), { data: { reason: 'the_cause' } }, 'ERROR_the_cause');
       });
     });
 
@@ -165,7 +185,7 @@ describe('Step1Service', () => {
   });
 
   describe('createDocument', () => {
-    it('executes a "documents" backend call to create a document', (done) => {
+    it('calls the content service to create a document', (done) => {
       Step1Service.name = 'test-name';
       Step1Service.url = 'test-url';
       Step1Service.documentTemplateQuery = 'test-tpl-query';
@@ -175,7 +195,7 @@ describe('Step1Service', () => {
       Step1Service.defaultPath = 'test-defaultpath';
 
       Step1Service.createDocument().then(done);
-      expect(ContentService._send).toHaveBeenCalledWith('POST', ['documents'], {
+      expect(ContentService.createDocument).toHaveBeenCalledWith({
         name: 'test-name',
         slug: 'test-url',
         documentTemplateQuery: 'test-tpl-query',
@@ -188,8 +208,8 @@ describe('Step1Service', () => {
 
     it('handles create-document backend errors', () => {
       spyOn(FeedbackService, 'showError');
-      expectError(() => Step1Service.createDocument(), {}, 'Unexpected error creating a new document');
-      expectError(() => Step1Service.createDocument(), {
+      expectCreateDocumentError(() => Step1Service.createDocument(), {}, 'Unexpected error creating a new document');
+      expectCreateDocumentError(() => Step1Service.createDocument(), {
         data: {
           reason: 'the_cause',
           params: 'the_params',
@@ -199,15 +219,17 @@ describe('Step1Service', () => {
   });
 
   describe('getFolders', () => {
-    it('executes a "folders" backend call', () => {
+    it('calls the content service to get folders', () => {
       Step1Service.getFolders('aa/bb');
-      expect(ContentService._send).toHaveBeenCalledWith('GET', ['folders', 'aa/bb'], null, true);
+      expect(ContentService.getFolders).toHaveBeenCalledWith('aa/bb');
     });
 
     it('handles getFolders backend errors', () => {
       spyOn(FeedbackService, 'showError');
-      expectError(() => Step1Service.getFolders('aa/bb'), {}, 'Unexpected error loading folders for path aa/bb');
-      expectError(() => Step1Service.getFolders('aa/bb'), { data: { reason: 'the_cause' } }, 'ERROR_the_cause');
+      expectGetFoldersError(() => Step1Service
+        .getFolders('aa/bb'), {}, 'Unexpected error loading folders for path aa/bb');
+      expectGetFoldersError(() => Step1Service
+        .getFolders('aa/bb'), { data: { reason: 'the_cause' } }, 'ERROR_the_cause');
     });
   });
 });
