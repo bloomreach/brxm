@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ describe('Step2Service', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.createContent.step2');
 
-    ContentService = jasmine.createSpyObj('ContentService', ['_send']);
-    ContentService._send.and.returnValue(Promise.resolve());
+    ContentService = jasmine.createSpyObj('ContentService', ['setDocumentNameUrl']);
+    ContentService.setDocumentNameUrl.and.returnValue(Promise.resolve());
 
     angular.mock.module(($provide) => {
       $provide.value('ContentService', ContentService);
@@ -157,7 +157,7 @@ describe('Step2Service', () => {
       const dialogData = { name: 'new-display-name', url: 'new-url' };
       spyOn(DialogService, 'show').and.returnValue($q.resolve(dialogData));
       const responseData = { displayName: dialogData.name, urlName: dialogData.url };
-      ContentService._send.and.returnValue($q.resolve(responseData));
+      ContentService.setDocumentNameUrl.and.returnValue($q.resolve(responseData));
 
       Step2Service.openEditNameUrlDialog();
       $rootScope.$digest();
@@ -177,7 +177,7 @@ describe('Step2Service', () => {
           params: 'error_params',
         },
       };
-      ContentService._send.and.returnValue($q.reject(error));
+      ContentService.setDocumentNameUrl.and.returnValue($q.reject(error));
 
       Step2Service.openEditNameUrlDialog();
       $rootScope.$digest();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class Step1Service {
     this.documentTemplateQuery = documentTemplateQuery;
     this.folderTemplateQuery = folderTemplateQuery;
 
-    return this.ContentService._send('GET', ['documenttemplatequery', documentTemplateQuery], null, true)
+    return this.ContentService.getDocumentTemplateQuery(documentTemplateQuery)
       .then(documentTemplateQueryResult => this._onLoadDocumentTypes(documentTemplateQueryResult.documentTypes))
       .catch(error => this._onError(error, `Unexpected error loading template query "${documentTemplateQuery}"`));
   }
@@ -103,12 +103,12 @@ class Step1Service {
       rootPath: this.rootPath,
       defaultPath: this.defaultPath,
     };
-    return this.ContentService._send('POST', ['documents'], document)
+    return this.ContentService.createDocument(document)
       .catch(error => this._onError(error, 'Unexpected error creating a new document'));
   }
 
   getFolders(path) {
-    return this.ContentService._send('GET', ['folders', path], null, true)
+    return this.ContentService.getFolders(path)
       .catch(error => this._onError(error, `Unexpected error loading folders for path ${path}`));
   }
 

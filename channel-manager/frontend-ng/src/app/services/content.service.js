@@ -34,6 +34,14 @@ class ContentService {
     return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', id, 'branch']);
   }
 
+  createDocument(document) {
+    return this._send(REST_API_CONTENT_PATH, 'POST', ['documents'], document);
+  }
+
+  generateDocumentUrl(name, locale) {
+    return this._send(REST_API_CONTENT_PATH, 'POST', ['slugs'], name, true, { locale });
+  }
+
   getEditableDocument(id) {
     return this._send(REST_API_CONTENT_PATH, 'POST', ['documents', id, 'editable']);
   }
@@ -42,12 +50,24 @@ class ContentService {
     return this._send(REST_API_CONTENT_PATH, 'GET', ['documents', id, branchId]);
   }
 
+  getDocumentTemplateQuery(documentTemplateQuery) {
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['documenttemplatequery', documentTemplateQuery], null, true);
+  }
+
+  getFolders(foldersPath) {
+    return this._send(REST_API_CONTENT_PATH, 'GET', ['folders', foldersPath], null, true);
+  }
+
   saveDocument(doc) {
     return this._send(REST_API_CONTENT_PATH, 'PUT', ['documents', doc.id, 'editable'], doc);
   }
 
   discardChanges(id) {
     return this._send(REST_API_CONTENT_PATH, 'DELETE', ['documents', id, 'editable']);
+  }
+
+  setDocumentNameUrl(documentId, nameUrl) {
+    return this._send(REST_API_CONTENT_PATH, 'PUT', ['documents', documentId], nameUrl);
   }
 
   saveField(documentId, fieldName, value) {
