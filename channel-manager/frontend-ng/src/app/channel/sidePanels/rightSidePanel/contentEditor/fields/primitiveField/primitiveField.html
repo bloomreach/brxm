@@ -182,7 +182,7 @@
                display-name="::fieldValue.metadata.displayName"
                hint="::$ctrl.fieldType.hint"
                index="::$index"
-               is-required="::$ctrl.fieldType.required"
+               ng-required="::$ctrl.fieldType.required"
                name="{{::$ctrl.getFieldName($index)}}"
                ng-model="fieldValue.value"
                ng-change="$ctrl.valueChanged()"
