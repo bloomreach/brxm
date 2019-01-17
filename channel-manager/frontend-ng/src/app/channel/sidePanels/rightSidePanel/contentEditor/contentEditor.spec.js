@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,12 @@ describe('ContentEditorCtrl', () => {
     const fields = [];
     ContentEditor.getDocument.and.returnValue({ fields });
     expect($ctrl.getFieldValues()).toBe(fields);
+  });
+
+  it('gets the document locale', () => {
+    const info = { locale: 'en' };
+    ContentEditor.getDocument.and.returnValue({ info });
+    expect($ctrl.getDocumentLocale()).toBe('en');
   });
 
   it('gets the error', () => {

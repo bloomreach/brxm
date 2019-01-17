@@ -95,12 +95,12 @@ describe('RenderingService', () => {
     });
 
     it('handles the loading of a new page', () => {
-      spyOn(DomService, 'addCss');
+      spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
 
       RenderingService.createOverlay();
       $rootScope.$digest();
 
-      expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
+      expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)]);
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
@@ -110,7 +110,7 @@ describe('RenderingService', () => {
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
-      spyOn(DomService, 'addCss').and.throwError();
+      spyOn(DomService, 'addCssLinks').and.returnValue($q.reject());
 
       RenderingService.createOverlay();
       $rootScope.$digest();
@@ -140,6 +140,7 @@ describe('RenderingService', () => {
     it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
       const deferred = $q.defer();
 
+      spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
       spyOn(ChannelService, 'initializeChannel').and.returnValue(deferred.promise);
       spyOn(RenderingService, '_parseLinks');
 

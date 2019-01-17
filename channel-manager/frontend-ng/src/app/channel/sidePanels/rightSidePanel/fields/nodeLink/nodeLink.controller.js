@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,13 @@ class nodeLinkController {
     if (this.index === 0) {
       this.$scope.$on('primitive-field:focus', ($event, focusEvent) => this.onFocusFromParent(focusEvent));
     }
+
+    // material doesn't do that in our case because the input field is read-only
+    // @see https://github.com/angular/material/blob/master/src/components/input/input.js#L397
+    this.$scope.$watch(
+      () => this.ngModel.$invalid && this.ngModel.$touched,
+      isInvalid => this.mdInputContainer && this.mdInputContainer.setInvalid(isInvalid),
+    );
   }
 
   onFocusFromParent(focusEvent) {
@@ -96,6 +103,7 @@ class nodeLinkController {
   clear() {
     this.linkPicked = false;
     this.displayName = '';
+    this.ngModel.$setTouched();
     this.ngModel.$setViewValue('');
     this._focusSelectButton();
   }

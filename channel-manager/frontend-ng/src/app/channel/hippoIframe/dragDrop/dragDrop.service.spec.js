@@ -245,7 +245,7 @@ describe('DragDropService', () => {
       'HST-LockedBy': 'anotherUser',
     };
     loadIframeFixture(() => {
-      expect(DragDropService.drake.containers).toEqual([container2.getBoxElement()]);
+      expect(angular.element(DragDropService.drake.containers)).toEqual(container2.getBoxElement());
       done();
     });
   });
@@ -387,7 +387,7 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(DragDropService.drake.containers).toEqual([
+        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
           reRenderedContainer1.getBoxElement(),
           container2.getBoxElement(),
         ]);
@@ -404,7 +404,7 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(DragDropService.drake.containers).toEqual([
+        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
           container1.getBoxElement(),
           container2.getBoxElement(),
         ]);
@@ -419,7 +419,7 @@ describe('DragDropService', () => {
 
       // wait until the current $digest is done before expecting results
       setTimeout(() => {
-        expect(DragDropService.drake.containers).toEqual([
+        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
           container1.getBoxElement(),
           container2.getBoxElement(),
         ]);

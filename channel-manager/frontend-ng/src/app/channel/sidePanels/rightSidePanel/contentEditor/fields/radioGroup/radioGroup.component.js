@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-import template from './nodeLink.html';
-import controller from './nodeLink.controller';
-import './nodeLink.scss';
+import template from './radioGroup.html';
+import RadioGroupFieldCtrl from './radioGroup.controller';
+import './radioGroup.scss';
 
-const nodeLinkComponent = {
-  controller,
-  template,
+const radioGroupComponent = {
   bindings: {
-    ariaLabel: '@',
-    config: '<',
-    disabled: '<?',
-    displayName: '=',
-    hint: '<',
-    index: '<',
-    name: '@',
-    onBlur: '&',
-    onFocus: '&',
+    fieldType: '<',
+    isRequired: '<',
+    locale: '<',
+    name: '<',
+    ngModel: '<',
+    onFieldBlur: '&',
+    onFieldFocus: '&',
+    optionsSource: '<',
+    orientation: '<',
+    sortBy: '<',
+    sortComparator: '<',
+    sortOrder: '<',
   },
+  controller: RadioGroupFieldCtrl,
+  template,
   require: {
-    ngModel: 'ngModel',
-    mdInputContainer: '?^^mdInputContainer',
+    ngModelCtrl: 'ngModel',
   },
 };
 
-export default nodeLinkComponent;
+export default radioGroupComponent;

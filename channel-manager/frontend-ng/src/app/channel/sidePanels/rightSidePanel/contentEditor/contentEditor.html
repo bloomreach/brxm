@@ -1,5 +1,5 @@
 <!--
-  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@
   <document-fields ng-if="$ctrl.isEditing()"
                    class="top-level"
                    field-types="$ctrl.getFieldTypes()"
-                   field-values="$ctrl.getFieldValues()">
+                   field-values="$ctrl.getFieldValues()"
+                   locale="::$ctrl.getDocumentLocale()">
   </document-fields>
 </md-content>

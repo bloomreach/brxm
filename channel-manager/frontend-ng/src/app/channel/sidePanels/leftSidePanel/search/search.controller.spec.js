@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,13 +54,13 @@ describe('siteMapListingController', () => {
     expect(onFilter).toHaveBeenCalledWith({ filteredItems: items });
   });
 
-  it('clears the filter on changes', () => {
-    $ctrl.keywords = 'b';
+  it('reapplies the filter on changes', () => {
+    $ctrl.keywords = 'w';
     $ctrl.$onChanges();
 
-    expect($ctrl.keywords).toEqual('');
-    expect($ctrl.hits).toEqual(items.length);
-    expect(onFilter).toHaveBeenCalledWith({ filteredItems: items });
+    expect($ctrl.keywords).toEqual('w');
+    expect($ctrl.hits).toEqual(1);
+    expect(onFilter).toHaveBeenCalledWith({ filteredItems: [{ a: 'two' }] });
   });
 
   it('returns translationData containing the name of the items, single and plural', () => {
