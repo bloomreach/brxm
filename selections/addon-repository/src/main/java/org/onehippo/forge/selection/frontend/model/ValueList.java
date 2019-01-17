@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package org.onehippo.forge.selection.frontend.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-
-import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Value list object, i.e. an array list with ListItem objects, reflecting a
@@ -27,10 +26,8 @@ import org.apache.wicket.util.io.IClusterable;
  * @author Jeroen Hoffman
  * @author Dennis Dam
  */
-public class ValueList extends ArrayList<ListItem> implements IClusterable {
+public class ValueList extends ArrayList<ListItem> implements Serializable {
 
-    private static final long serialVersionUID = 1361292197145754639L;
-    
     /**
      * Constructor.
      */
@@ -48,7 +45,7 @@ public class ValueList extends ArrayList<ListItem> implements IClusterable {
      * @return index of a list item in the list
      */
     @Override
-    public int indexOf(Object element) {
+    public int indexOf(final Object element) {
         if (element instanceof ListItem) {
             return super.indexOf(element);
         }
@@ -73,7 +70,7 @@ public class ValueList extends ArrayList<ListItem> implements IClusterable {
      * @param object a listitem or a string
      * @return the key associated with the listitem/string
      */
-    public String getKey(Object object) {
+    public String getKey(final Object object) {
 
         if (object instanceof ListItem) {
             return ((ListItem) object).getKey();
@@ -95,7 +92,7 @@ public class ValueList extends ArrayList<ListItem> implements IClusterable {
      * @param object a listitem or a string
      * @return the label associated with the listitem/string
      */
-    public String getLabel(Object object) {
+    public String getLabel(final Object object) {
 
         if (object instanceof ListItem) {
             return ((ListItem) object).getLabel();
@@ -103,9 +100,9 @@ public class ValueList extends ArrayList<ListItem> implements IClusterable {
 
         // string value is considered as the key
         if (object instanceof String) {
-            for (int i = 0; i < size(); i++) {
-                if (get(i).getKey().equals(object)) {
-                    return get(i).getLabel();
+            for (ListItem listItem : this) {
+                if (listItem.getKey().equals(object)) {
+                    return listItem.getLabel();
                 }
             }
         }
@@ -118,9 +115,8 @@ public class ValueList extends ArrayList<ListItem> implements IClusterable {
      * @param key the key of a listitem
      * @return the listitem of which the key is equal to the given key
      */
-    public ListItem getListItemByKey(String key){
-        for (int i = 0; i < size(); i++) {
-            ListItem valueListItem = get(i);
+    public ListItem getListItemByKey(final String key){
+        for (ListItem valueListItem : this) {
             if (valueListItem.getKey().equals(key)) {
                 return valueListItem;
             }
