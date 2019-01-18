@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ValidationResult implements IValidationResult {
@@ -23,7 +23,7 @@ public class ValidationResult implements IValidationResult {
     private Set<Violation> violations;
 
     public ValidationResult() {
-        this(new HashSet<>());
+        this(new LinkedHashSet<>());
     }
 
     public ValidationResult(final Set<Violation> violations) {

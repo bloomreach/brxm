@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.validator;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -82,7 +83,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         if (!(model instanceof JcrNodeModel)) {
             throw new ValidationException("Invalid model type; only JcrNodeModel is supported");
         }
-        final Set<Violation> violations = new HashSet<>();
+        final Set<Violation> violations = new LinkedHashSet<>();
         final Set<String> validators = field.getValidators();
         final boolean required = validators.contains(REQUIRED_VALIDATOR);
         if ((required || fieldType.isNode() || validators.size() > 0) && !field.isProtected()) {
