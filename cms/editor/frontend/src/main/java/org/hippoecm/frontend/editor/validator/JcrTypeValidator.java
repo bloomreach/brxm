@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
@@ -30,7 +30,7 @@ import org.hippoecm.frontend.validation.Violation;
  */
 public class JcrTypeValidator implements ITypeValidator {
 
-    private final Set<JcrFieldValidator> fieldValidators = new HashSet<>();
+    private final Set<JcrFieldValidator> fieldValidators = new LinkedHashSet<>();
     private final ITypeDescriptor type;
     private final ValidatorService validatorService;
 
@@ -51,7 +51,7 @@ public class JcrTypeValidator implements ITypeValidator {
     }
 
     public Set<Violation> validate(final IModel model) throws ValidationException {
-        final Set<Violation> violations = new HashSet<>();
+        final Set<Violation> violations = new LinkedHashSet<>();
         for (final JcrFieldValidator fieldValidator : fieldValidators) {
             final Set<Violation> fieldViolations = fieldValidator.validate(model);
             violations.addAll(fieldViolations);
