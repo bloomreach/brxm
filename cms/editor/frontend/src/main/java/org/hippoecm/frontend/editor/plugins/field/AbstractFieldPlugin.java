@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,7 +42,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -63,6 +63,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -204,23 +205,71 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     @Override
     public void render(final PluginRequestTarget target) {
-        if (isActive()) {
-            if (IEditor.Mode.EDIT == mode && filter != null) {
-                final IModel<IValidationResult> validationModel = helper.getValidationModel();
-                if (validationModel != null && validationModel.getObject() != null) {
-                    filter.setValid(isFieldValid(validationModel.getObject()));
+        if (isActive() && IEditor.Mode.EDIT == mode && filter != null) {
+            final Violation firstViolation = findFirstViolation();
+            filter.setValid(firstViolation == null);
+
+            if (target != null) {
+                String javascript = "";
+
+                // clear previous validation messages
+                javascript += String.format("$('.validation-message', '#%s').remove();", getMarkupId());
+
+                if (firstViolation == null) {
+                    javascript += String.format("$('#%s').removeClass('%s');", getMarkupId(), ValidationFilter.INVALID);
+                } else {
+                    javascript += String.format("$('#%s').addClass('%s');", getMarkupId(), ValidationFilter.INVALID);
+
+                    // print first violation
+                    final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
+                    final String msgCode = getMarkupId() + msg.hashCode();
+                    javascript += String.format("if ($('.%s').length === 0) { $('#%s').append('<span class=\"validation-message %s\">%s</span>'); }", msgCode, getMarkupId(), msgCode, msg);
                 }
-                if (target != null) {
-                    final String element = "$('#" + getMarkupId() + "')";
-                    if (filter.isValid()) {
-                        target.appendJavaScript(element + ".removeClass('" + ValidationFilter.INVALID + "');");
-                    } else {
-                        target.appendJavaScript(element + ".addClass('" + ValidationFilter.INVALID + "');");
-                    }
-                }
+
+                target.appendJavaScript(javascript);
             }
         }
         super.render(target);
+    }
+
+    private Violation findFirstViolation() {
+        final IFieldDescriptor field = getFieldHelper().getField();
+        if (field == null) {
+            return null;
+        }
+
+        final IModel<IValidationResult> validationModel = helper.getValidationModel();
+        if (validationModel == null) {
+            return null;
+        }
+
+        final IValidationResult validationResult = validationModel.getObject();
+        if (validationResult == null || validationResult.isValid()) {
+            return null;
+        }
+
+        final Set<Violation> violations = validationResult.getViolations();
+        if (violations == null || violations.isEmpty()) {
+            return null;
+        }
+
+        return violations.stream()
+                .filter(violation -> isFieldViolation(field, violation))
+                .reduce((first, second) -> second) // return last element
+                .orElse(null);
+    }
+
+    private static boolean isFieldViolation(final IFieldDescriptor field, final Violation violation) {
+        final Set<ModelPath> dependentPaths = violation.getDependentPaths();
+        for (final ModelPath path : dependentPaths) {
+            if (path.getElements().length > 0) {
+                final ModelPathElement first = path.getElements()[0];
+                if (first.getField().equals(field)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
