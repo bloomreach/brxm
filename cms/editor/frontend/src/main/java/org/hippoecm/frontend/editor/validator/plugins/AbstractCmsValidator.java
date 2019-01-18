@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,16 +24,15 @@ import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.ICmsValidator;
-import org.hippoecm.frontend.validation.ValidatorMessages;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
     private final String name;
 
-    public AbstractCmsValidator(IPluginContext context, IPluginConfig config) {
+    public AbstractCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
     }
@@ -68,24 +67,12 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
      *
      * @return a model of the translation of the message
      */
-    protected IModel<String> getTranslation(String alternateKey) {
-        String key = getName() + "#" + alternateKey;
+    protected IModel<String> getTranslation(final String alternateKey) {
+        final String key = getName() + "#" + alternateKey;
         return getResourceBundleModel(key, Session.get().getLocale());
     }
 
-    /**
-     * Return translations of the default messages (those in {@link ValidatorMessages})
-     *
-     * This method is deprecated. Instead, use {@link #getTranslation()} which uses repository resource bundles.
-     * @param key the key for a default message
-     * @return a model of the translation of the default message
-     */
-    @Deprecated
-    protected IModel<String> getDefaultMessage(String key) {
-        return new ClassResourceModel(key, ValidatorMessages.class);
-    }
-
-    private IModel<String> getResourceBundleModel(String key, Locale locale) {
+    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
         return new ResourceBundleModel("hippo:cms.validators", key, locale);
     }
 

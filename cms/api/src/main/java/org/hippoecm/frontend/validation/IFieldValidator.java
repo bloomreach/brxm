@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,18 +29,6 @@ public interface IFieldValidator extends IClusterable {
     IFieldDescriptor getFieldDescriptor();
 
     ITypeDescriptor getFieldType();
-
-    /**
-     * Create a Violation object with field information.
-     *
-     * @param childModel
-     * @param key
-     * @throws ValidationException
-     *
-     * @deprecated : use the {@link #newValueViolation(IModel, IModel)} signature instead
-     */
-    @Deprecated
-    Violation newValueViolation(IModel childModel, String key) throws ValidationException;
 
     /**
      * Create a Violation object with field information.

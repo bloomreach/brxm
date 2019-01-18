@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,17 +40,17 @@ import org.slf4j.LoggerFactory;
  */
 public class HtmlCmsValidator extends AbstractCmsValidator {
 
-    static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
 
-    private HtmlValidator htmlValidator;
+    private final HtmlValidator htmlValidator;
 
-    public HtmlCmsValidator(IPluginContext context, IPluginConfig config) {
+    public HtmlCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         htmlValidator = new HtmlValidator();
     }
 
     @Override
-    public void preValidation(IFieldValidator type) throws ValidationException {
+    public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
             throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
         }
@@ -58,11 +60,11 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(IFieldValidator fieldValidator, JcrNodeModel model, IModel childModel) throws ValidationException {
-        Set<Violation> violations = new HashSet<Violation>();
-        String value = (String) childModel.getObject();
-        for (String key : htmlValidator.validateNonEmpty(value)) {
-            violations.add(fieldValidator.newValueViolation(childModel, getDefaultMessage(key)));
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+        final Set<Violation> violations = new HashSet<>();
+        final String value = (String) childModel.getObject();
+        for (final String key : htmlValidator.validateNonEmpty(value)) {
+            violations.add(fieldValidator.newValueViolation(childModel, new ClassResourceModel(key, ValidatorMessages.class)));
         }
         return violations;
     }

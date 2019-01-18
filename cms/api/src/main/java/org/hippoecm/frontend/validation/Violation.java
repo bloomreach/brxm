@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import org.apache.wicket.model.IModel;
  */
 public final class Violation implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     private final Set<ModelPath> fieldPaths;
     private final IModel<String> message;
 
@@ -54,7 +52,7 @@ public final class Violation implements IDetachable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("paths: ");
         sb.append(fieldPaths.toString());
         sb.append(", message: ");
@@ -63,9 +61,7 @@ public final class Violation implements IDetachable {
     }
 
     public void detach() {
-        for (ModelPath path : fieldPaths) {
-            path.detach();
-        }
+        fieldPaths.forEach(ModelPath::detach);
     }
 
 }
