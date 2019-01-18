@@ -25,6 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
@@ -45,11 +46,14 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public void preValidation(final IFieldValidator type) throws ValidationException {
-        if (!"String".equals(type.getFieldType().getType())) {
+    public void preValidation(final IFieldValidator fieldValidator) throws ValidationException {
+        final ITypeDescriptor fieldType = fieldValidator.getFieldType();
+
+        if (!"String".equals(fieldType.getType())) {
             throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptiness");
         }
-        if ("Html".equals(type.getFieldType().getName())) {
+
+        if ("Html".equals(fieldType.getName()) && htmlValidator == null) {
             htmlValidator = new HtmlValidator();
         }
     }
@@ -58,7 +62,8 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
     public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
-        if (htmlValidator != null) {
+
+        if ("Html".equals(fieldValidator.getFieldType().getName())) {
             for (final String key : htmlValidator.validateNonEmpty(value)) {
                 final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
                 violations.add(fieldValidator.newValueViolation(childModel, message));
