@@ -33,6 +33,18 @@ public interface IFieldValidator extends IClusterable {
     /**
      * Create a Violation object with field information.
      *
+     * @param childModel
+     * @param key
+     * @throws ValidationException
+     *
+     * @deprecated : use the {@link #newValueViolation(IModel, IModel)} signature instead
+     */
+    @Deprecated
+    Violation newValueViolation(IModel childModel, String key) throws ValidationException;
+
+    /**
+     * Create a Violation object with field information.
+     *
      * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
      * @param message model containing the message to be shown to the user
      * @throws ValidationException

@@ -142,6 +142,11 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         return fieldType;
     }
 
+    @Override
+    public Violation newValueViolation(final IModel childModel, final String key) throws ValidationException {
+        return newValueViolation(childModel, getMessage(key));
+    }
+
     private void addTypeViolations(final Set<Violation> violations, final IModel childModel, final Set<Violation> typeViolations)
             throws ValidationException {
         final JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
