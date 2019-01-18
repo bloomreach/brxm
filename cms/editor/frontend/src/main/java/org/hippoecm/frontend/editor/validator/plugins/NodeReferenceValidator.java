@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
@@ -30,7 +31,7 @@ import org.hippoecm.frontend.validation.Violation;
 
 public class NodeReferenceValidator extends AbstractCmsValidator {
 
-    public NodeReferenceValidator(IPluginContext context, IPluginConfig config) {
+    public NodeReferenceValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
@@ -43,10 +44,12 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
 
     @Override
     public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
-        Set<Violation> violations = new HashSet<Violation>();
-        String ref = (String) childModel.getObject();
+        final Set<Violation> violations = new HashSet<>();
+        final String ref = (String) childModel.getObject();
         if(ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
-            violations.add(fieldValidator.newValueViolation(childModel, getDefaultMessage(ValidatorMessages.REFERENCE_IS_EMPTY)));
+            final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.REFERENCE_IS_EMPTY,
+                    ValidatorMessages.class);
+            violations.add(fieldValidator.newValueViolation(childModel, message));
         }
         return violations;
     }
