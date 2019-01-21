@@ -652,26 +652,6 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
-    },
-    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/width.hint" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/height.hint" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
     }
   }
 }

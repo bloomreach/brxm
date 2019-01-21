@@ -96,10 +96,8 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsVideoComponentInfo
     : /en:
         jcr:primaryType: hipposys:resourcebundle
-        width.hint: In pixels
         video.group: Video
         width: Width
-        height.hint: In pixels
         height: Height
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsPageable
     : /en:
