@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ public interface EssentialsSortable {
     String ASC = "asc";
     String DESC = "desc";
 
-    @Parameter(name = "sortField", description = "The JCR property name on the document node to sort by.")
+    @Parameter(name = "sortField")
     String getSortField();
 
-    @Parameter(name = "sortOrder", defaultValue = DESC, description = "Order results ascending or descending.")
+    @Parameter(name = "sortOrder", defaultValue = DESC)
     @DropDownList(value = {ASC, DESC})
     String getSortOrder();
 }
