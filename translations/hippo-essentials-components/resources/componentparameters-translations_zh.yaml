@@ -15,12 +15,10 @@ definitions:
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: 地形信息
-        mapType.help: 要显示的地图的类型
         address: 位置/地址
         apiKey: 谷歌地图 API 秘钥
         latitude: 纬度
         mapType: 地图类型
-        location.help: 关于您可以提供地址或使用经度和维度的位置
         zoomFactor: 缩放系数
         map.options: 地图选项
         mapType#SATELLITE: 谷歌地图卫星

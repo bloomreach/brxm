@@ -15,13 +15,10 @@ definitions:
     : /fr:
         jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: Informations topographiques
-        mapType.help: Le type de carte à afficher
         address: Emplacement / Adresse
         apiKey: Code API Google Maps
         latitude: Latitude
         mapType: Type de carte
-        location.help: Pour le lieu, vous pouvez fournir une adresse ou utiliser la
-          longitude et la latitude
         zoomFactor: Facteur zoom
         map.options: Options de carte
         mapType#SATELLITE: Satellite Google Earth
