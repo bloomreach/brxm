@@ -183,9 +183,7 @@ definitions:
               /en:
                 jcr:primaryType: hipposys:resourcebundle
                 height: Height
-                height.hint: In pixels
                 width: Width
-                width.hint: In pixels
                 video.group: Video
             /EssentialsDocumentComponentInfo:
               jcr:primaryType: hipposys:resourcebundles
