@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
-  * ResourceRequiredValidator validates fields that are a (subtype of) {@link HippoNodeType.NT_RESOURCE} that a resource
-  * has been uploaded.
-  *
-  * @author David de Bos
-  */
+ * ResourceRequiredValidator validates fields that are a (subtype of) {@link HippoNodeType.NT_RESOURCE} that a resource
+ * has been uploaded.
+ *
+ * @author David de Bos
+ */
 public class ResourceRequiredValidator extends AbstractCmsValidator {
 
     public static final String INVALID_VALIDATION_EXCEPTION_ERROR_MESSAGE = "Invalid validation exception. " +
@@ -78,7 +78,9 @@ public class ResourceRequiredValidator extends AbstractCmsValidator {
             final Node node = ((JcrNodeModel) childModel).getNode();
             final Property resourceData = node.getProperty("jcr:data");
             if (!(resourceData.getLength() > 0)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
+                final Violation violation = fieldValidator.newValueViolation(childModel, getTranslation());
+                violation.setValidationScope(getValidationScope());
+                violations.add(violation);
             }
         } catch (final Exception e) {
             throw new ValidationException(e);

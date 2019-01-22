@@ -41,11 +41,15 @@ public class EscapedCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+                                   final IModel childModel) throws ValidationException {
+        
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (INVALID_CHARS.matcher(value).matches()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
+            final Violation violation = fieldValidator.newValueViolation(childModel, getTranslation());
+            violation.setValidationScope(getValidationScope());
+            violations.add(violation);
         }
         return violations;
     }

@@ -50,7 +50,8 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
         final ITypeDescriptor fieldType = fieldValidator.getFieldType();
 
         if (!"String".equals(fieldType.getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptiness");
+            throw new ValidationException("Invalid validation exception; " +
+                    "cannot validate non-string field for emptiness");
         }
 
         if ("Html".equals(fieldType.getName()) && htmlValidator == null) {
@@ -59,14 +60,18 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+                                   final IModel childModel) throws ValidationException {
+        
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
 
         if ("Html".equals(fieldValidator.getFieldType().getName())) {
             for (final String key : htmlValidator.validateNonEmpty(value)) {
                 final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
-                violations.add(fieldValidator.newValueViolation(childModel, message));
+                final Violation violation = fieldValidator.newValueViolation(childModel, message);
+                violation.setValidationScope(getValidationScope());
+                violations.add(violation);
             }
         } else {
             if (StringUtils.isBlank(value)) {
