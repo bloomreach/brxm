@@ -37,6 +37,7 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -120,7 +121,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 if (validatorService != null) {
                     for (final String fieldValidatorType : validators) {
                         if (validatorService.containsValidator(fieldValidatorType)) {
-                            violations.addAll(validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel));
+                            final Set<Violation> violationSet = validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel);
+                            violationSet.forEach(violation -> violation.setValidationScope(ValidationScope.FIELD));
+                            violations.addAll(violationSet);
                         }
                     }
                 }
@@ -165,8 +168,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             throw new ValidationException("Could not resolve path for invalid value", e);
         }
 
-        for (final Violation violation : typeViolations) {
-            final Set<ModelPath> childPaths = violation.getDependentPaths();
+        for (final Violation typeViolation : typeViolations) {
+            final Set<ModelPath> childPaths = typeViolation.getDependentPaths();
             final Set<ModelPath> paths = new HashSet<>();
             for (final ModelPath childPath : childPaths) {
                 final ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
@@ -174,7 +177,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 elements[0] = new ModelPathElement(field, name, index);
                 paths.add(new ModelPath(elements));
             }
-            violations.add(new Violation(paths, violation.getMessage()));
+            final Violation newViolation = new Violation(paths, typeViolation.getMessage());
+            newViolation.setValidationScope(typeViolation.getValidationScope());
+            violations.add(newViolation);
         }
     }
 
@@ -222,7 +227,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel) {
         final Set<ModelPath> paths = getModelPaths(child);
-        return new Violation(paths, messageModel);
+        final Violation violation = new Violation(paths, messageModel);
+        violation.setValidationScope(ValidationScope.FIELD);
+        return violation;
     }
 
 }

@@ -39,7 +39,8 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         if (config.containsKey(PATTERN_KEY)) {
             pattern = Pattern.compile(config.getString(PATTERN_KEY));
         } else {
-            throw new Exception("regex_pattern property should be set in the plugin configuration of: " + config.getName());
+            throw new Exception("regex_pattern property should be set in the plugin configuration of: "
+                    + config.getName());
         }
     }
 
@@ -51,14 +52,17 @@ public class RegExCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
+                                   final IModel childModel) throws ValidationException {
+
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (!pattern.matcher(value).find()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
+            final Violation violation = fieldValidator.newValueViolation(childModel, getTranslation());
+            violation.setValidationScope(getValidationScope());
+            violations.add(violation);
         }
         return violations;
     }
-
 
 }

@@ -49,7 +49,9 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
         if(ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
             final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.REFERENCE_IS_EMPTY,
                     ValidatorMessages.class);
-            violations.add(fieldValidator.newValueViolation(childModel, message));
+            final Violation violation = fieldValidator.newValueViolation(childModel, message);
+            violation.setValidationScope(getValidationScope());
+            violations.add(violation);
         }
         return violations;
     }

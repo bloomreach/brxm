@@ -52,19 +52,26 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
     @Override
     public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptyness");
+            throw new ValidationException("Invalid validation exception; " +
+                    "cannot validate non-string field for emptyness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
-            log.warn("Explicit html validation is not necessary for fields of type 'Html'.  This is covered by the 'non-empty' validator.");
+            log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
+                    "This is covered by the 'non-empty' validator.");
         }
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+                                   final IModel childModel) throws ValidationException {
+        
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         for (final String key : htmlValidator.validateNonEmpty(value)) {
-            violations.add(fieldValidator.newValueViolation(childModel, new ClassResourceModel(key, ValidatorMessages.class)));
+            final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
+            final Violation violation = fieldValidator.newValueViolation(childModel, message);
+            violation.setValidationScope(getValidationScope());
+            violations.add(violation);
         }
         return violations;
     }
