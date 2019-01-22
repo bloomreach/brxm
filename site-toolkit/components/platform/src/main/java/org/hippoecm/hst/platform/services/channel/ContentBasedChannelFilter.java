@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class ContentBasedChannelFilter implements BiPredicate<Session, Channel> 
     public boolean test(final Session userSession, final Channel channel) {
         try {
             if (userSession.nodeExists(channel.getContentRoot())) {
-                log.debug("Predicate passed for channel '{}' because user has read access on '{}'",
+                log.debug("Predicate passed for channel '{}' because user '{}' has read access on '{}'",
                         new String[]{channel.toString(), userSession.getUserID(), channel.getContentRoot()});
                 return true;
             }
@@ -45,7 +45,7 @@ public class ContentBasedChannelFilter implements BiPredicate<Session, Channel> 
                     new String[]{channel.toString(), userSession.getUserID(), channel.getContentRoot()});
             return false;
         } catch (RepositoryException e) {
-            log.warn("Exception while trying to check channel {}. Skip that channel:", channel.getContentRoot(), e);
+            log.warn("Exception while trying to check channel content root '{}'. Skip that channel:", channel.getContentRoot(), e);
             return false;
         }
     }
