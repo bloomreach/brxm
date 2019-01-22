@@ -35,6 +35,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -126,7 +127,12 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 listener.onValidation(result);
             }
             for (final Violation violation : result.getViolations()) {
-                logger.error(violation.getMessage());
+                logger.error(violation.getMessage().getObject(), violation.getValidationScope());
+            }
+            if (result.getViolations().size() > 0) {
+                // TODO use resource bundle for 1 and more error(s)
+                logger.error(String.format("There are %d validation errors.", result.getViolations().size()), 
+                        ValidationScope.DOCUMENT);
             }
         } catch (final RepositoryException e) {
             throw new ValidationException("Repository error", e);
