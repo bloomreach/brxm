@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -555,7 +555,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         try {
             HstServices.getComponentManager()
                     .getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
-                    .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
+                    .setChannelManagerHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
@@ -580,7 +580,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
                     channel, branch);
         } finally {
             HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
-                    .setChannelManagerHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
+                    .setChannelManagerHstSiteProvider((master, branches, requestContext) -> master);
             restoreHstConfigBackup(session);
             session.logout();
             ModifiableRequestContextProvider.clear();
@@ -593,7 +593,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
         try {
             HstServices.getComponentManager()
                     .getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
-                    .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getBranches().get("branchid-000"));
+                    .setWebsiteHstSiteProvider((master, branches, requestContext) -> branches.get("branchid-000"));
 
             createHstConfigBackup(session);
             createBranch(session, "unittestproject-branchid-000", "branchid-000");
@@ -619,7 +619,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             assertSame("Expected that the branch channel would be matched", channel, branch);
         } finally {
             HstServices.getComponentManager().getComponent(DelegatingHstSiteProvider.class, "org.hippoecm.hst.platform")
-                    .setWebsiteHstSiteProvider((compositeHstSite, requestContext) -> compositeHstSite.getMaster());
+                    .setWebsiteHstSiteProvider((master, branches, requestContext) -> master);
             restoreHstConfigBackup(session);
             session.logout();
             ModifiableRequestContextProvider.clear();

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.container.site;
 
+import java.util.Map;
+
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
@@ -27,15 +29,19 @@ public interface HstSiteProvider {
      *     or to return the master.
      * </p>
      * <p>
-     *     Note that this method {@link HstSiteProvider#getHstSite(CompositeHstSite, HstRequestContext)}
+     *     Note that this method {@link HstSiteProvider#getHstSite(HstSite, Map, HstRequestContext)}
      *     only gets invoked when there is at least one branch for the {@link HstSite} belonging to the matched
      *     {@link org.hippoecm.hst.configuration.hosting.Mount} for the current {@link HstRequestContext}. If you provide
      *     a custom {@link HstSiteProvider} it might thus happen that your implemented
-     *     {@link HstSiteProvider#getHstSite(CompositeHstSite, HstRequestContext)} does not get invoked, which is most
+     *     {@link HstSiteProvider#getHstSite(HstSite, Map, HstRequestContext)} does not get invoked, which is most
      *     likely caused by there being no branches available.
      * </p>
+     * @param master the master {@link HstSite}
+     * @param branches unmutable map of {link HstSite}s which are the branches (master not included!) and empty map if no
+     *                 branches for {@code master} present. They keys in the map are the branch ids
+     * @param requestContext
      * @return the {@link HstSite} to use for rendering, not allowed to be {@code null}
      */
-    HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
+    HstSite getHstSite(HstSite master, Map<String, HstSite> branches, HstRequestContext requestContext);
 
 }

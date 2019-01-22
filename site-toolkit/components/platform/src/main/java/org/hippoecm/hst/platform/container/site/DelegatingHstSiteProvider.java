@@ -16,10 +16,10 @@
 package org.hippoecm.hst.platform.container.site;
 
 
-import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.site.HstSiteProvider;
+import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.container.site.CustomWebsiteHstSiteProviderService;
+import org.hippoecm.hst.container.site.HstSiteProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
@@ -34,8 +34,8 @@ public class DelegatingHstSiteProvider  {
 
     private static final String HST_SITE_CONTEXT_ATTR = DelegatingHstSiteProvider.class.getName() + ".hstSite";
 
-    private HstSiteProvider channelManagerHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
-    private HstSiteProvider websiteHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
+    private HstSiteProvider channelManagerHstSiteProvider = (master, branches, requestContext) -> master;
+    private HstSiteProvider websiteHstSiteProvider = (master, branches, requestContext) -> master;
 
     /**
      * this setter can be used by enterprise paltform webapp to inject a custom HstSiteProvider for the channel mngr
@@ -63,20 +63,20 @@ public class DelegatingHstSiteProvider  {
 
         final HstSite hstSite;
         if (requestContext.isCmsRequest()) {
-            hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+            hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         } else {
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
             final HstSiteProvider customSiteProvider = customWebsiteHstSiteProviderService.get(requestContext.getServletRequest().getContextPath());
             if (customSiteProvider == null) {
-                hstSite = websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+                hstSite = websiteHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
             } else {
                 HstSite custom;
                 try {
-                    custom = customSiteProvider.getHstSite(compositeHstSite, requestContext);
+                    custom = customSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
                 } catch (Exception e) {
                     log.warn("Exception in custom site provider {}. Fallback to default hst site provider",
                             customSiteProvider.getClass(), e);
-                    custom = websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+                    custom = websiteHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
                 }
                 if (custom == null) {
                     log.warn("");
