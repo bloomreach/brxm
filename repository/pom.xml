@@ -72,6 +72,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
+    <javadoc.base.version>13.0</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.configuration-management.version>13.1.0-SNAPSHOT</hippo.configuration-management.version>
