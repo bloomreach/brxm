@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.frontend.validation.ScopedFeedBackMessageFilter;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
@@ -113,6 +114,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     public static final String CSS_ID = "wicket.css";
     public static final String EXTENSIONS_ID = "wicket.extensions";
     public static final String FEEDBACK = "wicket.feedback";
+    public static final String FEEDBACK_SCOPE = "wicket.feedback.scope";
     public static final String BEHAVIOR = "wicket.behavior";
     public static final String VISIBLE = "wicket.visible";
     public static final String DEFAULT_LOCALE = "en";
@@ -210,7 +212,13 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         }
 
         if (config.getString(FEEDBACK) != null) {
-            context.registerService(new ContainerFeedbackMessageFilter(this), config.getString(FEEDBACK));
+            if (StringUtils.isNotBlank(config.getString(FEEDBACK_SCOPE))) {
+                context.registerService(new ScopedFeedBackMessageFilter(config.getString(FEEDBACK_SCOPE)), 
+                        config.getString(FEEDBACK));
+            } else {
+                // only for backwards compatibility: feedback should also include scope in the next major version
+                context.registerService(new ContainerFeedbackMessageFilter(this), config.getString(FEEDBACK));
+            }
         } else {
             log.debug("No feedback id {} defined to register message filter", FEEDBACK);
         }

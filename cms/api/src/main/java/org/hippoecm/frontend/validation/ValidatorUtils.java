@@ -20,7 +20,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ValidatorUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(ValidatorUtils.class);
 
     public static final String NON_EMPTY_VALIDATOR = "non-empty";
     public static final String OPTIONAL_VALIDATOR = "optional";
@@ -32,6 +38,20 @@ public class ValidatorUtils {
 
     public static boolean hasRequiredValidator(final Set<String> validators) {
         return validators.stream().anyMatch(REQUIRED_VALIDATORS::contains);
+    }
+
+    public static ValidationScope getValidationScope(final String scope) {
+        try {
+            if (StringUtils.isNotBlank(scope)) {
+                return ValidationScope.valueOf(scope.toUpperCase());
+            }
+        } catch (IllegalArgumentException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid scope '{}'. Must be one of " + StringUtils.join(ValidationScope.values(), ", ") +
+                        ". Using DOCUMENT scope as default.", scope);
+            }
+        }
+        return ValidationScope.DOCUMENT;
     }
 
     private ValidatorUtils() {}
