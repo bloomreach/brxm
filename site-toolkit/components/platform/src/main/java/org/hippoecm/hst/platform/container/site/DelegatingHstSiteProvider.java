@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,10 +19,20 @@ package org.hippoecm.hst.platform.container.site;
 import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.site.HstSiteProvider;
+import org.hippoecm.hst.container.site.CustomWebsiteHstSiteProviderService;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.hst.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 
 public class DelegatingHstSiteProvider  {
 
+    private static final Logger log = LoggerFactory.getLogger(DelegatingHstSiteProvider.class);
+
+    private static final String HST_SITE_CONTEXT_ATTR = DelegatingHstSiteProvider.class.getName() + ".hstSite";
 
     private HstSiteProvider channelManagerHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
     private HstSiteProvider websiteHstSiteProvider = (compositeHstSite, requestContext) -> compositeHstSite.getMaster();
@@ -45,9 +55,44 @@ public class DelegatingHstSiteProvider  {
         if (requestContext == null) {
             return compositeHstSite.getMaster();
         }
-        if (requestContext.isCmsRequest()) {
-            return channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+
+        final HstSite computed = (HstSite) requestContext.getAttribute(HST_SITE_CONTEXT_ATTR);
+        if (computed != null) {
+            return computed;
         }
-        return websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+
+        final HstSite hstSite;
+        if (requestContext.isCmsRequest()) {
+            hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+            return hstSite;
+        } else {
+            final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
+            final HstSiteProvider customSiteProvider = customWebsiteHstSiteProviderService.get(requestContext.getServletRequest().getContextPath());
+            if (customSiteProvider == null) {
+                hstSite = websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+            } else {
+                HstSite custom;
+                try {
+                    custom = customSiteProvider.getHstSite(compositeHstSite, requestContext);
+                } catch (Exception e) {
+                    log.warn("Exception in custom site provider {}. Fallback to default hst site provider",
+                            customSiteProvider.getClass(), e);
+                    custom = websiteHstSiteProvider.getHstSite(compositeHstSite, requestContext);
+                }
+                if (custom == null) {
+                    log.warn("");
+                }
+                hstSite = custom;
+            }
+
+        }
+
+        requestContext.setAttribute(HST_SITE_CONTEXT_ATTR, hstSite);
+
+        final Channel channel = hstSite.getChannel();
+        if (channel != null && channel.getBranchId() != null) {
+            requestContext.setAttribute(RENDER_BRANCH_ID, channel.getBranchId());
+        }
+        return hstSite;
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,21 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 @FunctionalInterface
 public interface HstSiteProvider {
 
+    /**
+     * <p>
+     *     An {@link HstSiteProvider} can choose based on some heuristic to return a specific {@link HstSite} branch
+     *     or to return the master.
+     * </p>
+     * <p>
+     *     Note that this method {@link HstSiteProvider#getHstSite(CompositeHstSite, HstRequestContext)}
+     *     only gets invoked when there is at least one branch for the {@link HstSite} belonging to the matched
+     *     {@link org.hippoecm.hst.configuration.hosting.Mount} for the current {@link HstRequestContext}. If you provide
+     *     a custom {@link HstSiteProvider} it might thus happen that your implemented
+     *     {@link HstSiteProvider#getHstSite(CompositeHstSite, HstRequestContext)} does not get invoked, which is most
+     *     likely caused by there being no branches available.
+     * </p>
+     * @return the {@link HstSite} to use for rendering, not allowed to be {@code null}
+     */
     HstSite getHstSite(CompositeHstSite compositeHstSite, HstRequestContext requestContext);
 
 }
