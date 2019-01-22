@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -45,7 +44,9 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,13 +143,13 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         validation.stop();
     }
 
-    public boolean accept(FeedbackMessage message) {
-        final Component reporter = message.getReporter();
-        if (reporter == null) {
-            return false;
+    public boolean accept(final FeedbackMessage message) {
+        if (message instanceof ScopedFeedBackMessage) {
+            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getScope().equals(ValidationScope.COMPOUND);
         }
-        return reporter == this || this.contains(reporter, true);
-    }
+        return false;
+   }
 
     @Override
     public void onModelChanged() {
@@ -174,6 +175,12 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     @Override
     public void error(final IModel<String> message) {
         super.error(message.getObject());
+    }
+
+    // the same logic as in org.apache.wicket.Component.error
+    public void error(final String message, final ValidationScope scope) {
+        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message, FeedbackMessage.ERROR, scope));
+        addStateChange();
     }
 
     @Override

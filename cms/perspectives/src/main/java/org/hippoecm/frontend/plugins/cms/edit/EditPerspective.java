@@ -76,6 +76,7 @@ public class EditPerspective extends Perspective {
         feedback = new FeedbackPanel("feedback", message -> {
             final String serviceId = config.getString(RenderService.FEEDBACK);
             if (serviceId != null) {
+                // TODO: with scoped feedback to collect all filters may not be necessary anymore
                 List<IFeedbackMessageFilter> filters = context.getServices(serviceId, IFeedbackMessageFilter.class);
                 for (IFeedbackMessageFilter filter : filters) {
                     if (filter.accept(message)) {
