@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ class OverlayService {
 
     this.$log = $log;
     this.$rootScope = $rootScope;
-    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CreateContentService = CreateContentService;
@@ -61,6 +60,8 @@ class OverlayService {
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
+
+    this._translate = (key, params) => $translate.instant(key, params, undefined, false, 'escape');
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -329,15 +330,15 @@ class OverlayService {
 
   _getLockedByText(container) {
     if (container.isInherited()) {
-      return this.$translate.instant('CONTAINER_INHERITED');
+      return this._translate('CONTAINER_INHERITED');
     }
-    const escapedLockedBy = this.DomService.escapeHtml(container.getLockedBy());
-    return this.$translate.instant('CONTAINER_LOCKED_BY', { user: escapedLockedBy });
+
+    return this._translate('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
     overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
-    overlayElement.attr('title', this.$translate.instant(titleKey));
+    overlayElement.attr('title', this._translate(titleKey));
     overlayElement.append(this._getSvg(svg));
   }
 
@@ -446,7 +447,7 @@ class OverlayService {
         mainIcon: contentLinkSvg,
         optionIcon: '', // edit button should never be a option button
         callback: () => this._editContent(config.documentUuid),
-        tooltip: this.$translate.instant('EDIT_CONTENT'),
+        tooltip: this._translate('EDIT_CONTENT'),
       };
       buttons.push(editContentButton);
     }
@@ -458,8 +459,8 @@ class OverlayService {
         optionIcon: searchSvg,
         callback: () => this._selectDocument(config),
         tooltip: config.isLockedByOtherUser
-          ? this.$translate.instant('SELECT_DOCUMENT_LOCKED')
-          : this.$translate.instant('SELECT_DOCUMENT'),
+          ? this._translate('SELECT_DOCUMENT_LOCKED')
+          : this._translate('SELECT_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(selectDocumentButton);
@@ -472,8 +473,8 @@ class OverlayService {
         optionIcon: plusSvg,
         callback: () => this._createContent(config),
         tooltip: config.isLockedByOtherUser
-          ? this.$translate.instant('CREATE_DOCUMENT_LOCKED')
-          : this.$translate.instant('CREATE_DOCUMENT'),
+          ? this._translate('CREATE_DOCUMENT_LOCKED')
+          : this._translate('CREATE_DOCUMENT'),
         isDisabled: config.isLockedByOtherUser,
       };
       buttons.push(createContentButton);
