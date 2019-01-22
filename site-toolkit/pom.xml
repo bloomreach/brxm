@@ -79,6 +79,8 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
+    <javadoc.base.version>13.0</javadoc.base.version>
+
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>13.1.0-SNAPSHOT</hippo.repository.version>
