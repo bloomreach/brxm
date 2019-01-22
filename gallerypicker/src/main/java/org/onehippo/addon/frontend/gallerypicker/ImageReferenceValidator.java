@@ -73,7 +73,9 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
             if (ref == null || ref.equals("")
                     || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")
                     || ref.equals(contentGalleryIdentifier)) {
-                violations.add(fieldValidator.newValueViolation(childModel, "reference-is-empty"));
+                final Violation violation = fieldValidator.newValueViolation(childModel, "reference-is-empty");
+                violation.setValidationScope(getValidationScope());
+                violations.add(violation);
             }
         } catch (RepositoryException repositoryException) {
             log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(),
