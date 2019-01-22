@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -144,6 +145,14 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     }
 
     public boolean accept(final FeedbackMessage message) {
+        final Component reporter = message.getReporter();
+        if (reporter == null) {
+            return false;
+        }
+        boolean inContainerScope = reporter == this || this.contains(reporter, true);
+        if (!inContainerScope) {
+            return false;
+        }
         if (message instanceof ScopedFeedBackMessage) {
             ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
             return scopedMessage.getScope().equals(ValidationScope.COMPOUND);

@@ -213,7 +213,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
 
         if (config.getString(FEEDBACK) != null) {
             if (StringUtils.isNotBlank(config.getString(FEEDBACK_SCOPE))) {
-                context.registerService(new ScopedFeedBackMessageFilter(config.getString(FEEDBACK_SCOPE)), 
+                context.registerService(new ScopedFeedBackMessageFilter(this, config.getString(FEEDBACK_SCOPE)), 
                         config.getString(FEEDBACK));
             } else {
                 // only for backwards compatibility: feedback should also include scope in the next major version

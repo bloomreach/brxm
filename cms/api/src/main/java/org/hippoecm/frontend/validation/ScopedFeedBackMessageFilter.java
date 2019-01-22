@@ -15,25 +15,45 @@
  */
 package org.hippoecm.frontend.validation;
 
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
 
 /**
- * FeedbackMessage filter for ValidationScopes.
+ * A ContainerFeedbackMessageFilter filter that is scope aware.
  */
-public class ScopedFeedBackMessageFilter implements IFeedbackMessageFilter {
+public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter {
 
     private ValidationScope validationScope;
 
-    public ScopedFeedBackMessageFilter(final String scope) {
+    /**
+     * Constructor with default scope of {@code ValidationScope.DOCUMENT}
+     *
+     * @param container The container that message reporters must be a child of
+     */
+    public ScopedFeedBackMessageFilter(final MarkupContainer container) {
+        super(container);
+        validationScope = ValidationScope.DOCUMENT;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param container The container that message reporters must be a child of
+     * @param scope     The scope to filter feedback messages by.
+     */
+    public ScopedFeedBackMessageFilter(final MarkupContainer container, final String scope) {
+        this(container);
         validationScope = ValidatorUtils.getValidationScope(scope);
     }
 
     @Override
     public boolean accept(final FeedbackMessage message) {
-        if (message instanceof ScopedFeedBackMessage) {
-            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(this.validationScope);
+        if (super.accept(message)) {
+            if (message instanceof ScopedFeedBackMessage) {
+                ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+                return scopedMessage.getScope().equals(this.validationScope);
+            }
         }
         return false;
     }
