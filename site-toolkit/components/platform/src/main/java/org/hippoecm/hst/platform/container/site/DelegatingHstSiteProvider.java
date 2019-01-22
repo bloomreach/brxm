@@ -64,7 +64,6 @@ public class DelegatingHstSiteProvider  {
         final HstSite hstSite;
         if (requestContext.isCmsRequest()) {
             hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite, requestContext);
-            return hstSite;
         } else {
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
             final HstSiteProvider customSiteProvider = customWebsiteHstSiteProviderService.get(requestContext.getServletRequest().getContextPath());
@@ -87,10 +86,13 @@ public class DelegatingHstSiteProvider  {
 
         }
 
+        // never compute for the same request context again which HstSite to serve
         requestContext.setAttribute(HST_SITE_CONTEXT_ATTR, hstSite);
 
         final Channel channel = hstSite.getChannel();
         if (channel != null && channel.getBranchId() != null) {
+            // by setting the RENDER_BRANCH_ID, all further request processing in HST can know which branch
+            // to render
             requestContext.setAttribute(RENDER_BRANCH_ID, channel.getBranchId());
         }
         return hstSite;
