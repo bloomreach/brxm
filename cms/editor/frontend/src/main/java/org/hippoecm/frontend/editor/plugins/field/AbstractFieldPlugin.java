@@ -63,6 +63,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -260,6 +261,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     private static boolean isFieldViolation(final IFieldDescriptor field, final Violation violation) {
+        if (!violation.getValidationScope().equals(ValidationScope.FIELD)) {
+            return false;
+        }
         final Set<ModelPath> dependentPaths = violation.getDependentPaths();
         for (final ModelPath path : dependentPaths) {
             if (path.getElements().length > 0) {
