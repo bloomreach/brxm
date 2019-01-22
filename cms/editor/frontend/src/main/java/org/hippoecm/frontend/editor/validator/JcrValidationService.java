@@ -17,13 +17,16 @@ package org.hippoecm.frontend.editor.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -129,11 +132,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
             for (final Violation violation : result.getViolations()) {
                 logger.error(violation.getMessage().getObject(), violation.getValidationScope());
             }
-            if (result.getViolations().size() > 0) {
-                // TODO use resource bundle for 1 and more error(s)
-                logger.error(String.format("There are %d validation errors.", result.getViolations().size()), 
-                        ValidationScope.DOCUMENT);
-            }
+            addSummaryMessage(result, logger);
         } catch (final RepositoryException e) {
             throw new ValidationException("Repository error", e);
         } catch (final StoreException e) {
@@ -141,6 +140,21 @@ public class JcrValidationService implements IValidationService, IDetachable {
         } finally {
             validated = true;
         }
+    }
+
+    private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
+        if (result.getViolations().size() == 1) {
+            final String summary = getResourceBundleModel("summarySingle", Session.get().getLocale()).getObject();
+            logger.error(summary, ValidationScope.DOCUMENT);
+        }
+        if (result.getViolations().size() > 1) {
+            final String summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale()).getObject();
+            logger.error(String.format(summary, result.getViolations().size()), ValidationScope.DOCUMENT);
+        }
+    }
+
+    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
+        return new ResourceBundleModel("hippo:cms.validators", key, locale);
     }
 
     public IValidationResult getValidationResult() {

@@ -6,5 +6,7 @@ definitions:
         jcr:primaryType: hipposys:resourcebundle
         email: Field doesn't match an email address
         escaped: Invalid character present
-        non-empty: A mandatory string input field is empty
+        non-empty: This field is required
         resource-required: You must upload a file
+        summarySingle: One field is invalid.
+        summaryMultiple: There are %d invalid fields.
