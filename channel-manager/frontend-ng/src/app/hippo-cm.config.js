@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ function config(
   $mdThemingProvider,
   $qProvider,
   $stateProvider,
+  $translateSanitizationProvider,
   $translateProvider,
   $urlRouterProvider,
 ) {
@@ -79,7 +80,11 @@ function config(
       'zh_*': 'zh',
     });
   $translateProvider.fallbackLanguage(FALLBACK_LOCALE);
-  $translateProvider.useSanitizeValueStrategy('escaped');
+
+  // AngularJs sanitizes all 'external' values itself automatically, so don't
+  // let angular-translate sanitize values too to prevent double-escaping.
+  $translateSanitizationProvider.addStrategy('none', value => value);
+  $translateProvider.useSanitizeValueStrategy('none');
 
   $mdThemingProvider.definePalette('hippo-blue', {
     50: '#cfe7fc',
