@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,16 @@
  */
 package org.hippoecm.hst.util;
 
+import java.io.Serializable;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Credentials;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +35,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 
@@ -43,6 +49,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CON
 import static org.hippoecm.hst.util.HstRequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -184,6 +191,88 @@ public class TestHstRequestUtils {
         assertTrue("parsedQueryStringMap must contain 'key-ä'.", parsedQueryStringMap.containsKey("key-ä"));
         assertTrue("parsedQueryStringMap must have 1 value for 'key-ä'.", parsedQueryStringMap.get("key-ä").length == 1);
         assertEquals("value-ä", parsedQueryStringMap.get("key-ä")[0]);
+    }
+
+    @Test
+    public void forcedRenderHostFromParameter() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
+        expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost:9090");
+        replay(request);
+        final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
+        assertEquals("renderHost taken from request parameter", "localhost:9090", renderHost);
+    }
+
+    @Test
+    public void forcedRenderHostFromCmsSessionContext() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
+
+        final HttpSession session = createNiceMock(HttpSession.class);
+
+        expect(request.getSession(eq(false))).andStubReturn(session);
+        expect(request.getSession()).andStubReturn(session);
+
+        final CmsSessionContextMock cmsSessionContext = new CmsSessionContextMock(new SimpleCredentials("foo", "foo".toCharArray()));
+        cmsSessionContext.contextPayload.put(ContainerConstants.RENDERING_HOST, "localhost:9090");
+
+        expect(session.getAttribute(eq(CmsSessionContext.SESSION_KEY))).andStubReturn(cmsSessionContext);
+
+
+        replay(request, session);
+        final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
+        assertEquals("renderHost taken from cmsSessionContext", "localhost:9090", renderHost);
+    }
+
+    @Test
+    public void forcedRenderHostParameterTakesPrecedenceOverCmsSessionContext() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
+        expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost:9091");
+
+        final HttpSession session = createNiceMock(HttpSession.class);
+
+        expect(request.getSession(eq(false))).andStubReturn(session);
+        expect(request.getSession()).andStubReturn(session);
+
+        final CmsSessionContextMock cmsSessionContext = new CmsSessionContextMock(new SimpleCredentials("foo", "foo".toCharArray()));
+        cmsSessionContext.contextPayload.put(ContainerConstants.RENDERING_HOST, "localhost:9090");
+
+        expect(session.getAttribute(eq(CmsSessionContext.SESSION_KEY))).andStubReturn(cmsSessionContext);
+
+        replay(request, session);
+        final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
+        assertEquals("renderHost taken from parameter", "localhost:9091", renderHost);
+    }
+
+    @Test
+    public void renderHostParameter_or_CmsSessionContextRenderHost_ignored_for_non_SITE_WEBAPP_requests() {
+        final ServletContext cmsServletContext = createNiceMock(ServletContext.class);
+        expect(cmsServletContext.getContextPath()).andStubReturn("/cms");
+        replay(cmsServletContext);
+        final HippoWebappContext cmsHippoWebappContext = new HippoWebappContext(HippoWebappContext.Type.CMS, cmsServletContext);
+        HippoWebappContextRegistry.get().register(cmsHippoWebappContext);
+        try {
+            HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+            expect(request.getContextPath()).andStubReturn("/cms");
+            expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost:9091");
+
+            final HttpSession session = createNiceMock(HttpSession.class);
+
+            expect(request.getSession(eq(false))).andStubReturn(session);
+            expect(request.getSession()).andStubReturn(session);
+
+            final CmsSessionContextMock cmsSessionContext = new CmsSessionContextMock(new SimpleCredentials("foo", "foo".toCharArray()));
+            cmsSessionContext.contextPayload.put(ContainerConstants.RENDERING_HOST, "localhost:9090");
+
+            expect(session.getAttribute(eq(CmsSessionContext.SESSION_KEY))).andStubReturn(cmsSessionContext);
+
+            replay(request, session);
+            final String renderingHost = HstRequestUtils.getRenderingHost(request);
+            assertNull("Rendering Host expected to be null because not a SITE WEBAPP request", renderingHost);
+        } finally {
+            HippoWebappContextRegistry.get().unregister(cmsHippoWebappContext);
+        }
     }
 
     @Test
@@ -383,5 +472,35 @@ public class TestHstRequestUtils {
         replay(request, baseURL, context, virtualHost);
 
         return request;
+    }
+
+    public class CmsSessionContextMock implements CmsSessionContext {
+
+        private Map<String, Serializable> contextPayload = new HashMap<>();
+        private Map<String, Object> dataMap = new HashMap<>();
+
+        public CmsSessionContextMock(Credentials credentials) {
+            dataMap.put(CmsSessionContext.REPOSITORY_CREDENTIALS, credentials);
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public String getCmsContextServiceId() {
+            return null;
+        }
+
+        @Override
+        public Object get(final String key) {
+            return dataMap.get(key);
+        }
+
+        @Override
+        public Map<String, Serializable> getContextPayload() {
+            return contextPayload;
+        }
     }
 }
