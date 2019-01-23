@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/CarsValueListProvider:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.onehippo.forge.{{namespace}}.provider.CarsValueListProvider
+      valuelist.provider: service.valuelist.cars
