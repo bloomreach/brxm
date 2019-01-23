@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/facettestproducts/faceted/tag cloud browsing/tags/italian");
         request.setContent(new byte[0]);
@@ -69,8 +69,8 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./facetresult");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./facetresult");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/facettestproducts/faceted/tag cloud browsing/tags/italian./facetresult");
         request.setContent(new byte[0]);
@@ -97,8 +97,8 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./root");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./root");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/facettestproducts/faceted/tag cloud browsing/tags/italian./root");
         request.setContent(new byte[0]);
@@ -125,8 +125,8 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./folders/tags/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./folders/tags/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/facettestproducts/faceted/tag cloud browsing/tags/italian./folders/tags/");
         request.setContent(new byte[0]);
@@ -153,8 +153,8 @@ public class TestHippoFacetNavigationContentResource extends AbstractTestContent
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./documents/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/facettestproducts/faceted/tag cloud browsing/tags/italian./documents/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/facettestproducts/faceted/tag cloud browsing/tags/italian./documents/");
         request.setContent(new byte[0]);

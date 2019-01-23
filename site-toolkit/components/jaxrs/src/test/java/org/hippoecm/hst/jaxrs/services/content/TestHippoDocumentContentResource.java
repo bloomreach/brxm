@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,8 +46,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS");
         request.setContent(new byte[0]);
@@ -74,8 +74,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/");
         request.setContent(new byte[0]);
@@ -102,8 +102,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/");
         request.setContent(new byte[0]);
@@ -126,8 +126,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("PUT");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/");
         request.setContentType("text/xml");
@@ -149,8 +149,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("PUT");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/");
         request.setContentType("text/xml");
@@ -174,8 +174,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/content/");
         request.setContent(new byte[0]);
@@ -202,8 +202,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/content/");
         request.setContent(new byte[0]);
@@ -226,8 +226,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("PUT");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/content/");
         request.setContentType("text/html");
@@ -248,8 +248,8 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("PUT");
-        request.setRequestURI("/testapp/preview/services/Products/HippoCMS./html/content/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products/HippoCMS./html/content/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products/HippoCMS./html/content/");
         request.setContentType("text/html");

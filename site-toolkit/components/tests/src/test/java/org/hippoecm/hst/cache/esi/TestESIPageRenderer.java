@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockServletContext;
 
 import net.sf.ehcache.constructs.web.Header;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
  * TestESIPageRenderer
@@ -48,6 +54,22 @@ public class TestESIPageRenderer {
     private static final String EXAMPLE_LICENSE_TEXT = "Example License (\"http://www.example.com/LICENSE\")";
 
     private static Logger log = LoggerFactory.getLogger(TestESIPageRenderer.class);
+
+    protected HippoWebappContext webappContext = new HippoWebappContext(SITE, new MockServletContext() {
+        public String getContextPath() {
+            return "/site";
+        }
+    });
+
+    @Before
+    public void setup() {
+        HippoWebappContextRegistry.get().register(webappContext);
+    }
+
+    @After
+    public void tearDown() {
+        HippoWebappContextRegistry.get().unregister(webappContext);
+    }
 
     @Test
     public void testESIPageRendering() throws Exception {
@@ -66,6 +88,7 @@ public class TestESIPageRenderer {
         request.setQueryString("first=Robin&last=Roberts");
         request.setParameter("first", "Robin");
         request.setParameter("last", "Roberts");
+        request.setContextPath("/site");
 
         int statusCode = HttpServletResponse.SC_OK;
         String contentType = "text/html; charset=UTF-8";

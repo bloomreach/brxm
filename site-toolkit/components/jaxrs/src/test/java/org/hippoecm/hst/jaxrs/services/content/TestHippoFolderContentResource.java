@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/News/2009/April./folders/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/News/2009/April./folders/");
         request.setContent(new byte[0]);
@@ -80,8 +80,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/Day5/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/News/2009/April./folders/Day5/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/News/2009/April./folders/Day5/");
         request.setContent(new byte[0]);
@@ -111,8 +111,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("POST");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/News/2009/April./folders/unittestfolder1/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/News/2009/April./folders/unittestfolder1/");
         request.setContent(new byte[0]);
@@ -127,8 +127,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("DELETE");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./folders/unittestfolder1/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/News/2009/April./folders/unittestfolder1/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/News/2009/April./folders/unittestfolder1/");
         request.setContent(new byte[0]);
@@ -149,8 +149,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/News/2009/April./documents/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/News/2009/April./documents/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/News/2009/April./documents/");
         request.setContent(new byte[0]);
@@ -182,8 +182,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products./documents/HippoCMS");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products./documents/HippoCMS");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products./documents/HippoCMS");
         request.setContent(new byte[0]);
@@ -215,8 +215,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("POST");
-        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products./documents/newdocumentfortest/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products./documents/newdocumentfortest/");
         request.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -236,8 +236,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("GET");
-        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products./documents/newdocumentfortest");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products./documents/newdocumentfortest");
         request.setContent(new byte[0]);
@@ -260,8 +260,8 @@ public class TestHippoFolderContentResource extends AbstractTestContentResource 
         request.setServerName("localhost");
         request.setServerPort(8085);
         request.setMethod("DELETE");
-        request.setRequestURI("/testapp/preview/services/Products./documents/newdocumentfortest/");
-        request.setContextPath("/testapp");
+        request.setRequestURI("/site/preview/services/Products./documents/newdocumentfortest/");
+        request.setContextPath("/site");
         request.setServletPath("/preview/services");
         request.setPathInfo("/Products./documents/newdocumentfortest/");
         request.addHeader("Content-Type", "application/x-www-form-urlencoded");

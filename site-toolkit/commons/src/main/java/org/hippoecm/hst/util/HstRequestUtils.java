@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -224,14 +224,29 @@ public class HstRequestUtils {
     }
 
     /**
-     * Returns the rendering host of the current request, i.e. the host at which the request output is rendered.
-     * The rendering host can be set as a request parameter, or be present in the HTTP session. The request parameter
-     * value has precedence over the value in the HTTP session.
+     * <p>
+     *     Returns the rendering host of the current request, i.e. the host at which the request output is rendered.
+     *     The rendering host can be set as a request parameter, or be present in the HTTP session. The request parameter
+     *     value has precedence over the value in the HTTP session.
+     * </p>
+     * <p>
+     *     Note that the rendering host for webapps not of type {@link HippoWebappContext.Type#SITE} will always return
+     *     {@code null} since the 'rendering host' is only meant for requests that hit an HST Site webapp over the host
+     *     of the CMS : These are requests that render a channel in the CMS. Requests hitting the webapp
+     *     {@link HippoWebappContext.Type#CMS} always need to get the host information from the {@link HttpServletRequest}
+     *     and never from the rendering host name stored in the cross webapp shared {@link CmsSessionContext}
+     * </p>
      *
      * @param request the servlet request
      * @return the rendering host for the current request
      */
     public static String getRenderingHost(final HttpServletRequest request) {
+        final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(request.getContextPath());
+        if (context.getType() != HippoWebappContext.Type.SITE) {
+            // only for SITE webapps we support the 'rendering host' to be different than the actual request from the
+            // http servlet request
+            return null;
+        }
         String hostName = getRenderingHostName(request);
         if (hostName == null) {
             return null;

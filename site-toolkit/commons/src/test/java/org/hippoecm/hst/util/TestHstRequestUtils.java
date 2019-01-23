@@ -30,10 +30,13 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CONTEXT;
@@ -69,15 +72,21 @@ public class TestHstRequestUtils {
 
     private String customHttpForwardedForHeaderValue2;
 
+    private HippoWebappContext hippoWebappContext;
+
     @Before
     public void setUp() throws Exception {
         servletContext = createNiceMock(ServletContext.class);
+        expect(servletContext.getContextPath()).andStubReturn("/site");
         replay(servletContext);
+        hippoWebappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
+        HippoWebappContextRegistry.get().register(hippoWebappContext);
     }
 
     @After
     public void tearDown() {
         HstRequestUtils.httpForwardedForHeaderNames = null;
+        HippoWebappContextRegistry.get().unregister(hippoWebappContext);
     }
 
     @Test
@@ -180,6 +189,7 @@ public class TestHstRequestUtils {
     @Test
     public void forcedRenderHostWithoutPortUsesPortFromForwardedHostHeader() {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getHeader("X-Forwarded-Host")).andReturn("www.example.org:8080");
         expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost");
         replay(request);
@@ -190,6 +200,7 @@ public class TestHstRequestUtils {
     @Test
     public void testForwardedProto() throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
@@ -203,6 +214,7 @@ public class TestHstRequestUtils {
     @Test
     public void testForwardedScheme() throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getHeader("X-Forwarded-Scheme")).andReturn("https");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
@@ -216,6 +228,7 @@ public class TestHstRequestUtils {
     @Test
     public void testSSLEnabled() throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getHeader("X-SSL-Enabled")).andReturn("On");
         replay(request);
         assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
@@ -229,6 +242,7 @@ public class TestHstRequestUtils {
     @Test
     public void testXForwardedProtoInCapitals() throws Exception {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("HTTP").anyTimes();
         replay(request);
         String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(request);
@@ -238,6 +252,7 @@ public class TestHstRequestUtils {
     @Test
     public void testNoContextExternalRequestUrlWithoutQueryString() {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getRequestURL()).andReturn(new StringBuffer("http://localhost/site/foo/bar")).anyTimes();
         expect(request.getQueryString()).andReturn("foo=bar&lux=bar").anyTimes();
         replay(request);
@@ -248,6 +263,7 @@ public class TestHstRequestUtils {
     @Test
     public void testNoContextExternalRequestUrlWithQueryString() {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getRequestURL()).andReturn(new StringBuffer("http://localhost/site/foo/bar")).anyTimes();
         expect(request.getQueryString()).andReturn("foo=bar&lux=bar").anyTimes();
         replay(request);
@@ -352,6 +368,7 @@ public class TestHstRequestUtils {
         expect(virtualHost.getBaseURL(eq(request))).andReturn("http://www.example.com").anyTimes();
         expect(virtualHost.isContextPathInUrl()).andReturn(false).anyTimes();
 
+        expect(request.getContextPath()).andStubReturn("/site");
         expect(request.getServletContext()).andReturn(servletContext).anyTimes();
         // some ip address which is however not the matched host but the internal server that runs the load balancer for example
         expect(request.getRequestURL()).andReturn(new StringBuffer("10.10.100.84/foo/bar")).anyTimes();

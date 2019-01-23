@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,6 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
     protected MockServletConfig servletConfig;
-    protected MockServletContext servletContext;
     protected HstContainerConfig hstContainerConfig;
     protected ResolvedVirtualHost resolvedVirtualHost;
     protected VirtualHost virtualHost;
@@ -100,8 +99,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         
         pipelines = getComponent(Pipelines.class.getName());
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestContentPipeline");
-        
-        servletContext = new MockServletContext() { public String getRealPath(String path) { return null; } };
+
         servletContext.addInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM,
                 "classpath*:org/hippoecm/hst/jaxrs/model/beans/**/*.class");
         servletConfig = new MockServletConfig(servletContext);

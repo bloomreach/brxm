@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,6 +57,8 @@ public abstract class AbstractJaxrsSpringTestCase
         }
     });
 
+    protected MockServletContext servletContext;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         //Enable legacy project structure mode (without extensions)
@@ -72,7 +74,7 @@ public abstract class AbstractJaxrsSpringTestCase
         componentManager = new SpringComponentManager(containerConfiguration);
         componentManager.setConfigurationResources(getConfigurations());
 
-        final MockServletContext servletContext = new MockServletContext();
+        servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
