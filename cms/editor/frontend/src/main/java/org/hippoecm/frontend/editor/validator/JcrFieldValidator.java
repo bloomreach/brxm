@@ -214,7 +214,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters) {
         final Set<ModelPath> paths = getModelPaths(child);
-        return new Violation(paths, getMessage(message, parameters));
+        final Violation violation = new Violation(paths, getMessage(message, parameters));
+        violation.setValidationScope(ValidationScope.FIELD);
+        return violation;
     }
 
     private Set<ModelPath> getModelPaths(final ModelPathElement child) {
