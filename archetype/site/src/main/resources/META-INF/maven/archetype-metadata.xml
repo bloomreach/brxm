@@ -111,6 +111,22 @@
         <include>pom.xml</include>
       </includes>
     </fileSet>
+    <!-- repository-data-site-development module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/site-development/src/main/resources</directory>
+      <includes>
+        <include>**/*.yaml</include>
+        <include>**/*.cnd</include>
+        <include>**/*.xml</include>
+        <include>**/.gitkeep</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>repository-data/site-development</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
     <!-- repository-data-content module -->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>repository-data/development/src/main/resources</directory>

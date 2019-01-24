@@ -5,5 +5,9 @@
       <source>repository-data/development/target/${artifactId}-repository-data-development-${dollar}{project.version}.jar</source>
       <outputDirectory>shared/lib</outputDirectory>
     </file>
+    <file>
+      <source>repository-data/site-development/target/${artifactId}-repository-data-site-development-${dollar}{project.version}.jar</source>
+      <outputDirectory>shared/lib</outputDirectory>
+    </file>
   </files>
 </component>
