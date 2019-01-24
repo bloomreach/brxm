@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.SiteImpl;
 import org.onehippo.cm.model.path.JcrPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,12 +159,6 @@ public class ClasspathConfigurationModelReader {
         while (resources.hasMoreElements()) {
             final URL resource = resources.nextElement();
 
-            // Skip modules in the parent (shared in web container) classloader during hcm site loading.
-            // These should be considered part of the core HCM model.
-            if (hcmSiteName != null && parentResources.contains(resource)) {
-                continue;
-            }
-
             final String resourcePath = resource.getPath();
 
             // look for the marker that indicates this is a path within a jar file
@@ -188,6 +183,18 @@ public class ClasspathConfigurationModelReader {
 
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
+
+                if (parentResources.contains(resource)) {
+                    // If it is a shared module, read the module's descriptor file,
+                    // then check if its site name matches the input hcmSiteName
+                    final ModuleImpl sharedModule = new ModuleReader().readDescriptor(moduleDescriptorPath, null);
+                    final SiteImpl sharedModuleSite = sharedModule.getProject().getGroup().getSite();
+                    if (!sharedModuleSite.equals(new SiteImpl(hcmSiteName))) {
+                        fs.close();
+                        continue;
+                    }
+                }
+
                 final ModuleImpl moduleImpl =
                         new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
                                 .getModule();
@@ -203,6 +210,17 @@ public class ClasspathConfigurationModelReader {
                 // this is useful for loading a module for testing purposes without packaging it into a jar
                 // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
                 final Path moduleDescriptorPath = Paths.get(resource.toURI());
+
+                if (parentResources.contains(resource)) {
+                    // If it is a shared module, read the module's descriptor file,
+                    // then check if its site name matches the input hcmSiteName
+                    final ModuleImpl sharedModule = new ModuleReader().readDescriptor(moduleDescriptorPath, null);
+                    final SiteImpl sharedModuleSite = sharedModule.getProject().getGroup().getSite();
+                    if (!sharedModuleSite.equals(new SiteImpl(hcmSiteName))) {
+                        continue;
+                    }
+                }
+
                 modules.getRight()
                         .add(new ModuleReader().read(moduleDescriptorPath, verifyOnly, hcmSiteName, hstRoot)
                                 .getModule());

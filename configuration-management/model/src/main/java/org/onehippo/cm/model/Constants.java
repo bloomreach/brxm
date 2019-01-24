@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ public final class Constants {
     public static final String ACTIONS_YAML = "hcm-actions" + YAML_EXT;
 
     // Following keys used in hcm-module.yaml
+    public static final String SITE_KEY = "site";
     public static final String GROUP_KEY = "group";
     public static final String PROJECT_KEY = "project";
     public static final String MODULE_KEY = "module";

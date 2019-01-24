@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.junit.Test;
 import org.onehippo.cm.model.Constants;
+import org.onehippo.cm.model.Site;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 
@@ -37,6 +38,7 @@ public class ModuleDescriptorTest {
     public void testLoadSaveFull() throws ParserException, IOException {
         final String resource = "/hcm-module-full.yaml";
         final ModuleImpl module = loadDescriptor(resource);
+        assertEquals(Site.CORE_NAME, module.getProject().getGroup().getSite().getName());
         writeDescriptor(resource, module);
     }
 
@@ -44,15 +46,23 @@ public class ModuleDescriptorTest {
     public void testLoadShort() throws ParserException, IOException {
         final String resource = "/hcm-module-short.yaml";
         ModuleImpl module = loadDescriptor(resource);
+        assertEquals(Site.CORE_NAME, module.getProject().getGroup().getSite().getName());
         writeDescriptor(resource, module);
     }
 
-    private ModuleImpl loadDescriptor(final String resource) throws ParserException {
-        final InputStream stream = getClass().getResourceAsStream(resource);
-        final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
-        final ModuleImpl module = moduleDescriptorParser.parse(stream, "");
-        IOUtils.closeQuietly(stream);
-        return module;
+    @Test
+    public void testLoadSite() throws ParserException, IOException {
+        final String resource = "/hcm-module-site.yaml";
+        ModuleImpl module = loadDescriptor(resource);
+        assertEquals("mainsite", module.getProject().getGroup().getSite().getName());
+    }
+
+    private ModuleImpl loadDescriptor(final String resource) throws ParserException, IOException {
+        try(final InputStream stream = getClass().getResourceAsStream(resource)) {
+            final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(true);
+            final ModuleImpl module = moduleDescriptorParser.parse(stream, "");
+            return module;
+        }
     }
 
     private void writeDescriptor(final String resource, final ModuleImpl module) throws IOException {
