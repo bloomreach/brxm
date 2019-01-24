@@ -332,6 +332,7 @@
             <!-- for all requests determine the available request actions and report them through the special 'requests'
                  feedback map variable -->
             <!-- for document workflow requests: -->
+            <hippo:requestAction identifierExpr="request.identity" action="infoRequest" enabledExpr="true"/>
             <if cond="request.workflowRequest">
               <if cond="workflowContext.isGranted(request, 'hippo:editor')">
                 <!-- editor users (granted hippo:editor) may reject and accept as well as cancel requests -->
