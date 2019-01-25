@@ -39,7 +39,7 @@
 
   <properties>
     <hippo.repository.version>13.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.1.0-validation-SNAPSHOT</hippo.cms.version>
 
     <junit.version>4.12</junit.version>
 
