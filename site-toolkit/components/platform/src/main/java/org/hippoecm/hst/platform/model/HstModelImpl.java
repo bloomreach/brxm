@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.platform.model;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -71,6 +69,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import static org.hippoecm.hst.platform.utils.ProxyUtils.createProxy;
 
 public class HstModelImpl implements InternalHstModel {
 
@@ -411,25 +411,6 @@ public class HstModelImpl implements InternalHstModel {
                 '}';
     }
 
-    private <T> T createProxy(final ClassLoader objectClassLoader, final Class<T> proxyInterface, final T object) {
-        return  (T)Proxy.newProxyInstance(objectClassLoader, new Class[]{proxyInterface}, (proxy, method, args) -> {
-            final ClassLoader currentContextClassLoader = Thread.currentThread().getContextClassLoader();
-            if (currentContextClassLoader == objectClassLoader) {
-                try {
-                    return method.invoke(object, args);
-                } catch (InvocationTargetException ite) {
-                    throw (ite.getCause() != null) ? ite.getCause() : ite;
-                }
-            }
-            Thread.currentThread().setContextClassLoader(objectClassLoader);
-            try {
-                return method.invoke(object, args);
-            } catch (InvocationTargetException ite) {
-                throw (ite.getCause() != null) ? ite.getCause() : ite;
-            } finally {
-                Thread.currentThread().setContextClassLoader(currentContextClassLoader);
-            }
-        });
-    }
+
 
 }

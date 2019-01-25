@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@
         class="org.hippoecm.hst.platform.container.sitemapitemhandler.HstSiteMapItemHandlerFactoriesImpl"
         init-method="init"
         destroy-method="destroy"/>
+
+  <bean class="org.hippoecm.hst.platform.container.site.CustomWebsiteHstSiteProviderServiceImpl" init-method="init" destroy-method="destroy" />
 
   <bean id="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider"/>
 
