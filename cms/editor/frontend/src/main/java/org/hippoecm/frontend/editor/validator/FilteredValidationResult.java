@@ -79,9 +79,7 @@ public class FilteredValidationResult implements IValidationResult {
                 newPaths.add(new ModelPath(elements));
             }
         }
-        final Violation newViolation = new Violation(newPaths, violation.getMessage());
-        newViolation.setValidationScope(violation.getValidationScope());
-        return newViolation;
+        return new Violation(newPaths, violation.getMessage(), violation.getValidationScope());
     }
 
     public void detach() {

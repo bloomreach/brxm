@@ -46,9 +46,9 @@ public class ValidatorUtils {
                 return ValidationScope.valueOf(scope.toUpperCase());
             }
         } catch (IllegalArgumentException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Invalid scope '{}'. Must be one of " + StringUtils.join(ValidationScope.values(), ", ") +
-                        ". Using DOCUMENT scope as default.", scope);
+            if (log.isWarnEnabled()) {
+                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope, 
+                        StringUtils.join(ValidationScope.values(), ", "), e);
             }
         }
         return ValidationScope.DOCUMENT;
