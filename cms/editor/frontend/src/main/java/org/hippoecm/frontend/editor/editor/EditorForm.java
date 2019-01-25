@@ -69,7 +69,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     private ValidationService validation;
 
     public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
-            IPluginConfig config) {
+                      IPluginConfig config) {
         super(wicketId, model);
 
         this.context = context;
@@ -158,7 +158,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
             return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
         }
         return false;
-   }
+    }
 
     @Override
     public void onModelChanged() {
@@ -177,18 +177,16 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     }
 
     @Override
-    public void warn(final IModel<String> message) {
-        super.warn(message.getObject());
+    // the same logic as in org.apache.wicket.Component.warn
+    public void warn(final IModel<String> message, final ValidationScope scope) {
+        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.WARNING, scope));
+        addStateChange();
     }
 
     @Override
-    public void error(final IModel<String> message) {
-        super.error(message.getObject());
-    }
-
     // the same logic as in org.apache.wicket.Component.error
-    public void error(final String message, final ValidationScope scope) {
-        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message, FeedbackMessage.ERROR, scope));
+    public void error(final IModel<String> message, final ValidationScope scope) {
+        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
         addStateChange();
     }
 
