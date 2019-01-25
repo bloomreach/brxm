@@ -16,31 +16,24 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.validation.ValidationScope;
 
 public interface IFeedbackLogger {
 
-    ValidationScope scope = ValidationScope.DOCUMENT;
-
-    void warn(IModel<String> message);
-
     /**
-     * Log a Feedback error.
+     * Log a scoped Feedback warning.
      *
-     * @param message description of the error
-     * @deprecated use {@link IFeedbackLogger#error(String, ValidationScope)} instead.
+     * @param message description of the warning
+     * @param scope   the level this warning applies to
      */
-    @Deprecated
-    void error(IModel<String> message);
+    void warn(IModel<String> message, ValidationScope scope);
 
     /**
      * Log a scoped Feedback error.
      *
      * @param message description of the error
-     * @param scope   {@see ValidationScope} for valid values.
+     * @param scope   the level this error applies to
      */
-    default void error(String message, ValidationScope scope) {
-        error(Model.of(message));
-    }
+    void error(IModel<String> message, ValidationScope scope);
+
 }

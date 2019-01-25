@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -130,7 +131,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 listener.onValidation(result);
             }
             for (final Violation violation : result.getViolations()) {
-                logger.error(violation.getMessage().getObject(), violation.getValidationScope());
+                logger.error(violation.getMessage(), violation.getValidationScope());
             }
             addSummaryMessage(result, logger);
         } catch (final RepositoryException e) {
@@ -143,13 +144,13 @@ public class JcrValidationService implements IValidationService, IDetachable {
     }
 
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
-        if (result.getViolations().size() == 1) {
-            final String summary = getResourceBundleModel("summarySingle", Session.get().getLocale()).getObject();
+        if (result.getAffectedFields() == 1) {
+            final IModel<String> summary = getResourceBundleModel("summarySingle", Session.get().getLocale());
             logger.error(summary, ValidationScope.DOCUMENT);
         }
-        if (result.getViolations().size() > 1) {
-            final String summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale()).getObject();
-            logger.error(String.format(summary, result.getViolations().size()), ValidationScope.DOCUMENT);
+        if (result.getAffectedFields() > 1) {
+            final IModel<String> summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale());
+            logger.error(Model.of(String.format(summary.getObject(), result.getAffectedFields())), ValidationScope.DOCUMENT);
         }
     }
 
