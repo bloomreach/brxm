@@ -15,19 +15,26 @@
  */
 package org.hippoecm.frontend.validation;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.hippoecm.frontend.types.IFieldDescriptor;
 
 public class ValidationResult implements IValidationResult {
 
     private Set<Violation> violations;
+    private int affectedFields;
 
     public ValidationResult() {
         this(new LinkedHashSet<>());
     }
 
     public ValidationResult(final Set<Violation> violations) {
-        this.violations = violations;
+        if (violations == null) {
+            throw new IllegalArgumentException("Violations may not be null.");
+        }
+        setViolations(violations);
     }
 
     public Set<Violation> getViolations() {
@@ -36,14 +43,31 @@ public class ValidationResult implements IValidationResult {
 
     public void setViolations(final Set<Violation> violations) {
         this.violations = violations;
+        countFields();
     }
 
     public boolean isValid() {
         return violations.isEmpty();
     }
 
+    public int getAffectedFields() {
+        return affectedFields;
+    }
+
     public void detach() {
         violations.forEach(Violation::detach);
+    }
+    
+    private void countFields() {
+        final Set<IFieldDescriptor> fields = new HashSet<>();
+        for (Violation violation : getViolations()) {
+            for (ModelPath modelPath : violation.getDependentPaths()) {
+                for (ModelPathElement modelPathElement: modelPath.getElements()) {
+                    fields.add(modelPathElement.getField());
+                }
+            }
+        }
+        affectedFields = fields.size();
     }
 
 }
