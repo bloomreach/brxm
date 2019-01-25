@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.validation;
 
 public enum ValidationScope {
-    COMPOUND,
     DOCUMENT,
     FIELD
 }
