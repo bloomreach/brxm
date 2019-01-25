@@ -42,19 +42,18 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
      * @param container The container that message reporters must be a child of
      * @param scope     The scope to filter feedback messages by.
      */
-    public ScopedFeedBackMessageFilter(final MarkupContainer container, final String scope) {
+    public ScopedFeedBackMessageFilter(final MarkupContainer container, final ValidationScope scope) {
         this(container);
-        validationScope = ValidatorUtils.getValidationScope(scope);
+        validationScope = scope;
     }
 
     @Override
     public boolean accept(final FeedbackMessage message) {
-        if (super.accept(message)) {
-            if (message instanceof ScopedFeedBackMessage) {
-                ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-                return scopedMessage.getScope().equals(this.validationScope);
-            }
+        final boolean isInContainer = super.accept(message);
+        if (isInContainer && message instanceof ScopedFeedBackMessage) {
+            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getScope().equals(this.validationScope);
         }
-        return false;
+        return isInContainer;
     }
 }
