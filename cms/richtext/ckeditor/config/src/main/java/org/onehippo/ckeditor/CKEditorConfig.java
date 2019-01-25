@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ public class CKEditorConfig {
             + "    [ 'Alt', 'b', 'showblocks' ]"
             + "  ],"
             + "  linkShowAdvancedTab: false,"
-            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,copyformatting,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,hippopicker,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tableselection,tabletools,textselection,toolbar,undo,youtube',"
+            + "  plugins: 'a11yhelp,autolink,basicstyles,button,clipboard,codemirror,contextmenu,copyformatting,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,hippopicker,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tableselection,tabletools,textselection,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
             + "  title: false,"
             + "  toolbarGroups: ["
