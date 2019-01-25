@@ -69,9 +69,7 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
         final String value = (String) childModel.getObject();
         for (final String key : htmlValidator.validateNonEmpty(value)) {
             final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
-            final Violation violation = fieldValidator.newValueViolation(childModel, message);
-            violation.setValidationScope(getValidationScope());
-            violations.add(violation);
+            violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
         }
         return violations;
     }

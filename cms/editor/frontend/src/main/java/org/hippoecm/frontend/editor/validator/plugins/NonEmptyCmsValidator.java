@@ -34,8 +34,8 @@ import org.hippoecm.frontend.validation.Violation;
 /**
  * Validator that validates that a String value is non-empty.
  * <p>
- * When the type of the value is the builtin "Html" type, an {@link HtmlValidator} is used to verify this.
- * Such a field therefore does not require the html validator to be declared separately.
+ * When the type of the value is the builtin "Html" type, an {@link HtmlValidator} is used to verify this. Such a field
+ * therefore does not require the html validator to be declared separately.
  */
 public class NonEmptyCmsValidator extends AbstractCmsValidator {
 
@@ -60,26 +60,23 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
                                    final IModel childModel) throws ValidationException {
-        
+
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
 
         if ("Html".equals(fieldValidator.getFieldType().getName())) {
             for (final String key : htmlValidator.validateNonEmpty(value)) {
                 final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
-                final Violation violation = fieldValidator.newValueViolation(childModel, message);
-                violation.setValidationScope(getValidationScope());
-                violations.add(violation);
+                violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
             }
         } else {
             if (StringUtils.isBlank(value)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
             }
         }
         return violations;
     }
-
 
 }

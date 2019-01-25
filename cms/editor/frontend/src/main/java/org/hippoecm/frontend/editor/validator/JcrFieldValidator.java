@@ -104,8 +104,11 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             }
             final Iterator<? extends IModel> iter = provider.iterator(0, provider.size());
             if (required && !iter.hasNext()) {
-                violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
-                        getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
+                violations.add(newViolation(
+                        new ModelPathElement(field, field.getPath(), 0),
+                        getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
+                        ValidationScope.FIELD)
+                );
             }
 
             while (iter.hasNext()) {
@@ -118,19 +121,23 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                         }
                     }
                 }
+
                 if (validatorService != null) {
                     for (final String fieldValidatorType : validators) {
                         if (validatorService.containsValidator(fieldValidatorType)) {
-                            final Set<Violation> violationSet = validatorService.getValidator(fieldValidatorType).validate(this, nodeModel, childModel);
-                            violationSet.forEach(violation -> violation.setValidationScope(ValidationScope.FIELD));
-                            violations.addAll(violationSet);
+                            violations.addAll(validatorService.getValidator(fieldValidatorType)
+                                              .validate(this, nodeModel, childModel));
                         }
                     }
                 }
 
-                if (required && field.getTypeDescriptor().isType("Date") && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
-                    violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
-                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
+                if (required && field.getTypeDescriptor().isType("Date") 
+                    && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
+                        violations.add(newViolation(
+                                new ModelPathElement(field, field.getPath(), 0),
+                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT), 
+                                ValidationScope.FIELD)
+                        );
                 }
             }
         }
@@ -148,6 +155,18 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     @Override
     public Violation newValueViolation(final IModel childModel, final String key) throws ValidationException {
         return newValueViolation(childModel, getMessage(key));
+    }
+
+    @Override
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message) 
+            throws ValidationException {
+        return newValueViolation(childModel, message, ValidationScope.FIELD);
+    }
+
+    @Override
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message, 
+                                       final ValidationScope scope) throws ValidationException {
+        return newViolation(getElement(childModel), message, scope);
     }
 
     private void addTypeViolations(final Set<Violation> violations, final IModel childModel, final Set<Violation> typeViolations)
@@ -177,15 +196,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 elements[0] = new ModelPathElement(field, name, index);
                 paths.add(new ModelPath(elements));
             }
-            final Violation newViolation = new Violation(paths, typeViolation.getMessage());
-            newViolation.setValidationScope(typeViolation.getValidationScope());
-            violations.add(newViolation);
+            violations.add(new Violation(paths, typeViolation.getMessage(), typeViolation.getValidationScope()));
         }
-    }
-
-    @Override
-    public Violation newValueViolation(final IModel childModel, final IModel<String> message) throws ValidationException {
-        return newViolation(getElement(childModel), message);
     }
 
     private ModelPathElement getElement(final IModel childModel) throws ValidationException {
@@ -212,11 +224,16 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         return new ClassResourceModel(key, ValidatorMessages.class, parameters);
     }
 
-    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters) {
+    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters, 
+                                  final ValidationScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
-        final Violation violation = new Violation(paths, getMessage(message, parameters));
-        violation.setValidationScope(ValidationScope.FIELD);
-        return violation;
+        return new Violation(paths, getMessage(message, parameters), scope);
+    }
+
+    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel, 
+                                  final ValidationScope scope) {
+        final Set<ModelPath> paths = getModelPaths(child);
+        return new Violation(paths, messageModel, scope);
     }
 
     private Set<ModelPath> getModelPaths(final ModelPathElement child) {
@@ -225,13 +242,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         final Set<ModelPath> paths = new HashSet<>();
         paths.add(new ModelPath(elements));
         return paths;
-    }
-
-    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel) {
-        final Set<ModelPath> paths = getModelPaths(child);
-        final Violation violation = new Violation(paths, messageModel);
-        violation.setValidationScope(ValidationScope.FIELD);
-        return violation;
     }
 
 }
