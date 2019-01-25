@@ -35,6 +35,7 @@ public class HintsBuilder {
     public static String ACTION_REJECT_REQUEST = "rejectRequest";
     public static String ACTION_ACCEPT_REQUEST = "acceptRequest";
     public static String ACTION_CANCEL_REQUEST = "cancelRequest";
+    public static final String ACTION_INFO_REQUEST = "infoRequest";
     public static String ACTION_PUBLISH = "publish";
     public static String ACTION_REQUEST_PUBLICATION = "requestPublication";
     public static String ACTION_DEPUBLISH = "depublish";
@@ -173,6 +174,11 @@ public class HintsBuilder {
 
     public HintsBuilder cancelRequest(String requestId) {
         getRequestActions(requestId).put(ACTION_CANCEL_REQUEST, true);
+        return this;
+    }
+
+    public HintsBuilder infoRequest(String requestId){
+        getRequestActions(requestId).put(ACTION_INFO_REQUEST, true);
         return this;
     }
 
