@@ -155,7 +155,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         }
         if (message instanceof ScopedFeedBackMessage) {
             ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(ValidationScope.COMPOUND);
+            return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
         }
         return false;
    }
