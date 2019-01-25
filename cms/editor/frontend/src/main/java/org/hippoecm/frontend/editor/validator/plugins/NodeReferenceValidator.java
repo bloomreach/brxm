@@ -38,20 +38,21 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
     @Override
     public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptiness");
+            throw new ValidationException("Invalid validation exception; cannot validate non-string field for " +
+                    "emptiness");
         }
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
+                                   final IModel childModel) throws ValidationException {
+        
         final Set<Violation> violations = new HashSet<>();
         final String ref = (String) childModel.getObject();
-        if(ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
+        if (ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
             final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.REFERENCE_IS_EMPTY,
                     ValidatorMessages.class);
-            final Violation violation = fieldValidator.newValueViolation(childModel, message);
-            violation.setValidationScope(getValidationScope());
-            violations.add(violation);
+            violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
         }
         return violations;
     }

@@ -47,9 +47,7 @@ public class EscapedCmsValidator extends AbstractCmsValidator {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (INVALID_CHARS.matcher(value).matches()) {
-            final Violation violation = fieldValidator.newValueViolation(childModel, getTranslation());
-            violation.setValidationScope(getValidationScope());
-            violations.add(violation);
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
         }
         return violations;
     }

@@ -47,7 +47,8 @@ public class RegExCmsValidator extends AbstractCmsValidator {
     @Override
     public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
-            throw new ValidationException("Invalid validation exception; cannot validate non-string field for emptiness");
+            throw new ValidationException("Invalid validation exception; cannot validate non-string field for " +
+                    "emptiness");
         }
     }
 
@@ -58,9 +59,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (!pattern.matcher(value).find()) {
-            final Violation violation = fieldValidator.newValueViolation(childModel, getTranslation());
-            violation.setValidationScope(getValidationScope());
-            violations.add(violation);
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
         }
         return violations;
     }
