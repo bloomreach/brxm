@@ -42,7 +42,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
         
         if (config.containsKey(SCOPE)) {
-            setValidationScope(ValidatorUtils.getValidationScope(config.getString(SCOPE)));
+            validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
         }
     }
 
@@ -52,10 +52,6 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
 
     protected ValidationScope getValidationScope() {
         return validationScope;
-    }
-
-    protected void setValidationScope(final ValidationScope validationScope) {
-        this.validationScope = validationScope;
     }
 
     /**
