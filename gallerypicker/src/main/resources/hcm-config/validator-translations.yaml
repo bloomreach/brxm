@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /en:
+        image-references: Select an image
