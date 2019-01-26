@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.joor.Reflect;
 import org.junit.Test;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
@@ -35,7 +36,6 @@ import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.joor.Reflect.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -63,7 +63,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         ClasspathConfigurationModelReader classpathReader = new ClasspathConfigurationModelReader();
 
         // load the cms model and the main dev but not site dev should be present
-        List<ModuleImpl> cmsModuleList =  on(classpathReader).call("readModulesFromClasspath",
+        List<ModuleImpl> cmsModuleList =  Reflect.on(classpathReader).call("readModulesFromClasspath",
                 cmsClassloader, false, null, JcrPaths.getPath("/hst:hst")).call("getRight").get();
         cmsModuleList.sort(Comparator.comparing(ModuleImpl::getName));
         assertEquals(2, cmsModuleList.size());
@@ -71,7 +71,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         assertEquals("dev-module", cmsModuleList.get(1).getName());
 
         // load the site model and the site dev but not the main dev should be present
-        List<ModuleImpl> siteModuleList =  on(classpathReader).call("readModulesFromClasspath",
+        List<ModuleImpl> siteModuleList =  Reflect.on(classpathReader).call("readModulesFromClasspath",
                 siteClassloader, false, "mainsite", JcrPaths.getPath("/hst:hst")).call("getRight").get();
         siteModuleList.sort(Comparator.comparing(ModuleImpl::getName));
 
