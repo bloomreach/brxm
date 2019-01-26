@@ -49,6 +49,7 @@
 
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>
+    <joor.version>0.9.7</joor.version>
   </properties>
   
   <modules>
@@ -151,6 +152,14 @@
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-spi</artifactId>
         <version>${hippo.jackrabbit.version}</version>
+      </dependency>
+
+      <!-- test -->
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>joor-java-8</artifactId>
+        <version>${joor.version}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
 

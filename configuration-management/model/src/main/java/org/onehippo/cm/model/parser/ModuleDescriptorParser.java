@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import static org.onehippo.cm.model.Constants.GROUP_KEY;
 import static org.onehippo.cm.model.Constants.MODULE_KEY;
 import static org.onehippo.cm.model.Constants.NAME_KEY;
 import static org.onehippo.cm.model.Constants.PROJECT_KEY;
+import static org.onehippo.cm.model.Constants.SITE_KEY;
 
 public class ModuleDescriptorParser extends AbstractBaseParser {
 
@@ -44,17 +45,25 @@ public class ModuleDescriptorParser extends AbstractBaseParser {
     public ModuleImpl parse(final InputStream inputStream, final String location, final String hcmSiteName) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
         final Map<String, Node> rootNodeMap =
-                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, null);
+                asMapping(node, new String[]{GROUP_KEY, PROJECT_KEY, MODULE_KEY}, new String[]{SITE_KEY});
 
+        final Node siteNode = rootNodeMap.get(SITE_KEY);
         final Node groupNode = rootNodeMap.get(GROUP_KEY);
         final Node projectNode = rootNodeMap.get(PROJECT_KEY);
         final Node moduleNode = rootNodeMap.get(MODULE_KEY);
 
-        final SiteImpl site = new SiteImpl(hcmSiteName);
+        final SiteImpl site = constructSite(siteNode, hcmSiteName);
         final GroupImpl groupImpl = constructGroup(groupNode, site);
         final ProjectImpl project = constructProject(projectNode, groupImpl);
 
         return constructModule(moduleNode, project);
+    }
+
+    /**
+     * If site definition exists, use it, otherwise use the value of hcmSiteName
+     */
+    protected SiteImpl constructSite(final Node src, String hcmSiteName) throws ParserException {
+        return src instanceof ScalarNode ? new SiteImpl(asStringScalar(src)) : new SiteImpl(hcmSiteName);
     }
 
     protected GroupImpl constructGroup(final Node src, final SiteImpl site) throws ParserException {
