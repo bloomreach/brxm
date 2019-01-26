@@ -62,6 +62,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
 
         ClasspathConfigurationModelReader classpathReader = new ClasspathConfigurationModelReader();
 
+        // load the cms model and the main dev but not site dev should be present
         List<ModuleImpl> cmsModuleList =  on(classpathReader).call("readModulesFromClasspath",
                 cmsClassloader, false, null, JcrPaths.getPath("/hst:hst")).call("getRight").get();
         cmsModuleList.sort(Comparator.comparing(ModuleImpl::getName));
@@ -69,6 +70,7 @@ public class ClasspathConfigurationModelReaderTest extends AbstractBaseTest {
         assertEquals("app-module", cmsModuleList.get(0).getName());
         assertEquals("dev-module", cmsModuleList.get(1).getName());
 
+        // load the site model and the site dev but not the main dev should be present
         List<ModuleImpl> siteModuleList =  on(classpathReader).call("readModulesFromClasspath",
                 siteClassloader, false, "mainsite", JcrPaths.getPath("/hst:hst")).call("getRight").get();
         siteModuleList.sort(Comparator.comparing(ModuleImpl::getName));

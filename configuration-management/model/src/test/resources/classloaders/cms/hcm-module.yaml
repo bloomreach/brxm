@@ -1,4 +1,4 @@
-# This file is used by ClasspathConfigurationModelReaderTest and needs to be at the root of test-classes during test
+# This file is used by ClasspathConfigurationModelReaderTest
 group: test-group
 project: test-project
 module: app-module

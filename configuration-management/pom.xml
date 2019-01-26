@@ -153,6 +153,14 @@
         <artifactId>jackrabbit-spi</artifactId>
         <version>${hippo.jackrabbit.version}</version>
       </dependency>
+
+      <!-- test -->
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>joor-java-8</artifactId>
+        <version>${joor.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
 
   </dependencyManagement>

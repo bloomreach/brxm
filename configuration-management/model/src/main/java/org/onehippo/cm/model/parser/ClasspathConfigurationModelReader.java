@@ -184,15 +184,9 @@ public class ClasspathConfigurationModelReader {
                 // since this FS represents a jar, we should look for the descriptor at the root of the FS
                 final Path moduleDescriptorPath = fs.getPath(Constants.HCM_MODULE_YAML);
 
-                if (parentResources.contains(resource)) {
-                    // If it is a shared module, read the module's descriptor file,
-                    // then check if its site name matches the input hcmSiteName
-                    final ModuleImpl sharedModule = new ModuleReader().readDescriptor(moduleDescriptorPath, null);
-                    final SiteImpl sharedModuleSite = sharedModule.getProject().getGroup().getSite();
-                    if (!sharedModuleSite.equals(new SiteImpl(hcmSiteName))) {
-                        fs.close();
-                        continue;
-                    }
+                if (!shouldLoadModule(moduleDescriptorPath, hcmSiteName, resource, parentResources)) {
+                    fs.close();
+                    continue;
                 }
 
                 final ModuleImpl moduleImpl =
@@ -211,14 +205,8 @@ public class ClasspathConfigurationModelReader {
                 // since this FS is a normal native FS, we need to use the full resource path to load the descriptor
                 final Path moduleDescriptorPath = Paths.get(resource.toURI());
 
-                if (parentResources.contains(resource)) {
-                    // If it is a shared module, read the module's descriptor file,
-                    // then check if its site name matches the input hcmSiteName
-                    final ModuleImpl sharedModule = new ModuleReader().readDescriptor(moduleDescriptorPath, null);
-                    final SiteImpl sharedModuleSite = sharedModule.getProject().getGroup().getSite();
-                    if (!sharedModuleSite.equals(new SiteImpl(hcmSiteName))) {
-                        continue;
-                    }
+                if (!shouldLoadModule(moduleDescriptorPath, hcmSiteName, resource, parentResources)) {
+                    continue;
                 }
 
                 modules.getRight()
@@ -227,5 +215,23 @@ public class ClasspathConfigurationModelReader {
             }
         }
         return modules;
+    }
+
+    /**
+     * Check if a module is part of the parent (shared) classloader, and if so, if it should belong to the
+     * model that is currently being loaded, as determined by the hcmSiteName.
+     * @return true if this module should be loaded or false if this module should NOT be loaded
+     */
+    private boolean shouldLoadModule(final Path moduleDescriptorPath, final String hcmSiteName,
+                                     final URL resource, final HashSet<URL> parentResources)
+            throws IOException, ParserException {
+        if (parentResources.contains(resource)) {
+            // If it is a shared module, read the module's descriptor file,
+            // then check if its site name matches the input hcmSiteName
+            final ModuleImpl sharedModule = new ModuleReader().readDescriptor(moduleDescriptorPath, null);
+            final SiteImpl sharedModuleSite = sharedModule.getProject().getGroup().getSite();
+            return sharedModuleSite.equals(new SiteImpl(hcmSiteName));
+        }
+        return true;
     }
 }
