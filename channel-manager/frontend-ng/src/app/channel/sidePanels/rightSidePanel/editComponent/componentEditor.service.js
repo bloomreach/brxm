@@ -123,6 +123,8 @@ class ComponentEditorService {
       return;
     }
 
+    this.page = this.PageMetaDataService.get();
+
     const changedContainer = {
       isDisabled: component.container.isDisabled(),
       isInherited: component.container.isInherited(),

@@ -148,6 +148,23 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.reopen).not.toHaveBeenCalled();
     });
 
+    it('should update the page information if it has changed', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => false,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      spyOn(PageMetaDataService, 'get').and.returnValue({
+        [HstConstants.PAGE_ID]: 'some-id',
+      });
+      onStructureChange();
+
+      expect(PageMetaDataService.get).toHaveBeenCalled();
+      expect(ComponentEditor.page[HstConstants.PAGE_ID]).toBe('some-id');
+    });
+
     it('should reopen editor', () => {
       PageStructureService.getComponentById.and.returnValue({
         container: {
