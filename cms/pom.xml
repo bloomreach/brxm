@@ -82,6 +82,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
+    <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
@@ -132,7 +133,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.9.2-h1</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.11.2-h1-SNAPSHOT</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 
