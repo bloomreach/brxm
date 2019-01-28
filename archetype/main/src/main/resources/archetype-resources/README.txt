@@ -99,7 +99,20 @@ To run the image with in-memory h2 database:
 
     mvn -Pdocker.run
 
-To run the image with a mysql database, add the provided database name, username and password below to the properties
+
+Running with an embedded MySQL database. To create & run environment containing builtin MySQL DB just run:
+
+    mvn -Pdocker.run,with-mysql
+
+As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
+
+Running with an embedded PostgreSQL database. To create & run environment containing builtin PostgreSQL DB just run:
+
+    mvn -Pdocker.run,with-postgres
+
+As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
+
+To run the image with an external mysql database, add the provided database name, username and password below to the properties
 section of your project's pom.xml:
 
     <mysql.db.host>DATABASE_HOSTNAME</mysql.db.host>
@@ -112,7 +125,7 @@ Then run:
 
     mvn -Pdocker.run,mysql
 
-To run the image with a postgresql database, add the provided database name, username and password below to the
+To run the image with an external postgresql database, add the provided database name, username and password below to the
 properties section of your project's pom.xml:
 
     <postgresql.db.host>DATABASE_HOSTNAME</postgresql.db.host>
