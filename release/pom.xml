@@ -1270,6 +1270,12 @@
 
         <!-- Override brxm settings -->
         <brxm.docker.dependsOn.container.1>db</brxm.docker.dependsOn.container.1>
+
+        <!-- Default connection details -->
+        <mysql.db.name>${project.artifactId}</mysql.db.name>
+        <mysql.db.user>admin</mysql.db.user>
+        <mysql.db.password>admin</mysql.db.password>
+
       </properties>
     </profile>
 
@@ -1289,6 +1295,11 @@
 
         <!-- Override brxm settings -->
         <brxm.docker.dependsOn.container.1>db</brxm.docker.dependsOn.container.1>
+
+        <!-- Default connection details -->
+        <postgresql.db.name>${project.artifactId}</postgresql.db.name>
+        <postgresql.db.user>admin</postgresql.db.user>
+        <postgresql.db.password>admin</postgresql.db.password>
       </properties>
     </profile>
 
