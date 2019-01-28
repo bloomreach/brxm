@@ -1265,7 +1265,6 @@
         <db.docker.network.name>${project.artifactId}-network</db.docker.network.name>
         <db.docker.wait.time>120000</db.docker.wait.time>
         <db.docker.wait.log>3306</db.docker.wait.log>
-        <db.docker.bind.1>${project.basedir}/target/mysql-data:/var/lib/mysql</db.docker.bind.1>
         <db.docker.ports.1>mysql.db.port:3306</db.docker.ports.1>
 
         <!-- Override brxm settings -->
@@ -1290,7 +1289,6 @@
         <db.docker.network.name>${project.artifactId}-network</db.docker.network.name>
         <db.docker.wait.time>120000</db.docker.wait.time>
         <db.docker.wait.log>listening on IPv4 address "0.0.0.0", port 5432</db.docker.wait.log>
-        <db.docker.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</db.docker.bind.1>
         <db.docker.ports.1>postgresql.db.port:5432</db.docker.ports.1>
 
         <!-- Override brxm settings -->
