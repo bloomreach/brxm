@@ -95,7 +95,7 @@ Then build the brXM docker image:
 This maven profile will create a docker image and register that to the local docker repository. It will use the
 repository name as groupId/artifactId and tag as version.
 
-To run the image with in-memory hsql database:
+To run the image with in-memory h2 database:
 
     mvn -Pdocker.run
 

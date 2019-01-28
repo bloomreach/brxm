@@ -61,6 +61,13 @@
         <include>hippo-cms7-release-pom.xml</include>
       </includes>
     </fileSet>
+    <!-- db-bootstrap dir -->
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>db-bootstrap</directory>
+      <includes>
+        <include>.gitkeep</include>
+      </includes>
+    </fileSet>
     <!-- repository-data module -->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>repository-data</directory>

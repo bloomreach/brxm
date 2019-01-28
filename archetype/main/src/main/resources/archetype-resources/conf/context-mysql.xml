@@ -28,6 +28,6 @@
       minEvictableIdleTimeMillis="60000"
       username="@mysql.username@" password="@mysql.password@"
       driverClassName="@mysql.driver@"
-      url="jdbc:mysql://@mysql.host@:@mysql.port@/@mysql.repo.db@?characterEncoding=utf8&amp;useSSL=false"/>
+      url="jdbc:mysql://@mysql.host@:@mysql.port@/@mysql.repo.db@?characterEncoding=utf8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true"/>
 
 </Context>

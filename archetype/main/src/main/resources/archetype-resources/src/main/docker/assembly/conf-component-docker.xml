@@ -9,7 +9,7 @@
     <file>
       <source>conf/context.xml</source>
       <outputDirectory>conf</outputDirectory>
-      <destName>context-hsql.xml</destName>
+      <destName>context-h2.xml</destName>
       <filtered>false</filtered>
     </file>
     <file>

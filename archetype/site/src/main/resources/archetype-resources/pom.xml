@@ -80,7 +80,7 @@
     <buildNumber>${maven.build.timestamp}</buildNumber>
 
     <!-- Default DB profile -->
-    <db.profile>hsql</db.profile>
+    <db.profile>h2</db.profile>
   </properties>
 
   <repositories>
@@ -226,6 +226,8 @@
         <brxm.docker.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</brxm.docker.envRun.POSTGRES_DB_DRIVER>
         <brxm.docker.envRun.JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-postgres.xml
           -Dproject.basedir=${brxm.project.path}
+          -Drepo.path=${repo.path}
+          -Drepo.bootstrap=${repo.bootstrap}
           -Drepo.autoexport.allowed=${repo.autoexport.allowed}
           -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
           -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</brxm.docker.envRun.JAVA_OPTS>
@@ -245,6 +247,7 @@
         <brxm.docker.envRun.MYSQL_DB_DRIVER>com.mysql.jdbc.Driver</brxm.docker.envRun.MYSQL_DB_DRIVER>
         <brxm.docker.envRun.JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-mysql.xml
           -Dproject.basedir=${brxm.project.path}
+          -Drepo.path=${repo.path}
           -Drepo.bootstrap=${repo.bootstrap}
           -Drepo.autoexport.allowed=${repo.autoexport.allowed}
           -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
@@ -257,19 +260,23 @@
       <properties>
         <db.profile>mysql</db.profile>
 
+        <db.docker.bind.1>${project.basedir}/target/mysql-data:/var/lib/mysql</db.docker.bind.1>
+        <db.docker.bind.2>${project.basedir}/db-boostrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
+
         <db.docker.envRun.MYSQL_ROOT_PASSWORD>${mysql.db.password}</db.docker.envRun.MYSQL_ROOT_PASSWORD>
         <db.docker.envRun.MYSQL_DATABASE>${mysql.db.name}</db.docker.envRun.MYSQL_DATABASE>
         <db.docker.envRun.MYSQL_USER>${mysql.db.user}</db.docker.envRun.MYSQL_USER>
         <db.docker.envRun.MYSQL_PASSWORD>${mysql.db.password}</db.docker.envRun.MYSQL_PASSWORD>
 
-        <brxm.docker.envRun.MYSQL_DB_HOST>${mysql.db.host}</brxm.docker.envRun.MYSQL_DB_HOST>
-        <brxm.docker.envRun.MYSQL_DB_PORT>${mysql.db.port}</brxm.docker.envRun.MYSQL_DB_PORT>
+        <brxm.docker.envRun.MYSQL_DB_HOST>${dollar}{docker.container.db.net.${artifactId}-network.ip}</brxm.docker.envRun.MYSQL_DB_HOST>
+        <brxm.docker.envRun.MYSQL_DB_PORT>3306</brxm.docker.envRun.MYSQL_DB_PORT>
         <brxm.docker.envRun.MYSQL_DB_USER>${mysql.db.user}</brxm.docker.envRun.MYSQL_DB_USER>
         <brxm.docker.envRun.MYSQL_DB_PASSWORD>${mysql.db.password}</brxm.docker.envRun.MYSQL_DB_PASSWORD>
         <brxm.docker.envRun.MYSQL_DB_NAME>${mysql.db.name}</brxm.docker.envRun.MYSQL_DB_NAME>
         <brxm.docker.envRun.MYSQL_DB_DRIVER>com.mysql.jdbc.Driver</brxm.docker.envRun.MYSQL_DB_DRIVER>
         <brxm.docker.envRun.JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-mysql.xml
           -Dproject.basedir=${brxm.project.path}
+          -Drepo.path=${repo.path}
           -Drepo.bootstrap=${repo.bootstrap}
           -Drepo.autoexport.allowed=${repo.autoexport.allowed}
           -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
@@ -282,18 +289,22 @@
       <properties>
         <db.profile>postgres</db.profile>
 
+        <db.docker.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</db.docker.bind.1>
+        <db.docker.bind.2>${project.basedir}/db-boostrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
+
         <db.docker.envRun.POSTGRES_DB>${postgresql.db.name}</db.docker.envRun.POSTGRES_DB>
         <db.docker.envRun.POSTGRES_USER>${postgresql.db.user}</db.docker.envRun.POSTGRES_USER>
         <db.docker.envRun.POSTGRES_PASSWORD>${postgresql.db.password}</db.docker.envRun.POSTGRES_PASSWORD>
 
-        <brxm.docker.envRun.POSTGRES_DB_HOST>${postgresql.db.host}</brxm.docker.envRun.POSTGRES_DB_HOST>
-        <brxm.docker.envRun.POSTGRES_DB_PORT>${postgresql.db.port}</brxm.docker.envRun.POSTGRES_DB_PORT>
+        <brxm.docker.envRun.POSTGRES_DB_HOST>${dollar}{docker.container.db.net.${artifactId}-network.ip}</brxm.docker.envRun.POSTGRES_DB_HOST>
+        <brxm.docker.envRun.POSTGRES_DB_PORT>5432</brxm.docker.envRun.POSTGRES_DB_PORT>
         <brxm.docker.envRun.POSTGRES_DB_USER>${postgresql.db.user}</brxm.docker.envRun.POSTGRES_DB_USER>
         <brxm.docker.envRun.POSTGRES_DB_PASSWORD>${postgresql.db.password}</brxm.docker.envRun.POSTGRES_DB_PASSWORD>
         <brxm.docker.envRun.POSTGRES_DB_NAME>${postgresql.db.name}</brxm.docker.envRun.POSTGRES_DB_NAME>
         <brxm.docker.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</brxm.docker.envRun.POSTGRES_DB_DRIVER>
         <brxm.docker.envRun.JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-postgres.xml
           -Dproject.basedir=${brxm.project.path}
+          -Drepo.path=${repo.path}
           -Drepo.bootstrap=${repo.bootstrap}
           -Drepo.autoexport.allowed=${repo.autoexport.allowed}
           -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
@@ -302,12 +313,12 @@
     </profile>
 
     <profile>
-      <id>hsql</id>
+      <id>h2</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <db.profile>hsql</db.profile>
+        <db.profile>h2</db.profile>
       </properties>
     </profile>
 
