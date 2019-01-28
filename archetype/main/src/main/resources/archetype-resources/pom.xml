@@ -263,7 +263,7 @@
         <db.profile>mysql</db.profile>
 
         <db.docker.bind.1>${project.basedir}/target/mysql-data:/var/lib/mysql</db.docker.bind.1>
-        <db.docker.bind.2>${project.basedir}/db-boostrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
+        <db.docker.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
 
         <db.docker.envRun.MYSQL_ROOT_PASSWORD>${mysql.db.password}</db.docker.envRun.MYSQL_ROOT_PASSWORD>
         <db.docker.envRun.MYSQL_DATABASE>${mysql.db.name}</db.docker.envRun.MYSQL_DATABASE>
@@ -292,7 +292,7 @@
         <db.profile>postgres</db.profile>
 
         <db.docker.bind.1>${project.basedir}/target/postgres-data:/var/lib/postgresql/data</db.docker.bind.1>
-        <db.docker.bind.2>${project.basedir}/db-boostrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
+        <db.docker.bind.2>${project.basedir}/db-bootstrap:/docker-entrypoint-initdb.d</db.docker.bind.2>
 
         <db.docker.envRun.POSTGRES_DB>${postgresql.db.name}</db.docker.envRun.POSTGRES_DB>
         <db.docker.envRun.POSTGRES_USER>${postgresql.db.user}</db.docker.envRun.POSTGRES_USER>
