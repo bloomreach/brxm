@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -149,8 +150,9 @@ public class JcrValidationService implements IValidationService, IDetachable {
             logger.error(summary, ValidationScope.DOCUMENT);
         }
         if (result.getAffectedFields() > 1) {
-            final IModel<String> summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale());
-            logger.error(Model.of(String.format(summary.getObject(), result.getAffectedFields())), ValidationScope.DOCUMENT);
+            final String summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale()).getObject();
+            final String formatted = MessageFormat.format(summary, result.getAffectedFields());
+            logger.error(Model.of(formatted), ValidationScope.DOCUMENT);
         }
     }
 

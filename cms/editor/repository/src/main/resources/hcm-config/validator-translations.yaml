@@ -9,4 +9,4 @@ definitions:
         non-empty: Enter a value
         resource-required: Upload a file
         summarySingle: This document has 1 error
-        summaryMultiple: This document has %d errors
+        summaryMultiple: This document has {0} errors
