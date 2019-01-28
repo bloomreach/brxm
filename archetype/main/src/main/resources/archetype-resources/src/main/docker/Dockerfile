@@ -20,7 +20,7 @@ RUN rm -rf /usr/local/tomcat/webapps/examples
 RUN rm -rf /usr/local/tomcat/webapps/docs
 
 # Define a non-root user with limited permissions
-RUN adduser -S -u 999 ${container.user}
+RUN adduser -S -u ${container.user.groupId} ${container.user}
 RUN chown -R ${container.user} /usr/local/tomcat
 RUN chown -R ${container.user} /brxm
 USER ${container.user}
