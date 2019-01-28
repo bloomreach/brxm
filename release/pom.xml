@@ -1100,6 +1100,7 @@
         <base>${docker.base.image}</base>
         <project.artifactId>${project.artifactId}</project.artifactId>
         <container.user>brxmuser</container.user>
+        <container.user.groupId>1001</container.user.groupId>
       </properties>
       <dependencies>
         <dependency>
