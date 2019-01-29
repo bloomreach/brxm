@@ -1,4 +1,4 @@
-FROM ${base}
+FROM ${docker.base.image}
 
 LABEL PROJECT=${project.artifactId}
 
@@ -16,22 +16,22 @@ RUN mkdir -p \
         /usr/local/tomcat/webapps/host-manager \
         /usr/local/tomcat/webapps/manager \
         /usr/local/tomcat/webapps/ROOT \
-    && addgroup -g ${container.user.groupId} -S ${container.user} \
-    && adduser -G ${container.user} -u ${container.user.groupId} -S ${container.user} \
-    && chown -R ${container.user} /usr/local/tomcat /brxm
+    && addgroup -g ${docker.container.uid} -S ${docker.container.username} \
+    && adduser -G ${docker.container.username} -u ${docker.container.uid} -S ${docker.container.username} \
+    && chown -R ${docker.container.username} /usr/local/tomcat /brxm
 
-USER ${container.user}
+USER ${docker.container.username}
 
 # In maven/ the files as specified in the <assembly> section are stored and need to be added manually
 # COPY in reverse order of expected change frequency, for optimal docker build caching
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/common /usr/local/tomcat/common/
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/db-drivers /brxm/db-drivers
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/scripts /brxm/bin
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/common /usr/local/tomcat/common/
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/db-drivers /brxm/db-drivers
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/scripts /brxm/bin
 RUN chmod +x /brxm/bin/docker-entrypoint.sh
 
 # Entrypoint script applies env-vars to config, then runs tomcat
 ENTRYPOINT ["/brxm/bin/docker-entrypoint.sh"]
 
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/conf /usr/local/tomcat/conf/
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/shared /usr/local/tomcat/shared/
-COPY --chown=${container.user.groupId}:${container.user.groupId} maven/webapps /usr/local/tomcat/webapps/
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/conf /usr/local/tomcat/conf/
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/shared /usr/local/tomcat/shared/
+COPY --chown=${docker.container.uid}:${docker.container.uid} maven/webapps /usr/local/tomcat/webapps/

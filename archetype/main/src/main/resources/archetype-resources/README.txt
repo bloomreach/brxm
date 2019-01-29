@@ -102,39 +102,30 @@ To run the image with in-memory h2 database:
 
 Running with an embedded MySQL database. To create & run environment containing builtin MySQL DB just run:
 
-    mvn -Pdocker.run,with-mysql
+    mvn -Pdocker.run,docker.mysql
 
 As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
 
 Running with an embedded PostgreSQL database. To create & run environment containing builtin PostgreSQL DB just run:
 
-    mvn -Pdocker.run,with-postgres
+    mvn -Pdocker.run,docker.postgres
 
 As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
 
 To run the image with an external mysql database, add the provided database name, username and password below to the properties
 section of your project's pom.xml:
 
-    <mysql.db.host>DATABASE_HOSTNAME</mysql.db.host>
-    <mysql.db.port>DATABASE_PORT</mysql.db.port>
-    <mysql.db.name>DATABASE_NAME</mysql.db.name>
-    <mysql.db.user>DATABASE_USERNAME</mysql.db.user>
-    <mysql.db.password>DATABASE_PASSWORD</mysql.db.password>
+    <docker.db.host>DATABASE_HOSTNAME</docker.db.host>
+    <docker.db.port>DATABASE_PORT</docker.db.port>
+    <docker.db.schema>DATABASE_NAME</docker.db.schema>
+    <docker.db.username>DATABASE_USERNAME</docker.db.username>
+    <docker.db.password>DATABASE_PASSWORD</docker.db.password>
 
 Then run:
 
     mvn -Pdocker.run,mysql
 
-To run the image with an external postgresql database, add the provided database name, username and password below to the
-properties section of your project's pom.xml:
-
-    <postgresql.db.host>DATABASE_HOSTNAME</postgresql.db.host>
-    <postgresql.db.port>DATABASE_PORT</postgresql.db.port>
-    <postgresql.db.name>DATABASE_NAME</postgresql.db.name>
-    <postgresql.db.user>DATABASE_USERNAME</postgresql.db.user>
-    <postgresql.db.password>DATABASE_PASSWORD</postgresql.db.password>
-
-Then run:
+To run the image with an external postgresql database, add the same db properties as above, then run:
 
     mvn -Pdocker.run,postgres
 

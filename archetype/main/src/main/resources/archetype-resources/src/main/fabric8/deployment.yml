@@ -17,4 +17,4 @@ spec:
                 -Drepo.autoexport.allowed=${repo.autoexport.allowed} -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
                 -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}
             - name: profile
-              value: ${db.profile}
+              value: ${docker.db.profile}
