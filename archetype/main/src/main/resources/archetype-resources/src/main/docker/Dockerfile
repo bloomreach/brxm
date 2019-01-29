@@ -27,6 +27,7 @@ USER ${container.user}
 COPY --chown=${container.user.groupId}:${container.user.groupId} maven/common /usr/local/tomcat/common/
 COPY --chown=${container.user.groupId}:${container.user.groupId} maven/db-drivers /brxm/db-drivers
 COPY --chown=${container.user.groupId}:${container.user.groupId} maven/scripts /brxm/bin
+RUN chmod +x /brxm/bin/docker-entrypoint.sh
 
 # Entrypoint script applies env-vars to config, then runs tomcat
 ENTRYPOINT ["/brxm/bin/docker-entrypoint.sh"]
