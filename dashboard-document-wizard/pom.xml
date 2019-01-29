@@ -23,9 +23,9 @@
     <version>30.0</version>
   </parent>
 
-  <artifactId>hippo-plugin-dashboard-document-wizard</artifactId>
+  <artifactId>hippo-plugin-dashboard-document-wizard-root</artifactId>
   <version>13.1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <inceptionYear>2010</inceptionYear>
 
@@ -53,6 +53,8 @@
     <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
     <hippo.plugin.selections.version>13.1.0-SNAPSHOT</hippo.plugin.selections.version>
 
+    <essentials.version>${project.version}</essentials.version>
+
     <testng.version>6.0.1</testng.version>
   </properties>
 
@@ -70,66 +72,70 @@
     </repository>
   </repositories>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
-      <version>${hippo.plugin.selections.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugin-selections-addon-cms</artifactId>
-      <version>${hippo.plugin.selections.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-plugin-selections-addon-cms</artifactId>
+        <version>${hippo.plugin.selections.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testng.version}</version>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng.version}</version>
+        <scope>test</scope>
+      </dependency>
 
-  </dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+        <version>${essentials.version}</version>
+        <scope>provided</scope>
+      </dependency>
 
-  <build>
-    <defaultGoal>install</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.png</include>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-    </resources>
-  </build>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
+        <version>${essentials.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <modules>
+    <module>cms</module>
+    <module>essentials-demo-feature</module>
+  </modules>
 
   <profiles>
     <profile>
@@ -143,13 +149,6 @@
             <configuration>
               <excludes combine.children="append">
                 <exclude>README.md</exclude>
-                <!-- 3rd party -->
-                <exclude>demo/site/src/main/webapp/js/*.js</exclude>
-                <exclude>demo/site/src/main/webapp/fonts/*</exclude>
-                <!-- repository content XML -->
-                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
-                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
-                <exclude>demo/essentials/src/main/resources/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>

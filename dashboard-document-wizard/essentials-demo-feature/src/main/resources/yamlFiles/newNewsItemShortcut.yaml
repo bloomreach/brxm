@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newNewsItemShortcut:
+      jcr:primaryType: frontend:plugin
+      baseFolder: /content/documents/{{namespace}}/news
+      browser.id: service.browse
+      documentType: {{namespace}}:newsdocument
+      plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      wicket.id: shortcut
+      workaround: 2
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        date-label: Jaar/maand-folders
+        name-label: Naam document
+        shortcut-link-label: Maak een nieuwsdocument aan
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        date-label: Year/month folders
+        name-label: Doc name
+        shortcut-link-label: Create a news document
