@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,6 +146,23 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container.isInherited).toBe(true);
       expect(ComponentEditor.container.id).toBe(2);
       expect(ComponentEditor.reopen).not.toHaveBeenCalled();
+    });
+
+    it('should update the page information if it has changed', () => {
+      PageStructureService.getComponentById.and.returnValue({
+        container: {
+          isDisabled: () => false,
+          isInherited: () => true,
+          getId: () => 2,
+        },
+      });
+      spyOn(PageMetaDataService, 'get').and.returnValue({
+        [HstConstants.PAGE_ID]: 'some-id',
+      });
+      onStructureChange();
+
+      expect(PageMetaDataService.get).toHaveBeenCalled();
+      expect(ComponentEditor.page[HstConstants.PAGE_ID]).toBe('some-id');
     });
 
     it('should reopen editor', () => {
@@ -523,16 +540,27 @@ describe('ComponentEditorService', () => {
 
   describe('foreign page state', () => {
     beforeEach(() => {
+      ComponentEditor.component = { id: 'id1' };
+
       spyOn(PageMetaDataService, 'get').and.returnValue({ [HstConstants.PAGE_ID]: 'id1' });
     });
 
     it('should not be on a foreign page', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
       ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id1' };
 
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
+    it('should not be on a foreign page for a shared container', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue({});
+      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+
+      expect(ComponentEditor.isForeignPage()).toBe(false);
+    });
+
     it('should be on a foreign page', () => {
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
       ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
 
       expect(ComponentEditor.isForeignPage()).toBe(true);
