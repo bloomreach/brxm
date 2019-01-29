@@ -85,23 +85,26 @@
     <hippo.cms.locales />
 
 
+    <!-- docker related configuration -->
+    <!-- used for basic docker interactions -->
+    <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
+    <!-- used for extended K8s support -->
+    <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version>
+
+    <!-- Open source JDBC drivers included in docker image -->
     <mysql.connector.version>5.1.46</mysql.connector.version>
     <postgres.connector.version>42.2.5</postgres.connector.version>
 
+    <!-- Default base image -->
+    <docker.base.image>tomcat:9-jre8-alpine</docker.base.image>
 
-    <!-- docker related configuration -->
-    <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
-    <!-- if you want a remote debugging on a different a address override on command line with -Ddocker.debug.address=xxxx -->
-    <docker.debug.address>8000</docker.debug.address>
+    <!-- if you want a remote debugging on a different port override on command line with -Ddocker.debug.port=xxxx -->
+    <docker.debug.port>8000</docker.debug.port>
     <!-- if you want to start remote debugging session suspended override on command line with -Ddocker.debug.suspend=y -->
     <docker.debug.suspend>n</docker.debug.suspend>
-    <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version>
 
-    <!-- Default base image -->
-    <docker.base.image>tomcat:9.0.13-jre8-alpine</docker.base.image>
-
-    <!-- Default project's path at container -->
-    <brxm.default.project.path>/brxm/project</brxm.default.project.path>
+    <!-- Default project's path inside container, where auto-export and webfiles watches will happen -->
+    <brxm.project.path>/brxm/project</brxm.project.path>
   </properties>
 
   <repositories>
@@ -1095,12 +1098,9 @@
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.path>${project.build.directory}/storage</repo.path>
         <repo.config />
-        <repo.bootstrap>true</repo.bootstrap>
-        <repo.autoexport.allowed>true</repo.autoexport.allowed>
-        <base>${docker.base.image}</base>
-        <project.artifactId>${project.artifactId}</project.artifactId>
-        <container.user>brxmuser</container.user>
-        <container.user.groupId>1001</container.user.groupId>
+
+        <docker.container.username>brxmuser</docker.container.username>
+        <docker.container.uid>1001</docker.container.uid>
       </properties>
       <dependencies>
         <dependency>
@@ -1172,18 +1172,25 @@
     <profile>
       <id>docker.run</id>
       <properties>
-        <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
-        <docker.debug.port>${docker.debug.address}</docker.debug.port>
-        <docker.debug.suspend>n</docker.debug.suspend>
-        <brxm.project.path>${brxm.default.project.path}</brxm.project.path>
-        <brxm.docker.network.mode>custom</brxm.docker.network.mode>
-        <brxm.docker.network.name>${project.artifactId}-network</brxm.docker.network.name>
         <repo.autoexport.allowed>true</repo.autoexport.allowed>
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.config />
         <repo.bootstrap>true</repo.bootstrap>
         <repo.path>${brxm.project.path}/target/storage</repo.path>
-        <db.run.skip>true</db.run.skip>
+
+        <!-- private docker network for brXM to DB comms -->
+        <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
+        <docker.brxm.network.mode>custom</docker.brxm.network.mode>
+        <docker.brxm.network.name>${project.artifactId}-network</docker.brxm.network.name>
+
+        <!-- Default DB profile -->
+        <docker.db.profile>h2</docker.db.profile>
+        <docker.db.run.skip>true</docker.db.run.skip>
+
+        <!-- Default connection details -->
+        <docker.db.schema>${project.artifactId}</docker.db.schema>
+        <docker.db.username>admin</docker.db.username>
+        <docker.db.password>admin</docker.db.password>
       </properties>
       <build>
         <plugins>
@@ -1206,7 +1213,7 @@
                   <alias>${project.artifactId}</alias>
                   <external>
                     <type>properties</type>
-                    <prefix>brxm.docker</prefix>
+                    <prefix>docker.brxm</prefix>
                     <mode>override</mode>
                   </external>
                   <run>
@@ -1215,7 +1222,7 @@
                       <port>${docker.debug.port}:${docker.debug.port}</port>
                     </ports>
                     <env>
-                      <profile>${db.profile}</profile>
+                      <profile>${docker.db.profile}</profile>
                       <JAVA_OPTS>-Drepo.path=${repo.path}
                          -Dproject.basedir=${brxm.project.path}
                          -Drepo.bootstrap=${repo.bootstrap}
@@ -1238,11 +1245,11 @@
                   <alias>db</alias>
                   <external>
                     <type>properties</type>
-                    <prefix>db.docker</prefix>
+                    <prefix>docker.db</prefix>
                     <mode>override</mode>
                   </external>
                   <run>
-                    <skip>${db.run.skip}</skip>
+                    <skip>${docker.db.run.skip}</skip>
                     <log>
                       <enabled>true</enabled>
                     </log>
@@ -1256,58 +1263,42 @@
     </profile>
 
     <profile>
-      <id>with-mysql</id>
+      <id>docker.mysql</id>
       <properties>
-        <db.profile>mysql</db.profile>
-        <db.run.skip>false</db.run.skip>
-        <db.docker.name>mysql:latest</db.docker.name>
+        <docker.db.profile>mysql</docker.db.profile>
+        <docker.db.run.skip>false</docker.db.run.skip>
+        <docker.db.name>mysql:8.0</docker.db.name>
 
-        <db.docker.network.mode>custom</db.docker.network.mode>
-        <db.docker.network.name>${project.artifactId}-network</db.docker.network.name>
-        <db.docker.wait.time>120000</db.docker.wait.time>
-        <db.docker.wait.log>3306</db.docker.wait.log>
-        <db.docker.ports.1>mysql.db.port:3306</db.docker.ports.1>
+        <docker.db.network.mode>custom</docker.db.network.mode>
+        <docker.db.network.name>${project.artifactId}-network</docker.db.network.name>
+        <docker.db.wait.time>120000</docker.db.wait.time>
+        <docker.db.wait.log>3306</docker.db.wait.log>
+        <docker.db.ports.1>docker.db.port:3306</docker.db.ports.1>
 
-        <!-- Override brxm settings -->
-        <brxm.docker.dependsOn.container.1>db</brxm.docker.dependsOn.container.1>
-
-        <!-- Default connection details -->
-        <mysql.db.name>${project.artifactId}</mysql.db.name>
-        <mysql.db.user>admin</mysql.db.user>
-        <mysql.db.password>admin</mysql.db.password>
-
+        <docker.brxm.dependsOn.container.1>db</docker.brxm.dependsOn.container.1>
       </properties>
     </profile>
 
     <profile>
-      <id>with-postgres</id>
+      <id>docker.postgres</id>
       <properties>
-        <db.profile>postgres</db.profile>
-        <db.run.skip>false</db.run.skip>
-        <db.docker.name>postgres:latest</db.docker.name>
+        <docker.db.profile>postgres</docker.db.profile>
+        <docker.db.run.skip>false</docker.db.run.skip>
+        <docker.db.name>postgres:10.6</docker.db.name>
 
-        <db.docker.network.mode>custom</db.docker.network.mode>
-        <db.docker.network.name>${project.artifactId}-network</db.docker.network.name>
-        <db.docker.wait.time>120000</db.docker.wait.time>
-        <db.docker.wait.log>listening on IPv4 address "0.0.0.0", port 5432</db.docker.wait.log>
-        <db.docker.ports.1>postgresql.db.port:5432</db.docker.ports.1>
+        <docker.db.network.mode>custom</docker.db.network.mode>
+        <docker.db.network.name>${project.artifactId}-network</docker.db.network.name>
+        <docker.db.wait.time>120000</docker.db.wait.time>
+        <docker.db.wait.log>listening on IPv4 address "0.0.0.0", port 5432</docker.db.wait.log>
+        <docker.db.ports.1>docker.db.port:5432</docker.db.ports.1>
 
-        <!-- Override brxm settings -->
-        <brxm.docker.dependsOn.container.1>db</brxm.docker.dependsOn.container.1>
-
-        <!-- Default connection details -->
-        <postgresql.db.name>${project.artifactId}</postgresql.db.name>
-        <postgresql.db.user>admin</postgresql.db.user>
-        <postgresql.db.password>admin</postgresql.db.password>
+        <docker.brxm.dependsOn.container.1>db</docker.brxm.dependsOn.container.1>
       </properties>
     </profile>
 
     <profile>
       <id>k8s.run</id>
       <properties>
-        <brxm.project.path>${brxm.default.project.path}</brxm.project.path>
-        <docker.debug.suspend>n</docker.debug.suspend>
-        <docker.debug.port>${docker.debug.address}</docker.debug.port>
         <repo.autoexport.allowed>true</repo.autoexport.allowed>
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.config />
