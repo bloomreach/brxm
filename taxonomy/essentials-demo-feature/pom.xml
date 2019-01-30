@@ -28,22 +28,4 @@
   <description>Hippo Plugin Taxonomy Essentials Demo Feature</description>
   <artifactId>hippo-plugin-taxonomy-essentials-demo-feature</artifactId>
 
-  <properties>
-    <essentials.version>${project.version}</essentials.version>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-      <version>${essentials.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
-      <version>${essentials.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 </project>
