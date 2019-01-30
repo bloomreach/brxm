@@ -97,7 +97,7 @@
 
     <!-- DB images used by docker.mysql and docker.postgres profiles -->
     <docker.mysql.image>mysql:8.0</docker.mysql.image>
-    <docker.postgres.image>postgres:10.6</docker.postgres.image>
+    <docker.postgres.image>postgres:10.6-alpine</docker.postgres.image>
 
     <!-- Default base image for brXM Dockerfile -->
     <docker.base.image>tomcat:9-jre8-alpine</docker.base.image>
@@ -122,14 +122,14 @@
     <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
     <docker.brxm.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</docker.brxm.envRun.POSTGRES_DB_DRIVER>
 
-    <docker.brxm.envRun.JAVA_OPTS>-Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-      -Dproject.basedir=${brxm.project.path}
+    <docker.default.JAVA_OPTS>
       -Drepo.path=${repo.path}
+      -Dproject.basedir=${brxm.project.path}
       -Drepo.bootstrap=${repo.bootstrap}
       -Drepo.autoexport.allowed=${repo.autoexport.allowed}
       -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
       -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}
-    </docker.brxm.envRun.JAVA_OPTS>
+    </docker.default.JAVA_OPTS>
   </properties>
 
   <repositories>
@@ -1216,6 +1216,10 @@
         <docker.db.schema>${project.artifactId}</docker.db.schema>
         <docker.db.username>admin</docker.db.username>
         <docker.db.password>admin</docker.db.password>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          ${docker.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
       </properties>
       <build>
         <plugins>
@@ -1248,12 +1252,6 @@
                     </ports>
                     <env>
                       <profile>${docker.db.profile}</profile>
-                      <JAVA_OPTS>-Drepo.path=${repo.path}
-                         -Dproject.basedir=${brxm.project.path}
-                         -Drepo.bootstrap=${repo.bootstrap}
-                         -Drepo.autoexport.allowed=${repo.autoexport.allowed}
-                         -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
-                         -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}</JAVA_OPTS>
                     </env>
                     <volumes>
                       <bind>
@@ -1295,6 +1293,11 @@
 
         <docker.brxm.envRun.MYSQL_DB_HOST>${docker.db.host}</docker.brxm.envRun.MYSQL_DB_HOST>
         <docker.brxm.envRun.MYSQL_DB_PORT>${docker.db.port}</docker.brxm.envRun.MYSQL_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
 
@@ -1308,7 +1311,7 @@
         <docker.db.network.mode>custom</docker.db.network.mode>
         <docker.db.network.name>${project.artifactId}-network</docker.db.network.name>
         <docker.db.wait.time>120000</docker.db.wait.time>
-        <docker.db.wait.log>3306</docker.db.wait.log>
+        <docker.db.wait.log>ready for connections. Version.* port: 3306</docker.db.wait.log>
         <docker.db.ports.1>docker.db.port:3306</docker.db.ports.1>
 
         <docker.brxm.dependsOn.container.1>db</docker.brxm.dependsOn.container.1>
@@ -1319,6 +1322,11 @@
         <docker.db.envRun.MYSQL_PASSWORD>${docker.db.password}</docker.db.envRun.MYSQL_PASSWORD>
 
         <docker.brxm.envRun.MYSQL_DB_PORT>3306</docker.brxm.envRun.MYSQL_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
 
@@ -1330,6 +1338,11 @@
 
         <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.db.host}</docker.brxm.envRun.POSTGRES_DB_HOST>
         <docker.brxm.envRun.POSTGRES_DB_PORT>${docker.db.port}</docker.brxm.envRun.POSTGRES_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
 
@@ -1353,6 +1366,11 @@
         <docker.db.envRun.POSTGRES_PASSWORD>${docker.db.password}</docker.db.envRun.POSTGRES_PASSWORD>
 
         <docker.brxm.envRun.POSTGRES_DB_PORT>5432</docker.brxm.envRun.POSTGRES_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
 
