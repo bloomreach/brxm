@@ -27,22 +27,4 @@
   <name>Hippo Plugin Selections Essentials Demo Feature</name>
   <description>Hippo Plugin Selections Essentials Demo Feature</description>
 
-  <properties>
-    <essentials.version>${project.version}</essentials.version>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-      <version>${essentials.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
-      <version>${essentials.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 </project>
