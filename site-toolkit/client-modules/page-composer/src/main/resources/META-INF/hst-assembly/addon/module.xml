@@ -18,6 +18,7 @@
   <name>org.hippoecm.hst.pagecomposer</name>
   <config-locations>
     <config-location>classpath*:META-INF/hst-assembly/addon/org/hippoecm/hst/pagecomposer/*.xml</config-location>
+    <!-- Deprecated since 13.1.0 : end projects are never allowed to override page composer beans in the paltform webapp -->
     <config-location>classpath*:META-INF/hst-assembly/overrides/addon/org/hippoecm/hst/pagecomposer/*.xml</config-location>
   </config-locations>
 </module>
