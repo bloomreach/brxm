@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * When using the this class to encrypt or decrypt using provided methods, make sure that the same "instance" is used
  * for both the operations. Otherwise you might get exception while decrypting.
+ * @deprecated since 13.0.1 Do not use any more! There are no usages in our stack of this. This class will be removed in
+ * 14.0.0. It is a leftover from old SSO support between site and cms
  */
+@Deprecated
 public final class CredentialCipher {
 
     static final Logger log = LoggerFactory.getLogger(CredentialCipher.class);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,11 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
-
+/*
+ * @deprecated since 13.0.1 Do not use any more! There are no usages in our stack of this. This class will be removed in
+ * 14.0.0. It is a leftover from old SSO support between site and cms
+ */
+@Deprecated
 public class CredentialCipherTest {
     @Test
     public void testEncodeDecode() {
