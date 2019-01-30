@@ -1,0 +1,7 @@
+/content/gallery/{{namespace}}:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  jcr:uuid: 5ca39a62-9c96-4e0a-ae23-0979c9aaa033
+  hippo:name: Taxonomy demo
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['hippogallery:imageset']
