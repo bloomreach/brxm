@@ -27,14 +27,4 @@
   <name>Hippo Plugin Dashboard Document Wizard Essentials Demo Feature</name>
   <description>Hippo Plugin Dashboard Document Wizard Essentials Demo Feature</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
-    </dependency>
-  </dependencies>
 </project>

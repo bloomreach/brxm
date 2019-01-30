@@ -53,8 +53,6 @@
     <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
     <hippo.plugin.selections.version>13.1.0-SNAPSHOT</hippo.plugin.selections.version>
 
-    <essentials.version>${project.version}</essentials.version>
-
     <testng.version>6.0.1</testng.version>
   </properties>
 
@@ -116,19 +114,6 @@
         <scope>test</scope>
       </dependency>
 
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-        <version>${essentials.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-plugin-sdk-implementation</artifactId>
-        <version>${essentials.version}</version>
-        <scope>provided</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
