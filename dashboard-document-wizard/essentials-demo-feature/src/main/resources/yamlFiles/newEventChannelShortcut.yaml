@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/newEventChannelShortcut:
+      jcr:primaryType: frontend:plugin
+      baseFolder: events
+      browser.id: service.browse
+      classificationType: list
+      documentType: {{namespace}}:eventsdocument
+      plugin.class: org.onehippo.forge.demo.DocumentChannelWizardPlugin
+      valueListPath: /content/documents/valuelists/eventtypes
+      wicket.id: shortcut
+      workaround: 4
+      /nl:
+        jcr:primaryType: frontend:pluginconfig
+        list-label: Thema
+        shortcut-link-label: Maak een evenementdocument aan in een site folder (Extended Wizard voorbeeld)
+      /en:
+        jcr:primaryType: frontend:pluginconfig
+        list-label: Theme
+        shortcut-link-label: Create an event document in a channel folder (Extended Wizard Demo)
