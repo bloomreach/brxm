@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="list">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:containeritemcomponent</sv:value>
+  </sv:property>
+  
+  <sv:property sv:name="hst:componentclassname" sv:type="String">
+    <sv:value>{{componentsPackage}}.ListView</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:iconpath" sv:type="String">
+    <sv:value>images/catalog-list.png</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:label" sv:type="String">
+    <sv:value>List</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+    <sv:value>title</sv:value>
+    <sv:value>pageSize</sv:value>
+    <sv:value>sortBy</sv:value>
+  </sv:property>
+  <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+    <sv:value>List</sv:value>
+    <sv:value>3</sv:value>
+    <sv:value>{{namespace}}:date</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:template" sv:type="String">
+    <sv:value>blocks-list</sv:value>
+  </sv:property>
+  <sv:property sv:name="hst:xtype" sv:type="String">
+    <sv:value>HST.Item</sv:value>
+  </sv:property>
+</sv:node>
