@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.Value;
 
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -56,8 +59,8 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         "/test/folder/document", "hippo:handle",
             "jcr:mixinTypes", "mix:referenceable",
         "/test/folder/document/document", "hippo:testdocument",
+            "jcr:mixinTypes", "hippostd:publishable",
             "hippostd:state", "unpublished",
-            "hippostd:holder", "admin",
         "/test/folder_nl", "hippostd:folder",
             "jcr:mixinTypes", "mix:versionable",
         "/test/hipposysedit:prototype", "hippo:testdocument",
@@ -154,6 +157,49 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         session.refresh(false);
         assertTrue(session.nodeExists("/test/folder_nl/dokument"));
         assertTrue(session.nodeExists("/test/folder_nl/dokument/dokument"));
+    }
+
+    @Test
+    public void testTranslatedDocumentIsInEditMode() throws Exception {
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Node handle = session.getRootNode().getNode("test/folder/document");
+        Node document = handle.getNode(handle.getName());
+        document.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        document.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
+        document.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        document.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, "admin");
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY, "admin");
+
+        session.save();
+        session.refresh(false);
+
+        Workflow workflowInterface = manager.getWorkflow("translation", document);
+        assertTrue(workflowInterface instanceof TranslationWorkflow);
+        TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
+        workflow.addTranslation("nl", "dokument");
+
+        session.refresh(false);
+
+        final Node newHandle = session.getNode("/test/folder_nl/dokument");
+
+        boolean hasDraft = false;
+        boolean hasUnpublished = false;
+        
+        for (NodeIterator variants = newHandle.getNodes(); variants.hasNext();) {
+            Node variant = variants.nextNode();
+            if (variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.DRAFT)) {
+                hasDraft = true;
+                assertEquals("admin", variant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString());
+            }
+            if (variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.UNPUBLISHED)) {
+                hasUnpublished = true;
+            }
+        }
+        assertTrue(hasDraft);
+        assertTrue(hasUnpublished);
     }
 
     @Test

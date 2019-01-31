@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
@@ -104,6 +105,9 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 JcrUtils.ensureIsCheckedOut(copiedVariant);
                 copiedVariant.setProperty(HippoTranslationNodeType.LOCALE, language);
             }
+
+            toEditmode(copiedDoc);
+
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
@@ -236,6 +240,17 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         hints.put("available", (Serializable) available);
         hints.put("locale", translatedNode.getLocale());
         return hints;
+    }
+
+    /**
+     * Bring the new document to edit mode for the current user.
+     */
+    private void toEditmode(final Node newNode) throws WorkflowException, RepositoryException, RemoteException {
+        final Workflow editing = workflowContext.getWorkflow("editing", new Document(newNode));
+        if (editing instanceof EditableWorkflow) {
+            EditableWorkflow editableWorkflow = (EditableWorkflow) editing;
+            editableWorkflow.obtainEditableInstance();
+        }
     }
 
     private void copyFolderTypes(final Node copiedDoc, final Map<String, Set<String>> prototypes) throws RepositoryException {
