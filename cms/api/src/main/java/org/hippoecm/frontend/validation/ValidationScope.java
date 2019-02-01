@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,21 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-/**
- * Exception thrown during validation.  When thrown, the validation was aborted.
- */
-public class ValidationException extends Exception {
-
-    public ValidationException(final String message) {
-        super(message);
-    }
-
-    public ValidationException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public ValidationException(final Throwable cause) {
-        super(cause);
-    }
-
+public enum ValidationScope {
+    DOCUMENT,
+    FIELD
 }

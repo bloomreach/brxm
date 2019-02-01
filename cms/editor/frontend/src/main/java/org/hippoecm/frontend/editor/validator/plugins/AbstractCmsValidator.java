@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,32 +24,44 @@ import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.ICmsValidator;
-import org.hippoecm.frontend.validation.ValidatorMessages;
+import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
+    private final static String SCOPE = "scope";
+    
     private final String name;
+    private ValidationScope validationScope = ValidationScope.DOCUMENT;
 
-    public AbstractCmsValidator(IPluginContext context, IPluginConfig config) {
+    public AbstractCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
+        
+        if (config.containsKey(SCOPE)) {
+            validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
+        }
     }
 
     public String getName() {
         return name;
     }
 
+    protected ValidationScope getValidationScope() {
+        return validationScope;
+    }
+
     /**
-     * Gets the translation for the default validator message in the locale of the currently logged-in user.
-     * Validator messages are stored as repository based resource bundles at:
-     *
+     * Gets the translation for the default validator message in the locale of the currently logged-in user. Validator
+     * messages are stored as repository based resource bundles at:
+     * <p>
      * /hippo:configuration/hippo:translations/hippo:cms/validators
-     *
-     * To retrieve the message from the resource bundle, the key is constructed using the last section of
-     * this plugin's name.
+     * <p>
+     * To retrieve the message from the resource bundle, the key is constructed using the last section of this plugin's
+     * name.
      *
      * @return a model of the translation of the message
      */
@@ -60,32 +72,20 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
     /**
      * Gets the translation for the alternate validator message {@code alternateKey} in the locale of the currently
      * logged-in user. Validator messages are stored as repository based resource bundles at:
-     *
+     * <p>
      * /hippo:configuration/hippo:translations/hippo:cms/validators
-     *
-     * To retrieve the message from the resource bundle, the key is constructed using the pattern
-     * {@code "<name>#<alternateKey>"} where name is the last section of this plugin's name.
+     * <p>
+     * To retrieve the message from the resource bundle, the key is constructed using the pattern {@code
+     * "<name>#<alternateKey>"} where name is the last section of this plugin's name.
      *
      * @return a model of the translation of the message
      */
-    protected IModel<String> getTranslation(String alternateKey) {
-        String key = getName() + "#" + alternateKey;
+    protected IModel<String> getTranslation(final String alternateKey) {
+        final String key = getName() + "#" + alternateKey;
         return getResourceBundleModel(key, Session.get().getLocale());
     }
 
-    /**
-     * Return translations of the default messages (those in {@link ValidatorMessages})
-     *
-     * This method is deprecated. Instead, use {@link #getTranslation()} which uses repository resource bundles.
-     * @param key the key for a default message
-     * @return a model of the translation of the default message
-     */
-    @Deprecated
-    protected IModel<String> getDefaultMessage(String key) {
-        return new ClassResourceModel(key, ValidatorMessages.class);
-    }
-
-    private IModel<String> getResourceBundleModel(String key, Locale locale) {
+    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
         return new ResourceBundleModel("hippo:cms.validators", key, locale);
     }
 

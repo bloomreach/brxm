@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.validation;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 
 /**
@@ -24,31 +26,25 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
  */
 public final class ModelPath implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
+    private final ModelPathElement[] elements;
 
-    private ModelPathElement[] elements;
-
-    public ModelPath(ModelPathElement[] elements) {
+    public ModelPath(final ModelPathElement[] elements) {
         this.elements = elements;
     }
-    
+
     public ModelPathElement[] getElements() {
         return elements;
     }
 
     @Override
     public String toString() {
-        String[] strings = new String[elements.length];
-        for (int i = 0; i < elements.length; i++) {
-            strings[i] = elements[i].toString();
-        }
-        return Strings.join("/", strings);
+        return Arrays.stream(elements)
+                .map(ModelPathElement::toString)
+                .collect(Collectors.joining("/"));
     }
 
     public void detach() {
-        for (ModelPathElement element : elements) {
-            element.detach();
-        }
+        Arrays.stream(elements).forEach(ModelPathElement::detach);
     }
-    
+
 }
