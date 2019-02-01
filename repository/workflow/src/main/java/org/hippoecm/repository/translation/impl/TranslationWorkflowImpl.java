@@ -300,15 +300,17 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             final FolderWorkflow folderWorkflow = getFolderWorkflow(rootSubject);
             final Map<String, Set<String>> copyPrototypes = getPrototypes(folderWorkflow);
 
-            if (copyPrototypes != null && copyPrototypes.size() > 0) {
-                // got some stuff...check if equal:
-                final Set<String> protoKeys = prototypes.keySet();
-                final Set<String> copyKeys = copyPrototypes.keySet();
-                // check if we have a difference and overwrite
-                if (copyKeys.size() != protoKeys.size() || !copyKeys.containsAll(protoKeys)) {
-                    final String[] newValues = copyKeys.toArray(new String[0]);
-                    copiedNode.setProperty(HippoStdNodeType.HIPPOSTD_FOLDERTYPE, newValues);
-                }
+            // check if equal
+            if (copyPrototypes == null || copyPrototypes.size() == 0) {
+                return;
+            }
+            
+            final Set<String> protoKeys = prototypes.keySet();
+            final Set<String> copyKeys = copyPrototypes.keySet();
+            // check if we have a difference and overwrite
+            if (copyKeys.size() != protoKeys.size() || !copyKeys.containsAll(protoKeys)) {
+                final String[] newValues = copyKeys.toArray(new String[0]);
+                copiedNode.setProperty(HippoStdNodeType.HIPPOSTD_FOLDERTYPE, newValues);
             }
         } catch (WorkflowException e) {
             log.warn(e.getClass().getName() + ": " + e.getMessage(), e);
