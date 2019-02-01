@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,36 +26,30 @@ import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Creates a model from a container model, using a {@link ModelPath}.
  */
 public class JcrFieldResolver implements IFieldResolver {
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(JcrFieldResolver.class);
-
-    public IModel resolve(IModel model, ModelPath path) throws EditorException {
+    public IModel resolve(final IModel model, final ModelPath path) throws EditorException {
         if (model instanceof JcrNodeModel) {
-            JcrNodeModel nodeModel = (JcrNodeModel) model;
+            final JcrNodeModel nodeModel = (JcrNodeModel) model;
             Node node = nodeModel.getNode();
-            for (ModelPathElement element : path.getElements()) {
-                IFieldDescriptor field = element.getField();
-                ITypeDescriptor fieldType = field.getTypeDescriptor();
-                Iterator<? extends IModel> iter;
+            for (final ModelPathElement element : path.getElements()) {
+                final IFieldDescriptor field = element.getField();
+                final ITypeDescriptor fieldType = field.getTypeDescriptor();
+                final Iterator<? extends IModel> iter;
                 if (fieldType.isNode()) {
-                    ChildNodeProvider provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
+                    final ChildNodeProvider provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
                     iter = provider.iterator(element.getIndex(), 1);
                 } else {
-                    PropertyValueProvider provider = new PropertyValueProvider(field, null, nodeModel.getItemModel());
+                    final PropertyValueProvider provider = new PropertyValueProvider(field, null, nodeModel.getItemModel());
                     iter = provider.iterator(element.getIndex(), 1);
                 }
                 if (iter.hasNext()) {
                     if (fieldType.isNode()) {
-                        JcrNodeModel childModel = (JcrNodeModel) iter.next();
+                        final JcrNodeModel childModel = (JcrNodeModel) iter.next();
                         node = childModel.getNode();
                     } else {
                         return iter.next();
