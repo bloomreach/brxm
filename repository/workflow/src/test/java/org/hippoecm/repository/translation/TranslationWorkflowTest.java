@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 package org.hippoecm.repository.translation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -30,6 +29,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.value.StringValue;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -43,21 +45,26 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 public class TranslationWorkflowTest extends RepositoryTestCase {
     private static final String INVALID_ID = "invalid id - to be overwritten by folderworkflow";
 
     
-    static final String FOLDER_T9N_ID = "700a09f1-eac5-482c-a09e-ec0a6a5d6abc";
-    static final String DOCUMENT_T9N_ID = "dbe51269-1211-4695-9dd4-1d6ea578f134";
+    private static final String FOLDER_T9N_ID = "700a09f1-eac5-482c-a09e-ec0a6a5d6abc";
+    private static final String DOCUMENT_T9N_ID = "dbe51269-1211-4695-9dd4-1d6ea578f134";
     
-    String[] content = {
+    private String[] content = {
         "/test/folder", "hippostd:folder",
             "jcr:mixinTypes", "mix:versionable",
         "/test/folder/document", "hippo:handle",
             "jcr:mixinTypes", "mix:referenceable",
         "/test/folder/document/document", "hippo:testdocument",
+            "jcr:mixinTypes", "hippostd:publishable",
             "hippostd:state", "unpublished",
-            "hippostd:holder", "admin",
         "/test/folder_nl", "hippostd:folder",
             "jcr:mixinTypes", "mix:versionable",
         "/test/hipposysedit:prototype", "hippo:testdocument",
@@ -157,6 +164,49 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testTranslatedDocumentIsInEditMode() throws Exception {
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Node handle = session.getRootNode().getNode("test/folder/document");
+        Node document = handle.getNode(handle.getName());
+        document.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        document.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
+        document.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        document.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, "admin");
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY, "admin");
+
+        session.save();
+        session.refresh(false);
+
+        Workflow workflowInterface = manager.getWorkflow("translation", document);
+        assertTrue(workflowInterface instanceof TranslationWorkflow);
+        TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
+        workflow.addTranslation("nl", "dokument");
+
+        session.refresh(false);
+
+        final Node newHandle = session.getNode("/test/folder_nl/dokument");
+
+        boolean hasDraft = false;
+        boolean hasUnpublished = false;
+        
+        for (NodeIterator variants = newHandle.getNodes(); variants.hasNext();) {
+            Node variant = variants.nextNode();
+            if (variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.DRAFT)) {
+                hasDraft = true;
+                assertEquals("admin", variant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString());
+            }
+            if (variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString().equals(HippoStdNodeType.UNPUBLISHED)) {
+                hasUnpublished = true;
+            }
+        }
+        assertTrue(hasDraft);
+        assertTrue(hasUnpublished);
+    }
+
+    @Test
     public void testTranslateFolder() throws Exception {
         Node deFolder = session.getRootNode().getNode("test").addNode("folder_de", "hippostd:folder");
         deFolder.addMixin(JcrConstants.MIX_VERSIONABLE);
@@ -200,6 +250,41 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testTranslatedFolderCopyFolderTypes() throws Exception {
+        Node subFolder = session.getRootNode().getNode("test/folder").addNode("subfolder", "hippostd:folder");
+        subFolder.addMixin(JcrConstants.MIX_VERSIONABLE);
+        subFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        String id = UUID.randomUUID().toString();
+        subFolder.setProperty(HippoTranslationNodeType.ID, id);
+        subFolder.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        Value[] values = {new StringValue("new-folder"), new StringValue("new-document"), new StringValue("incorrect")};
+        subFolder.setProperty(HippoStdNodeType.HIPPOSTD_FOLDERTYPE, values);
+
+        JcrUtils.copy(session.getNode("/test/folder/document"), "document", session.getNode("/test/folder/subfolder"));
+
+        session.save();
+        session.refresh(false);
+
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflowInterface = manager.getWorkflow("translation", session.getRootNode().getNode("test/folder/subfolder"));
+        assertTrue(workflowInterface instanceof TranslationWorkflow);
+        TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
+        workflow.addTranslation("nl", "ondermap");
+
+        session.refresh(false);
+
+        final Property property = session.getNode("/test/folder_nl/ondermap").getProperty(HippoStdNodeType.HIPPOSTD_FOLDERTYPE);
+        final Value[] copiedValues = property.getValues();
+        assertEquals(copiedValues.length, 2);
+        List<String> listValues = new ArrayList<>();
+        for (Value copiedValue : copiedValues) {
+            listValues.add(copiedValue.getString());
+        }
+        assertTrue(listValues.contains("new-document"));
+        assertTrue(listValues.contains("new-folder"));
+    }
+
+    @Test
     public void testFolderWorkflowCreatesNewDocumentThatInheritsLocale() throws Exception {
         WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
         Workflow workflowInterface = manager.getWorkflow("internal", session.getRootNode().getNode("test/folder"));
@@ -212,6 +297,6 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         Node docNode = session.getNode("/test/folder/test-document/test-document");
         assertTrue(docNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED));
         assertEquals("en", docNode.getProperty(HippoTranslationNodeType.LOCALE).getString());
-        assertFalse(INVALID_ID.equals(docNode.getProperty(HippoTranslationNodeType.ID).getString()));
+        assertNotEquals(INVALID_ID, docNode.getProperty(HippoTranslationNodeType.ID).getString());
     }
 }

@@ -1,5 +1,5 @@
 #
-#  Copyright 2013-2013 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -15,3 +15,4 @@
 #
 
 TranslationVirtualProvider is deprecated since repository 2.24.01 and should not be used
+Unknown folder type
