@@ -3,7 +3,7 @@
   <dependencySets>
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
-      <outputDirectory>shared/lib</outputDirectory>
+      <outputDirectory>autoreload</outputDirectory>
       <scope>provided</scope>
       <includes>
         <include>org.onehippo.cms7:hippo-services-autoreload</include>

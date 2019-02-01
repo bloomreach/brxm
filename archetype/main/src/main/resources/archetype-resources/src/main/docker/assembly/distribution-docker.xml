@@ -7,14 +7,11 @@
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <componentDescriptors>
-    <componentDescriptor>${project.basedir}/src/main/assembly/webapps-component.xml</componentDescriptor>
     <componentDescriptor>${project.basedir}/src/main/assembly/common-lib-component.xml</componentDescriptor>
     <componentDescriptor>${project.basedir}/src/main/assembly/shared-lib-component.xml</componentDescriptor>
-    <componentDescriptor>${project.basedir}/src/main/assembly/shared-lib-development-data-component.xml</componentDescriptor>
 
     <componentDescriptor>${project.basedir}/src/main/docker/assembly/conf-component-docker.xml</componentDescriptor>
     <componentDescriptor>${project.basedir}/src/main/docker/assembly/webapps-component-docker.xml</componentDescriptor>
-    <componentDescriptor>${project.basedir}/src/main/docker/assembly/shared-lib-component-docker.xml</componentDescriptor>
     <componentDescriptor>${project.basedir}/src/main/docker/assembly/scripts-docker.xml</componentDescriptor>
 
     <componentDescriptor>${project.basedir}/src/main/docker/assembly/docker-db-libs.xml</componentDescriptor>

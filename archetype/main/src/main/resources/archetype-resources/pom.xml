@@ -196,8 +196,42 @@
       <id>docker.build</id>
       <dependencies>
         <dependency>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-services-autoreload</artifactId>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}-cms</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}-webapp</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>docker.run</id>
+      <dependencies>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}-essentials</artifactId>
+          <version>${project.version}</version>
+          <type>war</type>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}-repository-data-development</artifactId>
+          <version>${project.version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>${project.artifactId}-repository-data-site-development</artifactId>
+          <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
       </dependencies>
@@ -320,6 +354,7 @@
       <id>without-development-data</id>
       <properties>
         <development-module-deploy-dir>temp</development-module-deploy-dir>
+        <docker.copy.dev.libs.instruction></docker.copy.dev.libs.instruction>
       </properties>
     </profile>
 

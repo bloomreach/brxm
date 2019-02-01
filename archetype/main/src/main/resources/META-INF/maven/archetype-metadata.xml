@@ -343,6 +343,7 @@
       <includes>
         <include>**/*.*</include>
         <include>Dockerfile</include>
+        <include>DockerfileDev</include>
       </includes>
     </fileSet>
  
