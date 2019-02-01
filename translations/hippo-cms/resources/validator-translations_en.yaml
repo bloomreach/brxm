@@ -2,8 +2,10 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /en:
-        escaped: Invalid character present
-        resource-required: You must upload a file
-        non-empty: A mandatory string input field is empty
         jcr:primaryType: hipposys:resourcebundle
-        email: Field doesn't match an email address
+        escaped: 'Do not use these characters: < > & '' "'
+        resource-required: Upload a file
+        summaryMultiple: This document has {0} errors
+        non-empty: Enter a value
+        summarySingle: This document has 1 error
+        email: Enter a valid email address
