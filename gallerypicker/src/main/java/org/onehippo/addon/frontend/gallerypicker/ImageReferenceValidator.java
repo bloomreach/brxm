@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,14 +33,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Validator for checking mandatory links to images.
- *
- *  It checks the link's reference (a node identifier) for not being set at all or being set to root node '/' or to node
- *  '/content/gallery'.
+ * Validator for checking mandatory links to images.
+ * <p>
+ * It checks the link's reference (a node identifier) for not being set at all or being set to root node '/' or to node
+ * '/content/gallery'.
  */
 public class ImageReferenceValidator extends AbstractCmsValidator {
 
-    static final Logger log = LoggerFactory.getLogger(ImageReferenceValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageReferenceValidator.class);
 
     public ImageReferenceValidator(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -52,28 +52,32 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, final IModel childModel) throws ValidationException {
-        final Set<Violation> violations = new HashSet<Violation>();
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
+                                   final IModel childModel) throws ValidationException {
+
+        final Set<Violation> violations = new HashSet<>();
         try {
             final Object object = childModel.getObject();
             final String ref;
-            if (object instanceof Node && ((Node)object).hasProperty("hippo:docbase")) {
-                ref = ((Node)object).getProperty("hippo:docbase").getString();
+            if (object instanceof Node && ((Node) object).hasProperty("hippo:docbase")) {
+                ref = ((Node) object).getProperty("hippo:docbase").getString();
             } else if (object instanceof String) {
-                ref = (String)object;
+                ref = (String) object;
             } else {
                 return violations;
             }
 
-            final String contentGalleryIdentifier = model.getNode().getSession().nodeExists("/content/gallery") ?
-                    model.getNode().getSession().getNode("/content/gallery").getIdentifier() : null;
+            final String contentGalleryIdentifier = model.getNode().getSession().nodeExists("/content/gallery") 
+                    ? model.getNode().getSession().getNode("/content/gallery").getIdentifier() 
+                    : null;
             if (ref == null || ref.equals("")
                     || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")
                     || ref.equals(contentGalleryIdentifier)) {
-                violations.add(fieldValidator.newValueViolation(childModel, "reference-is-empty"));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
             }
         } catch (RepositoryException repositoryException) {
-            log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(), repositoryException);
+            log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(),
+                    repositoryException);
         }
         return violations;
     }
