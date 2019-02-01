@@ -130,6 +130,10 @@
       -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
       -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}
     </docker.default.JAVA_OPTS>
+
+    <docker.container.username>brxmuser</docker.container.username>
+    <docker.container.uid>1001</docker.container.uid>
+
   </properties>
 
   <repositories>
@@ -1123,9 +1127,6 @@
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.path>${project.build.directory}/storage</repo.path>
         <repo.config />
-
-        <docker.container.username>brxmuser</docker.container.username>
-        <docker.container.uid>1001</docker.container.uid>
       </properties>
       <dependencies>
         <dependency>
@@ -1162,9 +1163,34 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker work directory</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/${project.version}" includeemptydirs="true"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
             <executions>
+              <execution>
+                <id>Delete docker image</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+              </execution>
               <execution>
                 <id>Build docker container</id>
                 <phase>initialize</phase>
@@ -1220,13 +1246,53 @@
         <docker.brxm.envRun.JAVA_OPTS>
           ${docker.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
+        <docker.copy.dev.libs.instruction>COPY --chown=${docker.container.uid}:${docker.container.uid} maven/shared /usr/local/tomcat/shared/</docker.copy.dev.libs.instruction>
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-services-autoreload</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker work directory</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/dev-${project.version}" includeemptydirs="true"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
             <executions>
+              <execution>
+                <id>Delete docker image</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>Build docker dev container</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+              </execution>
               <execution>
                 <id>Run docker container</id>
                 <phase>initialize</phase>
@@ -1238,13 +1304,21 @@
             <configuration>
               <images combine.children="append">
                 <image>
-                  <name>${project.groupId}/${project.artifactId}:${project.version}</name>
+                  <name>${project.groupId}/${project.artifactId}:dev-${project.version}</name>
                   <alias>${project.artifactId}</alias>
                   <external>
                     <type>properties</type>
                     <prefix>docker.brxm</prefix>
                     <mode>override</mode>
                   </external>
+                  <build>
+                    <dockerFile>${project.basedir}/src/main/docker/DockerfileDev</dockerFile>
+                    <assembly>
+                      <mode>dir</mode>
+                      <name>maven/</name>
+                      <descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</descriptor>
+                    </assembly>
+                  </build>
                   <run>
                     <ports>
                       <port>8080:8080</port>
