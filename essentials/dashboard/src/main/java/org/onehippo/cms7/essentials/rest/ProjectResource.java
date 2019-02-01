@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,10 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.plugin.sdk.config.ProjectSettingsBean;
@@ -42,13 +46,7 @@ import org.onehippo.cms7.essentials.rest.model.ProjectStatus;
 import org.onehippo.cms7.essentials.rest.model.SystemInfo;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 @CrossOriginResourceSharing(allowAllOrigins = true)
-@Api(
-        value = "/project",
-        description = "Rest resource which provides information about the project.")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("/project")
@@ -65,9 +63,9 @@ public class ProjectResource {
         this.installService = installService;
     }
 
-    @ApiOperation(
-            value = "Retrieve project status",
-            response = ProjectStatus.class)
+    @Operation(
+            summary = "Retrieve project status",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ProjectStatus.class)))})
     @GET
     @Path("/status")
     public ProjectStatus getProjectStatus() {
@@ -81,9 +79,9 @@ public class ProjectResource {
     }
 
 
-    @ApiOperation(
-            value = "Ping, retrieves back-end status of Essentials, to display in the Dashboard.",
-            response = SystemInfo.class)
+    @Operation(
+            summary = "Ping, retrieves back-end status of Essentials, to display in the Dashboard.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = SystemInfo.class)))})
     @GET
     @Path("/ping")
     public SystemInfo ping() {
@@ -97,10 +95,10 @@ public class ProjectResource {
     }
 
 
-    @ApiOperation(
-            value = "Retrieve project settings",
-            notes = "Project settings are global to the project and typically chosen once when the project is initialized.",
-            response = ProjectSettings.class)
+    @Operation(
+            summary = "Retrieve project settings",
+            description = "Project settings are global to the project and typically chosen once when the project is initialized.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ProjectSettings.class)))})
     @GET
     @Path("/settings")
     public ProjectSettings getProjectSettings(@Context HttpServletResponse response) {
@@ -112,9 +110,9 @@ public class ProjectResource {
     }
 
 
-    @ApiOperation(
-            value = "Save global project settings.",
-            response = UserFeedback.class)
+    @Operation(
+            summary = "Save global project settings.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = UserFeedback.class)))})
     @POST
     @Path("/settings")
     public UserFeedback saveProjectSettings(final ProjectSettingsBean projectSettings, @Context HttpServletResponse response) {

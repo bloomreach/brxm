@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.onehippo.cms7.essentials.dashboard.install.InstallService;
 import org.onehippo.cms7.essentials.dashboard.install.InstallStateMachine;
@@ -50,17 +55,11 @@ import org.onehippo.cms7.essentials.rest.model.ApplicationData;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.PluginDescriptor;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
-import org.onehippo.cms7.essentials.sdk.api.model.ProjectSettings;
 import org.onehippo.cms7.essentials.utils.DashboardUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-
 @CrossOriginResourceSharing(allowAllOrigins = true)
-@Api(value = "/plugins", description = "Rest resource which provides information about plugins: e.g. installed or available plugins")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/plugins")
@@ -84,10 +83,10 @@ public class PluginResource {
         this.installStateMachine = installStateMachine;
     }
 
-    @ApiOperation(
-            value = "Fetch list of all plugin descriptors. " +
+    @Operation(
+            summary = "Fetch list of all plugin descriptors. " +
                     "For all plugins with dynamic REST endpoints, these get registered at /dynamic/{pluginEndpoint}",
-            response = List.class)
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
     @GET
     @Path("/")
     public List<PluginDescriptor> getAllPlugins() {
@@ -95,10 +94,10 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Fetch plugin descriptor for the specified plugin.",
-            response = PluginDescriptor.class)
-    @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
+    @Operation(
+            summary = "Fetch plugin descriptor for the specified plugin.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = PluginDescriptor.class)))})
+    @Parameter(name = PLUGIN_ID, description = "Plugin ID", required = true)
     @GET
     @Path("/{" + PLUGIN_ID + '}')
     public PluginDescriptor getPlugin(@PathParam(PLUGIN_ID) final String pluginId) {
@@ -106,12 +105,12 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Return a list of changes made during installation of the plugin, based on installation parameters.",
-            notes = "Messages only indicate what might change, operations could be skipped, "
+    @Operation(
+            summary = "Return a list of changes made during installation of the plugin, based on installation parameters.",
+            description = "Messages only indicate what might change, operations could be skipped, "
                   + "e.g. file copy is not executed if file already exists.",
-            response = List.class)
-    @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
+    @Parameter(name = PLUGIN_ID, description = "Plugin ID", required = true)
     @GET
     @Path("/{" + PLUGIN_ID + "}/changes")
     public List<ChangeMessage> getInstructionPackageChanges(@PathParam(PLUGIN_ID) final String pluginId,
@@ -134,10 +133,10 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Install a plugin into the project.",
-            response = UserFeedback.class)
-    @ApiParam(name = PLUGIN_ID, value = "Plugin ID", required = true)
+    @Operation(
+            summary = "Install a plugin into the project.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = UserFeedback.class)))})
+    @Parameter(name = PLUGIN_ID, description = "Plugin ID", required = true)
     @POST
     @Path("/{" + PLUGIN_ID + "}/install")
     public synchronized UserFeedback installPlugin(@PathParam(PLUGIN_ID) String pluginId,
@@ -164,9 +163,9 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Signal a restart of Essentials, so the installation of plugins can continue.",
-            response = UserFeedback.class
+    @Operation(
+            summary = "Signal a restart of Essentials, so the installation of plugins can continue.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = UserFeedback.class)))}
     )
     @POST
     @Path("/autosetup")
@@ -192,10 +191,10 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Clears plugin cache",
-            notes = "Remote Plugin descriptors are cached for 1 hour. Trigger this endpoint manually to flush the cache earlier.",
-            response = UserFeedback.class)
+    @Operation(
+            summary = "Clears plugin cache",
+            description = "Remote Plugin descriptors are cached for 1 hour. Trigger this endpoint manually to flush the cache earlier.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = UserFeedback.class)))})
     @GET
     @Path("/clearcache")
     public UserFeedback clearCache(@Context ServletContext servletContext) {
@@ -204,9 +203,9 @@ public class PluginResource {
     }
 
 
-    @ApiOperation(
-            value = "Fetch list of to-be-loaded Javascript resources",
-            response = ApplicationData.class)
+    @Operation(
+            summary = "Fetch list of to-be-loaded Javascript resources",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = ApplicationData.class)))})
     @GET
     @Path("/modules")
     public ApplicationData getModules() {

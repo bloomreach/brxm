@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.ContentType;
@@ -45,12 +50,8 @@ import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
-@Api(value = "/documents", description = "Rest resource which provides information and actions for document types")
 @CrossOriginResourceSharing(allowAllOrigins = true)
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
@@ -69,18 +70,18 @@ public class DocumentResource {
         this.contentTypeService = contentTypeService;
     }
 
-    @ApiOperation(
-            value = "Fetches all project document types (including compounds)",
-            response = List.class)
+    @Operation(
+            summary = "Fetches all project document types (including compounds)",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
     @GET
     @Path("/")
     public List<ContentType> getAllTypes() {
         return contentTypeService.fetchContentTypesFromOwnNamespace();
     }
 
-    @ApiOperation(
-            value = "Fetches all project document types (compounds are *excluded*)",
-            response = List.class)
+    @Operation(
+            summary = "Fetches all project document types (compounds are *excluded*)",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
     @GET
     @Path("/documents")
     public List<ContentType> getDocumentTypes() {
@@ -90,9 +91,9 @@ public class DocumentResource {
                 .collect(Collectors.toList());
     }
 
-    @ApiOperation(
-            value = "Fetches all project compound types",
-            response = List.class)
+    @Operation(
+            summary = "Fetches all project compound types",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
     @GET
     @Path("/compounds")
     public List<ContentType> getCompounds() {
@@ -103,11 +104,11 @@ public class DocumentResource {
     }
 
 
-    @ApiOperation(
-            value = "Returns all documents of the specified type",
-            notes = "Specify the document type as {namespace}:{typename}.",
-            response = List.class)
-    @ApiParam(name = "docType", value = "Document type", required = true)
+    @Operation(
+            summary = "Returns all documents of the specified type",
+            description = "Specify the document type as {namespace}:{typename}.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
+    @Parameter(name = "docType", description = "Document type", required = true)
     @GET
     @Path("/{docType}")
     public List<ContentTypeInstance> getDocumentsByType(@PathParam("docType") String docType) {
@@ -137,11 +138,11 @@ public class DocumentResource {
         return instances;
     }
 
-    @ApiOperation(
-            value = "Returns all document / folder query types",
-            notes = "No pairing is done (e.g.: news-folder + news-document combinations. This is left to users themselves)",
-            response = List.class)
-    @ApiParam(name = "docType", value = "Document type", required = true)
+    @Operation(
+            summary = "Returns all document / folder query types",
+            description = "No pairing is done (e.g.: news-folder + news-document combinations. This is left to users themselves)",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = List.class)))})
+    @Parameter(name = "docType", description = "Document type", required = true)
     @GET
     @Path("/templatequeries")
     public List<TemplateQuery> getQueries() {

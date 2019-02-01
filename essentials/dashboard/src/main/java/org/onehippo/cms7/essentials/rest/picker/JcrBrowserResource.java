@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,14 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
-/**
- * @version "$Id$"
- */
-@Api(value = "/jcrbrowser", description = "Rest resource which helps browsing and selecting nodes from the repository.")
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/jcrbrowser")
@@ -58,9 +55,9 @@ public class JcrBrowserResource {
         this.jcrService = jcrService;
     }
 
-    @ApiOperation(
-            value = "Fetch a representation of the first 3 levels of hippostd:folder nodes below /content.",
-            response = JcrNode.class)
+    @Operation(
+            summary = "Fetch a representation of the first 3 levels of hippostd:folder nodes below /content.",
+            responses = {@ApiResponse(content = @Content(schema = @Schema(implementation = JcrNode.class)))})
     @GET
     @Path("/folders")
     public JcrNode getFolders() throws RepositoryException {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@
     <commons-io.version>2.6</commons-io.version>
     <core.jdt.version>3.10.0</core.jdt.version>
     <mustache.version>0.8.16</mustache.version>
-    <swagger.version>1.5.21</swagger.version>
     <json-lib.version>2.4</json-lib.version>
   </properties>
 
@@ -159,31 +158,6 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${swagger.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-jaxrs</artifactId>
-        <version>${swagger.version}</version>
-        <scope>runtime</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-scala_2.10</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scalap</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
