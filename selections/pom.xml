@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.0</version>
+    <version>30.1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Selections</name>
