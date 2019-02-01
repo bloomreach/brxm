@@ -305,6 +305,10 @@
                     <file>${project.basedir}/repository-data/development/target/${rootArtifactId}-repository-data-development-${dollar}{project.version}.jar</file>
                     <todir>${development-module-deploy-dir}</todir>
                   </file>
+                  <file>
+                    <file>${project.basedir}/repository-data/site-development/target/${rootArtifactId}-repository-data-site-development-${dollar}{project.version}.jar</file>
+                    <todir>${development-module-deploy-dir}</todir>
+                  </file>
                 </files>
               </configuration>
               <deployables>
