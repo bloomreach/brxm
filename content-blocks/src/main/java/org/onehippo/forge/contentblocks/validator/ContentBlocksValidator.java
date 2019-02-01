@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,8 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(IFieldValidator iFieldValidator, JcrNodeModel jcrNodeModel, IModel iModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator iFieldValidator, final JcrNodeModel jcrNodeModel,
+                                   final IModel iModel) throws ValidationException {
 
         try {
             // get descriptor based on actual node type
@@ -71,11 +72,12 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
             log.debug("Content block descriptor {} found by type {}", contentBlockDescriptor, primaryNodeType);
 
             if (contentBlockDescriptor != null) {
-                ValidatorService validatorService = getPluginContext().getService("field.validator.service", ValidatorService.class);
+                ValidatorService validatorService = getPluginContext().getService("field.validator.service",
+                        ValidatorService.class);
                 if (validatorService == null) {
-                    log.error("ValidatorService is not found by 'field.validator.service': cannot validate content block node {}", contentBlockNode.getPath());
-                }
-                else {
+                    log.error("ValidatorService is not found by 'field.validator.service': " +
+                            "cannot validate content block node {}", contentBlockNode.getPath());
+                } else {
                     // delegate to the actual content block's validator
                     final JcrTypeValidator validator = new JcrTypeValidator(contentBlockDescriptor, validatorService);
                     final Set<Violation> violations = validator.validate(new JcrNodeModel(contentBlockNode));
@@ -91,14 +93,15 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
         }
 
         // no validation done
-        return new HashSet<Violation>();
+        return new HashSet<>();
     }
 
     /**
      * Correct the paths of the violations, that are based on the type only, by prepending with the content blocks
      * compound path.
      */
-    protected Set<Violation> prependFieldPathToViolations(Set<Violation> violations, Node contentBlockNode, IFieldDescriptor fieldDescriptor)
+    protected Set<Violation> prependFieldPathToViolations(final Set<Violation> violations, final Node contentBlockNode,
+                                                          final IFieldDescriptor fieldDescriptor)
             throws ValidationException {
 
         // correct node index on behalf on multiples (which content blocks are)
@@ -110,17 +113,17 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
         }
 
         // replace the violations by violations that have also the path element of the content block compound in them
-        final Set<Violation> newViolations = new HashSet<Violation>(violations.size());
+        final Set<Violation> newViolations = new HashSet<>(violations.size());
         for (Violation violation : violations) {
             Set<ModelPath> childPaths = violation.getDependentPaths();
-            Set<ModelPath> newPaths = new HashSet<ModelPath>();
+            Set<ModelPath> newPaths = new HashSet<>();
             for (ModelPath childPath : childPaths) {
                 ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
                 System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
                 elements[0] = new ModelPathElement(fieldDescriptor, fieldDescriptor.getPath(), index);
                 newPaths.add(new ModelPath(elements));
             }
-            newViolations.add(new Violation(newPaths, violation.getMessage()));
+            newViolations.add(new Violation(newPaths, violation.getMessage(), violation.getValidationScope()));
         }
         return newViolations;
     }
