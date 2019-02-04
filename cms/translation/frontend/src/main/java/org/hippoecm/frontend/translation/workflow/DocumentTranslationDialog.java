@@ -47,31 +47,34 @@ public class DocumentTranslationDialog extends WorkflowDialog<Void> {
 
     private static final IValueMap DIALOG_SIZE = new ValueMap("width=675,height=405").makeImmutable();
 
-    private ISettingsService settingsService;
+    private final ISettingsService settingsService;
 
-    public DocumentTranslationDialog(ISettingsService settings,
-                                     IWorkflowInvoker action, IModel<String> title, List<FolderTranslation> folders,
-                                     IModel<Boolean> autoTranslateContent, String sourceLanguage,
-                                     final String targetLanguage, ILocaleProvider provider) {
+    public DocumentTranslationDialog(final ISettingsService settings,
+                                     final IWorkflowInvoker action,
+                                     final IModel<String> title,
+                                     final List<FolderTranslation> folders,
+                                     final IModel<Boolean> autoTranslateContent,
+                                     final String sourceLanguage,
+                                     final String targetLanguage,
+                                     final ILocaleProvider provider) {
         super(action);
         this.settingsService = settings;
 
         setTitle(title);
         setSize(DIALOG_SIZE);
 
-        DocumentTranslationView dtv = new DocumentTranslationView("grid", folders,
+        final DocumentTranslationView documentTranslationView = new DocumentTranslationView("grid", folders,
                 sourceLanguage, targetLanguage,
                 new LoadableDetachableModel<StringCodec>() {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected StringCodec load() {
-                        StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
+                        final StringCodecFactory stringCodecFactory = settingsService.getStringCodecFactory();
                         return stringCodecFactory.getStringCodec(CodecUtils.ENCODING_NODE, targetLanguage);
                     }
                 }, provider);
-        dtv.setFrame(false);
-        add(dtv);
+        documentTranslationView.setFrame(false);
+        add(documentTranslationView);
+
         if (autoTranslateContent != null) {
             add(new BooleanFieldWidget("translate", autoTranslateContent));
         } else {
@@ -83,23 +86,23 @@ public class DocumentTranslationDialog extends WorkflowDialog<Void> {
     protected void onOk() {
         try {
             getInvoker().invokeWorkflow();
-        } catch (WorkflowSNSException e) {
+        } catch (final WorkflowSNSException e) {
             log.warn("Could not execute workflow due to same-name-sibling issue: " + e.getMessage());
             handleExceptionTranslation(e, e.getConflictingName());
-        } catch (WorkflowException e) {
+        } catch (final WorkflowException e) {
             log.warn("Could not execute workflow: " + e.getMessage());
             handleExceptionTranslation(e);
-        } catch (AccessDeniedException e) {
+        } catch (final AccessDeniedException e) {
             log.warn("Access denied: " + e.getMessage());
             handleExceptionTranslation(e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Could not execute workflow.", e);
             error(e);
         }
     }
 
     private void handleExceptionTranslation(final Throwable e, final Object... parameters) {
-        List<String> errors = new ArrayList<>();
+        final List<String> errors = new ArrayList<>();
         Throwable t = e;
         while(t != null) {
             final String translatedMessage = getExceptionTranslation(t, parameters).getObject();
