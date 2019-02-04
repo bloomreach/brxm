@@ -15,15 +15,20 @@
  */
 package org.hippoecm.frontend.translation.workflow;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.AccessDeniedException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.addon.workflow.WorkflowSNSException;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
@@ -32,18 +37,27 @@ import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
+import org.hippoecm.repository.api.WorkflowException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
+public class DocumentTranslationDialog extends WorkflowDialog<Void> {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentTranslationDialog.class);
+
+    private static final IValueMap DIALOG_SIZE = new ValueMap("width=675,height=405").makeImmutable();
 
     private ISettingsService settingsService;
 
     public DocumentTranslationDialog(ISettingsService settings,
                                      IWorkflowInvoker action, IModel<String> title, List<FolderTranslation> folders,
-                                     IModel<Boolean> autoTranslateContent, String sourceLanguage, 
+                                     IModel<Boolean> autoTranslateContent, String sourceLanguage,
                                      final String targetLanguage, ILocaleProvider provider) {
-        super(null, action);
+        super(action);
         this.settingsService = settings;
+
         setTitle(title);
+        setSize(DIALOG_SIZE);
 
         DocumentTranslationView dtv = new DocumentTranslationView("grid", folders,
                 sourceLanguage, targetLanguage,
@@ -66,7 +80,38 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
     }
 
     @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=675,height=405").makeImmutable();
+    protected void onOk() {
+        try {
+            getInvoker().invokeWorkflow();
+        } catch (WorkflowSNSException e) {
+            log.warn("Could not execute workflow due to same-name-sibling issue: " + e.getMessage());
+            handleExceptionTranslation(e, e.getConflictingName());
+        } catch (WorkflowException e) {
+            log.warn("Could not execute workflow: " + e.getMessage());
+            handleExceptionTranslation(e);
+        } catch (AccessDeniedException e) {
+            log.warn("Access denied: " + e.getMessage());
+            handleExceptionTranslation(e);
+        } catch (Exception e) {
+            log.error("Could not execute workflow.", e);
+            error(e);
+        }
+    }
+
+    private void handleExceptionTranslation(final Throwable e, final Object... parameters) {
+        List<String> errors = new ArrayList<>();
+        Throwable t = e;
+        while(t != null) {
+            final String translatedMessage = getExceptionTranslation(t, parameters).getObject();
+            if (translatedMessage != null && !errors.contains(translatedMessage)) {
+                errors.add(translatedMessage);
+            }
+            t = t.getCause();
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exception caught: {}", StringUtils.join(errors.toArray(), ";"), e);
+        }
+
+        errors.stream().forEach(this::error);
     }
 }
