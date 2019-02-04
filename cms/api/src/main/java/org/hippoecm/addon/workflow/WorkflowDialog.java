@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -93,5 +93,9 @@ public class WorkflowDialog<T> extends Dialog<T> {
     @Override
     protected FeedbackPanel newFeedbackPanel(String id) {
         return new FeedbackPanel(id);
+    }
+
+    protected IWorkflowInvoker getInvoker() {
+        return invoker;
     }
 }

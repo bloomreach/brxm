@@ -29,6 +29,10 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This class is deprecated since 13.1. Use the {@link WorkflowDialog} instead.
+ */
+@Deprecated
 public abstract class AbstractWorkflowDialog<T> extends Dialog<T> {
 
     private static Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
