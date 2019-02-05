@@ -1,0 +1,25 @@
+{
+  "id" : "hippo-plugin-selections-essentials-demoId",
+  "type" : "feature",
+  "name" : "Selections Demo",
+  "icon" : "/essentials/feature/images/selectionsDemoPlugin.png",
+  "introduction" : "This demo feature shows how to use all kinds of dropdowns, checkboxes and radio groups in your document types.",
+  "vendor" : {
+    "name" : "BloomReach",
+    "url" : "https://www.bloomreach.com"
+  },
+  "packageFile" : "/META-INF/selectionsDemoPlugin_instructions.xml",
+  "hasConfiguration" : false,
+  "rebuildAfterInstallation" : true,
+  "installWithParameters" : true,
+  "categories" : {
+    "license" : [ "community" ],
+    "application" : [ "content" ],
+    "type" : [ "feature" ]
+  },
+  "pluginDependencies" : [ {
+    "pluginId" : "skeleton"
+  }, {
+    "pluginId" : "selectionPlugin"
+  } ]
+}

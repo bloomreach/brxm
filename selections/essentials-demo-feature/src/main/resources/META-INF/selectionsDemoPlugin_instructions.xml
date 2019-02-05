@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+    <instructionSet group="default">
+        <cnd documentType="textdocument" superType="{{namespace}}:basedocument,hippostd:relaxed"/>
+        <cnd documentType="multilingualdocument" superType="{{namespace}}:basedocument,hippostd:relaxed"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="documentTypes/textdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/multilingualdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/homepage-selections-multi.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-selections-multi.ftl"/>
+        <freemarker action="copy" binary="false" overwrite="false" source="freemarker/homepage-selections.ftl" target="{{freemarkerRoot}}/{{namespace}}/homepage-selections.ftl"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="hstPages/demo.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstMenuItems/demo.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/demomulti.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstPages/demomulti.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/demo.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="templates/homepage-selections-multi.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="templates/homepage-selections.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstMenuItems/demomulti.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <file action="copy" binary="false" overwrite="false" source="cmsFiles/CustomValueListProvider.java" target="{{cmsRoot}}/src/main/java/org/onehippo/forge/selectiondemo/provider/CustomValueListProvider.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/HomeComponent.java" target="{{componentsFolder}}/HomeComponent.java"/>
+        <file action="copy" binary="false" overwrite="false" source="yamlFiles/example-cars-valuelistprovider.yaml" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-config/configuration/example-cars-valuelistprovider.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="cmsFiles/CarsValueListProvider.java" target="{{cmsRoot}}/src/main/java/org/onehippo/forge/selectiondemo/provider/CarsValueListProvider.java"/>
+        <file action="copy" binary="false" overwrite="false" source="yamlFiles/customvaluelistprovider.yaml" target="{{projectRoot}}/repository-data/application/src/main/resources/hcm-config/configuration/customvaluelistprovider.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/springValueListManager.xml" target="{{siteOverrideFolder}}/springValueListManager.xml"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/TextDocument.java" target="{{beansFolder}}/TextDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/MultilingualDocument.java" target="{{beansFolder}}/MultilingualDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/MultilingualComponent.java" target="{{componentsFolder}}/MultilingualComponent.java"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="contentDocuments/en.xml" target="/content/documents/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="contentDocuments/nl.xml" target="/content/documents/{{namespace}}"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="contentDocuments/valuelists.xml" target="/content/documents"/>
+    </instructionSet>
+</instructions>
