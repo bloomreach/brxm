@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,13 +23,17 @@ import javax.jcr.AccessDeniedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
+/**
+ * @deprecated This class is deprecated since 13.1. Use the {@link WorkflowDialog} instead.
+ */
+@Deprecated
+public abstract class AbstractWorkflowDialog<T> extends Dialog<T> {
 
     private static Logger log = LoggerFactory.getLogger(AbstractWorkflowDialog.class);
 
