@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -243,6 +243,7 @@
     <module>api</module>
     <module>hst-api</module>
     <module>hst</module>
+    <module>essentials-demo-feature</module>
   </modules>
 
   <profiles>
@@ -268,10 +269,7 @@
             <configuration>
               <excludes combine.children="append">
                 <exclude>README.md</exclude>
-                <!-- repository content XML -->
-                <exclude>addon/repository/src/main/resources/*.xml</exclude>
-                <exclude>demo/content/src/main/resources/**/*.xml</exclude>
-                <exclude>demo/plugin/src/main/resources/**/*.xml</exclude>
+                <exclude>essentials-demo-feature/src/main/resources/**/*.ftl</exclude>
               </excludes>
             </configuration>
           </plugin>
