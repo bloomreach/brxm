@@ -25,20 +25,23 @@ import org.onehippo.cm.model.path.JcrPath;
  * <p>
  *    {@link ConfigurationSiteMigrator} classes annotated with {@link PreSiteMigrator} run <strong>after</strong> the {@link ConfigurationModel}
  *    is loaded but before the {@link ConfigurationModel} is applied to the JCR Nodes (thus before applied to config or content).
- *    Be aware that {@link ConfigurationSiteMigrator}s always run at startup or a site web application is being registered hence should always have a fast initial check whether they have any work to do!
+ *    Be aware that {@link ConfigurationSiteMigrator}s always run at startup when a site web application is being registered,
+ *    hence should always have a fast initial check whether they have any work to do!
  * </p>
  * <p>
  *    {@link ConfigurationSiteMigrator} classes annotated with {@link PostSiteMigrator} run <strong>after</strong> the {@link ConfigurationModel}
  *    is applied to the JCR Nodes (to config or content).
- *    Be aware that {@link ConfigurationSiteMigrator}s always run at startup or a site web application is being registered hence should always have a fast initial check whether they have any work to do!
+ *    Be aware that {@link ConfigurationSiteMigrator}s always run at startup when a site web application is being registered,
+ *    hence should always have a fast initial check whether they have any work to do!
  * </p>
  * <p>
- *    For a site related migrator to run it has to implement this interface and have the {@link PreSiteMigrator} or {@link PostSiteMigrator} class annotation and be
- *    in one of the hippo internal packages. There is no specific order in which migrators run so a migrator should not
- *    rely on other migrators.
+ *    For a site-related migrator to run it has to implement this interface and have the {@link PreSiteMigrator} or {@link PostSiteMigrator} class annotation and be
+ *    in one of the hippo internal packages. This currently matches ((org|com)\.onehippo\..*)|(org\.hippoecm\..*)). See
+ *    {@link org.onehippo.cm.engine.ConfigurationServiceImpl#loadMigrators(Class, Class)} for the classpath scanning logic.
+ *    There is no specific order in which migrators run so a migrator should not rely on other migrators.
  * </p>
  * <p>
- *     A {@link ConfigurationSiteMigrator} implementation must have no-arg public constructor
+ *     A {@link ConfigurationSiteMigrator} implementation must have a no-arg public constructor.
  * </p>
  */
 public interface ConfigurationSiteMigrator {
@@ -54,6 +57,10 @@ public interface ConfigurationSiteMigrator {
      *     if the {@link ConfigurationSiteMigrator} throws a {@link MigrationException} : This is a short-circuiting exception
      *     making the further repository bootstrap to directly stop and quit the repository startup.
      * </p>
+     * @param session a JCR Session with no pending changes, and which should be returned to this state when this method returns
+     * @param configurationModel the HCM model representing the full HCM state of the CMS/platform core, plus one or more sites,
+     *                           including at least the one that uses the HST root node indicated by hstRoot
+     * @param hstRoot the path of the HST root node for the site that should be migrated
      * @param autoExportRunning {@code true} when auto export is enabled. Note that during the {@link #migrate(Session, ConfigurationModel, JcrPath, boolean)}
      *                                      of {@link PreSiteMigrator}s the {@code autoExportRunning} is always false, because
      *                                      auto export is never started before the {@link PreSiteMigrator}s are executed

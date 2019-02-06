@@ -95,6 +95,8 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.common.io.Files;
 
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
@@ -177,6 +179,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      */
     private ConfigurationModelImpl runtimeConfigurationModel;
 
+    /**
+     * Wrap the HCM configuration service startup with error handling and logging, and mark the JCR session used for
+     * bootstrap so that events can be filtered out from auto-export.
+     * @param configurationServiceSession the JCR session to use for bootstrap
+     * @param startRepositoryServicesTask a command-pattern task for follow-up work that must be triggered after bootstrap
+     * @return a fully-initialized ConfigurationService
+     * @throws RepositoryException
+     */
     public ConfigurationServiceImpl start(final Session configurationServiceSession, final StartRepositoryServicesTask startRepositoryServicesTask)
             throws RepositoryException {
 
@@ -198,24 +208,35 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         return this;
     }
 
+    /**
+     * Perform HCM model loading and bootstrap when a new HST site is added to the service registry.
+     * @param record a param-holder object with the context data relevant for a newly-registered HST site
+     * @throws ParserException
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws RepositoryException
+     */
     private void applySiteConfig(final SiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
         log.info("New HCM site detected: {}", record.siteName);
 
+        // Load the site HCM modules from the classpath and append to the runtimeConfigurationModel
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
-        // TODO: this is not actually a new model, so code below that assumes it is must be reworked
+        // This variable may or may not contain a new model instance, so logic below should not assume, but code defensively
         ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(record.siteName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
+        // If auto-export is enabled and will be started, we also need to load modules from the local project
         if (startAutoExportService) {
             final List<ModuleImpl> hcmSiteModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
                     .stream().filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
             if (CollectionUtils.isNotEmpty(hcmSiteModulesFromSourceFiles)) {
+                // This is where the runtimeConfigurationModel could be replaced with a new instance
                 newRuntimeConfigModel = mergeWithSourceModules(hcmSiteModulesFromSourceFiles, newRuntimeConfigModel);
             }
         }
 
         // Run pre site migrators for this site
-        applyPreMigrators(newRuntimeConfigModel, new SiteRecord[] { record }, ConfigurationSiteMigrator.class);
+        applyPreMigrators(newRuntimeConfigModel, singleton(record), ConfigurationSiteMigrator.class);
 
         //Reload baseline for bootstrap 2+
         final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
@@ -238,8 +259,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             processHcmSiteWebFileBundles(record);
 
             // Run post site migrators for this site
-            applyPostMigrators(newRuntimeConfigModel, new SiteRecord[] { record },
-                    autoExportService != null ? autoExportService.isRunning() : false, ConfigurationSiteMigrator.class);
+            applyPostMigrators(newRuntimeConfigModel, singleton(record),
+                    (autoExportService != null && autoExportService.isRunning()),
+                    ConfigurationSiteMigrator.class);
 
             log.info("HCM Site Configuration '{}' was successfuly applied", record.siteName);
         } else {
@@ -335,11 +357,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
                     }
 
-                    applyPreMigrators(bootstrapModel, null, ConfigurationMigrator.class);
+                    applyPreMigrators(bootstrapModel, emptySet(), ConfigurationMigrator.class);
 
                     if (!hcmSiteRecords.isEmpty()) {
                         // if the registered site list is not empty then run pre site migrators for the site(s)
-                        applyPreMigrators(bootstrapModel, hcmSiteRecords.values().toArray(new SiteRecord[] {}),
+                        applyPreMigrators(bootstrapModel, hcmSiteRecords.values(),
                                 ConfigurationSiteMigrator.class);
                     }
 
@@ -398,11 +420,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                     // post migrators need to run after the auto export service has been started because the
                     // changes of the migrators might have to be exported
-                    applyPostMigrators(bootstrapModel, null, autoExportRunning, ConfigurationMigrator.class);
+                    applyPostMigrators(bootstrapModel, emptySet(), autoExportRunning, ConfigurationMigrator.class);
 
                     if (!hcmSiteRecords.isEmpty()) {
                         // if the registered site list is not empty then run post site migrators for the site(s)
-                        applyPostMigrators(bootstrapModel, hcmSiteRecords.values().toArray(new SiteRecord[] {}),
+                        applyPostMigrators(bootstrapModel, hcmSiteRecords.values(),
                                 autoExportRunning, ConfigurationSiteMigrator.class);
                     }
 
@@ -432,7 +454,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private <T> void applyPreMigrators(final ConfigurationModelImpl bootstrapModel, final SiteRecord[] siteRecords,
+    private <T> void applyPreMigrators(final ConfigurationModelImpl bootstrapModel, final Collection<SiteRecord> siteRecords,
             Class<T> configurationMigratorClass) {
         log.info("Loading preMigrators");
         final boolean coreMigrators = configurationMigratorClass.equals(ConfigurationMigrator.class);
@@ -443,14 +465,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             if (coreMigrators) {
                 runMigrators(bootstrapModel, preMigrators, null, false);
             } else {
-                for (SiteRecord sideRecord : siteRecords) {
-                    runMigrators(bootstrapModel, preMigrators, sideRecord, false);
+                for (SiteRecord siteRecord : siteRecords) {
+                    runMigrators(bootstrapModel, preMigrators, siteRecord, false);
                 }
             }
         }
     }
 
-    private <T> void applyPostMigrators(final ConfigurationModelImpl bootstrapModel, final SiteRecord[] siteRecords,
+    private <T> void applyPostMigrators(final ConfigurationModelImpl bootstrapModel, final Collection<SiteRecord> siteRecords,
             final boolean autoExportRunning, Class<T> configurationMigratorClass) throws RepositoryException {
         log.info("Loading postMigrators");
         final boolean coreMigrators = configurationMigratorClass.equals(ConfigurationMigrator.class);
@@ -850,7 +872,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * returned.
      */
 
-    private <T> void runMigrators(final ConfigurationModel model, final List<T> migrators, SiteRecord sideRecord,
+    private <T> void runMigrators(final ConfigurationModel model, final List<T> migrators, SiteRecord siteRecord,
             final boolean autoExportRunning) {
         for (T migrator : migrators) {
             try {
@@ -858,7 +880,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     ((ConfigurationMigrator) migrator).migrate(session, model, autoExportRunning);
 
                 } else if (ConfigurationSiteMigrator.class.isInstance(migrator)) {
-                    ((ConfigurationSiteMigrator) migrator).migrate(session, model, sideRecord.hstRoot,
+                    ((ConfigurationSiteMigrator) migrator).migrate(session, model, siteRecord.hstRoot,
                             autoExportRunning);
                 }
             } catch (MigrationException e) {
