@@ -51,6 +51,11 @@
     <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
   </scm>
 
+  <properties>
+    <ant.version>1.9.4</ant.version>
+    <junit.version>4.11</junit.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -59,6 +64,12 @@
       <classifier>resources</classifier>
       <type>zip</type>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -102,7 +113,34 @@
         </executions>
       </plugin>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-junit</artifactId>
+            <version>${ant.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-junit4</artifactId>
+            <version>${ant.version}</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <phase>process-resources</phase>
@@ -114,6 +152,86 @@
                 <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
                   <include name="pom.xml"/>
                 </replace>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>Docker build the image</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <target name="dockerBuild">
+                <condition property="executableType" value="cmd" else="sh">
+                  <os family="windows" />
+                </condition>
+                <condition property="executableCommand" value="/c" else="-c">
+                  <os family="windows" />
+                </condition>
+                <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/extra"
+                  executable="${executableType}">
+                  <arg value="${executableCommand}"/>
+                  <arg value="mvn -Pdocker.build"/>
+                </exec>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>Docker run the image</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <target name="dockerRun">
+                <condition property="executableType" value="cmd" else="sh">
+                  <os family="windows" />
+                </condition>
+                <condition property="executableCommand" value="/c" else="-c">
+                  <os family="windows" />
+                </condition>
+                <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/extra"
+                  executable="${executableType}" spawn="true">
+                  <arg value="${executableCommand}"/>
+                  <arg value="mvn -Pdocker.run -Ddb.profile=h2"/>
+                </exec>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>Docker test the container</id>
+            <phase>integration-test</phase>
+            <configuration>
+              <target name="dockerTest">
+                <condition property="executableType" value="cmd" else="sh">
+                  <os family="windows" />
+                </condition>
+                <condition property="executableCommand" value="/c" else="-c">
+                  <os family="windows" />
+                </condition>
+                <junit printsummary="on" haltonfailure="no" fork="true" failureProperty="test.failed" logfailedtests="true">
+                  <classpath id="classpath.test">
+                    <pathelement location="${org.hamcrest:hamcrest-core:jar}" />
+                    <pathelement location="target/test-classes" />
+                  </classpath>
+                  <formatter type="brief" usefile="false" />
+                  <batchtest>
+                    <fileset dir="target/test-classes" excludes="projects/**" includes="**/*.class" />
+                  </batchtest>
+                </junit>
+                <exec executable="${executableType}">
+                  <arg value="${executableCommand}"/>
+                  <arg value="docker kill $(docker ps -q --filter 'name=extra-1')"/>
+                </exec>
+                <exec executable="${executableType}">
+                  <arg value="${executableCommand}"/>
+                  <arg value="docker rm $(docker ps -a -q --filter 'name=extra-1')"/>
+                </exec>
+                <fail message="Test failure detected, check test results." if="test.failed" />
               </target>
             </configuration>
             <goals>
