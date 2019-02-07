@@ -15,11 +15,10 @@
   -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <span class="hippo-hint-field">
-      <a class="info" wicket:id="hint-visual">
-        <span wicket:id="hint-image">[ hint img ]</span>
-        <span wicket:id="hint-text">[ hint text ]</span>
-      </a>
-    </span>
+    <a class="hippo-hint-field" wicket:id="hint-visual">
+      <i class="hippo-hint-field__icon">
+        <wicket:container wicket:id="hint-image">[ hint img ]</wicket:container>
+      </i>
+    </a>
   </wicket:panel>
 </html>
