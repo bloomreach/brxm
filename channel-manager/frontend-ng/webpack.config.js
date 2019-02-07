@@ -30,7 +30,7 @@ const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { ProvidePlugin } = require('webpack');
 
-module.exports = merge(config, {
+const webpackConfig = merge(config, {
   entry: {
     'vendor-styles': src('vendors'),
   },
@@ -65,3 +65,9 @@ module.exports = merge(config, {
     },
   },
 });
+
+if (env === 'test') {
+  delete webpackConfig.entry;
+}
+
+module.exports = webpackConfig;
