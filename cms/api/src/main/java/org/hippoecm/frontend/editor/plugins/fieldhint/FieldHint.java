@@ -16,28 +16,48 @@
 package org.hippoecm.frontend.editor.plugins.fieldhint;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
 
 public class FieldHint extends Panel {
+    private static final String JS_TEMPLATE = "$('#%s').tooltip({ container: 'body', placement: 'auto' })";
+    private Component hint;
 
-    public FieldHint(String id, final IModel<String> hintModel) {
+    public FieldHint(String id, final IModel<String> model) {
         super(id);
-        add(createHint(hintModel));
+
+        hint = createHint(model);
+        add(hint);
     }
 
-    protected Component createHint(final IModel<String> hintModel) {
-        final WebMarkupContainer hintContainer = new WebMarkupContainer("hint-visual");
-        if (hintModel == null) {
-            hintContainer.setVisible(false);
-        } else {
-            hintContainer.add(new Label("hint-text", hintModel));
-            hintContainer.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        String script = String.format(JS_TEMPLATE, hint.getMarkupId());
+        response.render(OnDomReadyHeaderItem.forScript(script));
+    }
+
+    /**
+     * @param model The hint model holding the message
+     * @return Hint container
+     */
+    protected Component createHint(final IModel<String> model) {
+        final WebMarkupContainer container = new WebMarkupContainer("hint-visual");
+        if (model == null) {
+            return container.setVisible(false);
         }
-        return hintContainer;
+
+        container.setOutputMarkupId(true);
+        container.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
+        container.add(new AttributeAppender("title", model));
+
+        return container;
     }
 }
