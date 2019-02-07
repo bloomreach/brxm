@@ -59,7 +59,9 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
@@ -248,9 +250,20 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     log.debug("'{}' can not be matched to a host. Skip HST Filter and request processing since most likely it " +
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
-                    log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
+
+                    // Add runtime host
+                    // TODO should we also do this for any HST website requests or only for platform (/cms) requests?
+                    // TODO dev-localhost should be configurable
+                    vHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName, "dev-localhost", contextPath);
+                    resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
+
+                    if (resolvedVirtualHost == null) {
+                        log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
+                    }
                 }
-                chain.doFilter(request, response);
+                if (resolvedVirtualHost == null) {
+                    chain.doFilter(request, response);
+                }
                 return;
             }
 

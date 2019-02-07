@@ -54,7 +54,7 @@ public class VirtualHostService implements MutableVirtualHost {
 
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
 
-    private Map<String, MutableVirtualHost> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
+    private Map<String, VirtualHost> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
 
     private String name;
     private String hostName;

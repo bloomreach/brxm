@@ -76,7 +76,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 new String[]{mountName, mountType, mountNamedPipeline});
 
 
-        for (Map.Entry<String, Map<String, MutableVirtualHost>> entry : hosts.getRootVirtualHostsByGroup().entrySet()) {
+        for (Map.Entry<String, Map<String, VirtualHost>> entry : hosts.getRootVirtualHostsByGroup().entrySet()) {
             if (entry.getValue().isEmpty()) {
                 continue;
             }

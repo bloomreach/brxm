@@ -30,12 +30,13 @@ public interface MutableVirtualHosts extends VirtualHosts {
      * @param virtualHost the {@link MutableVirtualHost} to add
      * @throws IllegalArgumentException if the <code>virtualHost</code> could not be added
      */
-    void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException;
+    void addVirtualHost(VirtualHost virtualHost) throws IllegalArgumentException;
  
     /**
      * The root virtualhosts are the first segment of a host. For example just 'com', or just 'org'. In case
-     * of an IP adres, for for example the hostName 127.0.0.1, the root virtualhost will be '1' 
+     * of an IP adres, for for example the hostName 127.0.0.1, the root virtualhost will be '1' . A root virtualhost
+     * is also allowed to be www.example.com which is typically the case when it is runtime added
      * @return all the root virtualhosts by hostgroup
      */
-    Map<String, Map<String, MutableVirtualHost>> getRootVirtualHostsByGroup();
+    Map<String, Map<String, VirtualHost>> getRootVirtualHostsByGroup();
 }

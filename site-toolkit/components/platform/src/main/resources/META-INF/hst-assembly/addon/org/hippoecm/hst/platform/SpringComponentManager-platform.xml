@@ -32,4 +32,6 @@
 
   <bean id="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider" class="org.hippoecm.hst.platform.container.site.DelegatingHstSiteProvider"/>
 
+  <bean class="org.hippoecm.hst.platform.model.RuntimeHostServiceImpl" init-method="init" destroy-method="destroy"/>
+
 </beans>

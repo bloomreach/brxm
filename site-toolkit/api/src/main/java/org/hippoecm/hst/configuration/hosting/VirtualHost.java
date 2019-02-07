@@ -34,7 +34,8 @@ public interface VirtualHost {
 
     /**
      * Returns the <code>name</code> of this VirtualHost. Note, this is not the hostName, but only part of it. If the hostName
-     * is www.apache.org, then the name of this VirtualHost might be 'www' or 'apache' or 'org'. It is thus one segment of the entire hostName.
+     * is www.apache.org, then the name of this VirtualHost might be 'www' or 'apache' or 'org'. It can thus be one segment
+     * of the entire hostName or is get be www.apache.org which is also possible
      *
      * @see #getHostName()
      * @return The <code>name</code> of this VirtualHost. Note, this is only part of the entire hostName

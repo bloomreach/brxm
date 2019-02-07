@@ -84,7 +84,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private final String contextPath;
     private HstNodeLoadingCache hstNodeLoadingCache;
-    private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<>();
+    private Map<String, Map<String, VirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<>();
     private Map<String, Mount> mountsByIdentifier = new HashMap<>();
@@ -294,7 +294,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
                 throw new ModelLoadingException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
             }
-            Map<String, MutableVirtualHost> rootVirtualHosts =  virtualHostHashMap();
+            Map<String, VirtualHost> rootVirtualHosts =  virtualHostHashMap();
             try {
                 rootVirtualHostsByGroup.put(hostGroupNode.getValueProvider().getName(), rootVirtualHosts);
             } catch (IllegalArgumentException e) {
@@ -445,8 +445,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
-       Map<String, MutableVirtualHost> rootVirtualHosts =  rootVirtualHostsByGroup.get(virtualHost.getHostGroupName());
+    public void addVirtualHost(VirtualHost virtualHost) throws IllegalArgumentException {
+       Map<String, VirtualHost> rootVirtualHosts =  rootVirtualHostsByGroup.get(virtualHost.getHostGroupName());
        if(rootVirtualHosts == null) {
            rootVirtualHosts =  virtualHostHashMap();
            rootVirtualHostsByGroup.put(virtualHost.getHostGroupName(), rootVirtualHosts);
@@ -455,7 +455,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public Map<String, Map<String, MutableVirtualHost>> getRootVirtualHostsByGroup() {
+    public Map<String, Map<String, VirtualHost>> getRootVirtualHostsByGroup() {
         return rootVirtualHostsByGroup;
     }
 
@@ -599,7 +599,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         int depth = requestServerNameSegments.length - 1;
         VirtualHost host = null;
         PortMount portMount = null;
-        for(Map<String, MutableVirtualHost> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
+        for(Map<String, VirtualHost> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
             VirtualHost tryHost = rootVirtualHosts.get(requestServerNameSegments[depth]);
             if(tryHost == null) {
               continue;
@@ -732,7 +732,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
-    public static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
+    public static HashMap<String, VirtualHost> virtualHostHashMap(){
         return new DuplicateKeyNotAllowedHashMap<>();
     }
 
