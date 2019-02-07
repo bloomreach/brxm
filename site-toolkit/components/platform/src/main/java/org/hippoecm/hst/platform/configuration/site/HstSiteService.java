@@ -15,11 +15,8 @@
  */
 package org.hippoecm.hst.platform.configuration.site;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.platform.configuration.cache.CompositeConfigurationNodes;
@@ -28,13 +25,11 @@ import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCach
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.platform.configuration.channel.ChannelLazyLoadingChangedBySet;
-import org.hippoecm.hst.platform.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.platform.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
