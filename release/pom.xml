@@ -100,16 +100,25 @@
     <docker.postgres.image>postgres:10.6-alpine</docker.postgres.image>
 
     <!-- Default base image for brXM Dockerfile -->
-    <docker.base.image>tomcat:9-jre8-alpine</docker.base.image>
+    <docker.brxm.base.image>tomcat:9-jre8-alpine</docker.brxm.base.image>
 
     <!-- if you want a remote debugging on a different port override on command line with -Ddocker.debug.port=xxxx -->
-    <docker.debug.port>8000</docker.debug.port>
+    <docker.brxm.debug.port>8000</docker.brxm.debug.port>
     <!-- if you want to start remote debugging session suspended override on command line with -Ddocker.debug.suspend=y -->
-    <docker.debug.suspend>n</docker.debug.suspend>
+    <docker.brxm.debug.suspend>n</docker.brxm.debug.suspend>
 
     <!-- Project's path inside container, where auto-export and webfiles watches will happen.
          NOTE: This path is not intended to be customizable, but is defined here for reuse in multiple profiles. -->
-    <brxm.project.path>/brxm/project</brxm.project.path>
+    <docker.brxm.project.path>/brxm/project</docker.brxm.project.path>
+
+    <!-- Default brXM application HTTP port-->
+    <docker.brxm.http.port>8080</docker.brxm.http.port>
+
+    <!-- Default brXM application AJP port-->
+    <docker.brxm.ajp.port>8009</docker.brxm.ajp.port>
+
+    <!-- Extra JVM arguments to pass to brXM Docker container-->
+    <docker.brxm.jvm.args/>
 
     <!-- Docker-related properties defined here only to DRY up multiple profiles -->
     <docker.brxm.envRun.MYSQL_DB_USER>${docker.db.username}</docker.brxm.envRun.MYSQL_DB_USER>
@@ -122,17 +131,19 @@
     <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
     <docker.brxm.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</docker.brxm.envRun.POSTGRES_DB_DRIVER>
 
-    <docker.default.JAVA_OPTS>
+    <docker.brxm.default.JAVA_OPTS>
       -Drepo.path=${repo.path}
-      -Dproject.basedir=${brxm.project.path}
+      -Dproject.basedir=${docker.brxm.project.path}
       -Drepo.bootstrap=${repo.bootstrap}
       -Drepo.autoexport.allowed=${repo.autoexport.allowed}
-      -Dlog4j.configurationFile=file://${brxm.project.path}/conf/log4j2-dev.xml
-      -agentlib:jdwp=transport=dt_socket,address=${docker.debug.port},server=y,suspend=${docker.debug.suspend}
-    </docker.default.JAVA_OPTS>
+      -Dlog4j.configurationFile=file://${docker.brxm.project.path}/conf/log4j2-dev.xml
+      -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend}
+      ${docker.brxm.jvm.args}
+    </docker.brxm.default.JAVA_OPTS>
 
-    <docker.container.username>brxmuser</docker.container.username>
-    <docker.container.uid>1001</docker.container.uid>
+    <!-- Default user and user id for brXM container -->
+    <docker.brxm.container.username>brxmuser</docker.brxm.container.username>
+    <docker.brxm.container.uid>1001</docker.brxm.container.uid>
 
   </properties>
 
@@ -1227,7 +1238,7 @@
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.config />
         <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${brxm.project.path}/target/storage</repo.path>
+        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
 
         <!-- private docker network for brXM to DB comms -->
         <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
@@ -1244,9 +1255,14 @@
         <docker.db.password>admin</docker.db.password>
 
         <docker.brxm.envRun.JAVA_OPTS>
-          ${docker.default.JAVA_OPTS}
+          ${docker.brxm.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
-        <docker.copy.dev.libs.instruction>COPY --chown=${docker.container.uid}:${docker.container.uid} maven/shared /usr/local/tomcat/shared/</docker.copy.dev.libs.instruction>
+
+        <!-- COPY development artifacts for DEV image -->
+        <docker.brxm.copy.dev.libs.cmd>COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/</docker.brxm.copy.dev.libs.cmd>
+
+        <!-- Default assembly used for building docker image -->
+        <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</docker.dev.assembly.descriptor>
       </properties>
       <dependencies>
         <dependency>
@@ -1316,20 +1332,21 @@
                     <assembly>
                       <mode>dir</mode>
                       <name>maven/</name>
-                      <descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</descriptor>
+                      <descriptor>${docker.dev.assembly.descriptor}</descriptor>
                     </assembly>
                   </build>
                   <run>
                     <ports>
-                      <port>8080:8080</port>
-                      <port>${docker.debug.port}:${docker.debug.port}</port>
+                      <port>${docker.brxm.http.port}:8080</port>
+                      <port>${docker.brxm.debug.port}:${docker.brxm.debug.port}</port>
+                      <port>${docker.brxm.ajp.port}:8009</port>
                     </ports>
                     <env>
                       <profile>${docker.db.profile}</profile>
                     </env>
                     <volumes>
                       <bind>
-                        <volume>${project.basedir}:${brxm.project.path}</volume>
+                        <volume>${project.basedir}:${docker.brxm.project.path}</volume>
                       </bind>
                     </volumes>
                     <log>
@@ -1370,7 +1387,7 @@
 
         <docker.brxm.envRun.JAVA_OPTS>
           -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.default.JAVA_OPTS}
+          ${docker.brxm.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
@@ -1399,7 +1416,7 @@
 
         <docker.brxm.envRun.JAVA_OPTS>
           -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.default.JAVA_OPTS}
+          ${docker.brxm.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
@@ -1415,7 +1432,7 @@
 
         <docker.brxm.envRun.JAVA_OPTS>
           -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.default.JAVA_OPTS}
+          ${docker.brxm.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
@@ -1443,7 +1460,7 @@
 
         <docker.brxm.envRun.JAVA_OPTS>
           -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.default.JAVA_OPTS}
+          ${docker.brxm.default.JAVA_OPTS}
         </docker.brxm.envRun.JAVA_OPTS>
       </properties>
     </profile>
@@ -1455,7 +1472,7 @@
         <repo.base.path>${project.basedir}</repo.base.path>
         <repo.config />
         <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${brxm.project.path}/target/storage</repo.path>
+        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
         <fabric8.skip.build.pom>false</fabric8.skip.build.pom>
       </properties>
       <build>
