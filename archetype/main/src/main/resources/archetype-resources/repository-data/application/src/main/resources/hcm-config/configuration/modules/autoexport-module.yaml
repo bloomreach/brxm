@@ -2,4 +2,5 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/autoexport:
       /hippo:moduleconfig:
-        autoexport:modules: ['repository-data/application:/']
+        autoexport:modules: ['repository-data/application:/',
+                             'repository-data/site:${rootArtifactId.replace($hyphen,$empty)}:/hst:${rootArtifactId.replace($hyphen,$empty)}']
