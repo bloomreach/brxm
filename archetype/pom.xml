@@ -52,7 +52,7 @@
     <ant.version>1.9.4</ant.version>
     <junit.version>4.11</junit.version>
 
-    <docker.test.bootstrap.timeout>60000</docker.test.bootstrap.timeout>
+    <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
   </properties>
 
   <dependencies>
