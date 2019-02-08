@@ -364,12 +364,14 @@
       </includes>
       <excludes>
         <exclude>assembly/webapps-component-docker.xml</exclude>
+        <exclude>assembly/distribution-docker-dev-with-main-site.xml</exclude>
       </excludes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/docker/assembly</directory>
       <includes>
         <include>webapps-component-docker.xml</include>
+        <include>distribution-docker-dev-with-main-site.xml</include>
       </includes>
     </fileSet>
 

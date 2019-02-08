@@ -2,6 +2,6 @@ FROM ${project.groupId}/${project.artifactId}:${project.version}
 
 LABEL PROJECT=${project.artifactId}:dev-${project.version}
 
-COPY --chown=${docker.container.uid}:${docker.container.uid} maven/webapps /usr/local/tomcat/webapps/
-COPY --chown=${docker.container.uid}:${docker.container.uid} maven/autoreload /usr/local/tomcat/shared/lib
-${docker.copy.dev.libs.instruction}
+COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/webapps /usr/local/tomcat/webapps/
+COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/autoreload /usr/local/tomcat/shared/lib
+${docker.brxm.copy.dev.libs.cmd}
