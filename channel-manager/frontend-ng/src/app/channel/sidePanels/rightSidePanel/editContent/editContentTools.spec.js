@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,8 +67,16 @@ describe('EditContentToolsCtrl', () => {
     });
     expect($ctrl.isDisabled()).toBeFalsy();
 
+    ContentEditor.isEditing.and.returnValue(true);
     ContentEditor.getError.and.returnValue(undefined);
     expect($ctrl.isDisabled()).toBeFalsy();
+  });
+
+  it('disables buttons when we are not editing and there is no error', () => {
+    ContentEditor.getError.and.returnValue(false);
+    ContentEditor.isEditing.and.returnValue(false);
+
+    expect($ctrl.isDisabled()).toBeTruthy();
   });
 
   describe('opens the content editor in view mode and', () => {
