@@ -120,31 +120,45 @@ describe('RenderingService', () => {
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
-    it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
-      const deferred = $q.defer();
+    describe('channels switch', () => {
+      beforeEach(() => {
+        spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
+        spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
+        spyOn(RenderingService, '_parseLinks');
 
-      spyOn(ChannelService, 'initializeChannel').and.returnValue(deferred.promise);
-      spyOn(RenderingService, '_parseLinks');
+        spyOn(PageMetaDataService, 'getContextPath').and.returnValue('/contextPathX');
+        spyOn(PageMetaDataService, 'getChannelId');
+        spyOn(ChannelService, 'getId');
 
-      spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
-      spyOn(ChannelService, 'getId').and.returnValue('channelY');
+        RenderingService.createOverlay();
+      });
 
-      RenderingService.createOverlay();
-      $rootScope.$digest();
+      it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
+        PageMetaDataService.getChannelId.and.returnValue('channelX');
+        ChannelService.getId.and.returnValue('channelY');
 
-      expect(HstCommentsProcessorService.run).toHaveBeenCalled();
+        $rootScope.$digest();
 
-      $rootScope.$digest();
+        expect(ChannelService.initializeChannel).toHaveBeenCalledWith('channelX', '/contextPathX');
+      });
 
-      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
-      expect(PageMetaDataService.getChannelId).toHaveBeenCalled();
-      expect(ChannelService.getId).toHaveBeenCalled();
+      it('does not switch channels when the channel id from the meta same to the current one', () => {
+        PageMetaDataService.getChannelId.and.returnValue('channelX');
+        ChannelService.getId.and.returnValue('channelX');
 
-      deferred.resolve();
-      $rootScope.$digest();
+        $rootScope.$digest();
 
-      expect(RenderingService._parseLinks).toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      });
+
+      it('does not switch channels when there is no meta', () => {
+        PageMetaDataService.getChannelId.and.returnValue(undefined);
+        ChannelService.getId.and.returnValue('channelX');
+
+        $rootScope.$digest();
+
+        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      });
     });
   });
 
