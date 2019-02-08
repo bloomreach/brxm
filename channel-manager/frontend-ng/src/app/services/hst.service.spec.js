@@ -19,6 +19,7 @@ import 'angular-mocks';
 
 describe('HstService', () => {
   let $q;
+  let $timeout;
   let $httpBackend;
   let hstService;
   let ConfigServiceMock;
@@ -45,8 +46,9 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$httpBackend_, _HstService_) => {
+    inject((_$q_, _$timeout_, _$httpBackend_, _HstService_) => {
       $q = _$q_;
+      $timeout = _$timeout_;
       $httpBackend = _$httpBackend_;
       hstService = _HstService_;
     });
@@ -213,9 +215,12 @@ describe('HstService', () => {
     expect(catchSpy).toHaveBeenCalledWith(channelA);
   });
 
-  it('throws exception when get a channel without id', () => {
-    expect(() => hstService.getChannel()).toThrowError('Channel id must be defined');
-    expect(() => hstService.getChannel('')).toThrowError('Channel id must be defined');
+  it('rejects promise when get a channel without id', (done) => {
+    hstService.getChannel('')
+      .then(() => done(new Error('Promise should not be resolved')))
+      .catch(() => done());
+
+    $timeout.flush();
   });
 
   it('rejects a promise when a channel load fails', () => {
