@@ -20,6 +20,7 @@ const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
 
 class RenderingService {
   constructor(
+    $log,
     $q,
     $rootScope,
     ChannelService,
@@ -36,6 +37,7 @@ class RenderingService {
   ) {
     'ngInject';
 
+    this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
@@ -122,7 +124,12 @@ class RenderingService {
     const channelIdFromService = this.ChannelService.getId();
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
-    if (!channelIdFromPage || channelIdFromService === channelIdFromPage) {
+    if (!channelIdFromPage) {
+      this.$log.info('There is no channel detected in the page metadata.');
+
+      return;
+    }
+    if (channelIdFromService === channelIdFromPage) {
       return;
     }
 
