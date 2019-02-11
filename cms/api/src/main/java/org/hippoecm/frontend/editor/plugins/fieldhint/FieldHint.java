@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,11 +40,13 @@ public class FieldHint extends Panel {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        String script = String.format(JS_TEMPLATE, hint.getMarkupId());
+        final String script = String.format(JS_TEMPLATE, hint.getMarkupId());
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
     /**
+     * Create the hint component.
+     * 
      * @param model The hint model holding the message
      * @return Hint container
      */
