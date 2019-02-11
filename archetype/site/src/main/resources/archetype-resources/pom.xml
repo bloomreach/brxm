@@ -267,15 +267,6 @@
     </profile>
 
     <profile>
-      <id>docker.es</id>
-      <properties>
-        <docker.es.bind.1>${project.basedir}/target/elasticsearch-data:/usr/share/elasticsearch/data</docker.es.bind.1>
-
-        <docker.brxm.envRun.ELASTICSEARCH_HOST>${dollar}{docker.container.es.net.${artifactId}-network.ip}</docker.brxm.envRun.ELASTICSEARCH_HOST>
-      </properties>
-    </profile>
-
-    <profile>
       <id>with-main-site</id>
       <properties>
         <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev-with-main-site.xml</docker.dev.assembly.descriptor>

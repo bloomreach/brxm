@@ -67,10 +67,9 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <essentials.version>13.1.0-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
-    <!--<essentials.version>@release.essentials.version@</essentials.version>-->
+    <essentials.version>@release.essentials.version@</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
@@ -264,16 +263,6 @@
         <docker.brxm.envRun.POSTGRES_DB_HOST>${dollar}{docker.container.db.net.${artifactId}-network.ip}</docker.brxm.envRun.POSTGRES_DB_HOST>
       </properties>
     </profile>
-
-    <profile>
-      <id>docker.es</id>
-      <properties>
-        <docker.es.bind.1>${project.basedir}/target/elasticsearch-data:/usr/share/elasticsearch/data</docker.es.bind.1>
-
-        <docker.brxm.envRun.ELASTICSEARCH_HOST>${dollar}{docker.container.es.net.${artifactId}-network.ip}</docker.brxm.envRun.ELASTICSEARCH_HOST>
-      </properties>
-    </profile>
-
 
     <profile>
       <id>cargo.run</id>
