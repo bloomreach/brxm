@@ -18,6 +18,7 @@ import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
 class RenderingService {
   constructor(
+    $log,
     $q,
     ChannelService,
     CmsService,
@@ -34,6 +35,7 @@ class RenderingService {
   ) {
     'ngInject';
 
+    this.$log = $log;
     this.$q = $q;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -109,7 +111,12 @@ class RenderingService {
     const channelIdFromService = this.ChannelService.getId();
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
-    if (!channelIdFromPage || channelIdFromService === channelIdFromPage) {
+    if (!channelIdFromPage) {
+      this.$log.info('There is no channel detected in the page metadata.');
+
+      return;
+    }
+    if (channelIdFromService === channelIdFromPage) {
       return;
     }
 
