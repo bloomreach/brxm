@@ -39,6 +39,7 @@
     "lint:js": "febuild lint:js",
     "lint:js:watch": "febuild lint:js:watch",
     "lint:watch": "febuild lint:watch",
+    "postinstall": "febuild clean:cache",
     "start": "febuild start",
     "start:debug": "febuild start:debug",
     "start:dist": "febuild start:dist",
@@ -75,7 +76,7 @@
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "10.0.0-beta.1",
+    "@bloomreach/frontend-build": "10.0.0-beta.3",
     "angular-mocks": "1.6.9"
   }
 }
