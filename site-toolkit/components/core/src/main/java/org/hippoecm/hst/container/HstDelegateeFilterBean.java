@@ -263,8 +263,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 }
                 if (resolvedVirtualHost == null) {
                     chain.doFilter(request, response);
+                    return;
                 }
-                return;
             }
 
             log.debug("{} matched to host '{}'", containerRequest, resolvedVirtualHost.getVirtualHost());
