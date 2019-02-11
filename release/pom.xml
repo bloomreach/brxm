@@ -83,6 +83,68 @@
     <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
+
+
+    <!-- docker related configuration -->
+    <!-- used for basic docker interactions -->
+    <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
+    <!-- used for extended K8s support -->
+    <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version>
+
+    <!-- Open source JDBC drivers included in docker image -->
+    <mysql.connector.version>5.1.46</mysql.connector.version>
+    <postgres.connector.version>42.2.5</postgres.connector.version>
+
+    <!-- DB images used by docker.mysql and docker.postgres profiles -->
+    <docker.mysql.image>mysql:8.0</docker.mysql.image>
+    <docker.postgres.image>postgres:10.6-alpine</docker.postgres.image>
+
+    <!-- Default base image for brXM Dockerfile -->
+    <docker.brxm.base.image>tomcat:9-jre8-alpine</docker.brxm.base.image>
+
+    <!-- if you want a remote debugging on a different port override on command line with -Ddocker.debug.port=xxxx -->
+    <docker.brxm.debug.port>8000</docker.brxm.debug.port>
+    <!-- if you want to start remote debugging session suspended override on command line with -Ddocker.debug.suspend=y -->
+    <docker.brxm.debug.suspend>n</docker.brxm.debug.suspend>
+
+    <!-- Project's path inside container, where auto-export and webfiles watches will happen.
+         NOTE: This path is not intended to be customizable, but is defined here for reuse in multiple profiles. -->
+    <docker.brxm.project.path>/brxm/project</docker.brxm.project.path>
+
+    <!-- Default brXM application HTTP port-->
+    <docker.brxm.http.port>8080</docker.brxm.http.port>
+
+    <!-- Default brXM application AJP port-->
+    <docker.brxm.ajp.port>8009</docker.brxm.ajp.port>
+
+    <!-- Extra JVM arguments to pass to brXM Docker container-->
+    <docker.brxm.jvm.args/>
+
+    <!-- Docker-related properties defined here only to DRY up multiple profiles -->
+    <docker.brxm.envRun.MYSQL_DB_USER>${docker.db.username}</docker.brxm.envRun.MYSQL_DB_USER>
+    <docker.brxm.envRun.MYSQL_DB_PASSWORD>${docker.db.password}</docker.brxm.envRun.MYSQL_DB_PASSWORD>
+    <docker.brxm.envRun.MYSQL_DB_NAME>${docker.db.schema}</docker.brxm.envRun.MYSQL_DB_NAME>
+    <docker.brxm.envRun.MYSQL_DB_DRIVER>com.mysql.jdbc.Driver</docker.brxm.envRun.MYSQL_DB_DRIVER>
+
+    <docker.brxm.envRun.POSTGRES_DB_USER>${docker.db.username}</docker.brxm.envRun.POSTGRES_DB_USER>
+    <docker.brxm.envRun.POSTGRES_DB_PASSWORD>${docker.db.password}</docker.brxm.envRun.POSTGRES_DB_PASSWORD>
+    <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
+    <docker.brxm.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</docker.brxm.envRun.POSTGRES_DB_DRIVER>
+
+    <docker.brxm.default.JAVA_OPTS>
+      -Drepo.path=${repo.path}
+      -Dproject.basedir=${docker.brxm.project.path}
+      -Drepo.bootstrap=${repo.bootstrap}
+      -Drepo.autoexport.allowed=${repo.autoexport.allowed}
+      -Dlog4j.configurationFile=file://${docker.brxm.project.path}/conf/log4j2-dev.xml
+      -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend}
+      ${docker.brxm.jvm.args}
+    </docker.brxm.default.JAVA_OPTS>
+
+    <!-- Default user and user id for brXM container -->
+    <docker.brxm.container.username>brxmuser</docker.brxm.container.username>
+    <docker.brxm.container.uid>1001</docker.brxm.container.uid>
+
   </properties>
 
   <repositories>
@@ -911,6 +973,19 @@
         <artifactId>hippo-addon-crisp-repository</artifactId>
         <version>${hippo.addon-crisp.version}</version>
       </dependency>
+
+      <!-- DB connectors -->
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.connector.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.connector.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -1004,6 +1079,17 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>${docker.maven.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>fabric8-maven-plugin</artifactId>
+          <version>${fabric8.maven.plugin.version}</version>
+        </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
@@ -1072,6 +1158,369 @@
                 <version>${hippo.cargo-extensions.version}</version>
               </dependency>
             </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>docker.build</id>
+      <properties>
+        <repo.base.path>${project.basedir}</repo.base.path>
+        <repo.path>${project.build.directory}/storage</repo.path>
+        <repo.config />
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker work directory</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/${project.version}" includeemptydirs="true"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker image</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>Build docker container</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <images>
+                <image>
+                  <name>${project.groupId}/${project.artifactId}:${project.version}</name>
+                  <alias>${project.artifactId}</alias>
+                  <build>
+                    <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+                    <assembly>
+                      <mode>dir</mode>
+                      <name>maven/</name>
+                      <descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker.xml</descriptor>
+                    </assembly>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>docker.run</id>
+      <properties>
+        <repo.autoexport.allowed>true</repo.autoexport.allowed>
+        <repo.base.path>${project.basedir}</repo.base.path>
+        <repo.config />
+        <repo.bootstrap>true</repo.bootstrap>
+        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
+
+        <!-- private docker network for brXM to DB comms -->
+        <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
+        <docker.brxm.network.mode>custom</docker.brxm.network.mode>
+        <docker.brxm.network.name>${project.artifactId}-network</docker.brxm.network.name>
+
+        <!-- Default DB profile -->
+        <docker.db.profile>h2</docker.db.profile>
+        <docker.db.run.skip>true</docker.db.run.skip>
+
+        <!-- Default connection details -->
+        <docker.db.schema>${project.artifactId}</docker.db.schema>
+        <docker.db.username>admin</docker.db.username>
+        <docker.db.password>admin</docker.db.password>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          ${docker.brxm.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
+
+        <!-- COPY development artifacts for DEV image -->
+        <docker.brxm.copy.dev.libs.cmd>COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/</docker.brxm.copy.dev.libs.cmd>
+
+        <!-- Default assembly used for building docker image -->
+        <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</docker.dev.assembly.descriptor>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-services-autoreload</artifactId>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker work directory</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/dev-${project.version}" includeemptydirs="true"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Delete docker image</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>Build docker dev container</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>Run docker container</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <images combine.children="append">
+                <image>
+                  <name>${project.groupId}/${project.artifactId}:dev-${project.version}</name>
+                  <alias>${project.artifactId}</alias>
+                  <external>
+                    <type>properties</type>
+                    <prefix>docker.brxm</prefix>
+                    <mode>override</mode>
+                  </external>
+                  <build>
+                    <dockerFile>${project.basedir}/src/main/docker/DockerfileDev</dockerFile>
+                    <assembly>
+                      <mode>dir</mode>
+                      <name>maven/</name>
+                      <descriptor>${docker.dev.assembly.descriptor}</descriptor>
+                    </assembly>
+                  </build>
+                  <run>
+                    <ports>
+                      <port>${docker.brxm.http.port}:8080</port>
+                      <port>${docker.brxm.debug.port}:${docker.brxm.debug.port}</port>
+                      <port>${docker.brxm.ajp.port}:8009</port>
+                    </ports>
+                    <env>
+                      <profile>${docker.db.profile}</profile>
+                    </env>
+                    <volumes>
+                      <bind>
+                        <volume>${project.basedir}:${docker.brxm.project.path}</volume>
+                      </bind>
+                    </volumes>
+                    <log>
+                      <enabled>true</enabled>
+                    </log>
+                  </run>
+                </image>
+                <image>
+                  <name>db</name>
+                  <alias>db</alias>
+                  <external>
+                    <type>properties</type>
+                    <prefix>docker.db</prefix>
+                    <mode>override</mode>
+                  </external>
+                  <run>
+                    <skip>${docker.db.run.skip}</skip>
+                    <log>
+                      <enabled>true</enabled>
+                    </log>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>mysql</id>
+      <properties>
+        <docker.db.profile>mysql</docker.db.profile>
+        <docker.db.port>3306</docker.db.port>
+
+        <docker.brxm.envRun.MYSQL_DB_HOST>${docker.db.host}</docker.brxm.envRun.MYSQL_DB_HOST>
+        <docker.brxm.envRun.MYSQL_DB_PORT>${docker.db.port}</docker.brxm.envRun.MYSQL_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.brxm.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docker.mysql</id>
+      <properties>
+        <docker.db.profile>mysql</docker.db.profile>
+        <docker.db.run.skip>false</docker.db.run.skip>
+        <docker.db.name>${docker.mysql.image}</docker.db.name>
+
+        <docker.db.network.mode>custom</docker.db.network.mode>
+        <docker.db.network.name>${project.artifactId}-network</docker.db.network.name>
+        <docker.db.wait.time>120000</docker.db.wait.time>
+        <docker.db.wait.log>ready for connections. Version.* port: 3306</docker.db.wait.log>
+        <docker.db.ports.1>docker.db.port:3306</docker.db.ports.1>
+
+        <docker.brxm.dependsOn.container.1>db</docker.brxm.dependsOn.container.1>
+
+        <docker.db.envRun.MYSQL_ROOT_PASSWORD>${docker.db.password}</docker.db.envRun.MYSQL_ROOT_PASSWORD>
+        <docker.db.envRun.MYSQL_DATABASE>${docker.db.schema}</docker.db.envRun.MYSQL_DATABASE>
+        <docker.db.envRun.MYSQL_USER>${docker.db.username}</docker.db.envRun.MYSQL_USER>
+        <docker.db.envRun.MYSQL_PASSWORD>${docker.db.password}</docker.db.envRun.MYSQL_PASSWORD>
+
+        <docker.brxm.envRun.MYSQL_DB_PORT>3306</docker.brxm.envRun.MYSQL_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.brxm.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>postgres</id>
+      <properties>
+        <docker.db.profile>postgres</docker.db.profile>
+        <docker.db.port>5432</docker.db.port>
+
+        <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.db.host}</docker.brxm.envRun.POSTGRES_DB_HOST>
+        <docker.brxm.envRun.POSTGRES_DB_PORT>${docker.db.port}</docker.brxm.envRun.POSTGRES_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.brxm.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docker.postgres</id>
+      <properties>
+        <docker.db.profile>postgres</docker.db.profile>
+        <docker.db.run.skip>false</docker.db.run.skip>
+        <docker.db.name>${docker.postgres.image}</docker.db.name>
+
+        <docker.db.network.mode>custom</docker.db.network.mode>
+        <docker.db.network.name>${project.artifactId}-network</docker.db.network.name>
+        <docker.db.wait.time>120000</docker.db.wait.time>
+        <docker.db.wait.log>listening on IPv4 address "0.0.0.0", port 5432</docker.db.wait.log>
+        <docker.db.ports.1>docker.db.port:5432</docker.db.ports.1>
+
+        <docker.brxm.dependsOn.container.1>db</docker.brxm.dependsOn.container.1>
+
+        <docker.db.envRun.POSTGRES_DB>${docker.db.schema}</docker.db.envRun.POSTGRES_DB>
+        <docker.db.envRun.POSTGRES_USER>${docker.db.username}</docker.db.envRun.POSTGRES_USER>
+        <docker.db.envRun.POSTGRES_PASSWORD>${docker.db.password}</docker.db.envRun.POSTGRES_PASSWORD>
+
+        <docker.brxm.envRun.POSTGRES_DB_PORT>5432</docker.brxm.envRun.POSTGRES_DB_PORT>
+
+        <docker.brxm.envRun.JAVA_OPTS>
+          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
+          ${docker.brxm.default.JAVA_OPTS}
+        </docker.brxm.envRun.JAVA_OPTS>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>k8s.run</id>
+      <properties>
+        <repo.autoexport.allowed>true</repo.autoexport.allowed>
+        <repo.base.path>${project.basedir}</repo.base.path>
+        <repo.config />
+        <repo.bootstrap>true</repo.bootstrap>
+        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
+        <fabric8.skip.build.pom>false</fabric8.skip.build.pom>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric8-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>Deploy on the Kubernetes Server</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>resource</goal>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
