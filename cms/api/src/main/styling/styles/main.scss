@@ -20,9 +20,10 @@
 
 // Vendor styling
 @import "../../../../node_modules/open-sans-fontface/open-sans.scss";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/alerts";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/tables";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "../../../../node_modules/retinajs/src/_retina.scss";
 
 // Core styling
