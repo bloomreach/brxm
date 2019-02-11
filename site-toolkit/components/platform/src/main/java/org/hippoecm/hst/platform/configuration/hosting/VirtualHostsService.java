@@ -346,7 +346,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
         this.hstFilterSuffixExclusions = hstFilterSuffixExclusions;
     }
 
-    private void loadChannelsMap() {
+    public void loadChannelsMap() {
+
+        channelsByHostGroup.clear();
+
         for (String hostGroupName : getHostGroupNames()) {
             if (!channelsByHostGroup.containsKey(hostGroupName)) {
                 channelsByHostGroup.put(hostGroupName, new HashMap<>());
