@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,49 +17,27 @@
   top: 2px;
   height: 16px;
 
+  text-decoration: none;
+
   &:after {
-    visibility: hidden;
+    content: ' ';
     display: block;
-    font-size: 0;
-    content: " ";
     clear: both;
+
+    visibility: hidden;
+    font-size: 0;
     height: 0;
   }
 
-  .info {
+  &__icon {
     display: inline-block;
     height: 16px;
     vertical-align: top;
     position: relative;
-    text-decoration: none;
 
     .hi {
       color: $editor-field-title-color;
       fill: $editor-field-title-color;
-    }
-
-    span {
-      display: none;
-      position: absolute;
-      top: -3px;
-      left: 24px;
-      border: 1px solid $dark-gray;
-      background-color: $white;
-      color: $darkest-shade;
-      padding: 4px 8px;
-      overflow: hidden;
-      width: auto;
-      white-space: nowrap;
-      z-index: 1;
-
-      .col30 & {
-        right: 24px;
-        left: auto;
-      }
-    }
-
-    &:hover span {
-      display: block;
     }
   }
 }
