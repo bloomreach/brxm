@@ -15,35 +15,39 @@
     "last 1 Edge versions"
   ],
   "engines": {
-    "node": "8",
-    "npm": "6"
+    "node": ">=8",
+    "npm": ">=6"
+  },
+  "config": {
+    "dist": "target/classes/angular/hippo-cm/"
   },
   "scripts": {
-    "build": "webpack --env.prod",
-    "build:debug": "node --inspect-brk node_modules/webpack-cli/bin/cli.js --env.dev",
-    "build:dev": "webpack --env.dev --cache",
-    "build:dll": "webpack --env.dll",
-    "build:profile": "webpack --env.prod --profile --verbose",
-    "clean": "node_modules/@bloomreach/frontend-build/bin/clean.js",
-    "clean:lint:css": "node_modules/@bloomreach/frontend-build/bin/clean.js .cache/stylelint",
-    "clean:lint:js": "node_modules/@bloomreach/frontend-build/bin/clean.js .cache/eslint",
-    "dev:all": "concurrently -k \"npm:lint:watch\" \"npm:start\" \"npm:test\"",
-    "lint": "concurrently --names \"js,css\" -c \"blue.bold,magenta.bold\" \"npm -s run lint:js\" \"npm -s run lint:css\"",
-    "lint:css": "stylelint \"src/**/*.scss\" --custom-formatter=\"node_modules/stylelint-formatter-pretty\"",
-    "lint:css:watch": "npm run clean:lint:css && onchange -i \"src/**/*.scss\" -- npm -s run lint:css -- --cache --cache-location \".cache/stylelint\"",
-    "lint:fix": "concurrently --names \"js,css\" -c \"blue.bold,magenta.bold\" \"npm -s run lint:js -- --fix\" \"npm -s run lint:css -- --fix\"",
-    "lint:fix:watch": "concurrently --names \"js,css\" -c \"blue.bold,magenta.bold\" \"npm -s run lint:js:watch -- --fix\" \"npm -s run lint:css:watch -- --fix\"",
-    "lint:js": "eslint src/ --format \"node_modules/eslint-formatter-friendly\"",
-    "lint:js:watch": "npm run clean:lint:js && esw src/ --watch --format \"node_modules/eslint-formatter-friendly\" --cache --cache-location \".cache/eslint\"",
-    "lint:watch": "concurrently --names \"js,css\" -c \"blue.bold,magenta.bold\" \"npm -s run lint:js:watch\" \"npm -s run lint:css:watch\"",
-    "start": "webpack-serve --env.dev --cache",
-    "start:debug": "node --inspect-brk node_modules/webpack-serve/cli.js --env.dev",
-    "start:dist": "webpack-serve --env.prod",
-    "start:friendly": "webpack-serve --env.dev --friendly --log-level silent --cache",
-    "test": "karma start --env.test --cache",
-    "test:friendly": "karma start --env.test --friendly --cache",
-    "test:debug": "karma start --env.test --debug",
-    "test:single-run": "karma start --single-run --env.test"
+    "build": "febuild build",
+    "build:debug": "febuild build:debug",
+    "build:dev": "febuild build:dev",
+    "build:dll": "febuild build:dll",
+    "build:profile": "febuild build:profile",
+    "clean": "febuild clean",
+    "clean:lint:css": "febuild clean:lint:css",
+    "clean:lint:js": "febuild clean:lint:js",
+    "dev:all": "febuild dev:all",
+    "lint": "febuild lint",
+    "lint:css": "febuild lint:css",
+    "lint:css:watch": "febuild lint:css:watch",
+    "lint:fix": "febuild lint:fix",
+    "lint:fix:watch": "febuild lint:fix:watch",
+    "lint:js": "febuild lint:js",
+    "lint:js:watch": "febuild lint:js:watch",
+    "lint:watch": "febuild lint:watch",
+    "postinstall": "febuild clean:cache",
+    "start": "febuild start",
+    "start:debug": "febuild start:debug",
+    "start:dist": "febuild start:dist",
+    "start:friendly": "febuild start:friendly",
+    "test": "febuild test",
+    "test:friendly": "febuild test:friendly",
+    "test:debug": "febuild test:debug",
+    "test:single-run": "febuild test:once"
   },
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
@@ -72,7 +76,7 @@
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "9.0.5",
+    "@bloomreach/frontend-build": "10.0.0-beta.3",
     "angular-mocks": "1.6.9"
   }
 }

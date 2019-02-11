@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,26 @@
  * limitations under the License.
  */
 
-const karmaConf = require('@bloomreach/frontend-build/conf/karma.conf');
+const fbConfig = require('@bloomreach/frontend-build/lib/karma.conf');
 
-module.exports = karmaConf;
+module.exports = (config) => {
+  fbConfig(config);
+
+  config.set({
+    port: 10002,
+    files: [
+      ...config.files,
+      'node_modules/@bloomreach/dragula/dist/dragula.min.js',
+      'node_modules/@bloomreach/dragula/dist/dragula.min.css',
+      'node_modules/jquery/dist/jquery.js',
+    ],
+    proxies: {
+      '/styles/dragula.min.css': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.css',
+      '/scripts/dragula.min.js': '/base/node_modules/@bloomreach/dragula/dist/dragula.min.js',
+    },
+    reporters: [...config.reporters, 'junit'],
+    junitReporter: {
+      outputDir: 'target/surefire-reports',
+    },
+  });
+};
