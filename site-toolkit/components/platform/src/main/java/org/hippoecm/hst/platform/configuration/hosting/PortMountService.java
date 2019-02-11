@@ -40,7 +40,10 @@ public class PortMountService implements MutablePortMount {
      * The root {@link Mount} for this PortMount
      */
     private Mount rootMount;
-    
+
+    /**
+     * TODO deprecate this, we never use port mounts
+     */
     public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache,
                             final HstConfigurationLoadingCache hstConfigurationLoadingCache) throws ModelLoadingException {
         String nodeName = portMount.getValueProvider().getName();

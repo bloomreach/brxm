@@ -43,7 +43,6 @@ public class RuntimeHostServiceImpl implements RuntimeHostService {
             final HstModelImpl hstModel = (HstModelImpl)hstModelRegistry.getHstModel(webappContextPath);
 
             hstModel.addRuntime(hostName, sourceHostGroupName, targetHostGroupName);
-            hstModel.invalidate();
         });
 
         return hstModelRegistry.getHstModel(contextPath).getVirtualHosts();

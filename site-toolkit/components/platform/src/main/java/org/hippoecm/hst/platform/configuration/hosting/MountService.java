@@ -967,7 +967,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("MountService [jcrPath=");
-        builder.append(jcrLocation).append(", hostName=").append(virtualHost.getHostName()).append("]");
+        // use getVirtualHost() since in a decorated monut it can return a different host name
+        builder.append(jcrLocation).append(", hostName=").append(getVirtualHost().getHostName()).append("]");
         return  builder.toString();
     }
 

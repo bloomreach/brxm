@@ -27,9 +27,8 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.configuration.GenericVirtualHostWrapper;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.hosting.MutableVirtualHost;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
@@ -49,6 +48,7 @@ import org.hippoecm.hst.core.linking.ResourceContainer;
 import org.hippoecm.hst.core.linking.RewriteContextResolver;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.configuration.RuntimeVirtualHost;
@@ -183,7 +183,10 @@ public class HstModelImpl implements InternalHstModel {
 
     public void addRuntime(final String hostName, final String sourceHostGroupName, final String targetHostGroupName) {
         synchronized (this) {
-            runtimeHosts.put(hostName, Pair.of(sourceHostGroupName, targetHostGroupName));
+            if (!runtimeHosts.containsKey(hostName)) {
+                runtimeHosts.put(hostName, Pair.of(sourceHostGroupName, targetHostGroupName));
+                invalidate();
+            }
         }
     }
 
@@ -233,7 +236,11 @@ public class HstModelImpl implements InternalHstModel {
 
                 augment(virtualHosts);
 
-                addRuntimeHosts(virtualHosts);
+                final boolean added = addRuntimeHosts(virtualHosts);
+                if (added) {
+                    // reload the channels map
+                    virtualHosts.loadChannelsMap();
+                }
 
                 this.virtualHosts = virtualHosts;
 
@@ -282,8 +289,9 @@ public class HstModelImpl implements InternalHstModel {
         }
     }
 
-
-    private void addRuntimeHosts(final VirtualHostsService virtualHosts) {
+    // returns true if at least one runtime host was added
+    private boolean addRuntimeHosts(final VirtualHostsService virtualHosts) {
+        boolean added = false;
         for (Map.Entry<String, Pair<String, String>> entry : runtimeHosts.entrySet()) {
             final String hostName = entry.getKey();
             final String sourceHostGroupName = entry.getValue().getLeft();
@@ -302,10 +310,27 @@ public class HstModelImpl implements InternalHstModel {
                 continue;
             }
             // create runtime host
-            VirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, hostName, targetHostGroupName);
+            RuntimeVirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, hostName, targetHostGroupName);
 
             virtualHosts.addVirtualHost(runtimeHost);
+
+            final ResolvedMount resolvedMount = virtualHosts.matchMount(hostName, "");
+            if (resolvedMount == null) {
+                log.warn("Expected runtime added virtualhost '{}' to have a root mount", hostName);
+                continue;
+            }
+
+            final Mount rootMount = resolvedMount.getMount();
+            addMounts(virtualHosts, rootMount);
+
+            added = true;
         }
+        return added;
+    }
+
+    private void addMounts(final VirtualHostsService virtualHosts, final Mount mount) {
+        virtualHosts.addMount(mount);
+        mount.getChildMounts().forEach(child -> addMounts(virtualHosts, child));
     }
 
 

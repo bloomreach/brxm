@@ -284,4 +284,11 @@ public class GenericMountWrapper implements Mount {
     public boolean isExplicit() {
         return delegatee.isExplicit();
     }
+
+    @Override
+    public String toString() {
+        return "GenericMountWrapper{" +
+                "delegatee=" + delegatee +
+                '}';
+    }
 }

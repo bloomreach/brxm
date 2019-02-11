@@ -24,42 +24,64 @@ import org.hippoecm.hst.configuration.GenericVirtualHostWrapper;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 
 public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
+    private final VirtualHost delegatee;
     private final String hostName;
     private final String name;
     private final String hostGroupName;
     private final VirtualHost child;
+    private final PortMount portMount;
 
     public RuntimeVirtualHost(final VirtualHost delegatee, final String serverName, final String hostGroupName) {
-        super(delegatee);
-        this.hostGroupName = hostGroupName;
-
-        hostName = StringUtils.substringBefore(serverName, ":");
-        final String[] hostNameSegments = hostName.split("\\.");
-
-        final int position = hostNameSegments.length - 1;
-        // add hosts in reverse order, thus last segment first
-
-        name = hostNameSegments[position];
-        if (position > 0) {
-            child = new RuntimeVirtualHost(delegatee, hostName, hostNameSegments, position -1, hostGroupName);
-        } else {
-            child = null;
-        }
+        this(delegatee, StringUtils.substringBefore(serverName, ":").split("\\."), hostGroupName);
     }
 
-    public RuntimeVirtualHost(final VirtualHost delegatee, final String hostName, final String[] hostNameSegments, final int position, final String hostGroupName) {
+    private RuntimeVirtualHost(final VirtualHost delegatee, final String[] hostNameSegments, final String hostGroupName) {
+        this(delegatee, "", hostNameSegments, hostNameSegments.length - 1, hostGroupName);
+    }
+
+    public RuntimeVirtualHost(final VirtualHost delegatee, final String hostNamePrefix, final String[] hostNameSegments, final int position, final String hostGroupName) {
         super(delegatee);
-        this.hostName = hostName;
+        this.delegatee = delegatee;
+        if (hostNamePrefix.length() == 0) {
+            hostName = hostNameSegments[position] + hostNamePrefix;
+        } else {
+            hostName = hostNameSegments[position] + "." + hostNamePrefix;
+        }
         this.hostGroupName = hostGroupName;
         name = hostNameSegments[position];
 
         if (position > 0) {
             child = new RuntimeVirtualHost(delegatee, hostName, hostNameSegments, position - 1, hostGroupName);
+            portMount = null;
         } else {
             child = null;
+            // we can use '0' since we never really have port mounts, and '0' is the default catch all port
+            final PortMount delegateePortMount = delegatee.getPortMount(0);
+
+            final Mount rootMount = delegateePortMount.getRootMount();
+
+            final RuntimeMount runtimeMount;
+            if (rootMount instanceof ContextualizableMount) {
+                runtimeMount = new RuntimeContextualizableMount((ContextualizableMount)rootMount, RuntimeVirtualHost.this);
+            } else {
+                runtimeMount = new RuntimeMount(rootMount, RuntimeVirtualHost.this);
+            }
+
+            this.portMount = new PortMount() {
+                @Override
+                public int getPortNumber() {
+                    return delegateePortMount.getPortNumber();
+                }
+
+                @Override
+                public Mount getRootMount() {
+                    return runtimeMount;
+                }
+            };
         }
     }
 
@@ -81,26 +103,7 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
     @Override
     public PortMount getPortMount(final int portNumber) {
-        final PortMount portMount = super.getPortMount(portNumber);
-
-        if (portMount == null) {
-            return null;
-        }
-        return new PortMount() {
-            @Override
-            public int getPortNumber() {
-                return portMount.getPortNumber();
-            }
-
-            @Override
-            public Mount getRootMount() {
-                if (portMount.getRootMount() == null) {
-                    return null;
-                }
-                return new RuntimeMount(portMount.getRootMount(), RuntimeVirtualHost.this);
-            }
-        };
-
+       return portMount;
     }
 
     @Override
@@ -108,6 +111,12 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
         // TODO validate, is this optional? Opposed to typically localhost, we do not want the port number in the URL
         // TODO for auto created hosts, but we do inherit the show contextpath from the delegatee
         return false;
+    }
+
+    @Override
+    public String getScheme() {
+        // TODO make this configurable? Most likely most be https
+        return super.getScheme();
     }
 
     @Override
@@ -121,5 +130,12 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
     @Override
     public List<VirtualHost> getChildHosts() {
         return child == null ? Collections.emptyList() : Collections.singletonList(child);
+    }
+
+    @Override
+    public String toString() {
+        return "RuntimeVirtualHost{" +
+                "delegatee=" + delegatee +
+                '}';
     }
 }

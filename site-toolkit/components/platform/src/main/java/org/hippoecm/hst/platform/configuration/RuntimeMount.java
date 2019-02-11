@@ -20,20 +20,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.hippoecm.hst.configuration.GenericMountWrapper;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.onehippo.cms7.services.hst.Channel;
 
 import static java.util.Collections.unmodifiableList;
 
 public class RuntimeMount extends GenericMountWrapper {
 
+    private final Mount delegatee;
     private final VirtualHost virtualHost;
     private final Mount parent;
-    private Map<String, Mount> children = new HashMap<>();
-    private List<Mount> childrenList;
+    private final Map<String, Mount> children = new HashMap<>();
+    private final List<Mount> childrenList;
+    private final HstSite hstSite;
 
     public RuntimeMount(final Mount delegatee, final VirtualHost virtualHost) {
         this(delegatee, virtualHost, null);
@@ -41,14 +45,42 @@ public class RuntimeMount extends GenericMountWrapper {
 
     public RuntimeMount(final Mount delegatee, final VirtualHost virtualHost, final Mount parent) {
         super(delegatee);
+        this.delegatee = delegatee;
         this.virtualHost = virtualHost;
         this.parent = parent;
+
+        final HstSite delegateeSite = delegatee.getHstSite();
+        if (delegateeSite != null) {
+            hstSite = new RuntimeHstSite(delegateeSite, this);
+        } else {
+            hstSite = null;
+        }
+
         delegatee.getChildMounts().forEach(child ->
-                children.put(child.getName(), new RuntimeMount(child, virtualHost, RuntimeMount.this))
+                {
+                    if (child instanceof ContextualizableMount) {
+                        children.put(child.getName(), new RuntimeContextualizableMount((ContextualizableMount)child, virtualHost, RuntimeMount.this) {
+                        });
+                    } else {
+                        children.put(child.getName(), new RuntimeMount(child, virtualHost, RuntimeMount.this));
+                    }
+                }
+
         );
         childrenList = unmodifiableList(new ArrayList<>(children.values()));
     }
 
+    public HstSite getHstSite() {
+        return hstSite;
+    }
+
+    @Override
+    public Channel getChannel() {
+        if (hstSite == null) {
+            return null;
+        }
+        return hstSite.getChannel();
+    }
 
     @Override
     public Mount getParent() {
@@ -66,8 +98,38 @@ public class RuntimeMount extends GenericMountWrapper {
     }
 
     @Override
+    public boolean isPortInUrl() {
+        return virtualHost.isPortInUrl();
+    }
+
+    @Override
+    public String getScheme() {
+        return virtualHost.getScheme();
+    }
+
+    @Override
+    public boolean isExplicit() {
+        // although you might argue that a runtime created mount is an implicit mount, we need to know in the
+        // channel mngr when we are dealing with an explicit configured Mount or not, hence we request the delegatee
+        // I know we don't need to override #isExplicit here but only do this for the sake of the comment above
+        return super.isExplicit();
+    }
+
+    @Override
     public VirtualHost getVirtualHost() {
         return virtualHost;
+    }
+
+    public Mount getDelegatee() {
+        return delegatee;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RuntimeMount{" +
+                "delegatee=" + delegatee +
+                '}';
     }
 
 }

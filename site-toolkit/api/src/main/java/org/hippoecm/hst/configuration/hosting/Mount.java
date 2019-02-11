@@ -486,7 +486,10 @@ public interface Mount {
 
     /**
      * @return {@code true} if the configuration behind this {@link Mount} is explicitly configured. It returns {@code
-     * false} for {@link Mount} objects that are an implicit result, for example when the {@link Mount} is auto-created.
+     * false} for {@link Mount} objects that are an implicit result, for example when the {@link Mount} is auto-created
+     * via Spring wiring. Note that auto created mounts that decorate or wrap an explicit mount might choose to return
+     * {@code true} for {@link #isExplicit()}, thus {@code true} does not perse mean that the {@link Mount} instance
+     * is not a runtime created {@link Mount} or not.
      */
     boolean isExplicit();
 
