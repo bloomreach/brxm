@@ -76,3 +76,85 @@ Distributing Additional Site Projects
 Note that if your organization is using multiple site projects, you must configure the assembly of a distribution to
 include all of the separate site webapps for deployment. This project is designed for stand-alone use and does not
 automatically include any additional, externally-maintained site webapps.
+
+
+Running the brXM Project in a Docker Container
+======================
+
+To run the brXM project in a docker container, you must install the project, build the docker image and run the docker
+image respectively.
+
+First install the project:
+
+    mvn clean install
+
+Then build the brXM docker image:
+
+    mvn -Pdocker.build
+
+This maven profile will create a docker image and add it to the local docker registry. The new image will be tagged
+as ${groupId}/${artifactId}:${version}
+
+To run the image with in-memory h2 database:
+
+    mvn -Pdocker.run
+
+
+Running with an embedded MySQL database. To create & run environment containing builtin MySQL DB just run:
+
+    mvn -Pdocker.run,docker.mysql
+
+As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
+
+Running with an embedded PostgreSQL database. To create & run environment containing builtin PostgreSQL DB just run:
+
+    mvn -Pdocker.run,docker.postgres
+
+As a result, default db credentials will be used (admin/admin) and DB name will be the same as project's artifactId (e.g. myproject)
+
+To run the image with an external mysql database, add the provided database name, username and password below to the properties
+section of your project's pom.xml:
+
+    <docker.db.host>DATABASE_HOSTNAME</docker.db.host>
+    <docker.db.port>DATABASE_PORT</docker.db.port>
+    <docker.db.schema>DATABASE_NAME</docker.db.schema>
+    <docker.db.username>DATABASE_USERNAME</docker.db.username>
+    <docker.db.password>DATABASE_PASSWORD</docker.db.password>
+
+Then run:
+
+    mvn -Pdocker.run,mysql
+
+To run the image with an external postgresql database, add the same db properties as above, then run:
+
+    mvn -Pdocker.run,postgres
+
+After running the docker image, application logs will be shown on the terminal window.
+
+
+Install a Kubernetes Server Locally
+===================================
+
+Docker Desktop for Mac (or Windows):
+
+Docker for Mac (or Windows) is an application that includes a standalone Kubernetes server and client. The Kubernetes
+server runs locally within your Docker instance, is not configurable, and is a single-node cluster. How to enable Kubernetes 
+support feature, please look at https://docs.docker.com/docker-for-mac/#kubernetes.
+
+Minikube:
+
+Another possible solution is Minikube. How to install Minikube, please look at https://kubernetes.io/docs/setup/minikube/.
+
+
+Deploy the brXM Project on Kubernetes Locally
+=============================================
+
+Some maven profiles are defined to build a docker image, run the docker image on the default docker server and deploy and 
+run the docker image on Kubernetes locally. To build a brXM project image, run the following commands
+
+    mvn clean verify
+    mvn -P docker.build
+
+To deploy and run the image on the Kubernetes server execute:
+
+    mvn -P k8s.run -N

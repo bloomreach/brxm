@@ -58,6 +58,10 @@
       <directory>conf</directory>
       <includes>
         <include>context.xml</include>
+        <include>context-mysql.xml</include>
+        <include>context-postgres.xml</include>
+        <include>repository-mysql.xml</include>
+        <include>repository-postgres.xml</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
@@ -67,6 +71,13 @@
         <include>README.txt</include>
         <include>BUILD</include>
         <include>hippo-cms7-release-pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- db-bootstrap dir -->
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>db-bootstrap</directory>
+      <includes>
+        <include>.gitkeep</include>
       </includes>
     </fileSet>
     <!-- repository-data module -->
@@ -342,5 +353,27 @@
         <include>src/main/resources/project-settings.xml</include>
       </includes>
     </fileSet>
+
+    <!-- docker -->
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>src/main/docker/</directory>
+      <includes>
+        <include>**/*.*</include>
+        <include>Dockerfile</include>
+        <include>DockerfileDev</include>
+      </includes>
+      <excludes>
+        <exclude>assembly/webapps-component-docker.xml</exclude>
+        <exclude>assembly/distribution-docker-dev-with-main-site.xml</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/docker/assembly</directory>
+      <includes>
+        <include>webapps-component-docker.xml</include>
+        <include>distribution-docker-dev-with-main-site.xml</include>
+      </includes>
+    </fileSet>
+
   </fileSets>
 </archetype-descriptor>

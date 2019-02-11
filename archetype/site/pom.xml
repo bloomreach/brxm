@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -51,11 +51,16 @@
     <url>https://code.onehippo.org/cms-community/hippo-project-archetype</url>
   </scm>
 
+  <properties>
+    <gettingstarted.artifactId>${extra.app.artifactId}</gettingstarted.artifactId>
+    <docker.image.name>${extra.app.artifactId}-1</docker.image.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>hippo-project-archetype</artifactId>
-      <version>13.1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>resources</classifier>
       <type>zip</type>
       <scope>provided</scope>
@@ -102,25 +107,17 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
+        <artifactId>maven-compiler-plugin</artifactId>
         <executions>
           <execution>
-            <phase>process-resources</phase>
-            <configuration>
-              <target>
-                <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                  <include name="pom.xml"/>
-                </replace>
-                <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                  <include name="pom.xml"/>
-                </replace>
-              </target>
-            </configuration>
             <goals>
-              <goal>run</goal>
+              <goal>testCompile</goal>
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
       </plugin>
 
       <plugin>
@@ -134,29 +131,9 @@
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
         <configuration>
           <overwrite>true</overwrite>
         </configuration>
-        <executions>
-          <execution>
-            <!-- copy the Getting Started app to target/gettingstarted in the install phase -->
-            <id>copy-resources</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/${extra.app.artifactId}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/test-classes/projects/gettingstarted/project/${extra.app.artifactId}</directory>
-                </resource>
-              </resources>
-              <includeEmptyDirs>true</includeEmptyDirs>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
