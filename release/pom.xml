@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.0</version>
+    <version>30.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -473,6 +473,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-json</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-console-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -520,6 +525,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-workflowmenu</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-richtext-ckeditor-config</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
@@ -682,6 +692,7 @@
         <groupId>org.onehippo.cms7.hst.components</groupId>
         <artifactId>hst-core</artifactId>
         <version>${hippo.hst.version}</version>
+        <scope>runtime</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.components</groupId>
@@ -941,6 +952,26 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-plugin-taxonomy-hstclient</artifactId>
         <version>${hippo.plugin.taxonomy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-api</artifactId>
+        <version>${hippo.addon-crisp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-core</artifactId>
+        <version>${hippo.addon-crisp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-hst</artifactId>
+        <version>${hippo.addon-crisp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-addon-crisp-repository</artifactId>
+        <version>${hippo.addon-crisp.version}</version>
       </dependency>
 
       <!-- DB connectors -->
