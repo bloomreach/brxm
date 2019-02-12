@@ -27,6 +27,7 @@
     <property name="useSystemProperties" value="false" />
     <property name="maxConnTotal" value="250" />
     <property name="maxConnPerRoute" value="125" />
+    <property name="connectionTimeMillisToLive" value="60000" />
   </bean>
 
 </beans>
