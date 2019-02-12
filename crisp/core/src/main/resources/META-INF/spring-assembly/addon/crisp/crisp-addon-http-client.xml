@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,8 +20,21 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
+  <bean id="crispHttpClientBuilder" class="org.onehippo.cms7.crisp.core.support.httpclient.DefaultHttpClientBuilderFactoryBean">
+    <property name="useSystemProperties" value="true" />
+    <property name="maxConnTotal" value="500" />
+    <property name="maxConnPerRoute" value="200" />
+  </bean>
+
+  <bean id="crispHttpClient" class="org.hippoecm.hst.site.container.TypeDeterminedMethodInvokingFactoryBean">
+    <constructor-arg value="org.apache.http.impl.client.CloseableHttpClient" />
+    <property name="targetObject" ref="crispHttpClientBuilder" />
+    <property name="targetMethod" value="build" />
+  </bean>
+
   <bean id="org.springframework.http.client.ClientHttpRequestFactory"
         class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+    <constructor-arg ref="crispHttpClient" />
     <property name="connectTimeout" value="30000" />
     <property name="connectionRequestTimeout" value="30000" />
     <property name="readTimeout" value="30000" />
