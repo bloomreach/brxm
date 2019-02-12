@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.crisp.core.support.httpclient;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -56,6 +58,16 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
      */
     private int maxConnPerRoute = DEFAULT_MAX_CONN_PER_ROUTE;
 
+    /**
+     * Max time milliseconds to live for persistent connections.
+     * <p>
+     * If this value is less than or equal to zero, it means no expiration for connections.
+     * Refer to {@link org.apache.http.pool.PoolEntry} for detail.
+     * <p>
+     * By default, <code>HttpClientBuilder<code> is set to -1.
+     */
+    private Long connectionTimeMillisToLive;
+
     public boolean isUseSystemProperties() {
         return useSystemProperties;
     }
@@ -80,6 +92,14 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
         this.maxConnPerRoute = maxConnPerRoute;
     }
 
+    public Long getConnectionTimeMillisToLive() {
+        return connectionTimeMillisToLive;
+    }
+
+    public void setConnectionTimeMillisToLive(Long connectionTimeMillisToLive) {
+        this.connectionTimeMillisToLive = connectionTimeMillisToLive;
+    }
+
     @Override
     protected HttpClientBuilder createInstance() throws Exception {
         HttpClientBuilder builder = HttpClientBuilder.create();
@@ -94,6 +114,10 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
 
         if (maxConnPerRoute > 0) {
             builder.setMaxConnPerRoute(maxConnPerRoute);
+        }
+
+        if (connectionTimeMillisToLive != null) {
+            builder.setConnectionTimeToLive(connectionTimeMillisToLive.longValue(), TimeUnit.MILLISECONDS);
         }
 
         return builder;
