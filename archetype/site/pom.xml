@@ -54,6 +54,7 @@
   <properties>
     <gettingstarted.artifactId>${extra.app.artifactId}</gettingstarted.artifactId>
     <docker.image.name>${extra.app.artifactId}-1</docker.image.name>
+    <site.webapp.context.path>${extra.app.artifactId}</site.webapp.context.path>
   </properties>
 
   <dependencies>
@@ -64,6 +65,14 @@
       <classifier>resources</classifier>
       <type>zip</type>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hippo-project-archetype</artifactId>
+      <version>${project.version}</version>
+      <classifier>tests</classifier>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -98,28 +107,33 @@
             <configuration>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <includeArtifacIds>hippo-project-archetype</includeArtifacIds>
+              <includeArtifactIds>hippo-project-archetype</includeArtifactIds>
               <excludeTransitive>true</excludeTransitive>
               <classifier>resources</classifier>
               <type>zip</type>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
           <execution>
+            <id>copy-test-resources</id>
             <goals>
-              <goal>testCompile</goal>
+              <goal>unpack-dependencies</goal>
             </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <includeGroupIds>${project.groupId}</includeGroupIds>
+              <includeArtifactIds>hippo-project-archetype</includeArtifactIds>
+              <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+              <excludeTransitive>true</excludeTransitive>
+              <includes>**/*.class</includes>
+              <classifier>tests</classifier>
+              <type>test-jar</type>
+            </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>

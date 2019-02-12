@@ -4,15 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DockerIntegrationTest {
+    private static final Logger logger = LoggerFactory.getLogger(DockerIntegrationTest.class);
     private static final String bootstrapTimeout = System.getProperty("docker.test.bootstrap.timeout");
+    private static final String siteWebappContextPath = System.getProperty("docker.test.site.context.path");
     private static final int SLEEP_DURATION = 5_000;
     private static final int CONNECT_TIMEOUT = 1_000;
     private static final int READ_TIMEOUT = 1_000;
@@ -29,7 +33,7 @@ public class DockerIntegrationTest {
 
     @Test
     public void testPingSite() throws InterruptedException {
-        boolean success = pingWebapp("site");
+        boolean success = pingWebapp(siteWebappContextPath);
         if (!success) {
             fail("Pinging site webapp is failed!");
         }
@@ -42,10 +46,12 @@ public class DockerIntegrationTest {
                 int webappStatus = doRequest(webapp);
                 assertEquals(webappStatus, EXPECTED_HTTP_STATUS_CODE);
                 return true;
-            } catch (ConnectException | SocketTimeoutException e) {
+            } catch (SocketTimeoutException | SocketException e) {
+                logger.warn(e.getMessage());
                 timeout = timeout - SLEEP_DURATION;
                 Thread.sleep(SLEEP_DURATION);
             } catch (Exception e) {
+                logger.error(e.getMessage(), e);
                 break;
             }
         }

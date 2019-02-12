@@ -54,6 +54,7 @@
   <properties>
     <gettingstarted.artifactId>${main.app.artifactId}</gettingstarted.artifactId>
     <docker.image.name>${main.app.artifactId}-1</docker.image.name>
+    <site.webapp.context.path>site</site.webapp.context.path>
   </properties>
 
   <build>
@@ -96,6 +97,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <executions>
           <execution>
+            <id>Compile test resources</id>
+            <phase>generate-resources</phase>
             <goals>
               <goal>testCompile</goal>
             </goals>
@@ -120,7 +123,21 @@
           </execution>
         </executions>
       </plugin>
-
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Create test resource</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>**/*.class</includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-archetype-plugin</artifactId>

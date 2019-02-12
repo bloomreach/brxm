@@ -48,7 +48,7 @@
     <maven.dependency.plugin.version>3.1.1</maven.dependency.plugin.version>
     <maven.resources.plugin.version>2.7</maven.resources.plugin.version>
 
-	<!-- ant and junit versions are aligned with the versions that maven-antrun-plugin use -->
+    <!-- ant and junit versions are aligned with the versions which maven-antrun-plugin uses -->
     <ant.version>1.9.4</ant.version>
     <junit.version>4.11</junit.version>
 
@@ -174,6 +174,7 @@
                          failureProperty="test.failed"
                          logfailedtests="true">
                     <sysproperty key="docker.test.bootstrap.timeout" value="${docker.test.bootstrap.timeout}"/>
+                    <sysproperty key="docker.test.site.context.path" value="${site.webapp.context.path}"/>
                     <classpath id="classpath.test">
                       <pathelement location="${org.hamcrest:hamcrest-core:jar}" />
                       <pathelement location="${project.build.directory}/test-classes" />
