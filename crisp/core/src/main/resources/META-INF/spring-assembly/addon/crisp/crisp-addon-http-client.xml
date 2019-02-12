@@ -22,7 +22,7 @@
 
   <bean id="crispHttpClientBuilder" class="org.onehippo.cms7.crisp.core.support.httpclient.DefaultHttpClientBuilderFactoryBean">
     <property name="useSystemProperties" value="true" />
-    <property name="maxConnTotal" value="500" />
+    <property name="maxConnTotal" value="600" />
     <property name="maxConnPerRoute" value="200" />
   </bean>
 
