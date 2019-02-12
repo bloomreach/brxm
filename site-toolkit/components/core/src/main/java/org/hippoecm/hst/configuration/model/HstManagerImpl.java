@@ -48,7 +48,7 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
 
 
     public HstSiteMapMatcher getSiteMapMatcher() {
-
+        // will return right HstSiteMapMatcher since classloader of HstManagerImpl is the right webapp at this moment
         return hstModelProvider.getHstModel().getHstSiteMapMatcher();
     }
 
