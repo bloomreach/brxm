@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,6 +157,19 @@ describe('HstService', () => {
       .catch(catchSpy);
 
     $httpBackend.flush();
+    expect(catchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects a promise on a request cancel', () => {
+    const catchSpy = jasmine.createSpy('catchSpy');
+    const url = `${cmsContextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
+    $httpBackend.expectGET(url).respond(200);
+    hstService
+      .getChannel('test', contextPath, hostGroup)
+      .cancel()
+      .catch(catchSpy);
+
+    $timeout.flush();
     expect(catchSpy).toHaveBeenCalled();
   });
 
