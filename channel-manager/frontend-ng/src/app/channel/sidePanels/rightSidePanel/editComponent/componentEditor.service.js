@@ -59,10 +59,13 @@ class ComponentEditorService {
     channel, component, container, page,
   }) {
     this.close();
+    this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
-    return this.HstComponentService.getProperties(component.id, component.variant)
-      .then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
-      .catch(() => this._onLoadFailure());
+    this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
+      .catch(() => this._onLoadFailure())
+      .finally(() => { delete this.request; });
+
+    return this.request;
   }
 
   getPropertyGroups() {
@@ -323,6 +326,10 @@ class ComponentEditorService {
   }
 
   close() {
+    if (this.request) {
+      this.request.cancel();
+    }
+
     this._clearData();
     this.OverlayService.deselectComponent();
     delete this.error;
