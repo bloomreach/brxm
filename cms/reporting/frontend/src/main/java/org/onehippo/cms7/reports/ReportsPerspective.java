@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
 
         refreshGroup = new WebMarkupContainer("refresh-group");
         refreshGroup.add(new Label("latest-refresh-label", new StringResourceModel("last-refresh-label", this)));
-        lastRefreshDateLabel = new DateLabel("latest-refresh-date", new PatternDateConverter("HH:mm", false));
+        lastRefreshDateLabel = new DateLabel("latest-refresh-date", new PatternDateConverter("HH:mm", true));
         lastRefreshDateLabel.setOutputMarkupId(true);
         refreshGroup.add(lastRefreshDateLabel);
 
