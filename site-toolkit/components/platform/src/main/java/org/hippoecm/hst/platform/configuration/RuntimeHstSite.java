@@ -17,7 +17,6 @@
 package org.hippoecm.hst.platform.configuration;
 
 import org.apache.commons.lang3.RegExUtils;
-import org.hippoecm.hst.configuration.GenericHstSiteWrapper;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.onehippo.cms7.services.hst.Channel;
