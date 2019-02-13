@@ -252,8 +252,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 } else {
 
                     // Add runtime host
-                    // TODO should we also do this for any HST website requests or only for platform (/cms) requests?
-                    // TODO dev-localhost should be configurable
+                    // TODO HSTTWO-4540 Replace "dev-localhost" by finding the 'hostgroup' that has hst:autoHostTemplate
+                    // TODO the hostname will be only added if it fits the hst:autoHostTemplate pattern match.
                     vHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName, "dev-localhost", contextPath);
                     resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
 
