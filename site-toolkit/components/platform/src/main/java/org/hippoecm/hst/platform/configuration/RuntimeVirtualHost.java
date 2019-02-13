@@ -108,14 +108,13 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
     @Override
     public boolean isPortInUrl() {
-        // TODO validate, is this optional? Opposed to typically localhost, we do not want the port number in the URL
-        // TODO for auto created hosts, but we do inherit the show contextpath from the delegatee
+        // TODO depending on whether the 'runtime host' to be added has the port in the URL this should return true or false
         return false;
     }
 
     @Override
     public String getScheme() {
-        // TODO make this configurable? Most likely most be https
+        // TODO depending on whether the 'runtime host' to be added has http or https
         return super.getScheme();
     }
 
