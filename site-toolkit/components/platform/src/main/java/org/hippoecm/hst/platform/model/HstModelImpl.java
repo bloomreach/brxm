@@ -291,6 +291,9 @@ public class HstModelImpl implements InternalHstModel {
 
     // returns true if at least one runtime host was added
     private boolean addRuntimeHosts(final VirtualHostsService virtualHosts) {
+
+        // TODO HSTTWO-4540 if a runtime host is still present in runtimeHosts but has in the mean time be
+        // TODO added already as explicit JCR configuration, remove it from the runtimeHosts map and do not add it runtime
         boolean added = false;
         for (Map.Entry<String, Pair<String, String>> entry : runtimeHosts.entrySet()) {
             final String hostName = entry.getKey();
