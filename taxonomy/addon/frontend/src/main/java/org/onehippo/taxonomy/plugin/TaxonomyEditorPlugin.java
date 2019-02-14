@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -61,7 +59,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
-
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -80,7 +77,6 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyException;
@@ -97,9 +93,10 @@ import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * TaxonomyEditorPlugin used when editing taxonomy documents.
@@ -113,16 +110,23 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
     private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
 
-    private Locale currentLocaleSelection;
+    private final boolean editing;
+    private final boolean useUrlKeyEncoding;
+
+    private final Form<?> container;
+    private final MarkupContainer holder;
+    private final MarkupContainer toolbarHolder;
+    private final ITaxonomyService service;
+    private final Comparator<Category> categoryComparator;
+    private final ITreeNodeIconProvider treeNodeIconProvider;
+
     private JcrTaxonomy taxonomy;
-    private String key;
-    private IModel<String[]> synonymModel;
-    private Form<?> container;
-    private MarkupContainer holder;
-    private MarkupContainer toolbarHolder;
     private TaxonomyTreeModel treeModel;
     private TaxonomyTree tree;
-    private final boolean useUrlKeyEncoding;
+    private IModel<String[]> synonymModel;
+
+    private Locale currentLocaleSelection;
+    private String key;
 
     /**
      * Constructor which adds all the UI components. The UI components include taxonomy tree, toolbar, and detail form
@@ -132,66 +136,17 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     public TaxonomyEditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final boolean editing = "edit".equals(config.getString("mode"));
+        editing = "edit".equals(config.getString("mode"));
         useUrlKeyEncoding = config.getAsBoolean("keys.urlencode", false);
 
-        final ITaxonomyService service = getPluginContext()
-                .getService(config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID), ITaxonomyService.class);
+        service = getPluginContext().getService(config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID), ITaxonomyService.class);
 
-        taxonomy = newTaxonomy(getModel(), editing, service);
+        categoryComparator = getCategoryComparator(config, currentLocaleSelection);
+        treeNodeIconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
 
-        final List<Locale> availableLocaleSelections = getAvailableLocaleSelections();
         currentLocaleSelection = getLocale();
 
-        synonymModel = new IModel<String[]>() {
-
-            public String[] getObject() {
-                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
-                return info.getSynonyms();
-            }
-
-            public void setObject(String[] object) {
-                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
-                try {
-                    info.setSynonyms(object);
-                } catch (TaxonomyException e) {
-                    redraw();
-                }
-            }
-
-            public void detach() {
-            }
-
-        };
-
-        final IModel<Taxonomy> taxonomyModel = Model.of(taxonomy);
-        final Comparator<Category> categoryComparator = getCategoryComparator(config, currentLocaleSelection);
-        treeModel = new TaxonomyTreeModel(taxonomyModel, currentLocaleSelection, categoryComparator);
-        final ITreeNodeIconProvider treeNodeIconProvider = FolderTreePlugin.newTreeNodeIconProvider(context, config);
-        tree = new TaxonomyTree("tree", treeModel, currentLocaleSelection, treeNodeIconProvider) {
-
-            @Override
-            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
-                if (node instanceof CategoryNode) {
-                    final Category category = ((CategoryNode) node).getCategory();
-                    key = category.getKey();
-                    if (editing) {
-                        updateToolbarForCategory(category);
-                    }
-                    redraw();
-                } else if (node instanceof TaxonomyNode) {
-                    key = null;
-                    if (editing) {
-                        updateToolbarForCategory(null);
-                    }
-                    redraw();
-                } else {
-                    log.error("Unexpected tree node: " + node);
-                }
-                super.onNodeLinkClicked(target, node);
-            }
-        };
-        tree.setOutputMarkupId(true);
+        initializeTree();
         add(tree);
 
         holder = new WebMarkupContainer("container-holder");
@@ -201,7 +156,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         toolbarHolder.setOutputMarkupId(true);
 
         if (editing) {
-            toolbarHolder.add(new AddButton(taxonomyModel, categoryComparator));
+            toolbarHolder.add(new AddButton(Model.of(taxonomy), categoryComparator));
             toolbarHolder.add(new MoveButton(context, config));
             toolbarHolder.add(new RemoveButton());
             toolbarHolder.add(new MoveUpButton(categoryComparator));
@@ -220,6 +175,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             }
         };
 
+        final List<Locale> availableLocaleSelections = getAvailableLocaleSelections();
         ChoiceRenderer<Locale> choiceRenderer = new ChoiceRenderer<>("displayName", "toString");
         DropDownChoice<Locale> languageSelectionChoice =
                 new DropDownChoice<>("locales", new PropertyModel<>(this, "currentLocaleSelection"), availableLocaleSelections, choiceRenderer);
@@ -360,9 +316,67 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         add(holder);
     }
 
+    private void initializeTree() {
+
+        taxonomy = newTaxonomy(getModel(), editing, service);
+
+        synonymModel = new IModel<String[]>() {
+
+            public String[] getObject() {
+                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
+                return info.getSynonyms();
+            }
+
+            public void setObject(String[] object) {
+                EditableCategoryInfo info = taxonomy.getCategoryByKey(key).getInfo(currentLocaleSelection);
+                try {
+                    info.setSynonyms(object);
+                } catch (TaxonomyException e) {
+                    redraw();
+                }
+            }
+
+            public void detach() {
+            }
+        };
+
+        treeModel = new TaxonomyTreeModel(Model.of(taxonomy), currentLocaleSelection, categoryComparator);
+
+        tree = new TaxonomyTree("tree", treeModel, currentLocaleSelection, treeNodeIconProvider) {
+
+            @Override
+            protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode node) {
+                if (node instanceof CategoryNode) {
+                    final Category category = ((CategoryNode) node).getCategory();
+                    key = category.getKey();
+                    if (editing) {
+                        updateToolbarForCategory(category);
+                    }
+                    redraw();
+                } else if (node instanceof TaxonomyNode) {
+                    key = null;
+                    if (editing) {
+                        updateToolbarForCategory(null);
+                    }
+                    redraw();
+                } else {
+                    log.error("Unexpected tree node: " + node);
+                }
+                super.onNodeLinkClicked(target, node);
+            }
+        };
+        tree.setOutputMarkupId(true);
+    }
+
     @Override
     public void renderHead(final IHeaderResponse response) {
         response.render(CssHeaderItem.forReference(CSS));
+    }
+
+    @Override
+    protected void onModelChanged() {
+        initializeTree();
+        replace(tree);
     }
 
     /**
