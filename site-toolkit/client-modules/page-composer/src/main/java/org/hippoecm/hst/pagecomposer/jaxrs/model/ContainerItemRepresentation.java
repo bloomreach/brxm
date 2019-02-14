@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,9 @@ public class ContainerItemRepresentation extends ComponentRepresentation {
             setLabel(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_LABEL).getString());
         }
         setType(HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.toString());
-        setXtype(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
+        if (node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE)) {
+            setXtype(node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_XTYPE).getString());
+        }
 
         setComponentClassName(node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME) ?
                 node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "");
