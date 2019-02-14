@@ -237,7 +237,7 @@
   "TOOLBAR_MENU_CHANNEL_DISCARD_CHANGES": "Discard changes",
   "TOOLBAR_BUTTON_LEFT_SIDE_PANEL_OPEN": "Open left side panel",
   "SUBPAGE_PAGE_COPY_LABEL_URL_STEM": "Destination URL",
-  "VALIDATION_REQUIRED": "This is required",
+  "VALIDATION_REQUIRED": "Enter a value",
   "TOOLBAR_MENU_PAGE_PROPERTIES": "Properties",
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Failed to save the channel setting",
   "ERROR_NOT_A_FOLDER": "Selected element is not a folder",
