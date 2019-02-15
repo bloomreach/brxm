@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
@@ -51,19 +52,18 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     private final IFieldDescriptor field;
     private final ITypeDescriptor fieldType;
-    private ITypeValidator typeValidator;
     private final ValidatorService validatorService;
+    private ITypeValidator typeValidator;
 
-    public JcrFieldValidator(final IFieldDescriptor field, final JcrTypeValidator container) throws StoreException {
+    JcrFieldValidator(final IFieldDescriptor field, final JcrTypeValidator container) throws StoreException {
         this.field = field;
         this.validatorService = container.getValidatorService();
         this.fieldType = field.getTypeDescriptor();
+
         if (fieldType.isNode()) {
-            if (fieldType.equals(container.getType())) {
-                typeValidator = container;
-            } else {
-                typeValidator = new JcrTypeValidator(fieldType, validatorService);
-            }
+            typeValidator = fieldType.equals(container.getType())
+                    ? container
+                    : new JcrTypeValidator(fieldType, validatorService);
         }
 
         if (validatorService != null) {
@@ -87,9 +87,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         final Set<Violation> violations = new LinkedHashSet<>();
         final Set<String> validators = field.getValidators();
         final boolean required = validators.contains(REQUIRED_VALIDATOR);
-        if ((required || fieldType.isNode() || validators.size() > 0) && !field.isProtected()) {
+        if ((required || fieldType.isNode() || !validators.isEmpty()) && !field.isProtected()) {
             if ("*".equals(field.getPath())) {
-                if (log.isDebugEnabled() && validators.size() > 0) {
+                if (log.isDebugEnabled() && !validators.isEmpty()) {
                     log.debug("Wildcard properties are not validated");
                 }
                 return violations;
@@ -99,7 +99,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             if (fieldType.isNode()) {
                 provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
             } else {
-                final JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + field.getPath(), true);
+                final String propertyPath = nodeModel.getItemModel().getPath() + "/" + field.getPath();
+                final JcrItemModel<Property> itemModel = new JcrItemModel<>(propertyPath, true);
                 provider = new PropertyValueProvider(field, null, itemModel);
             }
             final Iterator<? extends IModel> iter = provider.iterator(0, provider.size());
@@ -131,11 +132,11 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                     }
                 }
 
-                if (required && field.getTypeDescriptor().isType("Date") 
+                if (required && field.getTypeDescriptor().isType("Date")
                     && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
                         violations.add(newViolation(
                                 new ModelPathElement(field, field.getPath(), 0),
-                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT), 
+                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
                                 ValidationScope.FIELD)
                         );
                 }
@@ -158,13 +159,13 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     }
 
     @Override
-    public Violation newValueViolation(final IModel childModel, final IModel<String> message) 
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message)
             throws ValidationException {
         return newValueViolation(childModel, message, ValidationScope.FIELD);
     }
 
     @Override
-    public Violation newValueViolation(final IModel childModel, final IModel<String> message, 
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message,
                                        final ValidationScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
     }
@@ -224,13 +225,13 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         return new ClassResourceModel(key, ValidatorMessages.class, parameters);
     }
 
-    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters, 
+    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters,
                                   final ValidationScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, getMessage(message, parameters), scope);
     }
 
-    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel, 
+    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
                                   final ValidationScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, messageModel, scope);

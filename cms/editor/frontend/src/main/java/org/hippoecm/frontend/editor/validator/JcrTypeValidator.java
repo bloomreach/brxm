@@ -37,6 +37,7 @@ public class JcrTypeValidator implements ITypeValidator {
     public JcrTypeValidator(final ITypeDescriptor type, final ValidatorService validatorService) throws StoreException {
         this.type = type;
         this.validatorService = validatorService;
+
         for (final IFieldDescriptor field : type.getFields().values()) {
             fieldValidators.add(new JcrFieldValidator(field, this));
         }
@@ -46,7 +47,7 @@ public class JcrTypeValidator implements ITypeValidator {
         return type;
     }
 
-    public ValidatorService getValidatorService(){
+    public ValidatorService getValidatorService() {
         return validatorService;
     }
 

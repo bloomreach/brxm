@@ -62,7 +62,8 @@ public class TemplateTypeValidator implements ITypeValidator {
                         if (paths.contains(path)) {
                             // TODO: add actual paths
                             violations.add(new Violation(new HashSet<>(),
-                                    new ClassResourceModel(ValidatorMessages.PATH_USED_MULTIPLE_TIMES, ValidatorMessages.class)));
+                                    new ClassResourceModel(ValidatorMessages.PATH_USED_MULTIPLE_TIMES,
+                                            ValidatorMessages.class)));
                         }
                         if (!path.equals("*")) {
                             paths.add(path);

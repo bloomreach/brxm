@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.base.CharMatcher;
-
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.htmlcleaner.BaseToken;
@@ -29,13 +27,13 @@ import org.htmlcleaner.ContentNode;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 
-public class HtmlValidator implements IClusterable {
+import com.google.common.base.CharMatcher;
 
-    private static final long serialVersionUID = 1L;
+public class HtmlValidator implements IClusterable {
 
     public static final String[] VALID_ELEMENTS = new String[]{"img", "object", "embed", "form", "applet", "iframe"};
 
-    public Set<String> validateNonEmpty(String html) {
+    public Set<String> validateNonEmpty(final String html) {
         final Set<String> result = new HashSet<>();
         final HtmlCleaner cleaner = new HtmlCleaner();
         final CleanerProperties properties = cleaner.getProperties();
@@ -51,9 +49,9 @@ public class HtmlValidator implements IClusterable {
     }
 
     private boolean isEmpty(final TagNode node) {
-        for (BaseToken item : node.getAllChildren()) {
+        for (final BaseToken item : node.getAllChildren()) {
             if (item instanceof TagNode) {
-                final TagNode childNode = (TagNode)item;
+                final TagNode childNode = (TagNode) item;
                 if (Arrays.stream(VALID_ELEMENTS).anyMatch(e -> childNode.getName().equalsIgnoreCase(e))
                         || CharMatcher.invisible().negate().matchesAnyOf(childNode.getText())
                         || !isEmpty(childNode)) {

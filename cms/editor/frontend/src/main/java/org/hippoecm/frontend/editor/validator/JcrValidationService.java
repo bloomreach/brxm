@@ -47,14 +47,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A validation engine that registers itself as an {@link org.hippoecm.frontend.validation.IValidationService}.  All supported
- * validation rules are hardcoded.  Generic node types will be validated according to the
- * "required" and "non-empty" rules that apply to fields (see {@link org.hippoecm.frontend.editor.validator.JcrFieldValidator}).
- * The template type node type is validated by the {@link org.hippoecm.frontend.editor.validator.TemplateTypeValidator}.
+ * A validation engine that registers itself as an {@link org.hippoecm.frontend.validation.IValidationService}.  All
+ * supported validation rules are hardcoded.  Generic node types will be validated according to the "required" and
+ * "non-empty" rules that apply to fields (see {@link org.hippoecm.frontend.editor.validator.JcrFieldValidator}). The
+ * template type node type is validated by the {@link org.hippoecm.frontend.editor.validator.TemplateTypeValidator}.
  * <p>
- * Validation can be triggered by invoking the {@link org.hippoecm.frontend.validation.IValidationService#validate()} method.
- * Results of the validation are returned and made available on the validator.model model
- * service.
+ * Validation can be triggered by invoking the {@link org.hippoecm.frontend.validation.IValidationService#validate()}
+ * method. Results of the validation are returned and made available on the validator.model model service.
  * <p>
  * Configure with
  * <ul>
@@ -63,9 +62,9 @@ import org.slf4j.LoggerFactory;
  * <li><b>wicket.model</b>
  * The model that is used in validation.
  * <li><b>validator.model</b>
- * The model where the {@link org.hippoecm.frontend.validation.IValidationResult} is made available.  Plugins that need to
- * change their appearance or functionality based on the validation status can observe the
- * model that is registered here.
+ * The model where the {@link org.hippoecm.frontend.validation.IValidationResult} is made available.  Plugins that need
+ * to change their appearance or functionality based on the validation status can observe the model that is registered
+ * here.
  * </ul>
  */
 public class JcrValidationService implements IValidationService, IDetachable {
@@ -115,6 +114,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
         if (model == null || model.getObject() == null) {
             throw new ValidationException("No model found, skipping validation");
         }
+
         try {
             final String nodeType = model.getObject().getPrimaryNodeType().getName();
             final ITypeValidator validator;

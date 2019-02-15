@@ -53,7 +53,7 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
     public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
             throw new ValidationException("Invalid validation exception; " +
-                    "cannot validate non-string field for emptyness");
+                    "cannot validate non-string field for emptiness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
@@ -62,9 +62,9 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
                                    final IModel childModel) throws ValidationException {
-        
+
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         for (final String key : htmlValidator.validateNonEmpty(value)) {
