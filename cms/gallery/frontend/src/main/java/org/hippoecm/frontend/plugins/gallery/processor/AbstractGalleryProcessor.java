@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,16 +57,17 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
             RepositoryException {
         long time = System.currentTimeMillis();
 
-        Node resourceNode = getPrimaryChild(node);
-        if (!resourceNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
-            throw new GalleryException("Resource node not of primaryType " + HippoNodeType.NT_RESOURCE);
+        final Node primaryResourceNode = getPrimaryChild(node);
+        if (!primaryResourceNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
+            throw new GalleryException("Primary resource node " + primaryResourceNode.getPath()
+                    + " is not of primaryType " + HippoNodeType.NT_RESOURCE);
         }
 
         //Create a new image binary that serves as the original source converted to RGB plus image metadata
         ImageBinary image = new ImageBinary(node, stream, fileName, mimeType);
 
         log.debug("Setting JCR data of primary resource");
-        ResourceHelper.setDefaultResourceProperties(resourceNode, image.getMimeType(), image, image.getFileName());
+        ResourceHelper.setDefaultResourceProperties(primaryResourceNode, image.getMimeType(), image, image.getFileName());
 
         //TODO: Currently the InputStream is never used in our impls, might revisit this piece of the API
         InputStream isTemp = image.getStream();
@@ -86,27 +87,37 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         }
 
         //create the primary resource node
-        log.debug("Creating primary resource {}", resourceNode.getPath());
-        Calendar lastModified = resourceNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate();
-        initGalleryResource(resourceNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
+        log.debug("Creating primary resource {}", primaryResourceNode.getPath());
+        Calendar lastModified = primaryResourceNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate();
 
-        // create all resource variant nodes
-        for (IFieldDescriptor field : type.getFields().values()) {
-            if (field.getTypeDescriptor().isType(HippoGalleryNodeType.IMAGE)) {
-                String variantPath = field.getPath();
-                if (!node.hasNode(variantPath)) {
-                    log.debug("creating variant resource {}", variantPath);
-                    Node variantNode = node.addNode(variantPath, field.getTypeDescriptor().getType());
-                    initGalleryResource(variantNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
-                }
-            }
-        }
+        initGalleryResource(primaryResourceNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
+
+        initGalleryResourceVariants(node, image, type, lastModified);
 
         image.dispose();
 
         if (log.isDebugEnabled()) {
             time = System.currentTimeMillis() - time;
             log.debug("Processing image '{}' took {} ms.", fileName, time);
+        }
+    }
+
+
+    /**
+     * Create resource variants below the image set node, based on a binary and the type definition.
+     */
+    protected void initGalleryResourceVariants(final Node imageSetNode, final ImageBinary image, final ITypeDescriptor type,
+                                               final Calendar lastModified) throws RepositoryException, GalleryException {
+        // create all resource variant nodes
+        for (IFieldDescriptor field : type.getFields().values()) {
+            if (field.getTypeDescriptor().isType(HippoGalleryNodeType.IMAGE)) {
+                String variantPath = field.getPath();
+                if (!imageSetNode.hasNode(variantPath)) {
+                    log.debug("Creating variant resource {}", variantPath);
+                    Node variantNode = imageSetNode.addNode(variantPath, field.getTypeDescriptor().getType());
+                    initGalleryResource(variantNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
+                }
+            }
         }
     }
 

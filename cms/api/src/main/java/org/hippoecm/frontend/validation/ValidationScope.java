@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,15 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.validation;
 
-jQuery(document).ready(function() {
-  // Fix rendering of inline SVGs in IE11 on Windows 10. This is a known bug that Microsoft won't fix anymore:
-  // https://connect.microsoft.com/IE/feedback/details/2337112/svg-use-elements-disappear-on-windows-10
-  setTimeout(function() {
-    jQuery('use').each(function() {
-      if (this.href && this.href.baseVal) {
-        this.href.baseVal = this.href.baseVal;
-      }
-    });
-  }, 10);
-});
+public enum ValidationScope {
+    DOCUMENT,
+    FIELD
+}

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 
 public class EditPerspective extends Perspective {
 
-    static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
+    private static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private FeedbackPanel feedback;
     private boolean feedbackShown;
@@ -103,7 +103,7 @@ public class EditPerspective extends Perspective {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
                         boolean hasMessage = false;
-                        if (result != null && result.getViolations() != null){
+                        if (result != null && result.getViolations() != null) {
                             hasMessage = !result.getViolations().isEmpty();
                         }
                         renderFeedbackIfNeeded(target, hasMessage);
@@ -117,7 +117,7 @@ public class EditPerspective extends Perspective {
     @Override
     public void onEvent(IEvent event) {
         // handle notified validation events from wicket fields
-        if(event.getPayload() instanceof UpdateFeedbackInfo) {
+        if (event.getPayload() instanceof UpdateFeedbackInfo) {
             final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
             final AjaxRequestTarget target = ufi.getTarget();
             if (ufi.isClearAll()) {
@@ -135,7 +135,7 @@ public class EditPerspective extends Perspective {
     }
 
     private void clearFeedbackOfChildComponents() {
-        visitChildren(HippoForm.class, (object, visit) -> ((HippoForm)object).clearFeedbackMessages());
+        visitChildren(HippoForm.class, (object, visit) -> ((HippoForm) object).clearFeedbackMessages());
     }
 
     private void renderFeedbackIfNeeded(final AjaxRequestTarget target, final boolean hasFeedbackMessage) {
@@ -163,7 +163,7 @@ public class EditPerspective extends Perspective {
                                 Node versionNode = node.getParent();
                                 Calendar calendar = versionNode.getProperty("jcr:created").getDate();
                                 MessageFormat format = new MessageFormat("{0} {1,date} {1,time}", getLocale());
-                                return format.format(new Object[] { nodeName.getObject(), calendar.getTime() });
+                                return format.format(new Object[]{nodeName.getObject(), calendar.getTime()});
                             }
                         } catch (ValueFormatException e) {
                             log.error("Value is not a date", e);
@@ -202,7 +202,7 @@ public class EditPerspective extends Perspective {
         try {
             return JcrUtils.getStringProperty(frozenNode, JcrConstants.JCR_FROZENUUID, frozenNode.getIdentifier());
         } catch (RepositoryException e) {
-            log.warn(e.getMessage(),e );
+            log.warn(e.getMessage(), e);
         }
         return null;
     }

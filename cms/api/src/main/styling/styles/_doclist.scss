@@ -237,9 +237,6 @@ $doclist-icon-shift-right: 2px;
     width: 100%;
 
     > tr {
-      // prevent IE10 from setting tbody height on all rows
-      height: auto;
-
       border-top: 1px solid $doclist-row-separator-color;
 
       &:first-child {

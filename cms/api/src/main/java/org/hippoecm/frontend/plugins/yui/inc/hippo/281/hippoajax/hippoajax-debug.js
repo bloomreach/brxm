@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,15 +45,12 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
       _scrollbarWidth: null,
 
       loadJavascript: function (url, callback, scope) {
-        var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange',
+        var evt = "onload",
           element = document.createElement("script");
         element.type = "text/javascript";
         element.src = url;
         if (callback) {
           element[evt] = function () {
-            if (YAHOO.env.ua.ie && (!(/loaded|complete/.test(window.event.srcElement.readyState)))) {
-              return;
-            }
             callback.call(scope);
             element[evt] = null;
           };

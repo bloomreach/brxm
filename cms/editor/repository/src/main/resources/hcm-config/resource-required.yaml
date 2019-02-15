@@ -3,3 +3,4 @@ definitions:
     /hippo:configuration/hippo:frontend/cms/cms-validators/resource-required:
       jcr:primaryType: frontend:plugin
       plugin.class: org.hippoecm.frontend.editor.validator.plugins.ResourceRequiredValidator
+      scope: field

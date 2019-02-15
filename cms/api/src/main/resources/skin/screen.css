@@ -640,7 +640,6 @@ body.hippo-root div.yui-log-container {
 
 .hippo-root .yui-tt-shadow-visible {
   opacity: .12;
-  filter: alpha(opacity = 12); /* For IE */
 }
 
 /* Workflow reject request dialog: textarea styling */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class MimeTypeHelper {
      * @return A standard compliant mimetype in lowercase
      */
     public static String sanitizeMimeType(final String mimeType) {
-        // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
+        // Edge uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
         // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
         // For more info see http://www.iana.org/assignments/media-types/image/ and
         // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
@@ -125,7 +125,7 @@ public class MimeTypeHelper {
             } else {
                 // This method can be overridden to allow more such checks on content type.  if such an override
                 // wants to be really strict and not allow unknown content, the following thrown exception is to be included
-                // throw new ValueFormatException("impermissible unrecognized type content");
+                // throw new InvalidMimeTypeException("impermissible unrecognized type content");
             }
         } catch (IOException ex) {
             throw new InvalidMimeTypeException("impermissible unknown type content");

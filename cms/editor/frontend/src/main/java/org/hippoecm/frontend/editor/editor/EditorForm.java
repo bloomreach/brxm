@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,9 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +69,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     private ValidationService validation;
 
     public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
-            IPluginConfig config) {
+                      IPluginConfig config) {
         super(wicketId, model);
 
         this.context = context;
@@ -142,12 +144,20 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         validation.stop();
     }
 
-    public boolean accept(FeedbackMessage message) {
+    public boolean accept(final FeedbackMessage message) {
         final Component reporter = message.getReporter();
         if (reporter == null) {
             return false;
         }
-        return reporter == this || this.contains(reporter, true);
+        boolean inContainerScope = reporter == this || this.contains(reporter, true);
+        if (!inContainerScope) {
+            return false;
+        }
+        if (message instanceof ScopedFeedBackMessage) {
+            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
+        }
+        return false;
     }
 
     @Override
@@ -167,13 +177,17 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     }
 
     @Override
-    public void warn(final IModel<String> message) {
-        super.warn(message.getObject());
+    // the same logic as in org.apache.wicket.Component.warn
+    public void warn(final IModel<String> message, final ValidationScope scope) {
+        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.WARNING, scope));
+        addStateChange();
     }
 
     @Override
-    public void error(final IModel<String> message) {
-        super.error(message.getObject());
+    // the same logic as in org.apache.wicket.Component.error
+    public void error(final IModel<String> message, final ValidationScope scope) {
+        getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
+        addStateChange();
     }
 
     @Override

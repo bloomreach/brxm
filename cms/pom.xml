@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.0</version>
+    <version>30.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -82,6 +82,7 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
+    <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
@@ -115,9 +116,9 @@
 
     <!--
       TODO: when wicket.version is bumped again, check whether the version override
-      of commons-fileupload in api/pom.xml can be removed.
+      of commons-fileupload in api/pom.xml can be remove. (It will be in 7.12.0).
     -->
-    <wicket.version>7.10.0</wicket.version>
+    <wicket.version>7.11.0</wicket.version>
     <wicket-extjs.version>0.26.0</wicket-extjs.version>
     <wicket15-tree.version>7.1.0</wicket15-tree.version>
     <httpclient.version>4.5.6</httpclient.version>
@@ -132,7 +133,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.9.2-h1</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.11.2-h1-SNAPSHOT</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 

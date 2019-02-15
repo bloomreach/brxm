@@ -96,7 +96,10 @@ public class RequestsView extends RepeatingView {
     }
 
     protected void populateItem(final Item<Request> item) {
-        item.add(new StdWorkflow("info", "info") {
+
+        final Request request = item.getModel().getObject();
+
+        final StdWorkflow requestInfo = new StdWorkflow("info", "info") {
 
             @Override
             public String getSubMenu() {
@@ -112,22 +115,14 @@ public class RequestsView extends RepeatingView {
                 final String parameter = schedule != null ?
                         DateTimePrinter.of(schedule).appendDST().print(FormatStyle.FULL) : "??";
                 return new StringResourceModel("state-" + state, this)
-                    .setDefaultValue("unknown")
-                    .setParameters(parameter);
+                        .setDefaultValue("unknown")
+                        .setParameters(parameter);
             }
+        };
+        item.add(requestInfo);
+        setVisibility(requestInfo, request.getInfo());
 
-            @Override
-            protected void invoke() {
-            }
-        });
-
-        item.add(new StdWorkflow("accept", new StringResourceModel("accept-request", this), getModel()) {
-
-            @Override
-            public boolean isVisible() {
-                final Request request = item.getModel().getObject();
-                return Boolean.TRUE.equals(request.getAccept());
-            }
+        final StdWorkflow accept = new StdWorkflow("accept", new StringResourceModel("accept-request", this), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -145,17 +140,13 @@ public class RequestsView extends RepeatingView {
                 workflow.acceptRequest(item.getModelObject().getId());
                 return null;
             }
-        });
+        };
+        item.add(accept);
+        setVisibility(accept, request.getAccept());
 
-        item.add(new StdWorkflow("reject", new StringResourceModel("reject-request", this), context, getModel()) {
+        final StdWorkflow reject = new StdWorkflow("reject", new StringResourceModel("reject-request", this), context, getModel()) {
             @SuppressWarnings("unused") // reason is used in PropertyModel
             public String reason;
-
-            @Override
-            public boolean isVisible() {
-                final Request request = item.getModel().getObject();
-                return Boolean.TRUE.equals(request.getReject());
-            }
 
             @Override
             public String getSubMenu() {
@@ -187,15 +178,11 @@ public class RequestsView extends RepeatingView {
                 workflow.rejectRequest(item.getModelObject().getId(), reason);
                 return null;
             }
-        });
+        };
+        item.add(reject);
+        setVisibility(reject, request.getReject());
 
-        item.add(new StdWorkflow("cancel", new StringResourceModel("cancel-request", this), context, getModel()) {
-
-            @Override
-            public boolean isVisible() {
-                final Request request = item.getModel().getObject();
-                return Boolean.TRUE.equals(request.getCancel());
-            }
+        final StdWorkflow cancel = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -259,7 +246,13 @@ public class RequestsView extends RepeatingView {
                 workflow.cancelRequest(item.getModelObject().getId());
                 return null;
             }
-        });
+        };
+        item.add(cancel);
+        setVisibility(cancel, request.getCancel());
 
+    }
+
+    private Component setVisibility(final StdWorkflow requestInfo, final Boolean info) {
+        return requestInfo.setVisible(Boolean.TRUE.equals(info));
     }
 }

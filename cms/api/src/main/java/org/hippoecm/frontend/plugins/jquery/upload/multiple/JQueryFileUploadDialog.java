@@ -74,6 +74,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                setCancelEnabled(false);
                 isUploadButtonEnabled = false;
                 target.add(this);
             }
@@ -108,6 +109,9 @@ public abstract class JQueryFileUploadDialog extends Dialog {
 
                 if (!error) {
                     JQueryFileUploadDialog.this.closeDialog();
+                }
+                else {
+                    JQueryFileUploadDialog.this.setCancelEnabled(true);
                 }
             }
 
