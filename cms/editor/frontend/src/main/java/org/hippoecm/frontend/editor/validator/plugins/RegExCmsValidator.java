@@ -27,6 +27,9 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 
+/**
+ * Validator that validates if the given value matches the configured regular expression.
+ */
 public class RegExCmsValidator extends AbstractCmsValidator {
 
     private final Pattern pattern;
@@ -39,7 +42,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         if (config.containsKey(PATTERN_KEY)) {
             pattern = Pattern.compile(config.getString(PATTERN_KEY));
         } else {
-            throw new Exception("regex_pattern property should be set in the plugin configuration of: "
+            throw new Exception("Property \"regex_pattern\" should be set in the plugin configuration of: "
                     + config.getName());
         }
     }

@@ -29,7 +29,13 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 
+/**
+ * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
+ * node.
+ */
 public class NodeReferenceValidator extends AbstractCmsValidator {
+
+    private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
     public NodeReferenceValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -46,10 +52,10 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
     @Override
     public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
                                    final IModel childModel) throws ValidationException {
-        
+
         final Set<Violation> violations = new HashSet<>();
         final String ref = (String) childModel.getObject();
-        if (ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
+        if (ref == null || ref.equals("") || ref.equals(ROOT_NODE_UUID)) {
             final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.REFERENCE_IS_EMPTY,
                     ValidatorMessages.class);
             violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));

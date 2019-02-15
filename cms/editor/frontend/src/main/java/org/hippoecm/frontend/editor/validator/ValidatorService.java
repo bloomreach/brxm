@@ -49,17 +49,17 @@ public class ValidatorService extends Plugin {
     }
 
     public ICmsValidator getValidator(final String name) {
-        if (StringUtils.isNotEmpty(name) && map.containsKey(name)) {
-            return map.get(name);
+        if (StringUtils.isEmpty(name)) {
+            return null;
         }
-        return null;
+        return map.getOrDefault(name, null);
     }
 
     public boolean containsValidator(final String name) {
         return map.containsKey(name);
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return map.isEmpty();
     }
 
