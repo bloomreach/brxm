@@ -49,7 +49,6 @@ public class ContentExportDialog extends Dialog<Node> {
     private boolean skipBinary = false;
 
     public ContentExportDialog(final IModelReference<Node> modelReference) {
-        setTitle(Model.of("XML Export " + getNodePath()));
         setSize(DialogConstants.LARGE);
         
         final IModel<Node> nodeModel = modelReference.getModel();
@@ -116,15 +115,17 @@ public class ContentExportDialog extends Dialog<Node> {
         setOkVisible(false);
     }
 
-    private String getNodePath() {
-        final IModel<Node> nodeModel = getModel();
+    public IModel<String> getTitle() {
+        IModel<Node> nodeModel = getModel();
+        String path;
         try {
-            return nodeModel.getObject().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            return e.getMessage();
+            path = e.getMessage();
         }
+        return new Model<>("XML export " + path);
     }
-
+    
     public boolean isSkipBinary() {
         return skipBinary;
     }

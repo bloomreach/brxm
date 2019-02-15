@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ public class YamlExportDialog extends Dialog<Node> {
     private static IValueMap SIZE = new ValueMap("width=855,height=475").makeImmutable();
 
     public YamlExportDialog(final IModelReference<Node> modelReference) {
-        setTitle(Model.of("YAML Export " + getNodePath()));
         setSize(SIZE);
 
         final IModel<Node> nodeModel = modelReference.getModel();
@@ -90,13 +89,15 @@ public class YamlExportDialog extends Dialog<Node> {
         setOkVisible(false);
     }
 
-    private String getNodePath() {
-        final IModel<Node> nodeModel = getModel();
+    public IModel<String> getTitle() {
+        IModel<Node> nodeModel = getModel();
+        String path;
         try {
-            return nodeModel.getObject().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            return e.getMessage();
+            path = e.getMessage();
         }
+        return new Model<>("YAML export " + path);
     }
 
 }

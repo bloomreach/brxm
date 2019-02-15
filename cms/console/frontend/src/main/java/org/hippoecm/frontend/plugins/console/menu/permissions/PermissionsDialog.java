@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -74,8 +74,6 @@ public class PermissionsDialog extends Dialog<Node> {
     private static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(PermissionsPlugin plugin) {
-        setTitle(Model.of("Permissions for " + getNodePath()));
-        
         final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 
@@ -163,12 +161,15 @@ public class PermissionsDialog extends Dialog<Node> {
         return list.toArray(new String[0]);
     }
 
-    private String getNodePath() {
+    public IModel<String> getTitle() {
         final IModel<Node> nodeModel = getModel();
+        String path;
         try {
-            return nodeModel.getObject().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            return e.getMessage();
+            path = e.getMessage();
+            log.warn("Unable to get path for : " + nodeModel);
         }
+        return Model.of("Permissions for " + path);
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ public class ReferencesDialog extends Dialog<Node> {
     private static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
     public ReferencesDialog(final ReferencesPlugin plugin) {
-        setTitle(Model.of("References for " + getNodePath()));
         setSize(DialogConstants.LARGE);
         
         final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
@@ -98,12 +97,15 @@ public class ReferencesDialog extends Dialog<Node> {
         });
     }
 
-    private String getNodePath() {
+    public IModel<String> getTitle() {
         final IModel<Node> nodeModel = getModel();
+        String path;
         try {
-            return nodeModel.getObject().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
-            return e.getMessage();
+            path = e.getMessage();
+            log.warn("Unable to get path for : " + nodeModel);
         }
+        return new Model("References for " + path);
     }
 }

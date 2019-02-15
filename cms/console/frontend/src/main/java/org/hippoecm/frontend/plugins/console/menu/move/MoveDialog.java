@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class MoveDialog extends LookupDialog {
 
     public MoveDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
-        setTitle(Model.of("Move Node"));
+        setTitle(Model.of("Move node"));
         
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();

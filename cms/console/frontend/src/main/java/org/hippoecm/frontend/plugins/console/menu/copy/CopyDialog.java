@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ public class CopyDialog extends LookupDialog {
 
     public CopyDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
+        setTitle(Model.of("Copy node"));
         setSize(SIZE);
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
@@ -99,10 +100,6 @@ public class CopyDialog extends LookupDialog {
             setOkVisible(false);
             setFocusOnCancel();
         }
-    }
-
-    public IModel<String> getTitle() {
-        return Model.of("Copy Node");
     }
 
     @Override

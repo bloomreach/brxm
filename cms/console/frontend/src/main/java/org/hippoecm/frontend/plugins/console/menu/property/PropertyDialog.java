@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -100,7 +100,8 @@ public class PropertyDialog extends Dialog<Node> {
     private boolean focusOnLatestValue;
 
     public PropertyDialog(IModelReference<Node> modelReference) {
-        setTitle(Model.of("Add a new Property"));
+        setTitle(Model.of("Add a new property"));
+        
         setSize(SIZE);
 
         this.modelReference = modelReference;
