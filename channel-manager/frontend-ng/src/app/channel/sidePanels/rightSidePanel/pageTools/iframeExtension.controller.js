@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ class IframeExtensionCtrl {
   constructor(
     $element,
     $log,
+    $rootScope,
     $sce,
     $window,
     ChannelService,
@@ -31,6 +32,7 @@ class IframeExtensionCtrl {
 
     this.$element = $element;
     this.$log = $log;
+    this.$rootScope = $rootScope;
     this.$sce = $sce;
     this.$window = $window;
     this.ChannelService = ChannelService;
@@ -44,6 +46,9 @@ class IframeExtensionCtrl {
 
   $onInit() {
     this._initExtension();
+
+    this.$rootScope.$on('channel:publish', () => this.child.emitEvent('channel.publish'));
+    this.$rootScope.$on('channel:discard', () => this.child.emitEvent('channel.discard'));
   }
 
   _initExtension() {
