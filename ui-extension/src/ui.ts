@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,11 @@
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
 import Emittery = require('emittery'); // tslint:disable-line:import-name
-import { ChannelScope, Emitter, EventHandler, PageScope, PageScopeEvents, UiScope } from './api';
+import { ChannelScope, ChannelScopeEvents, Emitter, EventHandler, PageScope, PageScopeEvents, UiScope } from './api';
 import { ParentConnection } from './parent';
+
+const SCOPE_CHANNEL = 'channel';
+const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
 
 abstract class Scope {
   protected constructor(protected _parent: ParentConnection) {
@@ -57,12 +60,12 @@ class Page extends ScopeEmitter<PageScopeEvents> implements PageScope {
   }
 }
 
-class Channel extends Scope implements ChannelScope {
+class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
   page: Page;
 
-  constructor(parent: ParentConnection, eventEmitter: Emittery) {
-    super(parent);
-    this.page = new Page(parent, eventEmitter, 'channel.page');
+  constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
+    super(parent, eventEmitter, eventScope);
+    this.page = new Page(parent, eventEmitter, SCOPE_PAGE);
   }
 
   refresh() {
@@ -88,7 +91,7 @@ export class Ui extends Scope implements UiScope {
 
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
-    this.channel = new Channel(parent, eventEmitter);
+    this.channel = new Channel(parent, eventEmitter, SCOPE_CHANNEL);
   }
 
   init(): Promise<Ui> {
