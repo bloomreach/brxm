@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 /* Console CSS */
 /* ================================================ */
+
+*:focus {
+   outline: none !important; 
+}
 
 #lt {
   border-right: 1px solid #666666;
@@ -87,7 +91,7 @@
 }
 
 /* Styling for tree in Dialog */
-.hippo-window .hippo-console-tree .hippo-tree {
+.hippo-dialog-center .hippo-console-tree .hippo-tree {
   padding-top: 0;
   padding-bottom: 5px;
 }
@@ -96,20 +100,21 @@
   display: block;
 }
 
-.hippo-window .hippo-console-tree {
+.hippo-dialog-center .hippo-console-tree {
   float: left;
-  width: 479px;
+  width: 463px;
   border-right: 1px solid #e3e3e3;
   height: 270px;
   overflow: auto;
   border: 1px solid #e3e3e3;
+  margin: 16px;
 }
 
-.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {
+.hippo-dialog-center .hippo-console-tree .hippo-tree div.wicket-tree {
   width: 463px;
 }
 
-.hippo-window .hippo-console-tree .hippo-tree div.wicket-tree {
+.hippo-dialog-center .hippo-console-tree .hippo-tree div.wicket-tree {
   width: 100%;
 }
 
@@ -150,7 +155,7 @@
   padding-bottom: 3px;
 }
 
-.hippo-window form .message {
+.hippo-dialog-body .message {
   margin-bottom: 10px;
   font-size: 13px;
 }
@@ -891,6 +896,179 @@ body.hippo-root div.yui-log-container {
   padding: 8px;
 }
 
+/* Styles for using org.hippoecm.frontend.dialog.Dialog, copied from cms styles. */
+
+.w_content_container > div {
+  height: 100%;
+}
+
+.hippo-dialog-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.hippo-dialog-center {
+  flex: auto;
+  overflow: auto;
+}
+
+.hippo-dialog-center .hippo-dialog-feedback .feedback-enabled {
+  padding-bottom: 16px;
+}
+
+.hippo-dialog-center .hippo-dialog-body {
+  padding: 16px;
+}
+
+.hippo-dialog-center .hippo-dialog-body .no-padding {
+   padding: 0;
+ }
+
+.hippo-dialog-center .hippo-dialog-body .label {
+  padding: 0 0 5px 0;
+}
+
+.hippo-dialog-center .hippo-dialog-body .input-row {
+  padding: 0 0 16px 0;
+}
+
+.hippo-dialog-center .hippo-dialog-body .input-row:last-child {
+   padding: 0 0 4px 0;
+}
+
+.hippo-dialog-center .hippo-dialog-body .input {
+  display: flex;
+  align-items: center;
+  padding: 0 0 16px 0;
+}
+
+.hippo-dialog-center .hippo-dialog-body input,select {
+  flex-grow: 1;
+}
+
+.hippo-dialog-center .hippo-dialog-body input {
+  padding: 0 8px 0 8px;
+}
+
+.hippo-dialog-center .hippo-dialog-body textarea {
+  padding: 8px;
+  width: 100%;
+}
+
+.hippo-dialog-center .hippo-window-buttons {
+  bottom: 0;
+  right: 0;
+
+  display: inline;
+  padding-right: 16px;
+  padding-top: 12px;
+  position: relative;
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  padding: 8px 12px !important;
+  font-size: 13px;
+  line-height: 1.2;
+  border-radius: 5px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn-default {
+  color: #22272f;
+  background-color: #fff;
+  border-color: #d4d6d8;
+}
+
+.btn-default.focus, .btn-default:focus, .btn-default.hover, .btn-default:hover {
+  color: #22272f;
+  background-color: #e6e5e5;
+  border-color: #91969b;
+}
+
+.hippo-dialog-bottom {
+  min-height: 48px;
+  height: 49px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #e8e8ea;
+}
+
+.hippo-dialog-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 0 0 16px 0;
+}
+
+.hippo-dialog-row-field-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-right: 20px;
+}
+
+.hippo-dialog-row-field-wrapper .input {
+  margin-left: 8px;
+  padding: 0 !important;
+}
+
+.hippo-dialog-bottom .hippo-dialog-bottom-left {
+  height: 100%;
+  overflow: hidden;
+}
+
+.hippo-dialog-bottom .hippo-dialog-bottom-right {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.hippo-dialog-bottom .hippo-window-buttons {
+  bottom: 0;
+  right: 0;
+
+  display: inline-block;
+  align-self: center;
+  position: relative;
+}
+
+.hippo-dialog-bottom .hippo-window-buttons input:last-child {
+  margin-right: 16px;
+}
+
+.w_caption a.w_close {
+  /* copy of fontawesome .fa class */ 
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: 17px;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 6px !important;
+  color: #22272f;
+}
+/* copy of fontawesome .fa-times:before class*/
+.w_caption a.w_close:before {
+  content: "\f00d";
+}
+
+/* End of: Styles for using org.hippoecm.frontend.dialog.Dialog */
+
 /* Node & Property dialog */
 .wicket-modal .node-dialog .hippo-root {
   height: 168px;
@@ -902,32 +1080,6 @@ body.hippo-root div.yui-log-container {
   height: 218px;
   padding: 15px 20px 0;
   overflow: auto;
-}
-
-.node-dialog form > ul,
-.property-dialog form > ul {
-  padding: 10px 15px 0;
-}
-
-.node-dialog fieldset,
-.property-dialog fieldset {
-  margin-top: 3px;
-}
-
-.node-dialog input[type=text],
-.property-dialog input[type=text] {
-  width: 272px;
-}
-
-.node-dialog li,
-.property-dialog li {
-  margin-bottom: 10px;
-}
-
-.node-dialog li label,
-.property-dialog li label {
-  font-weight: bold;
-  display: inline;
 }
 
 .property-dialog li label {
@@ -949,12 +1101,16 @@ body.hippo-root div.yui-log-container {
 }
 
 .property-dialog .property-values {
+  /*
   display: table;
   margin-top: 3px;
+  */
 }
 
 .property-dialog .property-values > div {
+  /*
   display: table-row;
+  */
 }
 
 .property-dialog .property-values > div > div {

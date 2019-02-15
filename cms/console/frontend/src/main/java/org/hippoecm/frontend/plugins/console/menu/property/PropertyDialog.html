@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,35 +15,47 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <ul>
-      <li>
-        <label wicket:for="types">Type:</label><select wicket:id="types"/>
-        <label wicket:for="isMultiple">Multi value:</label><input type="checkbox" wicket:id="isMultiple"/>
-      </li>
-      <li>
-        <label wicket:for="name">Name: </label>
-        <fieldset>
-          <input wicket:id="name" type="text"/>
-        </fieldset>
-      </li>
-      <li wicket:id="valuesContainer">
-          <label>Value: </label>
-          <div class="property-values">
-              <div wicket:id="values">
-                  <div class="property-value">
-                      <input type="text" wicket:id="val"/>
-                      <a wicket:id="removeLink" class="property-value-remove">
-                          <span class="remove-icon fa fa-times"/>
-                      </a>
-                  </div>
-              </div>
-              <div>
-                  <a wicket:id="addLink" class="property-value-add">
-                      <span class="add-icon fa fa-plus"/>
-                  </a>
-              </div>
+    <div class="hippo-dialog-body">
+      <ul>
+        <li class="hippo-dialog-row">
+          <div class="hippo-dialog-row-field-wrapper">
+            <div class="label">Type</div>
+            <div class="input">
+              <select wicket:id="types"/>
+            </div>
           </div>
-      </li>
-    </ul>
+          <div class="hippo-dialog-row-field-wrapper">
+            <label class="label" wicket:for="isMultiple">Multi value</label>
+            <div class="input">
+              <input type="checkbox" wicket:id="isMultiple"/>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="label">Name</div>
+          <div class="input">
+            <input wicket:id="name" type="text"/>
+          </div>
+        </li>
+        <li wicket:id="valuesContainer">
+            <div class="label">Value</div>
+            <div class="property-values">
+                <div wicket:id="values">
+                    <div class="property-value">
+                        <input type="text" wicket:id="val"/>
+                        <a wicket:id="removeLink" class="property-value-remove">
+                            <span class="remove-icon fa fa-times"/>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <a wicket:id="addLink" class="property-value-add">
+                        <span class="add-icon fa fa-plus"/>
+                    </a>
+                </div>
+            </div>
+        </li>
+      </ul>
+    </div>
   </wicket:extend>
 </html>

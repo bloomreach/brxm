@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,8 +58,9 @@ public class NodeDialog extends Dialog<Node> {
     private final TextField<String> typeField;
     private final TextField<String> nameField;
 
+    
     public NodeDialog(IModelReference<Node> modelReference) {
-        setTitle(Model.of("Add a new Node"));
+        setTitle(Model.of("Add a new node"));
         setSize(DialogConstants.SMALL);
 
         this.modelReference = modelReference;
