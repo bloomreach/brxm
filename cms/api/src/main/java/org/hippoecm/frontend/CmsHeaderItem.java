@@ -44,20 +44,11 @@ public class CmsHeaderItem extends HippoHeaderItem {
     @Override
     public void render(final Response response) {
         CssHeaderItem.forReference(SCREEN_CSS).render(response);
-
-        if (isBrowserInternetExplorer()) {
-            CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
-        }
-
         CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);
 
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(MESSAGE_BUS_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_JS : THEME_MIN_JS).render(response);
-
-        if (isBrowserInternetExplorer() && getBrowserVersion() == 11) {
-            JavaScriptReferenceHeaderItem.forReference(IE11_JS).render(response);
-        }
     }
 }

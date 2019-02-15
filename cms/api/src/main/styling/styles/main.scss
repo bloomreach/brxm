@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@
 
 // Vendor styling
 @import "../../../../node_modules/open-sans-fontface/open-sans.scss";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
-@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/alerts";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/buttons";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/tables";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "../../../../node_modules/retinajs/src/_retina.scss";
 
 // Core styling
@@ -63,6 +64,7 @@
 @import "_editor_feedback";
 @import "_editor_linkpicker";
 @import "_editor_hint_field";
+@import "_editor_validation";
 @import "_rich_text";
 @import "_ckeditor";
 @import "_revision_history";

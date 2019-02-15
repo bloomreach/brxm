@@ -27,7 +27,6 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 public abstract class HippoHeaderItem extends HeaderItem {
 
     protected static final ResourceReference SCREEN_CSS = getUniqueResourceReference("skin/screen.css");
-    protected static final ResourceReference SCREEN_IE_CSS = getUniqueResourceReference("skin/screen_ie.css");
     protected static final ResourceReference LEGACY_CSS = getUniqueResourceReference("skin/screen_legacy.css");
 
     protected static final ResourceReference THEME_CSS = getUniqueResourceReference("skin/hippo-cms/css/hippo-cms-theme.css");
@@ -38,14 +37,9 @@ public abstract class HippoHeaderItem extends HeaderItem {
 
     protected static final ResourceReference FUTURE_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/future.js");
     protected static final ResourceReference GLOBAL_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/global.js");
-    protected static final ResourceReference IE11_JS = new JavaScriptResourceReference(HippoHeaderItem.class, "js/ie11.js");
 
     protected static UrlResourceReference getUniqueResourceReference(final String path) {
         return WebApplicationHelper.createUniqueUrlResourceReference(Url.parse(path)).setContextRelative(true);
-    }
-
-    protected boolean isBrowserInternetExplorer() {
-        return WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
     }
 
     protected int getBrowserVersion() {

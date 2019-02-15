@@ -13,10 +13,12 @@ definitions:
         plugin.class: org.hippoecm.frontend.plugins.cms.edit.EditPerspective
         wicket.extensions: [extension.editor, extension.workflow]
         wicket.feedback: ${cluster.id}.feedback
+        wicket.feedback.scope: document
       /editorPlugin:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.editor.EditorPlugin
         wicket.feedback: ${cluster.id}.feedback
+        wicket.feedback.scope: document
         wicket.id: ${cluster.id}.editor
         /cluster.options:
           jcr:primaryType: frontend:pluginconfig
@@ -24,6 +26,7 @@ definitions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.addon.workflow.DocumentWorkflowManagerPlugin
         wicket.feedback: ${cluster.id}.feedback
+        wicket.feedback.scope: document
         wicket.id: ${cluster.id}.workflows
         workflow.categories: [editing]
         workflow.observation: false

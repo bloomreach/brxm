@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Contains all settings of a YUI unit.
- * 
+ *
  * <ul>
  *   <li>
  *   POSITION: String representation of the position this unit has in the wireframe; top, right, bottom, left or center
@@ -39,37 +39,37 @@ import org.slf4j.LoggerFactory;
  *      element will be generated.
  *   </li>
  *   <li>
- *   WIDTH: width (in pixels) that the unit will take up in the wireframe (only applies to left and right units and 
+ *   WIDTH: width (in pixels) that the unit will take up in the wireframe (only applies to left and right units and
  *   is required)
  *   </li>
  *   <li>
- *   HEIGHT: height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom units 
+ *   HEIGHT: height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom units
  *   and is required).
  *   </li>
  *   <li>
- *   MIN_WIDTH: minimum width (in pixels) the unit will take up in the wireframe (only applies to left and right units 
+ *   MIN_WIDTH: minimum width (in pixels) the unit will take up in the wireframe (only applies to left and right units
  *   and is required)
  *   </li>
  *   <li>
- *   MIN_HEIGHT: minimum height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom 
+ *   MIN_HEIGHT: minimum height (in pixels) that the unit will take up in the wireframe (only applies to top and bottom
  *   units and is required).
  *   </li>
  *   <li>
  *   GUTTER: the gutter applied to the unit's wrapper, before the content, for example "5px".
  *   </li>
  *   <li>
- *   SCROLL: Boolean indicating whether the unit's body should have scroll bars if the body content is larger than the 
+ *   SCROLL: Boolean indicating whether the unit's body should have scroll bars if the body content is larger than the
  *   display area.
  *   </li>
  *   <li>
  *   RESIZE: Boolean indicating whether this unit is resizeable.
  *   </li>
  *   <li>
- *   USE_SHIM: Sometimes resizing a unit over an iframe (or other elements) will lead to unexpected behavior, especially
- *   in everyone's favorite browser IE. Set this property to true to fix it. 
+ *   USE_SHIM: Sometimes resizing a unit over an iframe (or other elements) will lead to unexpected behavior. Set this
+ *   property to true to fix it.
  *   </li>
  *   <li>
- *   Z_INDEX: z-index for this unit. 
+ *   Z_INDEX: z-index for this unit.
  *   </li>
  *   <li>
  *   EXPANDED: whether or not this unit is expanded, meaning it will take up all available space inside the wireframe, hiding
@@ -102,7 +102,7 @@ public class UnitSettings implements Serializable {
 
     private boolean expandCollapseEnabled = false;
     private boolean expanded = false;
-    
+
     public static final String TOP = "top";
     public static final String RIGHT = "right";
     public static final String BOTTOM = "bottom";

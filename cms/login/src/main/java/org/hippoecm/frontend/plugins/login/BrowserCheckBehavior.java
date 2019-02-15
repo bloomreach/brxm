@@ -55,7 +55,7 @@ public class BrowserCheckBehavior extends Behavior {
 
     /**
      * Supported browsers can be configured like:
-     * ie 6 <=, safari 4 <, chrome, firefox 3.5 <=, opera
+     * edge 6 <=, safari 4 <, chrome, firefox 3.5 <=, opera
      */
     public static class Browser implements IClusterable {
 
@@ -124,8 +124,6 @@ public class BrowserCheckBehavior extends Behavior {
 
         private boolean isAgent(final BrowserInfo info) {
             switch (agent) {
-                case "ie":
-                    return info.isInternetExplorer();
                 case "firefox":
                     return info.isFirefox();
                 case "safari":
@@ -153,8 +151,6 @@ public class BrowserCheckBehavior extends Behavior {
 
         boolean isFirefox();
 
-        boolean isInternetExplorer();
-
         boolean isEdge();
 
         int getMajor();
@@ -164,7 +160,6 @@ public class BrowserCheckBehavior extends Behavior {
 
     public static class WicketBrowserInfo implements BrowserInfo {
 
-        private static final String MSIE = "MSIE";
         private static final String CHROME = "Chrome";
         private static final String SHIRETOKO = "Shiretoko";
         private static final String FIREFOX = "Firefox";
@@ -190,12 +185,6 @@ public class BrowserCheckBehavior extends Behavior {
                     setVersions(CHROME);
                 } else if (isSafari() || isOpera()) {
                     setVersions("Version");
-                } else if (isInternetExplorer()) {
-                    final String ua = info.getUserAgent();
-                    if (ua.indexOf(MSIE) > 0) {
-                        final String v = ua.substring(ua.indexOf(MSIE));
-                        parseMajorMinor(v.substring(5, v.indexOf(';')));
-                    }
                 } else if(isEdge()) {
                     setVersions(EDGE);
                 }
@@ -231,10 +220,6 @@ public class BrowserCheckBehavior extends Behavior {
         public boolean isFirefox() {
             return info.getProperties().isBrowserMozillaFirefox()
                     || (info.getProperties().isBrowserMozilla() && info.getUserAgent().contains(SHIRETOKO));
-        }
-
-        public boolean isInternetExplorer() {
-            return info.getProperties().isBrowserInternetExplorer();
         }
 
         public boolean isOpera() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,20 +28,28 @@ import org.apache.wicket.model.IModel;
  */
 public final class Violation implements IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     private final Set<ModelPath> fieldPaths;
     private final IModel<String> message;
+    private ValidationScope validationScope;
 
     /**
-     * Create a new violation with the specified message.
+     * Create a new violation with the specified message. The scope of this violation will be {@code
+     * ValidationScope.DOCUMENT}
      *
-     * @param paths  list of {@link ModelPath}s that led up to the violation
+     * @param paths        list of {@link ModelPath}s that led up to the violation
      * @param messageModel a model of the message to be shown to the user
      */
     public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
         this.fieldPaths = paths;
         this.message = messageModel;
+        this.validationScope = ValidationScope.DOCUMENT;
+    }
+
+    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message, 
+                     final ValidationScope validationScope) {
+        this.fieldPaths = fieldPaths;
+        this.message = message;
+        this.validationScope = validationScope;
     }
 
     public IModel<String> getMessage() {
@@ -52,9 +60,17 @@ public final class Violation implements IDetachable {
         return fieldPaths;
     }
 
+    public ValidationScope getValidationScope() {
+        return validationScope;
+    }
+
+    public void setValidationScope(final ValidationScope ValidationScope) {
+        this.validationScope = ValidationScope;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("paths: ");
         sb.append(fieldPaths.toString());
         sb.append(", message: ");
@@ -63,9 +79,7 @@ public final class Violation implements IDetachable {
     }
 
     public void detach() {
-        for (ModelPath path : fieldPaths) {
-            path.detach();
-        }
+        fieldPaths.forEach(ModelPath::detach);
     }
 
 }

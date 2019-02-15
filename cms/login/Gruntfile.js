@@ -16,8 +16,7 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
-const Fiber = require('fibers');
-const sass = require('sass');
+const sass = require('node-sass');
 const stylelintFormatter = require('stylelint-formatter-pretty');
 
 module.exports = function (grunt) {
@@ -73,10 +72,9 @@ module.exports = function (grunt) {
     // Compile Sass to CSS.
     sass: {
       options: {
-        fiber: Fiber,
         implementation: sass,
         outputStyle: 'expanded',
-        sourceMap: true
+        sourceMap: true,
       },
       main: {
         files: {

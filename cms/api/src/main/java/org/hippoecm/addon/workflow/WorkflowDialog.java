@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class WorkflowDialog<T> extends Dialog<T> {
 
-    private static Logger log = LoggerFactory.getLogger(WorkflowDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(WorkflowDialog.class);
 
     private final IWorkflowInvoker invoker;
     private final IModel<String> titleModel;
@@ -64,7 +64,7 @@ public class WorkflowDialog<T> extends Dialog<T> {
         return super.getTitle();
     }
 
-    public void setNotification(IModel<String> notificationModel) {
+    public void setNotification(final IModel<String> notificationModel) {
         notification.setDefaultModel(notificationModel);
         notification.setVisible(true);
     }
@@ -73,10 +73,10 @@ public class WorkflowDialog<T> extends Dialog<T> {
     protected void onOk() {
         try {
             invoker.invokeWorkflow();
-        } catch (WorkflowException e) {
+        } catch (final WorkflowException e) {
             log.warn("Could not execute workflow: " + e.getMessage());
             error(e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Could not execute workflow.", e);
             error(e);
         }
@@ -91,7 +91,11 @@ public class WorkflowDialog<T> extends Dialog<T> {
     }
 
     @Override
-    protected FeedbackPanel newFeedbackPanel(String id) {
+    protected FeedbackPanel newFeedbackPanel(final String id) {
         return new FeedbackPanel(id);
+    }
+
+    protected IWorkflowInvoker getInvoker() {
+        return invoker;
     }
 }

@@ -9,16 +9,21 @@ definitions:
       /non-empty:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.validator.plugins.NonEmptyCmsValidator
+        scope: field
       /html:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.validator.plugins.HtmlCmsValidator
+        scope: field
       /escaped:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator
+        scope: field
       /email:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator
         regex_pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$
+        scope: field
       /references:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.editor.validator.plugins.NodeReferenceValidator
+        scope: field

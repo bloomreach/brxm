@@ -76,13 +76,7 @@
         form.$.submit = CKEDITOR.tools.override(form.$.submit, function(originalSubmit) {
             return function() {
                 callFunctions(functionMap);
-
-                // For IE, the DOM submit function is not a function
-                if (originalSubmit.apply) {
-                    originalSubmit.apply(this);
-                } else {
-                    originalSubmit();
-                }
+                originalSubmit.apply(this);
             };
         });
     }

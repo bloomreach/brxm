@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.wicket.util.collections.MiniMap;
-
 public class Request implements Serializable {
+
+    public static final String INFO_REQUEST = "infoRequest";
+    public static final String CANCEL_REQUEST = "cancelRequest";
+    public static final String REJECT_REQUEST = "rejectRequest";
+    public static final String ACCEPT_REQUEST = "acceptRequest";
 
     private final String id;
     private final Date schedule;
@@ -30,15 +33,17 @@ public class Request implements Serializable {
     private final Boolean accept;
     private final Boolean reject;
     private final Boolean cancel;
+    private final Boolean info;
 
     public Request(final String id, final Date schedule, final String state, final Map<String, ?> info) {
         this.id = id;
         this.schedule = schedule;
         this.state = state;
 
-        this.accept = getTriState(info, "acceptRequest");
-        this.reject = getTriState(info, "rejectRequest");
-        this.cancel = getTriState(info, "cancelRequest");
+        this.accept = getTriState(info, ACCEPT_REQUEST);
+        this.reject = getTriState(info, REJECT_REQUEST);
+        this.cancel = getTriState(info, CANCEL_REQUEST);
+        this.info = getTriState(info, INFO_REQUEST);
     }
 
     Boolean getTriState(Map<String, ?> info, String key) {
@@ -73,13 +78,8 @@ public class Request implements Serializable {
         return cancel;
     }
 
-    public Map<String, ?> getInfo() {
-        Map<String, Boolean> info = new MiniMap<>(3);
-        info.put("acceptRequest", accept);
-        info.put("rejectRequest", reject);
-        info.put("cancelRequest", cancel);
+    public Boolean getInfo() {
         return info;
     }
-
 }
 
