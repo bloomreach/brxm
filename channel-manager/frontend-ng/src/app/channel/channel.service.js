@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -225,23 +225,27 @@ class ChannelService {
 
   publishOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'publish')
+      .then(() => this.$rootScope.$broadcast('channel:publish'))
       .then(() => this.reload());
   }
 
   publishChangesOf(users) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
+      .then(() => this.$rootScope.$broadcast('channel:publish'))
       .then(() => this.reload());
   }
 
   discardOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'discard')
+      .then(() => this.$rootScope.$broadcast('channel:discard'))
       .then(() => this.reload());
   }
 
   discardChangesOf(users) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
+      .then(() => this.$rootScope.$broadcast('channel:discard'))
       .then(() => this.reload());
   }
 
