@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.api.broker;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
@@ -121,6 +122,16 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     @Override
     public ResourceBeanMapper getResourceBeanMapper(String resourceSpace) throws ResourceException {
         return delegated.getResourceBeanMapper(resourceSpace);
+    }
+
+    @Override
+    public URI resolveFullURI(String resourceSpace, String absPath) throws ResourceException {
+        return delegated.resolveFullURI(resourceSpace, absPath);
+    }
+
+    @Override
+    public URI resolveFullURI(String resourceSpace, String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        return delegated.resolveFullURI(resourceSpace, absPath, pathVariables);
     }
 
 }

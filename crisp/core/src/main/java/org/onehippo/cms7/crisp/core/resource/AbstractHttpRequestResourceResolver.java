@@ -15,8 +15,11 @@
  */
 package org.onehippo.cms7.crisp.core.resource;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cms7.crisp.api.resource.AbstractResourceResolver;
+import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.springframework.http.client.ClientHttpRequestFactory;
 
@@ -72,6 +75,17 @@ public abstract class AbstractHttpRequestResourceResolver extends AbstractResour
      */
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
+    }
+
+    @Override
+    public URI resolveFullURI(String absPath) throws ResourceException {
+        String uriString = getBaseResourceURI(absPath);
+
+        if (uriString == null || uriString.isEmpty()) {
+            return null;
+        }
+
+        return URI.create(uriString);
     }
 
     /**

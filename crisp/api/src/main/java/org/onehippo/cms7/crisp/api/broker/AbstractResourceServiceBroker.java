@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.api.broker;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -218,6 +219,28 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
 
         if (resolver != null) {
             return resolver.getResourceBeanMapper();
+        }
+
+        return null;
+    }
+
+    @Override
+    public URI resolveFullURI(String resourceSpace, String absPath) throws ResourceException {
+        ResourceResolver resolver = getResourceResolver(resourceSpace);
+
+        if (resolver != null) {
+            return resolver.resolveFullURI(absPath);
+        }
+
+        return null;
+    }
+
+    @Override
+    public URI resolveFullURI(String resourceSpace, String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        ResourceResolver resolver = getResourceResolver(resourceSpace);
+
+        if (resolver != null) {
+            return resolver.resolveFullURI(absPath, pathVariables);
         }
 
         return null;

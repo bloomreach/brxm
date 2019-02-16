@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.api.resource;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
@@ -270,5 +271,38 @@ public interface ResourceResolver extends ResourceCacheResolvable {
      * @throws UnsupportedOperationException if a {@link ResourceBeanMapper} is not supported
      */
     ResourceBeanMapper getResourceBeanMapper() throws ResourceException;
+
+    /**
+     * Resolves a full URI determined and resolved for the {@code absPath}.
+     * Or returns null if the backend cannot support a full URI access.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Resource}
+     * @return URI representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    URI resolveFullURI(String absPath) throws ResourceException;
+
+    /**
+     * Resolves a full URI determined and resolved for the {@code absPath}.
+     * Or returns null if the backend cannot support a full URI access.
+     * <p>{@code absPath} is a domain-specific path template that should be meaningful to the backend.
+     * For example, if the backend is a REST API, then {@code absPath} can be a URI path or part of URL. Or, as
+     * an example, the {@code absPath} can be an index name of a search index, table name of databases or node
+     * path in JCR, totally depending on {@code ResourceResolver} implementations.</p>
+     * <p>The {@code absPath} template is expanded using the given path variables ({@code pathVariables}), if any.
+     * For example, if {@code pathVariables} looks like <code>{"var1":"hello","var2":"world"}</code>
+     * and {@code absPath} is <code>".../some/path/{var1}/{var2}/overview"</code>, then it is expanded to
+     * <code>".../some/path/hello/world/overview"</code> by the {@code pathVariables}.</p>
+     * @param resourceSpace Resource space name to resolve a proper {@link ResourceResolver}
+     * @param absPath absolute path of a {@link Resource}
+     * @param pathVariables the variables to expand the template given by {@code absPath}
+     * @return URI representation by {@code absPath}
+     * @throws ResourceException if resource resolution operation fails
+     */
+    URI resolveFullURI(String absPath, Map<String, Object> pathVariables) throws ResourceException;
 
 }
