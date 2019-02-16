@@ -38,9 +38,9 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms7.services.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.editor.validator;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.onehippo.cms7.services.validation.ValidationScope;
 
 public interface IFeedbackLogger {
 
