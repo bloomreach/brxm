@@ -15,14 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.broker;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +42,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 public class CacheableResourceServiceBrokerTest {
 
     private CacheableResourceServiceBroker broker;
@@ -64,6 +65,7 @@ public class CacheableResourceServiceBrokerTest {
     @Before
     public void setUp() throws Exception {
         demoResourceResolver1 = new SimpleJacksonRestTemplateResourceResolver();
+        demoResourceResolver1.setBaseUri("https://api.example.com/v1/");
         demoResourceResolver1.setCacheEnabled(true);
         demoResourceResolver1.setResourceDataCache(new SpringResourceDataCache(new ConcurrentMapCache("demo1Cache")));
 
@@ -116,6 +118,18 @@ public class CacheableResourceServiceBrokerTest {
     @After
     public void tearDown() throws Exception {
         ResourceServiceBrokerRequestContext.clear();
+    }
+
+    @Test
+    public void testResolveFullURI() throws Exception {
+        assertEquals(URI.create("https://api.example.com/v1/a/b/c"), broker.resolveFullURI("demo1", "/a/b/c"));
+
+        Map<String, Object> pathVars = new HashMap<>();
+        pathVars.put("p1", "val1");
+        pathVars.put("p2", "val2");
+
+        assertEquals(URI.create("https://api.example.com/v1/a/b/c/val1?p2=val2"),
+                broker.resolveFullURI("demo1", "/a/b/c/{p1}?p2={p2}", pathVars));
     }
 
     @Test

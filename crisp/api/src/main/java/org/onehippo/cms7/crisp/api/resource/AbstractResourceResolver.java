@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.api.resource;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
@@ -147,4 +148,15 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
     public ResourceBeanMapper getResourceBeanMapper() throws ResourceException {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public URI resolveFullURI(String absPath) throws ResourceException {
+        return null;
+    }
+
+    @Override
+    public URI resolveFullURI(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        return null;
+    }
+
 }

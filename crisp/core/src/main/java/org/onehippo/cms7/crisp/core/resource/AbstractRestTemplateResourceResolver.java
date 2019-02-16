@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -210,6 +211,17 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         }
 
         return binary;
+    }
+
+    @Override
+    public URI resolveFullURI(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        final String uriString = getBaseResourceURI(absPath);
+
+        if (uriString == null || uriString.isEmpty()) {
+            return null;
+        }
+
+        return getRestTemplate().getUriTemplateHandler().expand(uriString, pathVariables);
     }
 
     /**
