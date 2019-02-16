@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.onehippo.cms7.services.validation.ValidationScope;
 
 /**
  * Validation constraint violation.  Provides the list of {@link ModelPath}s that
@@ -45,7 +46,7 @@ public final class Violation implements IDetachable {
         this.validationScope = ValidationScope.DOCUMENT;
     }
 
-    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message, 
+    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message,
                      final ValidationScope validationScope) {
         this.fieldPaths = fieldPaths;
         this.message = message;

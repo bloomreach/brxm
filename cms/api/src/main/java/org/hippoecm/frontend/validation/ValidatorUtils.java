@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.services.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class ValidatorUtils {
             }
         } catch (IllegalArgumentException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope, 
+                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope,
                         StringUtils.join(ValidationScope.values(), ", "), e);
             }
         }

@@ -63,9 +63,9 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms7.services.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
