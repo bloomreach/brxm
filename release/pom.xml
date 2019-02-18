@@ -67,10 +67,10 @@
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>13.1.0-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>13.1.0-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-blocks.version>13.1.0-validation-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>13.1.0-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>13.1.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>13.1.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>13.1.0-validation-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>13.1.0-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>13.1.0-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.resourcebundle-editor.version>13.1.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
