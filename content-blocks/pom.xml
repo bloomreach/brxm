@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
   <description>Hippo Plugin Content Blocks</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-plugin-content-blocks</artifactId>
-  <version>13.1.0-SNAPSHOT</version>
+  <version>13.1.0-validation-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <scm>
@@ -40,7 +40,8 @@
 
   <properties>
     <hippo.repository.version>13.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.1.0-validation-SNAPSHOT</hippo.cms.version>
+    <hippo.services.version>13.1.0-validation-SNAPSHOT</hippo.services.version>
   </properties>
 
   <repositories>
@@ -80,6 +81,12 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <version>${hippo.services.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
