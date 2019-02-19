@@ -15,9 +15,14 @@
  */
 package org.onehippo.cms7.crisp.core.support.httpclient;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+
+import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.RedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
@@ -44,6 +49,16 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
     static final int DEFAULT_MAX_CONN_PER_ROUTE = 250;
 
     /**
+     * User Agent request header value. Used if set to a non-empty string.
+     */
+    private String userAgent;
+
+    /**
+     * Default request headers. Used if set to a non-empty collection.
+     */
+    private Collection<? extends Header> defaultHeaders;
+
+    /**
      * Whether to invoke {@link HttpClientBuilder#useSystemProperties()}.
      */
     private boolean useSystemProperties = DEFAULT_USE_SYSTEM_PROPERTIES;
@@ -67,6 +82,32 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
      * By default, <code>HttpClientBuilder<code> is set to -1.
      */
     private Long connectionTimeMillisToLive;
+
+    /**
+     * {@link HostnameVerifier} instance. Used if set to non-null instance.
+     */
+    private HostnameVerifier hostnameVerifier;
+
+    /**
+     * {@link RedirectStrategy} instance. Used if set to non-null instance.
+     */
+    private RedirectStrategy redirectStrategy;
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public Collection<? extends Header> getDefaultHeaders() {
+        return defaultHeaders;
+    }
+
+    public void setDefaultHeaders(Collection<? extends Header> defaultHeaders) {
+        this.defaultHeaders = defaultHeaders;
+    }
 
     public boolean isUseSystemProperties() {
         return useSystemProperties;
@@ -100,9 +141,33 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
         this.connectionTimeMillisToLive = connectionTimeMillisToLive;
     }
 
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
+
+    public RedirectStrategy getRedirectStrategy() {
+        return redirectStrategy;
+    }
+
+    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
+    }
+
     @Override
     protected HttpClientBuilder createInstance() throws Exception {
         HttpClientBuilder builder = HttpClientBuilder.create();
+
+        if (userAgent != null && !userAgent.isEmpty()) {
+            builder = builder.setUserAgent(userAgent);
+        }
+
+        if (defaultHeaders != null && !defaultHeaders.isEmpty()) {
+            builder = builder.setDefaultHeaders(defaultHeaders);
+        }
 
         if (useSystemProperties) {
             builder = builder.useSystemProperties();
@@ -113,11 +178,19 @@ public class DefaultHttpClientBuilderFactoryBean extends AbstractFactoryBean<Htt
         }
 
         if (maxConnPerRoute > 0) {
-            builder.setMaxConnPerRoute(maxConnPerRoute);
+            builder = builder.setMaxConnPerRoute(maxConnPerRoute);
         }
 
         if (connectionTimeMillisToLive != null) {
-            builder.setConnectionTimeToLive(connectionTimeMillisToLive.longValue(), TimeUnit.MILLISECONDS);
+            builder = builder.setConnectionTimeToLive(connectionTimeMillisToLive.longValue(), TimeUnit.MILLISECONDS);
+        }
+
+        if (hostnameVerifier != null) {
+            builder = builder.setSSLHostnameVerifier(hostnameVerifier);
+        }
+
+        if (redirectStrategy != null) {
+            builder = builder.setRedirectStrategy(redirectStrategy);
         }
 
         return builder;
