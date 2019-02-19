@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ describe('SidePanelService', () => {
     it('adds className "side-panel-closed" to the sidePanelElement if it is closed on init', () => {
       mockSideNav.isOpen.and.returnValue(false);
       SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      $rootScope.$digest();
 
       expect(sidePanelElement.hasClass('side-panel-closed')).toBe(true);
       expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
@@ -87,6 +88,7 @@ describe('SidePanelService', () => {
     it('adds className "side-panel-open" to the sidePanelElement if it is open on init', () => {
       mockSideNav.isOpen.and.returnValue(true);
       SidePanelService.initialize('left', sidePanelElement, sideNavElement);
+      $rootScope.$digest();
 
       expect(sidePanelElement.hasClass('side-panel-closed')).toBe(false);
       expect(sidePanelElement.hasClass('side-panel-open')).toBe(true);
@@ -178,23 +180,6 @@ describe('SidePanelService', () => {
 
     expect(mockSideNav.open).not.toHaveBeenCalled();
     expect(SidePanelService.focus).toHaveBeenCalled();
-  });
-
-  it('adds classNames "side-panel-open" and "side-panel-closed" to the sidePanelElement', () => {
-    SidePanelService.initialize('left', sidePanelElement, sideNavElement);
-
-    SidePanelService.open('left');
-
-    expect(sidePanelElement.hasClass('side-panel-closed')).toBe(false);
-    expect(sidePanelElement.hasClass('side-panel-open')).toBe(true);
-
-    mockSideNav.isOpen.and.returnValue(true);
-
-    SidePanelService.close('left');
-    $rootScope.$digest();
-
-    expect(sidePanelElement.hasClass('side-panel-closed')).toBe(true);
-    expect(sidePanelElement.hasClass('side-panel-open')).toBe(false);
   });
 
   describe('un-initialized side-panel full-screen behavior', () => {
