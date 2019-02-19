@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.services.validation;
 
+import java.util.Locale;
+
 import javax.jcr.Session;
 
 public interface ValidatorContext {
@@ -23,5 +25,8 @@ public interface ValidatorContext {
 
     Session getJcrSession();
 
+    Locale getLocale();
+
     String getTranslatedMessage(String key);
+
 }
