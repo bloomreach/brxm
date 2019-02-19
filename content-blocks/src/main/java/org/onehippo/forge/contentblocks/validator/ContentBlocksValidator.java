@@ -123,7 +123,7 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
                 elements[0] = new ModelPathElement(fieldDescriptor, fieldDescriptor.getPath(), index);
                 newPaths.add(new ModelPath(elements));
             }
-            newViolations.add(new Violation(newPaths, violation.getMessage(), violation.getValidationScope()));
+            newViolations.add(new Violation(newPaths, violation.getMessage(), violation.getFeedbackScope()));
         }
         return newViolations;
     }
