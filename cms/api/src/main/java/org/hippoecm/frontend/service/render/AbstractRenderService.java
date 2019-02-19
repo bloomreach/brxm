@@ -31,6 +31,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -58,10 +59,10 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessageFilter;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.onehippo.cms7.services.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,8 +210,8 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         }
 
         if (config.getString(FEEDBACK) != null) {
-            final ValidationScope scope = StringUtils.isNotBlank(config.getString(FEEDBACK_SCOPE))
-                                          ? ValidatorUtils.getValidationScope(config.getString(FEEDBACK_SCOPE))
+            final ValidationScope scope = StringUtils.isNotBlank(config.getString(FEEDBACK_SCOPE)) 
+                                          ? ValidatorUtils.getValidationScope(config.getString(FEEDBACK_SCOPE)) 
                                           : ValidationScope.DOCUMENT;
             context.registerService(new ScopedFeedBackMessageFilter(this, scope), config.getString(FEEDBACK));
         } else {
@@ -344,7 +345,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
      * Utility method for subclasses to redraw the complete {@link Panel}. When invoked during request processing or
      * event handling, the service will be rendered during the rendering phase.
      * <p>
-     * For more fine-grained redrawing, subclasses should override the
+     * For more fine-grained redrawing, subclasses should override the 
      * {@link AbstractRenderService#render(PluginRequestTarget)} method.
      */
     protected void redraw() {

@@ -18,7 +18,6 @@ package org.hippoecm.frontend.validation;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
-import org.onehippo.cms7.services.validation.ValidationScope;
 
 /**
  * A ContainerFeedbackMessageFilter filter that is scope aware.

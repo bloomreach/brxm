@@ -19,18 +19,17 @@ import java.io.Serializable;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
-import org.onehippo.cms7.services.validation.ValidationScope;
 
 public class ScopedFeedBackMessage extends FeedbackMessage {
-
+    
     private ValidationScope scope;
-
+    
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level) {
         super(reporter, message, level);
         this.scope = ValidationScope.DOCUMENT;
     }
 
-    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
+    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level, 
                                  final ValidationScope scope) {
         super(reporter, message, level);
         this.scope = scope;
@@ -39,13 +38,13 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
     public ValidationScope getScope() {
         return scope;
     }
-
+    
     @Override
     public String toString() {
         return "ScopedFeedBackMessage{" +
                 "message = " + getMessage() +
                 ", scope=" + scope +
-                ", reporter = " + ((getReporter() == null) ? "null" : getReporter().getId()) +
+                ", reporter = " + ((getReporter() == null) ? "null" : getReporter().getId()) + 
                 ", level = " + getLevelAsString() +
                 '}';
     }
