@@ -2,15 +2,15 @@ definitions:
   config:
     /hst:hst/hst:configurations/hst:default/hst:templates/robotstxt.ftl:
       jcr:primaryType: hst:template
-      jcr:uuid: a0e01646-dbb0-475f-bc81-5f2d551f7fad
-      hst:script: "<#ftl encoding=\"UTF-8\" strip_whitespace=true attributes={\"content_type\"\
-        : \"text/plain\"}>\r\n<#assign hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
+      hst:script: "<#ftl encoding=\"UTF-8\" strip_whitespace=true  attributes={\"\
+        content_type\": \"text/plain\"}>\r\n<#assign hst=JspTaglibs[\"http://www.hippoecm.org/jsp/hst/core\"\
         ] >\r\n<#if document??>\r\n  <#if document.sections??>\r\n    <#list document.sections\
         \ as section>\r\n      <#if section.userAgent?? && (section.disallows?? ||\
         \ disallowedFacNavLinks??)>\r\nUser-agent: ${section.userAgent}\r\n      \
-        \  <#if section.disallows??><#list section.disallows as path>\r\nDisallow:\
-        \ ${path}</#list></#if>\r\n        <#if disallowedFacNavLinks??><#list disallowedFacNavLinks\
-        \ as facnav>\r\nDisallow: <@hst.link link=facnav/>/\r\n</#list></#if>\r\n\
-        \      </#if>\r\n    </#list>\r\n  </#if>\r\n  <#if document.sitemaps??>\r\
+        \  <#if section.disallows??>\r\n          <#list section.disallows as path>\r\
+        \nDisallow: ${path}\r\n          </#list>\r\n        </#if>\r\n        <#if\
+        \ disallowedFacNavLinks??>\r\n          <#list disallowedFacNavLinks as facnav>\r\
+        \nDisallow: <@hst.link link=facnav/>/\r\n          </#list>\r\n        </#if>\r\
+        \n      </#if>\r\n    </#list>\r\n  </#if>\r\n  <#if document.sitemaps??>\r\
         \n    <#list document.sitemaps as sitemap>\r\nSitemap: ${sitemap}\r\n    </#list>\r\
         \n  </#if>\r\n</#if>"
