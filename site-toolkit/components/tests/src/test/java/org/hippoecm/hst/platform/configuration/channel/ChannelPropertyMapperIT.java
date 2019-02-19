@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,12 +32,14 @@ import javax.jcr.SimpleCredentials;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.core.jcr.AbstractRepositoryTestCase;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
 import org.hippoecm.hst.platform.configuration.channel.ChannelPropertyMapper;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -48,7 +50,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class ChannelPropertyMapperIT extends RepositoryTestCase {
+public class ChannelPropertyMapperIT extends AbstractRepositoryTestCase {
 
     static interface TestInfo extends ChannelInfo {
         @Parameter(name = "test-name")

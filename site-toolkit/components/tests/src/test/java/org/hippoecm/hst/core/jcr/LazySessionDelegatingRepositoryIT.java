@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class LazySessionDelegatingRepositoryIT  extends RepositoryTestCase {
+public class LazySessionDelegatingRepositoryIT  extends AbstractRepositoryTestCase {
     
     private LazySessionDelegatingRepository repository;
     
