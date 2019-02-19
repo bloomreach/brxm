@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSKEY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORD;
 import static org.hippoecm.repository.api.HippoNodeType.NT_USER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class RepositoryLoginTest extends RepositoryTestCase {
@@ -82,12 +84,30 @@ public class RepositoryLoginTest extends RepositoryTestCase {
         super.tearDown();
     }
 
+    private void loginAssertions(final String userId, final String password) throws RepositoryException {
+        final SimpleCredentials credentials = new SimpleCredentials(userId, password.toCharArray());
+        assertFalse(passwordIsZeroedOut(credentials.getPassword()));
+        Session session = server.login(credentials);
+        assertEquals(userId, session.getUserID());
+        assertTrue(passwordIsZeroedOut(credentials.getPassword()));
+        session.logout();
+
+        // with the same credentials object, you should be able to login again
+        final Session session2 = server.login(credentials);
+        session2.logout();
+        final SimpleCredentials clone = new SimpleCredentials(credentials.getUserID(), credentials.getPassword());
+        try {
+            server.login(clone);
+            fail("The cloned credentials should not work since other object will zeroed out password");
+        } catch (LoginException e) {
+            // expected
+        }
+    }
+
     @Test
     public void testLoginPlainSuccess() throws Exception {
         try {
-            Session session = server.login(TESTUSER_ID_PLAIN, TESTUSER_PASS.toCharArray());
-            assertEquals(TESTUSER_ID_PLAIN, session.getUserID());
-            session.logout();
+            loginAssertions(TESTUSER_ID_PLAIN, TESTUSER_PASS);
         } catch (LoginException e) {
             fail("Plain login failed with valid credentials");
         }
@@ -96,9 +116,7 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     @Test
     public void testLoginMD5Success() throws Exception {
         try {
-            Session session = server.login(TESTUSER_ID_MD5, TESTUSER_PASS.toCharArray());
-            assertEquals(TESTUSER_ID_MD5, session.getUserID());
-            session.logout();
+            loginAssertions(TESTUSER_ID_MD5, TESTUSER_PASS);
         } catch (LoginException e) {
             fail("MD5 login failed with valid credentials");
         }
@@ -107,9 +125,7 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     @Test
     public void testLoginSHA1Success() throws Exception {
         try {
-            Session session = server.login(TESTUSER_ID_SHA1, TESTUSER_PASS.toCharArray());
-            assertEquals(TESTUSER_ID_SHA1, session.getUserID());
-            session.logout();
+            loginAssertions(TESTUSER_ID_SHA1, TESTUSER_PASS);
         } catch (LoginException e) {
             fail("SHA-1 login failed with valid credentials");
         }
@@ -118,9 +134,7 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     @Test
     public void testLoginSHA256Success() throws Exception {
         try {
-            Session session = server.login(TESTUSER_ID_SHA256, TESTUSER_PASS.toCharArray());
-            assertEquals(TESTUSER_ID_SHA256, session.getUserID());
-            session.logout();
+            loginAssertions(TESTUSER_ID_SHA256, TESTUSER_PASS);
         } catch (LoginException e) {
             fail("SHA-256 login failed with valid credentials");
         }
@@ -129,9 +143,12 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     @Test
     public void testLoginJvmUser() throws Exception {
         try {
-            final Session session = server.login(JvmCredentials.getCredentials(TESTUSER_JVM));
+            final JvmCredentials credentials = JvmCredentials.getCredentials(TESTUSER_JVM);
+            final Session session = server.login(credentials);
             assertEquals(TESTUSER_JVM, session.getUserID());
             session.logout();
+            // jvm user has random password which does not need to be zeroed out
+            assertFalse(passwordIsZeroedOut(credentials.getPassword()));
         } catch (LoginException e) {
             fail("Jvm user login failed");
         }
@@ -155,14 +172,26 @@ public class RepositoryLoginTest extends RepositoryTestCase {
 
     @Test(expected = LoginException.class)
     public void testLoginPlainFail() throws Exception {
-        Session session = server.login(TESTUSER_ID_PLAIN, "wrongpassword".toCharArray());
-        session.logout();
+        failingLoginAssertions(TESTUSER_ID_PLAIN, "wrongpassword");
+    }
+
+    private void failingLoginAssertions(final String testuserIdPlain, final String wrongPassword) throws RepositoryException {
+        final SimpleCredentials credentials = new SimpleCredentials(testuserIdPlain, wrongPassword.toCharArray());
+        assertFalse(passwordIsZeroedOut(credentials.getPassword()));
+        try {
+            server.login(credentials);
+            fail("Expected login exception");
+        } catch (LoginException e) {
+            assertTrue("even for failed login the password gets zeroed out",
+                    passwordIsZeroedOut(credentials.getPassword()));
+            // new attempt just results again in LoginException
+            server.login(credentials);
+        }
     }
 
     @Test(expected = LoginException.class)
     public void testLoginHashFail() throws Exception {
-        Session session =  server.login(TESTUSER_ID_SHA1, "wrongpassword".toCharArray());
-        session.logout();
+        failingLoginAssertions(TESTUSER_ID_SHA1, "wrongpassword");
     }
 
     @Test(expected = LoginException.class)
@@ -251,4 +280,14 @@ public class RepositoryLoginTest extends RepositoryTestCase {
             log.info(count + "\t" + (t2 - t1) + "\t" + ((t2 - t1) / count));
         }
     }
+
+    private boolean passwordIsZeroedOut(final char[] password) {
+        for (char c : password) {
+            if (c != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
