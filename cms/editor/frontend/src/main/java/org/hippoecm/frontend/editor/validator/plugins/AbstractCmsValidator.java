@@ -25,13 +25,13 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.ICmsValidator;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
-import org.onehippo.cms7.services.validation.ValidationScope;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
     private final static String SCOPE = "scope";
-
+    
     private final String name;
     private ValidationScope validationScope = ValidationScope.DOCUMENT;
 
@@ -40,7 +40,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
 
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
-
+        
         if (config.containsKey(SCOPE)) {
             validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
         }

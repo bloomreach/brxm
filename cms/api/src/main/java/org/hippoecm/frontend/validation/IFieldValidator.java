@@ -15,11 +15,10 @@
  */
 package org.hippoecm.frontend.validation;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.onehippo.cms7.services.validation.ValidationScope;
 
 /**
  * Interface implemented by the CMS validation mechanism to enable custom validators to check values and report

@@ -47,7 +47,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.onehippo.cms7.services.validation.ValidationScope;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
