@@ -40,7 +40,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -132,7 +132,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 listener.onValidation(result);
             }
             for (final Violation violation : result.getViolations()) {
-                logger.error(violation.getMessage(), violation.getValidationScope());
+                logger.error(violation.getMessage(), violation.getFeedbackScope());
             }
             addSummaryMessage(result, logger);
         } catch (final RepositoryException e) {
@@ -147,12 +147,12 @@ public class JcrValidationService implements IValidationService, IDetachable {
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
         if (result.getAffectedFields() == 1) {
             final IModel<String> summary = getResourceBundleModel("summarySingle", Session.get().getLocale());
-            logger.error(summary, ValidationScope.DOCUMENT);
+            logger.error(summary, FeedbackScope.DOCUMENT);
         }
         if (result.getAffectedFields() > 1) {
             final String summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale()).getObject();
             final String formatted = MessageFormat.format(summary, result.getAffectedFields());
-            logger.error(Model.of(formatted), ValidationScope.DOCUMENT);
+            logger.error(Model.of(formatted), FeedbackScope.DOCUMENT);
         }
     }
 

@@ -39,7 +39,7 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -109,7 +109,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 violations.add(newViolation(
                         new ModelPathElement(field, field.getPath(), 0),
                         getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                        ValidationScope.FIELD)
+                        FeedbackScope.FIELD)
                 );
             }
 
@@ -138,7 +138,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                         violations.add(newViolation(
                                 new ModelPathElement(field, field.getPath(), 0),
                                 getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                                ValidationScope.FIELD)
+                                FeedbackScope.FIELD)
                         );
                 }
             }
@@ -162,12 +162,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message)
             throws ValidationException {
-        return newValueViolation(childModel, message, ValidationScope.FIELD);
+        return newValueViolation(childModel, message, FeedbackScope.FIELD);
     }
 
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message,
-                                       final ValidationScope scope) throws ValidationException {
+                                       final FeedbackScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
     }
 
@@ -198,7 +198,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 elements[0] = new ModelPathElement(field, name, index);
                 paths.add(new ModelPath(elements));
             }
-            violations.add(new Violation(paths, typeViolation.getMessage(), typeViolation.getValidationScope()));
+            violations.add(new Violation(paths, typeViolation.getMessage(), typeViolation.getFeedbackScope()));
         }
     }
 
@@ -227,13 +227,13 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     }
 
     public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters,
-                                  final ValidationScope scope) {
+                                  final FeedbackScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, getMessage(message, parameters), scope);
     }
 
     public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
-                                  final ValidationScope scope) {
+                                  final FeedbackScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, messageModel, scope);
     }

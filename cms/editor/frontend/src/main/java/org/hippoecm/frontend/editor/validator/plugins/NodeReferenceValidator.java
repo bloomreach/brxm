@@ -58,7 +58,7 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
         if (ref == null || ref.equals("") || ref.equals(ROOT_NODE_UUID)) {
             final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.REFERENCE_IS_EMPTY,
                     ValidatorMessages.class);
-            violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
+            violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
         }
         return violations;
     }

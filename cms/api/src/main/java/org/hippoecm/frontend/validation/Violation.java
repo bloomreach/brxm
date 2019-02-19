@@ -30,11 +30,11 @@ public final class Violation implements IDetachable {
 
     private final Set<ModelPath> fieldPaths;
     private final IModel<String> message;
-    private ValidationScope validationScope;
+    private FeedbackScope feedbackScope;
 
     /**
      * Create a new violation with the specified message. The scope of this violation will be {@code
-     * ValidationScope.DOCUMENT}
+     * FeedbackScope.DOCUMENT}
      *
      * @param paths        list of {@link ModelPath}s that led up to the violation
      * @param messageModel a model of the message to be shown to the user
@@ -42,14 +42,14 @@ public final class Violation implements IDetachable {
     public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
         this.fieldPaths = paths;
         this.message = messageModel;
-        this.validationScope = ValidationScope.DOCUMENT;
+        this.feedbackScope = FeedbackScope.DOCUMENT;
     }
 
-    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message, 
-                     final ValidationScope validationScope) {
+    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message,
+                     final FeedbackScope feedbackScope) {
         this.fieldPaths = fieldPaths;
         this.message = message;
-        this.validationScope = validationScope;
+        this.feedbackScope = feedbackScope;
     }
 
     public IModel<String> getMessage() {
@@ -60,12 +60,12 @@ public final class Violation implements IDetachable {
         return fieldPaths;
     }
 
-    public ValidationScope getValidationScope() {
-        return validationScope;
+    public FeedbackScope getFeedbackScope() {
+        return feedbackScope;
     }
 
-    public void setValidationScope(final ValidationScope ValidationScope) {
-        this.validationScope = ValidationScope;
+    public void setFeedbackScope(final FeedbackScope feedbackScope) {
+        this.feedbackScope = feedbackScope;
     }
 
     @Override

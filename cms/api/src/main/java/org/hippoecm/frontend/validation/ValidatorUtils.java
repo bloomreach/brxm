@@ -40,18 +40,18 @@ public class ValidatorUtils {
         return validators.stream().anyMatch(REQUIRED_VALIDATORS::contains);
     }
 
-    public static ValidationScope getValidationScope(final String scope) {
+    public static FeedbackScope getFeedbackScope(final String scope) {
         try {
             if (StringUtils.isNotBlank(scope)) {
-                return ValidationScope.valueOf(scope.toUpperCase());
+                return FeedbackScope.valueOf(scope.toUpperCase());
             }
         } catch (IllegalArgumentException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope, 
-                        StringUtils.join(ValidationScope.values(), ", "), e);
+                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope,
+                        StringUtils.join(FeedbackScope.values(), ", "), e);
             }
         }
-        return ValidationScope.DOCUMENT;
+        return FeedbackScope.DOCUMENT;
     }
 
     private ValidatorUtils() {}
