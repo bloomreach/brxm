@@ -34,6 +34,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
@@ -125,9 +126,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
                 if (validatorService != null) {
                     for (final String fieldValidatorType : validators) {
-                        if (validatorService.containsValidator(fieldValidatorType)) {
-                            violations.addAll(validatorService.getValidator(fieldValidatorType)
-                                              .validate(this, nodeModel, childModel));
+                        final ICmsValidator validator = validatorService.getValidator(fieldValidatorType);
+                        if (validator != null) {
+                            violations.addAll(validator.validate(this, nodeModel, childModel));
                         }
                     }
                 }
