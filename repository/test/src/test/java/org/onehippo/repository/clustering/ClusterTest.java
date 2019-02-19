@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,8 +75,6 @@ public abstract class ClusterTest {
     private static final String dbport = System.getProperty(ClusterTest.class.getName() + ".dbport", "9001");
     private static final String repo1Config = "/org/onehippo/repository/clustering/node1-repository-" + dbtype + ".xml";
     private static final String repo2Config = "/org/onehippo/repository/clustering/node2-repository-" + dbtype + ".xml";
-
-    protected static final Credentials CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
 
     private static File tmpdir;
     private static String repo1Path;
@@ -337,7 +335,8 @@ public abstract class ClusterTest {
 
     protected Session loginSession(Object repo) {
         try {
-            return (Session) repo.getClass().getMethod("login", Credentials.class).invoke(repo, CREDENTIALS);
+            return (Session) repo.getClass().getMethod("login", Credentials.class).invoke(repo,
+                    new SimpleCredentials("admin", "admin".toCharArray()));
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("Failed to log in session: " + e);
         }
