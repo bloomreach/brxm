@@ -790,6 +790,10 @@ public class ContentBeanUtils {
     // TODO HSTTWO-4375 we really need to get rid of this logic in the ContentBeanUtils
     public static Session getPreviewCmsQuerySession(HstRequestContext requestContext, String sessionIdentifier) throws HstComponentException {
         try {
+            final Session previewSecurityDelegate = (Session)requestContext.getAttribute(ContentBeanUtils.class.getName() + "." + sessionIdentifier);
+            if (previewSecurityDelegate != null) {
+                return previewSecurityDelegate;
+            }
             SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
             if (!sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
                 log.debug("Security Delegation was expected to be enabled for cms request with non proxied session but it was not enabled. " +
@@ -808,7 +812,9 @@ public class ContentBeanUtils {
                 throw new IllegalStateException("HttpServletRequest should contain cms user credentials attribute for cms requests");
             }
             // create a security delegated session that is automatically cleaned up at the end of the request
-            return sessionSecurityDelegation.getOrCreatePreviewSecurityDelegate(cmsUserCred, sessionIdentifier);
+            final Session newPreviewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCred, true);
+            requestContext.setAttribute(ContentBeanUtils.class.getName() + "." + sessionIdentifier, newPreviewSecurityDelegate);
+            return previewSecurityDelegate;
         } catch (RepositoryException e) {
             throw new HstComponentException(e);
         }
