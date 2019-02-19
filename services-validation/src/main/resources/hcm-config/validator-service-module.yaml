@@ -1,0 +1,26 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/validation:
+      jcr:primaryType: hipposys:module
+      hipposys:className: org.onehippo.cms7.services.validation.ValidatorServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        /escaped:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.EscapedHtmlValidator
+        /email:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.RegExpValidator
+          regexp.pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$'
+        /html:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.NonEmptyHtmlValidator
+        /non-empty:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.NonEmptyValidator
+        /references:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.NodeReferenceValidator
+        /resource-required:
+          jcr:primaryType: hipposys:moduleconfig
+          hipposys:className: org.onehippo.cms7.services.validation.validator.ResourceRequiredValidator
