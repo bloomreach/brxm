@@ -109,7 +109,6 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
-    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
@@ -443,12 +442,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>net.sourceforge.htmlcleaner</groupId>
-        <artifactId>htmlcleaner</artifactId>
-        <version>${sf.htmlcleaner.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

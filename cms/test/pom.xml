@@ -29,6 +29,10 @@
   <artifactId>hippo-cms-test</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -113,6 +117,7 @@
     <dependency>
       <groupId>net.sourceforge.htmlcleaner</groupId>
       <artifactId>htmlcleaner</artifactId>
+      <version>${sf.htmlcleaner.version}</version>
       <scope>test</scope>
     </dependency>
 
