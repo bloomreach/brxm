@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,15 @@
 
 package org.hippoecm.hst.core.jcr;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -44,8 +40,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     private static final Logger log = LoggerFactory.getLogger(SessionSecurityDelegationImpl.class);
 
-    private static final String AUTO_LOGOUT_SESSIONS_KEY_MAP_ATTR_NAME = SessionSecurityDelegationImpl.class.getName() + ".auto.logout.sessions.map";
-    private static final String AUTO_LOGOUT_SESSIONS_KEY_LIST_ATTR_NAME = SessionSecurityDelegationImpl.class.getName() + ".auto.logout.sessions.list";
+    private static final String AUTO_LOGOUT_SESSIONS_LIST_ATTR_NAME = SessionSecurityDelegationImpl.class.getName() + ".auto.logout.sessions.list";
 
     private Repository repository;
     private Credentials previewCredentials;
@@ -85,15 +80,6 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             }
             autoLogoutList.clear();
         }
-        Map<DelegateSessionKey, Session> autoLogoutMap = getAutoLogoutSessionMap(requestContext);
-        if (autoLogoutMap != null) {
-            for (Session session : autoLogoutMap.values()) {
-                if (session.isLive()) {
-                    session.logout();
-                }
-            }
-            autoLogoutMap.clear();
-        }
     }
 
     @Override
@@ -101,36 +87,38 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         return repository.login(creds);
     }
 
+    @Deprecated
     @Override
     public Session getOrCreateLiveSecurityDelegate(final Credentials delegate, final String key) throws RepositoryException, IllegalStateException {
-        return createLiveSecurityDelegate(delegate, key, true);
+        return createLiveSecurityDelegate(delegate, true);
     }
 
     @Override
     public Session createLiveSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
-        return createLiveSecurityDelegate(delegate, null, autoLogout);
+        return doCreateLiveSecurityDelegate(delegate, autoLogout);
     }
 
-    private Session createLiveSecurityDelegate(final Credentials delegate, final String key, final boolean autoLogout) throws RepositoryException, IllegalStateException {
+    private Session doCreateLiveSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "live", true, true, PropertyType.STRING);
         final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
-        return createSecurityDelegate(liveCredentials, delegate, key, autoLogout, dre);
+        return doCreateSecurityDelegate(liveCredentials, delegate, autoLogout, dre);
     }
 
+    @Deprecated
     @Override
     public Session getOrCreatePreviewSecurityDelegate(final Credentials delegate, final String key) throws RepositoryException, IllegalStateException {
-        return createPreviewSecurityDelegate(delegate, key, true);
+        return doCreatePreviewSecurityDelegate(delegate, true);
     }
 
     @Override
     public Session createPreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
-        return createPreviewSecurityDelegate(delegate, null, autoLogout);
+        return doCreatePreviewSecurityDelegate(delegate, autoLogout);
     }
 
-    private Session createPreviewSecurityDelegate(final Credentials delegate, final String key, final boolean autoLogout) throws RepositoryException, IllegalStateException {
+    private Session doCreatePreviewSecurityDelegate(final Credentials delegate, final boolean autoLogout) throws RepositoryException, IllegalStateException {
         final FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
         final DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
-        return createSecurityDelegate(previewCredentials, delegate, key, autoLogout, dre);
+        return doCreateSecurityDelegate(previewCredentials, delegate, autoLogout, dre);
     }
 
     @Override
@@ -138,13 +126,12 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
                                           final Credentials cred2,
                                           final boolean autoLogout,
                                           final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
-        return createSecurityDelegate(cred1, cred2, null, autoLogout, domainExtensions);
+        return doCreateSecurityDelegate(cred1, cred2, autoLogout, domainExtensions);
     }
 
 
-    private Session createSecurityDelegate(final Credentials cred1,
+    private Session doCreateSecurityDelegate(final Credentials cred1,
                                            final Credentials cred2,
-                                           final String key,
                                            final boolean autoLogout,
                                            final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
         if (!securityDelegationEnabled) {
@@ -152,22 +139,9 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         }
 
         final HstRequestContext requestContext = RequestContextProvider.get();
-        if (autoLogout && key != null) {
-            if (requestContext == null) {
-                throw new IllegalStateException("Cannot automatically logout jcr session since there is no HstRequestContext");
-            }
-            Map<DelegateSessionKey, Session> sessionMap = getAutoLogoutSessionMap(requestContext);
-            if (sessionMap != null) {
-                DelegateSessionKey dsk = new DelegateSessionKey(cred1, cred2, key, domainExtensions);
-                Session existing = sessionMap.get(dsk);
-                if (existing != null) {
-                    return existing;
-                }
-            }
-        }
 
         long start = System.currentTimeMillis();
-        Session jcrSession = null;
+        Session jcrSession;
 
         Session session1 = null;
         try {
@@ -204,12 +178,8 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             if (requestContext == null) {
                 throw new IllegalStateException("Cannot automatically logout jcr session since there is no HstRequestContext");
             }
-            if (key == null) {
-                storeInAutoLogoutList(jcrSession, requestContext);
-            } else {
-                DelegateSessionKey dsk = new DelegateSessionKey(cred1, cred2, key, domainExtensions);
-                storeInAutoLogoutMap(jcrSession, dsk, requestContext);
-            }
+            storeInAutoLogoutList(jcrSession, requestContext);
+
         }
 
         return jcrSession;
@@ -229,103 +199,14 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
     private void storeInAutoLogoutList(final Session jcrSession, final HstRequestContext requestContext) {
         List<Session> sessionList = getAutoLogoutSessionList(requestContext);
         if (sessionList == null) {
-            sessionList = new ArrayList<Session>();
-            requestContext.setAttribute(AUTO_LOGOUT_SESSIONS_KEY_LIST_ATTR_NAME, sessionList);
+            sessionList = new ArrayList<>();
+            requestContext.setAttribute(AUTO_LOGOUT_SESSIONS_LIST_ATTR_NAME, sessionList);
         }
         sessionList.add(jcrSession);
     }
 
-    private void storeInAutoLogoutMap(final Session jcrSession, final DelegateSessionKey key, final HstRequestContext requestContext) {
-        Map<DelegateSessionKey, Session> sessionMap = getAutoLogoutSessionMap(requestContext);
-        if (sessionMap == null) {
-            sessionMap = new HashMap<DelegateSessionKey, Session>();
-            requestContext.setAttribute(AUTO_LOGOUT_SESSIONS_KEY_MAP_ATTR_NAME, sessionMap);
-        }
-        sessionMap.put(key, jcrSession);
-    }
-
-    private class DelegateSessionKey implements Serializable {
-        final Credentials cred1;
-        final Credentials cred2;
-        final String key;
-        final DomainRuleExtension[] domainExtensions;
-
-        DelegateSessionKey(final Credentials cred1,
-                           final Credentials cred2,
-                           final String key,
-                           final DomainRuleExtension... domainExtensions) {
-            this.cred1 = cred1;
-            this.cred2 = cred2;
-            this.key = key;
-            this.domainExtensions = domainExtensions;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof DelegateSessionKey)) {
-                return false;
-            }
-
-            final DelegateSessionKey that = (DelegateSessionKey) o;
-            if (!credentialsEqual(cred1, that.cred1)) {
-                return false;
-            }
-
-            if(!credentialsEqual(cred2, that.cred2)) {
-                return false;
-            }
-            // domainExtensions can be both null in which case they are equal
-            if (!Arrays.equals(domainExtensions, that.domainExtensions)) {
-                return false;
-            }
-            if (key != null ? !key.equals(that.key) : that.key != null) {
-                return false;
-            }
-            return true;
-        }
-
-        private boolean credentialsEqual(final Credentials cred, final Credentials compare) {
-            if (cred instanceof SimpleCredentials && compare instanceof SimpleCredentials) {
-                // SimpleCredentials does *not* override hashcode or equals!
-                SimpleCredentials sc = (SimpleCredentials)cred;
-                if (!sc.getUserID().equals(((SimpleCredentials)compare).getUserID())) {
-                    return false;
-                }
-                return Arrays.equals(sc.getPassword(), ((SimpleCredentials)compare).getPassword());
-            }
-            // we can only check on object equality now
-            return cred == compare;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = (domainExtensions != null ? Arrays.hashCode(domainExtensions) : 0);
-            result = 31 * result + getCredentialsHashCode(cred1);
-            result = 31 * result + getCredentialsHashCode(cred2);
-            result = 31 * result + (key != null ? key.hashCode() : 0);
-            return result;
-        }
-
-        private int getCredentialsHashCode(Credentials cred) {
-            if (cred instanceof SimpleCredentials) {
-                SimpleCredentials sc = (SimpleCredentials)cred;
-                return sc.getUserID().hashCode()*31 + Arrays.hashCode(sc.getPassword());
-            }
-            // we can only return object hashcode since Credentials impls do not override hashCode..
-            return (cred != null ? cred.hashCode() : 0);
-        }
-    }
-
-
-    private Map<DelegateSessionKey, Session> getAutoLogoutSessionMap(final HstRequestContext requestContext) {
-        return (Map<DelegateSessionKey, Session>)requestContext.getAttribute(AUTO_LOGOUT_SESSIONS_KEY_MAP_ATTR_NAME);
-    }
-
     private List<Session> getAutoLogoutSessionList(final HstRequestContext requestContext) {
-        return (List<Session>)requestContext.getAttribute(AUTO_LOGOUT_SESSIONS_KEY_LIST_ATTR_NAME);
+        return (List<Session>)requestContext.getAttribute(AUTO_LOGOUT_SESSIONS_LIST_ATTR_NAME);
     }
 
 }
