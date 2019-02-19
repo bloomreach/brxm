@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
@@ -337,7 +338,7 @@ public class SiteIntegrationTest {
                                 ImmutableSet.of("org.onehippo.cms7.services."), false);
 
                 repository.startRepository();
-                final Session session = repository.login(IsolatedRepository.CREDENTIALS);
+                final Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 
                 run.getPreConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
                 run.getJcrRunner().run(session);

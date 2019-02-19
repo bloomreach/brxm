@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.user;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -43,6 +44,11 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryUserManager.class);
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+
+    // note we include a random uuid to make sure that *before* a successful login the attribute name is not known
+    // on the SimpleCredentials object
+    private static final String LOGIN_RESULT_ATTR = RepositoryUserManager.class.getName()
+            + UUID.randomUUID().toString() + ".loginSuccess";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
     
@@ -112,12 +118,30 @@ public class RepositoryUserManager extends AbstractUserManager {
                 return true;
             }
 
+            final Boolean loginResult = (Boolean)creds.getAttribute(LOGIN_RESULT_ATTR);
+
+            if (loginResult != null) {
+                return loginResult;
+            }
+
             // do regular password check
-            return PasswordHelper.checkHash(password, getPasswordHash(userinfo));
+            final boolean success = PasswordHelper.checkHash(password, getPasswordHash(userinfo));
+
+            // purge the credentials and store the success outcome
+            creds.setAttribute(LOGIN_RESULT_ATTR, success);
+            zeroOutPassword(creds.getPassword());
+
+            return success;
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
         } catch (UnsupportedEncodingException e) {
             throw new RepositoryException("Unsupported encoding found when authenticating user: " + creds.getUserID(), e);
+        }
+    }
+
+    private void zeroOutPassword(final char[] password) {
+        for (int i = 0; i < password.length ; i++) {
+            password[i] = 0;
         }
     }
 

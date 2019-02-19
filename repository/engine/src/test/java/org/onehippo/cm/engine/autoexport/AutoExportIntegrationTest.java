@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.util.JcrUtils;
@@ -616,7 +617,7 @@ public class AutoExportIntegrationTest {
                         new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
 
                 repository.startRepository();
-                final Session session = repository.login(IsolatedRepository.CREDENTIALS);
+                final Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 
                 // verify that auto-export is disabled, since we want to control when it runs
                 assertTrue(session.nodeExists("/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig"));

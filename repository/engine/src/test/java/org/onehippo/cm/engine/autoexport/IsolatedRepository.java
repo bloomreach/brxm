@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
+
+import com.google.common.collect.Sets;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -36,8 +37,6 @@ import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import static org.onehippo.cm.engine.Constants.PROJECT_BASEDIR_PROPERTY;
 import static org.onehippo.cm.engine.Constants.SYSTEM_PARAMETER_REPO_BOOTSTRAP;
@@ -56,8 +55,6 @@ public class IsolatedRepository {
 
     private static final String dbport = System.getProperty(IsolatedRepository.class.getName() + ".dbport", "9001");
     private static final String repositoryConfig = "/org/hippoecm/repository/isolated-repository.xml";
-
-    public static final Credentials CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
 
     private final File folder;
     private final File projectFolder;
