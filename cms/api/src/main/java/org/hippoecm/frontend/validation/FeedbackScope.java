@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-public enum ValidationScope {
+public enum FeedbackScope {
     DOCUMENT,
     FIELD
 }

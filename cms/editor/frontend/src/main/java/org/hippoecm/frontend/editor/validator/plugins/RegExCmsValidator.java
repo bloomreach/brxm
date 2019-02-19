@@ -62,7 +62,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (!pattern.matcher(value).find()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
         }
         return violations;
     }

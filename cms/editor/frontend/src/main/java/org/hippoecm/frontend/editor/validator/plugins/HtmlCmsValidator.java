@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -28,6 +27,7 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms7.services.validation.util.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +42,8 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
 
-    private final HtmlValidator htmlValidator;
-
     public HtmlCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        htmlValidator = new HtmlValidator();
     }
 
     @Override
@@ -67,9 +64,9 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
 
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
-        for (final String key : htmlValidator.validateNonEmpty(value)) {
-            final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
-            violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
+        if (HtmlUtils.isEmpty(value)) {
+            final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.HTML_IS_EMPTY, ValidatorMessages.class);
+            violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
         }
         return violations;
     }

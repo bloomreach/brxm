@@ -25,7 +25,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
@@ -63,7 +63,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
                     validator.validate(context, valueModel.getObject());
             if (optionalViolation.isPresent()) {
                 final Model<String> message = Model.of(optionalViolation.get().getMessage());
-                final Violation violation = fieldValidator.newValueViolation(valueModel, message, ValidationScope.FIELD);
+                final Violation violation = fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD);
                 return Sets.newHashSet(violation);
             }
         } catch (final ValidatorException e) {

@@ -47,7 +47,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +154,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         }
         if (message instanceof ScopedFeedBackMessage) {
             ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
+            return scopedMessage.getScope().equals(FeedbackScope.DOCUMENT);
         }
         return false;
     }
@@ -177,14 +177,14 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
 
     @Override
     // the same logic as in org.apache.wicket.Component.warn
-    public void warn(final IModel<String> message, final ValidationScope scope) {
+    public void warn(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.WARNING, scope));
         addStateChange();
     }
 
     @Override
     // the same logic as in org.apache.wicket.Component.error
-    public void error(final IModel<String> message, final ValidationScope scope) {
+    public void error(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
         addStateChange();
     }

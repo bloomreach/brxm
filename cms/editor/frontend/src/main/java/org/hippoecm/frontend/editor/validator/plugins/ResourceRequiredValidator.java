@@ -78,7 +78,7 @@ public class ResourceRequiredValidator extends AbstractCmsValidator {
             final Node node = ((JcrNodeModel) childModel).getNode();
             final Property resourceData = node.getProperty("jcr:data");
             if (!(resourceData.getLength() > 0)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
             }
         } catch (final Exception e) {
             throw new ValidationException(e);
