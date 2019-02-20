@@ -814,7 +814,7 @@ public class ContentBeanUtils {
             // create a security delegated session that is automatically cleaned up at the end of the request
             final Session newPreviewSecurityDelegate = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCred, true);
             requestContext.setAttribute(ContentBeanUtils.class.getName() + "." + sessionIdentifier, newPreviewSecurityDelegate);
-            return previewSecurityDelegate;
+            return newPreviewSecurityDelegate;
         } catch (RepositoryException e) {
             throw new HstComponentException(e);
         }
