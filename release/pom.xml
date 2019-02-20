@@ -131,6 +131,9 @@
     <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
     <docker.brxm.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</docker.brxm.envRun.POSTGRES_DB_DRIVER>
 
+    <!-- Jackrabbit cluster node id can be set externally. -->
+    <docker.brxm.envRun.REPO_CLUSTER_NODE_ID/>
+
     <docker.brxm.default.JAVA_OPTS>
       -Drepo.path=${repo.path}
       -Dproject.basedir=${docker.brxm.project.path}
