@@ -89,7 +89,7 @@
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
 
-  <Cluster>
+  <Cluster id="@cluster.node.id@">
     <Journal class="org.apache.jackrabbit.core.journal.DatabaseJournal">
       <param name="dataSourceName" value="repositoryDS"/>
       <param name="databaseType" value="mysql"/>
