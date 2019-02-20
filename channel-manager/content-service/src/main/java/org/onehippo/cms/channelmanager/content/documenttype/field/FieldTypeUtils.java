@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,19 +42,20 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundF
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateAndTimeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateOnlyFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -63,7 +64,13 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.validation.ValidationService;
+import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,12 +88,6 @@ public class FieldTypeUtils {
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
-    // Translate JCR level validator to FieldType.Validator
-    private static final Map<String, Validator> VALIDATOR_MAP;
-
-    // Unsupported validators of which we know they have field-scope only
-    private static final Set<String> UNSUPPORTED_FIELD_VALIDATORS;
-
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
@@ -97,20 +98,6 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS = new HashSet<>();
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
-
-        VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put(FieldValidators.REQUIRED, Validator.REQUIRED);
-        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, Validator.REQUIRED);
-        // Apparently, making a String field required puts above two(!) values onto the validator property.
-
-        UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.EMAIL);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.ESCAPED);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.HTML);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.IMAGE_REFERENCES);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REFERENCES);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REQUIRED);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -159,10 +146,10 @@ public class FieldTypeUtils {
     }
 
     private static class TypeDescriptor {
-        public final Class<? extends FieldType> fieldTypeClass;
-        public final String defaultPluginClass;
+        final Class<? extends FieldType> fieldTypeClass;
+        final String defaultPluginClass;
 
-        public TypeDescriptor(final Class<? extends FieldType> fieldTypeClass, final String defaultPluginClass) {
+        TypeDescriptor(final Class<? extends FieldType> fieldTypeClass, final String defaultPluginClass) {
             this.fieldTypeClass = fieldTypeClass;
             this.defaultPluginClass = defaultPluginClass;
         }
@@ -173,20 +160,49 @@ public class FieldTypeUtils {
      * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
      * unknown validator'.
      *
-     * @param fieldType  Specification of a field type
-     * @param docType    The document type the field is a part of
-     * @param validators List of 0 or more validators specified at JCR level
+     * @param fieldType    Specification of a field type
+     * @param fieldContext The context of the field
+     * @param validatorNames List of 0 or more validator names specified at JCR level
      */
-    public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
-        for (final String validator : validators) {
-            if (IGNORED_VALIDATORS.contains(validator)) {
+    public static void determineValidators(final FieldType fieldType, final FieldTypeContext fieldContext,
+                                           final List<String> validatorNames) {
+        if (validatorNames.isEmpty()) {
+            return;
+        }
+
+        final ValidationService validationService = HippoServiceRegistry.getService(ValidationService.class);
+        if (validationService == null) {
+            log.error("Cannot load {} from service registry, field validation will be disabled",
+                    ValidationService.class.getSimpleName());
+        }
+
+        final FieldValidationContext validationContext = new FieldValidationContext(fieldContext);
+
+        for (String validatorName : validatorNames) {
+            if (IGNORED_VALIDATORS.contains(validatorName)) {
                 // Do nothing
-            } else if (VALIDATOR_MAP.containsKey(validator)) {
-                fieldType.addValidator(VALIDATOR_MAP.get(validator));
-            } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validator)) {
-                fieldType.addValidator(Validator.UNSUPPORTED);
+            } else if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
+                fieldType.setRequired(true);
             } else {
-                docType.setReadOnlyDueToUnknownValidator(true);
+                try {
+                    final Validator<FieldContext, Object> validator = validationService.getValidator(validatorName);
+                    if (validator != null) {
+                        validator.init(validationContext);
+                        fieldType.addValidator(validator);
+                    } else {
+                        final DocumentType docType = fieldContext.getParentContext().getDocumentType();
+                        log.info("Field '{}' in document type '{}' has unknown validator '{}', " +
+                                        "documents of this type will be read only in the Channel Manager",
+                                fieldType.getId(), docType.getId(), validatorName);
+                        docType.setReadOnlyDueToUnknownValidator(true);
+                    }
+                } catch (ValidatorConfigurationException e) {
+                    log.error("Failed to load validator '{}' for field '{}', ignoring it",
+                            validatorName, fieldType.getId(), e);
+                } catch (InvalidValidatorException e) {
+                    log.warn("Ignoring invalid validator '{}' for field '{}': {}",
+                            validatorName, fieldType.getId(), e.getMessage());
+                }
             }
         }
     }
@@ -234,9 +250,6 @@ public class FieldTypeUtils {
                 return optionalFieldType;
             }
 
-            if (fieldType.hasUnsupportedValidator()) {
-                allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
-            }
             // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
             // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
@@ -327,9 +340,7 @@ public class FieldTypeUtils {
                                         final List<FieldType> fields,
                                         final Node node) throws ErrorWithPayloadException {
         for (final FieldType fieldType : fields) {
-            if (!fieldType.hasUnsupportedValidator()) {
-                fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
-            }
+            fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
     }
 

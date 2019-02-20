@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -83,14 +82,9 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void isSupported() {
-        assertTrue(fieldType.isSupported());
-
+    public void emptyCompoundIsNotSupported() {
         CompoundFieldType empty = new CompoundFieldType();
         assertFalse(empty.isSupported());
-
-        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.isSupported());
     }
 
     @Test
@@ -514,7 +508,7 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void validateSingle() {
-        stringField2.addValidator(FieldType.Validator.REQUIRED);
+        stringField2.setRequired(true);
 
         Map<String, List<FieldValue>> valueMap = validCompound();
         assertTrue(fieldType.validate(listOf(valueOf(valueMap))));
@@ -523,8 +517,7 @@ public class CompoundFieldTypeTest {
 
         assertFalse(fieldType.validate(listOf(valueOf(valueMap))));
         assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
-                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
     }
 
     @Test
@@ -532,7 +525,7 @@ public class CompoundFieldTypeTest {
         Map<String, List<FieldValue>> valueA;
         Map<String, List<FieldValue>> valueB;
 
-        stringField2.addValidator(FieldType.Validator.REQUIRED);
+        stringField2.setRequired(true);
 
         valueA = validCompound();
         valueB = validCompound();
@@ -546,8 +539,7 @@ public class CompoundFieldTypeTest {
 
         assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
-                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
 
@@ -560,8 +552,7 @@ public class CompoundFieldTypeTest {
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
-                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
 
         // error in both instances
         valueA = validCompound();
@@ -571,11 +562,9 @@ public class CompoundFieldTypeTest {
 
         assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
-                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
-                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
     }
 
     private Map<String, List<FieldValue>> validCompound() {

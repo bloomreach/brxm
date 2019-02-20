@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationErrorInfo {
-    private final Code code;
 
-    public ValidationErrorInfo(final Code code) {
-        this.code = code;
+    /**
+     * The "required" validation is meant to indicate that a primitive field must have content. What exactly that
+     * means depends on the field type. The "required" validation is *not* meant to indicate that at least one
+     * instance of a multiple field must be present.
+     */
+    public static final String REQUIRED = "required";
+
+    private final String validation;
+    private final String message; // localized
+
+    public ValidationErrorInfo(final String validation, final String message) {
+        this.validation = validation;
+        this.message = message;
     }
 
-    public Code getCode() {
-        return code;
+    public String getValidation() {
+        return validation;
     }
 
-    public enum Code {
-        REQUIRED_FIELD_EMPTY
+    public String getMessage() {
+        return message;
     }
 }

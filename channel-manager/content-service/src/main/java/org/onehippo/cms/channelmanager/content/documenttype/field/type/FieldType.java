@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 
 /**
  * A field type in a {@link DocumentType}.
@@ -48,16 +50,6 @@ public interface FieldType {
         COMPOUND,
         IMAGE_LINK,
         NODE_LINK
-    }
-
-    /**
-     *  The 'REQUIRED' validator is meant to indicate that a primitive field must have content. What exactly that
-     *  means depends on the field type. The 'REQUIRED' validator is *not* meant to indicate that at least one
-     *  instance of a multiple field must be present.
-     */
-    enum Validator {
-        REQUIRED,
-        UNSUPPORTED
     }
 
     String getId();
@@ -86,7 +78,16 @@ public interface FieldType {
 
     void setMultiple(final boolean isMultiple);
 
+    /**
+     * Represents the "required" validator, which indicates that a primitive field must have content. What exactly that
+     * means depends on the field type. The "required" validator is *not* meant to indicate that at least one
+     * instance of a multiple field must be present.
+     *
+     * @return true or false
+     */
     boolean isRequired();
+
+    void setRequired(boolean required);
 
     /**
      * Check if an initialized field is supported, i.e. should be present in a document type.
@@ -140,17 +141,21 @@ public interface FieldType {
     boolean writeField(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException;
 
     /**
-     * Validate the current value of this field against all applicable (and supported) validators.
+     * Validates the current value of this field (possible multiple) against all applicable (and supported) validators.
      *
      * @param valueList list of field value(s) to validate
      * @return          true upon success, false if at least one validation error was encountered.
      */
     boolean validate(final List<FieldValue> valueList);
 
-    void addValidator(final Validator validator);
+    /**
+     * Validates a single value of this field. Will be called for every value of a multiple field.
+     * When the value is not valid, the errorInfo of the value should be set to indicate the problem.
+     *
+     * @param value value to validate
+     * @return true if the value is valid, false otherwise.
+     */
+    boolean validateValue(final FieldValue value);
 
-    Set<Validator> getValidators();
-
-    boolean hasUnsupportedValidator();
-
+    void addValidator(final Validator<FieldContext, Object> validator);
 }

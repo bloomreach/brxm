@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -47,16 +46,17 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -165,7 +165,7 @@ public class PrimitiveFieldTypeTest {
         node.setProperty(PROPERTY, "Value");
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
 
-        fieldType.addValidator(Validator.REQUIRED);
+        fieldType.setRequired(true);
         node.getProperty(PROPERTY).remove();
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
 
@@ -352,7 +352,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.setId(PROPERTY);
         expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(mockedNode)).andReturn("bla");
-        PowerMock.replayAll(mockedNode);
+        replayAll();
 
         assertThat(fieldType.readFrom(mockedNode).get().get(0).getValue(), equalTo(""));
     }
@@ -364,7 +364,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.setId(PROPERTY);
         expect(mockedNode.hasProperty(PROPERTY)).andReturn(false);
         expect(mockedNode.setProperty(PROPERTY, "New Value", PropertyType.STRING)).andThrow(new RepositoryException());
-        replay(mockedNode);
+        replayAll();
 
         try {
             fieldType.writeTo(mockedNode, Optional.of(listOf(valueOf("New Value"))));
@@ -372,7 +372,7 @@ public class PrimitiveFieldTypeTest {
         } catch (InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(mockedNode);
+        verifyAll();
     }
 
     @Test
@@ -383,7 +383,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
-        replay(mockedNode);
+        replayAll();
 
         try {
             fieldType.writeTo(mockedNode, Optional.empty());
@@ -391,7 +391,7 @@ public class PrimitiveFieldTypeTest {
         } catch (final InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(mockedNode);
+        verifyAll();
     }
 
     @Test
@@ -426,10 +426,10 @@ public class PrimitiveFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
-        replay(mockedNode);
+        replayAll();
 
         assertFalse(fieldType.writeField(mockedNode, fieldPath, fieldValues));
-        verify(mockedNode);
+        verifyAll();
     }
 
     @Test
@@ -446,7 +446,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
-        fieldType.addValidator(Validator.REQUIRED);
+        fieldType.setRequired(true);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final FieldValue emptyValue = new FieldValue("");
@@ -465,7 +465,11 @@ public class PrimitiveFieldTypeTest {
 
     @Test
     public void validateRequired() {
-        fieldType.addValidator(Validator.REQUIRED);
+        fieldType.setRequired(true);
+
+        fieldType.validationContext = createMock(FieldValidationContext.class);
+        expect(fieldType.validationContext.getTranslatedMessage(anyString())).andReturn("error message").anyTimes();
+        replayAll();
 
         // valid values
         assertTrue(fieldType.validate(listOf(valueOf("5"))));
@@ -474,41 +478,41 @@ public class PrimitiveFieldTypeTest {
         // invalid values
         FieldValue v = valueOf("");
         assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(v.getErrorInfo().getValidation(), equalTo("required"));
 
         v = valueOf(null);
         assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(v.getErrorInfo().getValidation(), equalTo("required"));
 
         List<FieldValue> l = Arrays.asList(valueOf("10"), valueOf(""));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
 
         l = Arrays.asList(valueOf("10"), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
 
         l = Arrays.asList(valueOf(""), valueOf("10"));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
         assertFalse(l.get(1).hasErrorInfo());
 
         l = Arrays.asList(valueOf(null), valueOf("10"));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
         assertFalse(l.get(1).hasErrorInfo());
 
         l = Arrays.asList(valueOf(""), valueOf(""));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
 
         l = Arrays.asList(valueOf(null), valueOf(null));
         assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
     }
 
     private List<FieldValue> listOf(final FieldValue value) {

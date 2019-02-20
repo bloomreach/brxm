@@ -40,7 +40,7 @@
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
     <hippo.plugin.gallerypicker.version>13.1.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
     <hippo.plugin.selections.version>13.1.0-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.services.version>13.1.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>13.1.0-validation-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>13.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
 
     <commons-lang.version>2.6</commons-lang.version>

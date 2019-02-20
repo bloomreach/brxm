@@ -307,13 +307,13 @@ public class ImageLinkFieldTypeTest {
 
     @Test
     public void validateValueRequiredNotEmpty() {
-        imageLink.addValidator(FieldType.Validator.REQUIRED);
+        imageLink.setRequired(true);
         assertTrue(imageLink.validateValue(new FieldValue("1234")));
     }
 
     @Test
     public void validateValueRequiredAndEmpty() {
-        imageLink.addValidator(FieldType.Validator.REQUIRED);
+        imageLink.setRequired(true);
         assertFalse(imageLink.validateValue(new FieldValue("")));
     }
 }

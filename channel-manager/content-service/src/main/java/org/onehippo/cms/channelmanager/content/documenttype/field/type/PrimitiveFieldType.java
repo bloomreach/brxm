@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -65,16 +63,18 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     @Override
-    public boolean validate(final List<FieldValue> valueList) {
-        boolean isValid = true;
-
-        if (isRequired()) {
-            if (!validateValues(valueList, PrimitiveFieldType::validateSingleRequired)) {
-                isValid = false;
-            }
+    protected boolean validateRequired(final FieldValue value) {
+        if (!value.hasValue() || value.getValue().isEmpty()) {
+            final String message = validationContext.getTranslatedMessage(ValidationErrorInfo.REQUIRED);
+            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED, message));
+            return false;
         }
+        return true;
+    }
 
-        return isValid;
+    @Override
+    protected final Object getValidatedValue(final FieldValue value) {
+        return value.getValue();
     }
 
     @Override
@@ -176,14 +176,6 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         }
 
         return values;
-    }
-
-    protected static boolean validateSingleRequired(final FieldValue value) {
-        if (value.findValue().orElse(StringUtils.EMPTY).isEmpty()) {
-            value.setErrorInfo(new ValidationErrorInfo(Code.REQUIRED_FIELD_EMPTY));
-            return false;
-        }
-        return true;
     }
 
     protected FieldValue getFieldValue(final String value) {

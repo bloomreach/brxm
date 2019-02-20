@@ -153,11 +153,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
     }
 
-    @Override
-    public boolean validateValue(final FieldValue value) {
-        return !isRequired() || validateSingleRequired(value);
-    }
-
     private String read(final String html, final Node node) {
         final Model<String> htmlModel = Model.of(html);
         final Model<Node> nodeModel = Model.of(node);

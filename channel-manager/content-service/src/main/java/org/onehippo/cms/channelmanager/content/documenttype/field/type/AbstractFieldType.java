@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,23 +28,30 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.Violation;
+import org.onehippo.cms7.services.validation.exception.ValidatorException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.repository.l10n.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentType}. It can be serialized into JSON to
@@ -56,10 +63,13 @@ public abstract class AbstractFieldType implements FieldType {
     protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
             = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
 
+    private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
+
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
+    private boolean required;
 
     @JsonIgnore
     private int minValues = 1;
@@ -67,11 +77,13 @@ public abstract class AbstractFieldType implements FieldType {
     private int maxValues = 1;
     @JsonIgnore
     private boolean isMultiple;
+    @JsonIgnore
+    protected FieldValidationContext validationContext;
 
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
-    private final Set<Validator> validators = new HashSet<>();
+    private final Set<Validator<FieldContext, Object>> validators = new LinkedHashSet<>();
 
     @Override
     public String getId() {
@@ -143,28 +155,23 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public Set<Validator> getValidators() {
-        return validators;
-    }
-
-    @Override
-    public void addValidator(final Validator validator) {
+    public void addValidator(final Validator<FieldContext, Object> validator) {
         validators.add(validator);
     }
 
     @Override
     public boolean isRequired() {
-        return getValidators().contains(Validator.REQUIRED);
+        return required;
     }
 
     @Override
-    public boolean hasUnsupportedValidator() {
-        return getValidators().contains(Validator.UNSUPPORTED);
+    public void setRequired(final boolean required) {
+        this.required = required;
     }
 
     @Override
     public boolean isSupported() {
-        return !hasUnsupportedValidator();
+        return true;
     }
 
     @Override
@@ -181,7 +188,8 @@ public abstract class AbstractFieldType implements FieldType {
         setLocalizedLabels(resourceBundle, editorFieldConfig);
 
         final List<String> validators = fieldContext.getValidators();
-        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), validators);
+
+        FieldTypeUtils.determineValidators(this, fieldContext, validators);
 
         // determine cardinality
         if (validators.contains(FieldValidators.OPTIONAL)) {
@@ -204,6 +212,53 @@ public abstract class AbstractFieldType implements FieldType {
             throws ErrorWithPayloadException {
         writeValues(node, optionalValues, true);
     }
+
+    @Override
+    public final boolean validate(final List<FieldValue> valueList) {
+        boolean isValid = true;
+
+        for (FieldValue value : valueList) {
+            isValid &= validate(value);
+        }
+
+        return isValid;
+    }
+
+    protected boolean validate(final FieldValue value) {
+        if (required && !validateRequired(value)) {
+            return false;
+        }
+        return validateValue(value);
+    }
+
+    protected abstract boolean validateRequired(final FieldValue value);
+
+    /**
+     * Executes all configured validators. The first validator that deems the value invalid sets the value's errorInfo.
+     */
+    public boolean validateValue(final FieldValue value) {
+        return !validators.stream().anyMatch(validator -> {
+            try {
+                final Optional<Violation> violation = validator.validate(validationContext, getValidatedValue(value));
+
+                violation.ifPresent((error) -> {
+                    ValidationErrorInfo errorInfo = new ValidationErrorInfo(validator.getName(), error.getMessage());
+                    value.setErrorInfo(errorInfo);
+                });
+
+                return violation.isPresent();
+            } catch (ValidatorException e) {
+                log.info("Failed to execute validator '{}', assuming the value is invalid", validator.getName(), e);
+                return true;
+            }
+        });
+    }
+
+    /**
+     * @param value the field value wrapper
+     * @return the part of the field value that gets validated
+     */
+    protected abstract Object getValidatedValue(final FieldValue value);
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
 

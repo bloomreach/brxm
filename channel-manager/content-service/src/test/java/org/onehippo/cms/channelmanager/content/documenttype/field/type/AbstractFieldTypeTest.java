@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,36 +71,29 @@ public class AbstractFieldTypeTest {
             }
 
             @Override
-            protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues)
-                    throws ErrorWithPayloadException { }
+            protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
+            }
 
             @Override
-            public boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) throws ErrorWithPayloadException {
+            public boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) {
                 return false;
             }
 
             @Override
-            public boolean validate(List<FieldValue> valueList) {
+            protected boolean validateRequired(final FieldValue value) {
                 return false;
+            }
+
+            @Override
+            protected Object getValidatedValue(final FieldValue value) {
+                return null;
             }
         };
     }
 
     @Test
-    public void hasUnsupportedValidator() {
-        assertFalse(fieldType.hasUnsupportedValidator());
-        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertTrue(fieldType.hasUnsupportedValidator());
-        fieldType.getValidators().remove(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.hasUnsupportedValidator());
-    }
-
-    @Test
     public void isSupported() {
         assertTrue(fieldType.isSupported());
-
-        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
-        assertFalse(fieldType.isSupported());
     }
 
     @Test
@@ -156,7 +149,7 @@ public class AbstractFieldTypeTest {
     @Test
     public void checkCardinalityNoneButRequired() throws Exception {
         fieldType.setMinValues(0);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
+        fieldType.setRequired(true);
         checkCardinality(Collections.emptyList());
     }
 
@@ -258,7 +251,7 @@ public class AbstractFieldTypeTest {
                 .andReturn(Optional.empty());
         expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
                 .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(fieldType, docType, validators);
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
@@ -299,7 +292,7 @@ public class AbstractFieldTypeTest {
                 .andReturn(Optional.of("Field Display Name"));
         expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
                 .andReturn(Optional.of("Hint"));
-        FieldTypeUtils.determineValidators(fieldType, docType, validators);
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
@@ -340,7 +333,7 @@ public class AbstractFieldTypeTest {
                 .andReturn(Optional.empty());
         expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
                 .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(fieldType, docType, validators);
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);

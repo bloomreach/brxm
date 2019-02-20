@@ -80,7 +80,7 @@ public class FieldValueTest {
         FieldValue value1 = new FieldValue("value");
 
         FieldValue value2 = new FieldValue("value");
-        value2.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        value2.setErrorInfo(new ValidationErrorInfo("required", "Bad!"));
 
         assertTrue(value1.equals(value2));
     }
