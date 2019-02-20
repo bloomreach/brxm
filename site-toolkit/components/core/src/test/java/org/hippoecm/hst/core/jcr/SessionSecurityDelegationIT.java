@@ -92,7 +92,7 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
     }
 
     @Test
-    public void sessionSecurityDelegationCachedEntries() throws RepositoryException {
+    public void sessionSecurityDelegationNeverCaches() throws RepositoryException {
         // since SimpleCredentials does not have a equals or hashCode impl, below test with two Credentials objects
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         Credentials creds2 = new SimpleCredentials("admin", "admin".toCharArray());
