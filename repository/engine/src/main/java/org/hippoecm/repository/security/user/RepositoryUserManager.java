@@ -15,11 +15,17 @@
  */
 package org.hippoecm.repository.security.user;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.UUID;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.spec.SecretKeySpec;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -47,19 +53,18 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     // note we include a random uuid to make sure that *before* a successful login the attribute name is not known
     // on the SimpleCredentials object
-    private static final String LOGIN_PWD_HASH = RepositoryUserManager.class.getName()
-            + UUID.randomUUID().toString() + ".loginSuccess";
+    private static final String IDENTITY_SECRET = RepositoryUserManager.class.getName() + ".identitySecret";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
-    
+
     private boolean maintenanceMode = false;
-    
+
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
         maintenanceMode = context.isMaintenanceMode();
     }
 
-     public boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+    public boolean isPasswordExpired(String rawUserId) throws RepositoryException {
         if (isSystemUser(rawUserId)) {
             // system users password does not expire
             return false;
@@ -82,6 +87,7 @@ public class RepositoryUserManager extends AbstractUserManager {
         }
         return -1l;
     }
+
 
     /**
      * Authenticate the user against the hash stored in the user node
@@ -108,8 +114,7 @@ public class RepositoryUserManager extends AbstractUserManager {
                         return true;
                     }
                     log.info("Jvm credentials did not match for user '{}'. Continuing with regular authentication", creds.getUserID());
-                }
-                else if (Arrays.equals(password, passkey.toCharArray())) {
+                } else if (Arrays.equals(password, passkey.toCharArray())) {
                     return true;
                 }
             }
@@ -118,23 +123,23 @@ public class RepositoryUserManager extends AbstractUserManager {
                 return true;
             }
 
-            // user's password hash was (maybe) stored on previous login and can be reused directly
-            final String passwordHash = (String)creds.getAttribute(LOGIN_PWD_HASH);
+            byte[] storedIdentitySecret = (byte[])creds.getAttribute(IDENTITY_SECRET);
 
-            final String storedHash = getPasswordHash(userinfo);
-            if (passwordHash != null) {
-                return passwordHash.equals(storedHash);
+            if (storedIdentitySecret != null) {
+                final int identity = IdentityCipher.INSTANCE.decrypt(storedIdentitySecret);
+                return identity == System.identityHashCode(creds);
             }
 
             // do regular password check
-            final boolean success = PasswordHelper.checkHash(password, storedHash);
+            final boolean result = PasswordHelper.checkHash(password, getPasswordHash(userinfo));
 
-            // store the hash in an attribute for reuse later, but clear the actual password to avoid plaintext attack
-            if (success) {
-                creds.setAttribute(LOGIN_PWD_HASH, storedHash);
+            // store a secret for authentication on creds instance, but clear the actual password to avoid plaintext attack
+            if (result) {
+                final byte[] identitySecret = IdentityCipher.INSTANCE.encrypt(creds);
+                creds.setAttribute(IDENTITY_SECRET, identitySecret);
             }
             zeroOutPassword(creds.getPassword());
-            return success;
+            return result;
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
         } catch (UnsupportedEncodingException e) {
@@ -190,5 +195,49 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     public boolean isAutoSave() {
         return false;
+    }
+
+
+    public static final class IdentityCipher {
+
+        private static final IdentityCipher INSTANCE = new IdentityCipher();
+
+        private final SecretKeySpec secret;
+
+        private IdentityCipher() {
+            try {
+                KeyGenerator kgen = KeyGenerator.getInstance("AES");
+                kgen.init(128);
+                secret = new SecretKeySpec(kgen.generateKey().getEncoded(), "AES");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("Encryption method AES could not be found", e);
+            }
+        }
+
+        public byte[] encrypt(final Object object) {
+            try {
+                Cipher cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.ENCRYPT_MODE, secret);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(System.identityHashCode(object));
+                return cipher.doFinal(baos.toByteArray());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to encrypt object identity", e);
+            }
+        }
+
+        public int decrypt(byte[] bytes) {
+            try {
+                Cipher cipher = Cipher.getInstance("AES");
+                cipher.init(Cipher.DECRYPT_MODE, secret);
+                byte[] decrypted = cipher.doFinal(bytes);
+                ByteArrayInputStream baos = new ByteArrayInputStream(decrypted);
+                ObjectInputStream ois = new ObjectInputStream(baos);
+                return (int) ois.readObject();
+            } catch (Exception e) {
+                throw new RuntimeException("Could not decrypt object identity", e);
+            }
+        }
     }
 }
