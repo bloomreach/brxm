@@ -1,3 +1,8 @@
 {
-  "extends": "./node_modules/@bloomreach/frontend-build/.babelrc"
+  "extends": "./node_modules/@bloomreach/frontend-build/.babelrc",
+  "plugins": [
+    ["babel-plugin-transform-async-to-promises", {
+      "externalHelpers": true
+    }]
+  ]
 }

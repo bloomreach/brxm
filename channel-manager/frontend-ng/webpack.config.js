@@ -39,6 +39,22 @@ const webpackConfig = merge(config, {
     publicPath: '',
   },
 
+  module: {
+    rules: [
+      {
+        test: /babel-plugin-transform-async-to-promises/,
+        use: {
+          loader: 'string-replace-loader',
+          options: {
+            search: 'Promise\\.(resolve|reject)',
+            replace: '$Promise.$1',
+            flags: 'g',
+          },
+        },
+      },
+    ],
+  },
+
   plugins: [
     env !== 'test' && new ProvidePlugin({
       $: 'jquery',
