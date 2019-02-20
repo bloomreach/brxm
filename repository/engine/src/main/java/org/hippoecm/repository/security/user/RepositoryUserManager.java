@@ -47,7 +47,7 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     // note we include a random uuid to make sure that *before* a successful login the attribute name is not known
     // on the SimpleCredentials object
-    private static final String LOGIN_RESULT_ATTR = RepositoryUserManager.class.getName()
+    private static final String LOGIN_PWD_HASH = RepositoryUserManager.class.getName()
             + UUID.randomUUID().toString() + ".loginSuccess";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
@@ -118,19 +118,22 @@ public class RepositoryUserManager extends AbstractUserManager {
                 return true;
             }
 
-            final Boolean loginResult = (Boolean)creds.getAttribute(LOGIN_RESULT_ATTR);
+            // user's password hash was (maybe) stored on previous login and can be reused directly
+            final String passwordHash = (String)creds.getAttribute(LOGIN_PWD_HASH);
 
-            if (loginResult != null) {
-                return loginResult;
+            final String storedHash = getPasswordHash(userinfo);
+            if (passwordHash != null) {
+                return passwordHash.equals(storedHash);
             }
 
             // do regular password check
-            final boolean success = PasswordHelper.checkHash(password, getPasswordHash(userinfo));
+            final boolean success = PasswordHelper.checkHash(password, storedHash);
 
-            // purge the credentials and store the success outcome
-            creds.setAttribute(LOGIN_RESULT_ATTR, success);
+            // store the hash in an attribute for reuse later, but clear the actual password to avoid plaintext attack
+            if (success) {
+                creds.setAttribute(LOGIN_PWD_HASH, storedHash);
+            }
             zeroOutPassword(creds.getPassword());
-
             return success;
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Unknown algorithm found when authenticating user: " + creds.getUserID(), e);
@@ -140,9 +143,7 @@ public class RepositoryUserManager extends AbstractUserManager {
     }
 
     private void zeroOutPassword(final char[] password) {
-        for (int i = 0; i < password.length ; i++) {
-            password[i] = 0;
-        }
+        Arrays.fill(password, (char)0);
     }
 
     public String getNodeType() {
