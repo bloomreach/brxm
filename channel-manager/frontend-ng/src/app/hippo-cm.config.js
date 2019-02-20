@@ -26,6 +26,7 @@ function config(
   $mdDateLocaleProvider,
   $mdIconProvider,
   $mdThemingProvider,
+  $provide,
   $qProvider,
   $stateProvider,
   $translateSanitizationProvider,
@@ -33,6 +34,16 @@ function config(
   $urlRouterProvider,
 ) {
   'ngInject';
+
+  $provide.decorator('$q', ($delegate) => {
+    'ngInject';
+
+    if (window.$Promise !== $delegate) {
+      window.$Promise = $delegate;
+    }
+
+    return $delegate;
+  });
 
   // FIXME This suppresses all uncaught promises
   $qProvider.errorOnUnhandledRejections(false);
