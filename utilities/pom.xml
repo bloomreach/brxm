@@ -36,6 +36,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
     <hippo.testutils.version>13.1.0-SNAPSHOT</hippo.testutils.version>
+    <httpclient.version>4.5.6</httpclient.version>
   </properties>
 
   <dependencies>
@@ -43,6 +44,11 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -95,6 +101,7 @@
       </releases>
     </repository>
   </repositories>
+
 
 
 </project>

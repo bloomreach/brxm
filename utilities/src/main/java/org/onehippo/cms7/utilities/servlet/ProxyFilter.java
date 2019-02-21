@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,8 +31,12 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.HeaderGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,24 @@ public class ProxyFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(ProxyFilter.class);
 
     private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
+
+
+    /**
+     * These are the "hop-by-hop" headers that should not be copied.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
+     *
+     * Copied from https://github.com/mitre/HTTP-Proxy-Servlet version 1.1
+     */
+    private static final HeaderGroup hopByHopHeaders;
+    static {
+        hopByHopHeaders = new HeaderGroup();
+        String[] headers = new String[]{
+                "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
+                "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Location"};
+        for (String header : headers) {
+            hopByHopHeaders.addHeader(new BasicHeader(header, null));
+        }
+    }
 
     private Map<String, String> proxies;
 
@@ -64,7 +86,7 @@ public class ProxyFilter implements Filter {
     }
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
         final String parameterValue = filterConfig.getInitParameter("jarPathPrefix");
         String jarPathPrefix = parameterValue == null ? "META-INFO" : parameterValue;
         final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
@@ -90,6 +112,7 @@ public class ProxyFilter implements Filter {
                 final URLConnection urlConnection = resource.openConnection();
                 if (urlConnection != null) {
                     log.debug("Proxying {} to {}", resourcePath, url);
+                    copyResponseHeaders((HttpServletResponse) response, urlConnection);
                     proxy(response, urlConnection);
                     return;
                 }
@@ -99,7 +122,33 @@ public class ProxyFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    private void proxy(final ServletResponse response, final URLConnection urlConnection) throws IOException {
+    /**
+     * Copy a proxied response header back to the proxy client.
+     *
+     * Do not copy cookies and the location header
+     *
+     * Inspired by https://github.com/mitre/HTTP-Proxy-Servlet version 1.1
+     */
+    private void copyResponseHeader(HttpServletResponse servletResponse, Header header) {
+        String headerName = header.getName();
+        if (!hopByHopHeaders.containsHeader(headerName)) {
+            servletResponse.setHeader(headerName, header.getValue());
+        }
+    }
+
+    private void copyResponseHeaders(final HttpServletResponse response, final URLConnection urlConnection) {
+        final Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
+        for (Map.Entry<String, List<String>> stringListEntry : headerFields.entrySet()) {
+            for (String value : stringListEntry.getValue()) {
+                final String key = stringListEntry.getKey();
+                if (key != null) {
+                    copyResponseHeader(response, new BasicHeader(key, value));
+                }
+            }
+        }
+    }
+
+    private void proxy(ServletResponse response, final URLConnection urlConnection) throws IOException {
         try (OutputStream out = response.getOutputStream()) {
             try (InputStream is = urlConnection.getInputStream()) {
                 final byte[] buffer = new byte[1024 * 4];
