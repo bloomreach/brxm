@@ -19,8 +19,6 @@ import java.util.Locale;
 
 import javax.jcr.Session;
 
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -53,15 +51,6 @@ public class CmsValidatorFieldContext implements FieldContext {
     @Override
     public Locale getLocale() {
         return UserSession.get().getLocale();
-    }
-
-    @Override
-    public String getTranslatedMessage(final String key) {
-        return getTranslation(key).getObject();
-    }
-
-    protected IModel<String> getTranslation(final String key) {
-        return new ResourceBundleModel("hippo:cms.validators", key, getLocale());
     }
 
 }
