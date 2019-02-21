@@ -17,6 +17,7 @@ package org.onehippo.cms7.services.validation.validator;
 
 import java.util.regex.Pattern;
 
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
 
@@ -27,7 +28,7 @@ public class EscapedHtmlValidator extends AbstractFieldValidator<String> {
 
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 
-    public EscapedHtmlValidator(final AbstractValidatorConfig config) {
+    public EscapedHtmlValidator(final ValidatorConfig config) {
         super(config);
     }
 

@@ -27,15 +27,15 @@ import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractValidatorConfig implements ValidatorConfig {
+public class ValidatorConfigImpl implements ValidatorConfig {
 
-    public static final Logger log = LoggerFactory.getLogger(AbstractValidatorConfig.class);
+    public static final Logger log = LoggerFactory.getLogger(ValidatorConfigImpl.class);
 
     private String name;
     private String className;
     private final Map<String, String> properties = new HashMap<>();
 
-    public AbstractValidatorConfig(final Node configNode) throws RepositoryException {
+    public ValidatorConfigImpl(final Node configNode) throws RepositoryException {
         reconfigure(configNode);
     }
 

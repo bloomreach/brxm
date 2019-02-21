@@ -23,9 +23,10 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 
 /**
  * ResourceRequiredValidator validates fields that are a (subtype of) {@link HippoNodeType#NT_RESOURCE} that a resource
@@ -38,7 +39,7 @@ public class ResourceRequiredValidator extends AbstractFieldValidator<Node> {
             "A ResourceRequiredValidator can only be used for field types that are a (subtype of) " +
             HippoNodeType.NT_RESOURCE;
 
-    public ResourceRequiredValidator(final AbstractValidatorConfig config) {
+    public ResourceRequiredValidator(final ValidatorConfig config) {
         super(config);
     }
 

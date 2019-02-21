@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.services.validation.validator;
 
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -33,7 +34,7 @@ public class NonEmptyHtmlValidator extends AbstractFieldValidator<String> {
 
     public static final Logger log = LoggerFactory.getLogger(NonEmptyHtmlValidator.class);
 
-    public NonEmptyHtmlValidator(final AbstractValidatorConfig config) {
+    public NonEmptyHtmlValidator(final ValidatorConfig config) {
         super(config);
     }
 

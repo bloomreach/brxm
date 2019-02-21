@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.validation.validator;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -28,7 +29,7 @@ public class NodeReferenceValidator extends AbstractFieldValidator<String> {
 
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
-    public NodeReferenceValidator(final AbstractValidatorConfig config) {
+    public NodeReferenceValidator(final ValidatorConfig config) {
         super(config);
     }
 

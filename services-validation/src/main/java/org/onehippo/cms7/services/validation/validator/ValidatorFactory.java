@@ -20,6 +20,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +28,10 @@ public interface ValidatorFactory extends Serializable {
 
     Logger log = LoggerFactory.getLogger(ValidatorFactory.class);
 
-    static Validator create(final AbstractValidatorConfig config) {
+    static Validator create(final ValidatorConfig config) {
         final String className = config.getClassName();
         try {
-            final Constructor<?> constructor = Class.forName(className).getConstructor(AbstractValidatorConfig.class);
+            final Constructor<?> constructor = Class.forName(className).getConstructor(ValidatorConfig.class);
             return (Validator) constructor.newInstance(config);
         } catch (ClassNotFoundException e) {
             log.error("Failed to locate class '{}' on classpath", className);

@@ -17,6 +17,7 @@ package org.onehippo.cms7.services.validation.validator;
 
 import org.apache.commons.lang.StringUtils;
 import org.htmlcleaner.HtmlCleaner;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -30,7 +31,7 @@ import org.onehippo.cms7.services.validation.util.HtmlUtils;
  */
 public class NonEmptyValidator extends AbstractFieldValidator<String> {
 
-    public NonEmptyValidator(final AbstractValidatorConfig config) {
+    public NonEmptyValidator(final ValidatorConfig config) {
         super(config);
     }
 

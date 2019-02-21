@@ -17,9 +17,10 @@ package org.onehippo.cms7.services.validation.validator;
 
 import java.util.regex.Pattern;
 
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
@@ -32,7 +33,7 @@ public class RegExpValidator extends AbstractFieldValidator<String> {
 
     private final static String PATTERN_KEY = "regexp.pattern";
 
-    public RegExpValidator(final AbstractValidatorConfig config) throws InvalidValidatorException {
+    public RegExpValidator(final ValidatorConfig config) throws InvalidValidatorException {
         super(config);
 
         if (config.hasProperty(PATTERN_KEY)) {

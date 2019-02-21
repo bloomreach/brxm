@@ -24,7 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
-import org.onehippo.cms7.services.validation.validator.AbstractValidatorConfig;
+import org.onehippo.cms7.services.validation.validator.ValidatorConfigImpl;
 import org.onehippo.cms7.services.validation.validator.ValidatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class ValidatorServiceConfig implements Serializable {
 
     public static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
 
-    private final Map<String, AbstractValidatorConfig> configs = new HashMap<>();
+    private final Map<String, ValidatorConfig> configs = new HashMap<>();
     private final Map<String, Validator> validators = new HashMap<>();
 
     ValidatorServiceConfig(final Node configNode) {
@@ -48,7 +48,7 @@ public class ValidatorServiceConfig implements Serializable {
             final NodeIterator iterator = config.getNodes();
             while (iterator.hasNext()) {
                 final Node configNode = iterator.nextNode();
-                final AbstractValidatorConfig validatorConfig = new AbstractValidatorConfig(configNode);
+                final ValidatorConfig validatorConfig = new ValidatorConfigImpl(configNode);
                 configs.put(configNode.getName(), validatorConfig);
             }
         } catch (final RepositoryException e) {
