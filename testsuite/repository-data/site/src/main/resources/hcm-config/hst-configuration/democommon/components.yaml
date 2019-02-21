@@ -79,7 +79,7 @@ definitions:
         hst:referencecomponent: hst:components/general_threecolumnlayout
         /content:
           jcr:primaryType: hst:component
-          hst:componentclassname: org.hippoecm.hst.demo.components.Search
+          hst:componentclassname: springManagedSearchComponent
           hst:template: searchresults
       /bodysolrsearch:
         jcr:primaryType: hst:component

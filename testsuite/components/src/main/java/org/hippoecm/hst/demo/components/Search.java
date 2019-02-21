@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
  * because the component class is scanned for component parameters in many other locations in HST Container.
  * </P>
  */
-@Component(DemoConstants.COMPONENT_BASE_PACKAGE + ".Search")
+@Component("springManagedSearchComponent")
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Search extends AbstractSearchComponent {
 
