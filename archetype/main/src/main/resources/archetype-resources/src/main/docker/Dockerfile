@@ -16,8 +16,8 @@ RUN mkdir -p \
         /usr/local/tomcat/webapps/host-manager \
         /usr/local/tomcat/webapps/manager \
         /usr/local/tomcat/webapps/ROOT \
-    && addgroup -g ${docker.brxm.container.uid} -S ${docker.brxm.container.username} \
-    && adduser -G ${docker.brxm.container.username} -u ${docker.brxm.container.uid} -S ${docker.brxm.container.username} \
+    && addgroup --gid ${docker.brxm.container.uid} ${docker.brxm.container.username} \
+    && adduser --gid ${docker.brxm.container.uid} --uid ${docker.brxm.container.uid} ${docker.brxm.container.username} \
     && chown -R ${docker.brxm.container.username} /usr/local/tomcat /brxm
 
 USER ${docker.brxm.container.username}
