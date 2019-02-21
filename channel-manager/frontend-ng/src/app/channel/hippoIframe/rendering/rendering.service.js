@@ -20,6 +20,7 @@ const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
 
 class RenderingService {
   constructor(
+    $log,
     $q,
     $rootScope,
     ChannelService,
@@ -36,6 +37,7 @@ class RenderingService {
   ) {
     'ngInject';
 
+    this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
@@ -122,23 +124,30 @@ class RenderingService {
     const channelIdFromService = this.ChannelService.getId();
     const channelIdFromPage = this.PageMetaDataService.getChannelId();
 
-    if (channelIdFromService !== channelIdFromPage) {
-      const contextPathFromPage = this.PageMetaDataService.getContextPath();
-      const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
+    if (!channelIdFromPage) {
+      this.$log.info('There is no channel detected in the page metadata.');
 
-      if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
-        // Current channel is a branch, but new channel has no branch of that project
-        // therefore load master
-        this.ChannelService.initializeChannel(
-          channelIdFromPage,
-          contextPathFromPage,
-          hostGroupFromPreviousChannel,
-          this.ProjectService.masterId,
-        );
-      } else {
-        // otherwise load new channel within current project
-        this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);
-      }
+      return;
+    }
+    if (channelIdFromService === channelIdFromPage) {
+      return;
+    }
+
+    const contextPathFromPage = this.PageMetaDataService.getContextPath();
+    const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
+
+    if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
+      // Current channel is a branch, but new channel has no branch of that project
+      // therefore load master
+      this.ChannelService.initializeChannel(
+        channelIdFromPage,
+        contextPathFromPage,
+        hostGroupFromPreviousChannel,
+        this.ProjectService.masterId,
+      );
+    } else {
+      // otherwise load new channel within current project
+      this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);
     }
   }
 

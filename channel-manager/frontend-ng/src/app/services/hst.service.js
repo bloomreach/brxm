@@ -48,7 +48,7 @@ class HstService {
 
   getChannel(id, contextPath, hostGroup) {
     if (!id) {
-      throw new Error('Channel id must be defined');
+      return q.reject('Channel id must be defined');
     }
 
     const currentContextPath = this.contextPath;
@@ -57,6 +57,8 @@ class HstService {
       this.contextPath = contextPath;
       this.hostGroup = hostGroup;
       return this.doGet(this.ConfigService.rootUuid, 'channels', id);
+    } catch (e) {
+      return q.reject(e);
     } finally {
       this.contextPath = currentContextPath;
       this.hostGroup = currentHostGroup;
