@@ -50,11 +50,6 @@ public class MockFieldContext implements FieldContext {
     }
 
     @Override
-    public String getTranslatedMessage(final String key) {
-        return null;
-    }
-
-    @Override
     public String getName() {
         return name;
     }

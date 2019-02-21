@@ -23,6 +23,7 @@ import org.onehippo.cms7.services.validation.exception.InvalidValidatorException
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.cms7.services.validation.field.FieldValidator;
+import org.onehippo.cms7.services.validation.util.TranslationUtils;
 
 public abstract class AbstractFieldValidator<V> implements FieldValidator<V> {
 
@@ -52,7 +53,7 @@ public abstract class AbstractFieldValidator<V> implements FieldValidator<V> {
     }
 
     protected String getViolationMessage(final FieldContext context) {
-        return context.getTranslatedMessage(getName());
+        return TranslationUtils.getTranslatedMessage(getName(), context.getLocale());
     }
 
 }
