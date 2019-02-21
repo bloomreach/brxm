@@ -18,7 +18,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.jcr.Node;
 
@@ -27,8 +26,6 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 
 /**
  * A field type in a {@link DocumentType}.
@@ -157,5 +154,10 @@ public interface FieldType {
      */
     boolean validateValue(final FieldValue value);
 
-    void addValidator(final Validator<FieldContext, Object> validator);
+    /**
+     * Add the name of a validator for this field.
+     *
+     * @param validatorName the name of the validator
+     */
+    void addValidatorName(final String validatorName);
 }

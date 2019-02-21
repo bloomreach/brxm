@@ -33,18 +33,12 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.Violation;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,13 +71,11 @@ public abstract class AbstractFieldType implements FieldType {
     private int maxValues = 1;
     @JsonIgnore
     private boolean isMultiple;
-    @JsonIgnore
-    protected FieldValidationContext validationContext;
 
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
-    private final Set<Validator<FieldContext, Object>> validators = new LinkedHashSet<>();
+    private final Set<String> validatorNames = new LinkedHashSet<>();
 
     @Override
     public String getId() {
@@ -155,8 +147,8 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public void addValidator(final Validator<FieldContext, Object> validator) {
-        validators.add(validator);
+    public void addValidatorName(final String validatorName) {
+        validatorNames.add(validatorName);
     }
 
     @Override
@@ -172,6 +164,10 @@ public abstract class AbstractFieldType implements FieldType {
     @Override
     public boolean isSupported() {
         return true;
+    }
+
+    public Set<String> getValidatorNames() {
+        return validatorNames;
     }
 
     @Override
@@ -233,26 +229,7 @@ public abstract class AbstractFieldType implements FieldType {
 
     protected abstract boolean validateRequired(final FieldValue value);
 
-    /**
-     * Executes all configured validators. The first validator that deems the value invalid sets the value's errorInfo.
-     */
-    public boolean validateValue(final FieldValue value) {
-        return !validators.stream().anyMatch(validator -> {
-            try {
-                final Optional<Violation> violation = validator.validate(validationContext, getValidatedValue(value));
-
-                violation.ifPresent((error) -> {
-                    ValidationErrorInfo errorInfo = new ValidationErrorInfo(validator.getName(), error.getMessage());
-                    value.setErrorInfo(errorInfo);
-                });
-
-                return violation.isPresent();
-            } catch (ValidatorException e) {
-                log.info("Failed to execute validator '{}', assuming the value is invalid", validator.getName(), e);
-                return true;
-            }
-        });
-    }
+    public abstract boolean validateValue(final FieldValue value);
 
     /**
      * @param value the field value wrapper

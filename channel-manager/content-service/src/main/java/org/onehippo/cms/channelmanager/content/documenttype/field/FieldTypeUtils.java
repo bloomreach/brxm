@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -68,6 +69,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -174,21 +176,20 @@ public class FieldTypeUtils {
         if (validationService == null) {
             log.error("Cannot load {} from service registry, field validation will be disabled",
                     ValidationService.class.getSimpleName());
+            return;
         }
-
-        final FieldValidationContext validationContext = new FieldValidationContext(fieldContext);
 
         for (String validatorName : validatorNames) {
             if (IGNORED_VALIDATORS.contains(validatorName)) {
-                // Do nothing
-            } else if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
+                continue;
+            } 
+            if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
                 fieldType.setRequired(true);
             } else {
                 try {
                     final Validator<FieldContext, Object> validator = validationService.getValidator(validatorName);
                     if (validator != null) {
-                        validator.init(validationContext);
-                        fieldType.addValidator(validator);
+                        fieldType.addValidatorName(validatorName);
                     } else {
                         final DocumentType docType = fieldContext.getParentContext().getDocumentType();
                         log.info("Field '{}' in document type '{}' has unknown validator '{}', " +
@@ -199,14 +200,38 @@ public class FieldTypeUtils {
                 } catch (ValidatorConfigurationException e) {
                     log.error("Failed to load validator '{}' for field '{}', ignoring it",
                             validatorName, fieldType.getId(), e);
-                } catch (InvalidValidatorException e) {
-                    log.warn("Ignoring invalid validator '{}' for field '{}': {}",
-                            validatorName, fieldType.getId(), e.getMessage());
                 }
             }
         }
     }
 
+    public static Validator<ValidatorContext, Object> getValidator(final String validatorName, 
+                                                                   final FieldValidationContext validationContext) {
+        
+        if (StringUtils.isBlank(validatorName)) {
+            return null;
+        }
+        
+        final ValidationService validationService = HippoServiceRegistry.getService(ValidationService.class);
+        if (validationService == null) {
+            log.error("Cannot load {} from service registry, field validation will be disabled",
+                    ValidationService.class.getSimpleName());
+            return null;
+        }
+        
+        try {
+            final Validator<ValidatorContext, Object> validator = validationService.getValidator(validatorName);
+            validator.init(validationContext);
+            return validator;
+        } catch (ValidatorConfigurationException e) {
+            log.error("Failed to load validator '{}', ignoring it", validatorName, e);
+        } catch (InvalidValidatorException e) {
+            log.warn("Ignoring invalid validator '{}': {}", validatorName, e.getMessage());
+        }
+        
+        return null;
+    }
+    
     /**
      * Populate the list of fields of a content type, in the context of assembling a Document Type.
      * Note that compound fields use this method recursively to populate their fields.

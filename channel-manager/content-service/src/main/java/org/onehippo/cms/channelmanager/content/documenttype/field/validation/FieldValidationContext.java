@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 
 import java.util.Locale;
 
+import javax.jcr.PropertyType;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -26,9 +27,11 @@ import org.onehippo.cms7.services.validation.field.FieldContext;
 public class FieldValidationContext implements FieldContext {
 
     private FieldTypeContext fieldContext;
+    private int propertyType;
 
-    public FieldValidationContext(final FieldTypeContext fieldContext) {
+    public FieldValidationContext(final FieldTypeContext fieldContext, final int propertyType) {
         this.fieldContext = fieldContext;
+        this.propertyType = propertyType;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class FieldValidationContext implements FieldContext {
 
     @Override
     public String getType() {
-        return fieldContext.getType();
+        return PropertyType.nameFromValue(propertyType);
     }
 
     @Override

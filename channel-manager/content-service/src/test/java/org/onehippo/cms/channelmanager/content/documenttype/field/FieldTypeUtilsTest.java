@@ -110,9 +110,9 @@ public class FieldTypeUtilsTest {
 //        final FieldType fieldType = createMock(AbstractFieldType.class);
 //        final DocumentType docType = createMock(DocumentType.class);
 //
-//        fieldType.addValidator(Validator.UNSUPPORTED);
+//        fieldType.addValidatorName(Validator.UNSUPPORTED);
 //        expectLastCall();
-//        fieldType.addValidator(Validator.UNSUPPORTED);
+//        fieldType.addValidatorName(Validator.UNSUPPORTED);
 //        expectLastCall();
 //        replayAll();
 //

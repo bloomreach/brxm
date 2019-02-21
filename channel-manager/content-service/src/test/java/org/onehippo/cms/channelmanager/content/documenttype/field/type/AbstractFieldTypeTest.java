@@ -85,6 +85,11 @@ public class AbstractFieldTypeTest {
             }
 
             @Override
+            public boolean validateValue(final FieldValue value) {
+                return false;
+            }
+
+            @Override
             protected Object getValidatedValue(final FieldValue value) {
                 return null;
             }
