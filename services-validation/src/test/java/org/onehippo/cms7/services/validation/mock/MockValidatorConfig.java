@@ -15,35 +15,40 @@
  */
 package org.onehippo.cms7.services.validation.mock;
 
-import java.util.Optional;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.Violation;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
-public class MockValidator implements Validator {
+public class MockValidatorConfig implements ValidatorConfig {
 
-    private ValidatorConfig config;
+    private final String name;
 
-    public MockValidator(final ValidatorConfig config) {
-        this.config = config;
+    public MockValidatorConfig(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void reconfigure(final Node node) throws RepositoryException {
     }
 
     @Override
     public String getName() {
-        return config.getName();
+        return name;
     }
 
     @Override
-    public void init(final ValidatorContext context) throws InvalidValidatorException {
+    public String getClassName() {
+        return null;
     }
 
     @Override
-    public Optional<Violation> validate(final ValidatorContext context, final Object value) throws ValidatorException {
-        return Optional.empty();
+    public boolean hasProperty(final String name) {
+        return false;
     }
 
+    @Override
+    public String getProperty(final String name) {
+        return null;
+    }
 }

@@ -17,9 +17,10 @@ package org.onehippo.cms7.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.mock.MockFieldContext;
-import org.onehippo.repository.mock.MockNode;
+import org.onehippo.cms7.services.validation.mock.MockValidatorConfig;
 
 import static org.junit.Assert.assertFalse;
 
@@ -29,7 +30,7 @@ public class NodeReferenceValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        final AbstractValidatorConfig config = new AbstractValidatorConfig(new MockNode("config"));
+        final ValidatorConfig config = new MockValidatorConfig("references");
         validator = new NodeReferenceValidator(config);
     }
 

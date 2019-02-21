@@ -17,9 +17,10 @@ package org.onehippo.cms7.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.cms7.services.validation.mock.MockFieldContext;
-import org.onehippo.repository.mock.MockNode;
+import org.onehippo.cms7.services.validation.mock.MockValidatorConfig;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +33,7 @@ public class EscapedHtmlValidatorTest {
     @Before
     public void setUp() throws Exception {
         context = new MockFieldContext();
-        final AbstractValidatorConfig config = new AbstractValidatorConfig(new MockNode("config"));
+        final ValidatorConfig config = new MockValidatorConfig("escaped");
         validator = new EscapedHtmlValidator(config);
     }
 
