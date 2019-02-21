@@ -27,6 +27,4 @@ public interface ValidatorContext {
 
     Locale getLocale();
 
-    String getTranslatedMessage(String key);
-
 }
