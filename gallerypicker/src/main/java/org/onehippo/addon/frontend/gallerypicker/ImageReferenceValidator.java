@@ -67,13 +67,13 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
                 return violations;
             }
 
-            final String contentGalleryIdentifier = model.getNode().getSession().nodeExists("/content/gallery") 
-                    ? model.getNode().getSession().getNode("/content/gallery").getIdentifier() 
+            final String contentGalleryIdentifier = model.getNode().getSession().nodeExists("/content/gallery")
+                    ? model.getNode().getSession().getNode("/content/gallery").getIdentifier()
                     : null;
             if (ref == null || ref.equals("")
                     || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")
                     || ref.equals(contentGalleryIdentifier)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
             }
         } catch (RepositoryException repositoryException) {
             log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(),
