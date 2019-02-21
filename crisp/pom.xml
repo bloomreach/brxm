@@ -173,6 +173,13 @@
       </dependency>
 
       <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-mock</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>${jsp-api.version}</version>
@@ -398,6 +405,7 @@
     <module>core</module>
     <module>repository</module>
     <module>hst</module>
+    <module>mock</module>
   </modules>
 
   <profiles>
