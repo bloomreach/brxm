@@ -15,17 +15,12 @@
  */
 package org.hippoecm.repository.security.user;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.UUID;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -43,6 +38,8 @@ import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.primitives.Ints;
+
 /**
  * UserManager backend that stores the users inside the JCR repository
  */
@@ -51,9 +48,13 @@ public class RepositoryUserManager extends AbstractUserManager {
     private static final Logger log = LoggerFactory.getLogger(RepositoryUserManager.class);
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
 
-    // note we include a random uuid to make sure that *before* a successful login the attribute name is not known
-    // on the SimpleCredentials object
-    private static final String IDENTITY_SECRET = RepositoryUserManager.class.getName() + ".identitySecret";
+    // The attribute name under which we will store a token indicating that a SimpleCredentials object has been
+    // pre-approved for login for the contained user ID.
+    private static final String PREAPPROVAL_TOKEN_ATTR = RepositoryUserManager.class.getName() + ".preapprovalToken";
+
+    // A cryptographically-strong random token that is used to "sign" a pre-approval token as having been approved
+    // by this instance of this class, valid only for the lifespan of this JVM process.
+    private static final byte[] masterKey = UUID.randomUUID().toString().getBytes();
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
 
@@ -123,21 +124,26 @@ public class RepositoryUserManager extends AbstractUserManager {
                 return true;
             }
 
-            byte[] storedIdentitySecret = (byte[])creds.getAttribute(IDENTITY_SECRET);
+            // Does this credentials object have a preapproval token?
+            final byte[] storedPreapprovalToken = (byte[]) creds.getAttribute(PREAPPROVAL_TOKEN_ATTR);
 
-            if (storedIdentitySecret != null) {
-                final int identity = IdentityCipher.INSTANCE.decrypt(storedIdentitySecret);
-                return identity == System.identityHashCode(creds);
+            // If yes, verify that the token belongs to this creds instance and is 'signed' by this class.
+            // Use the result instead of doing a normal password check.
+            final byte[] computedPreapprovalToken = computePreapprovalToken(creds);
+            if (storedPreapprovalToken != null) {
+                return Arrays.equals(storedPreapprovalToken, computedPreapprovalToken);
             }
 
-            // do regular password check
+            // If no preapproval token exists, do the regular password check
             final boolean result = PasswordHelper.checkHash(password, getPasswordHash(userinfo));
 
-            // store a secret for authentication on creds instance, but clear the actual password to avoid plaintext attack
+            // If the credentials are valid for the given user ID, store a token to indicate that the creds instance
+            // has been pre-approved and does not need to be checked again.
             if (result) {
-                final byte[] identitySecret = IdentityCipher.INSTANCE.encrypt(creds);
-                creds.setAttribute(IDENTITY_SECRET, identitySecret);
+                creds.setAttribute(PREAPPROVAL_TOKEN_ATTR, computedPreapprovalToken);
             }
+
+            // Clear the actual password to avoid plaintext attack, regardless of the result.
             zeroOutPassword(creds.getPassword());
             return result;
         } catch (NoSuchAlgorithmException e) {
@@ -197,47 +203,11 @@ public class RepositoryUserManager extends AbstractUserManager {
         return false;
     }
 
-
-    public static final class IdentityCipher {
-
-        private static final IdentityCipher INSTANCE = new IdentityCipher();
-
-        private final SecretKeySpec secret;
-
-        private IdentityCipher() {
-            try {
-                KeyGenerator kgen = KeyGenerator.getInstance("AES");
-                kgen.init(128);
-                secret = new SecretKeySpec(kgen.generateKey().getEncoded(), "AES");
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException("Encryption method AES could not be found", e);
-            }
-        }
-
-        public byte[] encrypt(final Object object) {
-            try {
-                Cipher cipher = Cipher.getInstance("AES");
-                cipher.init(Cipher.ENCRYPT_MODE, secret);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(System.identityHashCode(object));
-                return cipher.doFinal(baos.toByteArray());
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to encrypt object identity", e);
-            }
-        }
-
-        public int decrypt(byte[] bytes) {
-            try {
-                Cipher cipher = Cipher.getInstance("AES");
-                cipher.init(Cipher.DECRYPT_MODE, secret);
-                byte[] decrypted = cipher.doFinal(bytes);
-                ByteArrayInputStream baos = new ByteArrayInputStream(decrypted);
-                ObjectInputStream ois = new ObjectInputStream(baos);
-                return (int) ois.readObject();
-            } catch (Exception e) {
-                throw new RuntimeException("Could not decrypt object identity", e);
-            }
-        }
+    private byte[] computePreapprovalToken(SimpleCredentials creds) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance(PasswordHelper.getHashingAlgorithm());
+        final byte[] credsId = Ints.toByteArray(System.identityHashCode(creds));
+        md.update(masterKey);
+        return md.digest(credsId);
     }
+
 }
