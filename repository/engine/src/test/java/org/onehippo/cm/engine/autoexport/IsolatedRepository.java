@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.jcr.Credentials;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
