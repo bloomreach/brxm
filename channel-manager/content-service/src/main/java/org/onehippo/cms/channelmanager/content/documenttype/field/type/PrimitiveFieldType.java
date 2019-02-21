@@ -65,8 +65,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     @Override
     protected boolean validateRequired(final FieldValue value) {
         if (!value.hasValue() || value.getValue().isEmpty()) {
-            final String message = validationContext.getTranslatedMessage(ValidationErrorInfo.REQUIRED);
-            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED, message));
+            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED, ValidationErrorInfo.REQUIRED));
             return false;
         }
         return true;

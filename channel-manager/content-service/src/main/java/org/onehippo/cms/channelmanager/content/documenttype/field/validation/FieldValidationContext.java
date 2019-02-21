@@ -51,9 +51,4 @@ public class FieldValidationContext implements FieldContext {
         return fieldContext.getParentContext().getLocale();
     }
 
-    @Override
-    public String getTranslatedMessage(final String key) {
-        // TODO: return translated message instead of the key
-        return key;
-    }
 }

@@ -46,7 +46,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -468,7 +467,6 @@ public class PrimitiveFieldTypeTest {
         fieldType.setRequired(true);
 
         fieldType.validationContext = createMock(FieldValidationContext.class);
-        expect(fieldType.validationContext.getTranslatedMessage(anyString())).andReturn("error message").anyTimes();
         replayAll();
 
         // valid values
