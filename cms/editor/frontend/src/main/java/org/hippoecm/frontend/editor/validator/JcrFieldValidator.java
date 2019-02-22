@@ -134,12 +134,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 }
 
                 if (required && field.getTypeDescriptor().isType("Date")
-                    && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
-                        violations.add(newViolation(
-                                new ModelPathElement(field, field.getPath(), 0),
-                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                                FeedbackScope.FIELD)
-                        );
+                        && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
+                    violations.add(newViolation(
+                            new ModelPathElement(field, field.getPath(), 0),
+                            getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
+                            FeedbackScope.FIELD)
+                    );
                 }
             }
         }
@@ -189,17 +189,30 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             throw new ValidationException("Could not resolve path for invalid value", e);
         }
 
-        for (final Violation typeViolation : typeViolations) {
-            final Set<ModelPath> childPaths = typeViolation.getDependentPaths();
+        violations.addAll(prependFieldPathToViolations(typeViolations, field, name, index));
+    }
+
+    /**
+     * Replace the provided violations by new violations that have the path element of the provided fieldDescriptor
+     * in them, prepending the existing path element(s).
+     */
+    public static Set<Violation> prependFieldPathToViolations(final Set<Violation> violations,
+                                                              final IFieldDescriptor fieldDescriptor,
+                                                              final String name,
+                                                              final int index) {
+        final Set<Violation> newViolations = new HashSet<>(violations.size());
+        for (final Violation violation : violations) {
+            final Set<ModelPath> childPaths = violation.getDependentPaths();
             final Set<ModelPath> paths = new HashSet<>();
             for (final ModelPath childPath : childPaths) {
                 final ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
                 System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
-                elements[0] = new ModelPathElement(field, name, index);
+                elements[0] = new ModelPathElement(fieldDescriptor, name, index);
                 paths.add(new ModelPath(elements));
             }
-            violations.add(new Violation(paths, typeViolation.getMessage(), typeViolation.getFeedbackScope()));
+            newViolations.add(new Violation(paths, violation.getMessage(), violation.getFeedbackScope()));
         }
+        return newViolations;
     }
 
     private ModelPathElement getElement(final IModel childModel) throws ValidationException {
