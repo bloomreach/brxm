@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.extjs.charts;
+package org.onehippo.cms7.frontend.charts;
 
 import java.util.Collections;
 
