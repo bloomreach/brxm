@@ -132,16 +132,4 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
     private static void writeDocBase(final Node node, final String rootUuid) throws RepositoryException {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, rootUuid);
     }
-
-    @Override
-    protected Node getValidatedValue(final FieldValue value) throws Exception {
-        final String uuid = value.getValue();
-        final Session session = validationContext.getJcrSession();
-
-        if (StringUtils.isEmpty(uuid)) {
-            return session.getRootNode();
-        } else {
-            return session.getNodeByIdentifier(uuid);
-        }
-    }
 }
