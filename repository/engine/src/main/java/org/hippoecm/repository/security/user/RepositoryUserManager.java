@@ -205,9 +205,9 @@ public class RepositoryUserManager extends AbstractUserManager {
 
     private byte[] computePreapprovalToken(SimpleCredentials creds) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(PasswordHelper.getHashingAlgorithm());
-        final byte[] credsId = Ints.toByteArray(System.identityHashCode(creds));
+        final byte[] userId = creds.getUserID().getBytes();
         md.update(masterKey);
-        return md.digest(credsId);
+        return md.digest(userId);
     }
 
 }
