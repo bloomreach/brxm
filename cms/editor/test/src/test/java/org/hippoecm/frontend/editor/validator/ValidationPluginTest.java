@@ -55,7 +55,7 @@ public class ValidationPluginTest extends PluginTest {
 
             "/config/test-app/validator/registry", "frontend:plugin",
                 "plugin.class", ValidatorService.class.getName(),
-                "field.validator.service.id", "field.validator.service",
+                ValidatorService.FIELD_VALIDATOR_SERVICE_ID, ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE,
     };
 
     IPluginConfig config;
