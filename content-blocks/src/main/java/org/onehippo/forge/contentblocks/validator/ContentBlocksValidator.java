@@ -15,7 +15,7 @@
  */
 package org.onehippo.forge.contentblocks.validator;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
+import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.editor.validator.JcrTypeValidator;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.editor.validator.plugins.AbstractCmsValidator;
@@ -33,10 +34,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IFieldValidator;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,85 +46,84 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentBlocksValidator extends AbstractCmsValidator {
 
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentBlocksValidator.class);
 
-    public ContentBlocksValidator(IPluginContext context, IPluginConfig config) {
+    public ContentBlocksValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
 
     @Override
-    public void preValidation(IFieldValidator type) throws ValidationException {
+    public void preValidation(final IFieldValidator type) throws ValidationException {
         //Do nothing as we configure the validator ourselves.
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator iFieldValidator, final JcrNodeModel jcrNodeModel,
-                                   final IModel iModel) throws ValidationException {
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel jcrNodeModel,
+                                   final IModel model) throws ValidationException {
 
-        try {
-            // get descriptor based on actual node type
-            final Node contentBlockNode = (Node) iModel.getObject();
-            final String primaryNodeType = contentBlockNode.getPrimaryNodeType().getName();
-
-            final JcrTypeLocator jcrTypeLocator = new JcrTypeLocator();
-            final ITypeDescriptor contentBlockDescriptor = jcrTypeLocator.locate(primaryNodeType);
-            log.debug("Content block descriptor {} found by type {}", contentBlockDescriptor, primaryNodeType);
-
-            if (contentBlockDescriptor != null) {
-                ValidatorService validatorService = getPluginContext().getService("field.validator.service",
-                        ValidatorService.class);
-                if (validatorService == null) {
-                    log.error("ValidatorService is not found by 'field.validator.service': " +
-                            "cannot validate content block node {}", contentBlockNode.getPath());
-                } else {
-                    // delegate to the actual content block's validator
-                    final JcrTypeValidator validator = new JcrTypeValidator(contentBlockDescriptor, validatorService);
-                    final Set<Violation> violations = validator.validate(new JcrNodeModel(contentBlockNode));
-
-                    final IFieldDescriptor fieldDescriptor = iFieldValidator.getFieldDescriptor();
-                    return prependFieldPathToViolations(violations, contentBlockNode, fieldDescriptor);
-                }
-            }
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException occurred accessing node", e);
-        } catch (StoreException e) {
-            log.warn("StoreException occurred during locating the correct jcr type", e);
+        final Node contentBlockNode = (Node) model.getObject();
+        final ITypeDescriptor contentBlockDescriptor = getContentBlockDescriptor(contentBlockNode);
+        if (contentBlockDescriptor == null) {
+            return Collections.emptySet();
         }
 
-        // no validation done
-        return new HashSet<>();
-    }
+        final ValidatorService validatorService = getPluginContext().getService(
+                ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, ValidatorService.class);
+        if (validatorService == null) {
+            log.error("ValidatorService is not found by '{}': cannot validate content block node {}",
+                    ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, JcrUtils.getNodePathQuietly(contentBlockNode));
+            return Collections.emptySet();
+        }
 
-    /**
-     * Correct the paths of the violations, that are based on the type only, by prepending with the content blocks
-     * compound path.
-     */
-    protected Set<Violation> prependFieldPathToViolations(final Set<Violation> violations, final Node contentBlockNode,
-                                                          final IFieldDescriptor fieldDescriptor)
-            throws ValidationException {
+        // delegate to the actual content block's validator
+        final JcrTypeValidator validator = getTypeValidator(contentBlockDescriptor, validatorService);
+        if (validator == null) {
+            return Collections.emptySet();
+        }
 
-        // correct node index on behalf on multiples (which content blocks are)
-        int index;
+        final Set<Violation> violations = validator.validate(new JcrNodeModel(contentBlockNode));
+
+        // correct node index on behalf of multiples (which content blocks are)
+        final int index;
         try {
             index = contentBlockNode.getIndex() - 1;
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             throw new ValidationException("Could not get index for node", e);
         }
 
-        // replace the violations by violations that have also the path element of the content block compound in them
-        final Set<Violation> newViolations = new HashSet<>(violations.size());
-        for (Violation violation : violations) {
-            Set<ModelPath> childPaths = violation.getDependentPaths();
-            Set<ModelPath> newPaths = new HashSet<>();
-            for (ModelPath childPath : childPaths) {
-                ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
-                System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
-                elements[0] = new ModelPathElement(fieldDescriptor, fieldDescriptor.getPath(), index);
-                newPaths.add(new ModelPath(elements));
-            }
-            newViolations.add(new Violation(newPaths, violation.getMessage(), violation.getFeedbackScope()));
-        }
-        return newViolations;
+        // Correct the paths of the violations, that are based on the type only, by prepending with the content
+        // blocks compound path.
+        final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+        return JcrFieldValidator.prependFieldPathToViolations(violations, fieldDescriptor, fieldDescriptor.getPath(),
+                index);
     }
+
+    // get descriptor based on actual node type
+    private static ITypeDescriptor getContentBlockDescriptor(final Node contentBlockNode) {
+        final String primaryNodeType;
+        try {
+            primaryNodeType = contentBlockNode.getPrimaryNodeType().getName();
+            final JcrTypeLocator jcrTypeLocator = new JcrTypeLocator();
+            final ITypeDescriptor contentBlockDescriptor = jcrTypeLocator.locate(primaryNodeType);
+            log.debug("Content block descriptor {} found by type '{}'", contentBlockDescriptor, primaryNodeType);
+            return contentBlockDescriptor;
+        } catch (final RepositoryException e) {
+            log.warn("Failed to get the primary node type from content block node", e);
+        } catch (final StoreException e) {
+            log.warn("An error occurred while locating the correct JCR type", e);
+        }
+        return null;
+    }
+
+    private static JcrTypeValidator getTypeValidator(final ITypeDescriptor contentBlockDescriptor,
+                                                     final ValidatorService validatorService) {
+        try {
+            return new JcrTypeValidator(contentBlockDescriptor, validatorService);
+        } catch (final StoreException e) {
+            log.warn("StoreException occurred during locating the correct jcr type", e);
+        }
+        return null;
+    }
+
 }
