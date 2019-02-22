@@ -24,7 +24,10 @@ import org.onehippo.cms7.crisp.hst.module.CrispHstServices;
  * Mocking support to override the default {@link ResourceServiceBroker} instance, which can be retrieved through
  * {@link CrispHstServices#getDefaultResourceServiceBroker()}.
  */
-public class MockCrispHstServices {
+public final class MockCrispHstServices {
+
+    private MockCrispHstServices() {
+    }
 
     /**
      * Override the default {@link ResourceServiceBroker} instance, so that {@link CrispHstServices#getDefaultResourceServiceBroker()}
