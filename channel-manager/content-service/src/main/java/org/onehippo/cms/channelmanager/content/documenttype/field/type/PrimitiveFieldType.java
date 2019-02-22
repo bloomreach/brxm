@@ -49,7 +49,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a primitive field type, used for the fields of a {@link DocumentType}. It can be serialized into
+ * Base class for all primitive field types of a {@link DocumentType}. Can be serialized into
  * JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
@@ -78,43 +78,55 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
+    /**
+     * Validates the field value using all configured validators.
+     * The first validator that deems the value invalid sets the value's errorInfo.
+     *
+     * @return true when all validators deem the value valid, false otherwise.
+     */
     @Override
-    protected boolean validateRequired(final FieldValue value) {
-        if (!value.hasValue() || value.getValue().isEmpty()) {
-            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED, ValidationErrorInfo.REQUIRED));
+    public boolean validateValue(final FieldValue value) {
+        Object validatedValue;
+
+        try {
+            validatedValue = getValidatedValue(value);
+        } catch (Exception e) {
+            log.error("Cannot get value to validate", e);
             return false;
         }
-        return true;
+
+        return getValidatorNames().stream().allMatch(validatorName -> validateValue(value, validatedValue, validatorName));
     }
 
-    @Override
-    protected final Object getValidatedValue(final FieldValue value) {
-        return value.getValue();
-    }
-    /**
-     * Executes all configured validators. The first validator that deems the value invalid sets the value's errorInfo.
-     */
-    public boolean validateValue(final FieldValue value) {
-        return getValidatorNames().stream().noneMatch(validatorName -> {
-            try {
-                final Validator<ValidatorContext, Object> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
-                if (validator == null) {
-                    log.info("Failed to find validator '{}', assuming the value is invalid", validatorName);
-                    return false;
-                }
-
-                final Optional<Violation> violation = validator.validate(validationContext, getValidatedValue(value));
-                violation.ifPresent((error) -> {
-                    ValidationErrorInfo errorInfo = new ValidationErrorInfo(validator.getName(), error.getMessage());
-                    value.setErrorInfo(errorInfo);
-                });
-
-                return violation.isPresent();
-            } catch (ValidatorException e) {
-                log.info("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
-                return true;
+    private boolean validateValue(final FieldValue field, final Object value, final String validatorName) {
+        try {
+            final Validator<ValidatorContext, Object> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+            if (validator == null) {
+                log.warn("Failed to find validator '{}', assuming the value is invalid", validatorName);
+                return false;
             }
-        });
+
+            final Optional<Violation> violation = validator.validate(validationContext, value);
+
+            violation.ifPresent((error) -> {
+                ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
+                field.setErrorInfo(errorInfo);
+            });
+
+            return !violation.isPresent();
+        } catch (ValidatorException e) {
+            log.warn("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
+            return false;
+        }
+    }
+
+    /**
+     * Returns the value to validate. This default implementation returns the "value" string as-is
+     * @param value the field value wrapper for this field
+     * @return the actual value to pass to configured validators
+     */
+    protected Object getValidatedValue(final FieldValue value) throws Exception {
+        return value.getValue();
     }
 
     @Override

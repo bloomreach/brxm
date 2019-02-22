@@ -21,7 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.jcr.Node;
@@ -33,6 +32,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -40,8 +40,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.repository.l10n.ResourceBundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -56,8 +54,6 @@ public abstract class AbstractFieldType implements FieldType {
 
     protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
             = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -211,31 +207,30 @@ public abstract class AbstractFieldType implements FieldType {
 
     @Override
     public final boolean validate(final List<FieldValue> valueList) {
-        boolean isValid = true;
-
-        for (FieldValue value : valueList) {
-            isValid &= validate(value);
-        }
-
-        return isValid;
+        return validateRequired(valueList) && validateValues(valueList);
     }
 
-    protected boolean validate(final FieldValue value) {
-        if (required && !validateRequired(value)) {
+    final boolean validateRequired(final List<FieldValue> valueList) {
+        if (required && valueList.isEmpty()) {
+            final FieldValue error = new FieldValue();
+            error.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED));
             return false;
         }
-        return validateValue(value);
+        return true;
     }
 
-    protected abstract boolean validateRequired(final FieldValue value);
-
-    public abstract boolean validateValue(final FieldValue value);
+    private boolean validateValues(final List<FieldValue> valueList) {
+        return valueList.stream().allMatch(this::validateValue);
+    }
 
     /**
-     * @param value the field value wrapper
-     * @return the part of the field value that gets validated
+     * Validates a single value of this field. Will be called for every value of a multiple field.
+     * When the value is not valid, the errorInfo of the value should be set to indicate the problem.
+     *
+     * @param value value to validate
+     * @return true if the value is valid, false otherwise.
      */
-    protected abstract Object getValidatedValue(final FieldValue value);
+    public abstract boolean validateValue(final FieldValue value);
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
 
@@ -253,22 +248,6 @@ public abstract class AbstractFieldType implements FieldType {
         if (values.size() > getMaxValues()) {
             throw INVALID_DATA.get();
         }
-
-        if (isRequired() && values.isEmpty()) {
-            throw INVALID_DATA.get();
-        }
-    }
-
-    protected static boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
-        boolean isValid = true;
-
-        for (final FieldValue value : valueList) {
-            if (!validator.test(value)) {
-                isValid = false;
-            }
-        }
-
-        return isValid;
     }
 
     /**

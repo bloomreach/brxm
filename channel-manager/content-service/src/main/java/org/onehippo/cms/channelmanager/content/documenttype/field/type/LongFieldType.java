@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
+
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 
 /**
  * LongFieldType controls the reading and writing of a Long type field from and to a node's property.
@@ -46,5 +48,13 @@ public class LongFieldType extends PrimitiveFieldType {
     @Override
     protected String fieldSpecificConversion(final String input) {
         return Long.parseLong(input) + "";
+    }
+
+    @Override
+    protected Long getValidatedValue(final FieldValue value) {
+        if (value.hasValue()) {
+            return Long.parseLong(value.getValue());
+        }
+        return null;
     }
 }

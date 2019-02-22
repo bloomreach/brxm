@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
+
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 
 /**
  * DoubleFieldType controls the reading and writing of a Double type field from and to a node's property.
@@ -48,4 +50,11 @@ public class DoubleFieldType extends PrimitiveFieldType {
         return Double.parseDouble(input) + "";
     }
 
+    @Override
+    protected Double getValidatedValue(final FieldValue value) {
+        if (value.hasValue()) {
+            return Double.parseDouble(value.getValue());
+        }
+        return null;
+    }
 }

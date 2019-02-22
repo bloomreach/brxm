@@ -196,12 +196,6 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    protected boolean validateRequired(final FieldValue value) {
-        // Nothing to do: validation is delegated to the corresponding compound fields
-        return true;
-    }
-
-    @Override
     public boolean validateValue(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
         // #readValues guarantees that the value has a valid chosenId, and a choiceValue
@@ -210,11 +204,6 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
         final FieldValue choiceValue = value.getChosenValue();
 
         return choice.validateValue(choiceValue);
-    }
-
-    @Override
-    protected Object getValidatedValue(final FieldValue value) {
-        throw new IllegalStateException("Choice fields should not call #getValidatedValue");
     }
 
     private Optional<NodeFieldType> findChoice(final String chosenId) {

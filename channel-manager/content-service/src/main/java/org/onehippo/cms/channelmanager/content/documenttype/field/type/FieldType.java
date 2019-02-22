@@ -146,15 +146,6 @@ public interface FieldType {
     boolean validate(final List<FieldValue> valueList);
 
     /**
-     * Validates a single value of this field. Will be called for every value of a multiple field.
-     * When the value is not valid, the errorInfo of the value should be set to indicate the problem.
-     *
-     * @param value value to validate
-     * @return true if the value is valid, false otherwise.
-     */
-    boolean validateValue(final FieldValue value);
-
-    /**
      * Add the name of a validator for this field.
      *
      * @param validatorName the name of the validator
