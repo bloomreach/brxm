@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ import org.hippoecm.frontend.plugin.error.ErrorPlugin;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.session.UserSession;
+
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,65 +52,80 @@ public class PluginFactory implements IClusterable {
     }
 
     public IPlugin createPlugin(PluginContext context, IPluginConfig config) {
-        String className = config.getString(IPlugin.CLASSNAME);
-        IPlugin plugin = null;
-        String message = null;
-        if (className == null) {
-            message = "No plugin classname configured, please set plugin configuration parameter " + IPlugin.CLASSNAME;
-        } else {
-            className = className.trim();
-            ClassLoader loader = UserSession.get().getClassLoader();
-            if (loader == null) {
-                log.info("Unable to retrieve repository classloader, falling back to default classloader.");
-                loader = getClass().getClassLoader();
-            }
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends IPlugin> clazz = (Class<? extends IPlugin>) Class.forName(className, true, loader);
-                Class<?>[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
-                Constructor<? extends IPlugin> constructor = clazz.getConstructor(formalArgs);
-                Object[] actualArgs = new Object[] { context, config };
-                plugin = constructor.newInstance(actualArgs);
+        Task createPluginTask = null;
 
-            } catch (ClassNotFoundException e) {
-                ResourceSettings resourceSettings = Application.get().getResourceSettings();
-                IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
-                IResourceStream stream = locator.locate(null, className.replace('.', '/') + ".html");
-                if (stream != null) {
-                    plugin = new LayoutPlugin(context, config, stream);
-                } else {
+        try {
+            String className = config.getString(IPlugin.CLASSNAME);
+
+            if (HDC.isStarted()) {
+                createPluginTask = HDC.getCurrentTask().startSubtask(this.getClass().getSimpleName() + ".createPlugin");
+                createPluginTask.setAttribute("pluginClass", className != null ? className : "unknown");
+            }
+
+            IPlugin plugin = null;
+            String message = null;
+            if (className == null) {
+                message = "No plugin classname configured, please set plugin configuration parameter " + IPlugin.CLASSNAME;
+            } else {
+                className = className.trim();
+                ClassLoader loader = UserSession.get().getClassLoader();
+                if (loader == null) {
+                    log.info("Unable to retrieve repository classloader, falling back to default classloader.");
+                    loader = getClass().getClassLoader();
+                }
+                try {
+                    @SuppressWarnings("unchecked")
+                    Class<? extends IPlugin> clazz = (Class<? extends IPlugin>) Class.forName(className, true, loader);
+                    Class<?>[] formalArgs = new Class[] { IPluginContext.class, IPluginConfig.class };
+                    Constructor<? extends IPlugin> constructor = clazz.getConstructor(formalArgs);
+                    Object[] actualArgs = new Object[] { context, config };
+                    plugin = constructor.newInstance(actualArgs);
+
+                } catch (ClassNotFoundException e) {
+                    ResourceSettings resourceSettings = Application.get().getResourceSettings();
+                    IResourceStreamLocator locator = resourceSettings.getResourceStreamLocator();
+                    IResourceStream stream = locator.locate(null, className.replace('.', '/') + ".html");
+                    if (stream != null) {
+                        plugin = new LayoutPlugin(context, config, stream);
+                    } else {
+                        message = e.getClass().getName() + ": " + e.getMessage();
+                        log.error(message, e);
+                    }
+
+                } catch (InvocationTargetException e) {
+                    if(e.getTargetException() instanceof RestartResponseException) {
+                        throw (RestartResponseException) e.getTargetException();
+                    }
+                    message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
+                    log.error(message, e);
+                } catch (Exception e) {
                     message = e.getClass().getName() + ": " + e.getMessage();
                     log.error(message, e);
                 }
+            }
+            if (plugin == null && message != null) {
+                message += "\nFailed to instantiate plugin class '" + className + "' for wicket id '"
+                        + config.getString(RenderService.WICKET_ID) + "' in plugin '" + config.getName() + "' (" + config + ")";
 
-            } catch (InvocationTargetException e) {
-                if(e.getTargetException() instanceof RestartResponseException) {
-                    throw (RestartResponseException) e.getTargetException();
+                // reset context, i.e. unregister everything that was registered so far
+                context.reset();
+
+                if (config.getString(RenderService.WICKET_ID) != null) {
+                    IPluginConfig errorConfig = new JavaPluginConfig();
+                    errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
+                    errorConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
+                    plugin = new ErrorPlugin(context, errorConfig);
+                } else {
+                    log.error(message);
                 }
-                message = e.getTargetException().getClass().getName() + ": " + e.getTargetException().getMessage();
-                log.error(message, e);
-            } catch (Exception e) {
-                message = e.getClass().getName() + ": " + e.getMessage();
-                log.error(message, e);
+            }
+            return plugin;
+        }
+        finally {
+            if (createPluginTask != null) {
+                createPluginTask.stop();
             }
         }
-        if (plugin == null && message != null) {
-            message += "\nFailed to instantiate plugin class '" + className + "' for wicket id '"
-                    + config.getString(RenderService.WICKET_ID) + "' in plugin '" + config.getName() + "' (" + config + ")";
-
-            // reset context, i.e. unregister everything that was registered so far
-            context.reset();
-
-            if (config.getString(RenderService.WICKET_ID) != null) {
-                IPluginConfig errorConfig = new JavaPluginConfig();
-                errorConfig.put(ErrorPlugin.ERROR_MESSAGE, message);
-                errorConfig.put(RenderService.WICKET_ID, config.getString(RenderService.WICKET_ID));
-                plugin = new ErrorPlugin(context, errorConfig);
-            } else {
-                log.error(message);
-            }
-        }
-        return plugin;
     }
 
     private static class LayoutPlugin extends RenderPlugin implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
