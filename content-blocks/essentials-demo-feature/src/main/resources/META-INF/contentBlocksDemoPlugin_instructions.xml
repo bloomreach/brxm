@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<instructions xmlns="http://www.onehippo.org/essentials/instructions">
+    <instructionSet group="default">
+        <cnd documentType="textblock" superType="hippo:compound,hippostd:relaxed"/>
+        <cnd documentType="imageblock" superType="hippo:compound,hippostd:relaxed"/>
+        <cnd documentType="providercompounddocument" superType="{{namespace}}:basedocument,hippostd:relaxed"/>
+        <cnd documentType="contentblocksdocument" superType="{{namespace}}:basedocument,hippostd:relaxed"/>
+        <cnd documentType="contentblocksprovider" superType="hippo:compound,hippostd:relaxed"/>
+        <cnd documentType="videoblock" superType="hippo:compound,hippostd:relaxed"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="documentTypes/textblock.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/imageblock.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/providercompounddocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/contentblocksdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/contentblocksprovider.xml" target="/hippo:namespaces/{{namespace}}"/>
+        <xml action="copy" overwrite="false" source="documentTypes/videoblock.xml" target="/hippo:namespaces/{{namespace}}"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="hstMenus/namespace/main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="hstMenuItems/namespace/Blocks Group.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+        <xml action="copy" overwrite="false" source="hstMenuItems/namespace/Blocks List.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="templates/hstdefault/blocks-main.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+        <xml action="copy" overwrite="false" source="templates/hstdefault/blocks-list.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/blocks.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstPages/namespace/blocks-list.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
+        <xml action="copy" overwrite="false" source="hstCatalogComponents/namespace/list.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:catalog/{{namespace}}-catalog/"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/blocks-by-group.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+        <xml action="copy" overwrite="false" source="hstSitemapItems/namespace/blocks-by-list.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <file action="copy" binary="true" overwrite="false" source="images/catalog-list.png" target="{{imagesRoot}}/catalog-list.png"/>
+        <file action="copy" binary="true" overwrite="false" source="yamlBinaryFiles/Hippopotamus_-_04_original.jpg" target="{{applicationContent}}/content/gallery/{{namespace}}/hippopotamus_-_04.jpg/Hippopotamus_-_04_original.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="yamlBinaryFiles/Hippo_family_original.jpg" target="{{applicationContent}}/content/gallery/{{namespace}}/hippo_family.jpg/Hippo_family_original.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="yamlBinaryFiles/Hippo_family_thumbnail.jpg" target="{{applicationContent}}/content/gallery/{{namespace}}/hippo_family.jpg/Hippo_family_thumbnail.jpg"/>
+        <file action="copy" binary="true" overwrite="false" source="yamlBinaryFiles/Hippopotamus_-_04_thumbnail.jpg" target="{{applicationContent}}/content/gallery/{{namespace}}/hippopotamus_-_04.jpg/Hippopotamus_-_04_thumbnail.jpg"/>
+        <file action="copy" binary="false" overwrite="true" source="yamlFiles/contentblocksdemo.yaml" target="{{applicationContent}}/content/gallery/{{namespace}}.yaml"/>
+        <file action="copy" binary="false" overwrite="false" source="components/ListView.java" target="{{componentsPackage}}/ListView.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/BaseComponent.java" target="{{componentsFolder}}/BaseComponent.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ContentBlockImage.java" target="{{beansFolder}}/ContentBlockImage.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ContentBlocksDocument.java" target="{{beansFolder}}/ContentBlocksDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ContentBlockText.java" target="{{beansFolder}}/ContentBlockText.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ContentBlockVideo.java" target="{{beansFolder}}/ContentBlockVideo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ContentDocument.java" target="{{beansFolder}}/ContentDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/Detail.java" target="{{componentsFolder}}/Detail.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/GeneralListInfo.java" target="{{componentsFolder}}/GeneralListInfo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ListView.java" target="{{componentsFolder}}/ListView.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ListViewInfo.java" target="{{componentsFolder}}/ListViewInfo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/PageableListInfo.java" target="{{componentsFolder}}/PageableListInfo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/ProviderCompoundDocument.java" target="{{beansFolder}}/ProviderCompoundDocument.java"/>
+        <file action="copy" binary="false" overwrite="false" source="siteFiles/SearchInfo.java" target="{{componentsFolder}}/SearchInfo.java"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/blocks-list.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/blocks-list.ftl"/>
+        <file action="copy" binary="false" overwrite="false" source="webfiles/blocks-main.ftl" target="{{webfilesRoot}}/freemarker/hstdefault/blocks-main.ftl"/>
+    </instructionSet>
+    <instructionSet group="default">
+        <xml action="copy" overwrite="false" source="contentDocuments/common.xml" target="/content/documents/{{namespace}}"/>
+    </instructionSet>
+</instructions>

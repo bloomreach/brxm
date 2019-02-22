@@ -1,0 +1,27 @@
+{
+  "id" : "contentBlocksDemo",
+  "name" : "Content Blocks Demo",
+  "type" : "feature",
+  "introduction" : "This demo feature creates documents containing content blocks and a site that renders those.",
+  "vendor": {
+    "name": "BloomReach",
+    "url": "https://www.bloomreach.com"
+  },
+  "hasConfiguration" : false,
+  "rebuildAfterInstallation" : true,
+  "installWithParameters" : true,
+  "packageFile" : "/META-INF/contentBlocksDemoPlugin_instructions.xml",
+  "icon" : "/essentials/feature/images/contentBlocksDemoPlugin.png",
+  "categories" : {
+    "license" : [ "community" ],
+    "application" : [ "content" ],
+    "type" : [ "feature" ]
+  },
+  "pluginDependencies" : [ {
+    "pluginId" : "skeleton"
+  }, {
+    "pluginId" : "simpleContent"
+  }, {
+    "pluginId" : "contentBlocks"
+  } ]
+}
