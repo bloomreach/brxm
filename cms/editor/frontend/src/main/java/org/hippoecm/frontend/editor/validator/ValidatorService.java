@@ -38,6 +38,8 @@ public class ValidatorService extends Plugin {
     public static final Logger log = LoggerFactory.getLogger(ValidatorService.class);
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
+    public static final String FIELD_VALIDATOR_SERVICE_ID = "field.validator.service.id";
+    public static final String DEFAULT_FIELD_VALIDATOR_SERVICE = "field.validator.service";
 
     private final Map<String, ICmsValidator> map = new HashMap<>();
 
@@ -55,7 +57,7 @@ public class ValidatorService extends Plugin {
             }
         }, VALIDATOR_SERVICE_ID);
 
-        context.registerService(this, config.getString("field.validator.service.id", "field.validator.service"));
+        context.registerService(this, config.getString(FIELD_VALIDATOR_SERVICE_ID, DEFAULT_FIELD_VALIDATOR_SERVICE));
     }
 
     public ICmsValidator getValidator(final String name) {

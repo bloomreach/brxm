@@ -122,7 +122,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 validator = new TemplateTypeValidator();
             } else {
                 final ITypeDescriptor descriptor = locator.locate(nodeType);
-                final ValidatorService validatorService = context.getService("field.validator.service", ValidatorService.class);
+                final ValidatorService validatorService = context.getService(ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, ValidatorService.class);
                 validator = new JcrTypeValidator(descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));
