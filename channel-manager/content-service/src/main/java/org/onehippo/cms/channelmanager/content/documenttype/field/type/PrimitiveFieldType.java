@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -63,7 +64,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        validationContext = new FieldValidationContext(fieldContext, getPropertyType());
+        validationContext = new FieldValidationContext(fieldContext, getValidationType());
         return super.init(fieldContext);
     }
 
@@ -202,6 +203,10 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     protected abstract int getPropertyType();
+    
+    protected String getValidationType() {
+        return PropertyType.nameFromValue(getPropertyType());
+    }
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
