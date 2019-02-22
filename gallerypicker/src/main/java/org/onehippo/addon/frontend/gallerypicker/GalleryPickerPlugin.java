@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -51,6 +50,7 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,13 +62,11 @@ import org.slf4j.LoggerFactory;
  */
 public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 2965577252486600004L;
-
     private static final Logger log = LoggerFactory.getLogger(GalleryPickerPlugin.class);
 
+    public static final String GALLERY_ROOT_PATH = "/content/gallery/";
+
     private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
-    private static final String JCR_ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
-    private static final String GALLERY_ROOT_PATH = "/content/gallery/";
     private static final String HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME = "hippogallery:exampleImageSet";
     private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
     private static final String SUPPORTED_PATHS_KEY = "supported.paths";
@@ -141,7 +139,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 remove = new AjaxLink<Void>("remove") {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
-                        valueModel.setObject(JCR_ROOT_NODE_UUID);
+                        valueModel.setObject(JcrConstants.ROOT_NODE_ID);
                         triggerModelChanged();
                     }
                 };
@@ -378,7 +376,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private String getPath(final String docbaseUUID) {
         String path = StringUtils.EMPTY;
         try {
-            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(JCR_ROOT_NODE_UUID))) {
+            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(JcrConstants.ROOT_NODE_ID))) {
                 path = getJCRSession().getNodeByIdentifier(docbaseUUID).getPath();
             }
         } catch (RepositoryException e) {

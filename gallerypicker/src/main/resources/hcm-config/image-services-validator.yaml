@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/image-references:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.onehippo.cms7.services.validation.validator.ImageReferenceValidator
