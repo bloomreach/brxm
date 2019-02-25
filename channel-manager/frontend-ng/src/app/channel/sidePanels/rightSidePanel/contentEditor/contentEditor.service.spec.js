@@ -548,8 +548,10 @@ describe('ContentEditorService', () => {
       });
 
       describe('fails because of an invalid field', () => {
+        let saveResponse;
+
         beforeEach(() => {
-          const saveResponse = angular.copy(testDocument);
+          saveResponse = angular.copy(testDocument);
           saveResponse.fields['ns:string'] = [
             {
               value: '',
@@ -576,7 +578,7 @@ describe('ContentEditorService', () => {
 
           $rootScope.$digest();
 
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA');
+          expect(ContentEditor.getDocument()).toBe(saveResponse);
           expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
           expect(ContentEditor.getDocumentType()).toBe(reloadedDocumentType);
         });
@@ -590,7 +592,6 @@ describe('ContentEditorService', () => {
 
           $rootScope.$digest();
 
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA');
           expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
           expect(ContentEditor.getDocumentType()).toBe(testDocumentType);
           expect(ContentEditor.getError()).toEqual({
