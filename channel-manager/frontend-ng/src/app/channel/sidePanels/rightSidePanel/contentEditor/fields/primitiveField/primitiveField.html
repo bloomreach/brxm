@@ -47,7 +47,7 @@
     <!-- editors per field type -->
     <input ng-switch-when="STRING"
            ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
+           ng-change="$ctrl.valueChanged($index)"
            name="{{::$ctrl.getFieldName($index)}}"
            ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
            aria-label="{{::$ctrl.fieldType.displayName}}"
@@ -57,7 +57,7 @@
 
     <input ng-switch-when="LONG"
            ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
+           ng-change="$ctrl.valueChanged($index)"
            name="{{::$ctrl.getFieldName($index)}}"
            aria-label="{{::$ctrl.fieldType.displayName}}"
            ng-focus="$ctrl.focusPrimitive($event)"
@@ -67,7 +67,7 @@
 
     <input ng-switch-when="DOUBLE"
            ng-model="fieldValue.value"
-           ng-change="$ctrl.valueChanged()"
+           ng-change="$ctrl.valueChanged($index)"
            name="{{::$ctrl.getFieldName($index)}}"
            aria-label="{{::$ctrl.fieldType.displayName}}"
            ng-focus="$ctrl.focusPrimitive($event)"
@@ -79,7 +79,7 @@
       <md-checkbox ng-model="fieldValue.value"
                    ng-true-value="'true'"
                    ng-false-value="'false'"
-                   ng-change="$ctrl.valueChanged()"
+                   ng-change="$ctrl.valueChanged($index)"
                    class="md-primary"
                    name="{{::$ctrl.getFieldName($index)}}"
                    ng-focus="$ctrl.focusPrimitive($event)"
@@ -100,7 +100,7 @@
                 name="::$ctrl.getFieldName($index)"
                 field-type="::$ctrl.fieldType"
                 ng-model="fieldValue.value"
-                ng-change="$ctrl.valueChanged()"
+                ng-change="$ctrl.valueChanged($index)"
                 on-field-focus="$ctrl.focusPrimitive($event)"
                 on-field-blur="$ctrl.blurPrimitive($event)">
     </date-field>
@@ -109,7 +109,7 @@
       ng-switch-when="STATIC_DROPDOWN"
       aria-label="::$ctrl.fieldType.displayName"
       name="::$ctrl.getFieldName($index)"
-      ng-change="$ctrl.valueChanged()"
+      ng-change="$ctrl.valueChanged($index)"
       ng-model="fieldValue.value"
       ng-required="::$ctrl.fieldType.required"
       md-no-asterisk
@@ -125,7 +125,7 @@
     <radio-group ng-switch-when="RADIO_GROUP"
                  locale="::$ctrl.locale"
                  name="::$ctrl.getFieldName($index)"
-                 ng-change="$ctrl.valueChanged()"
+                 ng-change="$ctrl.valueChanged($index)"
                  on-field-blur="$ctrl.blurPrimitive($event)"
                  on-field-focus="$ctrl.focusPrimitive($event)"
                  ng-model="fieldValue.value"
@@ -139,7 +139,7 @@
       
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
-              ng-change="$ctrl.valueChanged()"
+              ng-change="$ctrl.valueChanged($index)"
               name="{{::$ctrl.getFieldName($index)}}"
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"
@@ -150,7 +150,7 @@
 
     <ckeditor ng-switch-when="HTML"
               ng-model="fieldValue.value"
-              ng-change="$ctrl.valueChanged()"
+              ng-change="$ctrl.valueChanged($index)"
               id="fieldValue.id"
               name="::$ctrl.getFieldName($index)"
               aria-label="::$ctrl.fieldType.displayName"
@@ -164,7 +164,7 @@
 
     <image-link ng-switch-when="IMAGE_LINK"
                 ng-model="fieldValue.value"
-                ng-change="$ctrl.valueChanged()"
+                ng-change="$ctrl.valueChanged($index)"
                 on-focus="$ctrl.focusPrimitive($event)"
                 on-blur="$ctrl.blurPrimitive($event)"
                 name="{{::$ctrl.getFieldName($index)}}"
@@ -185,7 +185,7 @@
                ng-required="::$ctrl.fieldType.required"
                name="{{::$ctrl.getFieldName($index)}}"
                ng-model="fieldValue.value"
-               ng-change="$ctrl.valueChanged()"
+               ng-change="$ctrl.valueChanged($index)"
                on-focus="$ctrl.focusPrimitive($event)"
                on-blur="$ctrl.blurPrimitive($event)">
     </node-link>
@@ -193,6 +193,7 @@
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
+      <div ng-message="server">{{ ::$ctrl.getFieldError().server }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'DATE_AND_TIME'" ng-message="valid">{{ ::'ERROR_INVALID_DATE' | translate }}</div>

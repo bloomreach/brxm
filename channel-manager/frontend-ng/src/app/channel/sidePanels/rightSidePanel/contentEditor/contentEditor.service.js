@@ -286,6 +286,15 @@ class ContentEditorService {
   save(force) {
     return this._saveDocument(force)
       .catch((response) => {
+        const result = this.$q.reject(); // tell the caller that saving has failed.
+
+        if (isDocument(response.data)) {
+          this._reloadDocumentType();
+          this.document = response.data;
+
+          return result;
+        }
+
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
@@ -293,9 +302,6 @@ class ContentEditorService {
           const errorInfo = response.data;
           errorKey = `ERROR_${errorInfo.reason}`;
           params = this._extractErrorParams(errorInfo);
-        } else if (isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
         }
 
         if (params) {
@@ -304,7 +310,7 @@ class ContentEditorService {
           this.FeedbackService.showError(errorKey);
         }
 
-        return this.$q.reject(); // tell the caller that saving has failed.
+        return result;
       });
   }
 

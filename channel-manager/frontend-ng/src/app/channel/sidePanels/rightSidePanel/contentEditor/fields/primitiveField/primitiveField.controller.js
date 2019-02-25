@@ -23,6 +23,20 @@ class PrimitiveFieldCtrl {
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
   }
 
+  $onChanges(changes) {
+    if (changes.fieldValues) {
+      changes.fieldValues.currentValue.forEach((value, index) => {
+        if (!value.errorInfo) {
+          return;
+        }
+
+        const field = this.form[this.getFieldName(index)];
+        field.$setValidity('server', false);
+        field.$error.server = value.errorInfo.message;
+      });
+    }
+  }
+
   getFieldName(index) {
     const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
     return index > 0 ? `${fieldName}[${index + 1}]` : fieldName;
@@ -79,7 +93,13 @@ class PrimitiveFieldCtrl {
     this._saveField();
   }
 
-  valueChanged() {
+  valueChanged(index) {
+    const field = this.form[this.getFieldName(index)];
+    if (field && field.$error.server) {
+      field.$setValidity('server', true);
+      delete field.$error.server;
+    }
+
     this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues);
   }
 

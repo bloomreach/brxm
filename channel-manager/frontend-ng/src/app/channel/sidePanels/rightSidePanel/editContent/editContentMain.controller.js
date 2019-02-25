@@ -55,6 +55,18 @@ class EditContentMainCtrl {
         this.RightSidePanelService.stopLoading();
       }
     });
+
+    this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length) {
+        error[0].$$element.focus();
+      }
+    });
+  }
+
+  getErrorCount() {
+    const document = this.ContentEditor.getDocument();
+
+    return document && document.info && document.info.errorCount;
   }
 
   notAllFieldsShown() {

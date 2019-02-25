@@ -212,12 +212,37 @@ describe('PrimitiveField', () => {
     expect(onFieldBlur).toHaveBeenCalled();
   });
 
-  it('starts a save timer when the value changed', () => {
-    spyOn(FieldService, 'startSaveTimer');
+  describe('valueChanged', () => {
+    let field;
 
-    $ctrl.valueChanged();
+    beforeEach(() => {
+      field = {
+        $invalid: false,
+        $error: {
+          server: 'Message',
+        },
+        $setValidity: () => {},
+      };
+      $ctrl.form = { 'test-name/field:type': field };
 
-    expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+      spyOn(FieldService, 'startSaveTimer');
+    });
+
+    it('starts a save timer when the value changed', () => {
+      $ctrl.valueChanged();
+      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    });
+
+    it('removes a server error when the value changed', () => {
+      spyOn($ctrl, 'getFieldName').and.returnValue('test-name/field:type');
+      spyOn(field, '$setValidity');
+      $ctrl.valueChanged(0);
+
+      expect($ctrl.getFieldName).toHaveBeenCalledWith(0);
+      expect(field.$setValidity).toHaveBeenCalledWith('server', true);
+      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+      expect(field.$error.server).toBe(undefined);
+    });
   });
 
   it('saves the field on blur when the value has changed', () => {

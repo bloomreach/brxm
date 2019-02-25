@@ -62,6 +62,18 @@ class Step2Controller {
     });
     // focus the form so key presses will reach Angular Material instead of the parent window
     this.$element.find('form').focus();
+
+    this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length) {
+        error[0].$$element.focus();
+      }
+    });
+  }
+
+  getErrorCount() {
+    const document = this.ContentEditor.getDocument();
+
+    return document && document.info && document.info.errorCount;
   }
 
   allMandatoryFieldsShown() {
