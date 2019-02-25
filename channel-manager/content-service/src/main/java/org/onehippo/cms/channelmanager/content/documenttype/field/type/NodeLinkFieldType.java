@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.picker.NodePicker;
 import org.onehippo.cms.json.Json;
@@ -48,6 +49,11 @@ public class NodeLinkFieldType extends LinkFieldType {
         config.set("linkpicker", NodePicker.build(fieldContext));
 
         return super.init(fieldContext);
+    }
+
+    @Override
+    protected String getValidationType() {
+        return HippoNodeType.NT_MIRROR;
     }
 
     @Override

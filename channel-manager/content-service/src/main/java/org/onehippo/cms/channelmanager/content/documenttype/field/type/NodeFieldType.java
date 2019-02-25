@@ -62,4 +62,11 @@ public interface NodeFieldType extends FieldType {
         return FieldTypeUtils.writeChoiceFieldValue(node, fieldPath, values, this);
     }
 
+    /**
+     * Validates the value.
+     * @param value value to validate
+     * @return true of the value is valid, false otherwise.
+     */
+    boolean validateValue(final FieldValue value);
+
 }

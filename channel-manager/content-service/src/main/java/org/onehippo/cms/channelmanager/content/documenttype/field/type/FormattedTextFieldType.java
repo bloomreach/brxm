@@ -79,6 +79,11 @@ public class FormattedTextFieldType extends StringFieldType {
         return fieldsInfo;
     }
 
+    @Override
+    protected String getValidationType() {
+        return "Html";
+    }
+
     public ObjectNode getConfig() {
         return config;
     }

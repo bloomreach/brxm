@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.wicket.util.collections.MiniMap;
+import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -55,6 +56,11 @@ public class ImageLinkFieldType extends LinkFieldType {
         config.set("imagepicker", ImagePicker.build(fieldContext));
 
         return super.init(fieldContext);
+    }
+
+    @Override
+    protected String getValidationType() {
+        return GalleryPickerNodeType.NT_IMAGE_LINK;
     }
 
     @Override

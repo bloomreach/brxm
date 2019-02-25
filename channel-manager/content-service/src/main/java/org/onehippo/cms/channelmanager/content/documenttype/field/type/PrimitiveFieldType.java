@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
@@ -38,9 +39,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +50,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * This bean represents a primitive field type, used for the fields of a {@link DocumentType}. It can be serialized into
+ * Base class for all primitive field types of a {@link DocumentType}. Can be serialized into
  * JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
@@ -63,7 +64,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        validationContext = new FieldValidationContext(fieldContext, getPropertyType());
+        validationContext = new FieldValidationContext(fieldContext, getValidationType());
         return super.init(fieldContext);
     }
 
@@ -78,43 +79,45 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
+    /**
+     * Validates the field value using all configured validators.
+     * The first validator that deems the value invalid sets the value's errorInfo.
+     *
+     * @return true when all validators deem the value valid, false otherwise.
+     */
     @Override
-    protected boolean validateRequired(final FieldValue value) {
-        if (!value.hasValue() || value.getValue().isEmpty()) {
-            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED, ValidationErrorInfo.REQUIRED));
+    public boolean validateValue(final FieldValue value) {
+        return getValidatorNames().stream().allMatch(validatorName -> validateValue(value, validatorName));
+    }
+
+    /**
+     * Validates the string value of a field with a validator.
+     *
+     * @param value the field value wrapper
+     * @param validatorName the name of the validator to use
+     *
+     * @return whether the validator deemed the value valid
+     */
+    private boolean validateValue(final FieldValue value, final String validatorName) {
+        try {
+            final Validator<FieldContext> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+            if (validator == null) {
+                log.warn("Failed to find validator '{}', assuming the value is invalid", validatorName);
+                return false;
+            }
+
+            final Optional<Violation> violation = validator.validate(validationContext, value.getValue());
+
+            violation.ifPresent((error) -> {
+                ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
+                value.setErrorInfo(errorInfo);
+            });
+
+            return !violation.isPresent();
+        } catch (ValidatorException e) {
+            log.warn("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
             return false;
         }
-        return true;
-    }
-
-    @Override
-    protected final Object getValidatedValue(final FieldValue value) {
-        return value.getValue();
-    }
-    /**
-     * Executes all configured validators. The first validator that deems the value invalid sets the value's errorInfo.
-     */
-    public boolean validateValue(final FieldValue value) {
-        return getValidatorNames().stream().noneMatch(validatorName -> {
-            try {
-                final Validator<ValidatorContext, Object> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
-                if (validator == null) {
-                    log.info("Failed to find validator '{}', assuming the value is invalid", validatorName);
-                    return false;
-                }
-
-                final Optional<Violation> violation = validator.validate(validationContext, getValidatedValue(value));
-                violation.ifPresent((error) -> {
-                    ValidationErrorInfo errorInfo = new ValidationErrorInfo(validator.getName(), error.getMessage());
-                    value.setErrorInfo(errorInfo);
-                });
-
-                return violation.isPresent();
-            } catch (ValidatorException e) {
-                log.info("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -190,6 +193,10 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     protected abstract int getPropertyType();
+
+    protected String getValidationType() {
+        return PropertyType.nameFromValue(getPropertyType());
+    }
 
     @Override
     public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {

@@ -34,6 +34,10 @@ public class ValidationErrorInfo {
     private final String validation;
     private final String message; // localized
 
+    public ValidationErrorInfo(final String validation) {
+        this(validation, null);
+    }
+
     public ValidationErrorInfo(final String validation, final String message) {
         this.validation = validation;
         this.message = message;

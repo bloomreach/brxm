@@ -150,21 +150,11 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    protected boolean validateRequired(final FieldValue value) {
-        // The "required: validator only applies to the cardinality of a compound field, and has
-        // therefore already been checked during the writeTo-validation (#checkCardinality).
-        return true;
-    }
-
-    @Override
     public boolean validateValue(final FieldValue value) {
         // Don't execute the validators, but validate all child fields instead.
         // #readValue guarantees that value.getFields is not empty.
+        // The "required" validator only applies to the cardinality, and has
+        // therefore already been checked during the writeTo-validation (#checkCardinality).
         return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());
-    }
-
-    @Override
-    protected Object getValidatedValue(final FieldValue value) {
-        throw new IllegalStateException("Compound fields should not call #getValidatedValue");
     }
 }
