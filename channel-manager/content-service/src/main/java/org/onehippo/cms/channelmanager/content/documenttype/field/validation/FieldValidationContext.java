@@ -18,8 +18,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 
 import java.util.Locale;
 
-import javax.jcr.Session;
-
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms7.services.validation.field.FieldContext;
 
@@ -41,11 +39,6 @@ public class FieldValidationContext implements FieldContext {
     @Override
     public String getType() {
         return type;
-    }
-
-    @Override
-    public Session getJcrSession() {
-        return fieldContext.getParentContext().getSession();
     }
 
     @Override
