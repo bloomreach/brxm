@@ -27,7 +27,6 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ public class ValidatorService extends Plugin {
         if (!map.containsKey(name)) {
             try {
                 final ValidationService validationService = getValidationService();
-                final Validator<FieldContext> validator = validationService.getValidator(name);
+                final Validator validator = validationService.getValidator(name);
                 if (validator != null) {
                     map.put(name, new CmsValidatorAdapter(validator));
                 }
