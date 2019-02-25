@@ -19,9 +19,9 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 import java.util.Locale;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 
-public class FieldValidationContext implements FieldContext {
+public class FieldValidationContext implements ValidatorContext {
 
     private FieldTypeContext fieldContext;
     private String type;

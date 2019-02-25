@@ -71,7 +71,6 @@ import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +193,7 @@ public class FieldTypeUtils {
                 fieldType.setUnsupportedValidator(true);
             } else {
                 try {
-                    final Validator<FieldContext> validator = validationService.getValidator(validatorName);
+                    final Validator validator = validationService.getValidator(validatorName);
                     if (validator != null) {
                         fieldType.addValidatorName(validatorName);
                     } else {
@@ -212,8 +211,7 @@ public class FieldTypeUtils {
         }
     }
 
-    public static Validator<FieldContext> getValidator(final String validatorName,
-                                                                   final FieldValidationContext validationContext) {
+    public static Validator getValidator(final String validatorName, final FieldValidationContext validationContext) {
 
         if (StringUtils.isBlank(validatorName)) {
             return null;
@@ -227,7 +225,7 @@ public class FieldTypeUtils {
         }
 
         try {
-            final Validator<FieldContext> validator = validationService.getValidator(validatorName);
+            final Validator validator = validationService.getValidator(validatorName);
             validator.init(validationContext);
             return validator;
         } catch (ValidatorConfigurationException e) {
