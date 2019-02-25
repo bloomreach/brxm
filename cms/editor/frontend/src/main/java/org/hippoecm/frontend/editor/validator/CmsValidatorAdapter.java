@@ -28,23 +28,23 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 
 import com.google.common.collect.Sets;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
-    private final Validator<FieldContext> validator;
+    private final Validator validator;
 
-    public CmsValidatorAdapter(final Validator<FieldContext> validator) {
+    public CmsValidatorAdapter(final Validator validator) {
         this.validator = validator;
     }
 
     @Override
     public void preValidation(final IFieldValidator fieldValidator) throws ValidationException {
-        final FieldContext context = new CmsValidatorFieldContext(fieldValidator);
+        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
         try {
             validator.init(context);
         } catch (final InvalidValidatorException e) {
@@ -57,7 +57,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
                                    final JcrNodeModel parentModel,
                                    final IModel valueModel) throws ValidationException {
 
-        final FieldContext context = new CmsValidatorFieldContext(fieldValidator);
+        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
         try {
             final Object object = valueModel.getObject();
             final Optional<org.onehippo.cms7.services.validation.Violation> optionalViolation =
