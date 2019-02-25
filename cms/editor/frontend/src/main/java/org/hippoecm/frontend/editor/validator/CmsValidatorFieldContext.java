@@ -17,8 +17,6 @@ package org.hippoecm.frontend.editor.validator;
 
 import java.util.Locale;
 
-import javax.jcr.Session;
-
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -41,11 +39,6 @@ public class CmsValidatorFieldContext implements FieldContext {
     @Override
     public String getType() {
         return type;
-    }
-
-    @Override
-    public Session getJcrSession() {
-        return UserSession.get().getJcrSession();
     }
 
     @Override
