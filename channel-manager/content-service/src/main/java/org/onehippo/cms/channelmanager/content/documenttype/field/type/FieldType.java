@@ -151,4 +151,16 @@ public interface FieldType {
      * @param validatorName the name of the validator
      */
     void addValidatorName(final String validatorName);
+
+    /**
+     * Marks this field as having a validator known by the system
+     * but not yet supported in this part of the code base.
+     */
+    void setUnsupportedValidator(boolean hasUnsupportedValidators);
+
+    /**
+     * @return whether this field has a validator known by the system
+     * but not yet supported in this part of the code base.
+     */
+    boolean hasUnsupportedValidator();
 }

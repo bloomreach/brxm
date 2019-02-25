@@ -60,6 +60,7 @@ public abstract class AbstractFieldType implements FieldType {
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
     private boolean required;
+    private boolean hasUnsupportedValidator;
 
     @JsonIgnore
     private int minValues = 1;
@@ -159,7 +160,17 @@ public abstract class AbstractFieldType implements FieldType {
 
     @Override
     public boolean isSupported() {
-        return true;
+        return !this.hasUnsupportedValidator();
+    }
+
+    @Override
+    public boolean hasUnsupportedValidator() {
+        return hasUnsupportedValidator;
+    }
+
+    @Override
+    public void setUnsupportedValidator(final boolean hasUnsupportedValidator) {
+        this.hasUnsupportedValidator = hasUnsupportedValidator;
     }
 
     public Set<String> getValidatorNames() {

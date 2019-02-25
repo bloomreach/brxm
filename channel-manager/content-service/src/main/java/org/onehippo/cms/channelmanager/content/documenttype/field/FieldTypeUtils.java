@@ -89,6 +89,9 @@ public class FieldTypeUtils {
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
+    // Unsupported validators of which we know they have field-scope only
+    private static final Set<String> UNSUPPORTED_FIELD_VALIDATORS;
+
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
@@ -99,6 +102,10 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS = new HashSet<>();
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
+
+        UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.IMAGE_REFERENCES);
+        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -180,10 +187,11 @@ public class FieldTypeUtils {
 
         for (final String validatorName : validatorNames) {
             if (IGNORED_VALIDATORS.contains(validatorName)) {
-                continue;
-            }
-            if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
+                // Do nothing
+            } else if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
                 fieldType.setRequired(true);
+            } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validatorName)) {
+                fieldType.setUnsupportedValidator(true);
             } else {
                 try {
                     final Validator<FieldContext> validator = validationService.getValidator(validatorName);
@@ -274,6 +282,9 @@ public class FieldTypeUtils {
                 return optionalFieldType;
             }
 
+            if (fieldType.hasUnsupportedValidator()) {
+                allFieldsInfo.addUnsupportedField(context.getType(), context.getValidators());
+            }
             // Else the field is a known one, but still unsupported (example: an empty compound). Don't include
             // the field in the list of unsupported fields, but don't include it in the document type either.
         } else {
@@ -364,7 +375,9 @@ public class FieldTypeUtils {
                                         final List<FieldType> fields,
                                         final Node node) throws ErrorWithPayloadException {
         for (final FieldType fieldType : fields) {
-            fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            if (!fieldType.hasUnsupportedValidator()) {
+                fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            }
         }
     }
 

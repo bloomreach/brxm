@@ -87,8 +87,20 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void hasUnsupportedValidator() {
+        assertFalse(fieldType.hasUnsupportedValidator());
+        fieldType.setUnsupportedValidator(true);
+        assertTrue(fieldType.hasUnsupportedValidator());
+        fieldType.setUnsupportedValidator(false);
+        assertFalse(fieldType.hasUnsupportedValidator());
+    }
+
+    @Test
     public void isSupported() {
         assertTrue(fieldType.isSupported());
+
+        fieldType.setUnsupportedValidator(true);
+        assertFalse(fieldType.isSupported());
     }
 
     @Test

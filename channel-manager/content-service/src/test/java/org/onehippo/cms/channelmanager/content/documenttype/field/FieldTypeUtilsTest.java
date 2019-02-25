@@ -48,8 +48,11 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFie
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidationService;
+import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -64,11 +67,10 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
-import static org.powermock.api.support.membermodification.MemberMatcher.field;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class, ContentTypeContext.class})
+@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class, ContentTypeContext.class, HippoServiceRegistry.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
@@ -80,59 +82,84 @@ public class FieldTypeUtilsTest {
         PowerMock.mockStatic(ChoiceFieldUtils.class);
         PowerMock.mockStatic(ContentTypeContext.class);
         PowerMock.mockStatic(FieldTypeFactory.class);
+        PowerMock.mockStatic(HippoServiceRegistry.class);
         PowerMock.mockStatic(NamespaceUtils.class);
     }
 
     @Test
     public void validateIgnoredValidator() {
+        final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         replayAll();
 
         FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("optional"));
+        verifyAll();
     }
 
     @Test
     public void validateMappedValidators() {
+        final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
 
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+
         fieldType.setRequired(true);
-        expectLastCall().times(2);
+        expectLastCall();
+
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Arrays.asList("required", "non-empty"));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("required"));
+        verifyAll();
     }
 
     @Test
-    public void validateFieldValidators() {
-        // TODO
-//        final FieldType fieldType = createMock(AbstractFieldType.class);
-//        final DocumentType docType = createMock(DocumentType.class);
-//
-//        fieldType.addValidatorName(Validator.UNSUPPORTED);
-//        expectLastCall();
-//        fieldType.addValidatorName(Validator.UNSUPPORTED);
-//        expectLastCall();
-//        replayAll();
-//
-//        FieldTypeUtils.determineValidators(fieldType, docType, Arrays.asList("email", "references"));
+    public void validateFieldValidators() throws ValidatorConfigurationException {
+        final ValidationService validationService = createMock(ValidationService.class);
+        final Validator email = createMock(Validator.class);
+        final Validator references = createMock(Validator.class);
+        final FieldType fieldType = createMock(AbstractFieldType.class);
+        final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("email")).andReturn(email);
+        expect(validationService.getValidator("references")).andReturn(references);
+
+        fieldType.addValidatorName("email");
+        expectLastCall();
+
+        fieldType.addValidatorName("references");
+        expectLastCall();
+
+        replayAll();
+
+        FieldTypeUtils.determineValidators(fieldType, fieldTypeContext, Arrays.asList("email", "references"));
+        verifyAll();
     }
 
     @Test
-    public void validateUnknownValidators() {
+    public void validateUnknownValidators() throws ValidatorConfigurationException {
+        final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final DocumentType docType = createMock(DocumentType.class);
 
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("unknown-validator")).andReturn(null);
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(parentContext.getDocumentType()).andReturn(docType);
+        expect(fieldType.getId()).andReturn("fieldId");
+        expect(docType.getId()).andReturn("docTypeId");
         docType.setReadOnlyDueToUnknownValidator(true);
         expectLastCall();
         replayAll();
 
         FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("unknown-validator"));
+        verifyAll();
     }
 
     @Test
@@ -344,6 +371,7 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
         expect(fieldType.isSupported()).andReturn(false);
+        expect(fieldType.hasUnsupportedValidator()).andReturn(true);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -530,6 +558,7 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.allSupported());
         expect(fieldType.isSupported()).andReturn(false);
+        expect(fieldType.hasUnsupportedValidator()).andReturn(false);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -563,6 +592,7 @@ public class FieldTypeUtilsTest {
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
         expect(fieldType.init(fieldContext)).andReturn(FieldsInformation.noneSupported());
         expect(fieldType.isSupported()).andReturn(false);
+        expect(fieldType.hasUnsupportedValidator()).andReturn(false);
         replayAll();
 
         final FieldsInformation fieldsInfo = FieldTypeUtils.populateFields(fields, context);
@@ -666,9 +696,11 @@ public class FieldTypeUtilsTest {
         final FieldValue value2 = new FieldValue("two");
         valueMap.put("field2", Arrays.asList(value1, value2));
 
+        expect(field1.hasUnsupportedValidator()).andReturn(false);
         expect(field1.getId()).andReturn("field1");
         field1.writeTo(node, Optional.empty());
         expectLastCall();
+        expect(field2.hasUnsupportedValidator()).andReturn(false);
         expect(field2.getId()).andReturn("field2");
         field2.writeTo(node, Optional.of(Arrays.asList(value1, value2)));
         expectLastCall();
@@ -689,6 +721,8 @@ public class FieldTypeUtilsTest {
         final FieldValue value2 = new FieldValue("two");
         valueMap.put("field2", Arrays.asList(value1, value2));
 
+        expect(field1.hasUnsupportedValidator()).andReturn(true);
+        expect(field2.hasUnsupportedValidator()).andReturn(false);
         expect(field2.getId()).andReturn("field2");
         field2.writeTo(node, Optional.of(Arrays.asList(value1, value2)));
         expectLastCall();
