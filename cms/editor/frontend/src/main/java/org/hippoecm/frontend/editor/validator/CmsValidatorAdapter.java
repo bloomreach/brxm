@@ -30,7 +30,6 @@ import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 import com.google.common.collect.Sets;
 
@@ -67,7 +66,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
                 final Violation violation = fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD);
                 return Sets.newHashSet(violation);
             }
-        } catch (final ValidatorException e) {
+        } catch (final RuntimeException e) {
             throw new ValidationException("Error executing validator " + validator, e);
         }
 
