@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
@@ -33,7 +32,7 @@ public class EscapedHtmlValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public boolean isValid(final ValidatorContext context, final String value) throws ValidatorException {
+    public boolean isValid(final ValidatorContext context, final String value) {
         return !INVALID_CHARS.matcher(value).matches();
     }
 

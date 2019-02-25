@@ -22,7 +22,6 @@ import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.util.TranslationUtils;
 
 public abstract class AbstractFieldValidator implements Validator {
@@ -42,11 +41,11 @@ public abstract class AbstractFieldValidator implements Validator {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidatorContext context, final String value) throws ValidatorException {
+    public Optional<Violation> validate(final ValidatorContext context, final String value) {
         return !isValid(context, value) ? getViolation(context) : Optional.empty();
     }
 
-    protected abstract boolean isValid(final ValidatorContext context, final String value) throws ValidatorException;
+    protected abstract boolean isValid(final ValidatorContext context, final String value);
 
     protected Optional<Violation> getViolation(final ValidatorContext context) {
         return Optional.of(() -> getViolationMessage(context));
