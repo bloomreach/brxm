@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 /**
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
@@ -42,7 +41,7 @@ public class NodeReferenceValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public boolean isValid(final ValidatorContext context, final String value) throws ValidatorException {
+    public boolean isValid(final ValidatorContext context, final String value) {
         return StringUtils.isNotBlank(value) && !value.equals(ROOT_NODE_UUID);
     }
 

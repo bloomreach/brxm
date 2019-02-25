@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
@@ -52,7 +51,7 @@ public class RegExpValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public boolean isValid(final ValidatorContext context, final String value) throws ValidatorException {
+    public boolean isValid(final ValidatorContext context, final String value) {
         return pattern.matcher(value).find();
     }
 }

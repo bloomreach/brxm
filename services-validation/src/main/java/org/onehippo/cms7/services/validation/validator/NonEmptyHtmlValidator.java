@@ -18,7 +18,6 @@ package org.onehippo.cms7.services.validation.validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.util.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public class NonEmptyHtmlValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public boolean isValid(final ValidatorContext context, final String value) throws ValidatorException {
+    public boolean isValid(final ValidatorContext context, final String value) {
         return !HtmlUtils.isEmpty(value);
     }
 

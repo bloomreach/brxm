@@ -22,7 +22,6 @@ import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 public class MockValidator implements Validator {
 
@@ -42,7 +41,7 @@ public class MockValidator implements Validator {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidatorContext context, final String value) throws ValidatorException {
+    public Optional<Violation> validate(final ValidatorContext context, final String value) {
         return Optional.empty();
     }
 
