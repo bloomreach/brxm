@@ -20,7 +20,9 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.plugins.AbstractCmsValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -29,6 +31,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +45,7 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(ImageReferenceValidator.class);
 
-    public ImageReferenceValidator(IPluginContext context, IPluginConfig config) {
+    public ImageReferenceValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
@@ -67,15 +70,16 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
                 return violations;
             }
 
-            final String contentGalleryIdentifier = model.getNode().getSession().nodeExists("/content/gallery")
-                    ? model.getNode().getSession().getNode("/content/gallery").getIdentifier()
+            final Session session = model.getNode().getSession();
+            final String contentGalleryIdentifier = session.nodeExists(GalleryPickerPlugin.GALLERY_ROOT_PATH)
+                    ? session.getNode(GalleryPickerPlugin.GALLERY_ROOT_PATH).getIdentifier()
                     : null;
-            if (ref == null || ref.equals("")
-                    || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")
+            if (StringUtils.isEmpty(ref)
+                    || ref.equals(JcrConstants.ROOT_NODE_ID)
                     || ref.equals(contentGalleryIdentifier)) {
                 violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
             }
-        } catch (RepositoryException repositoryException) {
+        } catch (final RepositoryException repositoryException) {
             log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(),
                     repositoryException);
         }

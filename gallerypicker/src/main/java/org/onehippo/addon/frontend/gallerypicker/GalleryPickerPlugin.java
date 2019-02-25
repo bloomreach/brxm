@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.addon.frontend.gallerypicker.dialog.GalleryPickerDialog;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,35 +62,34 @@ import org.slf4j.LoggerFactory;
  */
 public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 2965577252486600004L;
-
     private static final Logger log = LoggerFactory.getLogger(GalleryPickerPlugin.class);
 
-    private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
-    private static final String JCR_ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
-    private static final String GALLERY_ROOT_PATH = "/content/gallery/";
-    private static final String HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME = "hippogallery:exampleImageSet";
-    private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
-    private static final String SUPPORTED_PATHS_KEY = "supported.paths";
     private static final CssResourceReference GALLERY_PICKER_CSS =
             new CssResourceReference(GalleryPickerPlugin.class, GalleryPickerPlugin.class.getSimpleName() + ".css");
 
-    private IModel<String> valueModel;
-    private JcrNodeModel currentNodeModel;
+    private static final String DEFAULT_THUMBNAIL_WIDTH = "50";
+    private static final String HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME = "hippogallery:exampleImageSet";
+    private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
+    private static final String SUPPORTED_PATHS_KEY = "supported.paths";
+
+    static final String GALLERY_ROOT_PATH = "/content/gallery/";
+
+    private final IModel<String> valueModel;
+    private final JcrNodeModel currentNodeModel;
+    private final ImageItemFactory imageFactory;
+    private final InlinePreviewImage inlinePreviewImage;
+
     private String[] supportedPaths;
+    private AjaxLink<Void> remove;
+    protected Mode mode;
+    protected IPluginConfig config;
 
     //this object will be used by wicket based on the propertyModel provided to the inlinePreview image
     @SuppressWarnings("unused")
     private ImageItem image;
-    private ImageItemFactory imageFactory;
-    private InlinePreviewImage inlinePreviewImage;
-    private AjaxLink<Void> remove;
-
-    protected Mode mode;
-    protected IPluginConfig config;
 
     @SuppressWarnings("unchecked")
-    public GalleryPickerPlugin(final IPluginContext context, IPluginConfig config) {
+    public GalleryPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         this.config = config;
@@ -106,22 +106,24 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
             supportedPaths = config.getStringArray(SUPPORTED_PATHS_KEY);
         }
 
-        Fragment fragment;
+        final Fragment fragment;
         switch (mode) {
             case COMPARE:
                 fragment = new Fragment("fragment", "compare", this);
                 String path = null;
                 if (config.containsKey("model.compareTo")) {
-                    IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"), IModelReference.class);
+                    final IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
+                            IModelReference.class);
                     if (baseModelRef != null) {
-                        IModel<Node> baseModel = baseModelRef.getModel();
+                        final IModel<Node> baseModel = baseModelRef.getModel();
                         if (baseModel != null && baseModel.getObject() != null) {
-                            String uuid = getValueModel(baseModel).getObject();
+                            final String uuid = getValueModel(baseModel).getObject();
                             path = imageFactory.createImageItem(uuid).getPrimaryUrl();
                         }
                     }
                 }
-                InlinePreviewImage baseImagePreview = new InlinePreviewImage("baseImage", Model.of(path), getWidth(), getHeight());
+                final InlinePreviewImage baseImagePreview = new InlinePreviewImage("baseImage", Model.of(path),
+                        getWidth(), getHeight());
                 baseImagePreview.setVisible(!Strings.isEmpty(path));
                 fragment.add(baseImagePreview);
                 break;
@@ -139,8 +141,8 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
                 remove = new AjaxLink<Void>("remove") {
                     @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        valueModel.setObject(JCR_ROOT_NODE_UUID);
+                    public void onClick(final AjaxRequestTarget target) {
+                        valueModel.setObject(JcrConstants.ROOT_NODE_ID);
                         triggerModelChanged();
                     }
                 };
@@ -156,7 +158,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 fragment = new Fragment("fragment", "view", this);
         }
 
-        PropertyModel<String> previewImage = new PropertyModel<>(this, "image.primaryUrl");
+        final PropertyModel<String> previewImage = new PropertyModel<>(this, "image.primaryUrl");
         inlinePreviewImage = new InlinePreviewImage("previewImage", previewImage, getWidth(), getHeight());
         inlinePreviewImage.setVisible(isValidDisplaySelection());
         fragment.add(inlinePreviewImage);
@@ -181,13 +183,13 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         return config.getString("preview.height");
     }
 
-    private static IModel<String> getValueModel(IModel<Node> nodeModel) {
-        Node node = nodeModel.getObject();
+    private static IModel<String> getValueModel(final IModel<Node> nodeModel) {
+        final Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                Property prop = node.getProperty("hippo:docbase");
+                final Property prop = node.getProperty("hippo:docbase");
                 return new JcrPropertyValueModel<>(-1, prop.getValue(), new JcrPropertyModel<String>(prop));
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 throw new WicketRuntimeException("Property hippo:docbase is not defined.", ex);
             }
         } else {
@@ -195,15 +197,15 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private void addOpenButton(Fragment fragment) {
-        AjaxLink openButton = new AjaxLink("open") {
+    private void addOpenButton(final Fragment fragment) {
+        final AjaxLink openButton = new AjaxLink("open") {
             @Override
             public boolean isVisible() {
                 return isValidDisplaySelection();
             }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 open();
             }
         };
@@ -236,7 +238,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 return valueModel.getObject();
             }
 
-            public void setObject(String object) {
+            public void setObject(final String object) {
                 valueModel.setObject(object);
                 GalleryPickerPlugin.this.modelChanged();
             }
@@ -245,7 +247,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
                 return valueModel;
             }
 
-            public void setChainedModel(IModel<?> model) {
+            public void setChainedModel(final IModel<?> model) {
                 throw new UnsupportedOperationException("Value model cannot be changed");
             }
 
@@ -269,7 +271,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
         if (valueModel == null) {
             return;
         }
-        String uuid = getUUIDFromValueModel();
+        final String uuid = getUUIDFromValueModel();
         if (isValidDisplaySelection()) {
             inlinePreviewImage.setVisible(true);
             image = imageFactory.createImageItem(uuid);
@@ -300,19 +302,19 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      * @return true if the selected node is of either example imageset or std gallery set, false otherwise.
      */
     public boolean isValidDisplaySelection() {
-        String uuid = getUUIDFromValueModel();
+        final String uuid = getUUIDFromValueModel();
         if (uuid == null) {
             return false;
         } else {
             try {
-                Node selectedNode = getJCRSession().getNodeByIdentifier(uuid);
+                final Node selectedNode = getJCRSession().getNodeByIdentifier(uuid);
                 if (getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_EXAMPLE_IMAGESET_NODETYPE_NAME) ||
                         getNodeTypeName(selectedNode).equals(HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME) ||
                         selectedNode.getPath().startsWith(GALLERY_ROOT_PATH) ||
                         arrayContainsStartWith(supportedPaths, selectedNode.getPath())) {
                     return true;
                 }
-            } catch (RepositoryException e) {
+            } catch (final RepositoryException e) {
                 log.debug("Something went wrong while trying to get the selected node by UUID: {}", e.getMessage());
                 return false;
             }
@@ -331,7 +333,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      * @return the String representation of the current primary node type name
      * @throws javax.jcr.RepositoryException if something goes wrong while trying to get the node type name
      */
-    private String getNodeTypeName(Node node) throws RepositoryException {
+    private String getNodeTypeName(final Node node) throws RepositoryException {
         return node.getPrimaryNodeType().getName();
     }
 
@@ -343,11 +345,11 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
      * @param path
      * @return boolean; is there a record that starts with the given string
      */
-    public static boolean arrayContainsStartWith(String[] array, String path) {
+    public static boolean arrayContainsStartWith(final String[] array, final String path) {
         if (array != null) {
-            for (int i = 0; i < array.length; i++) {
-                if (path.startsWith(array[i])) {
-                    return (i >= 0);
+            for (final String s : array) {
+                if (path.startsWith(s)) {
+                    return true;
                 }
             }
         }
@@ -355,20 +357,20 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     }
 
     private String getMirrorPath() {
-        Node node = GalleryPickerPlugin.this.getModelObject();
+        final Node node = GalleryPickerPlugin.this.getModelObject();
         try {
             if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
                 return getPath(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
             }
-        } catch (ValueFormatException e) {
+        } catch (final ValueFormatException e) {
             log.warn("Invalid value format for docbase " + e.getMessage());
             log.debug("Invalid value format for docbase ", e);
-        } catch (PathNotFoundException e) {
+        } catch (final PathNotFoundException e) {
             log.warn("Docbase not found " + e.getMessage());
             log.debug("Docbase not found ", e);
-        } catch (ItemNotFoundException e) {
+        } catch (final ItemNotFoundException e) {
             log.info("Docbase " + e.getMessage() + " could not be dereferenced");
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Invalid docbase " + e.getMessage(), e);
         }
         return StringUtils.EMPTY;
@@ -377,10 +379,10 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private String getPath(final String docbaseUUID) {
         String path = StringUtils.EMPTY;
         try {
-            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(JCR_ROOT_NODE_UUID))) {
+            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(JcrConstants.ROOT_NODE_ID))) {
                 path = getJCRSession().getNodeByIdentifier(docbaseUUID).getPath();
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Invalid docbase " + e.getMessage(), e);
         }
         return path;
@@ -397,11 +399,10 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
 
     @Override
     protected void onDetach() {
-        super.onDetach();
-        if (valueModel == null) {
-            return;
+        if (valueModel != null) {
+            valueModel.detach();
         }
-        valueModel.detach();
+        super.onDetach();
     }
 
 }
