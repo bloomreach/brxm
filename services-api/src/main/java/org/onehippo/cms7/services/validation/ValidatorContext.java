@@ -19,6 +19,8 @@ import java.util.Locale;
 
 public interface ValidatorContext {
 
+    String getName();
+    
     String getType();
 
     Locale getLocale();
