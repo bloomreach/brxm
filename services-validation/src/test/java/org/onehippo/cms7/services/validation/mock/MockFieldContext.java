@@ -17,8 +17,6 @@ package org.onehippo.cms7.services.validation.mock;
 
 import java.util.Locale;
 
-import javax.jcr.Session;
-
 import org.onehippo.cms7.services.validation.field.FieldContext;
 
 public class MockFieldContext implements FieldContext {
@@ -37,11 +35,6 @@ public class MockFieldContext implements FieldContext {
     @Override
     public String getType() {
         return type;
-    }
-
-    @Override
-    public Session getJcrSession() {
-        return null;
     }
 
     @Override
