@@ -41,7 +41,6 @@ import org.onehippo.cms.channelmanager.content.error.InternalServerErrorExceptio
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +99,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      */
     private boolean validateValue(final FieldValue value, final String validatorName) {
         try {
-            final Validator<FieldContext> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+            final Validator validator = FieldTypeUtils.getValidator(validatorName, validationContext);
             if (validator == null) {
                 log.warn("Failed to find validator '{}', assuming the value is invalid", validatorName);
                 return false;
