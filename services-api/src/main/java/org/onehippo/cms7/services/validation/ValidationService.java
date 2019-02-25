@@ -19,7 +19,6 @@ import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationExc
 
 public interface ValidationService {
 
-    <C extends ValidatorContext> Validator<C> getValidator(String name)
-            throws ValidatorConfigurationException;
+    Validator getValidator(String name) throws ValidatorConfigurationException;
 
 }
