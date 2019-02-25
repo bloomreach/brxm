@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.validation.validator;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
@@ -57,9 +56,6 @@ public class ImageReferenceValidator extends AbstractFieldValidator<Object> {
 
     private boolean isOfCorrectType(final FieldContext context) throws InvalidValidatorException {
         final String jcrTypeName = context.getType();
-        if (jcrTypeName.equals(PropertyType.TYPENAME_STRING)) {
-            return true;
-        }
         try {
             final Session jcrSession = context.getJcrSession();
             final NodeTypeManager typeManager = jcrSession.getWorkspace().getNodeTypeManager();
