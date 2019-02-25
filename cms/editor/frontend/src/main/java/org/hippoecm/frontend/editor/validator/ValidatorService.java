@@ -68,7 +68,7 @@ public class ValidatorService extends Plugin {
         if (!map.containsKey(name)) {
             try {
                 final ValidationService validationService = getValidationService();
-                final Validator<FieldContext, Object> validator = validationService.getValidator(name);
+                final Validator<FieldContext> validator = validationService.getValidator(name);
                 if (validator != null) {
                     map.put(name, new CmsValidatorAdapter(validator));
                 }
