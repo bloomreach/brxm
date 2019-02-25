@@ -40,7 +40,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.Violation;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,8 +112,8 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
             });
 
             return !violation.isPresent();
-        } catch (ValidatorException e) {
-            log.warn("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
+        } catch (RuntimeException e) {
+            log.error("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
             return false;
         }
     }
