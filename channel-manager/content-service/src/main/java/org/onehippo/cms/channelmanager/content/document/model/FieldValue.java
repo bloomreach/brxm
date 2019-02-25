@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -34,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * client would like to reorder fields, each field value must have an ID to recognize a changed value order.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(value = "errorInfo", allowGetters = true) // only set errorInfo, never read it from the client
 public class FieldValue {
     private String value;                         // Stringified value for primitive fields
     private String id;                            // UUID of the field, if needed

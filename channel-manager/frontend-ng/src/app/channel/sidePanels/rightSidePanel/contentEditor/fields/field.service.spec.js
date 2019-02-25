@@ -56,6 +56,17 @@ describe('field service', () => {
     expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
   });
 
+  it('should not save errorInfo', () => {
+    const mockValue = [{ value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } }];
+    const mockValueResult = [{ value: 'mockValue' }];
+    spyOn(ContentService, 'saveField');
+    FieldService.setDocumentId('mockDocumentId');
+
+    FieldService.saveField('mockFieldName', mockValue);
+
+    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
+  });
+
   it('should clear field timer if exists', () => {
     FieldService.activeSaveTimers.mockDocumentId = {};
     FieldService.activeSaveTimers.mockDocumentId.mockFieldName = () => { angular.noop(); };
