@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -111,27 +111,27 @@ public class LocationMapTreeSiteMap implements LocationMapTree {
                     propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
                 } else if (s.containsWildCard()) {
                     // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                    String paramVal = s.getPrefix() + HstNodeTypes.WILDCARD;
-                    if (s.getPostfix().indexOf(".") > -1) {
-                        final String post = s.getPostfix().substring(0, s.getPostfix().indexOf("."));
+                    String paramVal = s.getWildCardPrefix() + HstNodeTypes.WILDCARD;
+                    if (s.getWildCardPostfix().indexOf(".") > -1) {
+                        final String post = s.getWildCardPostfix().substring(0, s.getWildCardPostfix().indexOf("."));
                         if (!"".equals(post)) {
                             paramVal += post;
                         }
                     } else {
-                        paramVal += s.getPostfix();
+                        paramVal += s.getWildCardPostfix();
                     }
                     params.put(String.valueOf(params.size() + 1), paramVal);
                     propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);
                 } else if (s.containsAny()) {
                     // we assume a postfix containing a "." only meant for document url extension, disregard for linkmatching first
-                    String paramVal = s.getPrefix() + HstNodeTypes.ANY;
-                    if (s.getPostfix().indexOf(".") > -1) {
-                        String post = s.getPostfix().substring(0, s.getPostfix().indexOf("."));
+                    String paramVal = s.getWildCardPrefix() + HstNodeTypes.ANY;
+                    if (s.getWildCardPostfix().indexOf(".") > -1) {
+                        String post = s.getWildCardPostfix().substring(0, s.getWildCardPostfix().indexOf("."));
                         if (!"".equals(post)) {
                             paramVal += post;
                         }
                     } else {
-                        paramVal += s.getPostfix();
+                        paramVal += s.getWildCardPostfix();
                     }
                     params.put(String.valueOf(params.size() + 1), paramVal);
                     propertyOrderList.add(PropertyParser.DEFAULT_PLACEHOLDER_PREFIX + params.size() + PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX);

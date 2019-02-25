@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
@@ -292,5 +293,33 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         } finally {
             session.logout();
         }
+    }
+
+    @Test
+    public void do_not_get_channel_as_admin_for_undefined_runtime_host() throws Exception {
+        final RequestResponseMock requestResponse = mockGetRequestResponse("http", "site-eng.example.org",
+                "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+
+        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
+        assertEquals(response.getContentAsString(), "");
+    }
+
+    @Test
+    public void get_channel_as_admin_for_defined_runtime_host() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms-*.example.org" });
+        session.save();
+        session.logout();
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms-eng.example.org",
+                "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+
+        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+        final MockHttpServletResponse response = render(null, requestResponse, admin);
+        final String restResponse = response.getContentAsString();
+        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+        assertEquals("unittestproject", responseMap.get("id"));
     }
 }

@@ -33,6 +33,8 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
     private final String hostGroupName;
     private final VirtualHost child;
     private final PortMount portMount;
+    private final boolean isPortInUrl;
+    private final String scheme;
 
     public RuntimeVirtualHost(final VirtualHost delegatee, final String serverName, final String hostGroupName) {
         this(delegatee, StringUtils.substringBefore(serverName, ":").split("\\."), hostGroupName);
@@ -56,6 +58,8 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
         if (position > 0) {
             child = new RuntimeVirtualHost(delegatee, hostName, hostNameSegments, position - 1, hostGroupName);
             portMount = null;
+            isPortInUrl = false;
+            scheme = null;
         } else {
             child = null;
             // we can use '0' since we never really have port mounts, and '0' is the default catch all port
@@ -81,6 +85,16 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
                     return runtimeMount;
                 }
             };
+
+            String runtimeHostURL = delegatee.getVirtualHosts().getAllowedRuntimeHostURL(hostName);
+            if (runtimeHostURL != null) {
+                String portNumber = StringUtils.substringAfter(StringUtils.substringAfter(runtimeHostURL, "://"), ":");
+                isPortInUrl = (portNumber != null) ? true : false;
+                scheme = (runtimeHostURL.startsWith("https")) ? "https:" : "http";
+            } else {
+                isPortInUrl = false;
+                scheme = null;
+            }
         }
     }
 
@@ -107,14 +121,12 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
     @Override
     public boolean isPortInUrl() {
-        // TODO depending on whether the 'runtime host' to be added has the port in the URL this should return true or false
-        return false;
+        return isPortInUrl;
     }
 
     @Override
     public String getScheme() {
-        // TODO depending on whether the 'runtime host' to be added has http or https
-        return super.getScheme();
+        return scheme;
     }
 
     @Override

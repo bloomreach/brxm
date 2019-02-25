@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -69,8 +69,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
+import org.hippoecm.hst.configuration.internal.InternalHstSiteMapItem;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -90,7 +90,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, ConfigurationLockInfo
+public class HstSiteMapItemService implements InternalHstSiteMapItem, ConfigurationLockInfo
 {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
@@ -188,8 +188,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     private Map<String, String> responseHeaders;
 
-    private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
-    private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
+    private List<InternalHstSiteMapItem> containsWildCardChildSiteMapItems = new ArrayList<InternalHstSiteMapItem>();
+    private List<InternalHstSiteMapItem> containsAnyChildSiteMapItems = new ArrayList<InternalHstSiteMapItem>();
     private boolean containsAny;
     private boolean containsWildCard;
     private boolean isExplicitItem;
@@ -607,7 +607,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         for(HstNode child : node.getNodes()) {
             if(NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);
+                    InternalHstSiteMapItem siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ModelLoadingException e) {
                     if (log.isDebugEnabled()) {
@@ -808,22 +808,24 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
 
     // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY
 
-    public void addWildCardPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
+    public void addWildCardPrefixedChildSiteMapItems(InternalHstSiteMapItem hstSiteMapItem){
         containsWildCardChildSiteMapItems.add(hstSiteMapItem);
     }
 
-    public void addAnyPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
+    public void addAnyPrefixedChildSiteMapItems(InternalHstSiteMapItem hstSiteMapItem){
         containsAnyChildSiteMapItems.add(hstSiteMapItem);
     }
 
-    public HstSiteMapItem getWildCardPatternChild(String value, List<HstSiteMapItem> excludeList){
+    @Override
+    public InternalHstSiteMapItem getWildCardPatternChild(String value, List<InternalHstSiteMapItem> excludeList){
         if(value == null || containsWildCardChildSiteMapItems.isEmpty()) {
             return null;
         }
         return match(value, containsWildCardChildSiteMapItems, excludeList);
     }
 
-    public HstSiteMapItem getAnyPatternChild(String[] elements, int position, List<HstSiteMapItem> excludeList){
+    @Override
+    public InternalHstSiteMapItem getAnyPatternChild(String[] elements, int position, List<InternalHstSiteMapItem> excludeList){
         if(value == null || containsAnyChildSiteMapItems.isEmpty()) {
             return null;
         }
@@ -834,7 +836,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return match(remainder.toString(), containsAnyChildSiteMapItems, excludeList);
     }
 
-
+    @Override
     public boolean patternMatch(String value, String prefix, String postfix ) {
      // postFix must match
         if(prefix != null && !"".equals(prefix)){
@@ -861,15 +863,15 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return true;
     }
 
-    private HstSiteMapItem match(String value, List<HstSiteMapItemService> patternSiteMapItems, List<HstSiteMapItem> excludeList) {
+    private InternalHstSiteMapItem match(String value, List<InternalHstSiteMapItem> patternSiteMapItems, List<InternalHstSiteMapItem> excludeList) {
 
-        for(HstSiteMapItemService item : patternSiteMapItems){
+        for(InternalHstSiteMapItem item : patternSiteMapItems){
             // if in exclude list, go to next
             if(excludeList.contains(item)) {
                 continue;
             }
 
-            if(patternMatch(value, item.getPrefix(),  item.getPostfix())) {
+            if(patternMatch(value, item.getWildCardPrefix(),  item.getWildCardPostfix())) {
                 return item;
             }
 
@@ -882,7 +884,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return namedPipeline;
     }
 
-    public String getPostfix(){
+    @Override
+    public String getWildCardPostfix(){
         return postfix;
     }
 
@@ -890,7 +893,8 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return extension;
     }
 
-    public String getPrefix(){
+    @Override
+    public String getWildCardPrefix(){
         return prefix;
     }
 

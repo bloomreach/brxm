@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -251,11 +251,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
 
-                    // Add runtime host
-                    // TODO HSTTWO-4540 Replace "dev-localhost" by finding the 'hostgroup' that has hst:autoHostTemplate
-                    // TODO the hostname will be only added if it fits the hst:autoHostTemplate pattern match.
-                    vHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName, "dev-localhost", contextPath);
-                    resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
+                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(vHosts, hostName, contextPath);
 
                     if (resolvedVirtualHost == null) {
                         log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
@@ -854,5 +850,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         }
 
         return null;
+    }
+
+    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(VirtualHosts vHosts, String hostName, String contextPath) {
+        ResolvedVirtualHost resolvedVirtualHost = null;
+        final String resolvedAutoHostTemplateGroupName = vHosts.getAutoHostTemplate(hostName);
+        if (resolvedAutoHostTemplateGroupName != null) {
+            vHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
+                    resolvedAutoHostTemplateGroupName, contextPath);
+            resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
+        }
+        return resolvedVirtualHost;
     }
 }

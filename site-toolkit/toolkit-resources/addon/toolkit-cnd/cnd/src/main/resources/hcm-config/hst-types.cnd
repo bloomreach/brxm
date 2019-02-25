@@ -389,6 +389,7 @@
 // Deprecated: Not used any more
 - hst:cmslocation (string)
 - hst:defaultport (long)
+- hst:autohosttemplate (string) multiple
 + * (hst:virtualhost)
 
 [hst:virtualhosts] > nt:base, mix:referenceable

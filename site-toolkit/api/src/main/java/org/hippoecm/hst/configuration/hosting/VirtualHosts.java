@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -307,4 +307,18 @@ public interface VirtualHosts {
      * @return {@link HstComponentRegistry}, meant for internal platform usage only!
      */
     HstComponentRegistry getComponentRegistry();
+
+    /**
+     * Gets the auto host template name from runtime hosts if exists
+     * @param hostName the name of the host which the request is made
+     * @return name of the auto host template
+     */
+    String getAutoHostTemplate(String hostName);
+
+    /**
+     * Gets the runtime host url if exists
+     * @param hostName the name of the host which the request is made
+     * @return
+     */
+    String getAllowedRuntimeHostURL(String hostName);
 }

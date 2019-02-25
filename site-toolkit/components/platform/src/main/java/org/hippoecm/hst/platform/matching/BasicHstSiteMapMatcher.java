@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,17 +23,18 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.configuration.internal.InternalHstSiteMapItem;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.platform.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -81,9 +82,9 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
         String[] elements = pathInfo.split("/");
 
         final HstSiteMap siteMap = hstSite.getSiteMap();
-        HstSiteMapItem hstSiteMapItem = siteMap.getSiteMapItem(elements[0]);
+        InternalHstSiteMapItem hstSiteMapItem = (InternalHstSiteMapItem) siteMap.getSiteMapItem(elements[0]);
         
-        HstSiteMapItem matchedSiteMapItem = null;
+        InternalHstSiteMapItem matchedSiteMapItem = null;
         if(hstSiteMapItem != null && !hstSiteMapItem.isMarkedDeleted()) {
             matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
         }
@@ -96,8 +97,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
                 if (item.isMarkedDeleted()) {
                     continue;
                 }
-                HstSiteMapItemService service = (HstSiteMapItemService)item;
-                if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
+                InternalHstSiteMapItem service = (InternalHstSiteMapItem) item;
+                if(service.containsWildCard() && service.patternMatch(elements[0], service.getWildCardPrefix(), service.getWildCardPostfix())) {
                     String parameter = getStrippedParameter(service, elements[0]);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem =  resolveMatchingSiteMap(service, params, 1, elements);
@@ -113,7 +114,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
         if(matchedSiteMapItem == null) {
             params.clear();
             // check for a wildcard (*) matcher :
-            hstSiteMapItem = siteMap.getSiteMapItem(WILDCARD);
+            hstSiteMapItem = (InternalHstSiteMapItem) siteMap.getSiteMapItem(WILDCARD);
             if(hstSiteMapItem != null && !hstSiteMapItem.isMarkedDeleted()) {
                 params.put(String.valueOf(params.size()+1), elements[0]);
                 matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
@@ -128,11 +129,11 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
                 if (item.isMarkedDeleted()) {
                     continue;
                 }
-                HstSiteMapItemService service = (HstSiteMapItemService)item;
-                if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
+                InternalHstSiteMapItem service = (InternalHstSiteMapItem) item;
+                if(service.containsAny() && service.patternMatch(pathInfo, service.getWildCardPrefix(), service.getWildCardPostfix())) {
                     String parameter = getStrippedParameter(service, pathInfo);
                     params.put(String.valueOf(params.size()+1), parameter);
-                    matchedSiteMapItem = item;
+                    matchedSiteMapItem = service;
                     // we have a matching sitemap item.
                     break;
                 }
@@ -143,7 +144,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
         if(matchedSiteMapItem == null) {
             params.clear();
             // check for a wildcard (**) matcher :
-            HstSiteMapItem hstSiteMapItemAny = siteMap.getSiteMapItem(ANY);
+            InternalHstSiteMapItem hstSiteMapItemAny = (InternalHstSiteMapItem) siteMap.getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null || hstSiteMapItemAny.isMarkedDeleted()) {
                 log.info("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getMount().getVirtualHost().getHostName()+"'" +
                         ". Return null", pathInfo, resolvedMount.getMount().getParent() == null ? "hst:root" : resolvedMount.getMount().getMountPath() );
@@ -157,7 +158,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
         }
 
         // check wether there is an _index_ sitemap item:
-        HstSiteMapItem index = matchedSiteMapItem.getChild(INDEX);
+        InternalHstSiteMapItem index = (InternalHstSiteMapItem) matchedSiteMapItem.getChild(INDEX);
         if (index != null) {
             log.info("Found an '{}' sitemap item below '{}'. Check if the relative content path points to an existing folder/document.",
                     INDEX, getSiteMapItemPath(matchedSiteMapItem));
@@ -189,7 +190,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
     
     }
 
-    private void logMatchedItem(final String pathInfo, final Properties params, final HstSiteMapItem matchedSiteMapItem) {
+    private void logMatchedItem(final String pathInfo, final Properties params, final InternalHstSiteMapItem matchedSiteMapItem) {
         if (log.isInfoEnabled()) {
             String path = getSiteMapItemPath(matchedSiteMapItem);
             log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);
@@ -197,40 +198,38 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
         }
     }
 
-    private String getSiteMapItemPath(final HstSiteMapItem matchedSiteMapItem) {
+    private String getSiteMapItemPath(final InternalHstSiteMapItem matchedSiteMapItem) {
         String path = matchedSiteMapItem.getId();
         path = path.replace(WILDCARD, "*");
         path = path.replace(ANY, "**");
         return path;
     }
 
-    private HstSiteMapItem resolveMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements) {
-       return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, new ArrayList<HstSiteMapItem>());
+    private InternalHstSiteMapItem resolveMatchingSiteMap(InternalHstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements) {
+       return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, new ArrayList<InternalHstSiteMapItem>());
     }
 
-    private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
-        HstSiteMapItemService hstSiteMapItemService = (HstSiteMapItemService)hstSiteMapItem;
-        
-        checkedSiteMapItems.add(hstSiteMapItemService);
+    private InternalHstSiteMapItem traverseInToSiteMapItem(InternalHstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<InternalHstSiteMapItem> checkedSiteMapItems) {
+        checkedSiteMapItems.add(hstSiteMapItem);
         if(position == elements.length) {
            // we are ready
-           return hstSiteMapItemService;
+           return hstSiteMapItem;
        }
-       HstSiteMapItem s; 
-       if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
+       InternalHstSiteMapItem s; 
+       if( (s = (InternalHstSiteMapItem) hstSiteMapItem.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
            if (s.isAny() || s.isWildCard()) {
                // this can happen when the pathInfo to match contains _default_ or _any_  : It is a corner case
                params.put(String.valueOf(params.size()+1), getStrippedParameter((HstSiteMapItemService)s, elements[position]));
            }
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null  && !s.isMarkedDeleted()) {
+       } else if( (s = hstSiteMapItem.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null  && !s.isMarkedDeleted()) {
            String parameter = getStrippedParameter((HstSiteMapItemService)s, elements[position]);
            params.put(String.valueOf(params.size()+1), parameter);
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
+       } else if( (s = (InternalHstSiteMapItem) hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
            params.put(String.valueOf(params.size()+1), elements[position]);
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !s.isMarkedDeleted()) {
+       } else if( (s = hstSiteMapItem.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !s.isMarkedDeleted()) {
            StringBuffer remainder = new StringBuffer(elements[position]);
            while(++position < elements.length) {
                remainder.append("/").append(elements[position]);
@@ -239,57 +238,56 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
            params.put(String.valueOf(params.size()+1), parameter);
            return s;
        } 
-       else if(hstSiteMapItemService.getChild(ANY) != null && !hstSiteMapItemService.getChild(ANY).isMarkedDeleted()) {
+       else if(hstSiteMapItem.getChild(ANY) != null && !hstSiteMapItem.getChild(ANY).isMarkedDeleted()) {
            StringBuffer remainder = new StringBuffer(elements[position]);
            while(++position < elements.length) {
                remainder.append("/").append(elements[position]);
            }
            params.put(String.valueOf(params.size()+1), remainder.toString());
-           return hstSiteMapItem.getChild(ANY);
+           return (InternalHstSiteMapItem) hstSiteMapItem.getChild(ANY);
        }  
        else {
            // We did not find a match for traversing this sitemap item tree. Traverse up, and try another tree
-           return traverseUp(hstSiteMapItemService, params, position, elements, checkedSiteMapItems);
+           return traverseUp(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        }
        
     }
 
-    private HstSiteMapItem traverseUp(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
-        HstSiteMapItemService hstSiteMapItemService = (HstSiteMapItemService)hstSiteMapItem;
+    private InternalHstSiteMapItem traverseUp(InternalHstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<InternalHstSiteMapItem> checkedSiteMapItems) {
         if(hstSiteMapItem == null) {
            return null;
        }
-       HstSiteMapItem s; 
+       InternalHstSiteMapItem s; 
        if(hstSiteMapItem.isWildCard()) {
-           if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
+           if( (s = (InternalHstSiteMapItem) hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
-           } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+           } else if( (s = hstSiteMapItem.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
            }else if(hstSiteMapItem.getChild(ANY) != null) {
                return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
-           } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+           } else if( (s = hstSiteMapItem.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
            } 
            // as this tree path did not result in a match, remove some params again
            params.remove(String.valueOf(params.size()));
-           return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
-       } else if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
+           return traverseUp((InternalHstSiteMapItem) hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
+       } else if( (s = (InternalHstSiteMapItem) hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+       } else if( (s = hstSiteMapItem.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
             return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else if(hstSiteMapItem.getChild(ANY) != null ){
            return traverseInToSiteMapItem(hstSiteMapItem, params,position, elements, checkedSiteMapItems);
-       } else if( (s = hstSiteMapItemService.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
+       } else if( (s = hstSiteMapItem.getAnyPatternChild(elements, position, checkedSiteMapItems)) != null && !checkedSiteMapItems.contains(s)) {
            return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
        } else {    
-           return traverseUp(hstSiteMapItem.getParentItem(),params, --position, elements, checkedSiteMapItems );
+           return traverseUp((InternalHstSiteMapItem) hstSiteMapItem.getParentItem(), params, --position, elements, checkedSiteMapItems );
        }
 
     }
     
-    private String getStrippedParameter(HstSiteMapItemService s, String parameter) {
-        String removePrefix = s.getPrefix();
-        String removePostfix = s.getPostfix();
+    private String getStrippedParameter(InternalHstSiteMapItem s, String parameter) {
+        String removePrefix = s.getWildCardPrefix();
+        String removePostfix = s.getWildCardPostfix();
         if(removePrefix != null && parameter.startsWith(removePrefix))  {
            parameter = parameter.substring(removePrefix.length());
         }

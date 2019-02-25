@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,21 +25,18 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.platform.configuration.cache.CompositeConfigurationNodes;
-import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.InternalHstSiteMap;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isWorkspaceConfig;
-
-public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
+public class HstSiteMapService implements InternalHstSiteMap {
     
     private static final long serialVersionUID = 1L;
 

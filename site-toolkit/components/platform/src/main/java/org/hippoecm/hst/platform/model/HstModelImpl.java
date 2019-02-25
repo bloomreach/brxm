@@ -17,8 +17,10 @@ package org.hippoecm.hst.platform.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiPredicate;
 
 import javax.jcr.RepositoryException;
@@ -292,15 +294,22 @@ public class HstModelImpl implements InternalHstModel {
     // returns true if at least one runtime host was added
     private boolean addRuntimeHosts(final VirtualHostsService virtualHosts) {
 
-        // TODO HSTTWO-4540 if a runtime host is still present in runtimeHosts but has in the mean time be
-        // TODO added already as explicit JCR configuration, remove it from the runtimeHosts map and do not add it runtime
         boolean added = false;
-        for (Map.Entry<String, Pair<String, String>> entry : runtimeHosts.entrySet()) {
+        for (Iterator<Map.Entry<String, Pair<String, String>>> iterator = runtimeHosts.entrySet().iterator(); iterator.hasNext();) {
+            final Entry<String, Pair<String, String>> entry = iterator.next();
             final String hostName = entry.getKey();
+
+            final ResolvedMount existing = virtualHosts.matchMount(hostName, "");
+            if (existing != null) {
+                // remove from runtimeHosts
+                iterator.remove();
+                continue;
+            }
+
             final String sourceHostGroupName = entry.getValue().getLeft();
             final String targetHostGroupName = entry.getValue().getRight();
             final Map<String, VirtualHost> sourceHostGroupHosts = virtualHosts.getRootVirtualHostsByGroup().get(sourceHostGroupName);
-            if (sourceHostGroupHosts.size() != 1) {
+            if (sourceHostGroupHosts == null || sourceHostGroupHosts.size() != 1) {
                 log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
                         "host which is required", hostName, websiteServletContext, sourceHostGroupName);
                 continue;

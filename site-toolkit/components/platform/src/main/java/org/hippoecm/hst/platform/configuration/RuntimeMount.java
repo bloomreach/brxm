@@ -55,17 +55,16 @@ public class RuntimeMount extends GenericMountWrapper {
             hstSite = null;
         }
 
-        delegatee.getChildMounts().forEach(child ->
-                {
-                    if (child instanceof ContextualizableMount) {
-                        children.put(child.getName(), new RuntimeContextualizableMount((ContextualizableMount)child, virtualHost, RuntimeMount.this) {
-                        });
-                    } else {
-                        children.put(child.getName(), new RuntimeMount(child, virtualHost, RuntimeMount.this));
-                    }
-                }
+        delegatee.getChildMounts().forEach(child -> {
+            if (child instanceof ContextualizableMount) {
+                children.put(child.getName(), new RuntimeContextualizableMount((ContextualizableMount) child,
+                        virtualHost, RuntimeMount.this) {
+                });
+            } else {
+                children.put(child.getName(), new RuntimeMount(child, virtualHost, RuntimeMount.this));
+            }
+        });
 
-        );
         childrenList = unmodifiableList(new ArrayList<>(children.values()));
     }
 
@@ -123,12 +122,9 @@ public class RuntimeMount extends GenericMountWrapper {
         return delegatee;
     }
 
-
     @Override
     public String toString() {
-        return "RuntimeMount{" +
-                "delegatee=" + delegatee +
-                '}';
+        return "RuntimeMount{" + "delegatee=" + delegatee + '}';
     }
 
 }

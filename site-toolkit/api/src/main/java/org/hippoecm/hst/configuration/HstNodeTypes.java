@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -163,6 +163,7 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED = "hst:channelmanagersiteauthenticationskipped";
 
     String VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT = "hst:defaultport";
+    String VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE = "hst:autohosttemplate";
 
     String VIRTUALHOST_PROPERTY_SCHEME = "hst:scheme";
     String VIRTUALHOST_PROPERTY_SITENAME = "hst:sitename";
