@@ -22,10 +22,10 @@ import java.util.Set;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
@@ -36,9 +36,9 @@ import com.google.common.collect.Sets;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
-    private final Validator<FieldContext, Object> validator;
+    private final Validator<FieldContext> validator;
 
-    public CmsValidatorAdapter(final Validator<FieldContext, Object> validator) {
+    public CmsValidatorAdapter(final Validator<FieldContext> validator) {
         this.validator = validator;
     }
 
@@ -59,8 +59,9 @@ public class CmsValidatorAdapter implements ICmsValidator {
 
         final FieldContext context = new CmsValidatorFieldContext(fieldValidator);
         try {
+            final Object object = valueModel.getObject();
             final Optional<org.onehippo.cms7.services.validation.Violation> optionalViolation =
-                    validator.validate(context, valueModel.getObject());
+                    validator.validate(context, object != null ? object.toString() : null);
             if (optionalViolation.isPresent()) {
                 final Model<String> message = Model.of(optionalViolation.get().getMessage());
                 final Violation violation = fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD);
