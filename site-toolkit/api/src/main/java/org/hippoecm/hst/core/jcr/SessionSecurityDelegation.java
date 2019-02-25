@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,16 +52,11 @@ public interface SessionSecurityDelegation {
 
 
     /**
-     * Returns an existing {@link Session} if there is one on the hst request for <code>key</code>. If there is none, a
-     * {@link Session} delegate will be created, with flag <code>autoLogout</code> is <code>true</code>
-     * @return a security delegated session which combines the access control rules for {@link Session} belonging to <code>delegate</code>
-     * and the normal hst live session credentials <b>with</b> the addition of an extra wildcard domain rule hippo:availability = live. The
-     * {@link Session} is automatically logged out at the end of the hst request
-     * @throws RepositoryException
-     * @throws IllegalStateException if <code>securityDelegationEnabled</code> is false or in case the created sessions are not of type {@link org.hippoecm.repository.api.HippoSession}
-     * or when there is not <code>HstRequestContext</code> available
-     * @see #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)
+     * @deprecated since 13.0.1 and 13.1.0 : Use {@link #createLiveSecurityDelegate(Credentials, boolean)} instead. The
+     * {@code key} parameter is not needed any more since we don't support returning same jcr session based on cachekey
+     * any more. Use autologout = true if you replace this method
      */
+    @Deprecated
     Session getOrCreateLiveSecurityDelegate(Credentials delegate, String key) throws RepositoryException, IllegalStateException;
 
     /**
@@ -76,16 +71,11 @@ public interface SessionSecurityDelegation {
     Session createLiveSecurityDelegate(Credentials delegate, boolean autoLogout) throws RepositoryException, IllegalStateException;
 
     /**
-     * Returns an existing {@link Session} if there is one on the hst request for <code>key</code>. If there is none, a
-     * {@link Session} delegate will be created, with flag <code>autoLogout</code> is <code>true</code>
-     * @return a security delegated session which combines the access control rules for {@link Session} belonging to <code>delegate</code>
-     * and the normal hst live session credentials <b>with</b> the addition of an extra wildcard domain rule hippo:availability = live. The
-     * {@link Session} is automatically logged out at the end of the hst request
-     * @throws RepositoryException
-     * @throws IllegalStateException if <code>securityDelegationEnabled</code> is false or in case the created sessions are not of type {@link org.hippoecm.repository.api.HippoSession}
-     * or when there is not <code>HstRequestContext</code> available
-     * @see #createLiveSecurityDelegate(javax.jcr.Credentials, boolean)
+     * @deprecated since 13.0.1 and 13.1.0 : Use {@link #createPreviewSecurityDelegate(Credentials, boolean)} instead. The
+     * {@code key} parameter is not needed any more since we don't support returning same jcr session based on cachekey
+     * any more. Use autologout = true if you replace this method
      */
+    @Deprecated
     Session getOrCreatePreviewSecurityDelegate(Credentials delegate, String key) throws RepositoryException, IllegalStateException;
 
     /**

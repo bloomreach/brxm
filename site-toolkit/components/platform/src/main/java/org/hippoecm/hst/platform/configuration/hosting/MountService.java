@@ -49,15 +49,15 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.platform.configuration.site.HstSiteFactory;
 import org.hippoecm.hst.platform.configuration.site.MountSiteMapConfiguration;
-import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,7 +225,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private Map<String, String> parameters;
 
-    private volatile HstSiteMapMatcher matcher;
+    private HstSiteMapMatcher matcher;
 
     private Map<String, String> responseHeaders;
 
@@ -243,6 +243,9 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.name = StringPool.get(mount.getValueProvider().getName());
         this.jcrLocation = mount.getValueProvider().getPath();
         this.uuid = mount.getValueProvider().getIdentifier();
+
+        matcher =  HippoServiceRegistry.getService(HstModelRegistry.class).getHstModel(getContextPath()).getHstSiteMapMatcher();
+
         // default for when there is no alias property
 
         this.allProperties = mount.getValueProvider().getProperties();
@@ -834,15 +837,6 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
-        // although code below is called concurrently, no need for synchronization or usage of volatile: worst
-        // that can happen is that HstServices.getComponentManager().getComponent(HstManager.class.getName()); is
-        // invoked multiple times. No issue and is much cheaper than synchronization
-        if (matcher != null) {
-            return matcher;
-        }
-
-        HstModelProvider hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class.getName());
-        matcher =  hstModelProvider.getHstModel().getHstSiteMapMatcher();
         return matcher;
     }
 

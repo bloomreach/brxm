@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 
 public class ErrorStatus {
-    @JsonProperty
     private final ClientError error;
 
-    @JsonProperty
     private Map<?, ?> parameterMap = Collections.emptyMap();
 
     ErrorStatus(final ClientError error, final String paramName, final Object paramValue) {
@@ -70,8 +66,9 @@ public class ErrorStatus {
 
     /**
      * Create an {@link ClientError#UNKNOWN} error status that contains an error message in the parameter 'errorReason'
-     * @param message
-     * @return
+     *
+     * @param message text describing the error
+     * @return an 'unknown' error status with errorReason message
      */
     public static ErrorStatus unknown(final String message) {
         return new ErrorStatus(ClientError.UNKNOWN, "errorReason", message);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 
@@ -34,6 +35,14 @@ public class AbstractRepositoryTestCase extends RepositoryTestCase {
     protected static final String LIVE_USER_PASS = "livePass";
     protected static final String LIVE_USER_PASSKEY = "jvm://";
     protected static final String TEST_GROUP_ID = "testgroup";
+
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        //Enable legacy project structure mode (without extensions)
+        System.setProperty("use.hcm.sites", "false");
+        RepositoryTestCase.setUpClass();
+    }
 
     @Override
     @Before

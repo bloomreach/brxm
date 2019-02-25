@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
     }
 
     @Test
-    public void sessionSecurityDelegationCachedEntries() throws RepositoryException {
+    public void sessionSecurityDelegationNeverCaches() throws RepositoryException {
         // since SimpleCredentials does not have a equals or hashCode impl, below test with two Credentials objects
         Credentials creds = new SimpleCredentials("admin", "admin".toCharArray());
         Credentials creds2 = new SimpleCredentials("admin", "admin".toCharArray());
@@ -103,10 +103,10 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
         final Session preview1 = sessionSecurityDelegation.getOrCreatePreviewSecurityDelegate(creds, "test123");
         final Session preview2 = sessionSecurityDelegation.getOrCreatePreviewSecurityDelegate(creds, "test123");
 
-        assertTrue(live1 == live2);
-        assertTrue(live1 == live3);
+        assertFalse(live1 == live2);
+        assertFalse(live1 == live3);
         assertFalse(live1 == live4);
-        assertTrue(preview1 == preview2);
+        assertFalse(preview1 == preview2);
         assertFalse(live1 == preview1);
 
         sessionSecurityDelegation.cleanupSessionDelegates(RequestContextProvider.get());
