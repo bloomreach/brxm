@@ -57,6 +57,12 @@ class EditContentMainCtrl {
     });
   }
 
+  getErrorCount() {
+    const document = this.ContentEditor.getDocument();
+
+    return document && document.info && document.info.errorCount;
+  }
+
   notAllFieldsShown() {
     return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
   }
