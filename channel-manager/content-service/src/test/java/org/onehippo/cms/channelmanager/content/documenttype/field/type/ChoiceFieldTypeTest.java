@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -549,7 +551,7 @@ public class ChoiceFieldTypeTest {
 
     @Test
     public void validateNone() {
-        assertTrue(choice.validate(Collections.emptyList()));
+        assertZeroViolations(choice.validate(Collections.emptyList()));
     }
 
     @Test
@@ -559,56 +561,56 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 1");
         final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
 
-        expect(compound2.validateValue(compoundValue1)).andReturn(true);
-        expect(compound1.validateValue(compoundValue2)).andReturn(true);
+        expect(compound2.validateValue(compoundValue1)).andReturn(0);
+        expect(compound1.validateValue(compoundValue2)).andReturn(0);
         replayAll();
 
-        assertTrue(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
+        assertZeroViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
         verifyAll();
     }
 
     @Test
     public void validateFirstBad() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue1 = new FieldValue("compound2", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
+        final FieldValue compoundValue1 = new FieldValue("value of compound 1");
+        final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
+        final FieldValue compoundValue2 = new FieldValue("value of compound 2");
+        final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
 
-        expect(compound2.validateValue(compoundValue1)).andReturn(false);
-        expect(compound1.validateValue(compoundValue2)).andReturn(true);
+        expect(compound1.validateValue(compoundValue1)).andReturn(1);
+        expect(compound2.validateValue(compoundValue2)).andReturn(0);
         replayAll();
 
-        assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 1);
         verifyAll();
     }
 
     @Test
     public void validateLastBad() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue1 = new FieldValue("compound2", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
+        final FieldValue compoundValue1 = new FieldValue("value of compound 1");
+        final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
+        final FieldValue compoundValue2 = new FieldValue("value of compound 2");
+        final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
 
-        expect(compound2.validateValue(compoundValue1)).andReturn(true);
-        expect(compound1.validateValue(compoundValue2)).andReturn(false);
+        expect(compound1.validateValue(compoundValue1)).andReturn(0);
+        expect(compound2.validateValue(compoundValue2)).andReturn(1);
         replayAll();
 
-        assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 1);
         verifyAll();
     }
 
     @Test
     public void validateAllBad() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue1 = new FieldValue("compound2", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
+        final FieldValue compoundValue1 = new FieldValue("value of compound 1");
+        final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
+        final FieldValue compoundValue2 = new FieldValue("value of compound 2");
+        final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
 
-        expect(compound2.validateValue(compoundValue1)).andReturn(false);
-        expect(compound1.validateValue(compoundValue2)).andReturn(false);
+        expect(compound1.validateValue(compoundValue1)).andReturn(1);
+        expect(compound2.validateValue(compoundValue2)).andReturn(1);
         replayAll();
 
-        assertFalse(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 2);
         verifyAll();
     }
 

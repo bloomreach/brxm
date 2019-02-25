@@ -141,9 +141,9 @@ public interface FieldType {
      * Validates the current value of this field (possible multiple) against all applicable (and supported) validators.
      *
      * @param valueList list of field value(s) to validate
-     * @return          true upon success, false if at least one validation error was encountered.
+     * @return          the number of violations found
      */
-    boolean validate(final List<FieldValue> valueList);
+    int validate(final List<FieldValue> valueList);
 
     /**
      * Add the name of a validator for this field.

@@ -217,21 +217,29 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public final boolean validate(final List<FieldValue> valueList) {
-        return validateRequired(valueList) && validateValues(valueList);
+    public final int validate(final List<FieldValue> valueList) {
+        int violations = validateRequired(valueList);
+
+        if (violations == 0) {
+            violations = validateValues(valueList);
+        }
+
+        return violations;
     }
 
-    final boolean validateRequired(final List<FieldValue> valueList) {
+    final int validateRequired(final List<FieldValue> valueList) {
         if (required && valueList.isEmpty()) {
             final FieldValue error = new FieldValue();
             error.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED));
-            return false;
+            return 1;
         }
-        return true;
+        return 0;
     }
 
-    private boolean validateValues(final List<FieldValue> valueList) {
-        return valueList.stream().allMatch(this::validateValue);
+    private int validateValues(final List<FieldValue> valueList) {
+        return valueList.stream()
+                .mapToInt(this::validateValue)
+                .sum();
     }
 
     /**
@@ -239,9 +247,9 @@ public abstract class AbstractFieldType implements FieldType {
      * When the value is not valid, the errorInfo of the value should be set to indicate the problem.
      *
      * @param value value to validate
-     * @return true if the value is valid, false otherwise.
+     * @return the number of violations found
      */
-    public abstract boolean validateValue(final FieldValue value);
+    public abstract int validateValue(final FieldValue value);
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
 

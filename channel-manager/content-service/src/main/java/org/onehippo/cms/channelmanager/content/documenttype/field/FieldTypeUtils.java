@@ -449,20 +449,19 @@ public class FieldTypeUtils {
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
-     * @return true if all checked field values are valid, false otherwise.
+     * @return the number of violations found
      */
-    public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
-        boolean isValid = true;
+    public static int validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
+        int violations = 0;
 
         for (final FieldType fieldType : fields) {
             final String fieldId = fieldType.getId();
             if (valueMap.containsKey(fieldId)) {
-                if (!fieldType.validate(valueMap.get(fieldId))) {
-                    isValid = false;
-                }
+                final List<FieldValue> fieldValues = valueMap.get(fieldId);
+                violations += fieldType.validate(fieldValues);
             }
         }
 
-        return isValid;
+        return violations;
     }
 }

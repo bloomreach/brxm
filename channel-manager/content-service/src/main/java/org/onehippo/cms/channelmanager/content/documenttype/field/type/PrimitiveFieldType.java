@@ -81,11 +81,13 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      * Validates the field value using all configured validators.
      * The first validator that deems the value invalid sets the value's errorInfo.
      *
-     * @return true when all validators deem the value valid, false otherwise.
+     * @return 1 if a validator deemed the value invalid, 0 otherwise
      */
     @Override
-    public boolean validateValue(final FieldValue value) {
-        return getValidatorNames().stream().allMatch(validatorName -> validateValue(value, validatorName));
+    public int validateValue(final FieldValue value) {
+        return getValidatorNames().stream()
+                .allMatch(validatorName -> validateValue(value, validatorName))
+                ? 0 : 1;
     }
 
     /**
@@ -97,25 +99,20 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      * @return whether the validator deemed the value valid
      */
     private boolean validateValue(final FieldValue value, final String validatorName) {
-        try {
-            final Validator validator = FieldTypeUtils.getValidator(validatorName, validationContext);
-            if (validator == null) {
-                log.warn("Failed to find validator '{}', assuming the value is invalid", validatorName);
-                return false;
-            }
-
-            final Optional<Violation> violation = validator.validate(validationContext, value.getValue());
-
-            violation.ifPresent((error) -> {
-                ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
-                value.setErrorInfo(errorInfo);
-            });
-
-            return !violation.isPresent();
-        } catch (RuntimeException e) {
-            log.error("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
-            return false;
+        final Validator validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+        if (validator == null) {
+            log.warn("Failed to find validator '{}', ignoring it", validatorName);
+            return true;
         }
+
+        final Optional<Violation> violation = validator.validate(validationContext, value.getValue());
+
+        violation.ifPresent((error) -> {
+            ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
+            value.setErrorInfo(errorInfo);
+        });
+
+        return !violation.isPresent();
     }
 
     @Override

@@ -44,7 +44,6 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -298,22 +297,5 @@ public class ImageLinkFieldTypeTest {
         replayAll();
 
         imageLink.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
-    }
-
-    @Test
-    public void validateValueNotRequired() {
-        assertTrue(imageLink.validateValue(new FieldValue()));
-    }
-
-    @Test
-    public void validateValueRequiredNotEmpty() {
-        imageLink.setRequired(true);
-        assertTrue(imageLink.validateValue(new FieldValue("1234")));
-    }
-
-    @Test
-    public void validateValueRequiredAndEmpty() {
-        imageLink.setRequired(true);
-        assertFalse(imageLink.validateValue(new FieldValue("")));
     }
 }

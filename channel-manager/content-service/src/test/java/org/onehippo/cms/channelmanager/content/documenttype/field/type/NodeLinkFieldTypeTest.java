@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -293,22 +292,5 @@ public class NodeLinkFieldTypeTest {
         replayAll();
 
         linkFieldType.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
-    }
-
-    @Test
-    public void validateValueNotRequired() {
-        assertTrue(linkFieldType.validateValue(new FieldValue()));
-    }
-
-    @Test
-    public void validateValueRequiredNotEmpty() {
-        linkFieldType.setRequired(true);
-        assertTrue(linkFieldType.validateValue(new FieldValue("1234")));
-    }
-
-    @Test
-    public void validateValueRequiredAndEmpty() {
-        linkFieldType.setRequired(true);
-        assertFalse(linkFieldType.validateValue(new FieldValue("")));
     }
 }

@@ -150,7 +150,7 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public boolean validateValue(final FieldValue value) {
+    public int validateValue(final FieldValue value) {
         // Don't execute the validators, but validate all child fields instead.
         // #readValue guarantees that value.getFields is not empty.
         // The "required" validator only applies to the cardinality, and has

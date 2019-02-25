@@ -196,7 +196,7 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public boolean validateValue(final FieldValue value) {
+    public int validateValue(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
         // #readValues guarantees that the value has a valid chosenId, and a choiceValue
         final String chosenId = value.getChosenId();

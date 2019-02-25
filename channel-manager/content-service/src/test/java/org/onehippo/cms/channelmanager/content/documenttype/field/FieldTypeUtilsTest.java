@@ -791,7 +791,7 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesNoFields() {
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
 
-        assertTrue(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList()));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList()), equalTo(0));
     }
 
     @Test
@@ -804,10 +804,10 @@ public class FieldTypeUtilsTest {
 
         expect(field1.getId()).andReturn("field1");
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(true);
+        expect(field2.validate(validValueList)).andReturn(0);
         replayAll();
 
-        assertTrue(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(0));
         verifyAll();
     }
 
@@ -822,12 +822,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", validValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(false);
+        expect(field1.validate(invalidValueList)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(true);
+        expect(field2.validate(validValueList)).andReturn(0);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(1));
         verifyAll();
     }
 
@@ -842,12 +842,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(validValueList)).andReturn(true);
+        expect(field1.validate(validValueList)).andReturn(0);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(false);
+        expect(field2.validate(invalidValueList)).andReturn(1);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(1));
         verifyAll();
     }
 
@@ -861,12 +861,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(false);
+        expect(field1.validate(invalidValueList)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(false);
+        expect(field2.validate(invalidValueList)).andReturn(1);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(2));
         verifyAll();
     }
 

@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -53,6 +52,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -456,61 +456,10 @@ public class PrimitiveFieldTypeTest {
 
     @Test
     public void validateNonRequired() {
-        assertTrue(fieldType.validate(Collections.emptyList()));
-        assertTrue(fieldType.validate(listOf(valueOf(""))));
-        assertTrue(fieldType.validate(listOf(valueOf("blabla"))));
-        assertTrue(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
-    }
-
-    @Test
-    public void validateRequired() {
-        fieldType.setRequired(true);
-
-        fieldType.validationContext = createMock(FieldValidationContext.class);
-        replayAll();
-
-        // valid values
-        assertTrue(fieldType.validate(listOf(valueOf("5"))));
-        assertTrue(fieldType.validate(Arrays.asList(valueOf("10"), valueOf("20"))));
-
-        // invalid values
-        FieldValue v = valueOf("");
-        assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getValidation(), equalTo("required"));
-
-        v = valueOf(null);
-        assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getValidation(), equalTo("required"));
-
-        List<FieldValue> l = Arrays.asList(valueOf("10"), valueOf(""));
-        assertFalse(fieldType.validate(l));
-        assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
-
-        l = Arrays.asList(valueOf("10"), valueOf(null));
-        assertFalse(fieldType.validate(l));
-        assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
-
-        l = Arrays.asList(valueOf(""), valueOf("10"));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
-        assertFalse(l.get(1).hasErrorInfo());
-
-        l = Arrays.asList(valueOf(null), valueOf("10"));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
-        assertFalse(l.get(1).hasErrorInfo());
-
-        l = Arrays.asList(valueOf(""), valueOf(""));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
-        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
-
-        l = Arrays.asList(valueOf(null), valueOf(null));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getValidation(), equalTo("required"));
-        assertThat(l.get(1).getErrorInfo().getValidation(), equalTo("required"));
+        assertZeroViolations(fieldType.validate(Collections.emptyList()));
+        assertZeroViolations(fieldType.validate(listOf(valueOf(""))));
+        assertZeroViolations(fieldType.validate(listOf(valueOf("blabla"))));
+        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
     }
 
     private List<FieldValue> listOf(final FieldValue value) {
