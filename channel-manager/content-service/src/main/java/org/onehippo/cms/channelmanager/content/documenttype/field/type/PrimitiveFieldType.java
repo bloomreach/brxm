@@ -39,9 +39,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
+import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +100,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      */
     private boolean validateValue(final FieldValue value, final String validatorName) {
         try {
-            final Validator<ValidatorContext, Object> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+            final Validator<FieldContext> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
             if (validator == null) {
                 log.warn("Failed to find validator '{}', assuming the value is invalid", validatorName);
                 return false;
@@ -193,7 +193,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     protected abstract int getPropertyType();
-    
+
     protected String getValidationType() {
         return PropertyType.nameFromValue(getPropertyType());
     }

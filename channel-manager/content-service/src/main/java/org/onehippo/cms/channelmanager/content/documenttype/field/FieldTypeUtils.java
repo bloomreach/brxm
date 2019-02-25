@@ -69,7 +69,6 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
@@ -179,15 +178,15 @@ public class FieldTypeUtils {
             return;
         }
 
-        for (String validatorName : validatorNames) {
+        for (final String validatorName : validatorNames) {
             if (IGNORED_VALIDATORS.contains(validatorName)) {
                 continue;
-            } 
+            }
             if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
                 fieldType.setRequired(true);
             } else {
                 try {
-                    final Validator<FieldContext, Object> validator = validationService.getValidator(validatorName);
+                    final Validator<FieldContext> validator = validationService.getValidator(validatorName);
                     if (validator != null) {
                         fieldType.addValidatorName(validatorName);
                     } else {
@@ -205,22 +204,22 @@ public class FieldTypeUtils {
         }
     }
 
-    public static Validator<ValidatorContext, Object> getValidator(final String validatorName, 
+    public static Validator<FieldContext> getValidator(final String validatorName,
                                                                    final FieldValidationContext validationContext) {
-        
+
         if (StringUtils.isBlank(validatorName)) {
             return null;
         }
-        
+
         final ValidationService validationService = HippoServiceRegistry.getService(ValidationService.class);
         if (validationService == null) {
             log.error("Cannot load {} from service registry, field validation will be disabled",
                     ValidationService.class.getSimpleName());
             return null;
         }
-        
+
         try {
-            final Validator<ValidatorContext, Object> validator = validationService.getValidator(validatorName);
+            final Validator<FieldContext> validator = validationService.getValidator(validatorName);
             validator.init(validationContext);
             return validator;
         } catch (ValidatorConfigurationException e) {
@@ -228,10 +227,10 @@ public class FieldTypeUtils {
         } catch (InvalidValidatorException e) {
             log.warn("Ignoring invalid validator '{}': {}", validatorName, e.getMessage());
         }
-        
+
         return null;
     }
-    
+
     /**
      * Populate the list of fields of a content type, in the context of assembling a Document Type.
      * Note that compound fields use this method recursively to populate their fields.
