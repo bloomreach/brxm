@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 
 public class BooleanFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_VALUE = "false";
@@ -45,10 +44,5 @@ public class BooleanFieldType extends PrimitiveFieldType {
             throw new IllegalArgumentException("BooleanFieldType value must be 'true' or 'false'.");
         }
         return output;
-    }
-
-    @Override
-    protected Object getValidatedValue(final FieldValue value) {
-        return BooleanUtils.toBoolean(value.getValue());
     }
 }

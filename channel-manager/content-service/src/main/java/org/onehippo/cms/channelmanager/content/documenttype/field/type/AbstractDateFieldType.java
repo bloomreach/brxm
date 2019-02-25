@@ -60,17 +60,4 @@ public abstract class AbstractDateFieldType extends PrimitiveFieldType {
 
         return new FieldValue(value);
     }
-
-    @Override
-    protected Calendar getValidatedValue(final FieldValue value) {
-        final String string = value.getValue();
-
-        if (StringUtils.isEmpty(string)) {
-            final Calendar defaultValue = Calendar.getInstance();
-            defaultValue.setTime(PropertyValueProvider.EMPTY_DATE);
-            return defaultValue;
-        } else {
-            return ISO8601.parse(string);
-        }
-    }
 }

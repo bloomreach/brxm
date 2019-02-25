@@ -17,8 +17,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
 
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-
 /**
  * LongFieldType controls the reading and writing of a Long type field from and to a node's property.
  * <p>
@@ -48,13 +46,5 @@ public class LongFieldType extends PrimitiveFieldType {
     @Override
     protected String fieldSpecificConversion(final String input) {
         return Long.parseLong(input) + "";
-    }
-
-    @Override
-    protected Long getValidatedValue(final FieldValue value) {
-        if (value.hasValue()) {
-            return Long.parseLong(value.getValue());
-        }
-        return null;
     }
 }

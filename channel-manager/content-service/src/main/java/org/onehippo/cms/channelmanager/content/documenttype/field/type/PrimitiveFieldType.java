@@ -87,19 +87,18 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      */
     @Override
     public boolean validateValue(final FieldValue value) {
-        Object validatedValue;
-
-        try {
-            validatedValue = getValidatedValue(value);
-        } catch (Exception e) {
-            log.error("Cannot get value to validate", e);
-            return false;
-        }
-
-        return getValidatorNames().stream().allMatch(validatorName -> validateValue(value, validatedValue, validatorName));
+        return getValidatorNames().stream().allMatch(validatorName -> validateValue(value, validatorName));
     }
 
-    private boolean validateValue(final FieldValue field, final Object value, final String validatorName) {
+    /**
+     * Validates the string value of a field with a validator.
+     *
+     * @param value the field value wrapper
+     * @param validatorName the name of the validator to use
+     *
+     * @return whether the validator deemed the value valid
+     */
+    private boolean validateValue(final FieldValue value, final String validatorName) {
         try {
             final Validator<ValidatorContext, Object> validator = FieldTypeUtils.getValidator(validatorName, validationContext);
             if (validator == null) {
@@ -107,11 +106,11 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
                 return false;
             }
 
-            final Optional<Violation> violation = validator.validate(validationContext, value);
+            final Optional<Violation> violation = validator.validate(validationContext, value.getValue());
 
             violation.ifPresent((error) -> {
                 ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
-                field.setErrorInfo(errorInfo);
+                value.setErrorInfo(errorInfo);
             });
 
             return !violation.isPresent();
@@ -119,15 +118,6 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
             log.warn("Failed to execute validator '{}', assuming the value is invalid", validatorName, e);
             return false;
         }
-    }
-
-    /**
-     * Returns the value to validate. This default implementation returns the "value" string as-is
-     * @param value the field value wrapper for this field
-     * @return the actual value to pass to configured validators
-     */
-    protected Object getValidatedValue(final FieldValue value) throws Exception {
-        return value.getValue();
     }
 
     @Override

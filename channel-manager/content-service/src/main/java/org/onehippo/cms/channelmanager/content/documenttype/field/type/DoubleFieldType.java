@@ -17,8 +17,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import javax.jcr.PropertyType;
 
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-
 /**
  * DoubleFieldType controls the reading and writing of a Double type field from and to a node's property.
  * <p>
@@ -48,13 +46,5 @@ public class DoubleFieldType extends PrimitiveFieldType {
     @Override
     protected String fieldSpecificConversion(final String input) {
         return Double.parseDouble(input) + "";
-    }
-
-    @Override
-    protected Double getValidatedValue(final FieldValue value) {
-        if (value.hasValue()) {
-            return Double.parseDouble(value.getValue());
-        }
-        return null;
     }
 }
