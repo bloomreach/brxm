@@ -18,7 +18,7 @@ package org.onehippo.cms7.services.validation.validator;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.mock.MockFieldContext;
 import org.onehippo.cms7.services.validation.mock.MockValidatorConfig;
 
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 public class EscapedHtmlValidatorTest {
 
-    private FieldContext context;
+    private ValidatorContext context;
     private EscapedHtmlValidator validator;
 
     @Before
@@ -39,7 +39,7 @@ public class EscapedHtmlValidatorTest {
 
     @Test
     public void testIsValid() throws Exception {
-        final FieldContext context = new MockFieldContext();
+        final ValidatorContext context = new MockFieldContext();
         assertTrue(validator.isValid(context, "Test input!"));
     }
 
