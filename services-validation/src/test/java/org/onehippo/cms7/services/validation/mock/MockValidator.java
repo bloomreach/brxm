@@ -42,7 +42,7 @@ public class MockValidator implements Validator {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidatorContext context, final Object value) throws ValidatorException {
+    public Optional<Violation> validate(final ValidatorContext context, final String value) throws ValidatorException {
         return Optional.empty();
     }
 

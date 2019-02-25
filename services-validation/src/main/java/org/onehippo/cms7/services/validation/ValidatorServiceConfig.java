@@ -61,7 +61,7 @@ public class ValidatorServiceConfig implements Serializable {
      * @param name The validator name
      * @return Instance of a {@link Validator}
      */
-    <T extends ValidatorContext, V> Validator<T, V> getValidator(final String name) throws ValidatorConfigurationException {
+    <C extends ValidatorContext> Validator<C> getValidator(final String name) throws ValidatorConfigurationException {
         if (!configs.containsKey(name)) {
             return null;
         }

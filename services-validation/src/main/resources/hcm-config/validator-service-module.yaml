@@ -21,6 +21,3 @@ definitions:
         /references:
           jcr:primaryType: hipposys:moduleconfig
           hipposys:className: org.onehippo.cms7.services.validation.validator.NodeReferenceValidator
-        /resource-required:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms7.services.validation.validator.ResourceRequiredValidator

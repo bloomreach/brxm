@@ -27,7 +27,7 @@ import org.onehippo.cms7.services.validation.field.FieldContext;
  * <p>
  * Use property "regexp.pattern" to set the required expression.
  */
-public class RegExpValidator extends AbstractFieldValidator<String> {
+public class RegExpValidator extends AbstractFieldValidator {
 
     private final Pattern pattern;
 

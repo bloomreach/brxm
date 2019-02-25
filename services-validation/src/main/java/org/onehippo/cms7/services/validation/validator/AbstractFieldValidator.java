@@ -17,15 +17,15 @@ package org.onehippo.cms7.services.validation.validator;
 
 import java.util.Optional;
 
+import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
 import org.onehippo.cms7.services.validation.field.FieldContext;
-import org.onehippo.cms7.services.validation.field.FieldValidator;
 import org.onehippo.cms7.services.validation.util.TranslationUtils;
 
-public abstract class AbstractFieldValidator<V> implements FieldValidator<V> {
+public abstract class AbstractFieldValidator implements Validator<FieldContext> {
 
     private final ValidatorConfig config;
 
@@ -42,11 +42,11 @@ public abstract class AbstractFieldValidator<V> implements FieldValidator<V> {
     }
 
     @Override
-    public Optional<Violation> validate(final FieldContext context, final V value) throws ValidatorException {
+    public Optional<Violation> validate(final FieldContext context, final String value) throws ValidatorException {
         return !isValid(context, value) ? getViolation(context) : Optional.empty();
     }
 
-    protected abstract boolean isValid(FieldContext context, V value) throws ValidatorException;
+    protected abstract boolean isValid(final FieldContext context, final String value) throws ValidatorException;
 
     protected Optional<Violation> getViolation(final FieldContext context) {
         return Optional.of(() -> getViolationMessage(context));

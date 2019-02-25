@@ -29,7 +29,7 @@ import org.onehippo.cms7.services.validation.util.HtmlUtils;
  * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
  * therefore does not require the html validator to be declared separately.
  */
-public class NonEmptyValidator extends AbstractFieldValidator<String> {
+public class NonEmptyValidator extends AbstractFieldValidator {
 
     public NonEmptyValidator(final ValidatorConfig config) {
         super(config);

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * The builtin "Html" type is checked by the {@link NonEmptyValidator} and does not require
  * special treatment.
  */
-public class NonEmptyHtmlValidator extends AbstractFieldValidator<String> {
+public class NonEmptyHtmlValidator extends AbstractFieldValidator {
 
     public static final Logger log = LoggerFactory.getLogger(NonEmptyHtmlValidator.class);
 

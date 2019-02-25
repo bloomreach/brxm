@@ -25,7 +25,7 @@ import org.onehippo.cms7.services.validation.field.FieldContext;
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
  * node.
  */
-public class NodeReferenceValidator extends AbstractFieldValidator<String> {
+public class NodeReferenceValidator extends AbstractFieldValidator {
 
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 

@@ -30,7 +30,7 @@ public class ValidatorServiceImpl implements ValidationService {
     }
 
     @Override
-    public <T extends ValidatorContext, V> Validator<T, V> getValidator(final String name) throws ValidatorConfigurationException {
+    public <C extends ValidatorContext> Validator<C> getValidator(final String name) throws ValidatorConfigurationException {
         return config.getValidator(name);
     }
 

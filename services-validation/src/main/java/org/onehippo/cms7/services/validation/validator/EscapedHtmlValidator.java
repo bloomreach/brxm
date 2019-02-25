@@ -24,7 +24,7 @@ import org.onehippo.cms7.services.validation.field.FieldContext;
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
  */
-public class EscapedHtmlValidator extends AbstractFieldValidator<String> {
+public class EscapedHtmlValidator extends AbstractFieldValidator {
 
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 
