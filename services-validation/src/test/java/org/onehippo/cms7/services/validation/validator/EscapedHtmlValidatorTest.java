@@ -19,11 +19,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.mock.MockFieldContext;
-import org.onehippo.cms7.services.validation.mock.MockValidatorConfig;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
 
 public class EscapedHtmlValidatorTest {
 
@@ -32,14 +31,13 @@ public class EscapedHtmlValidatorTest {
 
     @Before
     public void setUp() throws Exception {
-        context = new MockFieldContext();
-        final ValidatorConfig config = new MockValidatorConfig("escaped");
+        final ValidatorConfig config = createMock(ValidatorConfig.class);
+        context = createMock(ValidatorContext.class);
         validator = new EscapedHtmlValidator(config);
     }
 
     @Test
     public void testIsValid() throws Exception {
-        final ValidatorContext context = new MockFieldContext();
         assertTrue(validator.isValid(context, "Test input!"));
     }
 

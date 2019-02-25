@@ -20,24 +20,26 @@ import org.junit.Test;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-public class NodeReferenceValidatorTest {
+public class NonEmptyHtmlValidatorTest {
 
     private ValidatorContext context;
-    private NodeReferenceValidator validator;
+    private NonEmptyHtmlValidator validator;
 
     @Before
     public void setUp() throws Exception {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
-        validator = new NodeReferenceValidator(config);
+        validator = new NonEmptyHtmlValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
@@ -49,24 +51,45 @@ public class NodeReferenceValidatorTest {
     }
 
     @Test
+    public void testWarnsIfValidatorIsUsedWithHtmlField() throws Exception {
+        expect(context.getType()).andReturn("String");
+        expect(context.getName()).andReturn("Html");
+        replayAll();
+
+        try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
+            try {
+                validator.init(context);
+            } finally {
+                assertEquals(1L, listener.messages().count());
+                verifyAll();
+            }
+        }
+    }
+
+    @Test
     public void testCanBeInitializedIfFieldIsTypeString() throws Exception {
         expect(context.getType()).andReturn("String");
+        expect(context.getName()).andReturn("CustomHtml");
         replayAll();
 
         validator.init(context);
+
         verifyAll();
     }
 
     @Test
-    public void testIsInvalidForBlankString() throws Exception {
-        assertFalse(validator.isValid(context, null));
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
+    public void testIsValid() throws Exception {
+        assertTrue(validator.isValid(context, "text"));
+        assertTrue(validator.isValid(context, "<p>text</p>"));
+        assertTrue(validator.isValid(context, "<img src=\"empty.gif\">"));
     }
 
     @Test
-    public void testIsInvalidForRootIdentifier() throws Exception {
-        assertFalse(validator.isValid(context, JcrConstants.ROOT_NODE_ID));
+    public void testIsInvalid() throws Exception {
+        assertFalse(validator.isValid(context, null));
+        assertFalse(validator.isValid(context, ""));
+        assertFalse(validator.isValid(context, " "));
+        assertFalse(validator.isValid(context, "<html></html>"));
     }
 
 }

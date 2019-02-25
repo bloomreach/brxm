@@ -20,53 +20,66 @@ import org.junit.Test;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.repository.util.JcrConstants;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-public class NodeReferenceValidatorTest {
+public class RegExpValidatorTest {
 
     private ValidatorContext context;
-    private NodeReferenceValidator validator;
+    private RegExpValidator validator;
+    private ValidatorConfig config;
 
     @Before
     public void setUp() throws Exception {
-        final ValidatorConfig config = createMock(ValidatorConfig.class);
+        config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
-        validator = new NodeReferenceValidator(config);
+    }
+
+    @Test(expected = InvalidValidatorException.class)
+    public void testThrowsIfConfigIsInvalid() throws Exception {
+        expect(config.hasProperty("regexp.pattern")).andReturn(false);
+        expect(config.getName()).andReturn("regexp");
+        replayAll();
+
+        validator = new RegExpValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
     public void testThrowsIfFieldIsNotTypeString() throws Exception {
+        expect(config.hasProperty("regexp.pattern")).andReturn(true);
+        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
         expect(context.getType()).andReturn("not-a-string");
         replayAll();
 
+        validator = new RegExpValidator(config);
         validator.init(context);
     }
 
     @Test
-    public void testCanBeInitializedIfFieldIsTypeString() throws Exception {
-        expect(context.getType()).andReturn("String");
+    public void testIsValid() throws Exception {
+        expect(config.hasProperty("regexp.pattern")).andReturn(true);
+        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
         replayAll();
 
-        validator.init(context);
+        validator = new RegExpValidator(config);
+        assertTrue(validator.isValid(context, "abc"));
         verifyAll();
     }
 
     @Test
-    public void testIsInvalidForBlankString() throws Exception {
-        assertFalse(validator.isValid(context, null));
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
-    }
+    public void testIsInvalid() throws Exception {
+        expect(config.hasProperty("regexp.pattern")).andReturn(true);
+        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
+        replayAll();
 
-    @Test
-    public void testIsInvalidForRootIdentifier() throws Exception {
-        assertFalse(validator.isValid(context, JcrConstants.ROOT_NODE_ID));
+        validator = new RegExpValidator(config);
+        assertFalse(validator.isValid(context, "xyz"));
+        verifyAll();
     }
 
 }

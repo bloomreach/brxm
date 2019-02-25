@@ -26,6 +26,22 @@ public class HtmlUtilsTest {
     private static final String NON_BREAKING_SPACE = Character.toString((char) 160);
 
     @Test
+    public void testNullInput() throws Exception {
+        assertTrue(HtmlUtils.isEmpty(null));
+    }
+
+    @Test
+    public void testEmptyString() throws Exception {
+        assertTrue(HtmlUtils.isEmpty(""));
+    }
+
+    @Test
+    public void testBlankString() throws Exception {
+        assertTrue(HtmlUtils.isEmpty(" "));
+        assertTrue(HtmlUtils.isEmpty("\n"));
+    }
+
+    @Test
     public void testValidHtml() throws Exception {
         assertNotEmpty("aap noot mies");
     }

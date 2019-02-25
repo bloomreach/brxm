@@ -25,15 +25,12 @@ import org.onehippo.cms7.services.validation.exception.InvalidValidatorException
 
 public class MockValidator implements Validator {
 
-    private ValidatorConfig config;
-
     public MockValidator(final ValidatorConfig config) {
-        this.config = config;
     }
 
     @Override
     public String getName() {
-        return config.getName();
+        return "mock-validator";
     }
 
     @Override

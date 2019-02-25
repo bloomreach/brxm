@@ -15,82 +15,133 @@
  */
 package org.onehippo.cms7.services.validation;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.LogEvent;
-import org.junit.Test;
-import org.onehippo.repository.mock.MockNode;
-import org.onehippo.testutils.log4j.Log4jInterceptor;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
+import org.onehippo.cms7.services.validation.validator.ValidatorFactory;
+import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest(ValidatorFactory.class)
 public class ValidatorServiceConfigTest {
 
-    public static void assertLogMessage(final Log4jInterceptor interceptor, final String message, final Level level) {
-        assertThat("There is a log message", interceptor.getEvents().size(), greaterThan(0));
-        final LogEvent logEntry = interceptor.getEvents().get(0);
-        assertThat(logEntry.getLevel(), is(level));
-        assertThat(logEntry.getMessage().getFormattedMessage(), is(message));
+    private MockNode configNode;
+
+    @Before
+    public void setUp() throws Exception {
+        final MockNode root = MockNode.root();
+        configNode = root.addNode("config", JcrConstants.NT_UNSTRUCTURED);
+        mockStaticPartial(ValidatorFactory.class, "create");
+    }
+
+    @Test
+    public void testLogsErrorWhenRepositoryExceptionIsThrown() throws Exception {
+        final Node configNode = createMock(Node.class);
+        expect(configNode.getNodes()).andThrow(new RepositoryException());
+        replayAll();
+
+        try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidatorServiceConfig.class).build()) {
+            try {
+                new ValidatorServiceConfig(configNode);
+            } finally {
+                assertEquals(1L, listener.messages().count());
+                verifyAll();
+            }
+        }
     }
 
     @Test
     public void testReturnsNullIfNotFound() throws Exception {
-        final MockNode root = MockNode.root();
-        final MockNode configNode = root.addNode("config", "nt:unstructured");
-
         ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
         assertNull(config.getValidator("validator-1"));
 
-        final MockNode validator1 = configNode.addNode("validator-1", "nt:unstructured");
-        validator1.setProperty("hipposys:className", "org.onehippo.cms7.services.validation.mock.MockValidator");
+        addValidatorConfig("validator-1");
         config = new ValidatorServiceConfig(configNode);
         assertNull(config.getValidator("validator-2"));
 
-        final MockNode validator2 = configNode.addNode("validator-2", "nt:unstructured");
-        validator2.setProperty("hipposys:className", "org.onehippo.cms7.services.validation.mock.MockValidator");
+        addValidatorConfig("validator-2");
         config.reconfigure(configNode);
         assertNull(config.getValidator("validator-3"));
     }
 
-//    @Test(expected = ValidatorConfigurationException.class)
+    @Test(expected = ValidatorConfigurationException.class)
     public void testThrowsExceptionWhenValidatorCreationFailed() throws Exception {
-        final MockNode root = MockNode.root();
-        final MockNode configNode = root.addNode("config", "nt:unstructured");
-        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(null);
+        replayAll();
 
+        addValidatorConfig("validator-1");
+        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
         config.getValidator("validator-1");
     }
 
     @Test
-    public void testReturnsNewHtmlProcessorFromConfig() throws Exception {
-        final MockNode root = MockNode.root();
-        final MockNode configNode = root.addNode("config", "nt:unstructured");
-        final MockNode validator1 = configNode.addNode("validator-1", "nt:unstructured");
-        validator1.setProperty("hipposys:className", "org.onehippo.cms7.services.validation.mock.MockValidator");
+    public void testReturnsNewValidatorFromConfig() throws Exception {
+        final Validator mockValidator = createMock(Validator.class);
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
+        replayAll();
 
+        addValidatorConfig("validator-1");
         final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-        assertNotNull(config.getValidator("validator-1"));
-
-        final MockNode validator2 = configNode.addNode("validator-2", "nt:unstructured");
-        validator2.setProperty("hipposys:className", "org.onehippo.cms7.services.validation.mock.MockValidator");
-
-        config.reconfigure(configNode);
-        assertNotNull(config.getValidator("validator-2"));
+        assertEquals(mockValidator, config.getValidator("validator-1"));
+        verifyAll();
     }
 
     @Test
     public void testReturnsSameHtmlProcessorInstance() throws Exception {
-        final MockNode root = MockNode.root();
-        final MockNode configNode = root.addNode("config", "nt:unstructured");
-        final MockNode validator1 = configNode.addNode("validator-1", "nt:unstructured");
-        validator1.setProperty("hipposys:className", "org.onehippo.cms7.services.validation.mock.MockValidator");
+        final Validator mockValidator = createMock(Validator.class);
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
+        replayAll();
 
+        addValidatorConfig("validator-1");
+        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
+        assertEquals(config.getValidator("validator-1"), config.getValidator("validator-1"));
+    }
+
+    @Test
+    public void testClearsOnReconfigure() throws Exception {
+        final Validator mockValidator = createMock(Validator.class);
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
+        final Validator mockValidator2 = createMock(Validator.class);
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator2);
+        replayAll();
+
+        addValidatorConfig("validator-1");
         final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
 
-        assertEquals(config.getValidator("validator-1"), config.getValidator("validator-1"));
+        final Validator validator1 = config.getValidator("validator-1");
+        config.reconfigure(configNode);
+        final Validator validator2 = config.getValidator("validator-1");
+
+        assertNotNull(validator1);
+        assertNotNull(validator2);
+        assertNotEquals(validator1, validator2);
+    }
+
+
+    private void addValidatorConfig(final String id) throws RepositoryException {
+        final MockNode validatorConfig = configNode.addNode(id, JcrConstants.NT_UNSTRUCTURED);
+        validatorConfig.setProperty(ValidatorConfig.CLASS_NAME, "validator-classname");
     }
 }

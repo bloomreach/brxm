@@ -20,24 +20,24 @@ import org.junit.Test;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.repository.util.JcrConstants;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-public class NodeReferenceValidatorTest {
+public class NonEmptyValidatorTest {
 
     private ValidatorContext context;
-    private NodeReferenceValidator validator;
+    private NonEmptyValidator validator;
 
     @Before
     public void setUp() throws Exception {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
-        validator = new NodeReferenceValidator(config);
+        validator = new NonEmptyValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
@@ -58,15 +58,49 @@ public class NodeReferenceValidatorTest {
     }
 
     @Test
-    public void testIsInvalidForBlankString() throws Exception {
-        assertFalse(validator.isValid(context, null));
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
+    public void testHtmlIsValid() throws Exception {
+        expect(context.getName()).andReturn("Html").times(3);
+        replayAll();
+
+        assertTrue(validator.isValid(context, "text"));
+        assertTrue(validator.isValid(context, "<p>text</p>"));
+        assertTrue(validator.isValid(context, "<img src=\"empty.gif\">"));
+        verifyAll();
     }
 
     @Test
-    public void testIsInvalidForRootIdentifier() throws Exception {
-        assertFalse(validator.isValid(context, JcrConstants.ROOT_NODE_ID));
+    public void testHtmlIsInvalid() throws Exception {
+        expect(context.getName()).andReturn("Html").times(4);
+        replayAll();
+
+        assertFalse(validator.isValid(context, null));
+        assertFalse(validator.isValid(context, ""));
+        assertFalse(validator.isValid(context, " "));
+        assertFalse(validator.isValid(context, "<html></html>"));
+        verifyAll();
+    }
+
+    @Test
+    public void testTextIsValid() throws Exception {
+        expect(context.getName()).andReturn("not-html").times(3);
+        replayAll();
+
+        assertTrue(validator.isValid(context, "text"));
+        assertTrue(validator.isValid(context, "<p>text</p>"));
+        assertTrue(validator.isValid(context, "<html></html>"));
+        verifyAll();
+    }
+
+    @Test
+    public void testTextIsInvalid() throws Exception {
+        expect(context.getName()).andReturn("not-html").times(4);
+        replayAll();
+
+        assertFalse(validator.isValid(context, null));
+        assertFalse(validator.isValid(context, ""));
+        assertFalse(validator.isValid(context, " "));
+        assertFalse(validator.isValid(context, "\n\r"));
+        verifyAll();
     }
 
 }

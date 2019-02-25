@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.validation.util;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.htmlcleaner.BaseToken;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.ContentNode;
@@ -31,6 +32,10 @@ public class HtmlUtils implements Serializable {
     private static final String[] VALID_ELEMENTS = new String[]{"applet", "embed", "form", "iframe", "img", "object"};
 
     public static boolean isEmpty(final String html) {
+        if (StringUtils.isBlank(html)) {
+            return true;
+        }
+
         final HtmlCleaner cleaner = getHtmlCleaner();
         final TagNode parsedHtml = cleaner.clean(html);
         return isEmpty(parsedHtml);
