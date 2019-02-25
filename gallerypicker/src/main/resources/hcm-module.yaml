@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
     name: hippo-plugin-gallerypicker
-    after: [hippo-services-validation, hippo-cms]
+    after: hippo-cms
 module: hippo-plugin-gallerypicker
