@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorException;
 
 public interface Validator extends Serializable {
 
@@ -27,6 +26,6 @@ public interface Validator extends Serializable {
 
     void init(ValidatorContext context) throws InvalidValidatorException;
 
-    Optional<Violation> validate(ValidatorContext context, String value) throws ValidatorException;
+    Optional<Violation> validate(ValidatorContext context, String value);
 
 }
