@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 package org.onehippo.cms7.services.validation.validator;
 
 import org.onehippo.cms7.services.validation.ValidatorConfig;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.cms7.services.validation.util.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class NonEmptyHtmlValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public void init(final FieldContext context) throws InvalidValidatorException {
+    public void init(final ValidatorContext context) throws InvalidValidatorException {
         if (!"String".equals(context.getType())) {
             throw new InvalidValidatorException("Invalid validation exception; " +
                     "cannot validate non-string field for emptiness");
@@ -52,7 +52,7 @@ public class NonEmptyHtmlValidator extends AbstractFieldValidator {
     }
 
     @Override
-    public boolean isValid(final FieldContext context, final String value) throws ValidatorException {
+    public boolean isValid(final ValidatorContext context, final String value) throws ValidatorException {
         return !HtmlUtils.isEmpty(value);
     }
 

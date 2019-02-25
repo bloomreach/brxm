@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ import java.util.Optional;
 
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.cms7.services.validation.exception.ValidatorException;
-import org.onehippo.cms7.services.validation.field.FieldContext;
 import org.onehippo.cms7.services.validation.util.TranslationUtils;
 
-public abstract class AbstractFieldValidator implements Validator<FieldContext> {
+public abstract class AbstractFieldValidator implements Validator {
 
     private final ValidatorConfig config;
 
@@ -34,7 +34,7 @@ public abstract class AbstractFieldValidator implements Validator<FieldContext> 
     }
 
     @Override
-    public void init(final FieldContext context) throws InvalidValidatorException {
+    public void init(final ValidatorContext context) throws InvalidValidatorException {
     }
 
     public String getName() {
@@ -42,17 +42,17 @@ public abstract class AbstractFieldValidator implements Validator<FieldContext> 
     }
 
     @Override
-    public Optional<Violation> validate(final FieldContext context, final String value) throws ValidatorException {
+    public Optional<Violation> validate(final ValidatorContext context, final String value) throws ValidatorException {
         return !isValid(context, value) ? getViolation(context) : Optional.empty();
     }
 
-    protected abstract boolean isValid(final FieldContext context, final String value) throws ValidatorException;
+    protected abstract boolean isValid(final ValidatorContext context, final String value) throws ValidatorException;
 
-    protected Optional<Violation> getViolation(final FieldContext context) {
+    protected Optional<Violation> getViolation(final ValidatorContext context) {
         return Optional.of(() -> getViolationMessage(context));
     }
 
-    protected String getViolationMessage(final FieldContext context) {
+    protected String getViolationMessage(final ValidatorContext context) {
         return TranslationUtils.getTranslatedMessage(getName(), context.getLocale());
     }
 

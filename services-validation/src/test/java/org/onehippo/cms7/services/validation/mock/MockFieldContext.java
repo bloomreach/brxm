@@ -17,9 +17,9 @@ package org.onehippo.cms7.services.validation.mock;
 
 import java.util.Locale;
 
-import org.onehippo.cms7.services.validation.field.FieldContext;
+import org.onehippo.cms7.services.validation.ValidatorContext;
 
-public class MockFieldContext implements FieldContext {
+public class MockFieldContext implements ValidatorContext {
 
     private String name;
     private String type;
