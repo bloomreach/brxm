@@ -452,16 +452,16 @@ public class FieldTypeUtils {
      * @return the number of violations found
      */
     public static int validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
-        int violations = 0;
+        int violationCount = 0;
 
         for (final FieldType fieldType : fields) {
             final String fieldId = fieldType.getId();
             if (valueMap.containsKey(fieldId)) {
                 final List<FieldValue> fieldValues = valueMap.get(fieldId);
-                violations += fieldType.validate(fieldValues);
+                violationCount += fieldType.validate(fieldValues);
             }
         }
 
-        return violations;
+        return violationCount;
     }
 }

@@ -373,15 +373,15 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getType(), equalTo(FieldType.Type.MULTILINE_STRING));
     }
 
-    static void assertZeroViolations(int violations) {
-        assertViolations(violations, 0);
+    static void assertZeroViolations(int violationCount) {
+        assertViolations(violationCount, 0);
     }
 
-    static void assertViolation(int violations) {
-        assertViolations(violations, 1);
+    static void assertViolation(int violationCount) {
+        assertViolations(violationCount, 1);
     }
 
-    static void assertViolations(int actualViolations, int expectedViolations) {
-        assertThat("Number of violations", actualViolations, equalTo(expectedViolations));
+    static void assertViolations(int actualViolationCount, int expectedViolationCount) {
+        assertThat("Number of violations", actualViolationCount, equalTo(expectedViolationCount));
     }
 }

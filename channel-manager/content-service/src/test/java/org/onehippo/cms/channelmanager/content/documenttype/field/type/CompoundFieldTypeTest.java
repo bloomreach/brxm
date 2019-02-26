@@ -80,7 +80,7 @@ public class CompoundFieldTypeTest {
     public void setup() {
         mockStaticPartial(FieldTypeUtils.class, "getValidator");
         expect(FieldTypeUtils.getValidator(eq("non-empty"), anyObject(FieldValidationContext.class)))
-                .andReturn(new NonEmptyValidator())
+                .andReturn(new NonEmptyTestValidator())
                 .anyTimes();
         replayAll();
 

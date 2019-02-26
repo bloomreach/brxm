@@ -22,7 +22,7 @@ import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 
-public class NonEmptyValidator implements Validator {
+public class NonEmptyTestValidator implements Validator {
 
     @Override
     public String getName() {

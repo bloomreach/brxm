@@ -462,6 +462,8 @@ public class PrimitiveFieldTypeTest {
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
     }
 
+    // TODO: add tests for execution of validators
+
     private List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);
     }
