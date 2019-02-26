@@ -271,4 +271,53 @@ describe('PrimitiveField', () => {
 
     expect($ctrl.$scope.$broadcast).toHaveBeenCalledWith('primitive-field:focus', $event);
   });
+
+  describe('$onChanges', () => {
+    beforeEach(() => {
+      $ctrl.form = {
+        field1: {
+          $setValidity: jasmine.createSpy(),
+          $error: {
+            server: false,
+          },
+        },
+        field2: {
+          $setValidity: jasmine.createSpy(),
+          $error: {
+            server: true,
+          },
+        },
+      };
+    });
+
+    it('makes form field invalid', () => {
+      spyOn($ctrl, 'getFieldName').and.returnValue('field1');
+
+      $ctrl.$onChanges({
+        fieldValues: {
+          currentValue: [{
+            errorInfo: { message: 'error message' },
+          }],
+        },
+      });
+
+      expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field1.$setValidity).toHaveBeenCalledWith('server', false);
+      expect($ctrl.form.field1.$error.server).toBe('error message');
+    });
+
+    it('makes form field valid', () => {
+      spyOn($ctrl, 'getFieldName').and.returnValue('field2');
+
+      $ctrl.$onChanges({
+        fieldValues: {
+          currentValue: [{}],
+        },
+      });
+
+      expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field2.$setValidity).toHaveBeenCalledWith('server', true);
+      expect($ctrl.form.field2.$error.server).toBeFalsy();
+    });
+  });
 });
