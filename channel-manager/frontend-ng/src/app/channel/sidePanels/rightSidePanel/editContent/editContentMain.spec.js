@@ -41,6 +41,7 @@ describe('EditContentMainCtrl', () => {
         'confirmPublication',
         'confirmSaveOrDiscardChanges',
         'discardChanges',
+        'getDocument',
         'getDocumentId',
         'getDocumentType',
         'getDocumentDisplayName',
@@ -358,6 +359,26 @@ describe('EditContentMainCtrl', () => {
       $ctrl.discard();
 
       expect(DialogService.show).not.toHaveBeenCalled();
+    });
+
+    it('returns document errors count', () => {
+      ContentEditor.getDocument.and.returnValue({
+        info: { errorCount: 10 },
+      });
+
+      expect($ctrl.getErrorCount()).toBe(10);
+    });
+
+    it('sets focus on the first element on server-side validation error', () => {
+      const $$element = { focus: jasmine.createSpy() };
+      $ctrl.form = {
+        $error: {
+          server: [{ $$element }],
+        },
+      };
+      $scope.$digest();
+
+      expect($$element.focus).toHaveBeenCalled();
     });
   });
 });
