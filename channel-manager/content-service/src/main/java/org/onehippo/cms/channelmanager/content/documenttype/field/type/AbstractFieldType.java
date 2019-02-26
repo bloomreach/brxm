@@ -218,25 +218,6 @@ public abstract class AbstractFieldType implements FieldType {
 
     @Override
     public final int validate(final List<FieldValue> valueList) {
-        int violationCount = validateRequired(valueList);
-
-        if (violationCount == 0) {
-            violationCount = validateValues(valueList);
-        }
-
-        return violationCount;
-    }
-
-    private int validateRequired(final List<FieldValue> valueList) {
-        if (required && valueList.isEmpty()) {
-            final FieldValue error = new FieldValue();
-            error.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.REQUIRED));
-            return 1;
-        }
-        return 0;
-    }
-
-    private int validateValues(final List<FieldValue> valueList) {
         return valueList.stream()
                 .mapToInt(this::validateValue)
                 .sum();
@@ -265,6 +246,9 @@ public abstract class AbstractFieldType implements FieldType {
             throw INVALID_DATA.get();
         }
         if (values.size() > getMaxValues()) {
+            throw INVALID_DATA.get();
+        }
+        if (isRequired() && values.isEmpty()) {
             throw INVALID_DATA.get();
         }
     }

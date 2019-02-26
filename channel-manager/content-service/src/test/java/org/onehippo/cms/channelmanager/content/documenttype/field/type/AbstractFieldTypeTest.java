@@ -17,9 +17,12 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 
@@ -32,7 +35,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -41,17 +43,16 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -94,6 +95,17 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void isRequired() {
+        assertFalse(fieldType.isRequired());
+
+        fieldType.setRequired(true);
+        assertTrue(fieldType.isRequired());
+
+        fieldType.setRequired(false);
+        assertFalse(fieldType.isRequired());
+    }
+
+    @Test
     public void isSupported() {
         assertTrue(fieldType.isSupported());
 
@@ -129,6 +141,33 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void zeroValidatorNames() {
+        assertTrue(fieldType.getValidatorNames().isEmpty());
+    }
+
+    @Test
+    public void oneValidatorName() {
+        fieldType.addValidatorName("non-empty");
+
+        final Set<String> validatorNames = fieldType.getValidatorNames();
+        assertThat(validatorNames.size(), equalTo(1));
+        assertThat(validatorNames.iterator().next(), equalTo("non-empty"));
+    }
+
+    @Test
+    public void twoValidatorNames() {
+        fieldType.addValidatorName("non-empty");
+        fieldType.addValidatorName("email");
+
+        final Set<String> validatorNames = fieldType.getValidatorNames();
+        assertThat(validatorNames.size(), equalTo(2));
+
+        final Iterator<String> names = validatorNames.iterator();
+        assertThat(names.next(), equalTo("non-empty"));
+        assertThat(names.next(), equalTo("email"));
+    }
+
+    @Test
     public void checkCardinalityMoreThanAllowed() throws Exception {
         final List<FieldValue> list = new ArrayList<>();
         list.add(new FieldValue("one"));
@@ -151,12 +190,12 @@ public class AbstractFieldTypeTest {
         checkCardinality(list);
     }
 
-//    @Test
-//    public void checkRequiredCardinalityNoneButRequired() throws Exception {
-//        fieldType.setMinValues(0);
-//        fieldType.setRequired(true);
-//        checkCardinality(Collections.emptyList());
-//    }
+    @Test
+    public void checkCardinalityNoneButRequired() throws Exception {
+        fieldType.setMinValues(0);
+        fieldType.setRequired(true);
+        checkCardinality(Collections.emptyList());
+    }
 
     private void checkCardinality(final List<FieldValue> list) throws Exception {
         try {
@@ -174,79 +213,75 @@ public class AbstractFieldTypeTest {
         fieldType.checkCardinality(Collections.singletonList(new FieldValue("one")));
     }
 
-    // TODO: re-add tests for validation (covering "required" and delegated calls to validateValue());
-//    @Test
-//    public void validateValuesEmpty() {
-//        assertTrue(fieldType.validateValues(Collections.emptyList(), null));
-//    }
-//
-//    @Test
-//    public void validateValuesAllGood() {
-//        final Predicate<FieldValue> validator = (value) -> true;
-//        final List<FieldValue> list = new ArrayList<>();
-//        list.add(new FieldValue("one"));
-//        list.add(new FieldValue("two"));
-//        assertTrue(fieldType.validateValues(list, validator));
-//    }
-//
-//    @Test
-//    @SuppressWarnings("unchecked")
-//    public void validateValuesLastBad() {
-//        final Predicate<FieldValue> validator = createMock(Predicate.class);
-//        final List<FieldValue> list = new ArrayList<>();
-//        list.add(new FieldValue("one"));
-//        list.add(new FieldValue("two"));
-//
-//        expect(validator.test(list.get(0))).andReturn(true);
-//        expect(validator.test(list.get(1))).andReturn(false);
-//
-//        replay(validator);
-//
-//        assertFalse(fieldType.validateValues(list, validator));
-//
-//        verify(validator);
-//    }
-//
-//    @Test
-//    @SuppressWarnings("unchecked")
-//    public void validateValuesFirstBad() {
-//        final Predicate<FieldValue> validator = createMock(Predicate.class);
-//        final List<FieldValue> list = new ArrayList<>();
-//        list.add(new FieldValue("one"));
-//        list.add(new FieldValue("two"));
-//
-//        expect(validator.test(list.get(0))).andReturn(false);
-//        expect(validator.test(list.get(1))).andReturn(true);
-//
-//        replay(validator);
-//
-//        assertFalse(fieldType.validateValues(list, validator));
-//
-//        verify(validator);
-//    }
-//
-//    @Test
-//    @SuppressWarnings("unchecked")
-//    public void validateValuesBothBad() {
-//        final Predicate<FieldValue> validator = createMock(Predicate.class);
-//        final List<FieldValue> list = new ArrayList<>();
-//        list.add(new FieldValue("one"));
-//        list.add(new FieldValue("two"));
-//
-//        expect(validator.test(list.get(0))).andReturn(false);
-//        expect(validator.test(list.get(1))).andReturn(false);
-//
-//        replay(validator);
-//
-//        assertFalse(fieldType.validateValues(list, validator));
-//
-//        verify(validator);
-//    }
-//
+    @Test
+    public void validateEmpty() {
+        assertZeroViolations(fieldType.validate(Collections.emptyList()));
+    }
+
+    @Test
+    public void validateBothGood() {
+        fieldType = PowerMock.createMock(AbstractFieldType.class);
+
+        final FieldValue one = new FieldValue("one");
+        final FieldValue two = new FieldValue("two");
+
+        expect(fieldType.validateValue(one)).andReturn(0);
+        expect(fieldType.validateValue(two)).andReturn(0);
+        replayAll();
+
+        assertZeroViolations(fieldType.validate(Arrays.asList(one, two)));
+        verifyAll();
+    }
+
+    @Test
+    public void validateFirstBad() {
+        fieldType = PowerMock.createMock(AbstractFieldType.class);
+
+        final FieldValue one = new FieldValue("one");
+        final FieldValue two = new FieldValue("two");
+
+        expect(fieldType.validateValue(one)).andReturn(1);
+        expect(fieldType.validateValue(two)).andReturn(0);
+        replayAll();
+
+        assertViolation(fieldType.validate(Arrays.asList(one, two)));
+        verifyAll();
+    }
+
+    @Test
+    public void validateSecondBad() {
+        fieldType = PowerMock.createMock(AbstractFieldType.class);
+
+        final FieldValue one = new FieldValue("one");
+        final FieldValue two = new FieldValue("two");
+
+        expect(fieldType.validateValue(one)).andReturn(0);
+        expect(fieldType.validateValue(two)).andReturn(1);
+        replayAll();
+
+        assertViolation(fieldType.validate(Arrays.asList(one, two)));
+        verifyAll();
+    }
+
+    @Test
+    public void validateBothBad() {
+        fieldType = PowerMock.createMock(AbstractFieldType.class);
+
+        final FieldValue one = new FieldValue("one");
+        final FieldValue two = new FieldValue("two");
+
+        expect(fieldType.validateValue(one)).andReturn(1);
+        expect(fieldType.validateValue(two)).andReturn(1);
+        replayAll();
+
+        assertViolations(fieldType.validate(Arrays.asList(one, two)), 2);
+        verifyAll();
+    }
+
     @Test
     public void initOptionalNoLocalization() {
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
+        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
         final List<String> validators = Collections.singletonList(FieldValidators.OPTIONAL);
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -266,8 +301,7 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
-        PowerMock.replayAll();
-        replay(fieldContext, parentContext);
+        replayAll();
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -278,14 +312,13 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(1));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void initMultipleWithLocalization() {
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
+        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
         final List<String> validators = Collections.emptyList();
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -305,8 +338,7 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(true).anyTimes();
 
-        PowerMock.replayAll();
-        replay(fieldContext, parentContext);
+        replayAll();
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -317,14 +349,13 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(Integer.MAX_VALUE));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void initSingularNoLocalization() {
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
+        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
         final List<String> validators = Collections.emptyList();
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -344,8 +375,7 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
 
-        PowerMock.replayAll();
-        replay(fieldContext, parentContext);
+        replayAll();
 
         FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
@@ -356,8 +386,7 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMaxValues(), equalTo(1));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
-        verify(fieldContext, parentContext);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test

@@ -139,6 +139,11 @@ public interface FieldType {
 
     /**
      * Validates the current value of this field (possible multiple) against all applicable (and supported) validators.
+     * A field value with a violation will get its error info set.
+     *
+     * Note that the "required" validator is implemented as a sanity check in
+     * {@link #writeField(Node, FieldPath, List<FieldValue>)} since that is
+     * supposed to be checked by the front-end.
      *
      * @param valueList list of field value(s) to validate
      * @return          the number of violations found

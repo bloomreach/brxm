@@ -32,7 +32,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -45,6 +47,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,6 +56,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -59,7 +64,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({JcrUtils.class, NamespaceUtils.class})
+@PrepareForTest({JcrUtils.class, FieldTypeUtils.class, NamespaceUtils.class})
 public class PrimitiveFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
@@ -455,14 +460,75 @@ public class PrimitiveFieldTypeTest {
     }
 
     @Test
-    public void validateNonRequired() {
+    public void validateGood() {
         assertZeroViolations(fieldType.validate(Collections.emptyList()));
         assertZeroViolations(fieldType.validate(listOf(valueOf(""))));
         assertZeroViolations(fieldType.validate(listOf(valueOf("blabla"))));
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
     }
 
-    // TODO: add tests for execution of validators
+    @Test
+    public void validateBad() {
+        mockValidators();
+
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue("test");
+
+        assertViolation(fieldType.validateValue(test));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
+    }
+
+    @Test
+    public void validateSecondBad() {
+        mockValidators();
+
+        fieldType.addValidatorName("always-good");
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue("test");
+
+        assertViolation(fieldType.validateValue(test));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
+    }
+
+    @Test
+    public void firstViolationIsReported() {
+        mockValidators();
+
+        fieldType.addValidatorName("non-empty");
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue(""); // empty value should trigger non-empty validator
+
+        assertViolation(fieldType.validateValue(test));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("non-empty")); // and not "always-bad"
+    }
+
+    @Test
+    public void ignoreUnknownValidators() {
+        mockValidators();
+
+        fieldType.addValidatorName("unknown");
+        fieldType.addValidatorName("always-good");
+        final FieldValue test = new FieldValue("test");
+
+        assertZeroViolations(fieldType.validateValue(test));
+    }
+
+    private static void mockValidators() {
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "getValidator");
+        expect(FieldTypeUtils.getValidator(eq("always-good"), anyObject(FieldValidationContext.class)))
+                .andReturn(new AlwaysGoodTestValidator())
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("always-bad"), anyObject(FieldValidationContext.class)))
+                .andReturn(new AlwaysBadTestValidator())
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("non-empty"), anyObject(FieldValidationContext.class)))
+                .andReturn(new NonEmptyTestValidator())
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("unknown"), anyObject(FieldValidationContext.class)))
+                .andReturn(null)
+                .anyTimes();
+        replayAll();
+    }
 
     private List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);
