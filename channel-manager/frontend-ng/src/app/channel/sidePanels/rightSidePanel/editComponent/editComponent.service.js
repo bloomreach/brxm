@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 class EditComponentService {
   constructor(
     $log,
@@ -49,6 +50,11 @@ class EditComponentService {
     $transitions.onEnter(
       { entering: '**.edit-component' },
       transition => this._loadComponent(transition.params().properties),
+    );
+
+    $transitions.onExit(
+      { exiting: '**.edit-component' },
+      () => this.OverlayService.sync(),
     );
 
     CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
