@@ -415,7 +415,7 @@ describe('ChannelService', () => {
 
     $rootScope.$digest();
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
-    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:publish');
+    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:publish');
   });
 
   it('should discard own changes', () => {
@@ -432,7 +432,7 @@ describe('ChannelService', () => {
 
     $rootScope.$digest();
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
-    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:discard');
+    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:discard');
   });
 
   describe('should use the specified users when publishing or discarding changes', () => {
@@ -451,7 +451,7 @@ describe('ChannelService', () => {
 
       $rootScope.$digest();
       expect(ChannelService.reload).toHaveBeenCalled();
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:publish');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:publish');
     });
 
     it('should discard users changes', () => {
@@ -460,7 +460,7 @@ describe('ChannelService', () => {
 
       $rootScope.$digest();
       expect(ChannelService.reload).toHaveBeenCalled();
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:discard');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:discard');
     });
   });
 

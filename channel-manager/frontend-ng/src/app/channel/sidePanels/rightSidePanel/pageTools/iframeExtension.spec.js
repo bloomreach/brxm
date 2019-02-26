@@ -137,14 +137,21 @@ describe('iframeExtension', () => {
         $rootScope.$digest();
       });
 
-      it('reacts on channel:publish events', () => {
-        $rootScope.$emit('channel:publish');
-        expect(child.emitEvent).toHaveBeenCalledWith('channel.publish');
+      it('reacts on channel:changes:publish events', () => {
+        $rootScope.$emit('channel:changes:publish');
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.changes.publish');
       });
 
-      it('reacts on channel:discard events', () => {
-        $rootScope.$emit('channel:discard');
-        expect(child.emitEvent).toHaveBeenCalledWith('channel.discard');
+      it('reacts on channel:changes:discard events', () => {
+        $rootScope.$emit('channel:changes:discard');
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.changes.discard');
+      });
+
+      it('unsubscribes from event', () => {
+        $ctrl.$onDestroy();
+        $rootScope.$emit('channel:changes:publish');
+        $rootScope.$emit('channel:changes:discard');
+        expect(child.emitEvent).not.toHaveBeenCalled();
       });
     });
   });

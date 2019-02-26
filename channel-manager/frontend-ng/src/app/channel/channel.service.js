@@ -226,27 +226,27 @@ class ChannelService {
   publishOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'publish')
       .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:publish'));
+      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
   }
 
   publishChangesOf(users) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:publish'));
+      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
   }
 
   discardOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'discard')
       .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:discard'));
+      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
   }
 
   discardChangesOf(users) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:discard'));
+      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
   }
 
   getSiteMapId() {

@@ -47,8 +47,23 @@ class IframeExtensionCtrl {
   $onInit() {
     this._initExtension();
 
-    this.$rootScope.$on('channel:publish', () => this.child.emitEvent('channel.publish'));
-    this.$rootScope.$on('channel:discard', () => this.child.emitEvent('channel.discard'));
+    this._unsubscribeFromPublish = this.$rootScope.$on(
+      'channel:changes:publish',
+      () => this.child.emitEvent('channel.changes.publish'),
+    );
+    this._unsubscribeFromDiscard = this.$rootScope.$on(
+      'channel:changes:discard',
+      () => this.child.emitEvent('channel.changes.discard'),
+    );
+  }
+
+  $onDestroy() {
+    if (this._unsubscribeFromPublish) {
+      this._unsubscribeFromPublish();
+    }
+    if (this._unsubscribeFromDiscard) {
+      this._unsubscribeFromDiscard();
+    }
   }
 
   _initExtension() {
