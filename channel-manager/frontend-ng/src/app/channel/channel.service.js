@@ -225,28 +225,28 @@ class ChannelService {
 
   publishOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'publish')
-      .then(() => this.$rootScope.$broadcast('channel:publish'))
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:publish'));
   }
 
   publishChangesOf(users) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.$rootScope.$broadcast('channel:publish'))
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:publish'));
   }
 
   discardOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'discard')
-      .then(() => this.$rootScope.$broadcast('channel:discard'))
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:discard'));
   }
 
   discardChangesOf(users) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.$rootScope.$broadcast('channel:discard'))
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:discard'));
   }
 
   getSiteMapId() {
