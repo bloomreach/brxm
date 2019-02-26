@@ -74,10 +74,23 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
                 runtimeMount = new RuntimeMount(rootMount, RuntimeVirtualHost.this);
             }
 
+            String runtimeHostURL = delegatee.getVirtualHosts().getAllowedRuntimeHostURL(hostName);
+            final int portNumber;
+            if (runtimeHostURL != null) {
+                String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(runtimeHostURL, "://"), ":");
+                isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
+                portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : delegateePortMount.getPortNumber();
+                scheme = (runtimeHostURL.startsWith("https")) ? "https:" : "http";
+            } else {
+                isPortInUrl = false;
+                scheme = null;
+                portNumber = delegateePortMount.getPortNumber();
+            }
+
             this.portMount = new PortMount() {
                 @Override
                 public int getPortNumber() {
-                    return delegateePortMount.getPortNumber();
+                    return portNumber;
                 }
 
                 @Override
@@ -85,19 +98,8 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
                     return runtimeMount;
                 }
             };
-
-            String runtimeHostURL = delegatee.getVirtualHosts().getAllowedRuntimeHostURL(hostName);
-            if (runtimeHostURL != null) {
-                String portNumber = StringUtils.substringAfter(StringUtils.substringAfter(runtimeHostURL, "://"), ":");
-                isPortInUrl = (portNumber != null) ? true : false;
-                scheme = (runtimeHostURL.startsWith("https")) ? "https:" : "http";
-            } else {
-                isPortInUrl = false;
-                scheme = null;
-            }
         }
     }
-
 
     @Override
     public String getHostName() {
@@ -116,7 +118,7 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
     @Override
     public PortMount getPortMount(final int portNumber) {
-       return portMount;
+        return portMount;
     }
 
     @Override
@@ -144,8 +146,6 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
     @Override
     public String toString() {
-        return "RuntimeVirtualHost{" +
-                "delegatee=" + delegatee +
-                '}';
+        return "RuntimeVirtualHost{" + "delegatee=" + delegatee + '}';
     }
 }
