@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -45,11 +46,12 @@ public class StaticDropdownFieldTypeTest {
 
     private FieldTypeContext getFieldTypeContext() {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(new Locale("en"));
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:staticdropdown");
+        expect(fieldContext.getName()).andReturn("myproject:staticdropdown").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();

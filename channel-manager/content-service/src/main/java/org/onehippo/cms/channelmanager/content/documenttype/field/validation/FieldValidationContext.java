@@ -23,17 +23,19 @@ import org.onehippo.cms7.services.validation.ValidatorContext;
 
 public class FieldValidationContext implements ValidatorContext {
 
-    private FieldTypeContext fieldContext;
-    private String type;
+    private final String name;
+    private final String type;
+    private final Locale locale;
 
     public FieldValidationContext(final FieldTypeContext fieldContext, final String type) {
-        this.fieldContext = fieldContext;
+        this.name = fieldContext.getName();
         this.type = type;
+        this.locale = fieldContext.getParentContext().getLocale();
     }
 
     @Override
     public String getName() {
-        return fieldContext.getName();
+        return name;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class FieldValidationContext implements ValidatorContext {
 
     @Override
     public Locale getLocale() {
-        return fieldContext.getParentContext().getLocale();
+        return locale;
     }
 
 }

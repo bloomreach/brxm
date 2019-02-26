@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -108,7 +110,10 @@ public class NodeLinkFieldTypeTest {
         clusterOptions.setProperty("language.context.aware", true);
         clusterOptions.setProperty("nodetypes", new String[0]);
 
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        replayAll();
+        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
 
         final JsonNode linkPickerConfig = linkFieldType.getConfig().get("linkpicker");

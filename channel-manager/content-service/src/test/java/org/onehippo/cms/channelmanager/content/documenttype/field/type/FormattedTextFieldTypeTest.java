@@ -54,14 +54,14 @@ public class FormattedTextFieldTypeTest {
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:htmlfield");
+        expect(fieldContext.getName()).andReturn("myproject:htmlfield").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
         final Locale locale = new Locale("nl");
-        expect(parentContext.getLocale()).andReturn(locale);
+        expect(parentContext.getLocale()).andReturn(locale).anyTimes();
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));

@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -46,11 +47,12 @@ public class RadioGroupFieldTypeTest {
 
     private FieldTypeContext getFieldTypeContext() {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(new Locale("en"));
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:radiogroup");
+        expect(fieldContext.getName()).andReturn("myproject:radiogroup").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();

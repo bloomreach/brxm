@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -96,7 +98,10 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("last.visited.nodetypes", new String[0]);
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        replayAll();
+        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);
 
         final JsonNode imagePickerConfig = imageLink.getConfig().get("imagepicker");

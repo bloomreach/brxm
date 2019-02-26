@@ -81,11 +81,12 @@ public class RichTextFieldTypeTest {
 
     private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(new Locale("en"));
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn(FIELD_NAME);
+        expect(fieldContext.getName()).andReturn(FIELD_NAME).anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
