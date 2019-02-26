@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+function clearFieldValues(fieldValues) {
+  const clearedValues = angular.copy(fieldValues);
+  // do not send back errorInfo
+  if (angular.isArray(clearedValues)) {
+    clearedValues.forEach(value => delete value.errorInfo);
+  } else {
+    delete clearedValues.errorInfo;
+  }
+  return clearedValues;
+}
+
 class FieldService {
   constructor($timeout, ContentService) {
     'ngInject';
@@ -85,10 +96,7 @@ class FieldService {
 
   saveField(fieldName, fieldValues, documentId = this.getDocumentId()) {
     this._clearFieldTimer(documentId, fieldName);
-    const saveFieldValues = angular.copy(fieldValues);
-    // do not send back errorInfo
-    saveFieldValues.forEach(value => delete value.errorInfo);
-    this.ContentService.saveField(documentId, fieldName, saveFieldValues);
+    this.ContentService.saveField(documentId, fieldName, clearFieldValues(fieldValues));
     this._cleanupTimers(documentId);
   }
 

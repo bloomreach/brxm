@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-describe('field service', () => {
+fdescribe('field service', () => {
   let $timeout;
   let FieldService;
   let ContentService;
@@ -56,9 +56,20 @@ describe('field service', () => {
     expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
   });
 
-  it('should not save errorInfo', () => {
+  it('should not save errorInfo in arrays', () => {
     const mockValue = [{ value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } }];
     const mockValueResult = [{ value: 'mockValue' }];
+    spyOn(ContentService, 'saveField');
+    FieldService.setDocumentId('mockDocumentId');
+
+    FieldService.saveField('mockFieldName', mockValue);
+
+    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
+  });
+
+  it('should not save errorInfo in single value', () => {
+    const mockValue = { value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } };
+    const mockValueResult = { value: 'mockValue' };
     spyOn(ContentService, 'saveField');
     FieldService.setDocumentId('mockDocumentId');
 
