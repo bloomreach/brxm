@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import javax.jcr.Node;
 
@@ -37,7 +36,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -71,8 +69,8 @@ public class AbstractFieldTypeTest {
             }
 
             @Override
-            public boolean validateValue(final FieldValue value) {
-                return false;
+            public int validateValue(final FieldValue value) {
+                return 0;
             }
 
             @Override
@@ -176,6 +174,7 @@ public class AbstractFieldTypeTest {
         fieldType.checkCardinality(Collections.singletonList(new FieldValue("one")));
     }
 
+    // TODO: re-add tests for validation (covering "required" and delegated calls to validateValue());
 //    @Test
 //    public void validateValuesEmpty() {
 //        assertTrue(fieldType.validateValues(Collections.emptyList(), null));
@@ -372,5 +371,17 @@ public class AbstractFieldTypeTest {
         assertNull(fieldType.getType());
         fieldType.setType(FieldType.Type.MULTILINE_STRING);
         assertThat(fieldType.getType(), equalTo(FieldType.Type.MULTILINE_STRING));
+    }
+
+    static void assertZeroViolations(int violationCount) {
+        assertViolations(violationCount, 0);
+    }
+
+    static void assertViolation(int violationCount) {
+        assertViolations(violationCount, 1);
+    }
+
+    static void assertViolations(int actualViolationCount, int expectedViolationCount) {
+        assertThat("Number of violations", actualViolationCount, equalTo(expectedViolationCount));
     }
 }

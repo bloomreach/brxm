@@ -270,7 +270,9 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        if (!FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields())) {
+        final int violationCount = FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields());
+        if (violationCount > 0) {
+            document.getInfo().setErrorCount(violationCount);
             throw new BadRequestException(document);
         }
 

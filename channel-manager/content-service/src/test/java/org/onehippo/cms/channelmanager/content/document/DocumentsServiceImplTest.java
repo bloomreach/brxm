@@ -860,7 +860,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(false);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(1);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
@@ -901,7 +901,7 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
@@ -945,7 +945,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
@@ -993,7 +993,7 @@ public class DocumentsServiceImplTest {
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
@@ -1343,7 +1343,6 @@ public class DocumentsServiceImplTest {
     @Test
     public void discardEditableDocumentNotAHandle() throws Exception {
         final String uuid = "uuid";
-        final Document document = new Document();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 

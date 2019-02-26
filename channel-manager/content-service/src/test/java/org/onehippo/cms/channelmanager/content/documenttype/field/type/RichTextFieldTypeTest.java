@@ -56,7 +56,6 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
@@ -352,44 +351,6 @@ public class RichTextFieldTypeTest {
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
                 });
-    }
-
-    @Test
-    public void validateRequired() {
-        final RichTextFieldType field = initField();
-        field.setRequired(true);
-
-        assertTrue(field.isRequired());
-        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
-        assertFalse(field.validate(Collections.singletonList(new FieldValue(""))));
-        assertFalse(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
-    }
-
-    @Test
-    public void validateNotRequired() {
-        final RichTextFieldType field = initField();
-        assertFalse(field.isRequired());
-        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
-        assertTrue(field.validate(Collections.singletonList(new FieldValue(""))));
-        assertTrue(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
-    }
-
-    @Test
-    public void validateRequiredValue() {
-        final RichTextFieldType field = initField();
-        field.setRequired(true);
-
-        assertTrue(field.isRequired());
-        assertTrue(field.validateValue(new FieldValue("test")));
-        assertFalse(field.validateValue(new FieldValue("")));
-    }
-
-    @Test
-    public void validateNotRequiredValue() {
-        final RichTextFieldType field = initField();
-        assertFalse(field.isRequired());
-        assertTrue(field.validateValue(new FieldValue("test")));
-        assertTrue(field.validateValue(new FieldValue("")));
     }
 
     @Test

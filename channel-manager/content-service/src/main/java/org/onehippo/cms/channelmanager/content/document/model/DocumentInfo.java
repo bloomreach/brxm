@@ -36,6 +36,9 @@ public class DocumentInfo {
     // whether this document has auto-drafted changes that have not been saved to the preview variant yet
     private boolean dirty;
 
+    // the number of validation errors
+    private int errorCount;
+
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
     private PublicationState publicationState;
 
@@ -71,6 +74,14 @@ public class DocumentInfo {
 
     public void setDirty(final boolean dirty) {
         this.dirty = dirty;
+    }
+
+    public int getErrorCount() {
+        return errorCount;
+    }
+
+    public void setErrorCount(final int errorCount) {
+        this.errorCount = errorCount;
     }
 
     public PublicationState getPublicationState() {

@@ -65,8 +65,8 @@ public interface NodeFieldType extends FieldType {
     /**
      * Validates the value.
      * @param value value to validate
-     * @return true of the value is valid, false otherwise.
+     * @return the number of violations found
      */
-    boolean validateValue(final FieldValue value);
+    int validateValue(final FieldValue value);
 
 }

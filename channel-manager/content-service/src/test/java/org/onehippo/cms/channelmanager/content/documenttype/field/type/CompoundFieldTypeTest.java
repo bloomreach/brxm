@@ -29,15 +29,22 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -47,7 +54,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest({FieldTypeUtils.class})
 public class CompoundFieldTypeTest {
 
     private static final String NODE_NAME = "node:name";
@@ -62,6 +78,12 @@ public class CompoundFieldTypeTest {
 
     @Before
     public void setup() {
+        mockStaticPartial(FieldTypeUtils.class, "getValidator");
+        expect(FieldTypeUtils.getValidator(eq("non-empty"), anyObject(FieldValidationContext.class)))
+                .andReturn(new NonEmptyTestValidator())
+                .anyTimes();
+        replayAll();
+
         stringField1 = new StringFieldType();
         stringField1.setId(STRING_PROPERTY_1);
 
@@ -99,7 +121,7 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void readFromSingleAbsentCompound() throws Exception {
+    public void readFromSingleAbsentCompound() {
         assertFalse(fieldType.readFrom(node).isPresent());
     }
 
@@ -128,7 +150,7 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void readFromOptionalAbsentCompound() throws Exception {
+    public void readFromOptionalAbsentCompound() {
         fieldType.setMinValues(0);
 
         assertFalse(fieldType.readFrom(node).isPresent());
@@ -160,7 +182,7 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
-    public void readFromMultipleAbsentCompound() throws Exception {
+    public void readFromMultipleAbsentCompound() {
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
 
@@ -503,68 +525,86 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        assertTrue(fieldType.validate(Collections.emptyList()));
+        assertZeroViolations(fieldType.validate(Collections.emptyList()));
     }
 
     @Test
-    public void validateSingle() {
-        stringField2.setRequired(true);
+    public void validateSingleGood() {
+        stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueMap = validCompound();
-        assertTrue(fieldType.validate(listOf(valueOf(valueMap))));
-
-        valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // remove required
-
-        assertFalse(fieldType.validate(listOf(valueOf(valueMap))));
-        assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap))));
     }
 
     @Test
-    public void validateMultiple() {
-        Map<String, List<FieldValue>> valueA;
-        Map<String, List<FieldValue>> valueB;
+    public void validateSingleBad() {
+        stringField2.addValidatorName("non-empty");
 
-        stringField2.setRequired(true);
+        Map<String, List<FieldValue>> valueMap = validCompound();
+        valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // make non-empty field empty
 
-        valueA = validCompound();
-        valueB = validCompound();
+        assertViolation(fieldType.validate(listOf(valueOf(valueMap))));
+        assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+    }
 
-        assertTrue(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+    @Test
+    public void validateMultipleAllGood() {
+        stringField2.addValidatorName("non-empty");
 
-        // error in first instance
-        valueA = validCompound();
+        Map<String, List<FieldValue>> valueA = validCompound();
+        Map<String, List<FieldValue>> valueB = validCompound();
+
+        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+    }
+
+    @Test
+    public void validateMultipleFirstBad() {
+        stringField2.addValidatorName("non-empty");
+
+        Map<String, List<FieldValue>> valueA = validCompound();
+        Map<String, List<FieldValue>> valueB = validCompound();
+
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
-        valueB = validCompound();
 
-        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
+    }
 
-        // error in second instance
-        valueA = validCompound();
-        valueB = validCompound();
+    @Test
+    public void validateMultipleSecondBad() {
+        stringField2.addValidatorName("non-empty");
+
+        Map<String, List<FieldValue>> valueA = validCompound();
+        Map<String, List<FieldValue>> valueB = validCompound();
+
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+    }
 
-        // error in both instances
-        valueA = validCompound();
+    @Test
+    public void validateMultipleAllBad() {
+        stringField2.addValidatorName("non-empty");
+
+        Map<String, List<FieldValue>> valueA = validCompound();
+        Map<String, List<FieldValue>> valueB = validCompound();
+
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
-        valueB = validCompound();
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))), 2);
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("required"));
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
     }
 
     private Map<String, List<FieldValue>> validCompound() {
