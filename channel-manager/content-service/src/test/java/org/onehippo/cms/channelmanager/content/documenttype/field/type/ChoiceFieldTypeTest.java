@@ -50,7 +50,6 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -125,7 +124,6 @@ public class ChoiceFieldTypeTest {
 
         FieldsInformation fieldsInfo = choice.init(context);
 
-        verify(context);
         verifyAll();
 
         assertThat(choice.getId(), equalTo("choiceId"));
@@ -213,7 +211,7 @@ public class ChoiceFieldTypeTest {
 
         assertFalse(choice.readFrom(node).isPresent());
 
-        verify(node);
+        verifyAll();
     }
 
     @Test
@@ -307,7 +305,7 @@ public class ChoiceFieldTypeTest {
             assertNull(e.getPayload());
         }
 
-        verify(node);
+        verifyAll();
     }
 
     @Test
@@ -448,7 +446,7 @@ public class ChoiceFieldTypeTest {
         replayAll();
 
         assertFalse(choice.writeField(node, fieldPath, Collections.emptyList()));
-        verify(node);
+        verifyAll();
     }
 
     @Test
@@ -479,7 +477,7 @@ public class ChoiceFieldTypeTest {
             choice.writeField(node, fieldPath, Collections.emptyList());
             fail("Exception not thrown");
         } catch (InternalServerErrorException e) {
-            verify(node);
+            verifyAll();
         }
     }
 
@@ -496,7 +494,7 @@ public class ChoiceFieldTypeTest {
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
-        verify(compound1);
+        verifyAll();
     }
 
     @Test
@@ -513,7 +511,7 @@ public class ChoiceFieldTypeTest {
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
-        verify(compound1);
+        verifyAll();
     }
 
     @Test
@@ -530,7 +528,7 @@ public class ChoiceFieldTypeTest {
 
         assertTrue(choice.writeField(node, fieldPath, fieldValues));
 
-        verify(compound2);
+        verifyAll();
     }
 
     @Test
@@ -625,7 +623,6 @@ public class ChoiceFieldTypeTest {
         expect(context.getParentContext()).andReturn(pc).anyTimes();
         expect(context.getEditorConfigNode()).andReturn(Optional.ofNullable(node)).anyTimes();
         expect(pc.getResourceBundle()).andReturn(Optional.empty());
-        expect(pc.getDocumentType()).andReturn(null);
         expect(context.getName()).andReturn("choiceId");
         expect(context.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(context.isMultiple()).andReturn(true).anyTimes();
@@ -633,7 +630,7 @@ public class ChoiceFieldTypeTest {
                 .andReturn(Optional.empty());
         expect(LocalizationUtils.determineFieldHint("choiceId", Optional.empty(), Optional.ofNullable(node)))
                 .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(choice, null, Collections.emptyList());
+        FieldTypeUtils.determineValidators(choice, context, Collections.emptyList());
         expectLastCall();
 
         replayAll();

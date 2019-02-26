@@ -247,7 +247,6 @@ public class AbstractFieldTypeTest {
     public void initOptionalNoLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.singletonList(FieldValidators.OPTIONAL);
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -266,7 +265,6 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(parentContext.getDocumentType()).andReturn(docType);
 
         PowerMock.replayAll();
         replay(fieldContext, parentContext);
@@ -288,7 +286,6 @@ public class AbstractFieldTypeTest {
     public void initMultipleWithLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.emptyList();
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -304,7 +301,6 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(parentContext.getDocumentType()).andReturn(docType);
         expect(fieldContext.getName()).andReturn("field:id");
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(true).anyTimes();
@@ -329,7 +325,6 @@ public class AbstractFieldTypeTest {
     public void initSingularNoLocalization() {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final DocumentType docType = new DocumentType();
         final List<String> validators = Collections.emptyList();
 
         PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
@@ -345,7 +340,6 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(parentContext.getDocumentType()).andReturn(docType);
         expect(fieldContext.getName()).andReturn("field:id");
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
