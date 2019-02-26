@@ -26,13 +26,9 @@ class PrimitiveFieldCtrl {
   $onChanges(changes) {
     if (changes.fieldValues) {
       changes.fieldValues.currentValue.forEach((value, index) => {
-        if (!value.errorInfo) {
-          return;
-        }
-
         const field = this.form[this.getFieldName(index)];
-        field.$setValidity('server', false);
-        field.$error.server = value.errorInfo.message;
+        field.$setValidity('server', !value.errorInfo);
+        field.$error.server = value.errorInfo && value.errorInfo.message;
       });
     }
   }
