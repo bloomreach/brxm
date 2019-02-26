@@ -163,13 +163,13 @@ export interface ChannelScopeEvents {
    * Triggered when a user publishes channel changes
    * @event
    */
-  publish: void;
+  'changes.publish': void;
 
   /**
    * Triggered when a user discards channel changes
    * @event
    */
-  discard: void;
+  'changes.discard': void;
 }
 
 /**
