@@ -1,0 +1,68 @@
+/content/gallery/{{namespace}}:
+  jcr:primaryType: hippogallery:stdImageGallery
+  jcr:mixinTypes: ['mix:referenceable']
+  jcr:uuid: a62d5ba7-424f-4b8e-870e-4493aa74f619
+  hippostd:foldertype: [new-image-folder]
+  hippostd:gallerytype: ['hippogallery:imageset']
+  /hippopotamus_-_04.jpg:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: fc853208-64d7-4b42-9b4e-e1315c93284b
+    hippo:discriminator: []
+    hippo:name: Hippopotamus_-_04.jpg
+    /hippopotamus_-_04.jpg:
+      jcr:primaryType: hippogallery:imageset
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: e7c8d8ac-0046-4e5b-a7a7-ecaace32ef02
+      hippo:availability: [live, preview]
+      hippogallery:filename: Hippopotamus_-_04.jpg
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippogallery:image
+        hippo:filename: Hippopotamus_-_04.jpg
+        hippogallery:height: 40
+        hippogallery:width: 60
+        jcr:data:
+          type: binary
+          resource: /content/gallery/{{namespace}}/hippopotamus_-_04.jpg/Hippopotamus_-_04_thumbnail.jpg
+        jcr:lastModified: 2014-08-25T11:13:37.323+02:00
+        jcr:mimeType: image/jpeg
+      /hippogallery:original:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 400
+        hippogallery:width: 600
+        jcr:data:
+          type: binary
+          resource: /content/gallery/{{namespace}}/hippopotamus_-_04.jpg/Hippopotamus_-_04_original.jpg
+        jcr:lastModified: 2014-08-25T11:13:37.323+02:00
+        jcr:mimeType: image/jpeg
+  /hippo_family.jpg:
+    jcr:primaryType: hippo:handle
+    jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+    jcr:uuid: 773ba574-23a9-4d5f-bcd9-bd00e6c91888
+    hippo:discriminator: []
+    hippo:name: Hippo_family.jpg
+    /hippo_family.jpg:
+      jcr:primaryType: hippogallery:imageset
+      jcr:mixinTypes: ['mix:versionable']
+      jcr:uuid: e7209720-88c6-4d9a-b4ee-c95040aa0fef
+      hippo:availability: [live, preview]
+      hippogallery:filename: Hippo_family.jpg
+      /hippogallery:thumbnail:
+        jcr:primaryType: hippogallery:image
+        hippo:filename: Hippo_family.jpg
+        hippogallery:height: 40
+        hippogallery:width: 60
+        jcr:data:
+          type: binary
+          resource: /content/gallery/{{namespace}}/hippo_family.jpg/Hippo_family_thumbnail.jpg
+        jcr:lastModified: 2014-08-25T11:36:22.381+02:00
+        jcr:mimeType: image/jpeg
+      /hippogallery:original:
+        jcr:primaryType: hippogallery:image
+        hippogallery:height: 400
+        hippogallery:width: 600
+        jcr:data:
+          type: binary
+          resource: /content/gallery/{{namespace}}/hippo_family.jpg/Hippo_family_original.jpg
+        jcr:lastModified: 2014-08-25T11:36:22.381+02:00
+        jcr:mimeType: image/jpeg

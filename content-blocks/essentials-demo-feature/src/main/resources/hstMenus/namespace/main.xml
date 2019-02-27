@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="main">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sitemenu</sv:value>
+  </sv:property>
+  
+  <sv:node sv:name="home">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemenuitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>a9ee168b-63bf-4dd9-9ce7-c97bed07a8a9</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+      <sv:value>root</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="content">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemenuitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>2e58de7a-f71d-4a70-9b40-b7ccf047be79</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+      <sv:value>content</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="Blocks Group">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemenuitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>ab578044-5b7f-4cb0-b17d-11ac2a14183c</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+      <sv:value>blocks-by-group</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="Blocks List">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemenuitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>5f3e0430-b3a3-42ad-99c9-723b2930991a</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencesitemapitem" sv:type="String">
+      <sv:value>blocks-by-list</sv:value>
+    </sv:property>
+  </sv:node>
+</sv:node>

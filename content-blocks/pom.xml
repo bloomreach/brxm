@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,17 +20,16 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.1-SNAPSHOT</version>
+    <version>30.1.0-SNAPSHOT</version>
   </parent>
 
   <inceptionYear>2009</inceptionYear>
 
-  <name>Hippo Plugin Content Blocks</name>
-  <description>Hippo Plugin Content Blocks</description>
-  <groupId>org.onehippo.cms7</groupId>
-  <artifactId>hippo-plugin-content-blocks</artifactId>
+  <name>Hippo Plugin Content Blocks Root</name>
+  <description>Hippo Plugin Content Blocks Root</description>
+  <artifactId>hippo-plugin-content-blocks-root</artifactId>
   <version>13.1.0-validation-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-plugin-content-blocks.git</connection>
@@ -58,65 +57,45 @@
     </repository>
   </repositories>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-engine</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
-      <version>${hippo.services.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-api</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-engine</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-editor-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/java</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.png</include>
-          <include>**/*.gif</include>
-          <include>**/*.js</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.css</include>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
-          <include>**/*.yaml</include>
-        </includes>
-      </resource>
-    </resources>
-  </build>
+  <modules>
+    <module>cms</module>
+    <module>essentials-demo-feature</module>
+  </modules>
 
   <profiles>
     <profile>
@@ -129,14 +108,10 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
-                <!-- repository content XML -->
                 <exclude>README.md</exclude>
-                <exclude>src/main/resources/*.xml</exclude>
-                <exclude>demo/bootstrap/configuration/src/main/resources/**/*.xml</exclude>
-                <exclude>demo/bootstrap/content/src/main/resources/**/*.xml</exclude>
-                <!-- 3rd party -->
-                <exclude>demo/site/src/main/webapp/js/html5shiv.js</exclude>
-                <exclude>demo/site/src/main/webapp/css/style.css</exclude>
+                <exclude>cms/src/main/resources/*.xml</exclude>
+                <exclude>essentials-demo-feature/src/main/resources/**/*.xml</exclude>
+                <exclude>essentials-demo-feature/src/main/resources/**/*.ftl</exclude>
               </excludes>
             </configuration>
           </plugin>
