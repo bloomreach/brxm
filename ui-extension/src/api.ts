@@ -160,13 +160,15 @@ export interface ChannelScope extends Emitter<ChannelScopeEvents> {
 
 export interface ChannelScopeEvents {
   /**
-   * Triggered when a user publishes channel changes
+   * Triggered when a user publishes channel changes.
+   * @since 13.1
    * @event
    */
   'changes.publish': void;
 
   /**
    * Triggered when a user discards channel changes
+   * @since 13.1
    * @event
    */
   'changes.discard': void;
