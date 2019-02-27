@@ -361,7 +361,7 @@ public class PluginUserSession extends UserSession {
         }
         CmsSessionContext context = CmsSessionContext.getContext(httpSession);
         if (context != null) {
-            log.error("A non null CmsSessionContext for a new cms login should not be possible");
+            log.debug("A non null CmsSessionContext for a new cms login happens after a change password");
             cmsContextService.detach(getHttpSession());
         }
 

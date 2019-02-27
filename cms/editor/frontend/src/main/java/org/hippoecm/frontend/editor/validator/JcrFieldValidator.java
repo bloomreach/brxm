@@ -88,7 +88,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         final Set<Violation> violations = new LinkedHashSet<>();
         final Set<String> validators = field.getValidators();
         final boolean required = validators.contains(REQUIRED_VALIDATOR);
-        if ((required || fieldType.isNode() || !validators.isEmpty()) && !field.isProtected()) {
+
+        if (fieldNeedsValidation(validators)) {
             if ("*".equals(field.getPath())) {
                 if (log.isDebugEnabled() && !validators.isEmpty()) {
                     log.debug("Wildcard properties are not validated");
@@ -105,6 +106,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 provider = new PropertyValueProvider(field, null, itemModel);
             }
             final Iterator<? extends IModel> iter = provider.iterator(0, provider.size());
+
+            // A required field cannot have zero instances (property values or nodes)
             if (required && !iter.hasNext()) {
                 violations.add(newViolation(
                         new ModelPathElement(field, field.getPath(), 0),
@@ -116,6 +119,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             while (iter.hasNext()) {
                 final IModel childModel = iter.next();
                 if (fieldType.isNode()) {
+                    // Legacy: don't check validation anymore below field marked with "hipposysedit:cascadevalidation = false",
+                    // unless it is required.
                     if (required || field.getTypeDescriptor().isValidationCascaded()) {
                         final Set<Violation> typeViolations = typeValidator.validate(childModel);
                         if (typeViolations.size() > 0) {
@@ -133,17 +138,22 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                     }
                 }
 
+                // validates that a required Date field is not set to the default "empty" value
                 if (required && field.getTypeDescriptor().isType("Date")
-                        && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
-                    violations.add(newViolation(
-                            new ModelPathElement(field, field.getPath(), 0),
-                            getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                            FeedbackScope.FIELD)
-                    );
+                    && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
+                        violations.add(newViolation(
+                                new ModelPathElement(field, field.getPath(), 0),
+                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT), 
+                                FeedbackScope.FIELD)
+                        );
                 }
             }
         }
         return violations;
+    }
+
+    private boolean fieldNeedsValidation(final Set<String> validators) {
+        return (fieldType.isNode() || !validators.isEmpty()) && !field.isProtected();
     }
 
     public IFieldDescriptor getFieldDescriptor() {
