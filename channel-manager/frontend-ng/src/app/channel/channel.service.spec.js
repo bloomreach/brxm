@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -408,11 +408,14 @@ describe('ChannelService', () => {
     channelMock.changedBySet = ['anotherUser'];
     HstService.doPost.and.returnValue($q.resolve());
     HstService.getChannel.and.returnValue($q.when(channelMock));
+    spyOn($rootScope, '$broadcast');
+
     ChannelService.publishOwnChanges();
     expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'publish');
 
     $rootScope.$digest();
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
+    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:publish');
   });
 
   it('should discard own changes', () => {
@@ -422,29 +425,43 @@ describe('ChannelService', () => {
     channelMock.changedBySet = ['anotherUser'];
     HstService.doPost.and.returnValue($q.resolve());
     HstService.getChannel.and.returnValue($q.when(channelMock));
+    spyOn($rootScope, '$broadcast');
+
     ChannelService.discardOwnChanges();
     expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'discard');
 
     $rootScope.$digest();
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
+    expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:discard');
   });
 
-  it('should use the specified users when publishing or discarding changes', () => {
-    HstService.doPost.and.returnValue($q.when());
-    spyOn(ChannelService, 'reload');
-    loadChannel();
+  describe('should use the specified users when publishing or discarding changes', () => {
+    beforeEach(() => {
+      HstService.doPost.and.returnValue($q.when());
+      spyOn(ChannelService, 'reload');
 
-    ChannelService.publishChangesOf(['tester']);
-    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
+      loadChannel();
+      spyOn($rootScope, '$broadcast');
+    });
 
-    $rootScope.$digest();
-    expect(ChannelService.reload).toHaveBeenCalled();
+    it('should publish users changes', () => {
+      ChannelService.publishChangesOf(['tester']);
 
-    ChannelService.discardChangesOf(['tester']);
-    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
+      expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
 
-    $rootScope.$digest();
-    expect(ChannelService.reload).toHaveBeenCalled();
+      $rootScope.$digest();
+      expect(ChannelService.reload).toHaveBeenCalled();
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:publish');
+    });
+
+    it('should discard users changes', () => {
+      ChannelService.discardChangesOf(['tester']);
+      expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
+
+      $rootScope.$digest();
+      expect(ChannelService.reload).toHaveBeenCalled();
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('channel:changes:discard');
+    });
   });
 
   it('records own changes', () => {

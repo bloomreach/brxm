@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -225,24 +225,28 @@ class ChannelService {
 
   publishOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'publish')
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
   }
 
   publishChangesOf(users) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
   }
 
   discardOwnChanges() {
     return this.HstService.doPost(null, this.getMountId(), 'discard')
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
   }
 
   discardChangesOf(users) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.reload());
+      .then(() => this.reload())
+      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
   }
 
   getSiteMapId() {
