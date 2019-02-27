@@ -1,5 +1,5 @@
 #
-#  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+#  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 #
 #  Licensed under the Apache License, Version 2.0 (the  "License");
 #  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 Cancel request received but no pending request found for 'uuid'.
 Cannot change the URL name of document
 Cannot determine publication state of document handle
+Cannot load ValidationService from service registry, field validation will be disabled
 Cannot read config of field
 Could not determine publication state of document
 Document workflow action 'actionNotYetImplemented' is not implemented
@@ -46,6 +47,7 @@ Failed to execute template query 'new-document'
 Failed to find validator 'unknown', ignoring it
 Failed to get folder '/test'
 Failed to get or create folder 'test' below 'null'
+Failed to load validator
 Failed to obtain draft for user 'bla'.
 Failed to persist changes
 Failed to read field 'test:id' from 'bla'
@@ -89,6 +91,7 @@ Forbidden to erase document 'document'
 Forbidden to erase document 'uuid'
 Hint 'action' not stored as Boolean
 Hint 'no-boolean' not stored as Boolean
+Ignoring invalid validator
 Multiple request nodes found for 'uuid'. This situation is not supported.
 No Server set for org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine
 No values available for node of type 'choice'

@@ -212,7 +212,6 @@ public class FieldTypeUtils {
     }
 
     public static Validator getValidator(final String validatorName, final FieldValidationContext validationContext) {
-
         if (StringUtils.isBlank(validatorName)) {
             return null;
         }
