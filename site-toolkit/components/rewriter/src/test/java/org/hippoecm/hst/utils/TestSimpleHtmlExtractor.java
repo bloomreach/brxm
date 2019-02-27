@@ -209,7 +209,7 @@ public class TestSimpleHtmlExtractor {
     private void testInnerHtmlFromLigature(final String input) throws Exception {
 
         // there are single character ligatures that have two characters in uppercase, e.g. ß becomes SS
-        assertNotEquals("Length " + input.length() + " of string is equal to uppercase Dutch length "
+        assertNotEquals("Length " + input.length() + " of string is equal to uppercase length "
                         + input.toUpperCase().length(),
                 input.length(), input.toUpperCase().length());
 

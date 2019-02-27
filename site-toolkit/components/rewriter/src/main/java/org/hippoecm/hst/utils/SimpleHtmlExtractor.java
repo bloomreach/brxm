@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Simple HTML Tag Extractor
- * 
- * @version $Id: SimpleHtmlExtractor.java 22564 2010-04-27 12:53:45Z wko $
  */
 public class SimpleHtmlExtractor {
 
@@ -137,15 +137,14 @@ public class SimpleHtmlExtractor {
         }
     }
     
-    private static String getInnerHtmlSimply(String html, String tagName) {
+    private static String getInnerHtmlSimply(final String html, String tagName) {
         if (tagName == null || "".equals(tagName)) {
             tagName = "html";
         }
         
-        tagName = tagName.toUpperCase();
-        String startTag = "<" + tagName;
-        int startTagLen = startTag.length();
-        String endTag = "</" + tagName + ">";
+        final String startTag = "<" + tagName;
+        final int startTagLen = startTag.length();
+        final String endTag = "</" + tagName + ">";
         
         boolean tagStarted = false;
         int offset = -1;
@@ -165,7 +164,7 @@ public class SimpleHtmlExtractor {
 
             while (line != null) {
                 if (!tagStarted) {
-                    offset = line.toUpperCase().indexOf(startTag);
+                    offset = StringUtils.indexOfIgnoreCase(line, startTag);
                     
                     if (offset != -1) {
                         char ch = line.charAt(offset + startTagLen);
@@ -174,19 +173,19 @@ public class SimpleHtmlExtractor {
                             tagStarted = true;
                             offset = line.indexOf('>', offset + tagName.length());
                             if (offset != -1) {
-                                String temp = line.substring(offset + 1);
-                                offset = temp.toUpperCase().indexOf(endTag);
+                                final String remainder = line.substring(offset + 1);
+                                offset = StringUtils.indexOfIgnoreCase(remainder, endTag);
                                 if (offset == -1) {
-                                    out.println(temp);
+                                    out.println(remainder);
                                 } else {
-                                    out.print(temp.substring(0, offset));
+                                    out.print(remainder.substring(0, offset));
                                     break;
                                 }
                             }
                         }
                     }
                 } else {
-                    offset = line.toUpperCase().indexOf(endTag);
+                    offset = StringUtils.indexOfIgnoreCase(line, endTag);
                     
                     if (offset != -1) {
                         out.println(line.substring(0, offset));
