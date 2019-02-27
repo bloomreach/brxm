@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,7 +145,7 @@ export interface UiScope extends UiProperties {
 /**
  * API to access information about and communicate with the current channel shown in the Channel Manager.
  */
-export interface ChannelScope {
+export interface ChannelScope extends Emitter<ChannelScopeEvents> {
   /**
    * API for the current page in the current channel.
    */
@@ -156,6 +156,20 @@ export interface ChannelScope {
    * The Channel Manager UI will be updated to reflect the channel’s refreshed metadata.
    */
   refresh: () => Promise<void>;
+}
+
+export interface ChannelScopeEvents {
+  /**
+   * Triggered when a user publishes channel changes
+   * @event
+   */
+  'changes.publish': void;
+
+  /**
+   * Triggered when a user discards channel changes
+   * @event
+   */
+  'changes.discard': void;
 }
 
 /**
