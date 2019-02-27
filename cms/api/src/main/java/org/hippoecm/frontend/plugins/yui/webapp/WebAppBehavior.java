@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -71,6 +71,11 @@ public class WebAppBehavior extends Behavior implements IYuiManager {
     YuiHeaderCache headerContributor;
     YuiContext helper;
 
+    /**
+     * @Deprecated Flash is no longer used nor needed for the core of this product.
+     * Please move any dependencies on flash to your project implementation.
+     */
+    @Deprecated
     FlashVersion flash;
 
     public WebAppBehavior(WebAppSettings settings) {
@@ -118,10 +123,20 @@ public class WebAppBehavior extends Behavior implements IYuiManager {
         return new YuiContext(headerContributor);
     }
 
+    /**
+     * @Deprecated Flash is no longer used nor needed for the core of this product.
+     * Please move any dependencies on flash to your project implementation.
+     */
+    @Deprecated
     public FlashVersion getFlash() {
         return flash;
     }
 
+    /**
+     * @Deprecated Flash is no longer used nor needed for the core of this product.
+     * Please move any dependencies on flash to your project implementation.
+     */
+    @Deprecated
     public void setFlash(FlashVersion flash) {
         this.flash = flash;
     }
