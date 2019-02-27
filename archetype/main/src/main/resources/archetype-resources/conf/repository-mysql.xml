@@ -38,7 +38,7 @@
       <param name="externalBLOBs" value="true"/>
       <param name="consistencyCheck" value="false"/>
       <param name="consistencyFix" value="false"/>
-      <param name="bundleCacheSize" value="64"/>
+      <param name="bundleCacheSize" value="@repo.workspace.bundle.cache@"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineImpl">
@@ -84,6 +84,7 @@
       <param name="externalBLOBs" value="true"/>
       <param name="consistencyCheck" value="false"/>
       <param name="consistencyFix" value="false"/>
+      <param name="bundleCacheSize" value="@repo.versioning.bundle.cache@"/>
     </PersistenceManager>
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
