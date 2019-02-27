@@ -26,7 +26,9 @@
   </md-subheader>
 
   <md-subheader ng-if="$ctrl.getErrorCount()" md-colors="{background: 'hippo-red-50'}">
-    <div translate="DOCUMENT_CONTAINS_NUMBER_OF_ERRORS" translate-value-count="{{ $ctrl.getErrorCount() }}"></div>
+    <div translate="{{ $ctrl.getErrorCount() === 1 ? 'DOCUMENT_CONTAINS_ONE_ERROR' : 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS' }}"
+         translate-value-count="{{ $ctrl.getErrorCount() }}">
+    </div>
   </md-subheader>
 
   <content-editor flex="grow"
