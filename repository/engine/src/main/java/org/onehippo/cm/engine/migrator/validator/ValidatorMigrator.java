@@ -83,52 +83,39 @@ public class ValidatorMigrator implements ConfigurationMigrator {
 
     private boolean migrateValidatorConfiguration(final Session session) throws RepositoryException {
         final Node oldConfigLocation = session.getNode(OLD_VALIDATORS_CONFIGURATION_LOCATION);
-        
-        // check and warn for missing default validators
+        final Node newConfigLocation = session.getNode(NEW_VALIDATORS_CONFIGURATION_LOCATION);
+
         for (final String validatorName : DEFAULT_VALIDATORS.keySet()) {
-            if (!oldConfigLocation.hasNode(validatorName)) {
+            // check if default validator is available
+            if (oldConfigLocation.hasNode(validatorName)) {
+                final Node oldValidator = oldConfigLocation.getNode(validatorName);
+                final String oldValidatorName = oldValidator.getName();
+                final Node newValidator = newConfigLocation.getNode(oldValidatorName);
+                final String defaultPluginClass = DEFAULT_VALIDATORS.get(oldValidatorName);
+
+                log.info("Migrating validator " + oldValidatorName);
+                if (oldValidator.hasProperty(PLUGIN_CLASS)) {
+                    try {
+                        final String pluginClass = oldValidator.getProperty(PLUGIN_CLASS).getString();
+                        // config has not changed
+                        if (StringUtils.equals(pluginClass, defaultPluginClass)) {
+                            // copy regex pattern to new validator
+                            if (oldValidator.hasProperty(REGEX_PATTERN)) {
+                                setNewProperty(newValidator, oldValidator.getProperty(REGEX_PATTERN));
+                            }
+                            oldValidator.remove();
+                        } else {
+                            // config is not default: keep old validator, delete new validator
+                            newValidator.remove();
+                        }
+                    } catch (final RepositoryException e) {
+                        log.error("Migrating validator configuration failed.", e);
+                        return false;
+                    }
+                }
+            } else {
                 log.warn("Default validator " + validatorName + " was removed, but now bootstrapped again with " +
                         "default values. Please verify if this validator should be deleted.");
-            }
-        }
-
-        final Node newConfigLocation = session.getNode(NEW_VALIDATORS_CONFIGURATION_LOCATION);
-        final NodeIterator oldValidators = oldConfigLocation.getNodes();
-
-        while (oldValidators.hasNext()) {
-            final Node oldValidator = oldValidators.nextNode();
-            final String oldValidatorName = oldValidator.getName();
-            Node newValidator;
-            String defaultPluginClass;
-
-            try {
-                newValidator = newConfigLocation.getNode(oldValidatorName);
-                defaultPluginClass = DEFAULT_VALIDATORS.get(oldValidatorName);
-            } catch (final PathNotFoundException e) {
-                // custom validator, so leave as-is
-                log.info("Ignoring validator " + oldValidatorName + " since it is not one of the newly supported validators.");
-                continue;
-            }
-
-            log.info("Migrating validator " + oldValidatorName);
-            if (oldValidator.hasProperty(PLUGIN_CLASS)) {
-                try {
-                    final String pluginClass = oldValidator.getProperty(PLUGIN_CLASS).getString();
-                    // config has not changed
-                    if (StringUtils.equals(pluginClass, defaultPluginClass)) {
-                        // copy regex pattern to new validator
-                        if (oldValidator.hasProperty(REGEX_PATTERN)) {
-                            setNewProperty(newValidator, oldValidator.getProperty(REGEX_PATTERN));
-                        }
-                        oldValidator.remove();
-                    } else {
-                        // config is not default: keep old validator, delete new validator
-                        newValidator.remove();
-                    }
-                } catch (final RepositoryException e) {
-                    log.error("Migrating validator configuration failed.", e);
-                    return false;
-                }
             }
         }
 
