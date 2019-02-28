@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -394,7 +394,11 @@ public class HippoPathParser {
                             while(pos <= len && !jcrPath.substring(pos).startsWith(matchString))
                                 ++pos;
                             index = Path.INDEX_DEFAULT;
-                            argument = jcrPath.substring(lastPos, pos+(matchString.length()-1));
+                            final int endIndex = pos + (matchString.length() - 1);
+                            if (endIndex > len) {
+                                throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
+                            }
+                            argument = jcrPath.substring(lastPos, endIndex);
                             if(pos+matchString.length() > len)
                                 throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
                             pos += matchString.length();
