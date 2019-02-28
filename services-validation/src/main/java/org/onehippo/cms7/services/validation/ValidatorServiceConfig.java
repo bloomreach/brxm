@@ -33,7 +33,6 @@ public class ValidatorServiceConfig implements Serializable {
 
     public static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
 
-    private final Map<String, ValidatorConfig> configs = new HashMap<>();
     private final Map<String, Validator> validators = new HashMap<>();
 
     ValidatorServiceConfig(final Node configNode) {
@@ -41,7 +40,6 @@ public class ValidatorServiceConfig implements Serializable {
     }
 
     void reconfigure(final Node config) {
-        configs.clear();
         validators.clear();
 
         try {
@@ -49,7 +47,16 @@ public class ValidatorServiceConfig implements Serializable {
             while (iterator.hasNext()) {
                 final Node configNode = iterator.nextNode();
                 final ValidatorConfig validatorConfig = new ValidatorConfigImpl(configNode);
-                configs.put(configNode.getName(), validatorConfig);
+
+                if (!validators.containsKey(validatorConfig.getName())) {
+                    final Validator validator = ValidatorFactory.create(validatorConfig);
+                    if (validator == null) {
+                        log.error("Failed to create validator '" + validatorConfig.getName() + "'");
+                    } else {
+                        validators.put(configNode.getName(), validator);
+                    }
+                }
+
             }
         } catch (final RepositoryException e) {
             log.error("Failed to create validator config");
@@ -62,18 +69,6 @@ public class ValidatorServiceConfig implements Serializable {
      * @return Instance of a {@link Validator}
      */
     Validator getValidator(final String name) throws ValidatorConfigurationException {
-        if (!configs.containsKey(name)) {
-            return null;
-        }
-
-        if (!validators.containsKey(name)) {
-            final Validator validator = ValidatorFactory.create(configs.get(name));
-            if (validator == null) {
-                throw new ValidatorConfigurationException("Failed to create validator '" + name + "'");
-            }
-            validators.put(name, validator);
-        }
-
-        return validators.get(name);
+        return validators.getOrDefault(name, null);
     }
 }
