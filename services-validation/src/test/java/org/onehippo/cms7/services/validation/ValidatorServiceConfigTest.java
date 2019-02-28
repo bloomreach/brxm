@@ -51,97 +51,92 @@ public class ValidatorServiceConfigTest {
 
     @Before
     public void setUp() throws Exception {
-        final MockNode root = MockNode.root();
-        configNode = root.addNode("config", JcrConstants.NT_UNSTRUCTURED);
         mockStaticPartial(ValidatorFactory.class, "create");
+        configNode = MockNode.root().addNode("config", JcrConstants.NT_UNSTRUCTURED);
     }
 
     @Test
-    public void testLogsErrorWhenRepositoryExceptionIsThrown() throws Exception {
+    public void logsErrorWhenRepositoryExceptionIsThrown() throws Exception {
         final Node configNode = createMock(Node.class);
         expect(configNode.getNodes()).andThrow(new RepositoryException());
         replayAll();
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidatorServiceConfig.class).build()) {
-            try {
-                new ValidatorServiceConfig(configNode);
-            } finally {
-                assertEquals(1L, listener.messages().count());
-                verifyAll();
-            }
+            new ValidatorServiceConfig(configNode);
+            assertEquals(1L, listener.messages().count());
+            verifyAll();
         }
     }
 
     @Test
-    public void testReturnsNullIfNotFound() throws Exception {
-        ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-        assertNull(config.getValidator("validator-1"));
-
-        addValidatorConfig("validator-1");
-        config = new ValidatorServiceConfig(configNode);
-        assertNull(config.getValidator("validator-2"));
-
-        addValidatorConfig("validator-2");
-        config.reconfigure(configNode);
-        assertNull(config.getValidator("validator-3"));
-    }
-
-    @Test(expected = ValidatorConfigurationException.class)
-    public void testThrowsExceptionWhenValidatorCreationFailed() throws Exception {
-        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(null);
-        replayAll();
-
-        addValidatorConfig("validator-1");
-        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-        config.getValidator("validator-1");
+    public void returnsNullWhenNoValidatorAreConfigured() throws Exception {
+        final ValidatorServiceConfig config = createConfig();
+        assertNull(config.getValidator("non-existing-validator"));
     }
 
     @Test
-    public void testReturnsNewValidatorFromConfig() throws Exception {
+    public void returnsNullWhenValidatorIsNotFound() throws Exception {
+        final ValidatorServiceConfig config = createConfig("existing-validator");
+        assertNull(config.getValidator("non-existing-validator"));
+    }
+
+    @Test(expected = ValidatorConfigurationException.class)
+    public void throwsExceptionWhenValidatorCreationFailed() throws Exception {
+        expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(null);
+        replayAll();
+
+        final ValidatorServiceConfig config = createConfig("null-validator");
+        config.getValidator("null-validator");
+    }
+
+    @Test
+    public void returnsNewValidatorFromConfig() throws Exception {
         final Validator mockValidator = createMock(Validator.class);
         expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
         replayAll();
 
-        addValidatorConfig("validator-1");
-        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-        assertEquals(mockValidator, config.getValidator("validator-1"));
+        final ValidatorServiceConfig config = createConfig("mock-validator");
+        assertEquals(mockValidator, config.getValidator("mock-validator"));
         verifyAll();
     }
 
     @Test
-    public void testReturnsSameHtmlProcessorInstance() throws Exception {
+    public void returnsSameValidatorInstance() throws Exception {
         final Validator mockValidator = createMock(Validator.class);
         expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
         replayAll();
 
-        addValidatorConfig("validator-1");
-        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-        assertEquals(config.getValidator("validator-1"), config.getValidator("validator-1"));
+        final ValidatorServiceConfig config = createConfig("mock-validator");
+        assertEquals(config.getValidator("mock-validator"), config.getValidator("mock-validator"));
     }
 
     @Test
-    public void testClearsOnReconfigure() throws Exception {
+    public void clearsValidatorInstancesOnReconfigure() throws Exception {
         final Validator mockValidator = createMock(Validator.class);
         expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator);
         final Validator mockValidator2 = createMock(Validator.class);
         expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(mockValidator2);
         replayAll();
 
-        addValidatorConfig("validator-1");
-        final ValidatorServiceConfig config = new ValidatorServiceConfig(configNode);
-
-        final Validator validator1 = config.getValidator("validator-1");
-        config.reconfigure(configNode);
-        final Validator validator2 = config.getValidator("validator-1");
-
+        final ValidatorServiceConfig config = createConfig("mock-validator");
+        final Validator validator1 = config.getValidator("mock-validator");
         assertNotNull(validator1);
+
+        // Reconfigure should clear the existing validators and use the ValidatorFactory to create new instances
+        config.reconfigure(configNode);
+        final Validator validator2 = config.getValidator("mock-validator");
+
         assertNotNull(validator2);
         assertNotEquals(validator1, validator2);
+
+        verifyAll();
     }
 
-
-    private void addValidatorConfig(final String id) throws RepositoryException {
-        final MockNode validatorConfig = configNode.addNode(id, JcrConstants.NT_UNSTRUCTURED);
-        validatorConfig.setProperty(ValidatorConfig.CLASS_NAME, "validator-classname");
+    private ValidatorServiceConfig createConfig(final String... validators) throws RepositoryException {
+        for (final String validator : validators) {
+            final MockNode validatorConfigNode = configNode.addNode(validator, JcrConstants.NT_UNSTRUCTURED);
+            validatorConfigNode.setProperty(ValidatorConfig.CLASS_NAME, validator + "-validator-classname");
+        }
+        return new ValidatorServiceConfig(configNode);
     }
 }

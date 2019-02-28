@@ -34,14 +34,14 @@ public class NodeReferenceValidatorTest {
     private NodeReferenceValidator validator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
         validator = new NodeReferenceValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
-    public void testThrowsIfFieldIsNotTypeString() throws Exception {
+    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
         expect(context.getType()).andReturn("not-a-string");
         replayAll();
 
@@ -49,7 +49,7 @@ public class NodeReferenceValidatorTest {
     }
 
     @Test
-    public void testCanBeInitializedIfFieldIsTypeString() throws Exception {
+    public void initializesIfFieldIsOfTypeString() throws Exception {
         expect(context.getType()).andReturn("String");
         replayAll();
 
@@ -58,14 +58,14 @@ public class NodeReferenceValidatorTest {
     }
 
     @Test
-    public void testIsInvalidForBlankString() throws Exception {
+    public void blankStringIsInvalid() {
         assertFalse(validator.isValid(context, null));
         assertFalse(validator.isValid(context, ""));
         assertFalse(validator.isValid(context, " "));
     }
 
     @Test
-    public void testIsInvalidForRootIdentifier() throws Exception {
+    public void jcrRootNodeIdentifierIsInvalid() {
         assertFalse(validator.isValid(context, JcrConstants.ROOT_NODE_ID));
     }
 

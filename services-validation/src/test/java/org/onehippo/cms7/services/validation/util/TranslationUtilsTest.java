@@ -40,12 +40,12 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class TranslationUtilsTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockStaticPartial(HippoServiceRegistry.class, "getService");
     }
 
     @Test
-    public void testReturnsMissingValueWhenLocalizationServiceIsNotFound() throws Exception {
+    public void returnsMissingValueWhenLocalizationServiceIsNotFound() {
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(null);
         replayAll();
 
@@ -54,7 +54,7 @@ public class TranslationUtilsTest {
     }
 
     @Test
-    public void testReturnsMissingValueWhenBundleIsNotFound() throws Exception {
+    public void returnsMissingValueWhenBundleIsNotFound() {
         final LocalizationService localizationService = createMock(LocalizationService.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(null);
@@ -65,7 +65,7 @@ public class TranslationUtilsTest {
     }
 
     @Test
-    public void testReturnsMissingValueWhenMessageIsNotFound() throws Exception {
+    public void returnsMissingValueWhenMessageIsNotFound() {
         final LocalizationService localizationService = createMock(LocalizationService.class);
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
@@ -78,7 +78,7 @@ public class TranslationUtilsTest {
     }
 
     @Test
-    public void testReturnsTranslatedMessage() throws Exception {
+    public void returnsTranslatedMessage() {
         final LocalizationService localizationService = createMock(LocalizationService.class);
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);

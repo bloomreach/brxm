@@ -37,12 +37,12 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class ServiceUtilsTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mockStaticPartial(HippoServiceRegistry.class, "getService");
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testThrowsWhenServiceIsNotFound() throws Exception {
+    public void throwsExceptionWhenServiceIsNotFound() {
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(null);
         replayAll();
 
@@ -50,7 +50,7 @@ public class ServiceUtilsTest {
     }
 
     @Test
-    public void testGetValidationService() throws Exception {
+    public void getValidationService() {
         final ValidationService validationService = createMock(ValidationService.class);
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         replayAll();

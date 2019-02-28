@@ -26,97 +26,88 @@ public class HtmlUtilsTest {
     private static final String NON_BREAKING_SPACE = Character.toString((char) 160);
 
     @Test
-    public void testNullInput() throws Exception {
+    public void nullIsEmpty() {
         assertTrue(HtmlUtils.isEmpty(null));
     }
 
     @Test
-    public void testEmptyString() throws Exception {
-        assertTrue(HtmlUtils.isEmpty(""));
-    }
-
-    @Test
-    public void testBlankString() throws Exception {
-        assertTrue(HtmlUtils.isEmpty(" "));
-        assertTrue(HtmlUtils.isEmpty("\n"));
-    }
-
-    @Test
-    public void testValidHtml() throws Exception {
-        assertNotEmpty("aap noot mies");
-    }
-
-    @Test
-    public void testValidComplexHtml() throws Exception {
-        assertNotEmpty("\n\raap<br /><p/>");
-    }
-
-    @Test
-    public void testEmptyHtml() throws Exception {
+    public void blankStringIsEmpty() {
         assertEmpty("");
+        assertEmpty(" ");
     }
 
     @Test
-    public void testEmptyHtmlWithBr() throws Exception {
-        assertEmpty("<br />");
-    }
-
-    @Test
-    public void testEmptyHtmlWithSpace() throws Exception {
-        assertEmpty("<p>" + NORMAL_SPACE + "</p>");
-    }
-
-    @Test
-    public void testEmptyHtmlWithNonBreakingSpace() throws Exception {
-        assertEmpty("<p>" + NON_BREAKING_SPACE + "</p>");
-    }
-
-    @Test
-    public void testEmptyHtmlWithInvisibleCharacters() throws Exception {
+    public void invisibleCharactersIsEmpty() {
         assertEmpty("\f\n\t\r");
     }
 
     @Test
-    public void testImageHtml() throws Exception {
+    public void simpleHtmlIsNotEmpty() {
+        assertNotEmpty("aap noot mies");
+    }
+
+    @Test
+    public void complexHtmlIsNotEmpty()  {
+        assertNotEmpty("\n\raap<br /><p/>");
+    }
+
+    @Test
+    public void brIsEmpty() {
+        assertEmpty("<br />");
+    }
+
+    @Test
+    public void paragraphWithNormalSpaceIsEmpty() {
+        assertEmpty("<p>" + NORMAL_SPACE + "</p>");
+    }
+
+    @Test
+    public void paragraphWithNonBreakingSpaceIsEmpty() {
+        assertEmpty("<p>" + NON_BREAKING_SPACE + "</p>");
+    }
+
+    @Test
+    public void imageIsNotEmpty() {
         assertNotEmpty("<img src=\"xxx\" />");
     }
 
     @Test
-    public void testObjectHtml() throws Exception {
+    public void objectIsNotEmpty() {
         assertNotEmpty("<object data=\"http://www.youtube.com/v/3Rj9oiNZiog&amp;hl=en\" height=\"355\" type=\"application/x-shockwave-flash\" width=\"425\"><param name=\"movie\" value=\"http://www.youtube.com/v/3Rj9oiNZiog&amp;hl=en\"/><param name=\"wmode\" value=\"transparent\"/></object>");
     }
 
     @Test
-    public void testEmbedHtml() throws Exception {
+    public void embedIsNotEmpty() {
         assertNotEmpty("<EMBED TYPE=\"application/x-mplayer2\" SRC=\"videofilename.wmv\" NAME=\"MediaPlayer\" WIDTH=\"192\" HEIGHT=\"290\" ShowControls=\"1\" ShowStatusBar=\"1\" ShowDisplay=\"1\" autostart=\"0\"> </EMBED>");
     }
 
     @Test
-    public void testAppletHtml() throws Exception {
+    public void appletIsNotEmpty() {
         assertNotEmpty("<APPLET CODE=\"MyApplet.class\" WIDTH=200 HEIGHT=50><PARAM NAME=TEXT VALUE=\"Hi There\"></APPLET>");
     }
 
     @Test
-    public void testFormHtml() throws Exception {
+    public void formIsNotEmpty() {
         assertNotEmpty("<form name=\"myForm\"><input type=\"button\" value=\"button\" /></form>");
     }
 
     @Test
-    public void testIframeHtml() throws Exception {
+    public void iframeIsNotEmpty() {
         assertNotEmpty("<iframe src=\"http://example.com\"></iframe>");
     }
 
-    private void assertNotEmpty(final String text) {
-        assertFalse(isEmpty(text));
+    private static String wrapWithHtmlBody(final String text) {
+        return "<html><body>" + text + "</body></html>";
     }
 
-    private void assertEmpty(final String text) {
-        assertTrue(isEmpty(text));
+    private static void assertNotEmpty(final String text) {
+        assertFalse(HtmlUtils.isEmpty(text));
+        assertFalse(HtmlUtils.isEmpty(wrapWithHtmlBody(text)));
     }
 
-    private boolean isEmpty(final String text) {
-        final String html = "<html><body>" + text + "</body></html>";
-        return HtmlUtils.isEmpty(html);
+    private static void assertEmpty(final String text) {
+        assertTrue(HtmlUtils.isEmpty(text));
+        assertTrue(HtmlUtils.isEmpty(wrapWithHtmlBody(text)));
     }
 
 }

@@ -36,14 +36,14 @@ public class NonEmptyHtmlValidatorTest {
     private NonEmptyHtmlValidator validator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
         validator = new NonEmptyHtmlValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
-    public void testThrowsIfFieldIsNotTypeString() throws Exception {
+    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
         expect(context.getType()).andReturn("not-a-string");
         replayAll();
 
@@ -51,7 +51,18 @@ public class NonEmptyHtmlValidatorTest {
     }
 
     @Test
-    public void testWarnsIfValidatorIsUsedWithHtmlField() throws Exception {
+    public void initializesIfFieldIsOfTypeString() throws Exception {
+        expect(context.getType()).andReturn("String");
+        expect(context.getName()).andReturn("CustomHtml");
+        replayAll();
+
+        validator.init(context);
+
+        verifyAll();
+    }
+
+    @Test
+    public void warnsIfValidatorIsUsedWithHtmlField() throws Exception {
         expect(context.getType()).andReturn("String");
         expect(context.getName()).andReturn("Html");
         replayAll();
@@ -67,29 +78,38 @@ public class NonEmptyHtmlValidatorTest {
     }
 
     @Test
-    public void testCanBeInitializedIfFieldIsTypeString() throws Exception {
-        expect(context.getType()).andReturn("String");
-        expect(context.getName()).andReturn("CustomHtml");
-        replayAll();
-
-        validator.init(context);
-
-        verifyAll();
+    public void textIsValid() {
+        assertTrue(validator.isValid(context, "text"));
     }
 
     @Test
-    public void testIsValid() throws Exception {
-        assertTrue(validator.isValid(context, "text"));
+    public void paragraphWithTextIsValid() {
         assertTrue(validator.isValid(context, "<p>text</p>"));
+    }
+    @Test
+    public void imgIsValid() {
         assertTrue(validator.isValid(context, "<img src=\"empty.gif\">"));
     }
 
     @Test
-    public void testIsInvalid() throws Exception {
+    public void nullIsInvalid() {
         assertFalse(validator.isValid(context, null));
+    }
+
+    @Test
+    public void blankStringIsInvalid() {
         assertFalse(validator.isValid(context, ""));
         assertFalse(validator.isValid(context, " "));
+    }
+
+    @Test
+    public void emptyHtmlIsInvalid() {
         assertFalse(validator.isValid(context, "<html></html>"));
+    }
+
+    @Test
+    public void emptyParagraphInvalid() {
+        assertFalse(validator.isValid(context, "<p></p>"));
     }
 
 }

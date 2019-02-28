@@ -15,10 +15,14 @@
  */
 package org.onehippo.cms7.services.validation.validator;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.mock.MockValidator;
+import org.onehippo.cms7.services.validation.ValidatorContext;
+import org.onehippo.cms7.services.validation.Violation;
+import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.expect;
@@ -33,7 +37,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class ValidatorFactoryTest {
 
     @Test
-    public void testCreateNewValidator() throws Exception {
+    public void instantiatesNewValidator() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         expect(config.getClassName()).andReturn(MockValidator.class.getName());
         replayAll();
@@ -45,7 +49,7 @@ public class ValidatorFactoryTest {
     }
 
     @Test
-    public void testReturnsNullAndLogsErrorIfClassNotFound() throws Exception {
+    public void returnsNullAndLogsErrorIfClassNotFound() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         expect(config.getClassName()).andReturn("non-existing");
         replayAll();
@@ -59,9 +63,9 @@ public class ValidatorFactoryTest {
     }
 
     @Test
-    public void testReturnsNullAndLogsErrorIfConstructorIsMissing() throws Exception {
+    public void returnsNullAndLogsErrorIfConstructorIsMissing() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
-        expect(config.getClassName()).andReturn(Validator.class.getName());
+        expect(config.getClassName()).andReturn(BaseMockValidator.class.getName());
         replayAll();
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidatorFactory.class).build()) {
@@ -69,6 +73,29 @@ public class ValidatorFactoryTest {
             assertEquals(1L, listener.messages().count());
             assertNull(validator);
             verifyAll();
+        }
+    }
+
+    private static class BaseMockValidator implements Validator {
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public void init(final ValidatorContext context) throws InvalidValidatorException {
+        }
+
+        @Override
+        public Optional<Violation> validate(final ValidatorContext context, final String value) {
+            return Optional.empty();
+        }
+
+    }
+
+    private static class MockValidator extends BaseMockValidator {
+        public MockValidator(final ValidatorConfig config) {
         }
     }
 

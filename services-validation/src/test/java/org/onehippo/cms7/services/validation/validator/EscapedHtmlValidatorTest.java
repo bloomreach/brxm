@@ -30,24 +30,44 @@ public class EscapedHtmlValidatorTest {
     private EscapedHtmlValidator validator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
         validator = new EscapedHtmlValidator(config);
     }
 
     @Test
-    public void testIsValid() throws Exception {
-        assertTrue(validator.isValid(context, "Test input!"));
+    public void textContainingCommonCharactersIsValid() {
+        assertTrue(validator.isValid(context, "abcdefghijklmnopqrstuvwxyz"));
+        assertTrue(validator.isValid(context, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+        assertTrue(validator.isValid(context, "12345567890"));
+        assertTrue(validator.isValid(context, "\f\n\t\n"));
+        assertTrue(validator.isValid(context, "!@#$%^*()-_+=±§{}[]:;|\\,.?/~`"));
     }
 
     @Test
-    public void testIsInvalid() throws Exception {
+    public void textContainingLesserThanIsInvalid() {
         assertFalse(validator.isValid(context, "<"));
-        assertFalse(validator.isValid(context, "\""));
-        assertFalse(validator.isValid(context, "'"));
+    }
+
+    @Test
+    public void textContainingGreaterThanIsInvalid() {
         assertFalse(validator.isValid(context, ">"));
+    }
+
+    @Test
+    public void textContainingAmpersandIsInvalid() {
         assertFalse(validator.isValid(context, "&"));
+    }
+
+    @Test
+    public void textContainingSingleQuoteIsInvalid() {
+        assertFalse(validator.isValid(context, "'"));
+    }
+
+    @Test
+    public void textContainingDoubleQuoteIsInvalid() {
+        assertFalse(validator.isValid(context, "\""));
     }
 
 }

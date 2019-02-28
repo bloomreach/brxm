@@ -31,13 +31,13 @@ import static org.junit.Assert.assertTrue;
 public class ValidatorConfigTest {
 
     @Test(expected = IllegalStateException.class)
-    public void testThrowsIllegalStateExceptionIfClassNameIsNotConfigured() throws Exception {
+    public void throwsIllegalStateExceptionIfClassNameIsNotConfigured() throws Exception {
         final Node configNode = createConfigNode("validator-name", null);
         new ValidatorConfigImpl(configNode);
     }
 
     @Test
-    public void testRetrievesValidatorNameAndClassName() throws Exception {
+    public void loadsValidatorNameAndClassName() throws Exception {
         final Node configNode = createConfigNode("validator-name", "validator-class-name");
         final ValidatorConfigImpl validatorConfig = new ValidatorConfigImpl(configNode);
 
@@ -46,7 +46,7 @@ public class ValidatorConfigTest {
     }
 
     @Test
-    public void testAllowsCustomProperties() throws Exception {
+    public void loadsCustomProperties() throws Exception {
         final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
         configNode.setProperty("custom-property", "property-value");
         final ValidatorConfigImpl validatorConfig = new ValidatorConfigImpl(configNode);
@@ -56,7 +56,7 @@ public class ValidatorConfigTest {
     }
 
     @Test
-    public void testIgnoresNamespacedProperties() throws Exception {
+    public void ignoresNamespacedCustomProperties() throws Exception {
         final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
         configNode.setProperty("namespaced:custom-property", "property-value");
         final ValidatorConfigImpl validatorConfig = new ValidatorConfigImpl(configNode);
@@ -65,7 +65,7 @@ public class ValidatorConfigTest {
     }
 
     @Test
-    public void testIgnoresMultiplePropertiesAndLogsWarning() throws Exception {
+    public void ignoresMultiplePropertiesAndLogsWarning() throws Exception {
         final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
         configNode.setProperty("custom-property", new String[] {"property-value"});
 
@@ -77,7 +77,7 @@ public class ValidatorConfigTest {
     }
 
     @Test
-    public void testClearsValuesOnReconfigure() throws Exception {
+    public void clearsValuesOnReconfigure() throws Exception {
         final Node configNode = createConfigNode("validator-name", "validator-class-name");
         configNode.setProperty("custom-property", "property-value");
         final ValidatorConfigImpl validatorConfig = new ValidatorConfigImpl(configNode);

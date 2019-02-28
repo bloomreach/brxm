@@ -34,14 +34,14 @@ public class NonEmptyValidatorTest {
     private NonEmptyValidator validator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
         validator = new NonEmptyValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
-    public void testThrowsIfFieldIsNotTypeString() throws Exception {
+    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
         expect(context.getType()).andReturn("not-a-string");
         replayAll();
 
@@ -49,7 +49,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void testCanBeInitializedIfFieldIsTypeString() throws Exception {
+    public void initializesIfFieldIsOfTypeString() throws Exception {
         expect(context.getType()).andReturn("String");
         replayAll();
 
@@ -58,7 +58,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void testHtmlIsValid() throws Exception {
+    public void validInputForHtml() {
         expect(context.getName()).andReturn("Html").times(3);
         replayAll();
 
@@ -69,7 +69,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void testHtmlIsInvalid() throws Exception {
+    public void invalidInputForHtml() {
         expect(context.getName()).andReturn("Html").times(4);
         replayAll();
 
@@ -81,7 +81,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void testTextIsValid() throws Exception {
+    public void validInputForText() {
         expect(context.getName()).andReturn("not-html").times(3);
         replayAll();
 
@@ -92,7 +92,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void testTextIsInvalid() throws Exception {
+    public void invalidInputForText() {
         expect(context.getName()).andReturn("not-html").times(4);
         replayAll();
 

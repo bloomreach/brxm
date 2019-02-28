@@ -35,13 +35,13 @@ public class RegExpValidatorTest {
     private ValidatorConfig config;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
     }
 
     @Test(expected = InvalidValidatorException.class)
-    public void testThrowsIfConfigIsInvalid() throws Exception {
+    public void throwsExceptionIfRegexpPatternPropertyIsMissing() throws Exception {
         expect(config.hasProperty("regexp.pattern")).andReturn(false);
         expect(config.getName()).andReturn("regexp");
         replayAll();
@@ -50,7 +50,7 @@ public class RegExpValidatorTest {
     }
 
     @Test(expected = InvalidValidatorException.class)
-    public void testThrowsIfFieldIsNotTypeString() throws Exception {
+    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
         expect(config.hasProperty("regexp.pattern")).andReturn(true);
         expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
         expect(context.getType()).andReturn("not-a-string");
@@ -61,7 +61,7 @@ public class RegExpValidatorTest {
     }
 
     @Test
-    public void testIsValid() throws Exception {
+    public void testValidInput() throws Exception {
         expect(config.hasProperty("regexp.pattern")).andReturn(true);
         expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
         replayAll();
@@ -72,7 +72,7 @@ public class RegExpValidatorTest {
     }
 
     @Test
-    public void testIsInvalid() throws Exception {
+    public void testInvalidInput() throws Exception {
         expect(config.hasProperty("regexp.pattern")).andReturn(true);
         expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
         replayAll();
