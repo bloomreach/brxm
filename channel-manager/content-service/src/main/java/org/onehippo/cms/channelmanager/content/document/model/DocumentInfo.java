@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.document.model;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Type {@code type} attribute refers to the document's {@link DocumentType} by id.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonIgnoreProperties(value = "errorCount", allowGetters = true) // only return the error count, never let clients set it
 public class DocumentInfo {
 
     // enveloped reference to document type: { id: "namespace:typename" }
