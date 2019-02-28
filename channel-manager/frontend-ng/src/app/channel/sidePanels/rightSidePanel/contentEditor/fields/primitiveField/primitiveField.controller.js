@@ -31,8 +31,13 @@ class PrimitiveFieldCtrl {
           return;
         }
 
-        field.$setValidity('server', !value.errorInfo);
-        field.$error.server = value.errorInfo && value.errorInfo.message;
+        const isValid = !value.errorInfo || !value.errorInfo.message;
+        field.$setValidity('server', isValid);
+        if (isValid) {
+          delete field.$error.server;
+        } else {
+          field.$error.server = value.errorInfo.message;
+        }
       });
     }
   }
