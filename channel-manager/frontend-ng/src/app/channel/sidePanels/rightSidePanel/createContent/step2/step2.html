@@ -42,8 +42,9 @@
     </md-subheader>
 
     <md-subheader ng-if="$ctrl.getErrorCount()" md-colors="{background: 'hippo-red-50'}">
-      <div translate="{{ $ctrl.getErrorCount() === 1 ? 'DOCUMENT_CONTAINS_ONE_ERROR' : 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS' }}"
-           translate-value-count="{{ $ctrl.getErrorCount() }}">
+      <div class="qa-validation-summary"
+        translate="{{ $ctrl.getErrorCount() === 1 ? 'DOCUMENT_CONTAINS_ONE_ERROR' : 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS' }}"
+        translate-value-count="{{ $ctrl.getErrorCount() }}">
       </div>
     </md-subheader>
 
