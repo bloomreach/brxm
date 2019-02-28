@@ -208,7 +208,7 @@ public class HippoPathParser {
         final char EOF = (char) -1;
 
         // check for length
-        int len = jcrPath == null ? 0 : jcrPath.length();
+        final int len = jcrPath == null ? 0 : jcrPath.length();
 
         // shortcut
         if (len == 1 && jcrPath.charAt(0) == '/') {
@@ -394,9 +394,9 @@ public class HippoPathParser {
                             while(pos <= len && !jcrPath.substring(pos).startsWith(matchString))
                                 ++pos;
                             index = Path.INDEX_DEFAULT;
-                            final int endIndex = pos + (matchString.length() - 1);
+                            final int endIndex = pos + matchString.length() - 1;
                             if (endIndex > len) {
-                                throw new MalformedPathException("'" + jcrPath + "' is not a valid path: Mismatching ] character");
+                                throw new MalformedPathException("'" + jcrPath + "' is not a valid path: No matching '" + matchString + "' character");
                             }
                             argument = jcrPath.substring(lastPos, endIndex);
                             if(pos+matchString.length() > len)
