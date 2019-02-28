@@ -58,15 +58,15 @@ public class ValidatorMigrator implements ConfigurationMigrator {
             Collections::unmodifiableMap));
 
     @Override
-    public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
+    public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) {
         try {
-            return doMigrate(session, configurationModel, autoExportEnabled);
+            return doMigrate(session, autoExportEnabled);
         } catch (final RepositoryException e) {
             throw new MigrationException("ValidatorMigrator failed.", e);
         }
     }
 
-    private boolean doMigrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) throws RepositoryException {
+    private boolean doMigrate(final Session session, final boolean autoExportEnabled) throws RepositoryException {
         if (!autoExportEnabled) {
             log.info("Autoexport not enabled :ValidatorMigrator does not need to do anything.");
             return false;
@@ -83,10 +83,12 @@ public class ValidatorMigrator implements ConfigurationMigrator {
 
     private boolean migrateValidatorConfiguration(final Session session) throws RepositoryException {
         final Node oldConfigLocation = session.getNode(OLD_VALIDATORS_CONFIGURATION_LOCATION);
+        
+        // check and warn for missing default validators
         for (final String validatorName : DEFAULT_VALIDATORS.keySet()) {
             if (!oldConfigLocation.hasNode(validatorName)) {
-                log.warn("Default validator " + validatorName + " was removed, but now bootstrapped again with default values. " +
-                        "Please verify if this validator should be deleted.");
+                log.warn("Default validator " + validatorName + " was removed, but now bootstrapped again with " +
+                        "default values. Please verify if this validator should be deleted.");
             }
         }
 
@@ -111,14 +113,16 @@ public class ValidatorMigrator implements ConfigurationMigrator {
             log.info("Migrating validator " + oldValidatorName);
             if (oldValidator.hasProperty(PLUGIN_CLASS)) {
                 try {
-                    final Property pluginClass = oldValidator.getProperty(PLUGIN_CLASS);
-                    if (StringUtils.equals(pluginClass.getString(), defaultPluginClass)) {
+                    final String pluginClass = oldValidator.getProperty(PLUGIN_CLASS).getString();
+                    // config has not changed
+                    if (StringUtils.equals(pluginClass, defaultPluginClass)) {
+                        // copy regex pattern to new validator
                         if (oldValidator.hasProperty(REGEX_PATTERN)) {
                             setNewProperty(newValidator, oldValidator.getProperty(REGEX_PATTERN));
                         }
                         oldValidator.remove();
                     } else {
-                        // custom validator, so delete new validator
+                        // config is not default: keep old validator, delete new validator
                         newValidator.remove();
                     }
                 } catch (final RepositoryException e) {
