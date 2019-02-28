@@ -192,7 +192,7 @@
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
-      <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
+      <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       <div ng-message="server">{{ ::$ctrl.getFieldError().server }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'LONG'" ng-message="pattern">{{ ::'ERROR_FIELD_LONG_PATTERN' | translate }}</div>
       <div ng-if="::$ctrl.fieldType.type === 'DOUBLE'" ng-message="pattern">{{ ::'ERROR_FIELD_DOUBLE_PATTERN' | translate }}</div>
