@@ -62,13 +62,4 @@ public class HippoPathParserTest {
         HippoPathParser.parse("/binaries/foldername/documentname/versions[2']/file", resolver, pathFactory);
     }
 
-    @Test
-    public void testNumberParsing() throws RepositoryException {
-        final PathFactory pathFactory = PathFactoryImpl.getInstance();
-        final NamespaceResolver namespaceResolver = QDefinitionBuilderFactory.NS_DEFAULTS;
-        final HippoNamePathResolver resolver = new HippoNamePathResolver(namespaceResolver, false);
-        HippoPathParser.parse("/binaries/foldername/documentname/versions[2]/file", resolver, pathFactory);
-    }
-
-
 }
