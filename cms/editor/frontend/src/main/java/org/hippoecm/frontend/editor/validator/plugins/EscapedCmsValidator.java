@@ -29,7 +29,10 @@ import org.hippoecm.frontend.validation.Violation;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
+ *
+ * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.EscapedHtmlValidator} instead.
  */
+@Deprecated
 public class EscapedCmsValidator extends AbstractCmsValidator {
 
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
