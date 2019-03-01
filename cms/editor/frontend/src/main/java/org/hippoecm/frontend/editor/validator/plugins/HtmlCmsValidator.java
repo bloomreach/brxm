@@ -37,7 +37,11 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The builtin "Html" type is checked by the
  * {@link NonEmptyCmsValidator} and does not require special treatment.
+ * 
+ * 
+ * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.NonEmptyHtmlValidator} instead.
  */
+@Deprecated
 public class HtmlCmsValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
