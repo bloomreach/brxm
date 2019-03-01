@@ -18,6 +18,7 @@ package org.onehippo.cms7.utilities.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpStatus;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
 import org.slf4j.Logger;
@@ -47,20 +49,20 @@ public class ProxyFilter implements Filter {
     private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
 
 
-    /**
-     * These are the "hop-by-hop" headers that should not be copied.
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
-     *
-     * Copied from https://github.com/mitre/HTTP-Proxy-Servlet version 1.1
-     */
-    private static final HeaderGroup hopByHopHeaders;
+    private static final HeaderGroup ignoreHeaders;
     static {
-        hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[]{
+        ignoreHeaders = new HeaderGroup();
+        //These are the "hop-by-hop" headers that should not be copied
+        // ( see http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html )
+        String[] hopByHopHeaders = new String[]{
                 "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Location"};
-        for (String header : headers) {
-            hopByHopHeaders.addHeader(new BasicHeader(header, null));
+                "TE", "Trailers", "Transfer-Encoding", "Upgrade",};
+        for (String header : hopByHopHeaders) {
+            ignoreHeaders.addHeader(new BasicHeader(header, null));
+        }
+        String[] skipHeaders = new String[]{ "Location", org.apache.http.cookie.SM.SET_COOKIE, org.apache.http.cookie.SM.SET_COOKIE2};
+        for (String header : skipHeaders) {
+            ignoreHeaders.addHeader(new BasicHeader(header, null));
         }
     }
 
@@ -98,24 +100,25 @@ public class ProxyFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         final String resourcePath = StringUtils.substringBefore(httpServletRequest.getPathInfo(), ";");
         if (resourcePath != null) {
             String query = httpServletRequest.getQueryString();
             final String queryParams = StringUtils.isEmpty(query) ? "" : "?" + query;
-
             final Optional<String> url = proxies.entrySet().stream().filter(e -> resourcePath.startsWith(e.getKey())).map(
                     e -> getUrl(e.getKey(), e.getValue(), resourcePath, queryParams)
             ).findFirst();
 
             if (url.isPresent()) {
                 final URL resource = new URL(addIndexHtmlIfNeeded(url.get()));
-                final URLConnection urlConnection = resource.openConnection();
-                if (urlConnection != null) {
+                final HttpURLConnection urlConnection = (HttpURLConnection) resource.openConnection();
+                httpServletResponse.setStatus(urlConnection.getResponseCode());
+                if (urlConnection.getResponseCode()== HttpStatus.SC_OK){
                     log.debug("Proxying {} to {}", resourcePath, url);
-                    copyResponseHeaders((HttpServletResponse) response, urlConnection);
-                    proxy(response, urlConnection);
-                    return;
+                    copyResponseHeaders(httpServletResponse, urlConnection);
+                    proxy(httpServletResponse, urlConnection);
                 }
+                return;
             }
         }
         log.debug("Pass through request");
@@ -131,8 +134,8 @@ public class ProxyFilter implements Filter {
      */
     private void copyResponseHeader(HttpServletResponse servletResponse, Header header) {
         String headerName = header.getName();
-        if (!hopByHopHeaders.containsHeader(headerName)) {
-            servletResponse.setHeader(headerName, header.getValue());
+        if (!ignoreHeaders.containsHeader(headerName)) {
+            servletResponse.addHeader(headerName, header.getValue());
         }
     }
 
