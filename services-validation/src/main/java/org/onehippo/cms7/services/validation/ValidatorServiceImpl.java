@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.services.validation;
 
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public class ValidatorServiceImpl implements ValidationService {
     }
 
     @Override
-    public Validator getValidator(final String name) throws ValidatorConfigurationException {
+    public Validator getValidator(final String name) {
         return config.getValidator(name);
     }
 
