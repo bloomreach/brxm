@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.onehippo.cms7.services.validation.validator.ValidatorConfigImpl;
 import org.onehippo.cms7.services.validation.validator.ValidatorFactory;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class ValidatorServiceConfig implements Serializable {
 
-    public static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
 
     private final Map<String, Validator> validators = new HashMap<>();
 
@@ -51,7 +50,7 @@ public class ValidatorServiceConfig implements Serializable {
                 if (!validators.containsKey(validatorConfig.getName())) {
                     final Validator validator = ValidatorFactory.create(validatorConfig);
                     if (validator == null) {
-                        log.error("Failed to create validator '" + validatorConfig.getName() + "'");
+                        log.error("Failed to create validator '" + validatorConfig.getName() + "'.");
                     } else {
                         validators.put(configNode.getName(), validator);
                     }
@@ -59,7 +58,7 @@ public class ValidatorServiceConfig implements Serializable {
 
             }
         } catch (final RepositoryException e) {
-            log.error("Failed to create validator config");
+            log.error("Failed to create validator config.");
         }
     }
 
@@ -68,7 +67,7 @@ public class ValidatorServiceConfig implements Serializable {
      * @param name The validator name
      * @return Instance of a {@link Validator}
      */
-    Validator getValidator(final String name) throws ValidatorConfigurationException {
+    Validator getValidator(final String name) {
         return validators.getOrDefault(name, null);
     }
 }
