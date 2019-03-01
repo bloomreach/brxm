@@ -21,9 +21,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,12 +36,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.HeaderGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toSet;
 
 public class ProxyFilter implements Filter {
 
@@ -49,22 +48,24 @@ public class ProxyFilter implements Filter {
     private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
 
 
-    private static final HeaderGroup ignoreHeaders;
-    static {
-        ignoreHeaders = new HeaderGroup();
-        //These are the "hop-by-hop" headers that should not be copied
-        // ( see http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html )
-        String[] hopByHopHeaders = new String[]{
-                "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade",};
-        for (String header : hopByHopHeaders) {
-            ignoreHeaders.addHeader(new BasicHeader(header, null));
-        }
-        String[] skipHeaders = new String[]{ "Location", org.apache.http.cookie.SM.SET_COOKIE, org.apache.http.cookie.SM.SET_COOKIE2};
-        for (String header : skipHeaders) {
-            ignoreHeaders.addHeader(new BasicHeader(header, null));
-        }
-    }
+    /**
+     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html.
+     * Location and cookie headers are marked as ignore headers as well because the proxy does not (yet) do anything
+     * special with them.
+     */
+    private static final Set<String> IGNORE_HEADERS = Stream.of(
+            "Connection",
+            "Keep-Alive",
+            "Proxy-Authenticate",
+            "Proxy-Authorization",
+            "TE",
+            "Trailers",
+            "Transfer-Encoding",
+            "Upgrade",
+            "Location",
+            "Set-Cookie",
+            "Set-Cookie2"
+    ).collect(toSet());
 
     private Map<String, String> proxies;
 
@@ -113,7 +114,7 @@ public class ProxyFilter implements Filter {
                 final URL resource = new URL(addIndexHtmlIfNeeded(url.get()));
                 final HttpURLConnection urlConnection = (HttpURLConnection) resource.openConnection();
                 httpServletResponse.setStatus(urlConnection.getResponseCode());
-                if (urlConnection.getResponseCode()== HttpStatus.SC_OK){
+                if (urlConnection.getResponseCode() == 200) {
                     log.debug("Proxying {} to {}", resourcePath, url);
                     copyResponseHeaders(httpServletResponse, urlConnection);
                     proxy(httpServletResponse, urlConnection);
@@ -125,30 +126,12 @@ public class ProxyFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    /**
-     * Copy a proxied response header back to the proxy client.
-     *
-     * Do not copy cookies and the location header
-     *
-     * Inspired by https://github.com/mitre/HTTP-Proxy-Servlet version 1.1
-     */
-    private void copyResponseHeader(HttpServletResponse servletResponse, Header header) {
-        String headerName = header.getName();
-        if (!ignoreHeaders.containsHeader(headerName)) {
-            servletResponse.addHeader(headerName, header.getValue());
-        }
-    }
-
-    private void copyResponseHeaders(final HttpServletResponse response, final URLConnection urlConnection) {
-        final Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
-        for (Map.Entry<String, List<String>> stringListEntry : headerFields.entrySet()) {
-            for (String value : stringListEntry.getValue()) {
-                final String key = stringListEntry.getKey();
-                if (key != null) {
-                    copyResponseHeader(response, new BasicHeader(key, value));
-                }
-            }
-        }
+    private void copyResponseHeaders(final HttpServletResponse httpServletResponse, final HttpURLConnection urlConnection) {
+        urlConnection.getHeaderFields().entrySet().stream()
+                .filter(e ->
+                        e.getKey() != null && !IGNORE_HEADERS.contains(e.getKey()))
+                .forEach(e ->
+                        e.getValue().forEach(value -> httpServletResponse.addHeader(e.getKey(), value)));
     }
 
     private void proxy(ServletResponse response, final URLConnection urlConnection) throws IOException {

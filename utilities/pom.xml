@@ -36,7 +36,6 @@
     <commons-lang.version>2.6</commons-lang.version>
     <junit.version>4.12</junit.version>
     <hippo.testutils.version>13.1.0-SNAPSHOT</hippo.testutils.version>
-    <httpclient.version>4.5.6</httpclient.version>
   </properties>
 
   <dependencies>
@@ -44,11 +43,6 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -82,7 +76,7 @@
     </dependency>
   </dependencies>
 
- <scm>
+  <scm>
     <connection>scm:git:https://code.onehippo.org/cms-community/hippo-cms-utilities.git</connection>
     <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-cms-utilities.git</developerConnection>
     <url>https://code.onehippo.org/cms-community/hippo-cms-utilities</url>
@@ -101,7 +95,6 @@
       </releases>
     </repository>
   </repositories>
-
 
 
 </project>
