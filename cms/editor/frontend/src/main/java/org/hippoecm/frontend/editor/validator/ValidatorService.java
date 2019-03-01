@@ -26,15 +26,10 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.validation.util.ServiceUtils.getValidationService;
 
 public class ValidatorService extends Plugin {
-
-    public static final Logger log = LoggerFactory.getLogger(ValidatorService.class);
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
     public static final String FIELD_VALIDATOR_SERVICE_ID = "field.validator.service.id";
@@ -65,14 +60,10 @@ public class ValidatorService extends Plugin {
         }
 
         if (!map.containsKey(name)) {
-            try {
-                final ValidationService validationService = getValidationService();
-                final Validator validator = validationService.getValidator(name);
-                if (validator != null) {
-                    map.put(name, new CmsValidatorAdapter(validator));
-                }
-            } catch (final ValidatorConfigurationException e) {
-                log.warn("Failed to create validator '{}' due to a configuration error", name, e);
+            final ValidationService validationService = getValidationService();
+            final Validator validator = validationService.getValidator(name);
+            if (validator != null) {
+                map.put(name, new CmsValidatorAdapter(validator));
             }
         }
 
