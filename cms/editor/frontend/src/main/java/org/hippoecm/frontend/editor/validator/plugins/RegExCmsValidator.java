@@ -29,7 +29,10 @@ import org.hippoecm.frontend.validation.Violation;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
+ * 
+ * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.RegExpValidator} instead.
  */
+@Deprecated
 public class RegExCmsValidator extends AbstractCmsValidator {
 
     private final Pattern pattern;
