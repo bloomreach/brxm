@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adds a single property with a constant value to the dev-localhost
+ * Adds a single property with a constant value to the dev-localhost host group for hst:platform and the current site.
  */
 public class AutoHostTemplateInstruction implements Instruction {
 
