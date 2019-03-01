@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public class ValidatorConfigImpl implements ValidatorConfig {
 
-    public static final Logger log = LoggerFactory.getLogger(ValidatorConfigImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidatorConfigImpl.class);
 
     private String name;
     private String className;
@@ -42,7 +42,7 @@ public class ValidatorConfigImpl implements ValidatorConfig {
     @Override
     public void reconfigure(final Node node) throws RepositoryException {
         if (!node.hasProperty(CLASS_NAME)) {
-            throw new IllegalStateException("Required property '"+ CLASS_NAME + " is not found.");
+            throw new IllegalStateException("Required property '"+ CLASS_NAME + "' is not found.");
         }
 
         name = node.getName();

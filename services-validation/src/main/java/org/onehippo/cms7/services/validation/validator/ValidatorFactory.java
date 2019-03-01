@@ -34,11 +34,11 @@ public interface ValidatorFactory extends Serializable {
             final Constructor<?> constructor = Class.forName(className).getConstructor(ValidatorConfig.class);
             return (Validator) constructor.newInstance(config);
         } catch (ClassNotFoundException e) {
-            log.error("Failed to locate class '{}' on classpath", className);
+            log.error("Failed to locate class '{}' on classpath.", className);
         } catch (NoSuchMethodException e) {
-            log.error("Class '{}' is missing a constructor with single argument ValidatorConfig)", className);
+            log.error("Class '{}' is missing a constructor with single argument ValidatorConfig.", className);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            log.error("Error instantiating class '{}'", className, e);
+            log.error("Error instantiating class '{}'.", className, e);
         }
         return null;
     }

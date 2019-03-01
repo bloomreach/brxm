@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.onehippo.cms7.services.validation.validator.ValidatorFactory;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
@@ -69,7 +68,7 @@ public class ValidatorServiceConfigTest {
     }
 
     @Test
-    public void returnsNullWhenNoValidatorAreConfigured() throws Exception {
+    public void returnsNullWhenNoValidatorsAreConfigured() throws Exception {
         final ValidatorServiceConfig config = createConfig();
         assertNull(config.getValidator("non-existing-validator"));
     }
@@ -80,13 +79,17 @@ public class ValidatorServiceConfigTest {
         assertNull(config.getValidator("non-existing-validator"));
     }
 
-    @Test(expected = ValidatorConfigurationException.class)
-    public void throwsExceptionWhenValidatorCreationFailed() throws Exception {
+    @Test()
+    public void logsAnErrorWhenValidatorCreationFailed() throws Exception {
         expect(ValidatorFactory.create(isA(ValidatorConfig.class))).andReturn(null);
         replayAll();
 
-        final ValidatorServiceConfig config = createConfig("null-validator");
-        config.getValidator("null-validator");
+        try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidatorServiceConfig.class).build()) {
+            final ValidatorServiceConfig config = createConfig("null-validator");
+            config.getValidator("null-validator");
+            assertEquals(1L, listener.messages().count());
+            verifyAll();
+        }
     }
 
     @Test
