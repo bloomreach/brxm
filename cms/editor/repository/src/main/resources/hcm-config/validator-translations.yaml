@@ -7,6 +7,7 @@ definitions:
         email: Enter a valid email address
         escaped: 'Do not use these characters: < > & '' "'
         non-empty: Enter a value
+        html: Enter a value
         resource-required: Upload a file
         summarySingle: This document has 1 error
         summaryMultiple: This document has {0} errors
