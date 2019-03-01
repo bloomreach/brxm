@@ -15,10 +15,8 @@
  */
 package org.onehippo.cms7.services.validation;
 
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
-
 public interface ValidationService {
 
-    Validator getValidator(String name) throws ValidatorConfigurationException;
+    Validator getValidator(String name);
 
 }
