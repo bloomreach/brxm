@@ -54,7 +54,6 @@ import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -130,7 +129,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void determineTwoSupportedValidators() throws ValidatorConfigurationException {
+    public void determineTwoSupportedValidators() {
         final ValidationService validationService = createMock(ValidationService.class);
         final Validator email = createMock(Validator.class);
         final Validator references = createMock(Validator.class);
@@ -154,7 +153,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void determineUnknownValidator() throws ValidatorConfigurationException {
+    public void determineUnknownValidator() {
         final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
@@ -193,21 +192,6 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void determineMisconfiguredValidator() throws ValidatorConfigurationException {
-        final ValidationService validationService = createMock(ValidationService.class);
-        final FieldType fieldType = createMock(AbstractFieldType.class);
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-
-        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
-        expect(validationService.getValidator("misconfigured")).andThrow(new ValidatorConfigurationException("Something's wrong"));
-        expect(fieldType.getId()).andReturn("fieldId");
-        replayAll();
-
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("misconfigured"));
-        verifyAll();
-    }
-
-    @Test
     public void determineValidatorsWithoutValidationService() {
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
@@ -236,12 +220,13 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void getUnknownValidator() throws ValidatorConfigurationException {
+    public void getUnknownValidator() {
         ValidationService validationService = createMock(ValidationService.class);
         FieldValidationContext validationContext = createMock(FieldValidationContext.class);
 
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
-        expect(validationService.getValidator("test")).andThrow(new ValidatorConfigurationException("Something's wrong"));
+        expect(validationService.getValidator("test")).andReturn(null);
+
         replayAll();
 
         final Validator test = FieldTypeUtils.getValidator("test", validationContext);
@@ -250,7 +235,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void getKnownValidator() throws ValidatorConfigurationException, InvalidValidatorException {
+    public void getKnownValidator() throws InvalidValidatorException {
         ValidationService validationService = createMock(ValidationService.class);
         Validator validator = createMock(Validator.class);
         FieldValidationContext validationContext = createMock(FieldValidationContext.class);
@@ -267,7 +252,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void getMisconfiguredValidator() throws ValidatorConfigurationException, InvalidValidatorException {
+    public void getMisconfiguredValidator() throws InvalidValidatorException {
         ValidationService validationService = createMock(ValidationService.class);
         Validator validator = createMock(Validator.class);
         FieldValidationContext validationContext = createMock(FieldValidationContext.class);

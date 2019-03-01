@@ -70,7 +70,6 @@ import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.exception.ValidatorConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,20 +191,15 @@ public class FieldTypeUtils {
             } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validatorName)) {
                 fieldType.setUnsupportedValidator(true);
             } else {
-                try {
-                    final Validator validator = validationService.getValidator(validatorName);
-                    if (validator != null) {
-                        fieldType.addValidatorName(validatorName);
-                    } else {
-                        final DocumentType docType = fieldContext.getParentContext().getDocumentType();
-                        log.info("Field '{}' in document type '{}' has unknown validator '{}', " +
-                                        "documents of this type will be read only in the Channel Manager",
-                                fieldType.getId(), docType.getId(), validatorName);
-                        docType.setReadOnlyDueToUnknownValidator(true);
-                    }
-                } catch (ValidatorConfigurationException e) {
-                    log.error("Failed to load validator '{}' for field '{}', ignoring it",
-                            validatorName, fieldType.getId(), e);
+                final Validator validator = validationService.getValidator(validatorName);
+                if (validator != null) {
+                    fieldType.addValidatorName(validatorName);
+                } else {
+                    final DocumentType docType = fieldContext.getParentContext().getDocumentType();
+                    log.info("Field '{}' in document type '{}' has unknown validator '{}', " +
+                                    "documents of this type will be read only in the Channel Manager",
+                            fieldType.getId(), docType.getId(), validatorName);
+                    docType.setReadOnlyDueToUnknownValidator(true);
                 }
             }
         }
@@ -225,10 +219,10 @@ public class FieldTypeUtils {
 
         try {
             final Validator validator = validationService.getValidator(validatorName);
-            validator.init(validationContext);
-            return validator;
-        } catch (ValidatorConfigurationException e) {
-            log.error("Failed to load validator '{}', ignoring it", validatorName, e);
+            if (validator != null) {
+                validator.init(validationContext);
+                return validator;
+            }
         } catch (InvalidValidatorException e) {
             log.warn("Ignoring invalid validator '{}': {}", validatorName, e.getMessage());
         }
