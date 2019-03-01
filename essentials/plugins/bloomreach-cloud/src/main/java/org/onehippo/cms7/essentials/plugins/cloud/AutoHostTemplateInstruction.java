@@ -38,7 +38,9 @@ public class AutoHostTemplateInstruction implements Instruction {
     private static Logger log = LoggerFactory.getLogger(AutoHostTemplateInstruction.class);
 
     private static final String HST_AUTOHOSTTEMPLATE_PROPERTY = "hst:autohosttemplate";
-    private static final String BRC_CLUSTER_HOST_PATTERN = "https://*.bloomreach.io";
+    private static final String BRC_CLUSTER_HOST_PATTERN = "https://*.onehippo.io";
+    private static final String LOCALHOST_GROUP = "/hst:hosts/dev-localhost";
+    private static final String PLATFORM_PATH = "/hst:platform" + LOCALHOST_GROUP;
 
     @Inject private JcrService jcrService;
     @Inject private SettingsService settingsService;
@@ -46,15 +48,18 @@ public class AutoHostTemplateInstruction implements Instruction {
     @Override
     public Status execute(final Map<String, Object> parameters) {
         final String hstRoot = settingsService.getSettings().getHstRoot();
-        final String targetNode = hstRoot + "/hst:hosts/dev-localhost";
+        final String sitePath = hstRoot + LOCALHOST_GROUP;
+
         final Session session = jcrService.createSession();
         if (session == null) {
             return Status.FAILED;
         }
 
         try {
-            final Node devLocalhost = session.getNode(targetNode);
-            devLocalhost.setProperty(HST_AUTOHOSTTEMPLATE_PROPERTY, new String[] {BRC_CLUSTER_HOST_PATTERN});
+            final Node siteNode = session.getNode(sitePath);
+            final Node platformNode = session.getNode(PLATFORM_PATH);
+            siteNode.setProperty(HST_AUTOHOSTTEMPLATE_PROPERTY, new String[] {BRC_CLUSTER_HOST_PATTERN});
+            platformNode.setProperty(HST_AUTOHOSTTEMPLATE_PROPERTY, new String[] {BRC_CLUSTER_HOST_PATTERN});
             session.save();
         } catch (RepositoryException e) {
             log.error("Error adding HST autohosttemplate property", e);
