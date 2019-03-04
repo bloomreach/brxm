@@ -57,21 +57,9 @@ public class ValidationResult implements IValidationResult {
     }
     
     private void countFields() {
-        final Set<String> modelPaths = new HashSet<>();
+        final Set<ModelPath> modelPaths = new HashSet<>();
         for (Violation violation : getViolations()) {
-            for (ModelPath modelPath : violation.getDependentPaths()) {
-
-                int numberOfPathElements = modelPath.getElements().length;
-                int currentElement = 1;
-                
-                for (ModelPathElement modelPathElement: modelPath.getElements()) {
-                    final boolean isNode = modelPathElement.getField().getTypeDescriptor().isNode();
-                    boolean isLastModelPathElement = currentElement++ == numberOfPathElements;
-                    if (!isNode || isLastModelPathElement) {
-                        modelPaths.add(modelPath.toString());
-                    }
-                }
-            }
+            modelPaths.addAll(violation.getDependentPaths());
         }
         affectedFields = modelPaths.size();
     }
