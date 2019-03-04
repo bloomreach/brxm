@@ -32,7 +32,10 @@ import org.hippoecm.frontend.validation.Violation;
 /**
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
  * node.
+ *
+ * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.NodeReferenceValidator} instead.
  */
+@Deprecated
 public class NodeReferenceValidator extends AbstractCmsValidator {
 
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
