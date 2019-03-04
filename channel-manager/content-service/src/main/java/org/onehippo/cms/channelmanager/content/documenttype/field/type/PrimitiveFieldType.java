@@ -199,6 +199,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
             return false;
         }
         writeValues(node, Optional.of(values), false);
+        validate(values);
         return true;
     }
 

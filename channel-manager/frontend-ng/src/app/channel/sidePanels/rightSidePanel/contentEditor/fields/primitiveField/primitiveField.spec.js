@@ -17,27 +17,34 @@
 describe('PrimitiveField', () => {
   let $componentController;
   let $ctrl;
+  let $rootScope;
+  let $q;
   let FieldService;
   let onFieldFocus;
   let onFieldBlur;
 
-  const fieldType = { id: 'field:type' };
-  const fieldValues = [
-    { value: 'Value 1' },
-    { value: 'Value 2' },
-    { value: 'Value 3' },
-  ];
+  let fieldType;
+  let fieldValues;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$componentController_, _$rootScope_, _FieldService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _FieldService_) => {
       $componentController = _$componentController_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       FieldService = _FieldService_;
     });
 
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
+
+    fieldType = { id: 'field:type' };
+    fieldValues = [
+      { value: 'Value 1' },
+      { value: 'Value 2' },
+      { value: 'Value 3' },
+    ];
 
     $ctrl = $componentController('primitiveField', {
     }, {
@@ -218,9 +225,6 @@ describe('PrimitiveField', () => {
     beforeEach(() => {
       field = {
         $invalid: false,
-        $error: {
-          server: 'Message',
-        },
         $setValidity: () => {},
       };
       $ctrl.form = { 'test-name/field:type': field };
@@ -230,29 +234,66 @@ describe('PrimitiveField', () => {
 
     it('starts a save timer when the value changed', () => {
       $ctrl.valueChanged();
-      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
     });
 
-    it('removes a server error when the value changed', () => {
-      spyOn($ctrl, 'getFieldName').and.returnValue('test-name/field:type');
+    it('sets server errors when the auto-saved value contains errorInfo objects', () => {
       spyOn(field, '$setValidity');
-      $ctrl.valueChanged(0);
+      $ctrl.valueChanged();
 
-      expect($ctrl.getFieldName).toHaveBeenCalledWith(0);
+      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+
+      const validatedValues = angular.copy(fieldValues);
+      validatedValues[0].errorInfo = {
+        message: "First error",
+      };
+      validatedValues[2].errorInfo = {
+        message: "Second error",
+      };
+
+      const afterSave = FieldService.startSaveTimer.calls.mostRecent().args[2];
+      afterSave(validatedValues);
+
+      expect(field.$setValidity).toHaveBeenCalledWith('server', false);
+      expect($ctrl.firstServerError).toBe("First error");
+    });
+
+    it('removes server errors when the auto-saved value does not contain errorInfo objects', () => {
+      spyOn(field, '$setValidity');
+      fieldValues[1].errorInfo = {
+        message: "Error",
+      };
+      $ctrl.firstServerError = "Error";
+
+      $ctrl.valueChanged();
+
+      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+
+      const validatedValues = angular.copy(fieldValues);
+      delete validatedValues[1].errorInfo;
+
+      const afterSave = FieldService.startSaveTimer.calls.mostRecent().args[2];
+      afterSave(validatedValues);
+
       expect(field.$setValidity).toHaveBeenCalledWith('server', true);
-      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
-      expect(field.$error.server).toBe(undefined);
+      expect($ctrl.firstServerError).toBeUndefined();
     });
   });
 
   it('saves the field on blur when the value has changed', () => {
-    spyOn(FieldService, 'saveField');
+    const validatedValues = angular.copy(fieldValues); // values without errorInfo objects
+    spyOn(FieldService, 'saveField').and.returnValue($q.resolve(validatedValues));
 
     $ctrl.focusPrimitive();
+
     fieldValues[1].value = 'Changed';
+    const expectedFieldValues = angular.copy(fieldValues);
+
     $ctrl.blurPrimitive();
+    $rootScope.$digest();
 
     expect(FieldService.saveField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    expect($ctrl.fieldValues).toEqual(expectedFieldValues);
   });
 
   it('does not save the field on blur when the value has not changed', () => {
@@ -303,7 +344,7 @@ describe('PrimitiveField', () => {
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
       expect($ctrl.form.field1.$setValidity).toHaveBeenCalledWith('server', false);
-      expect($ctrl.form.field1.$error.server).toBe('error message');
+      expect($ctrl.firstServerError).toBe('error message');
     });
 
     it('makes form field valid', () => {
@@ -317,7 +358,7 @@ describe('PrimitiveField', () => {
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
       expect($ctrl.form.field2.$setValidity).toHaveBeenCalledWith('server', true);
-      expect($ctrl.form.field2.$error.server).toBeFalsy();
+      expect($ctrl.firstServerError).toBeUndefined();
     });
   });
 });

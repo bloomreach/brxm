@@ -56,6 +56,7 @@
     </md-button>
 
     <md-button class="qa-save"
+               md-no-ink
                ng-if="!$ctrl.isPublishAllowed()"
                ng-click="$ctrl.save()"
                ng-disabled="!$ctrl.isSaveAllowed()">

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 describe('field service', () => {
+  let $q;
+  let $rootScope;
   let $timeout;
   let FieldService;
   let ContentService;
@@ -21,7 +23,9 @@ describe('field service', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$timeout_, _FieldService_, _ContentService_) => {
+    inject((_$q_, _$rootScope_, _$timeout_, _FieldService_, _ContentService_) => {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       $timeout = _$timeout_;
       FieldService = _FieldService_;
       ContentService = _ContentService_;
@@ -29,18 +33,24 @@ describe('field service', () => {
   });
 
   it('should start a save timer for field', () => {
+    const saveResult = [];
     spyOn(FieldService, '_clearFieldTimer');
-    spyOn(FieldService, 'saveField');
+    spyOn(FieldService, 'saveField').and.returnValue($q.resolve(saveResult));
     FieldService.setDocumentId('mockDocumentId');
 
     expect(FieldService.activeSaveTimers).toEqual({});
 
-    FieldService.startSaveTimer('mockFieldName', 'mockValue');
+    const onSave = jasmine.createSpy('onSave');
+    FieldService.startSaveTimer('mockFieldName', 'mockValue', onSave);
+    $rootScope.$digest();
 
     expect(FieldService._clearFieldTimer).toHaveBeenCalled();
 
     $timeout.flush();
     expect(FieldService.saveField).toHaveBeenCalled();
+
+    $rootScope.$digest();
+    expect(onSave).toHaveBeenCalledWith(saveResult);
   });
 
   it('should save a field', () => {

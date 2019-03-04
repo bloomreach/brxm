@@ -187,6 +187,38 @@ describe('Create content step 2 controller', () => {
     $rootScope.$digest();
   });
 
+  describe('server-side validation error', () => {
+    let $$element;
+
+    beforeEach(() => {
+      $$element = { focus: jasmine.createSpy() };
+      $ctrl.form = {
+        $error: {
+          server: [{ $$element }],
+        },
+      };
+      spyOn(ContentEditor, 'save').and.returnValue($q.reject());
+    });
+
+    it('sets focus on the first element on server-side validation error', () => {
+      $ctrl.save();
+      $rootScope.$digest();
+
+      expect($$element.focus).toHaveBeenCalled();
+    });
+
+    it('removes an old watch for setting focus on the first element on server-side validation error', () => {
+      const stopPreviousWatch = jasmine.createSpy('stopPreviousWatch');
+      $ctrl.stopServerErrorWatch = stopPreviousWatch;
+
+      $ctrl.save();
+      $rootScope.$digest();
+
+      expect(stopPreviousWatch).toHaveBeenCalled();
+      expect($ctrl.stopServerErrorWatch).toBeUndefined();
+    });
+  });
+
   it('stops create content when close is called', () => {
     spyOn(CreateContentService, 'stop');
     $ctrl.close();
@@ -294,20 +326,6 @@ describe('Create content step 2 controller', () => {
       });
 
       expect($ctrl.getErrorCount()).toBe(10);
-    });
-
-    it('sets focus on the first element on server-side validation error', () => {
-      const $$element = { focus: jasmine.createSpy() };
-
-      $ctrl.$onInit();
-      $ctrl.form = {
-        $error: {
-          server: [{ $$element }],
-        },
-      };
-      $scope.$digest();
-
-      expect($$element.focus).toHaveBeenCalled();
     });
   });
 });

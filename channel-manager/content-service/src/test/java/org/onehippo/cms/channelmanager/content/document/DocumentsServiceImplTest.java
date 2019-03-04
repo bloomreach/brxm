@@ -1270,9 +1270,14 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
-
-        verifyAll();
+        try {
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            fail("Expected a BadRequestException");
+        } catch (BadRequestException expected) {
+            ErrorInfo errorInfo = (ErrorInfo) expected.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(Reason.INVALID_DATA));
+            verifyAll();
+        }
     }
 
     @Test

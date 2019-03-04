@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,9 +103,12 @@ public interface DocumentsService {
      *                    pending.
      * @param locale      Locale of the CMS user
      * @param branchId    id of branch
+     *
+     * @return the field values; the ones that were deemed invalid will be annotated with an errorInfo object.
+     *
      * @throws ErrorWithPayloadException If updating the field failed
      */
-    void updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final String branchId) throws ErrorWithPayloadException;
+    List<FieldValue> updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final String branchId) throws ErrorWithPayloadException;
 
     /**
      * Discard the editable version of a document, such that it is available for others to edit. The changes that were

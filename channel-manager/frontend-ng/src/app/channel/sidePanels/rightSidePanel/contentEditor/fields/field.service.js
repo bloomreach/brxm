@@ -82,7 +82,7 @@ class FieldService {
     return this.documentId;
   }
 
-  startSaveTimer(fieldName, fieldValue) {
+  startSaveTimer(fieldName, fieldValue, onSaveCallback) {
     const documentId = this.getDocumentId();
 
     if (!this.activeSaveTimers[documentId]) this.activeSaveTimers[documentId] = {};
@@ -90,14 +90,15 @@ class FieldService {
     this._clearFieldTimer(documentId, fieldName);
 
     this.activeSaveTimers[documentId][fieldName] = this.$timeout(() => {
-      this.saveField(fieldName, fieldValue, documentId);
+      this.saveField(fieldName, fieldValue, documentId).then(onSaveCallback);
     }, this.AUTOSAVE_DELAY);
   }
 
   saveField(fieldName, fieldValues, documentId = this.getDocumentId()) {
     this._clearFieldTimer(documentId, fieldName);
-    this.ContentService.saveField(documentId, fieldName, clearFieldValues(fieldValues));
+    const promise = this.ContentService.saveField(documentId, fieldName, clearFieldValues(fieldValues));
     this._cleanupTimers(documentId);
+    return promise;
   }
 
   _clearFieldTimer(documentId, fieldName) {

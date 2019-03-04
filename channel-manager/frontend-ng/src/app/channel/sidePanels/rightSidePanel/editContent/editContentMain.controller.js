@@ -55,12 +55,6 @@ class EditContentMainCtrl {
         this.RightSidePanelService.stopLoading();
       }
     });
-
-    this.$scope.$watch('$ctrl.form.$error.server', (error) => {
-      if (error && error.length) {
-        error[0].$$element.focus();
-      }
-    });
   }
 
   getErrorCount() {
@@ -82,7 +76,25 @@ class EditContentMainCtrl {
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       })
+      .catch(() => this._focusFirstInvalidField())
       .finally(stopLoading);
+  }
+
+  _focusFirstInvalidField() {
+    // stop previous watch if it still exists
+    if (this.stopServerErrorWatch) {
+      this.stopServerErrorWatch();
+    }
+    // create new watch for server errors, and focus the first field with such an error
+    this.stopServerErrorWatch = this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length > 0) {
+        error[0].$$element.focus();
+        this.stopServerErrorWatch();
+        delete this.stopServerErrorWatch;
+      }
+    });
+
+    return this.$q.reject();
   }
 
   startLoading() {

@@ -62,12 +62,6 @@ class Step2Controller {
     });
     // focus the form so key presses will reach Angular Material instead of the parent window
     this.$element.find('form').focus();
-
-    this.$scope.$watch('$ctrl.form.$error.server', (error) => {
-      if (error && error.length) {
-        error[0].$$element.focus();
-      }
-    });
   }
 
   getErrorCount() {
@@ -95,7 +89,7 @@ class Step2Controller {
         this.form.$setPristine();
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-        this.ContentEditor.discardChanges()
+        return this.ContentEditor.discardChanges()
           .then(() => this.Step2Service.saveComponentParameter())
           .then(() => {
             this.CreateContentService.finish(this.ContentEditor.getDocumentId());
@@ -104,6 +98,7 @@ class Step2Controller {
             this.CmsService.reportUsageStatistic('CreateContent2Done');
           });
       })
+      .catch(() => this._focusFirstInvalidField())
       .finally(stopLoading);
   }
 
@@ -111,6 +106,21 @@ class Step2Controller {
     this.loading = true;
 
     return () => { this.loading = false; };
+  }
+
+  _focusFirstInvalidField() {
+    // stop previous watch if it still exists
+    if (this.stopServerErrorWatch) {
+      this.stopServerErrorWatch();
+    }
+    // create new watch for server errors, and focus the first field with such an error
+    this.stopServerErrorWatch = this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length > 0) {
+        error[0].$$element.focus();
+        this.stopServerErrorWatch();
+        delete this.stopServerErrorWatch;
+      }
+    });
   }
 
   isEditing() {

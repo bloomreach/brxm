@@ -432,6 +432,7 @@ public class FieldTypeUtils {
         // Choices can never be multiple, there is always only one value.
         final FieldValue choiceFieldValue = values.get(0);
         field.writeValue(node, choiceFieldValue);
+        field.validateValue(choiceFieldValue);
         return true;
     }
 

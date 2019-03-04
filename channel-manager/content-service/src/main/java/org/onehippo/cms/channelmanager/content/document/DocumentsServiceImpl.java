@@ -300,7 +300,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void updateEditableField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale, final String branchId) throws ErrorWithPayloadException {
+    public List<FieldValue> updateEditableField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale, final String branchId) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
@@ -318,14 +318,17 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         // Write field value to draft node
         if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), draftNode)) {
-            // Persist changes to repository
             try {
                 session.save();
             } catch (final RepositoryException e) {
                 log.warn("Failed to save changes to field '{}' in draft node of document {}", fieldPath, uuid, e);
                 throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
             }
+        } else {
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
         }
+
+        return fieldValues;
     }
 
     @Override

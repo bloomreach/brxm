@@ -134,6 +134,38 @@ describe('EditContentMainCtrl', () => {
       expect($ctrl.startLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
     });
+
+    describe('on server-side validation error', () => {
+      let $$element;
+
+      beforeEach(() => {
+        $$element = { focus: jasmine.createSpy() };
+        $ctrl.form = {
+          $error: {
+            server: [{ $$element }],
+          },
+        };
+        ContentEditor.save.and.returnValue($q.reject());
+      });
+
+      it('sets focus on the first element on server-side validation error', () => {
+        $ctrl.save();
+        $scope.$digest();
+
+        expect($$element.focus).toHaveBeenCalled();
+      });
+
+      it('removes an old watch for setting focus on the first element on server-side validation error', () => {
+        const stopPreviousWatch = jasmine.createSpy('stopPreviousWatch');
+        $ctrl.stopServerErrorWatch = stopPreviousWatch;
+
+        $ctrl.save();
+        $scope.$digest();
+
+        expect(stopPreviousWatch).toHaveBeenCalled();
+        expect($ctrl.stopServerErrorWatch).toBeUndefined();
+      });
+    });
   });
 
   it('can switch the editor', () => {
@@ -367,18 +399,6 @@ describe('EditContentMainCtrl', () => {
       });
 
       expect($ctrl.getErrorCount()).toBe(10);
-    });
-
-    it('sets focus on the first element on server-side validation error', () => {
-      const $$element = { focus: jasmine.createSpy() };
-      $ctrl.form = {
-        $error: {
-          server: [{ $$element }],
-        },
-      };
-      $scope.$digest();
-
-      expect($$element.focus).toHaveBeenCalled();
     });
   });
 });

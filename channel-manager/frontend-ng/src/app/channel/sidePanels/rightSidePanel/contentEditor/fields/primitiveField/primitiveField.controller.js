@@ -25,21 +25,26 @@ class PrimitiveFieldCtrl {
 
   $onChanges(changes) {
     if (changes.fieldValues) {
-      changes.fieldValues.currentValue.forEach((value, index) => {
-        const field = this.form[this.getFieldName(index)];
-        if (!field) {
-          return;
-        }
-
-        const isValid = !value.errorInfo || !value.errorInfo.message;
-        field.$setValidity('server', isValid);
-        if (isValid) {
-          delete field.$error.server;
-        } else {
-          field.$error.server = value.errorInfo.message;
-        }
-      });
+      this._onFieldValuesChanged(changes.fieldValues.currentValue);
     }
+  }
+
+  _onFieldValuesChanged(fieldValues) {
+    delete this.firstServerError;
+
+    fieldValues.forEach((value, index) => {
+      const field = this.form[this.getFieldName(index)];
+      if (!field) {
+        return;
+      }
+
+      const isValid = !value.errorInfo || !value.errorInfo.message;
+      field.$setValidity('server', isValid);
+
+      if (!isValid && !this.firstServerError) {
+        this.firstServerError = value.errorInfo.message;
+      }
+    });
   }
 
   getFieldName(index) {
@@ -98,19 +103,37 @@ class PrimitiveFieldCtrl {
     this._saveField();
   }
 
-  valueChanged(index) {
-    const field = this.form[this.getFieldName(index)];
-    if (field && field.$error.server) {
-      field.$setValidity('server', true);
-      delete field.$error.server;
-    }
-
-    this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues);
+  valueChanged() {
+    this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues,
+      validatedValues => this._afterSaveField(validatedValues));
   }
 
   _saveField() {
     if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.saveField(this.getFieldName(), this.fieldValues);
+      this.FieldService.saveField(this.getFieldName(), this.fieldValues)
+        .then(validatedValues => this._afterSaveField(validatedValues));
+    }
+  }
+
+  _afterSaveField(validatedValues) {
+    let errorsChanged = false;
+
+    validatedValues.forEach((validatedValue, index) => {
+      const currentValue = this.fieldValues[index];
+
+      if (validatedValue.errorInfo && !currentValue.errorInfo) {
+        currentValue.errorInfo = validatedValue.errorInfo;
+        errorsChanged = true;
+      }
+
+      if (!validatedValue.errorInfo && currentValue.errorInfo) {
+        delete currentValue.errorInfo;
+        errorsChanged = true;
+      }
+    });
+
+    if (errorsChanged) {
+      this._onFieldValuesChanged(this.fieldValues);
     }
   }
 }

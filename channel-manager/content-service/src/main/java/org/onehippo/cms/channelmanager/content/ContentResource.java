@@ -109,10 +109,9 @@ public class ContentResource {
                                         @PathParam("fieldPath") final String fieldPath,
                                         final List<FieldValue> fieldValues,
                                         @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
-            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getBranchId(servletRequest));
-            return null;
-        });
+        return executeTask(servletRequest, Status.OK, (session, locale) ->
+            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getBranchId(servletRequest))
+        );
     }
 
     @DELETE
