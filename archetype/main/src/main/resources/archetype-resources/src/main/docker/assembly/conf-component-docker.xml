@@ -43,11 +43,6 @@
       <destName>catalina.properties</destName>
     </file>
     <file>
-      <source>conf/setenv.sh</source>
-      <outputDirectory>bin</outputDirectory>
-      <filtered>false</filtered>
-    </file>
-    <file>
       <source>conf/server.xml</source>
       <outputDirectory>conf</outputDirectory>
       <filtered>false</filtered>

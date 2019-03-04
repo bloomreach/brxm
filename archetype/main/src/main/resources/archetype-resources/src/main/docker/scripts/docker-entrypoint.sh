@@ -11,5 +11,8 @@ sed --in-place=.backup 's/@tomcat.max.threads@/'"$TOMCAT_MAXTHREADS"'/' /usr/loc
 # use the appropriate database context info for the selected database type
 cp /usr/local/tomcat/conf/context-$profile.xml /usr/local/tomcat/conf/context.xml
 
+# copy setting environment variables script to the related tomcat folder 
+cp /brxm/bin/tomcat/setenv.sh /usr/local/tomcat/bin/setenv.sh
+
 # run tomcat
 exec /usr/local/tomcat/bin/catalina.sh run

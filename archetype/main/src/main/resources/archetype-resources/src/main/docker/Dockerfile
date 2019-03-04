@@ -15,8 +15,8 @@ ENV BRXM_PROJECT_PATH "${docker.brxm.project.path}"
 # Default repository settings 
 ENV REPO_PATH "${BRXM_PROJECT_PATH}/target/storage"
 ENV REPO_CONFIG ""
-ENV REPO_BOOTSTRAP "true"
-ENV REPO_AUTOEXPORT_ALLOWED "true"
+ENV REPO_BOOTSTRAP "false"
+ENV REPO_AUTOEXPORT_ALLOWED "false"
 
 # Prepare dirs
 # Delete default & unused war files
@@ -48,7 +48,6 @@ RUN chmod +x /brxm/bin/docker-entrypoint.sh
 # Entrypoint script applies env-vars to config, then runs tomcat
 ENTRYPOINT ["/brxm/bin/docker-entrypoint.sh"]
 
-COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/bin /usr/local/tomcat/bin/
 COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/conf /usr/local/tomcat/conf/
 COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/
 COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/webapps /usr/local/tomcat/webapps/
