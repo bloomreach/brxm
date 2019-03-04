@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ describe('EditComponentService', () => {
   let ConfigService;
   let EditComponentService;
   let MaskService;
-  let OverlayService;
   let PageMetaDataService;
   let RightSidePanelService;
 
@@ -58,7 +57,6 @@ describe('EditComponentService', () => {
     ComponentEditor = jasmine.createSpyObj('ComponentEditor', [
       'getComponentName', 'kill', 'open', 'updatePreview',
     ]);
-    OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', [
       'clearContext', 'setContext', 'setTitle', 'startLoading', 'stopLoading',
     ]);
@@ -71,7 +69,6 @@ describe('EditComponentService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentEditor', ComponentEditor);
-      $provide.value('OverlayService', OverlayService);
       $provide.value('RightSidePanelService', RightSidePanelService);
     });
 
@@ -133,7 +130,6 @@ describe('EditComponentService', () => {
       expect(RightSidePanelService.clearContext).toHaveBeenCalled();
       expect($translate.instant).toHaveBeenCalledWith('COMPONENT');
       expect(RightSidePanelService.setTitle).toHaveBeenCalledWith('COMPONENT');
-      expect(OverlayService.sync).toHaveBeenCalled();
     });
 
     it('starts the loading state of the right side panel', () => {

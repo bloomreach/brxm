@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,16 +234,48 @@ describe('OverlayService', () => {
     });
   });
 
-  it('highlights selected element', (done) => {
-    OverlayService.selectComponent('aaaa');
-    loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active').length).toBe(1);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component-active [data-qa-name="component A"]').length)
-        .toBe(1);
-      done();
+  describe('selected component highlighting', () => {
+    const activeComponentSelector = '.hippo-overlay > .hippo-overlay-element-component-active';
+    function expectActiveComponent(qaName) {
+      expect(iframe(activeComponentSelector).length).toBe(1);
+      expect(iframe(`${activeComponentSelector} [data-qa-name="${qaName}"]`).length).toBe(1);
+    }
+
+    function expectNoActiveComponent() {
+      expect(iframe(activeComponentSelector).length).toBe(0);
+    }
+
+    it('highlights component after selecting it', (done) => {
+      loadIframeFixture(() => {
+        expectNoActiveComponent();
+
+        OverlayService.selectComponent('aaaa');
+        expectActiveComponent('component A');
+
+        done();
+      });
+    });
+
+    it('un-highlights component after deselecting it', (done) => {
+      loadIframeFixture(() => {
+        OverlayService.selectComponent('aaaa');
+        expectActiveComponent('component A');
+
+        OverlayService.deselectComponent();
+        expectNoActiveComponent();
+
+        done();
+      });
+    });
+
+    it('highlights component after loading a page that contains the component', (done) => {
+      OverlayService.selectComponent('aaaa');
+      loadIframeFixture(() => {
+        expectActiveComponent('component A');
+        done();
+      });
     });
   });
-
 
   it('sets specific CSS classes on the box- and overlay elements of containers', (done) => {
     loadIframeFixture(() => {
