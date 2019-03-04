@@ -16,6 +16,9 @@
 package org.hippoecm.hst.platform.container.site;
 
 
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.container.site.CustomWebsiteHstSiteProviderService;
@@ -56,7 +59,14 @@ public class DelegatingHstSiteProvider  {
             return compositeHstSite.getMaster();
         }
 
-        final HstSite computed = (HstSite) requestContext.getAttribute(HST_SITE_CONTEXT_ATTR);
+        Map<CompositeHstSite, HstSite> computedMap = (Map<CompositeHstSite, HstSite>)requestContext.getAttribute(HST_SITE_CONTEXT_ATTR);
+
+        if (computedMap == null) {
+            computedMap = new IdentityHashMap<>();
+            requestContext.setAttribute(HST_SITE_CONTEXT_ATTR, computedMap);
+        }
+
+        final HstSite computed = computedMap.get(compositeHstSite);
         if (computed != null) {
             return computed;
         }
@@ -87,7 +97,7 @@ public class DelegatingHstSiteProvider  {
         }
 
         // never compute for the same request context again which HstSite to serve
-        requestContext.setAttribute(HST_SITE_CONTEXT_ATTR, hstSite);
+        computedMap.put(compositeHstSite, hstSite);
 
         final Channel channel = hstSite.getChannel();
         if (channel != null && channel.getBranchId() != null) {
