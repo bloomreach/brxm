@@ -36,7 +36,10 @@ import org.onehippo.cms7.services.validation.util.HtmlUtils;
  * <p>
  * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
  * therefore does not require the html validator to be declared separately.
+ * 
+ * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.NonEmptyValidator} instead.
  */
+@Deprecated
 public class NonEmptyCmsValidator extends AbstractCmsValidator {
 
     public NonEmptyCmsValidator(final IPluginContext context, final IPluginConfig config) {
