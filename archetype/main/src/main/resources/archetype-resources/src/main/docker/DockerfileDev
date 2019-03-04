@@ -4,4 +4,4 @@ LABEL PROJECT=${project.artifactId}:dev-${project.version}
 
 COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/webapps /usr/local/tomcat/webapps/
 COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/autoreload /usr/local/tomcat/shared/lib
-${docker.brxm.copy.dev.libs.cmd}
+${docker.brxm.copy.dev.libs.cmd}COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/

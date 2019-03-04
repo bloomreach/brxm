@@ -382,8 +382,8 @@
       <properties>
         <development-module-deploy-dir>temp</development-module-deploy-dir>
 
-        <!-- Skip copying development modules. Should be empty -->
-        <docker.brxm.copy.dev.libs.cmd/>
+        <!-- Comment out Dockerfile instruction that copies development modules to an image -->
+        <docker.brxm.copy.dev.libs.cmd>#</docker.brxm.copy.dev.libs.cmd>
       </properties>
     </profile>
 
