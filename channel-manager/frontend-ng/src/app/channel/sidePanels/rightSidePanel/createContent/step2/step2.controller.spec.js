@@ -319,13 +319,5 @@ describe('Create content step 2 controller', () => {
       }, () => fail('Dialog should not reject'));
       $rootScope.$digest();
     });
-
-    it('returns document errors count', () => {
-      ContentEditor.getDocument.and.returnValue({
-        info: { errorCount: 10 },
-      });
-
-      expect($ctrl.getErrorCount()).toBe(10);
-    });
   });
 });

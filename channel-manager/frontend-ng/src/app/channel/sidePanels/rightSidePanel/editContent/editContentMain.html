@@ -17,19 +17,12 @@
       class="form-dense-layout"
       layout="column"
       flex>
-  <md-subheader ng-if="$ctrl.notAllFieldsShown() && !$ctrl.getErrorCount()"
+  <md-subheader ng-if="$ctrl.notAllFieldsShown()"
                 md-colors="{background: 'hippo-grey-200'}">
 
     <div>{{ ::'NOT_ALL_FIELDS_SHOWN' | translate }}</div>
     <!-- use double quotes in the click action expression so we can use single quotes in the translation value -->
     <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
-  </md-subheader>
-
-  <md-subheader ng-if="$ctrl.getErrorCount()" md-colors="{background: 'hippo-red-50'}">
-    <div class="qa-validation-summary"
-      translate="{{ $ctrl.getErrorCount() === 1 ? 'DOCUMENT_CONTAINS_ONE_ERROR' : 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS' }}"
-      translate-value-count="{{ $ctrl.getErrorCount() }}">
-    </div>
   </md-subheader>
 
   <content-editor flex="grow"

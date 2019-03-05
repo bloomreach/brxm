@@ -288,15 +288,16 @@ class ContentEditorService {
       .catch((response) => {
         const result = this.$q.reject(); // tell the caller that saving has failed.
 
+        let params;
+        let errorKey = 'ERROR_UNABLE_TO_SAVE';
+
         if (isDocument(response.data)) {
           this._reloadDocumentType();
           this.document = response.data;
 
-          return result;
+          errorKey = 'DOCUMENT_CONTAINS_ERRORS';
+          params = { name: response.data.displayName };
         }
-
-        let params;
-        let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
         if (isErrorInfo(response.data)) {
           const errorInfo = response.data;

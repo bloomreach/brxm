@@ -392,13 +392,5 @@ describe('EditContentMainCtrl', () => {
 
       expect(DialogService.show).not.toHaveBeenCalled();
     });
-
-    it('returns document errors count', () => {
-      ContentEditor.getDocument.and.returnValue({
-        info: { errorCount: 10 },
-      });
-
-      expect($ctrl.getErrorCount()).toBe(10);
-    });
   });
 });

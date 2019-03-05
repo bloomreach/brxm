@@ -64,12 +64,6 @@ class Step2Controller {
     this.$element.find('form').focus();
   }
 
-  getErrorCount() {
-    const document = this.ContentEditor.getDocument();
-
-    return document && document.info && document.info.errorCount;
-  }
-
   allMandatoryFieldsShown() {
     return this.ContentEditor.isEditing() && this.ContentEditor.getDocumentType().canCreateAllRequiredFields;
   }
