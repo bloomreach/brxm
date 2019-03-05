@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,7 +83,6 @@ public class PluginUserSession extends UserSession {
     public static final String SESSION_CMS_APP_COUNT = "session-cms:appCount";
     public static final String HST_REQUEST_CONTEXT_ATTR_JCR_SESSION = PluginUserSession.class.getName() + ".sessionObject";
 
-    private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
     private transient Session fallbackSession;
     private boolean skipFallbackSessionLogout;
@@ -100,10 +99,6 @@ public class PluginUserSession extends UserSession {
 
     public UserCredentials getUserCredentials() {
         return credentials;
-    }
-
-    public static void setCredentials(UserCredentials credentials) throws RepositoryException {
-        fallbackCredentials = credentials;
     }
 
     public static PluginUserSession get() {
@@ -192,15 +187,9 @@ public class PluginUserSession extends UserSession {
         Session session = getJcrSessionInternal();
         if (session == null) {
             Main main = (Main)Application.get();
-            if (fallbackCredentials == null) {
-                try {
-                    main.getRepository(); // side effect of reinitializing fallback credentials
-                } catch (RepositoryException ignored) {
-                }
-            }
             if (fallbackSession == null) {
                 try {
-                    fallbackSession = JcrSessionModel.login(fallbackCredentials);
+                    fallbackSession = JcrSessionModel.login(main.getFallbackCredentials());
                 } catch (RepositoryException e) {
                     log.warn("Cannot login fallback session: " + e.getMessage());
                 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                pageInitTask = HDC.getCurrentTask().startSubtask("PluginPage.init");
+                pageInitTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".init");
             }
 
             pageId = ((PluginUserSession) UserSession.get()).getPageId();
@@ -153,7 +153,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                pageRenderHeadTask = HDC.getCurrentTask().startSubtask("PluginPage.renderHead");
+                pageRenderHeadTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".renderHead");
             }
 
             super.renderHead(response);
@@ -210,11 +210,24 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
      * Refresh the JCR session, i.e. invalidate (cached) subtrees for which an event has been received.
      */
     public void refresh() {
-        // objects may be invalid after refresh, so reacquire them when needed
-        detach();
+        Task refreshTask = null;
 
-        // refresh session
-        JcrObservationManager.getInstance().refreshSession();
+        try {
+            if (HDC.isStarted()) {
+                refreshTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".refresh");
+            }
+
+            // objects may be invalid after refresh, so reacquire them when needed
+            detach();
+
+            // refresh session
+            JcrObservationManager.getInstance().refreshSession();
+        }
+        finally {
+            if (refreshTask != null) {
+                refreshTask.stop();
+            }
+        }
     }
 
     /**
@@ -225,7 +238,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                pageProcessEventsTask = HDC.getCurrentTask().startSubtask("PluginPage.processEvents");
+                pageProcessEventsTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".processEvents");
             }
 
             refresh();
@@ -250,7 +263,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                initTask = HDC.getCurrentTask().startSubtask("PluginPage.onInitialize");
+                initTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".onInitialize");
             }
 
             super.onInitialize();
@@ -267,7 +280,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                beforeRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.onBeforeRender");
+                beforeRenderTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".onBeforeRender");
             }
 
             super.onBeforeRender();
@@ -284,7 +297,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                afterRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.onAfterRender");
+                afterRenderTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".onAfterRender");
             }
 
             super.onAfterRender();
@@ -300,7 +313,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                pageRenderTask = HDC.getCurrentTask().startSubtask("PluginPage.render");
+                pageRenderTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".render");
             }
 
             if (root != null) {
@@ -370,7 +383,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         try {
             if (HDC.isStarted()) {
-                detachTask = HDC.getCurrentTask().startSubtask("PluginPage.onDetach");
+                detachTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".onDetach");
             }
 
             context.detach();
