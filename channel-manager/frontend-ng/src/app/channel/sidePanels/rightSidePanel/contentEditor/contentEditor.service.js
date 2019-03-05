@@ -374,7 +374,7 @@ class ContentEditorService {
     return this._askSaveOrDiscardChanges(messageKey, messageParams)
       .then((action) => {
         if (action === 'SAVE') {
-          return this._saveDocument()
+          return this.save()
             .then(() => action); // let caller know that changes have been saved
         }
 
