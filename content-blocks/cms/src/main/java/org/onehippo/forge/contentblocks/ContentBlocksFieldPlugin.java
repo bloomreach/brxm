@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
 import org.onehippo.forge.contentblocks.model.DropDownOption;
 import org.onehippo.forge.contentblocks.sort.SortHelper;
+import org.onehippo.forge.contentblocks.validator.ContentBlocksValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
-    static final Logger log = LoggerFactory.getLogger(ContentBlocksFieldPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentBlocksFieldPlugin.class);
 
     public static final String LINKS = "links";
     public static final String DROPDOWN = "dropdown";
@@ -173,6 +174,16 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         controls.add(focusMarker = new FocusLink("focusMarker"));
         return controls;
+    }
+
+    /**
+     * A field gets its own ValidationFilter, but a ContentBlocksField should not have that. By returning true here we
+     * simulate that this plugin provides its own validation, and no ValidationFilter is added for it. The block itself
+     * should not be validated. Its fields are validated by the {@link ContentBlocksValidator}.
+     */
+    @Override
+    protected boolean doesTemplateSupportValidation() {
+        return true;
     }
 
     @Override
