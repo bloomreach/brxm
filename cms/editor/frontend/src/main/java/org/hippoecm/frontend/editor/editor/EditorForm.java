@@ -128,7 +128,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
                 log.debug("Invalid model {}", getModel());
             }
         } catch (final ValidationException e) {
-            log.warn("Failed to validate " + getModel());
+            log.warn("Failed to validate " + getModel(), e);
         }
     }
 
