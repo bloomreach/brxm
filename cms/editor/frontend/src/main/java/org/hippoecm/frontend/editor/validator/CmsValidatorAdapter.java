@@ -27,22 +27,39 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms7.services.validation.ValidationService;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import static org.onehippo.cms7.services.validation.util.ServiceUtils.getValidationService;
+
 public class CmsValidatorAdapter implements ICmsValidator {
 
-    private final Validator validator;
+    public static final Logger log = LoggerFactory.getLogger(CmsValidatorAdapter.class);
 
-    public CmsValidatorAdapter(final Validator validator) {
-        this.validator = validator;
+    private final String name;
+
+    public CmsValidatorAdapter(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public void preValidation(final IFieldValidator fieldValidator) throws ValidationException {
+        final Validator validator = getValidator(name);
+        if (validator == null) {
+            return;
+        }
+
         final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
         try {
             validator.init(context);
@@ -51,31 +68,47 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
+    private static Validator getValidator(final String name) {
+        final ValidationService validationService = getValidationService();
+        final Validator validator = validationService.getValidator(name);
+        if (validator == null) {
+            log.warn("Failed to retrieve validator[{}] from validation module", name);
+        }
+        return validator;
+    }
+
     @Override
     public Set<Violation> validate(final IFieldValidator fieldValidator,
                                    final JcrNodeModel parentModel,
                                    final IModel valueModel) throws ValidationException {
 
-        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
-        try {
-            final Object object = valueModel.getObject();
-            final Optional<org.onehippo.cms7.services.validation.Violation> optionalViolation =
-                    validator.validate(context, object != null ? object.toString() : null);
-            if (optionalViolation.isPresent()) {
-                final Model<String> message = Model.of(optionalViolation.get().getMessage());
-                final Violation violation = fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD);
-                return Sets.newHashSet(violation);
-            }
-        } catch (final RuntimeException e) {
-            throw new ValidationException("Error executing validator " + validator, e);
+        final Validator validator = getValidator(name);
+        if (validator == null) {
+            return Collections.emptySet();
         }
 
-        return Collections.emptySet();
+        final String value = getString(valueModel);
+        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
+        try {
+            final Optional<org.onehippo.cms7.services.validation.Violation> violation = validator.validate(context, value);
+            return violation.isPresent()
+                    ? getViolations(fieldValidator, valueModel, violation.get())
+                    : Collections.emptySet();
+
+        } catch (final RuntimeException e) {
+            throw new ValidationException("Error executing validator " + name, e);
+        }
     }
 
-    @Override
-    public String getName() {
-        return validator.getName();
+    private static String getString(final IModel valueModel) {
+        final Object object = valueModel.getObject();
+        return object != null ? object.toString() : null;
+    }
+
+    private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
+                                                final org.onehippo.cms7.services.validation.Violation violation) throws ValidationException {
+        final Model<String> message = Model.of(violation.getMessage());
+        return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD));
     }
 
 }
