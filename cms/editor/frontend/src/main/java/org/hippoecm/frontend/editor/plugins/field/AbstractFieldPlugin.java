@@ -59,13 +59,14 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,6 +240,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             return null;
         }
 
+        // show no validation messages for compounds, such as content blocks
+        if (field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
+            return null;
+        }
+        
         final IModel<IValidationResult> validationModel = helper.getValidationModel();
         if (validationModel == null) {
             return null;
