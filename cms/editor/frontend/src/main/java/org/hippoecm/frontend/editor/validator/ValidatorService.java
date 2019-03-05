@@ -24,10 +24,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
-import org.onehippo.cms7.services.validation.ValidationService;
-import org.onehippo.cms7.services.validation.Validator;
 
-import static org.onehippo.cms7.services.validation.util.ServiceUtils.getValidationService;
+import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
 
 public class ValidatorService extends Plugin {
 
@@ -59,12 +57,8 @@ public class ValidatorService extends Plugin {
             return null;
         }
 
-        if (!map.containsKey(name)) {
-            final ValidationService validationService = getValidationService();
-            final Validator validator = validationService.getValidator(name);
-            if (validator != null) {
-                map.put(name, new CmsValidatorAdapter(validator));
-            }
+        if (!map.containsKey(name) && !REQUIRED_VALIDATOR.equals(name)) {
+            map.put(name, new CmsValidatorAdapter(name));
         }
 
         return map.getOrDefault(name, null);
