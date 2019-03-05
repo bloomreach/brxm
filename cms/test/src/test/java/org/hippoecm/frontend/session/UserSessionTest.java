@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -115,6 +116,7 @@ public class UserSessionTest extends PluginTest {
 
         assertTrue(deserJcrSession.isLive());
         assertFalse(deserJcrSession == jcrSession);
+        assertEquals(deserJcrSession.getUserID(), jcrSession.getUserID());
     }
 
     @Test
