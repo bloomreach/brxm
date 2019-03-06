@@ -254,7 +254,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
 
-                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(vHosts, hostName, contextPath);
+                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(hostName, contextPath);
 
                     if (resolvedVirtualHost == null) {
                         log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
@@ -855,15 +855,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return null;
     }
 
-    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(VirtualHosts vHosts, String hostName, String contextPath) {
+    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(String hostName, String contextPath) {
         ResolvedVirtualHost resolvedVirtualHost = HippoWebappContextRegistry.get().getEntries()
             .filter(hippoWebappContextServiceHolder -> {
                 final HippoWebappContext.Type contextType = hippoWebappContextServiceHolder.getServiceObject().getType();
                 return contextType == HippoWebappContext.Type.CMS || contextType == HippoWebappContext.Type.PLATFORM;
             })
             .findFirst()
-            .map(hippoWebappContextServiceHolder -> {
-                final HippoWebappContext ctx = hippoWebappContextServiceHolder.getServiceObject();
+            .map(platformWebappContextServiceHolder -> {
+                final HippoWebappContext ctx = platformWebappContextServiceHolder.getServiceObject();
                 final String platformContextPath = ctx.getServletContext().getContextPath();
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
                 final HstModel hstModel = hstModelRegistry.getHstModel(platformContextPath);

@@ -296,7 +296,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         defaultResourceBundleIds = StringUtils.split(vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
 
-        Map<String, List<String>> hostTemplates = new HashMap<String, List<String>>();
+        Map<String, List<String>> hostTemplates = new HashMap<>();
 
         // now we loop through the hst:hostgroup nodes first:
         for(HstNode hostGroupNode : vhostsNode.getNodes()) {

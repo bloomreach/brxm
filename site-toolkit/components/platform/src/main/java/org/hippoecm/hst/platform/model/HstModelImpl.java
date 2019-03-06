@@ -259,15 +259,15 @@ public class HstModelImpl implements InternalHstModel {
     private RuntimeHostConfiguration createRuntimeHostConfiguration(final String hostName,
             final String autoHostTemplateRuntimeURL, final String sourceHostGroupName,
             final String targetHostGroupName) {
-        RuntimeHostConfiguration configuration = new RuntimeHostConfiguration();
+        final RuntimeHostConfiguration configuration = new RuntimeHostConfiguration();
         configuration.setHostName(hostName);
         configuration.setSourceHostGroupName(sourceHostGroupName);
         configuration.setTargetHostGroupName(targetHostGroupName);
 
-        String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateRuntimeURL, "://"), ":");
-        boolean isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
-        Integer portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : null;
-        String scheme = (autoHostTemplateRuntimeURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
+        final String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateRuntimeURL, "://"), ":");
+        final boolean isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
+        final Integer portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : null;
+        final String scheme = (autoHostTemplateRuntimeURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
 
         configuration.setPortInUrl(isPortInUrl);
         configuration.setPortNumber(portNumber);
