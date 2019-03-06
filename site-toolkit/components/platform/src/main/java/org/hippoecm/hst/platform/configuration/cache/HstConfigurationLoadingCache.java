@@ -42,7 +42,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CHANNEL;
 
 /**
  * <p>
- *   Note that this class is <strong>not</strong> thread-safe : It should not be accessed by concurrent threads
+ *   Note that this class is <strong>thread-safe</strong> and all public methods can be invoked concurrently
  * </p>
  */
 public class HstConfigurationLoadingCache implements HstEventConsumer {
@@ -70,7 +70,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     }
 
     @Override
-    public void handleEvents(final Set<HstEvent> events) {
+    public synchronized void handleEvents(final Set<HstEvent> events) {
         if (events == null || events.isEmpty()) {
             return;
         }
@@ -102,7 +102,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
      *
      * @return main node path for event or <code>null</code> if event is not for hst configurations
      */
-    String getMainConfigOrRootConfigNodePath(final HstEvent event) throws IllegalArgumentException {
+    synchronized String getMainConfigOrRootConfigNodePath(final HstEvent event) throws IllegalArgumentException {
         if (!isHstConfigurationsEvent(event)) {
             return null;
         }
@@ -127,7 +127,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     }
 
 
-    public Channel loadChannel(final String configurationPath, final boolean isPreviewSite, final String mountIdentifier,
+    public synchronized Channel loadChannel(final String configurationPath, final boolean isPreviewSite, final String mountIdentifier,
                                final String contextPath) {
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath, NODENAME_HST_CHANNEL);
         List<UUID> cachekey = ccn.getCacheKey();
@@ -192,7 +192,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
      *                           returned if present in cache  @return a {@link HstComponentsConfigurationService}
      *                           instance or <code>null</code> when no found for <code>configurationPath</code>
      */
-    public HstComponentsConfiguration getComponentsConfiguration(final String configurationPath,
+    public synchronized HstComponentsConfiguration getComponentsConfiguration(final String configurationPath,
                                                                  final boolean createIfNotInCache) throws ModelLoadingException {
 
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
@@ -238,7 +238,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         return hstComponentsConfiguration;
     }
 
-    public HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration(final String configurationPath,
+    public synchronized HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration(final String configurationPath,
                                                                                           final boolean createIfNotInCache) throws ModelLoadingException {
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
                 HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
@@ -269,7 +269,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
     }
 
 
-    public CompositeConfigurationNodes getCompositeConfigurationNodes(final String configurationPath,
+    public synchronized CompositeConfigurationNodes getCompositeConfigurationNodes(final String configurationPath,
                                                                       final String... relPaths) {
         final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
         if (rootConfigNode == null) {

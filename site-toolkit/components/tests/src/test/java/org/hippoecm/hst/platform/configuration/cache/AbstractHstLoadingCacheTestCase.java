@@ -31,7 +31,6 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
     protected HstEventsCollector hstEventsCollector;
     protected HstManager hstManager;
     protected HstEventsDispatcher hstEventsDispatcher;
-    protected Object hstModelMutex;
 
     @Override
     public void setUp() throws Exception {
@@ -49,10 +48,7 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
 
         hstEventsCollector = on(hstEventsDispatcher).field("hstEventsCollector").get();
 
-        // HSTTWO-4354 TODO replace since hstEventsCollector and hstEventsDispatcher and hstModelMutex most likely won't be spring
-        // wired any more
         this.hstManager = getComponent(HstManager.class.getName());
-        this.hstModelMutex = getComponent("hstModelMutex");
 
     }
 

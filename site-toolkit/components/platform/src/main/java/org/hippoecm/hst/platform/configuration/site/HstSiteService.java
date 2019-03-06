@@ -73,7 +73,6 @@ public class HstSiteService implements HstSite {
     private String configurationPath;
     private MountSiteMapConfiguration mountSiteMapConfiguration;
     private final HstConfigurationLoadingCache hstConfigurationLoadingCache;
-    private final Object hstModelMutex;
 
     HstSiteService(final HstNode site,
                    final Mount mount,
@@ -81,10 +80,6 @@ public class HstSiteService implements HstSite {
                    final HstNodeLoadingCache hstNodeLoadingCache,
                    final HstConfigurationLoadingCache hstConfigurationLoadingCache,
                    final boolean isPreviewSite) throws ModelLoadingException {
-
-        // TODO HSTTWO-4355 this is now a platform mutex which is allowed but do we want this?
-        // TODO NOTE THAT WE DO NEED TO SYNC still on a mutex for model loading!! PER WEBAPP HOWEVER perhaps?
-        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
 
         this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
         name = site.getValueProvider().getName();
@@ -109,9 +104,6 @@ public class HstSiteService implements HstSite {
                           final String configurationPath,
                           final boolean isPreviewSite,
                           final Channel master) {
-
-        // TODO HSTTWO-4355 this is now a platform mutex which is allowed but do we want this?
-        hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
 
         this.hstConfigurationLoadingCache = hstConfigurationLoadingCache;
         name = site.getValueProvider().getName();
@@ -302,7 +294,7 @@ public class HstSiteService implements HstSite {
         }
         log.debug("Loading HstComponentsConfiguration for '{}'", configurationPath);
 
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (componentsConfiguration != null) {
                 return componentsConfiguration.get();
             }
@@ -330,7 +322,7 @@ public class HstSiteService implements HstSite {
         if (siteMap != null) {
             return siteMap.get();
         }
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (siteMap != null) {
                  return siteMap.get();
             }
@@ -367,7 +359,7 @@ public class HstSiteService implements HstSite {
         }
         log.debug("Loading HstComponentsConfiguration for '{}'", configurationPath);
 
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (siteMapItemHandlersConfigurationService != null) {
                 return siteMapItemHandlersConfigurationService.get();
             }
@@ -411,7 +403,7 @@ public class HstSiteService implements HstSite {
         if (locationMapTree != null) {
             return locationMapTree;
         }
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (locationMapTree != null) {
                 return locationMapTree;
             }
@@ -426,7 +418,7 @@ public class HstSiteService implements HstSite {
         if (locationMapTreeComponentDocuments != null) {
             return locationMapTreeComponentDocuments;
         }
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (locationMapTreeComponentDocuments != null) {
                 return locationMapTreeComponentDocuments;
             }
@@ -441,7 +433,7 @@ public class HstSiteService implements HstSite {
         if (siteMenusConfigurations != null) {
             return siteMenusConfigurations.orNull();
         }
-        synchronized (hstModelMutex) {
+        synchronized (this) {
             if (siteMenusConfigurations != null) {
                 return siteMenusConfigurations.orNull();
             }

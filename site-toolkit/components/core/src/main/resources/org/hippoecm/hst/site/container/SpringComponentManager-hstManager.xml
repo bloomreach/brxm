@@ -21,9 +21,6 @@
   <!-- Spring SPI id -->
   <bean id="org.hippoecm.hst.core.linking.HstLinkProcessor" abstract="true"/>
 
-
-  <bean id="hstModelMutex" class="java.lang.Object"/>
-
   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <property name="hstModelProvider" ref="org.hippoecm.hst.platform.HstModelProvider"/>
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />

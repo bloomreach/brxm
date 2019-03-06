@@ -32,9 +32,10 @@ import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*
+/**
  * <p>
- *   Note that this class is <strong>not</strong> thread-safe : It should not be accessed by concurrent threads
+ *   Note that this class is <strong>thread-safe</strong> and methods like {@link #getNode(String)} and
+ *   {@link #handleEvents(Set)} can be invoked concurrently
  * </p>
  */
 public class HstNodeLoadingCache implements HstEventConsumer {
@@ -61,7 +62,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
     }
 
     @Override
-    public void handleEvents(final Set<HstEvent> events) {
+    public synchronized void handleEvents(final Set<HstEvent> events) {
         if (this.events != null) {
             this.events.addAll(events);
         } else {
@@ -80,7 +81,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
      * @return the node for absPath and <code>null</code> otherwise
      * @throws IllegalArgumentException is absPath does not start with <code>rootPath + /</code>
      */
-    public HstNode getNode(String absPath) {
+    public synchronized HstNode getNode(String absPath) {
         long getNodeStartTime = System.currentTimeMillis();
         if (!absPath.startsWith(rootPath)) {
             throw new IllegalArgumentException("Path for getting node from hst node cache must start with rootPath " +
