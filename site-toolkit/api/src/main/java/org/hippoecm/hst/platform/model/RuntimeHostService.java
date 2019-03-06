@@ -21,9 +21,11 @@ public interface RuntimeHostService {
 
     /**
      *
-     * @param hostName
-     * @param sourceHostGroupName
+     * @param hostName the host which makes the request (eg: cms.example.org)
+     * @param sourceHostGroupName the host group which matches the request (eg: dev-localhost)
+     * @param autoHostTemplateRuntimeURL the runtime host url which is defined by hst:autohosttemplate property (eg: https://*.example.org)
+     * @param contextPath
      * @return the {@link VirtualHosts} object with the model for the {@code hostName} included
      */
-    VirtualHosts create(String hostName, String sourceHostGroupName, String contextPath);
+    VirtualHosts create(String hostName, String sourceHostGroupName, String autoHostTemplateRuntimeURL, String contextPath);
 }

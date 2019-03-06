@@ -75,6 +75,8 @@ import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
+
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
@@ -287,7 +289,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if (isSupportedSchemeNotMatchingResponseCode(statusCode)) {
                 schemeNotMatchingResponseCode = statusCode;
             } else {
-                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new Object[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
                         vHostConfValueProvider.getPath(), supportedSchemeNotMatchingResponseCodesAsString()});
             }
         }
@@ -1044,21 +1046,28 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public String getAutoHostTemplate(String hostName) {
+    public Map<String, String> getAutoHostTemplate(String hostName) {
         if (autoHostTemplates.size() == 0) {
             return null;
         } else if (autoHostTemplates.size() > 1) {
             log.warn("There are more than one hst:autohosttemplate property in virtual host definitions.");
         }
 
-        Optional<String> autoHostTemplateName = autoHostTemplates.entrySet()
+        return autoHostTemplates.entrySet()
                 .stream()
-                .filter(hostEntry -> hostEntry.getValue().stream().anyMatch(runtimeHostURL -> matchRuntimeHostURL(runtimeHostURL, hostName)))
+                .filter(entry -> entry.getValue().stream().anyMatch(url -> matchRuntimeHostURL(url, hostName)))
                 .sorted(Comparator.comparing(Entry::getKey))
                 .findFirst()
-                .map(Entry::getKey);
+                .map(entry -> {
+                    final String runtimeHostURL = entry.getValue()
+                        .stream()
+                        .filter(url -> matchRuntimeHostURL(url, hostName))
+                        .findFirst()
+                        .get();
 
-        return (autoHostTemplateName.isPresent()) ? autoHostTemplateName.get() : null;
+                    return ImmutableMap.of(entry.getKey(), runtimeHostURL);
+                })
+                .orElse(null);
     }
 
     private boolean matchRuntimeHostURL(String runtimeHostURL, String hostName) {
@@ -1072,25 +1081,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         Pattern runtimePattern = Pattern.compile(runtimeHostName.replace("*", "[-a-zA-Z0-9]*"));
 
         return runtimePattern.matcher(hostName).matches();
-    }
-
-    @Override
-    public String getAllowedRuntimeHostURL(String hostName) {
-        Optional<Entry<String, List<String>>> autoHostTemplateGroup = autoHostTemplates.entrySet()
-                .stream()
-                .filter(hostEntry -> hostEntry.getValue().stream().anyMatch(runtimeHostURL -> matchRuntimeHostURL(runtimeHostURL, hostName)))
-                .sorted(Comparator.comparing(Entry::getKey))
-                .findFirst();
-
-        if (!autoHostTemplateGroup.isPresent()) {
-            return null;
-        }
-
-        Optional<String> allowedRuntimeHostURL = autoHostTemplateGroup.get().getValue()
-                .stream()
-                .filter(runtimeHostURL -> matchRuntimeHostURL(runtimeHostURL, hostName))
-                .findFirst();
-        return (allowedRuntimeHostURL.isPresent()) ? allowedRuntimeHostURL.get() : null;
     }
 
 }
