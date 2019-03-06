@@ -397,12 +397,24 @@ public class HstModelImpl implements InternalHstModel {
                 continue;
             }
 
+            if (sourceHostGroupHosts.values().size() != 1) {
+                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
+                        "host but non or more than 1", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
+                continue;
+            }
             final VirtualHost virtualHost = sourceHostGroupHosts.values().iterator().next();
             if (!virtualHost.getChildHosts().isEmpty()) {
                 log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
                         "host without child hosts which is required", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
                 continue;
             }
+
+            if (virtualHost.getPortMount(0) == null || virtualHost.getPortMount(0).getRootMount() == null) {
+                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not have a host " +
+                        "with an hst:root mount below it", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
+                continue;
+            }
+
             // create runtime host
             RuntimeVirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, runtimeHostConfiguration);
 

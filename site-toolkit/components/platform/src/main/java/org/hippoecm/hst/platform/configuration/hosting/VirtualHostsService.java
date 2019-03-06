@@ -327,7 +327,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if (autoHostTemplate.length > 0) {
                 final HippoWebappContext.Type type = HippoWebappContextRegistry.get().getContext(contextPath).getType();
                 if (type == PLATFORM || type == CMS) {
-                    hostTemplates.putIfAbsent(hostGroupNode.getValueProvider().getName(), Arrays.asList(autoHostTemplate));
+                    if (hostTemplates.isEmpty()) {
+                        hostTemplates.put(hostGroupNode.getValueProvider().getName(), Arrays.asList(autoHostTemplate));
+                    } else {
+                        log.error("Property '{}' is not allowed on multiple host groups in hst:platform",
+                                VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE);
+                    }
                 } else {
                     log.error("Property '{}' is not allowed on hst configurations other than hst:platform, remove it from" +
                             "'{}'.", VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, hostGroupNode.getValueProvider().getPath());
