@@ -80,6 +80,9 @@ import com.google.common.collect.ImmutableMap;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
+import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.CMS;
+import static org.onehippo.cms7.services.context.HippoWebappContext.Type.PLATFORM;
 
 public class VirtualHostsService implements MutableVirtualHosts {
 
@@ -320,9 +323,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 defaultPort = longDefaultPort.intValue();
             }
 
-            String[] autoHostTemplate = hostGroupNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE);
+            String[] autoHostTemplate = hostGroupNode.getValueProvider().getStrings(VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE);
             if (autoHostTemplate.length > 0) {
-                hostTemplates.putIfAbsent(hostGroupNode.getValueProvider().getName(), Arrays.asList(autoHostTemplate));
+                final HippoWebappContext.Type type = HippoWebappContextRegistry.get().getContext(contextPath).getType();
+                if (type == PLATFORM || type == CMS) {
+                    hostTemplates.putIfAbsent(hostGroupNode.getValueProvider().getName(), Arrays.asList(autoHostTemplate));
+                } else {
+                    log.error("Property '{}' is not allowed on hst configurations other than hst:platform, remove it from" +
+                            "'{}'.", VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, hostGroupNode.getValueProvider().getPath());
+                }
             }
 
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
