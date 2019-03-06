@@ -103,6 +103,10 @@ public class MySqlDbLockManager extends DbLockManager {
                 if (lowerCaseMsg.contains("duplicate entry") || lowerCaseMsg.contains("data truncated")) {
                     log.info("After truncate but before table alteration entries have been inserted");
                     correctTableScheme(tableName, connection, retries - 1);
+                } else if (lowerCaseMsg.contains("duplicate key name")) {
+                    // Duplicate key exception means that the unique index is already created
+                    // In this case it's not necessary to either execute the batch query again or throw an exception
+                    return;
                 } else {
                     throw e;
                 }
