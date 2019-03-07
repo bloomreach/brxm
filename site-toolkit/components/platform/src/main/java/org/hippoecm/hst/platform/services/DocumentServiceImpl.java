@@ -128,8 +128,9 @@ public class DocumentServiceImpl implements DocumentService  {
             log.error("#getChannels invoked with a branchId should always originate from a real http request having an " +
                     "HstRequestContext on a ThreadLocal. RequestContext is missing, return #getChannels ignoring " +
                     "branchId '{}'", branchId);
+        } else {
+            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branchId);
         }
-        requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, branchId);
         return getPreviewChannels(userSession, hostGroup, uuid);
     }
 
