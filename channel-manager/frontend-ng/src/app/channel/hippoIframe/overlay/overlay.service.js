@@ -167,15 +167,17 @@ class OverlayService {
   }
 
   selectComponent(componentId) {
-    this._current = componentId;
+    this._selectedComponentId = componentId;
+    this.sync();
   }
 
   deselectComponent() {
-    delete this._current;
+    delete this._selectedComponentId;
+    this.sync();
   }
 
-  _isSelected(element) {
-    return element.type === 'component' && element.metaData.uuid === this._current;
+  _isSelectedComponentElement(element) {
+    return element.type === 'component' && element.metaData.uuid === this._selectedComponentId;
   }
 
   sync() {
@@ -624,7 +626,8 @@ class OverlayService {
     switch (structureElement.getType()) {
       case 'component':
         this._syncLabel(structureElement, overlayElement);
-        overlayElement.toggleClass('hippo-overlay-element-component-active', this._isSelected(structureElement));
+        overlayElement.toggleClass('hippo-overlay-element-component-active',
+          this._isSelectedComponentElement(structureElement));
         break;
       case 'container': {
         const isEmptyInDom = structureElement.isEmptyInDom();
