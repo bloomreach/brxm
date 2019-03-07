@@ -63,7 +63,7 @@
   "ERROR_UPDATE_COMPONENT": "Bewerken van component is mislukt",
   "ERROR_MENU_ITEM_SAVE_FAILED": "Opslaan van het menu-item is mislukt",
   "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED": "Ophalen van de sitemap voor dit channel is mislukt",
-  "PICKER_TYPE_SITEMAP_ITEMS": "Pagina's (Siteman items)",
+  "PICKER_TYPE_SITEMAP_ITEMS": "Pagina's (Sitemap items)",
   "FEEDBACK_DEFAULT_TITLE": "Fout",
   "TOOLBAR_MENU_CHANNEL_ACCEPT": "Channel accepteren",
   "CONFIRM_PUBLISH_DOCUMENT": "{{documentName}} publiceren?",
