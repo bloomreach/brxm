@@ -18,6 +18,7 @@ package org.hippoecm.hst.container;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
@@ -59,6 +60,8 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -251,7 +254,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             "is a hosting environment internal request, like a pinger. ", containerRequest);
                 } else {
 
-                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(vHosts, hostName, contextPath);
+                    resolvedVirtualHost = resolveVirtualHostFromRuntimeHosts(hostName, contextPath);
 
                     if (resolvedVirtualHost == null) {
                         log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
@@ -852,14 +855,34 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return null;
     }
 
-    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(VirtualHosts vHosts, String hostName, String contextPath) {
-        ResolvedVirtualHost resolvedVirtualHost = null;
-        final String resolvedAutoHostTemplateGroupName = vHosts.getAutoHostTemplate(hostName);
-        if (resolvedAutoHostTemplateGroupName != null) {
-            vHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
-                    resolvedAutoHostTemplateGroupName, contextPath);
-            resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
-        }
+    private ResolvedVirtualHost resolveVirtualHostFromRuntimeHosts(String hostName, String contextPath) {
+        ResolvedVirtualHost resolvedVirtualHost = HippoWebappContextRegistry.get().getEntries()
+            .filter(hippoWebappContextServiceHolder -> {
+                final HippoWebappContext.Type contextType = hippoWebappContextServiceHolder.getServiceObject().getType();
+                return contextType == HippoWebappContext.Type.CMS || contextType == HippoWebappContext.Type.PLATFORM;
+            })
+            .findFirst()
+            .map(platformWebappContextServiceHolder -> {
+                final HippoWebappContext ctx = platformWebappContextServiceHolder.getServiceObject();
+                final String platformContextPath = ctx.getServletContext().getContextPath();
+                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                final HstModel hstModel = hstModelRegistry.getHstModel(platformContextPath);
+
+                final Map<String, String> resolvedAutoHostTemplate = hstModel.getVirtualHosts().matchAutoHostTemplate(hostName);
+                ResolvedVirtualHost virtualHost = null;
+                if (resolvedAutoHostTemplate != null) {
+                    Entry<String, String> entry = resolvedAutoHostTemplate.entrySet().iterator().next();
+                    final String resolvedAutoHostTemplateGroupName = entry.getKey();
+                    final String resolvedAutoHostTemplateURL = entry.getValue();
+
+                    VirtualHosts virtualHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
+                        resolvedAutoHostTemplateGroupName, resolvedAutoHostTemplateURL, contextPath);
+                    virtualHost = virtualHosts.matchVirtualHost(hostName);
+                }
+                return virtualHost;
+            })
+            .orElse(null);
+
         return resolvedVirtualHost;
     }
 }

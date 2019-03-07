@@ -309,16 +309,11 @@ public interface VirtualHosts {
     HstComponentRegistry getComponentRegistry();
 
     /**
-     * Gets the auto host template name from runtime hosts if exists
-     * @param hostName the name of the host which the request is made
-     * @return name of the auto host template
+     * Tries to match the hostname to a defined hst:autohosttemplate URL. If there isn't any
+     * hst:autotemplate property is set or there isn't any matching URL, returns null
+     * 
+     * @param hostName the name of the host which the makes the request
+     * @return name (as key) - URL (as value) map of auto host template.
      */
-    String getAutoHostTemplate(String hostName);
-
-    /**
-     * Gets the runtime host url if exists
-     * @param hostName the name of the host which the request is made
-     * @return
-     */
-    String getAllowedRuntimeHostURL(String hostName);
+    Map<String, String> matchAutoHostTemplate(String hostName);
 }

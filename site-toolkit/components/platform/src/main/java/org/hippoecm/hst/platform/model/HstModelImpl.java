@@ -27,7 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -84,6 +84,8 @@ import static org.hippoecm.hst.platform.utils.ProxyUtils.createProxy;
 public class HstModelImpl implements InternalHstModel {
 
     private static final Logger log = LoggerFactory.getLogger(HstModelImpl.class);
+    public static final String HTTPS_SCHEME = "https";
+    public static final String HTTP_SCHEME = "http";
 
     private Session session;
     private ServletContext websiteServletContext;
@@ -108,7 +110,64 @@ public class HstModelImpl implements InternalHstModel {
     private final HstSiteMapItemHandlerRegistryImpl siteMapItemHandlerRegistry = new HstSiteMapItemHandlerRegistryImpl();
 
     // map of hostName as key and Pair left is the source HostGroupName and right the targetHostGroupName
-    private Map<String, Pair<String, String>> runtimeHosts = new HashMap<>();
+    private Map<String, RuntimeHostConfiguration> runtimeHosts = new HashMap<>();
+
+    public static class RuntimeHostConfiguration {
+        private String hostName;
+        private String sourceHostGroupName;
+        private String targetHostGroupName;
+        private String scheme;
+        private boolean isPortInUrl;
+        private Integer portNumber;
+
+        public String getHostName() {
+            return hostName;
+        }
+
+        public void setHostName(String hostName) {
+            this.hostName = hostName;
+        }
+
+        public String getSourceHostGroupName() {
+            return sourceHostGroupName;
+        }
+
+        public void setSourceHostGroupName(String sourceHostGroupName) {
+            this.sourceHostGroupName = sourceHostGroupName;
+        }
+
+        public String getTargetHostGroupName() {
+            return targetHostGroupName;
+        }
+
+        public void setTargetHostGroupName(String targetHostGroupName) {
+            this.targetHostGroupName = targetHostGroupName;
+        }
+
+        public String getScheme() {
+            return scheme;
+        }
+
+        public void setScheme(String scheme) {
+            this.scheme = scheme;
+        }
+
+        public boolean isPortInUrl() {
+            return isPortInUrl;
+        }
+
+        public void setPortInUrl(boolean isPortInUrl) {
+            this.isPortInUrl = isPortInUrl;
+        }
+
+        public Integer getPortNumber() {
+            return portNumber;
+        }
+
+        public void setPortNumber(Integer portNumber) {
+            this.portNumber = portNumber;
+        }
+    }
 
     public HstModelImpl(final Session session,
                         final ServletContext servletContext,
@@ -183,13 +242,36 @@ public class HstModelImpl implements InternalHstModel {
     }
 
 
-    public void addRuntime(final String hostName, final String sourceHostGroupName, final String targetHostGroupName) {
+    public void addRuntime(final String hostName, final String sourceHostGroupName, final String autoHostTemplateURL,
+            final String targetHostGroupName) {
         synchronized (this) {
             if (!runtimeHosts.containsKey(hostName)) {
-                runtimeHosts.put(hostName, Pair.of(sourceHostGroupName, targetHostGroupName));
+                runtimeHosts.put(hostName, createRuntimeHostConfiguration(hostName, autoHostTemplateURL,
+                        sourceHostGroupName, targetHostGroupName));
                 invalidate();
             }
         }
+    }
+
+    /**
+     * A runtime host configuration that contains configuration options for runtime virtual host
+     */
+    private RuntimeHostConfiguration createRuntimeHostConfiguration(final String hostName,
+            final String autoHostTemplateURL, final String sourceHostGroupName, final String targetHostGroupName) {
+        final RuntimeHostConfiguration configuration = new RuntimeHostConfiguration();
+        configuration.setHostName(hostName);
+        configuration.setSourceHostGroupName(sourceHostGroupName);
+        configuration.setTargetHostGroupName(targetHostGroupName);
+
+        final String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateURL, "://"), ":");
+        final boolean isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
+        final Integer portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : null;
+        final String scheme = (autoHostTemplateURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
+
+        configuration.setPortInUrl(isPortInUrl);
+        configuration.setPortNumber(portNumber);
+        configuration.setScheme(scheme);
+        return configuration;
     }
 
     @Override
@@ -295,9 +377,10 @@ public class HstModelImpl implements InternalHstModel {
     private boolean addRuntimeHosts(final VirtualHostsService virtualHosts) {
 
         boolean added = false;
-        for (Iterator<Map.Entry<String, Pair<String, String>>> iterator = runtimeHosts.entrySet().iterator(); iterator.hasNext();) {
-            final Entry<String, Pair<String, String>> entry = iterator.next();
+        for (Iterator<Map.Entry<String, RuntimeHostConfiguration>> iterator = runtimeHosts.entrySet().iterator(); iterator.hasNext();) {
+            final Entry<String, RuntimeHostConfiguration> entry = iterator.next();
             final String hostName = entry.getKey();
+            final RuntimeHostConfiguration runtimeHostConfiguration = entry.getValue();
 
             final ResolvedMount existing = virtualHosts.matchMount(hostName, "");
             if (existing != null) {
@@ -306,23 +389,33 @@ public class HstModelImpl implements InternalHstModel {
                 continue;
             }
 
-            final String sourceHostGroupName = entry.getValue().getLeft();
-            final String targetHostGroupName = entry.getValue().getRight();
-            final Map<String, VirtualHost> sourceHostGroupHosts = virtualHosts.getRootVirtualHostsByGroup().get(sourceHostGroupName);
+            final Map<String, VirtualHost> sourceHostGroupHosts = virtualHosts.getRootVirtualHostsByGroup().get(runtimeHostConfiguration.getSourceHostGroupName());
             if (sourceHostGroupHosts == null || sourceHostGroupHosts.size() != 1) {
                 log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
-                        "host which is required", hostName, websiteServletContext, sourceHostGroupName);
+                        "host which is required", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
                 continue;
             }
 
+            if (sourceHostGroupHosts.values().size() != 1) {
+                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
+                        "host but non or more than 1", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
+                continue;
+            }
             final VirtualHost virtualHost = sourceHostGroupHosts.values().iterator().next();
             if (!virtualHost.getChildHosts().isEmpty()) {
                 log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not define a single " +
-                        "host without child hosts which is required", hostName, websiteServletContext, sourceHostGroupName);
+                        "host without child hosts which is required", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
                 continue;
             }
+
+            if (virtualHost.getPortMount(0) == null || virtualHost.getPortMount(0).getRootMount() == null) {
+                log.warn("Cannot add runtime hosts '{}' for '{}' since the source host group '{}' does not have a host " +
+                        "with an hst:root mount below it", hostName, websiteServletContext, runtimeHostConfiguration.getSourceHostGroupName());
+                continue;
+            }
+
             // create runtime host
-            RuntimeVirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, hostName, targetHostGroupName);
+            RuntimeVirtualHost runtimeHost = new RuntimeVirtualHost(virtualHost, runtimeHostConfiguration);
 
             virtualHosts.addVirtualHost(runtimeHost);
 

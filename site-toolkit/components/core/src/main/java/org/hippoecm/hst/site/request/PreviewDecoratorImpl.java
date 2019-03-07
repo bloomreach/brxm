@@ -785,13 +785,8 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
-        public String getAutoHostTemplate(String hostName) {
-            return delegatee.getAutoHostTemplate(hostName);
-        }
-
-        @Override
-        public String getAllowedRuntimeHostURL(String hostName) {
-            return delegatee.getAllowedRuntimeHostURL(hostName);
+        public Map<String, String> matchAutoHostTemplate(String hostName) {
+            return delegatee.matchAutoHostTemplate(hostName);
         }
     }
 

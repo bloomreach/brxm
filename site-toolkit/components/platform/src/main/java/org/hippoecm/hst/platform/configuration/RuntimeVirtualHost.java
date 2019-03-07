@@ -24,6 +24,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.platform.model.HstModelImpl.RuntimeHostConfiguration;
 
 public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
@@ -36,15 +37,15 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
     private final boolean isPortInUrl;
     private final String scheme;
 
-    public RuntimeVirtualHost(final VirtualHost delegatee, final String serverName, final String hostGroupName) {
-        this(delegatee, StringUtils.substringBefore(serverName, ":").split("\\."), hostGroupName);
+    public RuntimeVirtualHost(final VirtualHost delegatee, final RuntimeHostConfiguration runtimeHostConfiguration) {
+        this(delegatee, runtimeHostConfiguration, StringUtils.substringBefore(runtimeHostConfiguration.getHostName(), ":").split("\\."), runtimeHostConfiguration.getTargetHostGroupName());
     }
 
-    private RuntimeVirtualHost(final VirtualHost delegatee, final String[] hostNameSegments, final String hostGroupName) {
-        this(delegatee, "", hostNameSegments, hostNameSegments.length - 1, hostGroupName);
+    private RuntimeVirtualHost(final VirtualHost delegatee, final RuntimeHostConfiguration runtimeHostConfiguration, final String[] hostNameSegments, final String hostGroupName) {
+        this(delegatee, runtimeHostConfiguration, "", hostNameSegments, hostNameSegments.length - 1, hostGroupName);
     }
 
-    public RuntimeVirtualHost(final VirtualHost delegatee, final String hostNamePrefix, final String[] hostNameSegments, final int position, final String hostGroupName) {
+    public RuntimeVirtualHost(final VirtualHost delegatee, final RuntimeHostConfiguration runtimeHostConfiguration, final String hostNamePrefix, final String[] hostNameSegments, final int position, final String hostGroupName) {
         super(delegatee);
         this.delegatee = delegatee;
         if (hostNamePrefix.length() == 0) {
@@ -56,7 +57,7 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
         name = hostNameSegments[position];
 
         if (position > 0) {
-            child = new RuntimeVirtualHost(delegatee, hostName, hostNameSegments, position - 1, hostGroupName);
+            child = new RuntimeVirtualHost(delegatee, runtimeHostConfiguration, hostName, hostNameSegments, position - 1, hostGroupName);
             portMount = null;
             isPortInUrl = false;
             scheme = null;
@@ -74,18 +75,9 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
                 runtimeMount = new RuntimeMount(rootMount, RuntimeVirtualHost.this);
             }
 
-            String runtimeHostURL = delegatee.getVirtualHosts().getAllowedRuntimeHostURL(hostName);
-            final int portNumber;
-            if (runtimeHostURL != null) {
-                String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(runtimeHostURL, "://"), ":");
-                isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
-                portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : delegateePortMount.getPortNumber();
-                scheme = (runtimeHostURL.startsWith("https")) ? "https:" : "http";
-            } else {
-                isPortInUrl = false;
-                scheme = null;
-                portNumber = delegateePortMount.getPortNumber();
-            }
+            final int portNumber = (runtimeHostConfiguration.getPortNumber() != null) ? runtimeHostConfiguration.getPortNumber() : delegateePortMount.getPortNumber();
+            isPortInUrl = runtimeHostConfiguration.isPortInUrl();
+            scheme = runtimeHostConfiguration.getScheme();
 
             this.portMount = new PortMount() {
                 @Override
