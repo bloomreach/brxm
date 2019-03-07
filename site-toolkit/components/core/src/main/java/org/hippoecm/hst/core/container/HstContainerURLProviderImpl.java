@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -405,7 +405,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         if (contextPath != null) {
             urlBuilder.append(contextPath);
-        } else if (requestContext.isCmsRequest() ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
+        } else if (requestContext.isChannelManagerPreviewRequest() ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
         // if there is a matchingIgnoredPrefix on the ResolvedMount, we include it here again after the contextpath

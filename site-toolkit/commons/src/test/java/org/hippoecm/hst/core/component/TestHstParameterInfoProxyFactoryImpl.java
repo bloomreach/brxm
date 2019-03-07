@@ -158,7 +158,7 @@ public class TestHstParameterInfoProxyFactoryImpl {
         expect(containerURL.getComponentRenderingWindowReferenceNamespace()).andReturn("r1_r2");
 
         expect(requestContext.getServletRequest()).andReturn(httpServletRequest).anyTimes();
-        expect(requestContext.isCmsRequest()).andReturn(true).anyTimes();
+        expect(requestContext.isChannelManagerPreviewRequest()).andReturn(true).anyTimes();
         expect(requestContext.getBaseURL()).andReturn(containerURL).anyTimes();
 
         Map<String, String []> postParameters = new HashMap<>();

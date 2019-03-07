@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -471,9 +471,15 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isCmsRequest() {
+    public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
         return cmsRequest;
+    }
+
+    @Deprecated
+    @Override
+    public boolean isCmsRequest() {
+        return false;
     }
 
     @Override
@@ -501,9 +507,9 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public void setCmsRequest(boolean cmsRequest) {
+    public void setChannelMngrPreviewRequest(boolean channelMngrPreviewRequest) {
         checkStateValidity();
-        this.cmsRequest = cmsRequest;
+        this.cmsRequest = channelMngrPreviewRequest;
     }
 
     @Override

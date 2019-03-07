@@ -324,7 +324,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, renderingHost, req)) {
 
-                            requestContext.setCmsRequest(true);
+                            requestContext.setChannelMngrPreviewRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
                                 if (!(undecoratedMount instanceof ContextualizableMount)) {
@@ -533,7 +533,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private void finishMatchingPhase(final HstMutableRequestContext requestContext) {
         requestContext.matchingFinished();
-        if (!requestContext.isCmsRequest()) {
+        if (!requestContext.isChannelManagerPreviewRequest()) {
             return;
         }
         final HttpSession session = requestContext.getServletRequest().getSession(false);
@@ -590,7 +590,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private boolean isSupportedScheme(final HstMutableRequestContext requestContext,
                                       final ResolvedSiteMapItem resolvedSiteMapItem,
                                       final String farthestRequestScheme) {
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
             // cms request always supported as piggybacking on cms host
             return true;
         }
@@ -612,7 +612,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private boolean isSupportedScheme(final HstMutableRequestContext requestContext,
                                       final ResolvedMount resolvedMount,
                                       final String farthestRequestScheme) {
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
             // cms request always supported as piggybacking on cms host
             return true;
         }

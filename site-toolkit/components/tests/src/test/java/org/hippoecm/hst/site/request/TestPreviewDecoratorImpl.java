@@ -45,7 +45,7 @@ public class TestPreviewDecoratorImpl {
     @Before
     public void setUp() {
         MockHstRequestContext ctx = new MockHstRequestContext();
-        ctx.setCmsRequest(true);
+        ctx.setChannelMngrPreviewRequest(true);
         ModifiableRequestContextProvider.set(ctx);
     }
 

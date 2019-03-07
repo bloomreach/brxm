@@ -75,7 +75,7 @@ public class DelegatingHstSiteProvider  {
         final String preferBranch = (String)requestContext.getAttribute(PREFER_RENDER_BRANCH_ID);
         if (preferBranch != null) {
             hstSite = compositeHstSite.getBranches().getOrDefault(preferBranch, compositeHstSite.getMaster());
-        } else if (requestContext.isCmsRequest()) {
+        } else if (requestContext.isChannelManagerPreviewRequest()) {
             hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         } else {
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
