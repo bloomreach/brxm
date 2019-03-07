@@ -32,7 +32,7 @@ public class RuntimeHostServiceImpl implements RuntimeHostService {
     }
 
     @Override
-    public VirtualHosts create(final String hostName, final String sourceHostGroupName, final String autoHostTemplateRuntimeURL, final String contextPath) {
+    public VirtualHosts create(final String hostName, final String sourceHostGroupName, final String autoHostTemplateURL, final String contextPath) {
 
         final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
         final String targetHostGroupName = UUID.randomUUID().toString();
@@ -41,7 +41,7 @@ public class RuntimeHostServiceImpl implements RuntimeHostService {
             final String webappContextPath = hippoWebappContextServiceHolder.getServiceObject().getServletContext().getContextPath();
             final HstModelImpl hstModel = (HstModelImpl)hstModelRegistry.getHstModel(webappContextPath);
 
-            hstModel.addRuntime(hostName, sourceHostGroupName, autoHostTemplateRuntimeURL, targetHostGroupName);
+            hstModel.addRuntime(hostName, sourceHostGroupName, autoHostTemplateURL, targetHostGroupName);
         });
 
         return hstModelRegistry.getHstModel(contextPath).getVirtualHosts();

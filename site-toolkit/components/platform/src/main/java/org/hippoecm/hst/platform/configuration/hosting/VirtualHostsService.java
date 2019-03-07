@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -90,7 +89,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private final static String WILDCARD = "_default_";
     private final static String CHANNEL_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.channelparameters";
-    public final static Pattern RUNTIME_HOST_URL_PATTERN = Pattern.compile("^(https?):////[[-a-zA-Z0-9]*]*[.][-a-zA-Z0-9.]*(((?=.*[:])(?=.*[0-9])).{3,6})?$");
+    public final static String AUTOHOST_URL_SCHEME_REGEX = "(https?)://";
+    public final static String AUTOHOST_URL_ASTERIX_REGEX = "(([-a-zA-Z0-9]*)?((?=[*]).{1})?([-a-zA-Z0-9]*))?";
+    public final static String AUTOHOST_URL_HOST_REGEX = "(((?=[.]).{1})([-a-zA-Z0-9]+))+";
+    public final static String AUTOHOST_URL_PORT_NUMBER_REGEX = "((?=[:]).{1}(\\d{2,5}))?";
+    public final static String AUTO_HOST_TEMPLATE_URL_REGEX = "^" + AUTOHOST_URL_SCHEME_REGEX
+            + AUTOHOST_URL_ASTERIX_REGEX + AUTOHOST_URL_HOST_REGEX + AUTOHOST_URL_PORT_NUMBER_REGEX + "$";
+    public final static String AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX = "([-a-zA-Z0-9]*)";
 
     private final String contextPath;
     private HstNodeLoadingCache hstNodeLoadingCache;
@@ -1060,7 +1065,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public Map<String, String> getAutoHostTemplate(String hostName) {
+    public Map<String, String> matchAutoHostTemplate(String hostName) {
         if (autoHostTemplates.size() == 0) {
             return null;
         } else if (autoHostTemplates.size() > 1) {
@@ -1069,13 +1074,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         return autoHostTemplates.entrySet()
                 .stream()
-                .filter(entry -> entry.getValue().stream().anyMatch(url -> matchRuntimeHostURL(url, hostName)))
+                .filter(entry -> entry.getValue().stream().anyMatch(url -> matchHostTemplateURL(url, hostName)))
                 .sorted(Comparator.comparing(Entry::getKey))
                 .findFirst()
                 .map(entry -> {
                     final String runtimeHostURL = entry.getValue()
                         .stream()
-                        .filter(url -> matchRuntimeHostURL(url, hostName))
+                        .filter(url -> matchHostTemplateURL(url, hostName))
                         .findFirst()
                         .get();
 
@@ -1084,15 +1089,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 .orElse(null);
     }
 
-    private boolean matchRuntimeHostURL(String runtimeHostURL, String hostName) {
-        if (RUNTIME_HOST_URL_PATTERN.matcher(runtimeHostURL).matches()) {
-            log.warn("Runtime host pattern of {} is not correct. It should be in http(s)://(*.)example.org(:port) pattern.",
-                    runtimeHostURL);
+    /**
+     * matches hostname to auto host template url by using regex validations 
+     */
+    private boolean matchHostTemplateURL(String templateHostURL, String hostName) {
+        Pattern pattern = Pattern.compile(AUTO_HOST_TEMPLATE_URL_REGEX, Pattern.LITERAL);
+        if (pattern.matcher(templateHostURL).matches()) {
+            log.warn("Auto host template url pattern of {} is not correct. It should be in http(s)://(*.)example.org(:port) pattern.",
+                    templateHostURL);
             return false;
         }
 
-        String runtimeHostName = StringUtils.substringBefore(StringUtils.substringAfter(runtimeHostURL, "://"), ":");
-        Pattern runtimePattern = Pattern.compile(runtimeHostName.replace("*", "[-a-zA-Z0-9]*"));
+        // create a new pattern from auto host template url to match the hostName
+        String runtimeHostName = StringUtils.substringBefore(StringUtils.substringAfter(templateHostURL, "://"), ":");
+        Pattern runtimePattern = Pattern.compile(runtimeHostName.replace("*", AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX));
 
         return runtimePattern.matcher(hostName).matches();
     }

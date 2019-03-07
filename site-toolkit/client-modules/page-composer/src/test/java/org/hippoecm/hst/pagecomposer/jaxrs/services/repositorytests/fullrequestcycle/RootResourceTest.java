@@ -306,20 +306,46 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
+    public void do_not_get_channel_as_admin_when_autohosttemplate_property_is_defined_out_of_hst_platform() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:hst/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://site.example.org" });
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "site.example.org",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            assertEquals(response.getContentAsString(), "");
+        } finally {
+            session.getNode("/hst:hst/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
+    }
+
+    @Test
     public void get_channel_as_admin_for_defined_runtime_host() throws Exception {
         final Session session = createSession("admin", "admin");
         session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
-                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms-*.example.org" });
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms.example.org" });
         session.save();
-        session.logout();
 
-        final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms-eng.example.org",
-                "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
-
-        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-        final String restResponse = response.getContentAsString();
-        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
-        assertEquals("unittestproject", responseMap.get("id"));
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms.example.org",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+            assertEquals("unittestproject", responseMap.get("id"));
+        } finally {
+            session.getNode("/hst:platform/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
     }
 }

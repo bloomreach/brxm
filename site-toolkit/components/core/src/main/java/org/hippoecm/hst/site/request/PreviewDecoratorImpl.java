@@ -785,8 +785,8 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
-        public Map<String, String> getAutoHostTemplate(String hostName) {
-            return delegatee.getAutoHostTemplate(hostName);
+        public Map<String, String> matchAutoHostTemplate(String hostName) {
+            return delegatee.matchAutoHostTemplate(hostName);
         }
     }
 

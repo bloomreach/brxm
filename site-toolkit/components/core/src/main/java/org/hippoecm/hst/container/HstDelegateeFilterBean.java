@@ -868,15 +868,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
                 final HstModel hstModel = hstModelRegistry.getHstModel(platformContextPath);
 
-                final Map<String, String> resolvedAutoHostTemplate = hstModel.getVirtualHosts().getAutoHostTemplate(hostName);
+                final Map<String, String> resolvedAutoHostTemplate = hstModel.getVirtualHosts().matchAutoHostTemplate(hostName);
                 ResolvedVirtualHost virtualHost = null;
                 if (resolvedAutoHostTemplate != null) {
                     Entry<String, String> entry = resolvedAutoHostTemplate.entrySet().iterator().next();
                     final String resolvedAutoHostTemplateGroupName = entry.getKey();
-                    final String resolvedAutoHostTemplateRuntimeURL = entry.getValue();
+                    final String resolvedAutoHostTemplateURL = entry.getValue();
 
                     VirtualHosts virtualHosts = HippoServiceRegistry.getService(RuntimeHostService.class).create(hostName,
-                        resolvedAutoHostTemplateGroupName, resolvedAutoHostTemplateRuntimeURL, contextPath);
+                        resolvedAutoHostTemplateGroupName, resolvedAutoHostTemplateURL, contextPath);
                     virtualHost = virtualHosts.matchVirtualHost(hostName);
                 }
                 return virtualHost;

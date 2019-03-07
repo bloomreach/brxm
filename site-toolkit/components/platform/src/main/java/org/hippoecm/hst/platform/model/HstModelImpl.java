@@ -242,11 +242,11 @@ public class HstModelImpl implements InternalHstModel {
     }
 
 
-    public void addRuntime(final String hostName, final String sourceHostGroupName,
-            final String autoHostTemplateRuntimeURL, final String targetHostGroupName) {
+    public void addRuntime(final String hostName, final String sourceHostGroupName, final String autoHostTemplateURL,
+            final String targetHostGroupName) {
         synchronized (this) {
             if (!runtimeHosts.containsKey(hostName)) {
-                runtimeHosts.put(hostName, createRuntimeHostConfiguration(hostName, autoHostTemplateRuntimeURL,
+                runtimeHosts.put(hostName, createRuntimeHostConfiguration(hostName, autoHostTemplateURL,
                         sourceHostGroupName, targetHostGroupName));
                 invalidate();
             }
@@ -257,17 +257,16 @@ public class HstModelImpl implements InternalHstModel {
      * A runtime host configuration that contains configuration options for runtime virtual host
      */
     private RuntimeHostConfiguration createRuntimeHostConfiguration(final String hostName,
-            final String autoHostTemplateRuntimeURL, final String sourceHostGroupName,
-            final String targetHostGroupName) {
+            final String autoHostTemplateURL, final String sourceHostGroupName, final String targetHostGroupName) {
         final RuntimeHostConfiguration configuration = new RuntimeHostConfiguration();
         configuration.setHostName(hostName);
         configuration.setSourceHostGroupName(sourceHostGroupName);
         configuration.setTargetHostGroupName(targetHostGroupName);
 
-        final String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateRuntimeURL, "://"), ":");
+        final String portNumberValue = StringUtils.substringAfter(StringUtils.substringAfter(autoHostTemplateURL, "://"), ":");
         final boolean isPortInUrl = (StringUtils.isNotEmpty(portNumberValue)) ? true : false;
         final Integer portNumber = (isPortInUrl) ? Integer.valueOf(portNumberValue) : null;
-        final String scheme = (autoHostTemplateRuntimeURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
+        final String scheme = (autoHostTemplateURL.startsWith(HTTPS_SCHEME)) ? HTTPS_SCHEME : HTTP_SCHEME;
 
         configuration.setPortInUrl(isPortInUrl);
         configuration.setPortNumber(portNumber);
