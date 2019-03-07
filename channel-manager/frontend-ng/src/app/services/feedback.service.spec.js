@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,16 @@ describe('FeedbackService', () => {
     FeedbackService.showDismissible(key, params);
 
     expect($translate.instant).toHaveBeenCalledWith(key, params);
+    expect($mdToast.simple).toHaveBeenCalled();
+    expect(toast.textContent).toHaveBeenCalledWith(message);
+    expect(toast.position).toHaveBeenCalledWith('top right');
+    expect(toast.hideDelay).toHaveBeenCalledWith(30000);
+    expect(toast.action).toHaveBeenCalled();
+  });
+
+  it('shows a dismissible text', () => {
+    FeedbackService.showDismissibleText(message);
+
     expect($mdToast.simple).toHaveBeenCalled();
     expect(toast.textContent).toHaveBeenCalledWith(message);
     expect(toast.position).toHaveBeenCalledWith('top right');
@@ -166,10 +176,9 @@ describe('FeedbackService', () => {
       expect($translate.instant).toHaveBeenCalledWith('defaultKey', { a: 'A', b: 'BB' });
     });
 
-    it('bypasses translation when provided with a userMessage', () => {
+    it('shows a userMessage', () => {
       const response = { data: { userMessage: 'Message intended for {{subs}}', subs: 'Tester' } };
       FeedbackService.showErrorResponse(response, 'defaultKey');
-      expect($translate.instant).not.toHaveBeenCalled();
       expect(toast.textContent).toHaveBeenCalledWith('Message intended for Tester');
     });
   });

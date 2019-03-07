@@ -81,7 +81,7 @@ class ChannelService {
         .then(() => this._getPreviewChannel(channel))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
-          this.FeedbackService.showError('ERROR_ENTER_EDIT');
+          this.FeedbackService.showErrorResponse(error.data, 'ERROR_ENTER_EDIT');
           return this.$q.reject();
         });
     }
