@@ -25,10 +25,10 @@ import org.hippoecm.hst.container.site.CustomWebsiteHstSiteProviderService;
 import org.hippoecm.hst.container.site.HstSiteProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 
 public class DelegatingHstSiteProvider  {
@@ -59,11 +59,11 @@ public class DelegatingHstSiteProvider  {
             return compositeHstSite.getMaster();
         }
 
-        Map<CompositeHstSite, HstSite> computedMap = (Map<CompositeHstSite, HstSite>)requestContext.getAttribute(HST_SITE_CONTEXT_ATTR);
+        Map<HstSite, HstSite> computedMap = (Map<HstSite, HstSite>)requestContext.getAttribute(RENDER_BRANCH_ID);
 
         if (computedMap == null) {
             computedMap = new IdentityHashMap<>();
-            requestContext.setAttribute(HST_SITE_CONTEXT_ATTR, computedMap);
+            requestContext.setAttribute(RENDER_BRANCH_ID, computedMap);
         }
 
         final HstSite computed = computedMap.get(compositeHstSite);
@@ -72,7 +72,10 @@ public class DelegatingHstSiteProvider  {
         }
 
         final HstSite hstSite;
-        if (requestContext.isCmsRequest()) {
+        final String preferBranch = (String)requestContext.getAttribute(PREFER_RENDER_BRANCH_ID);
+        if (preferBranch != null) {
+            hstSite = compositeHstSite.getBranches().getOrDefault(preferBranch, compositeHstSite.getMaster());
+        } else if (requestContext.isCmsRequest()) {
             hstSite = channelManagerHstSiteProvider.getHstSite(compositeHstSite.getMaster(), compositeHstSite.getBranches(), requestContext);
         } else {
             final CustomWebsiteHstSiteProviderService customWebsiteHstSiteProviderService = HippoServiceRegistry.getService(CustomWebsiteHstSiteProviderService.class);
@@ -99,12 +102,6 @@ public class DelegatingHstSiteProvider  {
         // never compute for the same request context again which HstSite to serve
         computedMap.put(compositeHstSite, hstSite);
 
-        final Channel channel = hstSite.getChannel();
-        if (channel != null && channel.getBranchId() != null) {
-            // by setting the RENDER_BRANCH_ID, all further request processing in HST can know which branch
-            // to render
-            requestContext.setAttribute(RENDER_BRANCH_ID, channel.getBranchId());
-        }
         return hstSite;
     }
 }

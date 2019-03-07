@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.site.HstSiteProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 
 /**
@@ -187,9 +189,14 @@ public interface ContainerConstants {
     String PAGE_MODEL_API_VERSION = "API-Version";
 
     /**
-     * The attribute used to find the node that will be used to represent a document.
-     * This attribute should be set when a {@link HstSiteProvider} determines what
-     * {@link org.hippoecm.hst.configuration.site.HstSite} to return to the hst engine.
+     * The attribute used on the {@link HstRequestContext} attributes to find out which branch of an {@link HstSite} or
+     * document to use during rendering. The stored value in the attribute should be of type Map<HstSite, HstSite>
      */
     String RENDER_BRANCH_ID = "org.hippoecm.hst.container.render_branch_id";
+
+    /**
+     * The attribute used on the {@link HstRequestContext} attributes to store which branch is preferred (aka if present)
+     * to be used for rendering. The stored value in the attribute should be of type String
+     */
+    String PREFER_RENDER_BRANCH_ID = "org.hippoecm.hst.container.prefer_render_branch_id";
 }

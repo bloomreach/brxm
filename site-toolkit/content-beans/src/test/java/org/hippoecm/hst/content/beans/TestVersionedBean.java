@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 package org.hippoecm.hst.content.beans;
 
 import java.rmi.RemoteException;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -30,6 +32,7 @@ import javax.jcr.version.VersionManager;
 import org.apache.jackrabbit.commons.flat.TreeTraverser;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -240,27 +243,32 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         assertThat(workspaceHomepage).isInstanceOf(PersistableTextPage.class);
     }
 
-
     private void initContext(final String branch) throws RepositoryException {
 
         final Channel channel = createNiceMock(Channel.class);
         expect(channel.getBranchOf()).andStubReturn("unittestproject");
         expect(channel.getBranchId()).andStubReturn(branch);
 
+        final HstSite hstSite = createNiceMock(HstSite.class);
+        expect(hstSite.getChannel()).andStubReturn(channel);
+
         final Mount mount = createNiceMock(Mount.class);
         expect(mount.getChannel()).andStubReturn(channel);
         expect(mount.isPreview()).andStubReturn(false);
+        expect(mount.getHstSite()).andStubReturn(hstSite);
 
         final ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
         expect(resolvedMount.getMount()).andStubReturn(mount);
 
         final HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getResolvedMount()).andStubReturn(resolvedMount);
-        expect(requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID)).andStubReturn(branch);
+        final Map<HstSite, HstSite> renderMap = new IdentityHashMap<>();
+        renderMap.put(hstSite, hstSite);
+        expect(requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID)).andStubReturn(renderMap);
 
         ModifiableRequestContextProvider.set(requestContext);
 
-        replay(channel, mount, resolvedMount, requestContext);
+        replay(channel, mount, resolvedMount, hstSite, requestContext);
 
     }
 

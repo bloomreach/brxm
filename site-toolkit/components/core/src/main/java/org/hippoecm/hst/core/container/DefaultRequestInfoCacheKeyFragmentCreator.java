@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,9 +64,7 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
         requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
         requestInfo.append(request.getRequestURI()).append(delim);
         requestInfo.append(StringUtils.defaultString(request.getQueryString())).append(delim);
-        if (requestContext.getAttribute(RENDER_BRANCH_ID) != null) {
-            requestInfo.append((String)requestContext.getAttribute(RENDER_BRANCH_ID)).append(delim);
-        }
+        requestInfo.append(HstRequestUtils.getBranchIdFromContext(requestContext)).append(delim);
 
         // AFter an internal HST FORWARD, all the above parts are the same because same http request,
         // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo

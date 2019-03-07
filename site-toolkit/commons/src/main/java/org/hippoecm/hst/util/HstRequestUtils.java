@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -44,8 +45,10 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.repository.branch.BranchConstants;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
 /**
@@ -755,5 +758,22 @@ public class HstRequestUtils {
         }
         throw new IllegalStateException("Platform hst model is not available");
     }
+
+
+    public static String getBranchIdFromContext(final HstRequestContext requestContext) {
+
+        final Map<HstSite, HstSite> renderMap = (Map<HstSite, HstSite>)requestContext.getAttribute(RENDER_BRANCH_ID);
+        if (renderMap == null) {
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+
+        final HstSite hstSite = requestContext.getResolvedMount().getMount().getHstSite();
+        final HstSite renderSite = renderMap.get(hstSite);
+        if (renderSite == null || renderSite.getChannel() == null || renderSite.getChannel().getBranchId() == null) {
+            return BranchConstants.MASTER_BRANCH_ID;
+        }
+        return renderSite.getChannel().getBranchId();
+    }
+
 
 }

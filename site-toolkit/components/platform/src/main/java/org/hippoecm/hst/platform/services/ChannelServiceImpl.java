@@ -1,5 +1,5 @@
 /*
-*  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -31,10 +31,11 @@ import java.util.stream.Collectors;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
@@ -43,6 +44,9 @@ import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * Implementation of {@link ChannelService} for CMS to interact with {@link Channel} resources
@@ -118,6 +122,11 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         final Map<String, Channel> channels = new HashMap<>();
+
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (preview && requestContext != null) {
+            requestContext.setAttribute(PREFER_RENDER_BRANCH_ID, MASTER_BRANCH_ID);
+        }
 
         for (HstModel hstModel : hstModelRegistry.getModels().values()) {
 

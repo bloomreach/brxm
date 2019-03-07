@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -266,7 +266,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-        final String branchId = getBranchIdFromContext(requestContext);
+        final String branchId = HstRequestUtils.getBranchIdFromContext(requestContext);
         final String branchIdOfNode = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_PROPERTY_BRANCH_ID, BranchConstants.MASTER_BRANCH_ID);
         if (branchIdOfNode.equals(branchId)) {
             return node;
@@ -313,14 +313,6 @@ public class ObjectConverterImpl implements ObjectConverter {
             return node;
         }
 
-    }
-
-    private String getBranchIdFromContext(final HstRequestContext requestContext) {
-        String branchId = (String) requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID);
-        if (branchId == null) {
-            return BranchConstants.MASTER_BRANCH_ID;
-        }
-        return branchId;
     }
 
     private Optional<Node> getVersionForLabel(final Node versionHistory, final String branchId, final boolean preview) throws RepositoryException {
