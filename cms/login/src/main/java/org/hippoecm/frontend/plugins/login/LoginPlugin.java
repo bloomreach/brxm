@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
+import org.hippoecm.frontend.widgets.Pinger;
 
 public class LoginPlugin extends RenderPlugin {
 
@@ -93,7 +94,10 @@ public class LoginPlugin extends RenderPlugin {
         final LoginConfig loginConfig = new LoginConfig(autoComplete, Arrays.asList(localeArray), supported);
         add(createLoginPanel("login-panel", loginConfig, new LoginPluginHandler(termsAndConditions)));
 
-        add(new Label("pinger"));
+        // Add a dummy pinger so a lingering pinger in an open CMS tab that sends an Ajax request to a freshly started
+        // CMS instance will still find a pinger component on the current Wicket page (i.e. the login page). That
+        // request will then make Wicket Ajax redirect to the login page.
+        add(Pinger.dummy());
     }
 
     @Override
