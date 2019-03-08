@@ -35,7 +35,7 @@
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
     <hippo.repository.version>13.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.1.0-openuidam-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.1.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
     <hippo.plugin.gallerypicker.version>13.1.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
@@ -107,6 +107,12 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-json</artifactId>
         <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-openui</artifactId>
+        <version>${hippo.cms.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
