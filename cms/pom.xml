@@ -67,6 +67,7 @@
 
     <module>builtin</module>
     <module>gallery</module>
+    <module>openui</module>
     <module>perspectives</module>
     <module>richtext</module>
     <module>translation</module>
@@ -424,6 +425,12 @@
         <groupId>org.hamcrest</groupId>
         <artifactId>hamcrest-core</artifactId>
         <version>${hamcrest.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-mockutils</artifactId>
+        <version>${hippo.repository.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
