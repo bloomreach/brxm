@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ class ChannelService {
         .then(() => this._getPreviewChannel(channel))
         .catch((error) => {
           this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
-          this.FeedbackService.showError('ERROR_ENTER_EDIT');
+          this.FeedbackService.showErrorResponse(error.data, 'ERROR_ENTER_EDIT');
           return this.$q.reject();
         });
     }

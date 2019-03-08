@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ describe('ChannelService', () => {
     spyOn(CatalogService, 'load');
     spyOn(CatalogService, 'getComponents');
     spyOn(CmsService, 'publish');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'doGetWithParams').and.returnValue($q.when({ data: {} }));
@@ -209,7 +209,7 @@ describe('ChannelService', () => {
 
     expect($log.error).toHaveBeenCalledWith('Failed to load channel \'testChannelId\'.', 'Failed to create preview configuration');
     expect(ChannelService.isEditable()).toBe(false);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_ENTER_EDIT');
   });
 
   it('knows when the current channel is editable', () => {
