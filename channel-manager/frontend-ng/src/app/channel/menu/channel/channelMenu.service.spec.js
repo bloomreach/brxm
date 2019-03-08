@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,6 @@ describe('ChannelMenuService', () => {
       spyOn(DialogService, 'alert').and.returnValue(confirmDialog);
       spyOn(DialogService, 'hide');
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
-      spyOn(FeedbackService, 'showError');
       spyOn(FeedbackService, 'showErrorResponse');
       spyOn(HippoIframeService, 'reload');
       spyOn(ProjectService, 'isBranch').and.returnValue(true);
@@ -193,18 +192,18 @@ describe('ChannelMenuService', () => {
     });
 
     it('flashes a toast when publication failed', () => {
-      const params = {};
-      ChannelService.publishOwnChanges.and.returnValue($q.reject({ data: params }));
+      const params = { data: {} };
+      ChannelService.publishOwnChanges.and.returnValue($q.reject(params));
       getItem('publish').onClick();
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(params, 'ERROR_CHANGE_PUBLICATION_FAILED');
 
       ChannelService.publishOwnChanges.and.returnValue($q.reject());
       getItem('publish').onClick();
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(params, 'ERROR_CHANGE_PUBLICATION_FAILED');
     });
 
     // discard changes
@@ -233,19 +232,19 @@ describe('ChannelMenuService', () => {
     });
 
     it('flashes a toast when discarding failed', () => {
-      const params = {};
-      ChannelService.discardOwnChanges.and.returnValue($q.reject({ data: params }));
+      const params = { data: {} };
+      ChannelService.discardOwnChanges.and.returnValue($q.reject(params));
 
       getItem('discard-changes').onClick();
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(params, 'ERROR_CHANGE_DISCARD_FAILED');
 
       ChannelService.discardOwnChanges.and.returnValue($q.reject());
       getItem('discard-changes').onClick();
       $rootScope.$digest();
 
-      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
+      expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(params, 'ERROR_CHANGE_DISCARD_FAILED');
     });
 
     it('does not discard changes if not confirmed', () => {
