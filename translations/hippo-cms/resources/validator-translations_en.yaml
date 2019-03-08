@@ -7,5 +7,6 @@ definitions:
         resource-required: Upload a file
         summaryMultiple: This document has {0} errors
         non-empty: Enter a value
+        html: Enter a value
         summarySingle: This document has 1 error
         email: Enter a valid email address
