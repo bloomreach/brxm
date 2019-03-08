@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>13.1.0-SNAPSHOT</version>
+  <version>13.1.0-openuidam-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -39,7 +39,7 @@
   </scm>
 
   <properties>
-    <hippo.release.version>13.1.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>13.1.0-openuidam-SNAPSHOT</hippo.release.version>
 
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
@@ -47,10 +47,10 @@
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
     <hippo.configuration-management.version>13.1.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>13.1.0-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-channel-manager.version>13.1.0-openuidam-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>13.1.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>13.1.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>13.1.0-openuidam-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.1.0-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>13.1.0-SNAPSHOT</hippo.packages.version>
     <hippo.repository.version>13.1.0-SNAPSHOT</hippo.repository.version>
@@ -457,6 +457,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-login</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-openui</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
       <dependency>
