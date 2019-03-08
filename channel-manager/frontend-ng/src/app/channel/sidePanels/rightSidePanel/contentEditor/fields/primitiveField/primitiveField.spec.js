@@ -234,40 +234,43 @@ describe('PrimitiveField', () => {
 
     it('starts a save timer when the value changed', () => {
       $ctrl.valueChanged();
-      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+      expect(FieldService.startSaveTimer)
+        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
     });
 
     it('sets server errors when the auto-saved value contains errorInfo objects', () => {
       spyOn(field, '$setValidity');
       $ctrl.valueChanged();
 
-      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+      expect(FieldService.startSaveTimer)
+        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
 
       const validatedValues = angular.copy(fieldValues);
       validatedValues[0].errorInfo = {
-        message: "First error",
+        message: 'First error',
       };
       validatedValues[2].errorInfo = {
-        message: "Second error",
+        message: 'Second error',
       };
 
       const afterSave = FieldService.startSaveTimer.calls.mostRecent().args[2];
       afterSave(validatedValues);
 
       expect(field.$setValidity).toHaveBeenCalledWith('server', false);
-      expect($ctrl.firstServerError).toBe("First error");
+      expect($ctrl.firstServerError).toBe('First error');
     });
 
     it('removes server errors when the auto-saved value does not contain errorInfo objects', () => {
       spyOn(field, '$setValidity');
       fieldValues[1].errorInfo = {
-        message: "Error",
+        message: '"Error',
       };
-      $ctrl.firstServerError = "Error";
+      $ctrl.firstServerError = 'Error';
 
       $ctrl.valueChanged();
 
-      expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+      expect(FieldService.startSaveTimer)
+        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
 
       const validatedValues = angular.copy(fieldValues);
       delete validatedValues[1].errorInfo;
