@@ -552,6 +552,7 @@ describe('ContentEditorService', () => {
 
         beforeEach(() => {
           saveResponse = angular.copy(testDocument);
+          saveResponse.info.errorCount = 1;
           saveResponse.fields['ns:string'] = [
             {
               value: '',
@@ -599,6 +600,20 @@ describe('ContentEditorService', () => {
             messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
             disableContentButtons: true,
           });
+        });
+
+        it('shows a feedback with error count', () => {
+          const reloadedDocumentType = angular.copy(testDocumentType);
+          ContentService.getDocumentType.and.returnValue($q.resolve(reloadedDocumentType));
+
+          ContentEditor.save();
+          $rootScope.$digest();
+
+          expect(FeedbackService.showError).toHaveBeenCalledWith(
+            jasmine.anything(),
+            { name: testDocument.displayName, count: 1 },
+          );
+          expect(FeedbackService.showError.calls.mostRecent().args[0]).toContain('DOCUMENT_CONTAINS');
         });
       });
 

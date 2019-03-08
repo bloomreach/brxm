@@ -295,8 +295,11 @@ class ContentEditorService {
           this._reloadDocumentType();
           this.document = response.data;
 
-          errorKey = 'DOCUMENT_CONTAINS_ERRORS';
-          params = { name: response.data.displayName };
+          const count = response.data.info && response.data.info.errorCount;
+          errorKey = count !== 1
+            ? 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS'
+            : 'DOCUMENT_CONTAINS_ONE_ERROR';
+          params = { name: response.data.displayName, count };
         }
 
         if (isErrorInfo(response.data)) {
