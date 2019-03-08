@@ -5,6 +5,13 @@ set -e
 # perform text replacements to apply environment vars properly to jackrabbit database configuration
 source /brxm/bin/$profile/setup-db.sh
 
+# initialize jackrabbit cluster node id by setting with an external value or with hostname.
+repo_cluster_id=$REPO_CLUSTER_NODE_ID
+if [ -z "$repo_cluster_id" ]; then
+    repo_cluster_id="$(hostname -f)"
+fi
+sed --in-place 's/@cluster.node.id@/'"$repo_cluster_id"'/' /usr/local/tomcat/conf/repository-$profile.xml
+
 # update tomcat http max threads variable
 sed --in-place=.backup 's/@tomcat.max.threads@/'"$TOMCAT_MAXTHREADS"'/' /usr/local/tomcat/conf/server.xml
 
