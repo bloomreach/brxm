@@ -88,8 +88,6 @@
     <!-- docker related configuration -->
     <!-- used for basic docker interactions -->
     <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
-    <!-- used for extended K8s support -->
-    <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version>
 
     <!-- Open source JDBC drivers included in docker image -->
     <mysql.connector.version>5.1.46</mysql.connector.version>
@@ -134,15 +132,15 @@
     <!-- Jackrabbit cluster node id can be set externally. -->
     <docker.brxm.envRun.REPO_CLUSTER_NODE_ID/>
 
-    <docker.brxm.default.JAVA_OPTS>
-      -Drepo.path=${repo.path}
+    <!-- Default repository workspace and versioning bundle cache sizes -->
+    <docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>256</docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>
+    <docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>64</docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>
+
+    <docker.brxm.envRun.JAVA_OPTS>
       -Dproject.basedir=${docker.brxm.project.path}
-      -Drepo.bootstrap=${repo.bootstrap}
-      -Drepo.autoexport.allowed=${repo.autoexport.allowed}
-      -Dlog4j.configurationFile=file://${docker.brxm.project.path}/conf/log4j2-dev.xml
       -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend}
       ${docker.brxm.jvm.args}
-    </docker.brxm.default.JAVA_OPTS>
+    </docker.brxm.envRun.JAVA_OPTS>
 
     <!-- Default user and user id for brXM container -->
     <docker.brxm.container.username>brxmuser</docker.brxm.container.username>
@@ -1087,11 +1085,6 @@
           <artifactId>docker-maven-plugin</artifactId>
           <version>${docker.maven.plugin.version}</version>
         </plugin>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>fabric8-maven-plugin</artifactId>
-          <version>${fabric8.maven.plugin.version}</version>
-        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -1170,8 +1163,8 @@
       <id>docker.build</id>
       <properties>
         <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.path>${project.build.directory}/storage</repo.path>
-        <repo.config />
+        <docker.brxm.envRun.REPO_PATH>${project.build.directory}/storage</docker.brxm.envRun.REPO_PATH>
+        <docker.brxm.envRun.REPO_CONFIG />
       </properties>
       <dependencies>
         <dependency>
@@ -1268,11 +1261,11 @@
     <profile>
       <id>docker.run</id>
       <properties>
-        <repo.autoexport.allowed>true</repo.autoexport.allowed>
         <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.config />
-        <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
+        <docker.brxm.envRun.REPO_PATH>${docker.brxm.project.path}/target/storage</docker.brxm.envRun.REPO_PATH>
+        <docker.brxm.envRun.REPO_AUTOEXPORT_ALLOWED>true</docker.brxm.envRun.REPO_AUTOEXPORT_ALLOWED>
+        <docker.brxm.envRun.REPO_BOOTSTRAP>true</docker.brxm.envRun.REPO_BOOTSTRAP>
+        <docker.brxm.envRun.REPO_CONFIG />
 
         <!-- private docker network for brXM to DB comms -->
         <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
@@ -1287,10 +1280,6 @@
         <docker.db.schema>${project.artifactId}</docker.db.schema>
         <docker.db.username>admin</docker.db.username>
         <docker.db.password>admin</docker.db.password>
-
-        <docker.brxm.envRun.JAVA_OPTS>
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
 
         <!-- COPY development artifacts for DEV image. Should be empty -->
         <docker.brxm.copy.dev.libs.cmd></docker.brxm.copy.dev.libs.cmd>
@@ -1419,10 +1408,7 @@
         <docker.brxm.envRun.MYSQL_DB_HOST>${docker.db.host}</docker.brxm.envRun.MYSQL_DB_HOST>
         <docker.brxm.envRun.MYSQL_DB_PORT>${docker.db.port}</docker.brxm.envRun.MYSQL_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1448,10 +1434,7 @@
 
         <docker.brxm.envRun.MYSQL_DB_PORT>3306</docker.brxm.envRun.MYSQL_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1464,10 +1447,7 @@
         <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.db.host}</docker.brxm.envRun.POSTGRES_DB_HOST>
         <docker.brxm.envRun.POSTGRES_DB_PORT>${docker.db.port}</docker.brxm.envRun.POSTGRES_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1492,41 +1472,8 @@
 
         <docker.brxm.envRun.POSTGRES_DB_PORT>5432</docker.brxm.envRun.POSTGRES_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
-    </profile>
-
-    <profile>
-      <id>k8s.run</id>
-      <properties>
-        <repo.autoexport.allowed>true</repo.autoexport.allowed>
-        <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.config />
-        <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
-        <fabric8.skip.build.pom>false</fabric8.skip.build.pom>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>fabric8-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>Deploy on the Kubernetes Server</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>resource</goal>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 
