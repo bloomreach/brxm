@@ -16,6 +16,7 @@
 package org.onehippo.cms7.openui.extensions;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -37,6 +38,7 @@ import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
 import static org.hippoecm.frontend.FrontendNodeType.NT_UI_EXTENSION;
 import static org.hippoecm.frontend.FrontendNodeType.NT_UI_EXTENSIONS;
 import static org.hippoecm.frontend.FrontendNodeType.UI_EXTENSIONS_NODE_NAME;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -68,10 +70,23 @@ public class JcrUiExtensionLoaderTest {
     }
 
     @Test
+    public void noConfigNodeLoadOne() {
+        final Optional<UiExtension> uiExtension = loader.loadUiExtension("extension1");
+        assertFalse(uiExtension.isPresent());
+    }
+
+    @Test
     public void zeroExtensions() throws RepositoryException {
         createConfigNode();
         final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertTrue(extensions.isEmpty());
+    }
+
+    @Test
+    public void zeroExtensionsLoadOne() throws RepositoryException {
+        createConfigNode();
+        final Optional<UiExtension> uiExtension = loader.loadUiExtension("extension1");
+        assertFalse(uiExtension.isPresent());
     }
 
     @Test
@@ -86,6 +101,24 @@ public class JcrUiExtensionLoaderTest {
         assertThat(extensions.size(), equalTo(1));
 
         final UiExtension extension = extensions.iterator().next();
+        assertThat(extension.getId(), equalTo("extension1"));
+        assertThat(extension.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
+        assertThat(extension.getDisplayName(), equalTo("Extension One"));
+        assertThat(extension.getUrl(), equalTo("/extensions/extension-one"));
+    }
+
+    @Test
+    public void singleExtensionLoadOne() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
+        final MockNode extensionNode = configNode.addNode("extension1", NT_UI_EXTENSION);
+        extensionNode.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
+        extensionNode.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
+        extensionNode.setProperty(FRONTEND_URL, "/extensions/extension-one");
+
+        final Optional<UiExtension> uiExtension = loader.loadUiExtension("extension1");
+        assertTrue(uiExtension.isPresent());
+        final UiExtension extension = uiExtension.get();
+
         assertThat(extension.getId(), equalTo("extension1"));
         assertThat(extension.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
         assertThat(extension.getDisplayName(), equalTo("Extension One"));
@@ -118,6 +151,30 @@ public class JcrUiExtensionLoaderTest {
         assertThat(extension1.getUrl(), equalTo("/extensions/extension-one"));
 
         final UiExtension extension2 = iterator.next();
+        assertThat(extension2.getId(), equalTo("extension2"));
+        assertThat(extension2.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
+        assertThat(extension2.getDisplayName(), equalTo("Extension Two"));
+        assertThat(extension2.getUrl(), equalTo("/extensions/extension-two"));
+    }
+
+    @Test
+    public void multipleExtensionsLoadOne() throws RepositoryException {
+        final MockNode configNode = createConfigNode();
+
+        final MockNode extensionNode1 = configNode.addNode("extension1", NT_UI_EXTENSION);
+        extensionNode1.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
+        extensionNode1.setProperty(FRONTEND_DISPLAY_NAME, "Extension One");
+        extensionNode1.setProperty(FRONTEND_URL, "/extensions/extension-one");
+
+        final MockNode extensionNode2 = configNode.addNode("extension2", NT_UI_EXTENSION);
+        extensionNode2.setProperty(FRONTEND_EXTENSION_POINT, CHANNEL_PAGE_TOOLS_EXTENSION_POINT);
+        extensionNode2.setProperty(FRONTEND_DISPLAY_NAME, "Extension Two");
+        extensionNode2.setProperty(FRONTEND_URL, "/extensions/extension-two");
+
+        final Optional<UiExtension> uiExtension = loader.loadUiExtension("extension2");
+        assertTrue(uiExtension.isPresent());
+
+        final UiExtension extension2 = uiExtension.get();
         assertThat(extension2.getId(), equalTo("extension2"));
         assertThat(extension2.getExtensionPoint(), equalTo(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
         assertThat(extension2.getDisplayName(), equalTo("Extension Two"));

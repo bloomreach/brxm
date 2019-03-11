@@ -54,6 +54,16 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         }
     }
 
+    @Override
+    public Optional<UiExtension> loadUiExtension(final String extensionName) {
+        try {
+            return Optional.of(readExtension(session.getNode(UI_EXTENSIONS_CONFIG_PATH + "/" + extensionName)));
+        } catch (RepositoryException e) {
+            log.warn("Could not load UI extension '" + extensionName + "'.");
+            return Optional.empty();
+        }
+    }
+
     private Set<UiExtension> readExtensions() throws RepositoryException {
         if (!session.nodeExists(UI_EXTENSIONS_CONFIG_PATH)) {
             return Collections.emptySet();
