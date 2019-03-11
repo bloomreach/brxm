@@ -50,6 +50,8 @@
         <include>context-postgres.xml</include>
         <include>repository-mysql.xml</include>
         <include>repository-postgres.xml</include>
+        <include>server.xml</include>
+        <include>setenv.sh</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
@@ -344,15 +346,6 @@
         <include>**/*.*</include>
         <include>Dockerfile</include>
         <include>DockerfileDev</include>
-      </includes>
-    </fileSet>
- 
-    <!-- k8s -->
-    <fileSet filtered="false" encoding="UTF-8">
-      <directory>src/main/fabric8/</directory>
-      <includes>
-        <include>deployment.yml</include>
-        <include>service.yml</include>
       </includes>
     </fileSet>
   </fileSets>

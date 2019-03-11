@@ -130,31 +130,3 @@ To run the image with an external postgresql database, add the same db propertie
     mvn -Pdocker.run,postgres
 
 After running the docker image, application logs will be shown on the terminal window.
-
-
-Install a Kubernetes Server Locally
-===================================
-
-Docker Desktop for Mac (or Windows):
-
-Docker for Mac (or Windows) is an application that includes a standalone Kubernetes server and client. The Kubernetes
-server runs locally within your Docker instance, is not configurable, and is a single-node cluster. How to enable Kubernetes 
-support feature, please look at https://docs.docker.com/docker-for-mac/#kubernetes.
-
-Minikube:
-
-Another possible solution is Minikube. How to install Minikube, please look at https://kubernetes.io/docs/setup/minikube/.
-
-
-Deploy the brXM Project on Kubernetes Locally
-=============================================
-
-Some maven profiles are defined to build a docker image, run the docker image on the default docker server and deploy and 
-run the docker image on Kubernetes locally. To build a brXM project image, run the following commands
-
-    mvn clean verify
-    mvn -P docker.build
-
-To deploy and run the image on the Kubernetes server execute:
-
-    mvn -P k8s.run -N

@@ -42,5 +42,10 @@
       <outputDirectory>conf</outputDirectory>
       <destName>catalina.properties</destName>
     </file>
+    <file>
+      <source>conf/server.xml</source>
+      <outputDirectory>conf</outputDirectory>
+      <filtered>false</filtered>
+    </file>
   </files>
 </component>

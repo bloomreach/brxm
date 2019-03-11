@@ -2,6 +2,22 @@ FROM ${docker.brxm.base.image}
 
 LABEL PROJECT=${project.artifactId}
 
+# Default JVM heap size variables
+ENV JAVA_MINHEAP "256m"
+ENV JAVA_MAXHEAP "512m"
+
+# Default tomcat http max threads variable
+ENV TOMCAT_MAXTHREADS "200"
+
+# BrXM project path variable
+ENV BRXM_PROJECT_PATH "${docker.brxm.project.path}"
+
+# Default repository settings 
+ENV REPO_PATH "${BRXM_PROJECT_PATH}/target/storage"
+ENV REPO_CONFIG ""
+ENV REPO_BOOTSTRAP "false"
+ENV REPO_AUTOEXPORT_ALLOWED "false"
+
 # Prepare dirs
 # Delete default & unused war files
 # Define a non-root user with limited permissions
