@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.openui.extensions;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,4 +28,8 @@ public interface UiExtensionLoader {
      */
     Set<UiExtension> loadUiExtensions();
 
+    /**
+     * @return an extension by name.
+     */
+    Optional<UiExtension> loadUiExtension(String extensionName);
 }

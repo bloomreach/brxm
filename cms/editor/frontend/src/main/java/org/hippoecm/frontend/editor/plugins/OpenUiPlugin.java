@@ -60,10 +60,7 @@ public class OpenUiPlugin extends RenderPlugin<String> {
 
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
         final UiExtensionValidator validator = new UiExtensionValidator();
-        return loader.loadUiExtensions()
-                .stream()
-                .filter(validator::validate)
-                .filter(e -> e.getId().equals(uiExtensionName))
-                .findFirst();
+
+        return loader.loadUiExtension(uiExtensionName).filter(validator::validate);
     }
 }
