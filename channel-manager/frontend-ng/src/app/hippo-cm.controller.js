@@ -20,10 +20,12 @@ class HippoCmCtrl {
     $rootScope,
     $state,
     $timeout,
+    $transitions,
     BrowserService,
     ChannelService,
     CmsService,
     ConfigService,
+    FeedbackService,
     HippoIframeService,
   ) {
     'ngInject';
@@ -32,10 +34,12 @@ class HippoCmCtrl {
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$timeout = $timeout;
+    this.$transitions = $transitions;
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
   }
 
@@ -67,6 +71,8 @@ class HippoCmCtrl {
       });
       this._restoreAppState();
     }
+
+    this.$transitions.onBefore({ from: 'hippo-cm.*.**', to: 'hippo-cm' }, () => this._closeChannel());
   }
 
   _loadChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
@@ -91,6 +97,10 @@ class HippoCmCtrl {
   _reloadChannel() {
     this.ChannelService.reload()
       .then(() => this.HippoIframeService.reload());
+  }
+
+  _closeChannel() {
+    return this.FeedbackService.hideAll();
   }
 
   _storeAppState(channelId, contextPath, hostGroup, branchId, initialPath) {
