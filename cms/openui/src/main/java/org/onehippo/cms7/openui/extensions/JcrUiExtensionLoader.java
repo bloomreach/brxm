@@ -55,9 +55,14 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
     }
 
     @Override
-    public Optional<UiExtension> loadUiExtension(final String extensionName) {
+    public Optional<UiExtension> loadUiExtension(final String extensionName, final UiExtensionPoint extensionPoint) {
         try {
-            return Optional.of(readExtension(session.getNode(UI_EXTENSIONS_CONFIG_PATH + "/" + extensionName)));
+            final UiExtension extension = 
+                    readExtension(session.getNode(UI_EXTENSIONS_CONFIG_PATH + "/" + extensionName));
+            if (extension.getExtensionPoint().equals(extensionPoint)) {
+                return Optional.of(extension);
+            }
+            return Optional.empty();
         } catch (RepositoryException e) {
             log.warn("Could not load UI extension '" + extensionName + "'.");
             return Optional.empty();
@@ -92,7 +97,7 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         final String extensionId = extensionNode.getName();
         extension.setId(extensionId);
 
-        readExtensionPoint(extensionNode).ifPresent(extension::setExtensionPoint);
+        extension.setExtensionPoint(readExtensionPoint(extensionNode));
 
         final String displayName = readProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
         extension.setDisplayName(displayName);
@@ -103,8 +108,10 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         return extension;
     }
 
-    private Optional<String> readExtensionPoint(final Node extensionNode) throws RepositoryException {
-        return readProperty(extensionNode, FRONTEND_EXTENSION_POINT);
+    private UiExtensionPoint readExtensionPoint(final Node extensionNode) throws RepositoryException {
+        return readProperty(extensionNode, FRONTEND_EXTENSION_POINT)
+                .map(UiExtensionPoint::getByConfigValue)
+                .orElse(UiExtensionPoint.UNKNOWN);
     }
 
     private Optional<String> readProperty(final Node extensionNode, final String propertyName) throws RepositoryException {
