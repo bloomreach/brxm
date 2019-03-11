@@ -29,7 +29,7 @@ public interface UiExtensionLoader {
     Set<UiExtension> loadUiExtensions();
 
     /**
-     * @return an extension by name.
+     * @return an extension by name and point type.
      */
-    Optional<UiExtension> loadUiExtension(String extensionName);
+    Optional<UiExtension> loadUiExtension(String extensionName, UiExtensionPoint extensionPoint);
 }

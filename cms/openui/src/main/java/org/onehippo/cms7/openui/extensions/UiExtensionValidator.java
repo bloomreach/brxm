@@ -28,7 +28,7 @@ public class UiExtensionValidator {
     private static final Logger log = LoggerFactory.getLogger(UiExtensionValidator.class);
 
     public boolean validate(final UiExtension extension) {
-        return validateId(extension)
+        return extension != null &&  validateId(extension)
                 && validateDisplayName(extension)
                 && validateExtensionPoint(extension)
                 && validateUrl(extension);
@@ -61,9 +61,9 @@ public class UiExtensionValidator {
     }
 
     private boolean validateExtensionPoint(final UiExtension extension) {
-        final String extensionPoint = extension.getExtensionPoint();
+        final UiExtensionPoint extensionPoint = extension.getExtensionPoint();
 
-        if (StringUtils.isBlank(extensionPoint)) {
+        if (extensionPoint == null || extensionPoint.equals(UiExtensionPoint.UNKNOWN)) {
             log.warn("Ignoring UI extension '{}': no extensionPoint provided.", extensionPoint);
             return false;
         }

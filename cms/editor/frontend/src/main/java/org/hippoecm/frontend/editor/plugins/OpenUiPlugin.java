@@ -29,6 +29,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
+import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
 import org.onehippo.cms7.openui.extensions.UiExtensionValidator;
 
 public class OpenUiPlugin extends RenderPlugin<String> {
@@ -61,6 +62,6 @@ public class OpenUiPlugin extends RenderPlugin<String> {
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
         final UiExtensionValidator validator = new UiExtensionValidator();
 
-        return loader.loadUiExtension(uiExtensionName).filter(validator::validate);
+        return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD).filter(validator::validate);
     }
 }

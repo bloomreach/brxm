@@ -23,8 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 public class UiExtensionValidatorTest {
 
-    private static final String CHANNEL_PAGE_TOOLS_EXTENSION_POINT = "channel.page.tools";
-
     private UiExtensionValidator validator;
 
     @Before
@@ -32,6 +30,11 @@ public class UiExtensionValidatorTest {
         validator = new UiExtensionValidator();
     }
 
+    @Test
+    public void nullExtensionIsInvalid() {
+        assertFalse(validator.validate(null));
+    }
+    
     @Test
     public void validateId() {
         assertTrue(isValidId("test"));
@@ -63,7 +66,9 @@ public class UiExtensionValidatorTest {
 
     @Test
     public void validateExtensionPoint() {
-        assertTrue(isValidExtensionPoint(CHANNEL_PAGE_TOOLS_EXTENSION_POINT));
+        assertTrue(isValidExtensionPoint(UiExtensionPoint.CHANNEL_PAGE_TOOL));
+        assertTrue(isValidExtensionPoint(UiExtensionPoint.DOCUMENT_FIELD));
+        assertFalse(isValidExtensionPoint(UiExtensionPoint.UNKNOWN));
         assertFalse(isValidExtensionPoint(null));
     }
 
@@ -79,24 +84,24 @@ public class UiExtensionValidatorTest {
     }
 
     private boolean isValidId(final String id) {
-        return validator.validate(extension(id, id, CHANNEL_PAGE_TOOLS_EXTENSION_POINT, "extensions/" + id));
+        return validator.validate(extension(id, id, UiExtensionPoint.CHANNEL_PAGE_TOOL, "extensions/" + id));
     }
 
     private boolean isValidDisplayName(final String displayName) {
-        return validator.validate(extension("test", displayName, CHANNEL_PAGE_TOOLS_EXTENSION_POINT, "extensions/test"));
+        return validator.validate(extension("test", displayName, UiExtensionPoint.CHANNEL_PAGE_TOOL, "extensions/test"));
     }
 
-    private boolean isValidExtensionPoint(final String context) {
+    private boolean isValidExtensionPoint(final UiExtensionPoint context) {
         return validator.validate(extension("test", "Test", context, "extensions/test"));
     }
 
     private boolean isValidUrl(final String url) {
-        return validator.validate(extension("test", "Test", CHANNEL_PAGE_TOOLS_EXTENSION_POINT, url));
+        return validator.validate(extension("test", "Test", UiExtensionPoint.CHANNEL_PAGE_TOOL, url));
     }
 
     private UiExtension extension(final String id,
                                   final String displayName,
-                                  final String extensionPoint,
+                                  final UiExtensionPoint extensionPoint,
                                   final String url) {
         final UiExtensionBean extension = new UiExtensionBean();
         extension.setId(id);
