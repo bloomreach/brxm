@@ -1281,8 +1281,8 @@
         <docker.db.username>admin</docker.db.username>
         <docker.db.password>admin</docker.db.password>
 
-        <!-- COPY development artifacts for DEV image -->
-        <docker.brxm.copy.dev.libs.cmd>COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/</docker.brxm.copy.dev.libs.cmd>
+        <!-- COPY development artifacts for DEV image. Should be empty -->
+        <docker.brxm.copy.dev.libs.cmd></docker.brxm.copy.dev.libs.cmd>
 
         <!-- Default assembly used for building docker image -->
         <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</docker.dev.assembly.descriptor>
