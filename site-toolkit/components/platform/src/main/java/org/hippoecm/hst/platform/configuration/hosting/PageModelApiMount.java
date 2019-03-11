@@ -301,12 +301,14 @@ public class PageModelApiMount implements ContextualizableMount {
     @Override
     public <T extends ChannelInfo> T getChannelInfo() {
         // no channel for page model api mount
+        // TODO should we return the channel of the parent mount instead, see HSTTWO-4548
         return null;
     }
 
     @Override
     public Channel getChannel() {
         // no channel for page model api mount
+        // TODO should we return the channel of the parent mount instead, see HSTTWO-4548
         return null;
     }
 
