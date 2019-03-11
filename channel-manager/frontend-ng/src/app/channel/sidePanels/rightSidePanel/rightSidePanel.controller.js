@@ -55,7 +55,7 @@ class RightSidePanelCtrl {
 
     this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
-    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*' }, () => this._focusPanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*.**' }, () => this._focusPanel());
     this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
   }
 
