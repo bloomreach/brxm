@@ -15,15 +15,70 @@
  */
 package org.onehippo.cms7.openui.extensions;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Checks that the system can use a UI extension.
+ * Validates that a {@link UiExtension} can be used in the Channel Editor. Validation errors will be logged as
+ * warnings.
  */
-public interface UiExtensionValidator {
+public class UiExtensionValidator {
 
-    /**
-     * @param extension the extension to check
-     * @return whether the system can use the extension or not.
-     */
-    boolean validate(UiExtension extension);
+    private static final Logger log = LoggerFactory.getLogger(UiExtensionValidator.class);
 
+    public boolean validate(final UiExtension extension) {
+        return validateId(extension)
+                && validateDisplayName(extension)
+                && validateExtensionPoint(extension)
+                && validateUrl(extension);
+    }
+
+    private boolean validateId(final UiExtension extension) {
+        final String id = extension.getId();
+
+        // only allow alphanumeric IDs
+        // - usable as ui-router state names (no spaces, no dots)
+        // - prevents XSS (no quotes, HTML, etc.)
+        // - keeps it simple
+        if (!StringUtils.isAlphanumeric(id)) {
+            log.warn("Ignoring UI extension '{}': extension IDs must be alphanumeric.", id);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateDisplayName(final UiExtension extension) {
+        final String displayName = extension.getDisplayName();
+
+        if (StringUtils.isBlank(displayName)) {
+            log.warn("Ignoring UI extension '{}': no display name provided.", extension.getId());
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateExtensionPoint(final UiExtension extension) {
+        final String extensionPoint = extension.getExtensionPoint();
+
+        if (StringUtils.isBlank(extensionPoint)) {
+            log.warn("Ignoring UI extension '{}': no extensionPoint provided.", extensionPoint);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateUrl(final UiExtension extension) {
+        final String url = extension.getUrl();
+
+        if (StringUtils.isBlank(url)) {
+            log.warn("Ignoring UI extension '{}': no URL provided.", extension.getId());
+            return false;
+        }
+
+        return true;
+    }
 }
