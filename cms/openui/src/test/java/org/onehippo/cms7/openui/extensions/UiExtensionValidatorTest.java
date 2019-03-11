@@ -21,15 +21,15 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ChannelEditorExtensionValidatorTest {
+public class UiExtensionValidatorTest {
 
     private static final String CHANNEL_PAGE_TOOLS_EXTENSION_POINT = "channel.page.tools";
 
-    private ChannelEditorUiExtensionValidator validator;
+    private UiExtensionValidator validator;
 
     @Before
     public void setUp() {
-        validator = new ChannelEditorUiExtensionValidator();
+        validator = new UiExtensionValidator();
     }
 
     @Test
