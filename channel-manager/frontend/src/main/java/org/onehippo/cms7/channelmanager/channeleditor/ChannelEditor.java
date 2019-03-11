@@ -52,7 +52,6 @@ import org.onehippo.cms7.channelmanager.channeleditor.pickers.ImagePicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
-import org.onehippo.cms7.openui.extensions.ChannelEditorUiExtensionValidator;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
@@ -262,7 +261,7 @@ public class ChannelEditor extends ExtPanel {
 
     private JSONArray loadExtensions() {
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
-        final UiExtensionValidator validator = new ChannelEditorUiExtensionValidator();
+        final UiExtensionValidator validator = new UiExtensionValidator();
         final List<UiExtension> extensions = loader.loadUiExtensions()
                 .stream()
                 .filter(validator::validate)
