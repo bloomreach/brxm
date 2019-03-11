@@ -25,6 +25,11 @@ definitions:
       /en:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Text
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUIString:
+      jcr:primaryType: hipposys:resourcebundles
+      /en:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Open UI String
     /hippo:configuration/hippo:translations/hippo:types/hipposys:String:
       jcr:primaryType: hipposys:resourcebundles
       /en:
