@@ -62,6 +62,8 @@
         <include>context-postgres.xml</include>
         <include>repository-mysql.xml</include>
         <include>repository-postgres.xml</include>
+        <include>server.xml</include>
+        <include>setenv.sh</include>
         <include>**/*.properties</include>
       </includes>
     </fileSet>
