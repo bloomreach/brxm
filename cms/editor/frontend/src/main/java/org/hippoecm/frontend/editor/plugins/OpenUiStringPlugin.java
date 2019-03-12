@@ -30,14 +30,13 @@ import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
-import org.onehippo.cms7.openui.extensions.UiExtensionValidator;
 
-public class OpenUiPlugin extends RenderPlugin<String> {
+public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String UI_EXTENSION = "uiExtension";
     private static final String ERROR_MESSAGE = "Cannot load extension '%s'.";
 
-    public OpenUiPlugin(final IPluginContext context, final IPluginConfig config) {
+    public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         
         final String extensionName = config.getString(UI_EXTENSION);
@@ -58,10 +57,7 @@ public class OpenUiPlugin extends RenderPlugin<String> {
         if (StringUtils.isBlank(uiExtensionName)) {
             return Optional.empty();
         }
-
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
-        final UiExtensionValidator validator = new UiExtensionValidator();
-
-        return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD).filter(validator::validate);
+        return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD);
     }
 }
