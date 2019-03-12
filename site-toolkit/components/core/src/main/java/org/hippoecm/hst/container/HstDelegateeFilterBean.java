@@ -74,6 +74,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
+import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
@@ -758,19 +759,29 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedSiteMapItem.getNamedPipeline());
 
         // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
-        if(containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+        if (containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+            if (Boolean.TRUE.equals(requestContext.getAttribute(FORWARD_RECURSION_ERROR))) {
+                throw new ContainerException("Forwarding recursion exception. Short-circuit");
+            }
+
             String forwardPathInfo = (String) containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
             containerRequest.removeAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
 
-            resolvedSiteMapItem = resolvedSiteMapItem.getResolvedMount().matchSiteMapItem(forwardPathInfo);
-            if(resolvedSiteMapItem == null) {
+            final ResolvedSiteMapItem forwardedResolvedSiteMapItem = resolvedSiteMapItem.getResolvedMount().matchSiteMapItem(forwardPathInfo);
+
+            if (forwardedResolvedSiteMapItem.getHstSiteMapItem() == resolvedSiteMapItem.getHstSiteMapItem()) {
+                log.warn("Forwarding recursion. Process forward last time");
+                requestContext.setAttribute(FORWARD_RECURSION_ERROR, Boolean.TRUE);
+            }
+
+            if(forwardedResolvedSiteMapItem == null) {
                 // should not be possible as when it would be null, an exception should have been thrown
                 String msg = String.format("Could not match request '%s' to a sitemap item for forwardPathInfo '%s'.",
                         containerRequest, forwardPathInfo);
                 throw new MatchException(msg);
             }
             requestContext.clearObjectAndQueryManagers();
-            requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+            requestContext.setResolvedSiteMapItem(forwardedResolvedSiteMapItem);
             requestContext.setBaseURL(urlFactory.getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
             processResolvedSiteMapItem(containerRequest, res, filterChain, requestContext, true);

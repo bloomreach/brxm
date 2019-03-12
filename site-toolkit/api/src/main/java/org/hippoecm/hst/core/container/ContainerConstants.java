@@ -199,4 +199,7 @@ public interface ContainerConstants {
      * to be used for rendering. The stored value in the attribute should be of type String
      */
     String PREFER_RENDER_BRANCH_ID = "org.hippoecm.hst.container.prefer_render_branch_id";
+
+
+    String FORWARD_RECURSION_ERROR = ContainerConstants.class.getName() + ".forwardRecursionError";
 }
