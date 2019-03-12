@@ -16,7 +16,7 @@
 package org.onehippo.cms7.openui.extensions;
 
 public enum UiExtensionPoint {
-    
+
     DOCUMENT_FIELD("document.field"),
     CHANNEL_PAGE_TOOL("channel.page.tools"),
     UNKNOWN("unknown");
@@ -26,9 +26,9 @@ public enum UiExtensionPoint {
     UiExtensionPoint(final String configValue) {
         this.configValue = configValue;
     }
-    
+
     public static UiExtensionPoint getByConfigValue(final String configValue) {
-        for(UiExtensionPoint uiExtensionPoint : UiExtensionPoint.values()) {
+        for (UiExtensionPoint uiExtensionPoint : UiExtensionPoint.values()) {
             if (uiExtensionPoint.configValue.equalsIgnoreCase(configValue)) {
                 return uiExtensionPoint;
             }
