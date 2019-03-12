@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -183,6 +184,11 @@ public abstract class CommonComponent extends BaseHstComponent {
      */
     public void pageNotFound(HstResponse response) {
         final HstRequestContext context = RequestContextProvider.get();
+        if (Boolean.TRUE.equals(context.getAttribute(ContainerConstants.FORWARD_RECURSION_ERROR))) {
+            log.warn("Skip pageNotFound since recursion detected. Only set 404 status and proceed page rendering");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
         String pageNotFoundPath = getComponentParameter(PAGE_404);
         if (Strings.isNullOrEmpty(pageNotFoundPath)) {
             pageNotFoundPath = PAGE_404;
