@@ -188,7 +188,7 @@ definitions:
               jcr:primaryType: frontend:plugin
               plugin.class: org.hippoecm.frontend.editor.plugins.DatePickerPlugin
               time.hide: 'true'
-      /OpenUIString:
+      /OpenUiString:
         jcr:primaryType: hipposysedit:templatetype
         jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
         /hipposysedit:nodetype:
