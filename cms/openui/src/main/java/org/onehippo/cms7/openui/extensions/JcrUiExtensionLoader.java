@@ -57,16 +57,12 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
     @Override
     public Optional<UiExtension> loadUiExtension(final String extensionName, final UiExtensionPoint extensionPoint) {
         try {
-            final UiExtension extension = 
-                    readExtension(session.getNode(UI_EXTENSIONS_CONFIG_PATH + "/" + extensionName));
-            if (extension.getExtensionPoint().equals(extensionPoint)) {
-                return Optional.of(extension);
-            }
-            return Optional.empty();
+            return readExtension(session.getNode(UI_EXTENSIONS_CONFIG_PATH + "/" + extensionName))
+                    .filter(e -> e.getExtensionPoint().equals(extensionPoint));
         } catch (RepositoryException e) {
             log.warn("Could not load UI extension '" + extensionName + "'.");
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     private Set<UiExtension> readExtensions() throws RepositoryException {
@@ -79,19 +75,18 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
 
         while (extensionNodes.hasNext()) {
             final Node extensionNode = extensionNodes.nextNode();
-            final UiExtension extension = readExtension(extensionNode);
-            if (extensions.contains(extension)) {
-                log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.",
-                        extension.getId());
-            } else {
-                extensions.add(extension);
-            }
+            readExtension(extensionNode).ifPresent(node -> {
+                if (!extensions.add(node)) {
+                    log.warn("Duplicate extensions found. Only the first extension with ID '{}' is loaded.",
+                            node.getId());
+                }
+            });
         }
 
         return extensions;
     }
 
-    private UiExtension readExtension(final Node extensionNode) throws RepositoryException {
+    private Optional<UiExtension> readExtension(final Node extensionNode) throws RepositoryException {
         final UiExtensionBean extension = new UiExtensionBean();
 
         final String extensionId = extensionNode.getName();
@@ -105,7 +100,11 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
         readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
         readProperty(extensionNode, FRONTEND_CONFIG).ifPresent(extension::setConfig);
 
-        return extension;
+        final UiExtensionValidator validator = new UiExtensionValidator();
+        if (validator.validate(extension)) {
+            return Optional.of(extension);
+        }
+        return Optional.empty();
     }
 
     private UiExtensionPoint readExtensionPoint(final Node extensionNode) throws RepositoryException {

@@ -63,6 +63,13 @@ public class JcrUiExtensionLoaderTest {
                 .addNode(UI_EXTENSIONS_NODE_NAME, NT_UI_EXTENSIONS);
     }
 
+    private void addNode(final MockNode configNode, final String name) throws RepositoryException {
+        final MockNode mockNode = configNode.addNode(name, NT_UI_EXTENSION);
+        // mockNode.setProperty("frontend:displayName", "display name");
+        mockNode.setProperty("frontend:extensionPoint", CHANNEL_PAGE_TOOLS_CONFIG_VALUE);
+        mockNode.setProperty("frontend:url", "http://url");
+    }
+    
     @Test
     public void noConfigNode() {
         final Set<UiExtension> extensions = loader.loadUiExtensions();
@@ -197,22 +204,20 @@ public class JcrUiExtensionLoaderTest {
     public void extensionsMustHaveUniqueID() throws RepositoryException {
         final MockNode configNode = createConfigNode();
 
-        configNode.addNode("extension1", NT_UI_EXTENSION);
-        configNode.addNode("extension1", NT_UI_EXTENSION);
+        addNode(configNode, "extension1");
+        addNode(configNode, "extension1");
 
         final Set<UiExtension> extensions = loader.loadUiExtensions();
         assertThat(extensions.size(), equalTo(1));
     }
 
     @Test
-    public void defaultValues() throws RepositoryException {
+    public void defaultValue() throws RepositoryException {
         final MockNode configNode = createConfigNode();
-        configNode.addNode("extension1", NT_UI_EXTENSION);
+        addNode(configNode, "extension1");
 
         final UiExtension extension = loader.loadUiExtensions().iterator().next();
-        assertThat(extension.getExtensionPoint(), equalTo(UiExtensionPoint.UNKNOWN));
         assertThat(extension.getDisplayName(), equalTo("extension1"));
-        assertThat(extension.getUrl(), equalTo(null));
     }
 
     @Test
