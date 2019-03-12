@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 
@@ -105,6 +106,10 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                         if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
                             log.warn("JcrSession '{}' had pending changes at the end of the request. This should never be " +
                                     "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
+                        }
+                        if (jcrSession instanceof HippoSession) {
+                            ((HippoSession)jcrSession).localRefresh();
+                        } else {
                             jcrSession.refresh(false);
                         }
                     } catch (RepositoryException e) {
