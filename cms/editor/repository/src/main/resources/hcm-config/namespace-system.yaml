@@ -209,4 +209,4 @@ definitions:
             frontend:services: [wicket.id]
             /root:
               jcr:primaryType: frontend:plugin
-              plugin.class: org.hippoecm.frontend.editor.plugins.OpenUiPlugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.OpenUiStringPlugin
