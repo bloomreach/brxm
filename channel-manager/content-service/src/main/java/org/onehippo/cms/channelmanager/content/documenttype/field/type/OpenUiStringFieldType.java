@@ -45,11 +45,11 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
         return super.init(fieldContext);
     }
 
-    public void setUiExtension(final String uiExtension) {
+    private void setUiExtension(final String uiExtension) {
         this.uiExtension = uiExtension;
     }
 
-    public String getUiExtension() {
+    String getUiExtension() {
         return uiExtension;
     }
 
