@@ -17,7 +17,9 @@
   <wicket:panel>
     <div class="hippo-editor-field-iframe">
       <span wicket:id="errorMessage">[ cannot load extension ]</span>
-      <iframe wicket:id="iframe"></iframe>
+      <iframe wicket:id="iframe" 
+              sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+      </iframe>
     </div>
   </wicket:panel>
 </html>
