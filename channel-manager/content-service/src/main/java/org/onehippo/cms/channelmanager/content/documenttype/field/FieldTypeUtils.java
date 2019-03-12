@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundF
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateAndTimeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateOnlyFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
@@ -128,6 +129,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
         FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(NodeLinkFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("OpenUIString", new TypeDescriptor(OpenUiStringFieldType.class, PROPERTY_FIELD_PLUGIN));
 
         STRUCTURE_PLUGIN_CLASSES = new HashSet<>();
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");
