@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
  * Validates that a {@link UiExtension} can be used in the Channel Editor. Validation errors will be logged as
  * warnings.
  */
-public class UiExtensionValidator {
+class UiExtensionValidator {
 
     private static final Logger log = LoggerFactory.getLogger(UiExtensionValidator.class);
 
-    public boolean validate(final UiExtension extension) {
+    boolean validate(final UiExtension extension) {
         return extension != null &&  validateId(extension)
                 && validateDisplayName(extension)
                 && validateExtensionPoint(extension)
