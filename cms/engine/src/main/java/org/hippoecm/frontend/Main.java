@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -100,9 +100,6 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.RequestUtils;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -168,7 +165,7 @@ public class Main extends PluginApplication {
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
     private static final Class<?> CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
-    
+
     private static final String BINARIES_MOUNT = "binaries";
     private static final String AUTH_MOUNT = "auth";
 
@@ -186,9 +183,20 @@ public class Main extends PluginApplication {
     private CmsInternalCmsContextService cmsContextService;
     private CmsEventDispatcherService cmsEventDispatcherService;
 
+    protected String repositoryFallbackUsername;
+    protected String repositoryFallbackPassword;
+
+
+    protected void initializeFallBackCredentials() {
+        repositoryFallbackUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
+        repositoryFallbackPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
+    }
+
     @Override
     protected void init() {
         super.init();
+
+        initializeFallBackCredentials();
 
         addRequestCycleListeners();
 
@@ -334,15 +342,15 @@ public class Main extends PluginApplication {
              * HST SAML kind of authentication handler needed for Template Composer integration
              *
              */
-            cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
+            cmsContextService = (CmsInternalCmsContextService) HippoServiceRegistry.getService(CmsContextService.class);
             if (cmsContextService == null) {
                 cmsContextServiceImpl = new CmsContextServiceImpl();
                 cmsContextService = cmsContextServiceImpl;
-                HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class,CmsInternalCmsContextService.class);
+                HippoServiceRegistry.register(cmsContextServiceImpl, CmsContextService.class, CmsInternalCmsContextService.class);
             }
 
             cmsEventDispatcherService = HippoServiceRegistry.getService(CmsEventDispatcherService.class);
-            if ( cmsEventDispatcherService == null) {
+            if (cmsEventDispatcherService == null) {
                 cmsEventDispatcherService = new CmsEventDispatcherServiceImpl();
                 HippoServiceRegistry.register(cmsEventDispatcherService, CmsEventDispatcherService.class, InternalCmsEventDispatcherService.class);
             }
@@ -359,7 +367,7 @@ public class Main extends PluginApplication {
                         final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
                                 ? destinationPathParams.get(0).toString() : null;
 
-                        HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
+                        HttpSession httpSession = ((ServletWebRequest) request).getContainerRequest().getSession();
                         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
                         if (cmsSessionContext == null) {
@@ -401,7 +409,7 @@ public class Main extends PluginApplication {
                             };
                         }
                         return requestTarget;
-                    } 
+                    }
                     return null;
                 }
 
@@ -529,7 +537,7 @@ public class Main extends PluginApplication {
                 String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
                 if (classNamePrefixes == null || classNamePrefixes.length == 0) {
                     log.info("No whitelisted package resources found, using the default whitelist: {}",
-                             Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
+                            Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
                     classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
                 }
                 addClassNamePrefixes(classNamePrefixes);
@@ -563,11 +571,9 @@ public class Main extends PluginApplication {
     }
 
     /**
-     * Tries to get the output wicket paths parameter from:
-     * <ol>
-     *     <li>The servlet init parameter</li>
-     *     <li>The servlet context if the init parameter isn't set</li>
-     * </ol>
+     * Tries to get the output wicket paths parameter from: <ol> <li>The servlet init parameter</li> <li>The servlet
+     * context if the init parameter isn't set</li> </ol>
+     *
      * @return the value of the output wicket paths parameter
      */
     private String obtainOutputWicketPathsParameter() {
@@ -639,12 +645,15 @@ public class Main extends PluginApplication {
             } else {
                 repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
             }
-            String repositoryUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
-            String repositoryPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
-            PluginUserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
         }
         return repository;
     }
+
+
+    public UserCredentials getFallbackCredentials() {
+        return new UserCredentials(repositoryFallbackUsername, repositoryFallbackPassword);
+    }
+
 
     public void resetConnection() {
         repository = null;
@@ -683,14 +692,14 @@ public class Main extends PluginApplication {
     }
 
     /**
-     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s. Note that the
-     * default <code>CsrfPreventionRequestCycleListener</code> always gets added, regardless whether custom  {@link IRequestCycleListener}s
-     * are configured.
-     * <P>
+     * Adds the default built-in {@link IRequestCycleListener} or configured custom {@link IRequestCycleListener}s. Note
+     * that the default <code>CsrfPreventionRequestCycleListener</code> always gets added, regardless whether custom
+     * {@link IRequestCycleListener}s are configured.
+     * <p>
      * If no custom {@link IRequestCycleListener}s are configured, then this simply registers the default built-in
-     * listeners such as {@link org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener} and {@link RepositoryRuntimeExceptionHandlingRequestCycleListener}.
-     * Otherwise, this registers only the custom configured {@link IRequestCycleListener}s.
-     * </P>
+     * listeners such as {@link org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener} and {@link
+     * RepositoryRuntimeExceptionHandlingRequestCycleListener}. Otherwise, this registers only the custom configured
+     * {@link IRequestCycleListener}s. </P>
      */
     private void addRequestCycleListeners() {
         String[] listenerClassNames = StringUtils.split(getConfigurationParameter(REQUEST_CYCLE_LISTENERS_PARAM, null), " ,\t\r\n");
