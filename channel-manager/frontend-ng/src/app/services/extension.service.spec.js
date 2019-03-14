@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,20 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ExtensionService', () => {
+  let $window;
   let ConfigService;
   let ExtensionService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    ConfigService = {};
-
     angular.mock.module(($provide) => {
-      $provide.value('ConfigService', ConfigService);
+      $provide.value('ConfigService', jasmine.createSpyObj('ConfigService', ['getCmsContextPath']));
     });
 
-    inject((_ExtensionService_) => {
+    inject((_$window_, _ConfigService_, _ExtensionService_) => {
+      $window = _$window_;
+      ConfigService = _ConfigService_;
       ExtensionService = _ExtensionService_;
     });
   });
@@ -75,6 +76,54 @@ describe('ExtensionService', () => {
     it('works when there are no extensions defined', () => {
       ConfigService.extensions = undefined;
       expect(ExtensionService.getExtensions('a')).toEqual([]);
+    });
+  });
+
+  describe('getExtensionUrl', () => {
+    beforeEach(() => {
+      $window.location = { origin: 'https://www.example.com:443' };
+      ConfigService.antiCache = 42;
+    });
+
+    describe('for extensions from the same origin', () => {
+      it('works when the CMS location has a context path', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works when the CMS location has no context path', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/');
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works when the extension URL path contains search parameters', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl?customParam=X' })).toEqual('/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works when the extension URL path does not start with a slash', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        expect(ExtensionService.getExtensionUrl({ url: 'testUrl' })).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works when the extension URL path contains dots', () => {
+        ConfigService.getCmsContextPath.and.returnValue('/cms/');
+        expect(ExtensionService.getExtensionUrl({ url: '../testUrl' })).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+    });
+
+    describe('for extensions from a different origin', () => {
+      it('works for URLs without parameters', () => {
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works for URLs with parameters', () => {
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com?customParam=X' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
+
+      it('works for HTTPS URLs', () => {
+        expect(ExtensionService.getExtensionUrl({ url: 'https://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+      });
     });
   });
 });

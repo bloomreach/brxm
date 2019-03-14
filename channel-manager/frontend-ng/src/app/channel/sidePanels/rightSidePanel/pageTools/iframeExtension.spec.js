@@ -21,16 +21,14 @@ describe('iframeExtension', () => {
   let $log;
   let $q;
   let $rootScope;
-  let $window;
   let context;
   let extension;
-  let iframe;
   let ChannelService;
   let ConfigService;
   let DomService;
   let ExtensionService;
   let HippoIframeService;
-  let Penpal;
+  let OpenUIService;
   let child;
 
   beforeEach(() => {
@@ -57,37 +55,27 @@ describe('iframeExtension', () => {
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
     ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath', 'getCmsOrigin']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
-    ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension']);
+    ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionUrl']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-    Penpal = jasmine.createSpyObj('Penpal', ['connectToChild']);
+    OpenUIService = jasmine.createSpyObj('OpenUIService', ['connect']);
     $log = jasmine.createSpyObj('$log', ['warn']);
-    $window = {
-      location: {
-        origin: 'https://www.example.com:443',
-      },
-    };
 
     ExtensionService.getExtension.and.returnValue(extension);
 
-    iframe = angular.element('<iframe src="about:blank"></iframe>');
     child = jasmine.createSpyObj('child', ['emitEvent']);
 
-    Penpal.connectToChild.and.returnValue({
-      promise: $q.resolve(child),
-      iframe,
-    });
+    OpenUIService.connect.and.returnValue($q.resolve(child));
 
     $element = angular.element('<div></div>');
     $ctrl = $componentController('iframeExtension', {
       $element,
       $log,
-      $window,
       ChannelService,
       ConfigService,
       DomService,
       ExtensionService,
       HippoIframeService,
-      Penpal,
+      OpenUIService,
     }, {
       extensionId: extension.id,
       context,
@@ -103,14 +91,13 @@ describe('iframeExtension', () => {
     });
 
     it('connects to the child', () => {
-      ConfigService.antiCache = 42;
-      ConfigService.getCmsContextPath.and.returnValue('/cms/');
+      ExtensionService.getExtensionUrl.and.returnValue('some-url');
 
       $ctrl.$onInit();
       $rootScope.$digest();
 
-      expect(Penpal.connectToChild).toHaveBeenCalledWith({
-        url: '/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443',
+      expect(OpenUIService.connect).toHaveBeenCalledWith({
+        url: 'some-url',
         appendTo: $element[0],
         methods: jasmine.any(Object),
       });
@@ -118,17 +105,16 @@ describe('iframeExtension', () => {
     });
 
     it('logs a warning when connecting to the child failed', () => {
-      ConfigService.antiCache = 42;
-      ConfigService.getCmsContextPath.and.returnValue('/cms/');
+      ExtensionService.getExtensionUrl.and.returnValue('some-url');
 
       const error = new Error('Connection destroyed');
-      Penpal.connectToChild.and.returnValue({ promise: $q.reject(error) });
+      OpenUIService.connect.and.returnValue($q.reject(error));
 
       $ctrl.$onInit();
       $rootScope.$digest();
 
-      expect(Penpal.connectToChild).toHaveBeenCalled();
-      expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' failed to connect with the client library.', error);
+      expect(OpenUIService.connect).toHaveBeenCalled();
+      expect($log.warn).toHaveBeenCalledWith("Extension 'Test' failed to connect with the client library.", error);
     });
 
     describe('channel events', () => {
@@ -156,66 +142,12 @@ describe('iframeExtension', () => {
     });
   });
 
-  describe('_getExtensionUrl', () => {
-    beforeEach(() => {
-      ConfigService.antiCache = 42;
-      $ctrl.extension = extension;
-    });
-
-    describe('for extensions from the same origin', () => {
-      it('works when the CMS location has a context path', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works when the CMS location has no context path', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/');
-        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works when the extension URL path contains search parameters', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        extension.url = '/testUrl?customParam=X';
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works when the extension URL path does not start with a slash', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        extension.url = 'testUrl';
-        expect($ctrl._getExtensionUrl()).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works when the extension URL path contains dots', () => {
-        ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        extension.url = '../testUrl';
-        expect($ctrl._getExtensionUrl()).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-    });
-
-    describe('for extensions from a different origin', () => {
-      it('works for URLs without parameters', () => {
-        extension.url = 'http://www.bloomreach.com';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works for URLs with parameters', () => {
-        extension.url = 'http://www.bloomreach.com?customParam=X';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-
-      it('works for HTTPS URLs', () => {
-        extension.url = 'https://www.bloomreach.com';
-        expect($ctrl._getExtensionUrl().$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
-      });
-    });
-  });
-
   describe('API for client library', () => {
     let methods;
 
     beforeEach(() => {
       $ctrl.$onInit();
-      const [args] = Penpal.connectToChild.calls.mostRecent().args;
+      const [args] = OpenUIService.connect.calls.mostRecent().args;
       ({ methods } = args);
     });
 
