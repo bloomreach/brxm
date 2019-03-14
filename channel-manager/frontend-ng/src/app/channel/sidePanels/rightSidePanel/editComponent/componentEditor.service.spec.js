@@ -721,6 +721,7 @@ describe('ComponentEditorService', () => {
 
   describe('the close function', () => {
     it('clears all properties so a next call starts with a clean slate', () => {
+      ComponentEditor.request = jasmine.createSpyObj('request', ['cancel']);
       ComponentEditor.channel = {};
       ComponentEditor.component = {};
       ComponentEditor.container = {};
@@ -732,6 +733,7 @@ describe('ComponentEditorService', () => {
 
       ComponentEditor.close();
 
+      expect(ComponentEditor.request.cancel).toHaveBeenCalled();
       expect(ComponentEditor.channel).toBeUndefined();
       expect(ComponentEditor.component).toBeUndefined();
       expect(ComponentEditor.container).toBeUndefined();
