@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,13 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <span wicket:id="message"></span>
-    <br/><br/>
-     <fieldset>
-      <legend><strong>Select file:</strong></legend>
-        <p>
+    <div class="hippo-dialog-body">
+      <div class="message" wicket:id="message"></div>
+      <div class="label">Select file</div>
+      <div class="input">
         <input wicket:id="fileInput" id="upload" type="file"/>
-        </p>
-     </fieldset>
+      </div>
+    </div>
   </wicket:extend>
 </html>

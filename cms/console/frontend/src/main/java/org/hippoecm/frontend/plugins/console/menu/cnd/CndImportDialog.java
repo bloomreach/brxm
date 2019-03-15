@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import javax.jcr.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -46,10 +45,10 @@ public class CndImportDialog extends Dialog<Void> {
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
 
-        msgText = new Model<>("Import a CND file.");
+        msgText = Model.of("Import a CND file.");
         add(new Label("message", msgText));
 
-        setOkLabel("import");
+        setOkLabel("Import");
     }
 
     @Override

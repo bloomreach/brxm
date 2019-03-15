@@ -26,22 +26,19 @@
         <div class="input">
           <select wicket:id="derefBehaviors"/>
         </div>
-        <span wicket:id="saveBehavior"/>
-        <span wicket:id="generate"/>
-        <p style="margin-top: 20px">
-          <div class="label">Select file</div>
+        <div class="label" wicket:id="saveBehavior"/>
+        <div class="label" wicket:id="generate"/>
+        <br/>
+        <div class="label">Select file</div>
         <div class="input">
           <input wicket:id="fileInput" id="upload" type="file"/>
         </div>
-        </p>
-        <p>
-          <legend>
-            <strong>Or paste your yaml dump here: </strong>
-          </legend>
-        <div class="xml-input">
-          <textarea wicket:id="xmlInput"/>
+        <div class="label">
+          Or paste your yaml dump here:
         </div>
-        </p>
+        <div class="xml-input">
+          <textarea wicket:id="xmlInput" style="padding: 0; height: 108px;"/>
+        </div>
       </div>
     </div>
   </wicket:extend>

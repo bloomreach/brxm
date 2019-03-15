@@ -20,6 +20,13 @@
    outline: none !important; 
 }
 
+/* Remove inner padding and border in Firefox 4+. */
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
 #lt {
   border-right: 1px solid #666666;
   border-left: 1px solid #666666;
@@ -103,8 +110,7 @@
 .hippo-dialog-center .hippo-console-tree {
   float: left;
   width: 463px;
-  border-right: 1px solid #e3e3e3;
-  height: 270px;
+  height: 350px;
   overflow: auto;
   border: 1px solid #e3e3e3;
   margin: 16px;
@@ -141,7 +147,7 @@
   margin-top: 5px;
 }
 
-.hippo-window .import-properties p {
+.hippo-window .import-properties div.label {
   margin-top: 5px;
 }
 
@@ -777,9 +783,20 @@ li.hippo-console-menu-actions-save.session-changes a {
   margin: 0 10px 10px;
 }
 
-.hippo-modal-feedback ul li.feedbackPanelERROR {
+ul.feedbackPanel {
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  border-width: 1px 0 1px 0;
+  border-style: solid;
+}
+
+li.feedbackPanelERROR {
+  background-image: url("dialog-error-16.png");
+  background-repeat: no-repeat;
+  background-position: 18px 7px;
   display: block;
   margin: 0;
+  padding: 8px 8px 8px 45px;
 }
 
 body.hippo-root div.yui-log-container {
@@ -921,6 +938,14 @@ body.hippo-root div.yui-log-container {
   padding: 16px;
 }
 
+.hippo-dialog-center .hippo-dialog-body .shortcuts {
+  width: 100%;
+}
+
+.hippo-dialog-center .hippo-dialog-body .shortcuts tr td {
+  font-size: 12px;
+}
+
 .hippo-dialog-center .hippo-dialog-body .no-padding {
    padding: 0;
  }
@@ -943,17 +968,28 @@ body.hippo-root div.yui-log-container {
   padding: 0 0 16px 0;
 }
 
-.hippo-dialog-center .hippo-dialog-body input,select {
-  flex-grow: 1;
+.hippo-dialog-center .hippo-dialog-body .input span.hippo-form-input  {
+  display: flex;
+  align-items: center;
+  padding: 0 0 16px 0;
+  width: 100%;
 }
 
 .hippo-dialog-center .hippo-dialog-body input {
+  flex-grow: 1;
+}
+
+.hippo-dialog-center .hippo-dialog-body input[type="text"],
+.hippo-dialog-center .hippo-dialog-body .input .hippo-form-input input {
   padding: 0 8px 0 8px;
+  height: 24px;
+  font-size: 12px;
 }
 
 .hippo-dialog-center .hippo-dialog-body textarea {
-  padding: 8px;
+  padding: 4px;
   width: 100%;
+  font-size: 12px;
 }
 
 .hippo-dialog-center .hippo-window-buttons {
@@ -1016,11 +1052,20 @@ body.hippo-root div.yui-log-container {
   padding: 0 0 16px 0;
 }
 
-.hippo-dialog-row-field-wrapper {
+.hippo-dialog-center .hippo-dialog-body .hippo-dialog-row-field-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   margin-right: 20px;
+}
+
+.hippo-dialog-center .hippo-dialog-body .hippo-dialog-row-field-wrapper .label {
+  padding: 0;
+}
+
+.hippo-dialog-center .hippo-dialog-body .hippo-dialog-row-field-wrapper label {
+  padding: 0;
+  margin: 0;
 }
 
 .hippo-dialog-row-field-wrapper .input {
@@ -1146,11 +1191,6 @@ body.hippo-root div.yui-log-container {
   font-size: 20px;
 }
 
-.node-dialog input[type="text"],
-.property-dialog input[type="text"] {
-  padding: 2px;
-}
-
 .infotable {
   width: 100%;
 }
@@ -1221,9 +1261,12 @@ body.hippo-root div.yui-log-container {
   display: block;
 }
 
+.delete-multiple-tree .tree-theme-windows {
+  height: 515px;
+}
+
 .tree-theme-windows {
   border: 1px solid #cccccc;
-  height: 480px;
   overflow: auto;
 }
 

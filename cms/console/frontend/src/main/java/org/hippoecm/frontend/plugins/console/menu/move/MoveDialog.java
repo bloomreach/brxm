@@ -28,6 +28,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -45,6 +47,8 @@ public class MoveDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
 
+    private static final IValueMap SIZE = new ValueMap("width=515,height=540");
+
     private String name;
     @SuppressWarnings("unused")
     private String target;
@@ -54,6 +58,7 @@ public class MoveDialog extends LookupDialog {
     public MoveDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
         setTitle(Model.of("Move node"));
+        setSize(SIZE);
         
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
