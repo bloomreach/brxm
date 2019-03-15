@@ -1,7 +1,7 @@
 {
   "id": "seoPlugin",
   "name": "Search Engine Optimization",
-  "icon": "/essentials/feature/images/seo-plugin-icon.png",
+  "icon": "/essentials/feature/images/seo-plugin-icon.svg",
   "introduction": "<p>Search engine optimization adds SEO support to your BloomReach project. You can easily add head elements contributions in your HTML, that can improve search results and help users find relevant documents. It can also improve the way links are rendered on Social Media.</p><p>This feature wraps the BloomReach HST SEO Support Components.</p>",
   "imageUrls": [
     "/essentials/feature/images/screenshots/seo01.png"

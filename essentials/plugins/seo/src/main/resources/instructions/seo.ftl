@@ -77,7 +77,7 @@
 
 <#if hstRequest.requestContext.cmsRequest>
 <div>
-  <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.png" />"> Click to edit SEO parameters
+  <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.svg" />"> Click to edit SEO parameters
   <#if title??>
     <p>Title: ${title?xml}</p>
   </#if>
