@@ -32,7 +32,7 @@
     <sv:value>main</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/menu.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/menu.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>essentials-menu</sv:value>
