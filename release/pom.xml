@@ -49,7 +49,7 @@
     <hippo.commons.version>4.6.2</hippo.commons.version>
     <hippo.cms.version>5.6.2</hippo.cms.version>
     <hippo.hst.version>5.6.2</hippo.hst.version>
-    <hippo.packages.version>5.6.2-SNAPSHOT</hippo.packages.version>
+    <hippo.packages.version>5.6.2</hippo.packages.version>
     <hippo.repository.version>5.6.2</hippo.repository.version>
     <hippo.services.version>4.6.2</hippo.services.version>
     <hippo.services.autoreload.version>4.6.2</hippo.services.autoreload.version>
