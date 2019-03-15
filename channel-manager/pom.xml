@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>5.6.2-SNAPSHOT</version>
+  <version>5.6.2</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -34,7 +34,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>5.6.2-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>5.6.2</hippo.repository.version>
     <hippo.cms.version>5.6.0</hippo.cms.version>
     <hippo.hst.version>5.6.0</hippo.hst.version>
     <hippo.commons.version>4.6.0</hippo.commons.version>
