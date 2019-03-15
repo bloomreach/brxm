@@ -71,15 +71,15 @@ describe('connect', () => {
 
     describe('parent connection', () => {
       describe('call', () => {
-        it('calls a parent method', () => {
+        it('calls a parent method', async () => {
           const refreshChannel = jest.spyOn(parent, 'refreshChannel');
-          return parentConnection.call('refreshChannel').then(() => {
-            expect(refreshChannel).toHaveBeenCalled();
-          });
+          await parentConnection.call('refreshChannel', 'something');
+
+          expect(refreshChannel).toHaveBeenCalledWith('something');
         });
 
         it('resolves with the data returned by the parent method', () => {
-          return parentConnection.call('getPage').then((page) => {
+          return parentConnection.call('getPage').then((page: any) => {
             expect(page.channel.id).toBe('testChannelId');
             expect(page.id).toBe('testPageId');
             expect(page.sitemapItem.id).toBe('testSitemapItemId');
