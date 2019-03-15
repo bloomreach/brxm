@@ -1,7 +1,7 @@
 {
   "id": "skeleton",
   "name": "Essentials Site Skeleton",
-  "icon": "/essentials/feature/skeleton/icon.png",
+  "icon": "/essentials/feature/skeleton/generic-package.svg",
   "introduction": "Provides a basic site structure for adding features, such as a basic sitemap, an empty menu and styling.",
   "type": "feature",
   "vendor": {
