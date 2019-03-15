@@ -140,6 +140,11 @@ export interface UiScope extends UiProperties {
    * API for the current channel.
    */
   channel: ChannelScope;
+
+  /**
+   * API for the current document.
+   */
+  document: DocumentScope;
 }
 
 /**
@@ -251,4 +256,30 @@ export interface PageProperties {
    * The public URL of the page.
    */
   url: string;
+}
+
+/**
+ * API to access information about and communicate with the current document.
+ */
+export interface DocumentScope {
+  /**
+   * API for the current field of the current document.
+   */
+  field: FieldScope;
+}
+
+/**
+ * API to access information about and communicate with the current document field.
+ */
+export interface FieldScope {
+  /**
+   * Gathers current field value.
+   */
+  getValue(): Promise<string>;
+
+  /**
+   * Updates current field value.
+   * @param value the new field value
+   */
+  setValue(value: string): Promise<void>;
 }

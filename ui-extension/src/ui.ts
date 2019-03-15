@@ -28,7 +28,17 @@
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
 import Emittery = require('emittery'); // tslint:disable-line:import-name
-import { ChannelScope, ChannelScopeEvents, Emitter, EventHandler, PageScope, PageScopeEvents, UiScope } from './api';
+import {
+  ChannelScope,
+  ChannelScopeEvents,
+  DocumentScope,
+  Emitter,
+  EventHandler,
+  FieldScope,
+  PageScope,
+  PageScopeEvents,
+  UiScope,
+} from './api';
 import { ParentConnection } from './parent';
 
 const SCOPE_CHANNEL = 'channel';
@@ -73,9 +83,24 @@ class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
   }
 }
 
+class Document extends Scope implements DocumentScope {
+  field = new Field(this._parent);
+}
+
+class Field extends Scope implements FieldScope {
+  getValue() {
+    return this._parent.call('getFieldValue');
+  }
+
+  setValue(value: string) {
+    return this._parent.call('setFieldValue', value);
+  }
+}
+
 export class Ui extends Scope implements UiScope {
   baseUrl: string;
   channel: ChannelScope;
+  document: DocumentScope;
   extension: {
     config: string,
   };
@@ -92,6 +117,7 @@ export class Ui extends Scope implements UiScope {
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
     this.channel = new Channel(parent, eventEmitter, SCOPE_CHANNEL);
+    this.document = new Document(parent);
   }
 
   init(): Promise<Ui> {
