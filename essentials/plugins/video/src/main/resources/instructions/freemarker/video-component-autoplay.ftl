@@ -9,6 +9,6 @@
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
-    <img src="<@hst.link path="/images/essentials/catalog-component-icons/video.png" />"> Click to edit Video
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/video.svg" />"> Click to edit Video
   </div>
 </#if>

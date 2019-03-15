@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
     <cnd documentType="video" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="instructions/xml/namespace/video-namespace.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="instructions/xml/hst/video-component-catalog.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="instructions/images/video.png" target="{{imagesRoot}}/essentials/catalog-component-icons/video.png"/>
+    <file action="copy" binary="true" source="instructions/images/video.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/video.svg"/>
     <file action="copy" source="instructions/java/Video.txt" target="{{beansFolder}}/Video.java"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="instructions/xml/folderoptions/new-video-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
