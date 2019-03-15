@@ -140,9 +140,9 @@
     <xml action="copy" source="hst/page-blog-main.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-list.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="hst/page-blog-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
-    <file action="copy" binary="true" source="images/blog-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/blog-list.png"/>
-    <file action="copy" binary="true" source="images/blogposts-by-author.png" target="{{imagesRoot}}/essentials/catalog-component-icons/blogposts-by-author.png"/>
-    <file action="copy" binary="true" source="images/facets.png" target="{{imagesRoot}}/essentials/catalog-component-icons/facets.png"/>
+    <file action="copy" binary="true" source="images/blog-list.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/blog-list.svg"/>
+    <file action="copy" binary="true" source="images/blogposts-by-author.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/blogposts-by-author.svg"/>
+    <file action="copy" binary="true" source="images/facets.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/facets.svg"/>
   </instructionSet>
 
   <!-- HST TEMPLATES -->

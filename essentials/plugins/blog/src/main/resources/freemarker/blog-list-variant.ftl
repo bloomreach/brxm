@@ -34,6 +34,6 @@
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
 <div>
-  <img src="<@hst.link path='/images/essentials/catalog-component-icons/blog-list.png'/>"> Click to edit Blog List
+  <img src="<@hst.link path='/images/essentials/catalog-component-icons/blog-list.svg'/>"> Click to edit Blog List
 </div>
 </#if>
