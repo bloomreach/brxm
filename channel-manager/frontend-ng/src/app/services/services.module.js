@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Penpal from 'penpal';
+
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './browser.service';
 import CatalogService from './catalog.service';
@@ -27,6 +29,7 @@ import FeedbackService from './feedback.service';
 import HippoGlobal from './hippoGlobal.service';
 import HstComponentService from './hstComponent.service';
 import HstService from './hst.service';
+import OpenUiService from './openui.service';
 import PathService from './path.service';
 import PickerService from './picker.service';
 import ProjectService from './project.service';
@@ -39,6 +42,7 @@ import WorkflowService from './workflow.service';
 
 const servicesModule = angular
   .module('hippo-cm.services', [])
+  .constant('Penpal', Penpal)
   .service('BrowserService', BrowserService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
@@ -51,6 +55,7 @@ const servicesModule = angular
   .service('HippoGlobal', HippoGlobal)
   .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
+  .service('OpenUiService', OpenUiService)
   .service('PathService', PathService)
   .service('PickerService', PickerService)
   .service('ProjectService', ProjectService)

@@ -49,7 +49,7 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
         this.uiExtension = uiExtension;
     }
 
-    String getUiExtension() {
+    public String getUiExtension() {
         return uiExtension;
     }
 

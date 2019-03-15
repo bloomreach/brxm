@@ -18,30 +18,26 @@ class IframeExtensionCtrl {
     $element,
     $log,
     $rootScope,
-    $sce,
-    $window,
     ChannelService,
     ConfigService,
     DomService,
     ExtensionService,
     HippoIframeService,
+    OpenUiService,
     PathService,
-    Penpal,
   ) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
     this.$rootScope = $rootScope;
-    this.$sce = $sce;
-    this.$window = $window;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
+    this.OpenUiService = OpenUiService;
     this.PathService = PathService;
-    this.Penpal = Penpal;
   }
 
   $onInit() {
@@ -69,8 +65,8 @@ class IframeExtensionCtrl {
   _initExtension() {
     this.extension = this.ExtensionService.getExtension(this.extensionId);
 
-    this.connection = this.Penpal.connectToChild({
-      url: this._getExtensionUrl(),
+    this.OpenUiService.connect({
+      url: this.ExtensionService.getExtensionUrl(this.extension),
       appendTo: this.$element[0],
       methods: {
         getProperties: () => this._getProperties(),
@@ -78,52 +74,11 @@ class IframeExtensionCtrl {
         refreshChannel: () => this.ChannelService.reload(),
         refreshPage: () => this.HippoIframeService.reload(),
       },
-    });
-
-    // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
-    // - allow-top-navigation
-    // - allow-top-navigation-by-user-activation
-    $(this.connection.iframe).attr('sandbox',
-      'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
-
-    this.connection.promise
-      .then((child) => {
-        this.child = child;
-      })
+    })
+      .then((child) => { this.child = child; })
       .catch((error) => {
         this.$log.warn(`Extension '${this.extension.displayName}' failed to connect with the client library.`, error);
       });
-  }
-
-  _getExtensionUrl() {
-    if (this._isAbsoluteUrl(this.extension.url)) {
-      return this._getTrustedAbsoluteUrl(this.extension.url);
-    }
-    return this._getUrlRelativeToCmsLocation(this.extension.url);
-  }
-
-  _isAbsoluteUrl(url) {
-    return url.startsWith('http://') || url.startsWith('https://');
-  }
-
-  _getTrustedAbsoluteUrl(extensionUrl) {
-    const url = new URL(extensionUrl);
-    this._addQueryParameters(url);
-    return this.$sce.trustAsResourceUrl(url.href);
-  }
-
-  _getUrlRelativeToCmsLocation(extensionUrl) {
-    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), extensionUrl);
-    // The current location should be the default value for the second parameter of the URL() constructor,
-    // but Chrome needs it explicitly otherwise it will throw an error.
-    const url = new URL(path, this.$window.location.origin);
-    this._addQueryParameters(url);
-    return url.pathname + url.search;
-  }
-
-  _addQueryParameters(url) {
-    url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
-    url.searchParams.append('br.parentOrigin', this.$window.location.origin);
   }
 
   _getProperties() {

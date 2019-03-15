@@ -20,6 +20,7 @@ import compoundFieldComponent from './compoundField/compoundField.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
+import openuiStringFieldComponent from './openuiStringField/openuiStringField.component';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import radioGroupFieldComponent from './radioGroup/radioGroup.component';
 
@@ -33,6 +34,7 @@ const fieldsModule = angular
   .component('compoundField', compoundFieldComponent)
   .component('documentFields', documentFieldsComponent)
   .component('imageLink', imageLinkComponent)
+  .component('openuiStringField', openuiStringFieldComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('radioGroup', radioGroupFieldComponent)
   .service('FieldService', fieldService);

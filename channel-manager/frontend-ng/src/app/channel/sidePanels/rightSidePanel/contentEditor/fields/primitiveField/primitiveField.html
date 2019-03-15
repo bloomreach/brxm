@@ -190,6 +190,10 @@
                on-blur="$ctrl.blurPrimitive($event)">
     </node-link>
 
+    <openui-string-field layout="row" ng-switch-when="OPEN_UI"
+      extension-id="{{:: $ctrl.fieldType.uiExtension }}">
+    </openui-string-field>
+
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>
