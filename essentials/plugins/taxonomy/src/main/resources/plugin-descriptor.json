@@ -1,7 +1,7 @@
 {
   "id": "taxonomyPlugin",
   "name": "Taxonomy",
-  "icon": "/essentials/feature/images/taxonomy-plugin-icon.png",
+  "icon": "/essentials/feature/images/taxonomy-plugin-icon.svg",
   "introduction": "With the Taxonomy feature you can add extra meta data to your documents to categorize them.",
   "description": "This feature wraps the 'Taxonomy' Standard Plugin.",
   "imageUrls": [
