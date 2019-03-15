@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 
   <instructionSet>
     <xml action="copy" source="hst/catalog/googlemaps-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/googlemaps.png" target="{{imagesRoot}}/essentials/catalog-component-icons/googlemaps.png"/>
+    <file action="copy" binary="true" source="images/googlemaps.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/googlemaps.svg"/>
     <file action="copy" binary="true" source="js/essentials-google-maps.js" target="{{webfilesJsRoot}}/essentials-google-maps.js"/>
     <freemarker action="copy" source="freemarker/essentials-googlemaps.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-googlemaps.ftl"/>
     <xml action="copy" source="hst/googlemaps-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>

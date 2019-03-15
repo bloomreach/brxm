@@ -26,7 +26,7 @@
     <sv:value>Google Maps</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/googlemaps.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/googlemaps.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>essentials-googlemaps</sv:value>
