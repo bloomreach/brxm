@@ -1,7 +1,7 @@
 {
   "id": "videoComponentPlugin",
   "name": "Videos",
-  "icon": "/essentials/feature/images/videos-plugin-icon.png",
+  "icon": "/essentials/feature/images/videos-plugin-icon.svg",
   "introduction": "The Video feature adds a new drag-and-drop component to the component library of the Channel Manager, enabling you to add video to your project.",
   "description": "The feature adds the new document type 'Video' to the project. You can choose to install a sample video document. The feature is based on linking to external video, e.g. hosted on youtube, rather than serving the video itself by the CMS.",
   "imageUrls": [

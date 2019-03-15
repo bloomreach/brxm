@@ -1,7 +1,7 @@
 {
   "id": "robotsPlugin",
   "name": "Robots.txt",
-  "icon": "/essentials/feature/images/robots-plugin-icon.png",
+  "icon": "/essentials/feature/images/robots-plugin-icon.svg",
   "introduction": "With the Robots.txt feature, you can control the content of your robots.txt file. The feature installs a special document type that can be used to read and write robots.txt.",
   "description": "This feature adds the 'Robots.txt' Standard Plugin. Also the robots.txt sitemap item is added and an example document.",
   "imageUrls": [

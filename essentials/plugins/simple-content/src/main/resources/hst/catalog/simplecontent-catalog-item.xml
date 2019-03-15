@@ -26,7 +26,7 @@
     <sv:value>Simple Content</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/simple-content.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/simple-content.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>contentpage-main</sv:value>

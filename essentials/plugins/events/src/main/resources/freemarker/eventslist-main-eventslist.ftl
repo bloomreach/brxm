@@ -29,7 +29,7 @@
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
-    <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.png'/>"> Click to edit Event List
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/events-list.svg'/>"> Click to edit Event List
     <div class="has-new-content-button">
       <@hst.manageContent documentTemplateQuery="new-events-document" folderTemplateQuery="new-events-folder" rootPath="events" defaultPath="${currentYear}/${currentMonth}"/>
     </div>

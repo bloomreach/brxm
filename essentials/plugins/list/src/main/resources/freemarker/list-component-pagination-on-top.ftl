@@ -29,6 +29,6 @@
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
-    <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.png'/>"> Click to edit Generic List
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/generic-list.svg'/>"> Click to edit Generic List
   </div>
 </#if>

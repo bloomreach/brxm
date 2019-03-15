@@ -1,7 +1,7 @@
 {
   "id": "taggingPlugin",
   "name": "Tagging",
-  "icon": "/essentials/feature/images/tagging-plugin-icon.png",
+  "icon": "/essentials/feature/images/tagging-plugin-icon.svg",
   "introduction": "With the Tagging feature, you can assign tags to your content.",
   "description": "This feature wraps the 'Content Tagging' Standard Plugin.",
   "imageUrls": [

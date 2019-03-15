@@ -26,7 +26,7 @@
     <sv:value>FAQ</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/faq.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/faq.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>faqlist-main</sv:value>

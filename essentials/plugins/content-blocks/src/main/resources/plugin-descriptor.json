@@ -1,7 +1,7 @@
 {
   "id": "contentBlocks",
   "name": "Content Blocks",
-  "icon": "/essentials/feature/images/content-blocks-plugin-icon.png",
+  "icon": "/essentials/feature/images/content-blocks-plugin-icon.svg",
   "introduction": "With Content Blocks, the content- and document editor can add multiple pre-configured compound type blocks to a document.",
   "description": "<p>The CMS administrator can configure the available content blocks on per document type basis.</p><p>This feature wraps the 'Content Blocks' Standard Plugin.</p>",
   "imageUrls": [

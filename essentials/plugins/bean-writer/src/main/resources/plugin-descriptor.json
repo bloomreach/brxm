@@ -1,7 +1,7 @@
 {
   "id": "beanwriter",
   "name": "Bean Writer",
-  "icon": "/essentials/tool/images/bean-writer-icon.png",
+  "icon": "/essentials/tool/images/bean-writer-icon.svg",
   "introduction": "Generate HST Content beans.",
   "restClasses": [
     "org.onehippo.cms7.essentials.beanwriter.rest.BeanWriterResource"

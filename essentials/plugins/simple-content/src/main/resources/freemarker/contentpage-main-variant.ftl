@@ -14,4 +14,10 @@
   </#if>
   <@hst.html hippohtml=document.content/>
 </article>
+<#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
+<#elseif editMode>
+  <div class="has-edit-button">
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/simple-content.svg" />"> Click to edit Simple Content
+    <@hst.manageContent documentTemplateQuery="new-content-document" parameterName="document" rootPath="content"/>
+  </div>
 </#if>

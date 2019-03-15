@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
     <freemarker action="copy" source="freemarker/essentials-menu.ftl" target="{{freemarkerRoot}}/hstdefault/essentials-menu.ftl"/>
     <xml action="copy" source="hst/menu-template-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/catalog/menu-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/menu.png" target="{{imagesRoot}}/essentials/catalog-component-icons/menu.png"/>
+    <file action="copy" binary="true" source="images/menu.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/menu.svg"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">

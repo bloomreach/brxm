@@ -26,7 +26,7 @@
     <sv:value>Search Box</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/search-box.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/search-box.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:template" sv:type="String">
     <sv:value>search-box</sv:value>

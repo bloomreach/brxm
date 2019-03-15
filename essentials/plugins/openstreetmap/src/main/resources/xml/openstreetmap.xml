@@ -23,7 +23,7 @@
     <sv:value>org.onehippo.cms7.essentials.components.EssentialsOpenStreetMapComponent</sv:value>
   </sv:property>
   <sv:property sv:name="hst:iconpath" sv:type="String">
-    <sv:value>images/essentials/catalog-component-icons/openstreetmap.png</sv:value>
+    <sv:value>images/essentials/catalog-component-icons/openstreetmap.svg</sv:value>
   </sv:property>
   <sv:property sv:name="hst:label" sv:type="String">
     <sv:value>OpenStreetMap</sv:value>

@@ -39,7 +39,7 @@
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div class="has-edit-button">
-    <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.svg" />"> Click to edit FAQ
     <@hst.manageContent documentTemplateQuery="new-faq-item" parameterName="document" rootPath="faq"/>
   </div>
 </#if>

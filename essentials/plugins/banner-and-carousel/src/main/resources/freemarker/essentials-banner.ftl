@@ -19,7 +19,7 @@
   <#elseif editMode>
     <figure style="position: relative">
       <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
-      <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Selected document "${document.node.path}" is not of the correct type, please select or create a Banner document.
+      <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.svg'/>"> Selected document "${document.node.path}" is not of the correct type, please select or create a Banner document.
     </figure>
   </#if>
 </div>
@@ -27,7 +27,7 @@
 <div>
   <figure style="position: relative">
     <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
-    <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.svg'/>"> Click to edit Banner
   </figure>
 </div>
 </#if>

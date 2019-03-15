@@ -1,7 +1,7 @@
 {
   "id": "projectsPlugin",
   "name": "Projects",
-  "icon": "/essentials/feature/images/projects-plugin-icon.png",
+  "icon": "/essentials/feature/images/projects-plugin-icon.svg",
   "introduction": "With Projects, you add projects functionality to the project. This feature will add the projects perspective.",
   "description": "Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project.. ",
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/workflow-process-management/introduction-to-workflow-process-management.html",

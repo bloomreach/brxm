@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@
     <xml action="copy" source="hst/menu/content-menu-item.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:workspace/hst:sitemenus/main"/>
     <xml action="copy" source="hst/catalog/simplecontent-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/page-prototype/page-prototype-definition.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:prototypepages"/>
-    <file action="copy" binary="true" source="images/simple-content.png" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.png"/>
-    <file action="copy" binary="true" source="images/generic-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.png"/>
+    <file action="copy" binary="true" source="images/simple-content.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/simple-content.svg"/>
+    <file action="copy" binary="true" source="images/generic-list.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/generic-list.svg"/>
     <xml action="copy" source="hst/template-content-freemarker.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
     <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main.ftl"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@
 
   <instructionSet>
     <xml action="copy" source="xml/hst/catalog/newslist.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/news-list.png" target="{{imagesRoot}}/essentials/catalog-component-icons/news-list.png"/>
+    <file action="copy" binary="true" source="images/news-list.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/news-list.svg"/>
   </instructionSet>
 
 

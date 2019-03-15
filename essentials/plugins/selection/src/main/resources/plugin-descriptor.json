@@ -1,7 +1,7 @@
 {
   "id": "selectionPlugin",
   "name": "Selections",
-  "icon": "/essentials/tool/images/selections-icon.png",
+  "icon": "/essentials/tool/images/selections-icon.svg",
   "introduction": "With the Selections tool, you can add several kinds of dropdowns, checkboxes and radio groups to your document types.",
   "description": "This tool helps you adding selection fields to your document types.",
   "imageUrls": [
