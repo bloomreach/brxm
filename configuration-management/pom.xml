@@ -30,7 +30,7 @@
 
   <groupId>org.onehippo.cms</groupId>
   <artifactId>hippo-configuration-management</artifactId>
-  <version>1.6.2-SNAPSHOT</version>
+  <version>1.6.2</version>
   
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
