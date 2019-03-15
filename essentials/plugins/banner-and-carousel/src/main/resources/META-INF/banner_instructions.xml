@@ -63,8 +63,8 @@
   <instructionSet>
     <xml action="copy" source="hst/catalog/banner-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
     <xml action="copy" source="hst/catalog/carousel-catalog-item.xml" target="{{hstRoot}}/hst:configurations/hst:default/hst:catalog/essentials-catalog"/>
-    <file action="copy" binary="true" source="images/banner.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/banner.png"/>
-    <file action="copy" binary="true" source="images/carousel.png" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/carousel.png"/>
+    <file action="copy" binary="true" source="images/banner.svg" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/banner.svg"/>
+    <file action="copy" binary="true" source="images/carousel.svg" target="{{siteWebRoot}}/images/essentials/catalog-component-icons/carousel.svg"/>
   </instructionSet>
 
   <!--

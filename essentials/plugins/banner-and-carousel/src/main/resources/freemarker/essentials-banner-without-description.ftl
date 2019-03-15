@@ -15,7 +15,7 @@
 <div>
   <figure style="position: relative">
     <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document" rootPath="banners"/>
-    <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.svg'/>"> Click to edit Banner
   </figure>
 </div>
 </#if>

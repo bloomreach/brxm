@@ -117,7 +117,7 @@
 
 <#elseif editMode>
   <div>
-    <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.svg'/>"> Click to edit Carousel
   </div>
   <div class="has-new-content-button">
     <@hst.manageContent documentTemplateQuery="new-banner-document" parameterName="document1" rootPath="banners"/>
