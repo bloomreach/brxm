@@ -47,4 +47,19 @@ public final class ModelPath implements IDetachable {
         Arrays.stream(elements).forEach(ModelPathElement::detach);
     }
 
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        return Arrays.equals(this.getElements(), ((ModelPath) other).getElements());
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(getElements());
+    }
 }
