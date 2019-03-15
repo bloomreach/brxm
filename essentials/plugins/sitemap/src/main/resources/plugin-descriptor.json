@@ -1,7 +1,7 @@
 {
   "id": "sitemapPlugin",
   "name": "Sitemap",
-  "icon": "/essentials/feature/images/sitemap-plugin-icon.png",
+  "icon": "/essentials/feature/images/sitemap-plugin-icon.svg",
   "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
   "description": "This feature wraps the 'Sitemap' Standard Plugin.",
   "documentationLink": "https://www.onehippo.org/library/concepts/plugins/sitemap/about.html",
