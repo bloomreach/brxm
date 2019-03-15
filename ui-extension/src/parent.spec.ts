@@ -42,21 +42,19 @@ describe('connect', () => {
     eventEmitter = new Emittery();
   });
 
-  it('connects to the parent API', () => {
-    return connect(parentOrigin, eventEmitter)
-      .then(() => {
-        expect(Penpal.connectToParent).toHaveBeenCalled();
-      });
+  it('connects to the parent API', async () => {
+    await connect(parentOrigin, eventEmitter);
+
+    expect(Penpal.connectToParent).toHaveBeenCalled();
   });
 
-  it('uses the provided parent origin', () => {
-    return connect(parentOrigin, eventEmitter)
-      .then(() => {
-        expect(Penpal.connectToParent).toHaveBeenCalledWith({
-          parentOrigin,
-          methods: expect.any(Object),
-        });
-      });
+  it('uses the provided parent origin', async () => {
+    await connect(parentOrigin, eventEmitter);
+
+    expect(Penpal.connectToParent).toHaveBeenCalledWith({
+      parentOrigin,
+      methods: expect.any(Object),
+    });
   });
 
   describe('on success', () => {
@@ -64,9 +62,9 @@ describe('connect', () => {
     let parent: Parent;
 
     beforeEach(() => connect(parentOrigin, eventEmitter).then(pc => (parentConnection = pc)));
-    beforeEach(() => {
+    beforeEach(async () => {
       const penpalConnection = (Penpal.connectToParent as jest.Mock).mock.results[0].value;
-      return penpalConnection.promise.then((p: Parent) => (parent = p));
+      parent = await penpalConnection.promise;
     });
 
     describe('parent connection', () => {
@@ -78,13 +76,13 @@ describe('connect', () => {
           expect(refreshChannel).toHaveBeenCalledWith('something');
         });
 
-        it('resolves with the data returned by the parent method', () => {
-          return parentConnection.call('getPage').then((page: any) => {
-            expect(page.channel.id).toBe('testChannelId');
-            expect(page.id).toBe('testPageId');
-            expect(page.sitemapItem.id).toBe('testSitemapItemId');
-            expect(page.url).toBe('http://www.example.com');
-          });
+        it('resolves with the data returned by the parent method', async () => {
+          const page = await parentConnection.call('getPage') as any;
+
+          expect(page.channel.id).toBe('testChannelId');
+          expect(page.id).toBe('testPageId');
+          expect(page.sitemapItem.id).toBe('testSitemapItemId');
+          expect(page.url).toBe('http://www.example.com');
         });
 
         it('rejects with error code "IncompatibleParent" when the parent method does not exist', () => {
@@ -119,21 +117,19 @@ describe('connect', () => {
 
           expect(parentConnection.call('refreshChannel')).rejects.toMatchObject(error);
         });
-      })
+      });
     });
 
     describe('event emitter', () => {
-      it('emits events emitted by the parent', () => {
+      it('emits events emitted by the parent', async () => {
         const emitEvent = Penpal.connectToParent['mock'].calls[0][0].methods.emitEvent;
         const eventData = {};
         const listener = jest.fn();
 
         eventEmitter.on('event', listener);
+        await emitEvent('event', eventData);
 
-        return emitEvent('event', eventData)
-          .then(() => {
-            expect(listener).toHaveBeenCalledWith(eventData);
-          });
+        expect(listener).toHaveBeenCalledWith(eventData);
       });
     });
   });
