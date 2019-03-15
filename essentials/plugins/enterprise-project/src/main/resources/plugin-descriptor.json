@@ -1,7 +1,7 @@
 {
   "id": "enterpriseProject",
   "name": "Convert to Enterprise Project",
-  "icon": "/essentials/feature/enterpriseProject/icon.png",
+  "icon": "/essentials/feature/enterpriseProject/generic-package.svg",
   "introduction": "The Enterprise Project feature ensures, upon installation, that your BloomReach Experience Manager project is set up to use enterprise features.",
   "description": "Please note that this component is an enterprise component, it does not work in the developer edition of brXM. Installing this feature will convert your project to an enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise License.",
   "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-developer-information/setting-up-a-hippo-enterprise-project.html",
