@@ -27,7 +27,7 @@
   </#if>
 <#elseif editMode>
   <div class="has-edit-button">
-    <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.png" />"> Click to edit FAQ, or select or create a document.
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/faq.svg" />"> Click to edit FAQ, or select or create a document.
     <#-- add faq list document -->
     <@hst.manageContent documentTemplateQuery="new-faq-list" parameterName="document" rootPath="faq"/>
   </div>
