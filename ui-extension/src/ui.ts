@@ -35,21 +35,23 @@ import {
   Emitter,
   EventHandler,
   FieldScope,
+  PageProperties,
   PageScope,
   PageScopeEvents,
+  UiProperties,
   UiScope,
 } from './api';
-import { ParentConnection } from './parent';
+import { Parent, ParentConnection, ParentMethod } from './parent';
 
 const SCOPE_CHANNEL = 'channel';
 const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
 
-abstract class Scope {
-  protected constructor(protected _parent: ParentConnection) {
+abstract class Scope<T extends Parent = Parent> {
+  protected constructor(protected _parent: ParentConnection<T>) {
   }
 }
 
-abstract class ScopeEmitter<Events> extends Scope implements Emitter<Events> {
+abstract class ScopeEmitter<Events, T extends Parent> extends Scope<T> implements Emitter<Events> {
   constructor(parent: ParentConnection, private _eventEmitter: Emittery, private _eventScope: string) {
     super(parent);
   }
@@ -60,7 +62,19 @@ abstract class ScopeEmitter<Events> extends Scope implements Emitter<Events> {
   }
 }
 
-class Page extends ScopeEmitter<PageScopeEvents> implements PageScope {
+interface ChannelParent extends Parent {
+  getPage: ParentMethod<PageProperties>;
+  getProperties: ParentMethod<UiProperties>;
+  refreshChannel: ParentMethod;
+  refreshPage: ParentMethod;
+}
+
+interface DocumentParent extends Parent {
+  getFieldValue: ParentMethod<string>;
+  setFieldValue: ParentMethod<void, [string]>;
+}
+
+class Page extends ScopeEmitter<PageScopeEvents, ChannelParent> implements PageScope {
   get() {
     return this._parent.call('getPage');
   }
@@ -70,7 +84,7 @@ class Page extends ScopeEmitter<PageScopeEvents> implements PageScope {
   }
 }
 
-class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
+class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements ChannelScope {
   page: Page;
 
   constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
@@ -83,11 +97,11 @@ class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
   }
 }
 
-class Document extends Scope implements DocumentScope {
+class Document extends Scope<DocumentParent> implements DocumentScope {
   field = new Field(this._parent);
 }
 
-class Field extends Scope implements FieldScope {
+class Field extends Scope<DocumentParent> implements FieldScope {
   getValue() {
     return this._parent.call('getFieldValue');
   }
