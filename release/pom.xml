@@ -62,7 +62,7 @@
     <hippo.l10n-tooling.version>2.6.2</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.essentials-components.version>4.6.2-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.essentials-components.version>4.6.2</hippo.essentials-components.version>
     <hippo.plugin.content-blocks.version>4.6.2-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>7.6.2-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>4.6.2-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
