@@ -5,7 +5,7 @@ definitions:
       /poll:
         jcr:primaryType: hst:containeritemcomponent
         hst:componentclassname: org.onehippo.forge.poll.component.PollDocumentComponent
-        hst:iconpath: resources/poll/catalog-poll.png
+        hst:iconpath: resources/poll/catalog-poll.svg
         hst:label: Poll
         hst:parameternames: [poll-pollCompoundName, poll-docsPath, poll-dataPath,
           poll-docsClass]
