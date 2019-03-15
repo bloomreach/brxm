@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     <xml action="copy" source="instructions/xml/hst/search-page.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="instructions/xml/hst/search-sitemap.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="instructions/content/search-labels.xml" target="/content/documents/administration/labels"/>
-    <file action="copy" binary="true" source="instructions/images/search-box.png" target="{{imagesRoot}}/essentials/catalog-component-icons/search-box.png"/>
+    <file action="copy" binary="true" source="instructions/images/search-box.svg" target="{{imagesRoot}}/essentials/catalog-component-icons/search-box.svg"/>
     <freemarker action="copy" source="instructions/freemarker/search-main.ftl" target="{{freemarkerRoot}}/{{namespace}}/search-main.ftl"/>
     <freemarker action="copy" source="instructions/freemarker/search-box.ftl" target="{{freemarkerRoot}}/hstdefault/search-box.ftl"/>
     <xml action="copy" source="instructions/xml/hst/search-main-freemarker.xml" target="{{hstRoot}}/hst:configurations/{{namespace}}/hst:templates"/>
