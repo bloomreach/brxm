@@ -1,7 +1,7 @@
 {
   "id": "galleryPlugin",
   "name": "Gallery Manager",
-  "icon": "/essentials/tool/images/gallery-manager-icon.png",
+  "icon": "/essentials/tool/images/gallery-manager-icon.svg",
   "introduction": "Manage your project's Image Set definitions.",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.gallery.GalleryPluginResource"
