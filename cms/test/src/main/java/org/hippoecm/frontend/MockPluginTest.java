@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -175,15 +175,14 @@ public abstract class MockPluginTest {
 
         @Override
         public PluginUserSession newSession(Request request, Response response) {
-            UserCredentials fakeCredentials = new UserCredentials("admin", "admin");
-            try {
-                PluginUserSession.setCredentials(fakeCredentials);
-            } catch (RepositoryException e) {
-                throw new IllegalStateException("Cannot set fake credentials in test", e);
-            }
             return new PluginUserSession(request);
         }
 
+        @Override
+        protected void initializeFallBackCredentials() {
+            repositoryFallbackUsername = "admin";
+            repositoryFallbackPassword = "admin";
+        }
     }
 
     protected MockNode root;

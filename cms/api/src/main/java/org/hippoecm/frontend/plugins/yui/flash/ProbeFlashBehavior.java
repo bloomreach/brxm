@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,11 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 
+/**
+ * @Deprecated Flash is no longer used nor needed for the core of this product.
+ * Please move any dependencies on flash to your project implementation.
+ */
+@Deprecated
 public abstract class ProbeFlashBehavior extends AbstractYuiAjaxBehavior {
 
     private final PackageTextTemplate PROBE_FLASH_TEMPLATE = new PackageTextTemplate(ProbeFlashBehavior.class, "probe_flash.js");

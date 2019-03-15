@@ -19,8 +19,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.hippoecm.frontend.types.IFieldDescriptor;
-
 public class ValidationResult implements IValidationResult {
 
     private Set<Violation> violations;
@@ -59,15 +57,11 @@ public class ValidationResult implements IValidationResult {
     }
     
     private void countFields() {
-        final Set<IFieldDescriptor> fields = new HashSet<>();
+        final Set<ModelPath> modelPaths = new HashSet<>();
         for (Violation violation : getViolations()) {
-            for (ModelPath modelPath : violation.getDependentPaths()) {
-                for (ModelPathElement modelPathElement: modelPath.getElements()) {
-                    fields.add(modelPathElement.getField());
-                }
-            }
+            modelPaths.addAll(violation.getDependentPaths());
         }
-        affectedFields = fields.size();
+        affectedFields = modelPaths.size();
     }
 
 }

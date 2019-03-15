@@ -22,6 +22,8 @@ target/
 /engine/node_modules
 /login/node/
 /login/node_modules/
+/reporting/frontend/node/
+/reporting/frontend/node_modules
 /richtext/frontend/repository/
 /richtext/frontend/version/
 /richtext/frontend/workspaces/

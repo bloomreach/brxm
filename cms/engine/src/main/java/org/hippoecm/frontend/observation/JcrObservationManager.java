@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,8 +36,13 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.frontend.session.UserSession;
+
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
+
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,57 +137,71 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     public void refreshSession() {
-        cleanup();
+        Task refreshSessionTask = null;
 
-        UserSession session = UserSession.get();
-        if (session != null) {
-            // copy set of listeners; don't synchronize on map while notifying observers
-            // as it may need to be modified as a result of the event.
-            SortedSet<JcrListener> set = new TreeSet<JcrListener>(new Comparator<JcrListener>() {
-
-                public int compare(JcrListener o1, JcrListener o2) {
-                    int result = o1.getPath().compareTo(o2.getPath());
-                    if (result == 0) {
-                        return Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
-                    }
-                    return result;
-                }
-
-            });
-            synchronized (listeners) {
-                for (JcrListener listener : listeners.values()) {
-                    if (listener.getSession() == session) {
-                        set.add(listener);
-                    }
-                }
+        try {
+            if (HDC.isStarted()) {
+                refreshSessionTask = HDC.getCurrentTask().startSubtask(JcrObservationManager.class.getSimpleName() + ".refreshSession");
+                refreshSessionTask.setAttribute("nrOfListeners", listeners.size());
             }
 
-            // notify facet search listeners.
-            // FIXME due to HREPTWO-2655, will not be able to receive events on newly
-            // created facet search nodes.
-            FacetRootsObserver fso = (FacetRootsObserver) session.getFacetRootsObserver();
-            fso.refresh();
+            cleanup();
 
-            Node root = session.getRootNode();
-            if (root != null) {
-                try {
-                    root.refresh(true);
-                } catch (RepositoryException ex) {
-                    log.error("Failed to refresh session", ex);
-                }
-            } else {
-                log.info("Root not found; cleaning up listeners");
+            UserSession session = UserSession.get();
+            if (session != null) {
+                // copy set of listeners; don't synchronize on map while notifying observers
+                // as it may need to be modified as a result of the event.
+                SortedSet<JcrListener> set = new TreeSet<JcrListener>(new Comparator<JcrListener>() {
+
+                    public int compare(JcrListener o1, JcrListener o2) {
+                        int result = o1.getPath().compareTo(o2.getPath());
+                        if (result == 0) {
+                            return Integer.valueOf(o1.hashCode()).compareTo(o2.hashCode());
+                        }
+                        return result;
+                    }
+
+                });
                 synchronized (listeners) {
-                    for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext();) {
-                        JcrListener listener = iter.next();
+                    for (JcrListener listener : listeners.values()) {
                         if (listener.getSession() == session) {
-                            iter.remove();
+                            set.add(listener);
                         }
                     }
                 }
+
+                // notify facet search listeners.
+                // FIXME due to HREPTWO-2655, will not be able to receive events on newly
+                // created facet search nodes.
+                FacetRootsObserver fso = (FacetRootsObserver) session.getFacetRootsObserver();
+                fso.refresh();
+
+                Node root = session.getRootNode();
+                if (root != null) {
+                    try {
+                        root.refresh(true);
+                    } catch (RepositoryException ex) {
+                        log.error("Failed to refresh session", ex);
+                    }
+                } else {
+                    log.info("Root not found; cleaning up listeners");
+                    synchronized (listeners) {
+                        for (Iterator<JcrListener> iter = listeners.values().iterator(); iter.hasNext();) {
+                            JcrListener listener = iter.next();
+                            if (listener.getSession() == session) {
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
+            } else {
+                log.error("No session found");
             }
-        } else {
-            log.error("No session found");
+        }
+        finally {
+            if (refreshSessionTask != null) {
+                refreshSessionTask.stop();
+            }
         }
     }
 
@@ -201,62 +220,76 @@ public class JcrObservationManager implements ObservationManager {
     }
 
     public void processEvents() {
-        long start = System.currentTimeMillis();
-        cleanup();
+        Task processEventsTask = null;
 
-        UserSession session = UserSession.get();
-        if (session != null) {
-            // copy set of listeners; don't synchronize on map while notifying observers
-            // as it may need to be modified as a result of the event.
-            SortedSet<JcrListener> set = new TreeSet<JcrListener>();
-            synchronized (listeners) {
-                for (JcrListener listener : listeners.values()) {
-                    if (listener.getSession() == session) {
-                        set.add(listener);
-                    }
-                }
+        try {
+            if (HDC.isStarted()) {
+                processEventsTask = HDC.getCurrentTask().startSubtask(JcrObservationManager.class.getSimpleName() + ".processEvents");
+                processEventsTask.setAttribute("nrOfListeners", listeners.size());
             }
 
-            Session jcrSession = session.getJcrSession();
-            Map<String, NodeState> states;
-            synchronized (cache) {
-                states = cache.get(jcrSession);
-                if (states == null) {
-                    states = new HashMap<String, NodeState>();
-                    cache.put(jcrSession, states);
-                }
-            }
+            long start = System.currentTimeMillis();
+            cleanup();
 
-            synchronized (states) {
-                Map<String, NodeState> dirty = new HashMap<String, NodeState>();
-                for (JcrListener listener : set) {
-                    listener.process(dirty);
-                }
-
-                states.clear();
-
-                // update cache
-                states.putAll(dirty);
-
-                // remove stale entries
-                Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
-                while (cacheIter.hasNext()) {
-                    Map.Entry<String, NodeState> entry = cacheIter.next();
-                    try {
-                        if (!jcrSession.itemExists(entry.getKey())) {
-                            cacheIter.remove();
+            UserSession session = UserSession.get();
+            if (session != null) {
+                // copy set of listeners; don't synchronize on map while notifying observers
+                // as it may need to be modified as a result of the event.
+                SortedSet<JcrListener> set = new TreeSet<JcrListener>();
+                synchronized (listeners) {
+                    for (JcrListener listener : listeners.values()) {
+                        if (listener.getSession() == session) {
+                            set.add(listener);
                         }
-                    } catch (RepositoryException ex) {
-                        log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
                     }
                 }
+
+                Session jcrSession = session.getJcrSession();
+                Map<String, NodeState> states;
+                synchronized (cache) {
+                    states = cache.get(jcrSession);
+                    if (states == null) {
+                        states = new HashMap<String, NodeState>();
+                        cache.put(jcrSession, states);
+                    }
+                }
+
+                synchronized (states) {
+                    Map<String, NodeState> dirty = new HashMap<String, NodeState>();
+                    for (JcrListener listener : set) {
+                        listener.process(dirty);
+                    }
+
+                    states.clear();
+
+                    // update cache
+                    states.putAll(dirty);
+
+                    // remove stale entries
+                    Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
+                    while (cacheIter.hasNext()) {
+                        Map.Entry<String, NodeState> entry = cacheIter.next();
+                        try {
+                            if (!jcrSession.itemExists(entry.getKey())) {
+                                cacheIter.remove();
+                            }
+                        } catch (RepositoryException ex) {
+                            log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
+                        }
+                    }
+                }
+            } else {
+                log.error("No session found");
             }
-        } else {
-            log.error("No session found");
+            if (log.isDebugEnabled()) {
+                log.debug("Processing events took '{}' ms. Current number of listeners is '{}'",
+                        (System.currentTimeMillis() - start), listeners.size());
+            }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Processing events took '{}' ms. Current number of listeners is '{}'",
-                    (System.currentTimeMillis() - start), listeners.size());
+        finally {
+            if (processEventsTask != null) {
+                processEventsTask.stop();
+            }
         }
     }
 
