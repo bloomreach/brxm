@@ -17,11 +17,11 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('OpenUIService', () => {
+describe('OpenUiService', () => {
   let $q;
   let $rootScope;
   let iframe;
-  let OpenUIService;
+  let OpenUiService;
   let Penpal;
 
   beforeEach(() => {
@@ -29,10 +29,10 @@ describe('OpenUIService', () => {
 
     iframe = angular.element('<iframe src="about:blank"></iframe>');
 
-    inject((_$q_, _$rootScope_, _OpenUIService_, _Penpal_) => {
+    inject((_$q_, _$rootScope_, _OpenUiService_, _Penpal_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      OpenUIService = _OpenUIService_;
+      OpenUiService = _OpenUiService_;
       Penpal = _Penpal_;
     });
   });
@@ -45,7 +45,7 @@ describe('OpenUIService', () => {
       promise: $q.resolve('child'),
     });
 
-    OpenUIService.connect(params);
+    OpenUiService.connect(params);
     $rootScope.$digest();
 
     expect(iframe).toHaveAttr(

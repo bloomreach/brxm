@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export default class OpenUIService {
+export default class OpenUiService {
   constructor($log, Penpal) {
     'ngInject';
 

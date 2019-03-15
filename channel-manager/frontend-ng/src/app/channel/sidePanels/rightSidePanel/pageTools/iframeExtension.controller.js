@@ -23,7 +23,7 @@ class IframeExtensionCtrl {
     DomService,
     ExtensionService,
     HippoIframeService,
-    OpenUIService,
+    OpenUiService,
     PathService,
   ) {
     'ngInject';
@@ -36,7 +36,7 @@ class IframeExtensionCtrl {
     this.DomService = DomService;
     this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
-    this.OpenUIService = OpenUIService;
+    this.OpenUiService = OpenUiService;
     this.PathService = PathService;
   }
 
@@ -65,7 +65,7 @@ class IframeExtensionCtrl {
   _initExtension() {
     this.extension = this.ExtensionService.getExtension(this.extensionId);
 
-    this.OpenUIService.connect({
+    this.OpenUiService.connect({
       url: this.ExtensionService.getExtensionUrl(this.extension),
       appendTo: this.$element[0],
       methods: {

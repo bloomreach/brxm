@@ -23,18 +23,18 @@ describe('OpenuiStringField', () => {
   let $rootScope;
   let mdInputContainer;
   let ExtensionService;
-  let OpenUIService;
+  let OpenUiService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _ExtensionService_, _OpenUIService_) => {
+    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _ExtensionService_, _OpenUiService_) => {
       $componentController = _$componentController_;
       $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ExtensionService = _ExtensionService_;
-      OpenUIService = _OpenUIService_;
+      OpenUiService = _OpenUiService_;
     });
 
     mdInputContainer = jasmine.createSpyObj('mdInputContainer', ['setHasValue']);
@@ -57,12 +57,12 @@ describe('OpenuiStringField', () => {
     });
 
     it('connects to the child', () => {
-      spyOn(OpenUIService, 'connect').and.returnValue($q.resolve());
+      spyOn(OpenUiService, 'connect').and.returnValue($q.resolve());
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
       expect(ExtensionService.getExtensionUrl).toHaveBeenCalledWith(extension);
-      expect(OpenUIService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
+      expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
         url: 'test-url',
         appendTo: $element[0],
       }));
@@ -70,7 +70,7 @@ describe('OpenuiStringField', () => {
 
     it('logs error message', () => {
       const error = new Error('something went wrong');
-      spyOn(OpenUIService, 'connect').and.returnValue($q.reject(error));
+      spyOn(OpenUiService, 'connect').and.returnValue($q.reject(error));
       spyOn($log, 'warn');
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
 

@@ -28,7 +28,7 @@ describe('iframeExtension', () => {
   let DomService;
   let ExtensionService;
   let HippoIframeService;
-  let OpenUIService;
+  let OpenUiService;
   let child;
 
   beforeEach(() => {
@@ -57,14 +57,14 @@ describe('iframeExtension', () => {
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionUrl']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-    OpenUIService = jasmine.createSpyObj('OpenUIService', ['connect']);
+    OpenUiService = jasmine.createSpyObj('OpenUiService', ['connect']);
     $log = jasmine.createSpyObj('$log', ['warn']);
 
     ExtensionService.getExtension.and.returnValue(extension);
 
     child = jasmine.createSpyObj('child', ['emitEvent']);
 
-    OpenUIService.connect.and.returnValue($q.resolve(child));
+    OpenUiService.connect.and.returnValue($q.resolve(child));
 
     $element = angular.element('<div></div>');
     $ctrl = $componentController('iframeExtension', {
@@ -75,7 +75,7 @@ describe('iframeExtension', () => {
       DomService,
       ExtensionService,
       HippoIframeService,
-      OpenUIService,
+      OpenUiService,
     }, {
       extensionId: extension.id,
       context,
@@ -96,7 +96,7 @@ describe('iframeExtension', () => {
       $ctrl.$onInit();
       $rootScope.$digest();
 
-      expect(OpenUIService.connect).toHaveBeenCalledWith({
+      expect(OpenUiService.connect).toHaveBeenCalledWith({
         url: 'some-url',
         appendTo: $element[0],
         methods: jasmine.any(Object),
@@ -108,12 +108,12 @@ describe('iframeExtension', () => {
       ExtensionService.getExtensionUrl.and.returnValue('some-url');
 
       const error = new Error('Connection destroyed');
-      OpenUIService.connect.and.returnValue($q.reject(error));
+      OpenUiService.connect.and.returnValue($q.reject(error));
 
       $ctrl.$onInit();
       $rootScope.$digest();
 
-      expect(OpenUIService.connect).toHaveBeenCalled();
+      expect(OpenUiService.connect).toHaveBeenCalled();
       expect($log.warn).toHaveBeenCalledWith("Extension 'Test' failed to connect with the client library.", error);
     });
 
@@ -147,7 +147,7 @@ describe('iframeExtension', () => {
 
     beforeEach(() => {
       $ctrl.$onInit();
-      const [args] = OpenUIService.connect.calls.mostRecent().args;
+      const [args] = OpenUiService.connect.calls.mostRecent().args;
       ({ methods } = args);
     });
 

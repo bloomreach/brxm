@@ -15,13 +15,13 @@
  */
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, ExtensionService, OpenUIService) {
+  constructor($element, $log, ExtensionService, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
     this.ExtensionService = ExtensionService;
-    this.OpenUIService = OpenUIService;
+    this.OpenUiService = OpenUiService;
   }
 
   $onInit() {
@@ -38,7 +38,7 @@ export default class OpenuiStringFieldController {
 
   _initExtension(id) {
     this.extension = this.ExtensionService.getExtension(id);
-    this.OpenUIService.connect({
+    this.OpenUiService.connect({
       url: this.ExtensionService.getExtensionUrl(this.extension),
       appendTo: this.$element[0],
       methods: {},
