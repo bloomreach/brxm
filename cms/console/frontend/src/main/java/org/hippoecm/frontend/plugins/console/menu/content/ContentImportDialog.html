@@ -14,33 +14,32 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <div class="hippo-dialog-body">
-    <div wicket:id="message" class="message"/>
-    <div class="import-properties">
-      <div class="label">UUID resolution</div>
-      <div class="input">
-        <select wicket:id="uuidBehaviors"/>
+  <wicket:extend>
+    <div class="hippo-dialog-body">
+      <div wicket:id="message" class="message"/>
+      <div class="import-properties">
+        <div class="label">UUID resolution</div>
+        <div class="input">
+          <select wicket:id="uuidBehaviors"/>
+        </div>
+        <div class="label">References resolution</div>
+        <div class="input">
+          <select wicket:id="derefBehaviors"/>
+        </div>
+        <div class="label" wicket:id="saveBehavior"/>
+        <div class="label" wicket:id="generate"/>
+        <br/>
+        <div class="label">Select file</div>
+        <div class="input">
+          <input wicket:id="fileInput" id="upload" type="file"/>
+        </div>
+        <div class="label">
+          Or paste your xml dump here:
+        </div>
+        <div class="xml-input">
+          <textarea wicket:id="xmlInput" style="padding: 0; height: 108px;"/>
+        </div>
       </div>
-      <div class="label">References resolution</div>
-      <div class="input">
-        <select wicket:id="derefBehaviors"/>
-      </div>
-      <span wicket:id="saveBehavior"/>
-      <span wicket:id="generate"/>
-      <p style="margin-top: 20px">
-      <div class="label">Select file</div>
-      <div class="input">
-        <input wicket:id="fileInput" id="upload" type="file"/>
-      </div>
-      </p>
-      <p>
-        <legend>
-          <strong>Or paste your xml dump here: </strong>
-        </legend>
-      <div class="xml-input">
-        <textarea wicket:id="xmlInput"/>
-      </div>
-      </p>
     </div>
-  </div>
+  </wicket:extend>
 </html>

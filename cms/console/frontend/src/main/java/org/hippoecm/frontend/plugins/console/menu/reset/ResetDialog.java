@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class ResetDialog extends Dialog<Node> {
     public ResetDialog() {
         setTitle(Model.of("Refresh Session"));
         setSize(DialogConstants.MEDIUM);
-        
+
         Component message;
         try {
             HippoNode rootNode = (HippoNode) UserSession.get().getJcrSession().getRootNode();
@@ -54,13 +54,18 @@ public class ResetDialog extends Dialog<Node> {
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-                message = new Label("message", "There are no pending changes");
+                message = new Label("message", "There are no pending changes.");
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
             e.printStackTrace();
         }
         add(message);
+
+        Label resetText = new Label("resetText", Model.of("Reset session?"));
+        resetText.setVisible(hasPendingChanges);
+        queue(resetText);
+
         setFocusOnOk();
     }
 

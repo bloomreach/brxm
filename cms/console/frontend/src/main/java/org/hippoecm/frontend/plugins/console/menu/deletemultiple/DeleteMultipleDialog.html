@@ -14,18 +14,20 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:extend>
-  <div class="hippo-dialog-body">
-  <div class="message">
-    Select multiple nodes for deletion in the tree below.
-  </div>
-  <div class="message">
-    <label>
-      <input type="checkbox" wicket:id="deleteFolders">
-      <span>&nbsp;Delete nodes with child nodes</span>
-    </label>
-  </div>
-    <div wicket:id="jcrtree"/>
-  </div>
-</wicket:extend>
+  <wicket:extend>
+    <div class="hippo-dialog-body">
+      <div class="message">
+        Select multiple nodes for deletion in the tree below.
+      </div>
+      <div class="message">
+        <label>
+          <input type="checkbox" wicket:id="deleteFolders">
+          <span>&nbsp;Delete nodes with child nodes</span>
+        </label>
+      </div>
+      <div class="delete-multiple-tree">
+        <div wicket:id="jcrtree"/>
+      </div>
+    </div>
+  </wicket:extend>
 </html>

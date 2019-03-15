@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ public class HelpDialog extends Dialog<Void> {
         final String TITLE = "Shortcut descriptions";
         setTitle(Model.of(TITLE));
 
-        add(new Label("label", TITLE));
         add(new PropertyListView<HelpDescription>("listview", Shortcuts.HELP_ITEMS) {
             protected void populateItem(ListItem<HelpDescription> item) {
                 HelpDescription helpDescription = item.getModelObject();

@@ -26,6 +26,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
@@ -176,6 +177,11 @@ public class OpenDialog extends Dialog<Node> {
 
     @Override
     protected void onOk() {
+        if (StringUtils.isBlank(pathOrId)) {
+            error("Enter a value.");
+            return;
+        }
+        
         pathOrId = pathOrId.trim();
         Session jcrSession = UserSession.get().getJcrSession();
         Node selected = null;
