@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const MAX_SIZE = 4096;
+
 export default class OpenuiStringFieldController {
   constructor($element, $log, ExtensionService, OpenUiService) {
     'ngInject';
@@ -41,10 +43,27 @@ export default class OpenuiStringFieldController {
     this.OpenUiService.connect({
       url: this.ExtensionService.getExtensionUrl(this.extension),
       appendTo: this.$element[0],
-      methods: {},
+      methods: {
+        getFieldValue: this.getValue.bind(this),
+        setFieldValue: this.setValue.bind(this),
+      },
     })
       .catch((error) => {
         this.$log.warn(`Extension '${this.extension.displayName}' failed to connect with the client library.`, error);
       });
+  }
+
+  setValue(value) {
+    value = `${value}`;
+    if (value.length >= MAX_SIZE) {
+      throw new Error('Max value size is reached.');
+    }
+
+    this.ngModel.$setViewValue(value);
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
   }
 }

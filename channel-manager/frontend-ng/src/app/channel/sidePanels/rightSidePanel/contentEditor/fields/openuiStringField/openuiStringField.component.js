@@ -21,8 +21,10 @@ export default {
   controller,
   bindings: {
     extensionId: '@',
+    value: '<ngModel',
   },
   require: {
     mdInputContainer: '?^^mdInputContainer',
+    ngModel: 'ngModel',
   },
 };

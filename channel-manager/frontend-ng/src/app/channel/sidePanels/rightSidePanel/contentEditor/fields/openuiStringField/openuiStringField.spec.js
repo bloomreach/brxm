@@ -22,6 +22,7 @@ describe('OpenuiStringField', () => {
   let $q;
   let $rootScope;
   let mdInputContainer;
+  let ngModel;
   let ExtensionService;
   let OpenUiService;
 
@@ -38,8 +39,13 @@ describe('OpenuiStringField', () => {
     });
 
     mdInputContainer = jasmine.createSpyObj('mdInputContainer', ['setHasValue']);
+    ngModel = jasmine.createSpyObj('ngModel', ['$setViewValue']);
     $element = angular.element('<div/>');
-    $ctrl = $componentController('openuiStringField', { $element }, { mdInputContainer });
+    $ctrl = $componentController('openuiStringField', { $element }, {
+      mdInputContainer,
+      ngModel,
+      value: 'test-value',
+    });
   });
 
   it('initializes the component', () => {
@@ -81,5 +87,20 @@ describe('OpenuiStringField', () => {
         error,
       );
     });
+  });
+
+  it('gets value', () => {
+    expect($ctrl.getValue()).toBe('test-value');
+  });
+
+  it('sets value', () => {
+    $ctrl.setValue('new-value');
+
+    expect($ctrl.getValue()).toBe('new-value');
+    expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-value');
+  });
+
+  it('fails to set a long value', () => {
+    expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
   });
 });
