@@ -25,7 +25,6 @@
 
   <name>Hippo Community Translations</name>
   <artifactId>hippo-community-translations</artifactId>
-  <version>12.6.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2016</inceptionYear>
@@ -34,14 +33,14 @@
     <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <maven.plugin.flatten.version>1.0.1</maven.plugin.flatten.version>
     <locales>fr,nl,de,zh,es</locales>
-    <locale />
+    <locale/>
     <format>excel</format>
     <full>false</full>
-    <file />
-    <srcBundle />
-    <destBundle />
-    <srcKey />
-    <destKey />
+    <file/>
+    <srcBundle/>
+    <destBundle/>
+    <srcKey/>
+    <destKey/>
   </properties>
   
   <scm>
