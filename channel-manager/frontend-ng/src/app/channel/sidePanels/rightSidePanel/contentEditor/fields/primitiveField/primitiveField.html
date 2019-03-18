@@ -191,7 +191,8 @@
     </node-link>
 
     <openui-string-field layout="row" ng-switch-when="OPEN_UI"
-      extension-id="{{:: $ctrl.fieldType.uiExtension }}">
+      extension-id="{{:: $ctrl.fieldType.uiExtension }}"
+      ng-model="fieldValue.value">
     </openui-string-field>
 
     <div ng-if="::$last"
