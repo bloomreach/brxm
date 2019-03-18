@@ -1,0 +1,12 @@
+{
+  "name": "hippo-cms-editor-frontend",
+  "license": "Apache-2.0",
+  "private": true,
+  "engines": {
+    "node": "8",
+    "npm": "6"
+  },
+  "dependencies": {
+    "penpal": "3.0.3"
+  }
+}
