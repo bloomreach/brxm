@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
@@ -247,6 +248,11 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         @Override
         public boolean isHstConfigurationNodesLoaded() {
             return delegatee.isHstConfigurationNodesLoaded();
+        }
+
+        @Override
+        public ComponentManager getComponentManager() {
+            return delegatee.getComponentManager();
         }
     }
 }

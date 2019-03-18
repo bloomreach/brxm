@@ -440,6 +440,11 @@ public class HstModelImpl implements InternalHstModel {
 
 
     @Override
+    public ComponentManager getComponentManager() {
+        return websiteComponentManager;
+    }
+
+    @Override
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return hstSiteMapMatcher;
     }

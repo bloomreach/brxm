@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 package org.hippoecm.hst.platform.model;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -52,6 +54,10 @@ public class HstModelRegistryImpl implements HstModelRegistry {
 
     private final Map<String, HstModelImpl> models = new HashMap<>();
 
+    private final Map<ClassLoader, HstModelImpl> modelsByClassLoader = new IdentityHashMap<>();
+
+    private final Map<String, ClassLoader> contextPathClassLoaderMap = new HashMap<>();
+
     private Repository repository;
 
     public void setRepository(Repository repository) {
@@ -82,6 +88,8 @@ public class HstModelRegistryImpl implements HstModelRegistry {
                                                   final boolean loadHstConfigNodes) throws ModelRegistrationException {
 
         final String contextPath = servletContext.getContextPath();
+        contextPathClassLoaderMap.put(contextPath, servletContext.getClassLoader());
+
         if (models.containsKey(contextPath)) {
             throw new IllegalStateException(String.format("There is already an HstModel registered for contextPath '%s'", contextPath));
         }
@@ -121,6 +129,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             final HstModelImpl model = new HstModelImpl(session, servletContext, websiteComponentManager,
                     hstNodeLoadingCache, hstConfigurationLoadingCache);
             models.put(contextPath, model);
+            modelsByClassLoader.put(servletContext.getClassLoader(), model);
 
             log.info("Registered HstModel for '{}'", contextPath);
             return model;
@@ -149,11 +158,18 @@ public class HstModelRegistryImpl implements HstModelRegistry {
             }
             log.info("Unregistered HstModel for '{}'", contextPath);
         }
+        modelsByClassLoader.remove(contextPathClassLoaderMap.get(contextPath));
+        contextPathClassLoaderMap.remove(contextPath);
     }
 
     @Override
     public HstModel getHstModel(final String contextPath) {
         return models.get(contextPath);
+    }
+
+    @Override
+    public HstModel getHstModel(final ClassLoader classLoader) {
+        return modelsByClassLoader.get(classLoader);
     }
 
     public List<HstModel> getHstModels() {
