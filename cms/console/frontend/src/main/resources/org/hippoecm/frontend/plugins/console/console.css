@@ -1145,19 +1145,6 @@ body.hippo-root div.yui-log-container {
   left: 280px;
 }
 
-.property-dialog .property-values {
-  /*
-  display: table;
-  margin-top: 3px;
-  */
-}
-
-.property-dialog .property-values > div {
-  /*
-  display: table-row;
-  */
-}
-
 .property-dialog .property-values > div > div {
   display: -webkit-box;
   display: -webkit-flex;
