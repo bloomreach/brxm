@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-//import org.apache.wicket.ajax.json.JSONObject;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -37,20 +38,18 @@ import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
 
-import net.sf.json.JSONObject;
-
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String UI_EXTENSION = "uiExtension";
     private static final String ERROR_MESSAGE = "Cannot load extension '%s'.";
     private String extensionUrl = null;
-    private WebMarkupContainer iframe;
+    private String iframeParentId;
     
     // penpal.js is fetched by npm
     private static final ResourceReference PENPAL_JS = new JavaScriptResourceReference(OpenUiStringPlugin.class, 
             "penpal.js");
-    private static final String JS_TEMPLATE = "Penpal.connectToChild(%s);";
-
+    private final PackageTextTemplate PENPAL_CONNECT_TEMPLATE = new PackageTextTemplate(OpenUiStringPlugin.class,
+            "penpalConnect.js");
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -58,19 +57,16 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         final String extensionName = config.getString(UI_EXTENSION);
         final Optional<UiExtension> uiExtension = loadUiExtension(extensionName);
 
-        iframe = new WebMarkupContainer("iframe");
-        uiExtension.ifPresent(extension -> {
-            iframe.add(new AttributeAppender("src", Model.of(getIframeUrl(extension.getUrl()))));
-            extensionUrl = extension.getUrl();
-        });
-        iframe.setOutputMarkupId(true);
-        queue(iframe);
-        iframe.setVisible(uiExtension.isPresent());
+        final WebMarkupContainer iframeParent = new WebMarkupContainer("iframeParent");
+        iframeParent.setOutputMarkupId(true);
+        queue(iframeParent);
+        iframeParentId = iframeParent.getMarkupId();
+
+        uiExtension.ifPresent(extension -> extensionUrl = extension.getUrl());
 
         final Label errorMessage = new Label("errorMessage", Model.of(String.format(ERROR_MESSAGE, extensionName)));
-        errorMessage.setVisible(!iframe.isVisible());
+        errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
-
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -81,29 +77,22 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD);
     }
     
-    private String getIframeUrl(final String extensionUrl) {
-        return extensionUrl + "?br.parentOrigin=http%3A%2F%2Flocalhost%3A8080" + "&br.antiCache=bla";
-    }
-
     @Override
     public void renderHead(final IHeaderResponse response) {
+        if (extensionUrl == null) {
+            return;
+        }
+        
         response.render(JavaScriptReferenceHeaderItem.forReference(PENPAL_JS));
 
-        JSONObject options = new JSONObject();
-        options.put("url", getIframeUrl(extensionUrl));
-        options.put("appendTo", "document.getElementById('" + iframe.getMarkupId() + "')");
-        options.put("methods", "{}");
-
-        String options2 = "{" +
-                "url: '" + getIframeUrl(extensionUrl) + "'," +
-                "appendTo: document.getElementById('" + iframe.getMarkupId() + "')," +
-                "methods: {" +
-                " getProperties() { return { baseUrl : 'testUrl', locale: 'testLocale' } }" +
-                "}" +
-                "}";
+        final Map<String, String> variables = new HashMap<>();
+        variables.put("extensionUrl", extensionUrl);
+        variables.put("iframeParentId", iframeParentId);
+        variables.put("userLocale", UserSession.get().getLocale().getLanguage());
+        variables.put("userTimezone", UserSession.get().getTimeZone().getID());
         
-        
-        final String script = String.format(JS_TEMPLATE, options2);
+        final String script = PENPAL_CONNECT_TEMPLATE.asString(variables);
+                
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
