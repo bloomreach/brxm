@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.onehippo.cm.ConfigurationService;
@@ -34,7 +34,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class YamlExportDialog extends AbstractDialog<Node> {
+public class YamlExportDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(YamlExportDialog.class);
@@ -42,15 +42,17 @@ public class YamlExportDialog extends AbstractDialog<Node> {
     private static IValueMap SIZE = new ValueMap("width=855,height=475").makeImmutable();
 
     public YamlExportDialog(final IModelReference<Node> modelReference) {
+        setSize(SIZE);
+
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
         try {
-            String path = nodeModel.getObject().getPath();
+            final String path = nodeModel.getObject().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this).setParameters(path)));
             //info("Export content from : " + );
         } catch (RepositoryException e) {
-            log.error("Error getting node from model for content export",e);
+            log.error("Error getting node from model for content export", e);
             throw new RuntimeException("Error getting node from model for content export: " + e.getMessage());
         }
 
@@ -95,12 +97,7 @@ public class YamlExportDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return new Model<>("YAML Export " + path);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return SIZE;
+        return new Model<>("YAML export " + path);
     }
 
 }

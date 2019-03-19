@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,15 +25,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteDialog extends AbstractDialog<Node> {
+public class DeleteDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DeleteDialog.class);
@@ -42,6 +41,9 @@ public class DeleteDialog extends AbstractDialog<Node> {
     private boolean immediateSave;
 
     public DeleteDialog(IModelReference<Node> modelReference) {
+        setTitle(Model.of(getString("dialog.title")));
+        setSize(DialogConstants.SMALL);
+
         this.modelReference = modelReference;
         IModel<Node> model = modelReference.getModel();
         setModel(model);
@@ -60,7 +62,7 @@ public class DeleteDialog extends AbstractDialog<Node> {
         }
         add(new Label("message", new StringResourceModel("delete.message", this).setParameters(path)));
 
-        add(new CheckBox("immediateSave", new PropertyModel<Boolean>(this, "immediateSave")));
+        add(new CheckBox("immediateSave", new PropertyModel<>(this, "immediateSave")));
 
         setFocusOnOk();
     }
@@ -84,15 +86,6 @@ public class DeleteDialog extends AbstractDialog<Node> {
         }
     }
 
-    public IModel getTitle() {
-        return new Model<String>(getString("dialog.title"));
-    }
-    
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
-    }
-
     private Node getSiblingOrParent(Node node) throws RepositoryException {
         final Node parent = node.getParent();
         final NodeIterator nodes = parent.getNodes();
@@ -110,5 +103,4 @@ public class DeleteDialog extends AbstractDialog<Node> {
         }
         return parent;
     }
-
 }

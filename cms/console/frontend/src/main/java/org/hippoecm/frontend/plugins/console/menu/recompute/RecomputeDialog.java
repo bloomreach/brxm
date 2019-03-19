@@ -1,12 +1,12 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,7 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Recompute derived data
  */
-public class RecomputeDialog extends AbstractDialog<Node> {
+public class RecomputeDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,17 +42,21 @@ public class RecomputeDialog extends AbstractDialog<Node> {
 
     public RecomputeDialog(IModel<Node> model) {
         super(model);
+        
+        setTitle(Model.of("Recalculate derived data"));
+        setSize(DialogConstants.SMALL);
+        
         String path = null;
         try {
             path = getModelObject().getPath();
         } catch (RepositoryException e) {
             log.error(e.getClass().getName() + ": " + e.getMessage());
         }
-        add(new CheckBox("automatic-save", new PropertyModel<Boolean>(this, "automaticSave")));
-        final String message = "The derived data properties of node " + path
-                + " and its subnodes will be recalculated. This might for instance be needed after moving a folder or a document." +
-                " Do you want to continue?";
-        add(new Label("message", new Model<String>(message)));
+        add(new CheckBox("automatic-save", new PropertyModel<>(this, "automaticSave")));
+        final String message = "The derived data properties of node " + path + " and its subnodes will be " +
+                "recalculated. This might for instance be needed after moving a folder or a document. " +
+                "Do you want to continue?";
+        add(new Label("message", Model.of(message)));
         setFocusOnOk();
     }
 
@@ -68,15 +71,4 @@ public class RecomputeDialog extends AbstractDialog<Node> {
             log.error("Error during fixing hippo:paths properties", e);
         }
     }
-    
-    @Override
-    public IModel<String> getTitle() {
-        return new Model<String>("Recalculate derived data");
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
-    }
-
 }
