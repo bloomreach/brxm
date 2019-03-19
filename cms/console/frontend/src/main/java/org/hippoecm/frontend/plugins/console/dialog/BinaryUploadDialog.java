@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,14 +26,13 @@ import org.apache.jackrabbit.value.BinaryImpl;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BinaryUploadDialog extends AbstractDialog<Void> {
+public class BinaryUploadDialog extends Dialog<Void> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +43,8 @@ public class BinaryUploadDialog extends AbstractDialog<Void> {
     private final JcrPropertyModel model;
 
     public BinaryUploadDialog(final JcrPropertyModel model) {
+        setTitle(Model.of("Update binary property"));
+
         this.model = model;
         setMultiPart(true);
         setNonAjaxSubmit();
@@ -53,11 +54,6 @@ public class BinaryUploadDialog extends AbstractDialog<Void> {
         add(new Label("message", msgText));
 
         setOkLabel("Import");
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return new Model<>("Update binary property");
     }
 
     @Override
@@ -80,5 +76,4 @@ public class BinaryUploadDialog extends AbstractDialog<Void> {
             }
         }
     }
-
 }

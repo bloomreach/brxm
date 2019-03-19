@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1077,16 +1077,16 @@ table.hippo-window-form {
 
 /* .hippo-root div.wicket-modal div.w_caption{background: url("images/box-blue-caption.png") repeat-x; height: 20px; padding: 6px;} */
 .hippo-root div.wicket-modal div.w_caption {
-    height: 24px;
-    background: #999999;
+    height: 34px;
+    background: #e8e8ea;
     text-align: center;
-    color: #f2f2f2
+    color: #f2f2f2;
+    line-height: 2.6em;
 }
 
 .hippo-root div.wicket-modal div.w_caption span {
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
+    color: #39434c;
+    font-size: 13px;
     margin: 0;
     padding: 0;
     position: relative;
@@ -1117,7 +1117,7 @@ table.hippo-window-form {
 }
 
 .hippo-root div.wicket-modal div.w_content {
-    background: white url("images/box-blue-back.png") repeat-x bottom left;
+    background: none;
 }
 
 .hippo-root div.wicket-modal div.w_content_3 {

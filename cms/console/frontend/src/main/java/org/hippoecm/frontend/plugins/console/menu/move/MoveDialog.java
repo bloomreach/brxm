@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -43,7 +45,9 @@ import org.slf4j.LoggerFactory;
 
 public class MoveDialog extends LookupDialog {
     private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(MoveDialog.class);
+
+    private static final IValueMap SIZE = new ValueMap("width=515,height=540");
 
     private String name;
     @SuppressWarnings("unused")
@@ -53,13 +57,16 @@ public class MoveDialog extends LookupDialog {
 
     public MoveDialog(IModelReference<Node> modelReference) {
         super(new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator()), modelReference.getModel());
+        setTitle(Model.of("Move node"));
+        setSize(SIZE);
+        
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
 
         try {
             if (model.getParentModel() != null) {
                 setSelectedNode(model.getParentModel());
-                
+
                 add(new Label("source", model.getNode().getPath()));
 
                 target = StringUtils.substringBeforeLast(model.getNode().getPath(), "/") + "/";
@@ -68,7 +75,7 @@ public class MoveDialog extends LookupDialog {
                 add(targetLabel);
 
                 name = model.getNode().getName();
-                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<String>(this, "name"));
+                TextFieldWidget nameField = new AutoFocusSelectTextFieldWidget("name", new PropertyModel<>(this, "name"));
                 nameField.setSize(String.valueOf(name.length() + 5));
                 add(nameField);
             } else {
@@ -86,10 +93,6 @@ public class MoveDialog extends LookupDialog {
             setOkVisible(false);
             setFocusOnCancel();
         }
-    }
-
-    public IModel<String> getTitle() {
-        return Model.of("Move Node");
     }
 
     @Override
@@ -143,7 +146,7 @@ public class MoveDialog extends LookupDialog {
 
     private Node getParentDestNode() {
         IJcrTreeNode selectedTreeNode = getSelectedNode();
-        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null ) {
+        if (selectedTreeNode == null || selectedTreeNode.getNodeModel() == null) {
             return null;
         }
         return selectedTreeNode.getNodeModel().getObject();
