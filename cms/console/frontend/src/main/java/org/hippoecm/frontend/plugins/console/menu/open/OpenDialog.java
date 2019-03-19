@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,11 @@ public class OpenDialog extends Dialog<Node> {
     }
 
     private void addMatchingNodes(final String path, final Collection<String> result) {
-        String relPath = path.substring(1);
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+
+        final String relPath = path.trim().substring(1);
         try {
             NodeIterator nodes = getNodesFromRelativePath(relPath);
             while (nodes.hasNext()) {
