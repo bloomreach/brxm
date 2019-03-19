@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
 
 /**
- * Simple {@link org.hippoecm.frontend.dialog.AbstractDialog} extension that adds multi-step capability. If you need
+ * Simple {@link org.hippoecm.frontend.dialog.Dialog} extension that adds multi-step capability. If you need
  * wizard functionality use {@link org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard} instead.
  */
 public abstract class MultiStepDialog<T> extends Dialog<T> {
