@@ -63,7 +63,6 @@ public class SaveDialog extends Dialog<Node> {
             setFocusOnCancel();
         }
         add(message);
-        // setFocusOnOk();
     }
 
     @Override
