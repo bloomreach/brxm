@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        image-references: 选择图像

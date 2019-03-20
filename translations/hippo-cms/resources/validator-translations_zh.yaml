@@ -2,8 +2,11 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /zh:
-        escaped: 出现无效字符
-        resource-required: 必须上传一个文件
-        non-empty: 一个强制性字符串输入字段为空
         jcr:primaryType: hipposys:resourcebundle
-        email: 字段与电子邮件地址不匹配
+        escaped: 请勿使用以下字符：< > & ' "
+        resource-required: 上传文件
+        summaryMultiple: 此文档包含 {0} 个错误
+        non-empty: 输入值
+        html: 输入值
+        summarySingle: 此文档包含 1 个错误
+        email: 输入有效的电子邮件地址

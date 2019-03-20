@@ -2,8 +2,11 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /es:
-        escaped: Carácter no válido presente
-        resource-required: Debe cargar un archivo
-        non-empty: Un campo de entrada de cadena obligatorio está vacío
         jcr:primaryType: hipposys:resourcebundle
-        email: El campo no coincide con una dirección de correo electrónico
+        escaped: 'No utilizar estos caracteres: < > & '' "'
+        resource-required: Cargar un archivo
+        summaryMultiple: Este documento contiene {0} errores
+        non-empty: Introducir un valor
+        html: Introducir un valor
+        summarySingle: Este documento contiene 1 error
+        email: Introducir una dirección de email válida

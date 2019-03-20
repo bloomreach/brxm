@@ -3,6 +3,7 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Gebruik de technische naam
         postScope: Blog post locatie
         sortField: Veld voor sortering
         pageSize: Aantal posts om te laten zien
@@ -15,28 +16,37 @@ definitions:
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: Terrein informatie
+        width.hint: In pixels
         address: Locatie / adres
         apiKey: Google Maps API sleutel
+        mapType.hint: Type kaart die moet worden weergegeven
         latitude: Latitude
         mapType: Kaart type
+        address.hint: Voor de locatie kunt u een adres opgeven of de lengte- en breedtegraad
+          gebruiken
         zoomFactor: Vergroot factor
         map.options: Kaart opties
+        height.hint: In pixels
         mapType#SATELLITE: Google Earth satelliet
         mapType#ROADMAP: Wegenkaart
         mapType#HYBRID: Mengsel van normaal en satelliet
-        width: Breedte (in pixels)
+        width: Breedte
         location: Locatie
         longitude: Longitude
-        height: Hoogte (in pixels)
+        height: Hoogte
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         group.documents: Carousel documenten
+        interval.hint: In milliseconden
         group.settings: Carousel instellingen
         document4: Carousel element 4
         document3: Carousel element 3
+        carouselWidth.hint: In pixels
         document6: Carousel element 6
         document5: Carousel element 5
         document2: Carousel element 2
+        carouselHeight.hint: In pixels
         document1: Carousel element 1
         cycle: Draai carousel continu
         pause: Pauzeer carousel als muis er over
@@ -44,36 +54,40 @@ definitions:
         carouselHeight: Carousel hoogte
         carouselBackgroundColor: Carousel achtergrondkleur
         showNavigation: Toon carousel navigatie
-        jcr:primaryType: hipposys:resourcebundle
-        interval: Carousel interval (millisecondes)
+        interval: Interval carousel
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
     : /nl:
-        documentTypes: Document types (komma gescheiden)
         jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Documenttypen
         showPagination: Toon paginering
+        documentTypes.hint: Gebruik de technische namen met een komma als scheidingsteken
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: 'Zoek facetpad (optioneel: contentpad kan ook gebruikt worden)'
+        facetPath.hint: Indien leeg wordt het inhoudpad gebruikt
+        facetPath: Facetpad (optioneel)
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         hidePastEvents: Verberg afgelopen evenementen
         documentDateField: Veld met document datum (voor verbergen)
-        documentTypes: Evenement document types (komma gescheiden)
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Documenttypen events
+        documentDateField.hint: Gebruik de technische naam
+        documentTypes.hint: Gebruik de technische namen met een komma als scheidingsteken
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
         menu: Menu naam
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         folderLinks: Folders zijn ook links
         depth: Diepte
-        root: Hoofd map
-        jcr:primaryType: hipposys:resourcebundle
+        root: Hoofdmap ouder
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Gebruik de technische naam
         sorting.group: Sortering
         sortOrder#desc: Aflopend
         sortOrder: Sorteer volgorde
@@ -108,15 +122,19 @@ definitions:
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
         path: Document pad
-        documentTypes: Document types (komma gescheiden)
+        path.hint: Het pad in de repository
+        documentTypes: Documenttypen
         list.group: Contentselectie
+        documentTypes.hint: Gebruik de technische namen met een komma als scheidingsteken
         includeSubtypes: Inclusief document sub-types
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /nl:
+        jcr:primaryType: hipposys:resourcebundle
         hideFutureItems: Verberg toekomstige documenten
         documentDateField: Veld met document datum (voor verbergen)
-        documentTypes: Nieuws document types (komma gescheiden)
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Documenttypen nieuws
+        documentDateField.hint: Gebruik de technische naam
+        documentTypes.hint: Gebruik de technische namen met een komma als scheidingsteken
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
     : /nl:
         document: Afbeelding
@@ -124,22 +142,27 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
+        width.hint: In pixels
         address: Adres
         map.canvas: Canvas
         latitude: Breedtegraad
         markerCustomText: Aangepaste tekst marker
         mapType: Type kaart
+        address.hint: Adres heeft voorrang op de lengtegraad/breedtegraad
         map.size: Formaat kaart
         zoomFactor: Zoomfactor
         map.options: Kaartopties
+        latitude.hint: Indien leeg worden de standaardwaarden voor lengtegraad/breedtegraad
+          gebruikt
+        height.hint: In pixels. De minimumwaarde is 250 pixels.
         showMarker#no: Geen marker
         showMarker: Marker weergeven
         mapOverlay: Overlay kaart
-        width: Breedte (in pixels)
+        width: Breedte
         showMarker#withoutText: Zonder tekst
         map.focus: Focus kaart
         location: Locatiegegevens
         showMarker#withCustomText: Met aangepaste tekst
         showMarker#withAddress: Met adres
-        height: Hoogte (in pixels)
+        height: Hoogte
         longitude: Lengtegraad
