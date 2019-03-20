@@ -72,4 +72,8 @@ function getUiProperties(cmsBaseUrl) {
 
   connection.iframe.setAttribute('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
+  win.HippoAjax.registerDestroyFunction(connection.iframe, function() {
+    connection.destroy();
+  });
+
 })(window, document);
