@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -46,7 +45,6 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
@@ -269,8 +267,8 @@ public class LoginPanel extends Panel {
             final Label submitLabel = new Label("submit-label", new LoginResourceModel("submit-label"));
             submitButton.add(submitLabel);
 
-            // hide language selection for console app
-            if (consoleLogin) {
+            // hide language selection for console app and when there is only one choice
+            if (consoleLogin || locales.size() == 1) {
                 locale.setVisible(false);
             }
         }
