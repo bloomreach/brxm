@@ -15,10 +15,12 @@
  */
 
 export default class OpenUiService {
-  constructor($log, Penpal) {
+  constructor($log, ConfigService, ExtensionService, Penpal) {
     'ngInject';
 
     this.$log = $log;
+    this.ConfigService = ConfigService;
+    this.ExtensionService = ExtensionService;
     this.Penpal = Penpal;
   }
 
@@ -35,5 +37,42 @@ export default class OpenUiService {
       );
 
     return connection.promise;
+  }
+
+  async initialize(extensionId, options) {
+    const extension = this.ExtensionService.getExtension(extensionId);
+
+    try {
+      return await this.connect({
+        url: this.ExtensionService.getExtensionUrl(extension),
+        ...options,
+        methods: {
+          ...options.methods,
+          getProperties: this.getProperties.bind(this, extension),
+        },
+      });
+    } catch (error) {
+      this.$log.warn(`Extension '${extension.displayName}' failed to connect with the client library.`, error);
+
+      throw error;
+    }
+  }
+
+  getProperties(extension) {
+    return {
+      baseUrl: this.ConfigService.getCmsOrigin() + this.ConfigService.getCmsContextPath(),
+      extension: {
+        config: extension.config,
+      },
+      locale: this.ConfigService.locale,
+      timeZone: this.ConfigService.timeZone,
+      user: {
+        id: this.ConfigService.cmsUser,
+        firstName: this.ConfigService.cmsUserFirstName,
+        lastName: this.ConfigService.cmsUserLastName,
+        displayName: this.ConfigService.cmsUserDisplayName,
+      },
+      version: this.ConfigService.cmsVersion,
+    };
   }
 }

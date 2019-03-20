@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class IframeExtensionCtrl {
+
+export default class IframeExtensionCtrl {
   constructor(
     $element,
-    $log,
     $rootScope,
     ChannelService,
-    ConfigService,
     DomService,
-    ExtensionService,
     HippoIframeService,
     OpenUiService,
     PathService,
@@ -29,12 +27,9 @@ class IframeExtensionCtrl {
     'ngInject';
 
     this.$element = $element;
-    this.$log = $log;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
-    this.ConfigService = ConfigService;
     this.DomService = DomService;
-    this.ExtensionService = ExtensionService;
     this.HippoIframeService = HippoIframeService;
     this.OpenUiService = OpenUiService;
     this.PathService = PathService;
@@ -62,41 +57,15 @@ class IframeExtensionCtrl {
     }
   }
 
-  _initExtension() {
-    this.extension = this.ExtensionService.getExtension(this.extensionId);
-
-    this.OpenUiService.connect({
-      url: this.ExtensionService.getExtensionUrl(this.extension),
+  async _initExtension() {
+    this.child = await this.OpenUiService.initialize(this.extensionId, {
       appendTo: this.$element[0],
       methods: {
-        getProperties: () => this._getProperties(),
         getPage: () => this.context,
         refreshChannel: () => this.ChannelService.reload(),
         refreshPage: () => this.HippoIframeService.reload(),
       },
-    })
-      .then((child) => { this.child = child; })
-      .catch((error) => {
-        this.$log.warn(`Extension '${this.extension.displayName}' failed to connect with the client library.`, error);
-      });
-  }
-
-  _getProperties() {
-    return {
-      baseUrl: this.ConfigService.getCmsOrigin() + this.ConfigService.getCmsContextPath(),
-      extension: {
-        config: this.extension.config,
-      },
-      locale: this.ConfigService.locale,
-      timeZone: this.ConfigService.timeZone,
-      user: {
-        id: this.ConfigService.cmsUser,
-        firstName: this.ConfigService.cmsUserFirstName,
-        lastName: this.ConfigService.cmsUserLastName,
-        displayName: this.ConfigService.cmsUserDisplayName,
-      },
-      version: this.ConfigService.cmsVersion,
-    };
+    });
   }
 
   $onChanges(params) {
@@ -112,5 +81,3 @@ class IframeExtensionCtrl {
     }
   }
 }
-
-export default IframeExtensionCtrl;

@@ -18,23 +18,17 @@ describe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
-  let $log;
   let $q;
-  let $rootScope;
   let mdInputContainer;
   let ngModel;
-  let ExtensionService;
   let OpenUiService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _ExtensionService_, _OpenUiService_) => {
+    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _OpenUiService_) => {
       $componentController = _$componentController_;
-      $log = _$log_;
       $q = _$q_;
-      $rootScope = _$rootScope_;
-      ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
     });
 
@@ -55,37 +49,13 @@ describe('OpenuiStringField', () => {
   });
 
   describe('$onChanges', () => {
-    let extension;
-    beforeEach(() => {
-      extension = { displayName: 'test-extension' };
-      spyOn(ExtensionService, 'getExtension').and.returnValue(extension);
-      spyOn(ExtensionService, 'getExtensionUrl').and.returnValue('test-url');
-    });
-
     it('connects to the child', () => {
-      spyOn(OpenUiService, 'connect').and.returnValue($q.resolve());
+      spyOn(OpenUiService, 'initialize').and.returnValue($q.resolve());
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
 
-      expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
-      expect(ExtensionService.getExtensionUrl).toHaveBeenCalledWith(extension);
-      expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
-        url: 'test-url',
+      expect(OpenUiService.initialize).toHaveBeenCalledWith('test-id', jasmine.objectContaining({
         appendTo: $element[0],
       }));
-    });
-
-    it('logs error message', () => {
-      const error = new Error('something went wrong');
-      spyOn(OpenUiService, 'connect').and.returnValue($q.reject(error));
-      spyOn($log, 'warn');
-      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
-
-      $rootScope.$digest();
-
-      expect($log.warn).toHaveBeenCalledWith(
-        "Extension 'test-extension' failed to connect with the client library.",
-        error,
-      );
     });
   });
 

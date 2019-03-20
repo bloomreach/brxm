@@ -18,15 +18,12 @@ describe('iframeExtension', () => {
   let $componentController;
   let $ctrl;
   let $element;
-  let $log;
   let $q;
   let $rootScope;
   let context;
   let extension;
   let ChannelService;
-  let ConfigService;
   let DomService;
-  let ExtensionService;
   let HippoIframeService;
   let OpenUiService;
   let child;
@@ -53,27 +50,19 @@ describe('iframeExtension', () => {
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
-    ConfigService = jasmine.createSpyObj('ConfigService', ['getCmsContextPath', 'getCmsOrigin']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
-    ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionUrl']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-    OpenUiService = jasmine.createSpyObj('OpenUiService', ['connect']);
-    $log = jasmine.createSpyObj('$log', ['warn']);
-
-    ExtensionService.getExtension.and.returnValue(extension);
+    OpenUiService = jasmine.createSpyObj('OpenUiService', ['initialize']);
 
     child = jasmine.createSpyObj('child', ['emitEvent']);
 
-    OpenUiService.connect.and.returnValue($q.resolve(child));
+    OpenUiService.initialize.and.returnValue($q.resolve(child));
 
     $element = angular.element('<div></div>');
     $ctrl = $componentController('iframeExtension', {
       $element,
-      $log,
       ChannelService,
-      ConfigService,
       DomService,
-      ExtensionService,
       HippoIframeService,
       OpenUiService,
     }, {
@@ -83,38 +72,15 @@ describe('iframeExtension', () => {
   });
 
   describe('$onInit', () => {
-    it('initializes the extension', () => {
-      $ctrl.$onInit();
-
-      expect(ExtensionService.getExtension).toHaveBeenCalledWith('test');
-      expect($ctrl.extension).toEqual(extension);
-    });
-
     it('connects to the child', () => {
-      ExtensionService.getExtensionUrl.and.returnValue('some-url');
-
       $ctrl.$onInit();
       $rootScope.$digest();
 
-      expect(OpenUiService.connect).toHaveBeenCalledWith({
-        url: 'some-url',
+      expect(OpenUiService.initialize).toHaveBeenCalledWith(extension.id, {
         appendTo: $element[0],
         methods: jasmine.any(Object),
       });
       expect($ctrl.child).toBe(child);
-    });
-
-    it('logs a warning when connecting to the child failed', () => {
-      ExtensionService.getExtensionUrl.and.returnValue('some-url');
-
-      const error = new Error('Connection destroyed');
-      OpenUiService.connect.and.returnValue($q.reject(error));
-
-      $ctrl.$onInit();
-      $rootScope.$digest();
-
-      expect(OpenUiService.connect).toHaveBeenCalled();
-      expect($log.warn).toHaveBeenCalledWith("Extension 'Test' failed to connect with the client library.", error);
     });
 
     describe('channel events', () => {
@@ -147,73 +113,8 @@ describe('iframeExtension', () => {
 
     beforeEach(() => {
       $ctrl.$onInit();
-      const [args] = OpenUiService.connect.calls.mostRecent().args;
+      const [, args] = OpenUiService.initialize.calls.mostRecent().args;
       ({ methods } = args);
-    });
-
-    describe('getProperties', () => {
-      describe('baseUrl', () => {
-        it('is set to the base URL of a CMS on localhost', () => {
-          ConfigService.getCmsContextPath.and.returnValue('/cms/');
-          ConfigService.getCmsOrigin.and.returnValue('http://localhost:8080');
-          expect(methods.getProperties().baseUrl).toBe('http://localhost:8080/cms/');
-        });
-
-        it('is set to the base URL of a CMS in production', () => {
-          ConfigService.getCmsContextPath.and.returnValue('/');
-          ConfigService.getCmsOrigin.and.returnValue('https://cms.example.com');
-          expect(methods.getProperties().baseUrl).toBe('https://cms.example.com/');
-        });
-      });
-
-      describe('extension config', () => {
-        it('is set to the config string of the extension', () => {
-          expect(methods.getProperties().extension.config).toBe('testConfig');
-        });
-      });
-
-      describe('locale', () => {
-        it('is set to the current CMS locale', () => {
-          ConfigService.locale = 'fr';
-          expect(methods.getProperties().locale).toBe('fr');
-        });
-      });
-
-      describe('timeZone', () => {
-        it('is set to the current CMS time zone', () => {
-          ConfigService.timeZone = 'Europe/Amsterdam';
-          expect(methods.getProperties().timeZone).toBe('Europe/Amsterdam');
-        });
-      });
-
-      describe('in user data', () => {
-        it('sets the id to the current CMS user name', () => {
-          ConfigService.cmsUser = 'editor';
-          expect(methods.getProperties().user.id).toBe('editor');
-        });
-
-        it('sets the firstName to the current CMS users first name', () => {
-          ConfigService.cmsUserFirstName = 'Ed';
-          expect(methods.getProperties().user.firstName).toBe('Ed');
-        });
-
-        it('sets the lastName to the current CMS users last name', () => {
-          ConfigService.cmsUserLastName = 'Itor';
-          expect(methods.getProperties().user.lastName).toBe('Itor');
-        });
-
-        it('sets the displayName to the current CMS users display name', () => {
-          ConfigService.cmsUserDisplayName = 'Ed Itor';
-          expect(methods.getProperties().user.displayName).toBe('Ed Itor');
-        });
-      });
-
-      describe('version', () => {
-        it('is set to the current CMS version', () => {
-          ConfigService.cmsVersion = '13.0.0';
-          expect(methods.getProperties().version).toBe('13.0.0');
-        });
-      });
     });
 
     describe('getPage', () => {

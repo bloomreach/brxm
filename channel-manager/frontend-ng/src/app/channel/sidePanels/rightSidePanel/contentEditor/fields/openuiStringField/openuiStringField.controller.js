@@ -17,12 +17,11 @@
 const MAX_SIZE = 4096;
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, ExtensionService, OpenUiService) {
+  constructor($element, $log, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
-    this.ExtensionService = ExtensionService;
     this.OpenUiService = OpenUiService;
   }
 
@@ -34,23 +33,14 @@ export default class OpenuiStringFieldController {
 
   $onChanges(changes) {
     if (changes.extensionId) {
-      this._initExtension(changes.extensionId.currentValue);
-    }
-  }
-
-  _initExtension(id) {
-    this.extension = this.ExtensionService.getExtension(id);
-    this.OpenUiService.connect({
-      url: this.ExtensionService.getExtensionUrl(this.extension),
-      appendTo: this.$element[0],
-      methods: {
-        getFieldValue: this.getValue.bind(this),
-        setFieldValue: this.setValue.bind(this),
-      },
-    })
-      .catch((error) => {
-        this.$log.warn(`Extension '${this.extension.displayName}' failed to connect with the client library.`, error);
+      this.OpenUiService.initialize(changes.extensionId.currentValue, {
+        appendTo: this.$element[0],
+        methods: {
+          getFieldValue: this.getValue.bind(this),
+          setFieldValue: this.setValue.bind(this),
+        },
       });
+    }
   }
 
   setValue(value) {
