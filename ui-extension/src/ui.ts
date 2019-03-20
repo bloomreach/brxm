@@ -75,14 +75,17 @@ abstract class ScopeEmitter<Events, T extends Parent> extends Scope<T> implement
   }
 }
 
-interface ChannelParent extends Parent {
-  getPage: ParentMethod<PageProperties>;
+interface UiParent extends Parent {
   getProperties: ParentMethod<UiProperties>;
+}
+
+interface ChannelParent extends UiParent {
+  getPage: ParentMethod<PageProperties>;
   refreshChannel: ParentMethod;
   refreshPage: ParentMethod;
 }
 
-interface DocumentParent extends Parent {
+interface DocumentParent extends UiParent {
   getFieldValue: ParentMethod<string>;
   setFieldValue: ParentMethod<void, [string]>;
 }
