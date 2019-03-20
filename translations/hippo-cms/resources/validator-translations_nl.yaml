@@ -2,8 +2,11 @@ definitions:
   config:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /nl:
-        escaped: Ongeldig karakter aanwezig
-        resource-required: U moet een bestand uploaden
-        non-empty: Een verplicht tekstveld is leeg
         jcr:primaryType: hipposys:resourcebundle
-        email: Veld komt niet overeen met een e-mail adres
+        escaped: 'De volgende tekens zijn niet toegestaan: < > & '' "'
+        resource-required: Upload een bestand
+        summaryMultiple: Dit document heeft {0} fouten
+        non-empty: Voer een waarde in
+        html: Voer een waarde in
+        summarySingle: Dit document heeft 1 fout
+        email: Voer een geldig e-mailadres in

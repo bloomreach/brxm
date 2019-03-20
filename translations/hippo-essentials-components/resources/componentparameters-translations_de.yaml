@@ -3,6 +3,7 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /de:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Den technischen Namen verwenden
         postScope: Standort Blog-Posts
         sortField: Sortierfeld
         pageSize: Anzahl der anzuzeigenden Posts
@@ -15,28 +16,37 @@ definitions:
     : /de:
         jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: Geländeinformationen
+        width.hint: In Pixeln
         address: Standort/Adresse
         apiKey: Google Maps API Key
+        mapType.hint: Art anzuzeigenden Karte
         latitude: Breitengrad
         mapType: Kartentyp
+        address.hint: Der Ort kann über eine Adresse oder mit Längen- und Breitengrad
+          angegeben werden.
         zoomFactor: Zoom-Faktor
         map.options: Landkartenoptionen
+        height.hint: In Pixeln
         mapType#SATELLITE: Google-Earth-Satellit
         mapType#ROADMAP: Straßenkarte
         mapType#HYBRID: Kombination normal und Satellit
-        width: Breite (in Pixel)
+        width: Breite
         location: Standort
         longitude: Längengrad
-        height: Höhe (in Pixel)
+        height: Höhe
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         group.documents: Karussell-Dokumente
+        interval.hint: In Millisekunden
         group.settings: Karrussel-Einstellungen
         document4: Karussell-Element 4
         document3: Karussell-Element 3
+        carouselWidth.hint: In Pixeln
         document6: Karussell-Element 6
         document5: Karussell-Element 5
         document2: Karussell-Element 2
+        carouselHeight.hint: In Pixeln
         document1: Karussell-Element 1
         cycle: Karussell ständig durchlaufen
         pause: Karussell bei Mausaktivierung anhalten
@@ -44,37 +54,40 @@ definitions:
         carouselHeight: Karussell-Höhe
         carouselBackgroundColor: Karussell-Hintergrundfarbe
         showNavigation: Karussell-Navigation anzeigen
-        jcr:primaryType: hipposys:resourcebundle
-        interval: Karussell-Intervall (Millisekunden)
+        interval: Karussellintervall
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
     : /de:
-        documentTypes: Dokumenttypen (kommagetrennt)
         jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Dokumenttypen
         showPagination: Seitennummerierung anzeigen
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /de:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: 'Zusammengesetzter Pfad (optional: Inhaltspfad kann auch verwendet
-          werden)'
+        facetPath.hint: Wenn dieser Eintrag leer ist, wird der Inhaltspfad verwendet.
+        facetPath: Facettenpfad (optional)
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         hidePastEvents: Vergangene Events ausblenden
         documentDateField: Feld mit Dokumentdatum (zum Ausblenden)
-        documentTypes: Events-Dokumenttypen (kommagetrennt)
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Ereignisdokumenttypen
+        documentDateField.hint: Den technischen Namen verwenden
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
     : /de:
         jcr:primaryType: hipposys:resourcebundle
         menu: Menübezeichnung
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         folderLinks: Ordner sind auch Links
         depth: Tiefe
-        root: Wurzelverzeichnis
-        jcr:primaryType: hipposys:resourcebundle
+        root: Stammverzeichnis
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /de:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: Den technischen Namen verwenden
         sorting.group: Sortieren
         sortOrder#desc: Absteigend
         sortOrder: Sortierreihenfolge
@@ -109,15 +122,19 @@ definitions:
     : /de:
         jcr:primaryType: hipposys:resourcebundle
         path: Dokumentpfad
-        documentTypes: Dokumenttypen (kommagetrennt)
+        path.hint: Der Pfad im Datenspeicher
+        documentTypes: Dokumenttypen
         list.group: Inhaltsauswahl
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
         includeSubtypes: Dokumentuntertypen einschließen
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /de:
+        jcr:primaryType: hipposys:resourcebundle
         hideFutureItems: Zukünftige Dokumente ausblenden
         documentDateField: Feld mit Dokumentdatum (zum Ausblenden)
-        documentTypes: News-Dokumenttypen (kommagetrennt)
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: Nachrichten-Dokumenttypen
+        documentDateField.hint: Den technischen Namen verwenden
+        documentTypes.hint: Die technischen Namen verwenden, durch Komma getrennt
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
     : /de:
         document: Bild
@@ -125,22 +142,27 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
     : /de:
         jcr:primaryType: hipposys:resourcebundle
+        width.hint: In Pixeln
         address: Adresse
         map.canvas: Map Canvas
         latitude: Breite
         markerCustomText: Markierung benutzerdefinierter Text
         mapType: Kartentyp
+        address.hint: Die Adresse hat Vorrang vor Längengrad / Breitengrad.
         map.size: Kartengröße
         zoomFactor: Vergrößerungsfaktor
         map.options: Kartenoptionen
+        latitude.hint: Wenn dieser Eintrag leer bleibt, wird der Standardlängengrad/-breitengrad
+          verwendet
+        height.hint: In Pixeln. Mindestens 250 Pixel.
         showMarker#no: Keine Markierung
         showMarker: Markierung anzeigen
         mapOverlay: Kartenüberlagerung
-        width: Breite (in Pixel)
+        width: Breite
         showMarker#withoutText: Ohne Text
         map.focus: Kartenfokus
         location: Standortinformationen
         showMarker#withCustomText: Breite benutzerdefinierter Text
         showMarker#withAddress: Breite Adresse
-        height: Höhe (in Pixel)
+        height: Höhe
         longitude: Länge

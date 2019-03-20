@@ -3,6 +3,7 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsBlogAuthorPostsComponentInfo
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: 使用技术名称
         postScope: 博客帖子的位置
         sortField: 排序字段
         pageSize: 要展示的帖子的数量
@@ -15,28 +16,36 @@ definitions:
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         mapType#TERRAIN: 地形信息
+        width.hint: 单位为像素
         address: 位置/地址
         apiKey: 谷歌地图 API 秘钥
+        mapType.hint: 要显示的地图类型
         latitude: 纬度
         mapType: 地图类型
+        address.hint: 对于位置，您可以提供地址或使用经度和纬度
         zoomFactor: 缩放系数
         map.options: 地图选项
+        height.hint: 单位为像素
         mapType#SATELLITE: 谷歌地图卫星
-        width: 宽度（单位为像素）
+        width: 宽度
         mapType#ROADMAP: 路线图
         mapType#HYBRID: 普通地图和卫星地图的混合
         location: 位置
         longitude: 经度
-        height: 高度（单位为像素）
+        height: 高度
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsCarouselComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         group.documents: 旋转木马文档
+        interval.hint: 单位为毫秒
         group.settings: 旋转木马设置
         document4: 旋转木马项目4
         document3: 旋转木马项目3
+        carouselWidth.hint: 单位为像素
         document6: 旋转木马项目6
         document5: 旋转木马项目5
         document2: 旋转木马项目2
+        carouselHeight.hint: 单位为像素
         document1: 旋转木马项目1
         cycle: 旋转木马持续循环
         pause: 通过鼠标进入来暂停木马
@@ -44,36 +53,40 @@ definitions:
         carouselHeight: 旋转木马高度
         carouselBackgroundColor: 旋转木马背景颜色
         showNavigation: 显示旋转木马导航
-        jcr:primaryType: hipposys:resourcebundle
-        interval: 旋转木马间隔（毫秒）
+        interval: 旋转木马间隔
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSearchComponentInfo
     : /zh:
-        documentTypes: 文档类型（逗号分隔）
         jcr:primaryType: hipposys:resourcebundle
+        documentTypes: 文档类型
         showPagination: 显示分页
+        documentTypes.hint: 使用技术名称（以逗号分隔）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsFacetsComponentInfo
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
-        facetPath: 平面路径（可选：也可使用内容路径）
+        facetPath.hint: 如果为空，将使用内容路径
+        facetPath: 平面路径（可选）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsEventsComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         hidePastEvents: 隐藏过去事件
         documentDateField: 包含文档日期的字段（供隐藏）
-        documentTypes: 事件文档类型（逗号分隔）
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: 事件文档类型
+        documentDateField.hint: 使用技术名称
+        documentTypes.hint: 使用技术名称（以逗号分隔）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsMenuComponentInfo
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         menu: 菜单名称
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsRepositoryMenuComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         folderLinks: 文件夹也是链接
         depth: 深度
         root: 根文件夹
-        jcr:primaryType: hipposys:resourcebundle
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsSortable
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
+        sortField.hint: 使用技术名称
         sorting.group: 排序
         sortOrder#desc: 降序
         sortOrder: 排序顺序
@@ -108,15 +121,19 @@ definitions:
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         path: 文档路径
-        documentTypes: 文档类型（逗号分隔）
+        path.hint: 存储库中的路径
+        documentTypes: 文档类型
         list.group: 选择内容
+        documentTypes.hint: 使用技术名称（以逗号分隔）
         includeSubtypes: 包括文档子类型
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsNewsComponentInfo
     : /zh:
+        jcr:primaryType: hipposys:resourcebundle
         hideFutureItems: 隐藏未来文档
         documentDateField: 包含文档日期的字段（供隐藏）
-        documentTypes: 新文档类型（逗号分隔）
-        jcr:primaryType: hipposys:resourcebundle
+        documentTypes: 新闻文档类型
+        documentDateField.hint: 使用技术名称
+        documentTypes.hint: 使用技术名称（以逗号分隔）
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsImageComponentInfo
     : /zh:
         document: 图像
@@ -124,22 +141,26 @@ definitions:
     ? /hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/onehippo/cms7/essentials/components/info/EssentialsOpenStreetMapComponentInfo
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
+        width.hint: 单位为像素
         address: 地址
         map.canvas: 地图画布
         latitude: 纬度
         markerCustomText: 标记自定义文本
         mapType: 地图类型
+        address.hint: 地址优先于经度/纬度
         map.size: 地图大小
         zoomFactor: 缩放系数
         map.options: 地图选项
+        latitude.hint: 如果留空，则使用默认经度/纬度
+        height.hint: 单位为像素。最小值为 250 像素。
         showMarker#no: 无标记
         showMarker: 显示标记
         mapOverlay: 地图叠加
-        width: 宽度（以像素为单位）
+        width: 宽度
         showMarker#withoutText: 无文本
         map.focus: 地图焦点
         location: 位置信息
         showMarker#withCustomText: 有自定义文本
         showMarker#withAddress: 有地址
-        height: 高度（以像素为单位）
+        height: 高度
         longitude: 经度
