@@ -27,7 +27,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "uiExtension";
-    private static final String ERROR_MESSAGE = "Cannot load extension '%s'.";
     private static final String JS_TEMPLATE = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
@@ -68,7 +67,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         extension = uiExtension.orElse(null);
 
-        final Label errorMessage = new Label("errorMessage", Model.of(String.format(ERROR_MESSAGE, extensionName)));
+        final Label errorMessage = new Label("errorMessage", 
+                new StringResourceModel("load-error", OpenUiStringPlugin.this).setParameters(extensionName));
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
     }
