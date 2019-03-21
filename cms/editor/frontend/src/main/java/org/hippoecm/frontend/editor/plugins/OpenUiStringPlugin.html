@@ -15,11 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-editor-field-iframe">
-      <span wicket:id="errorMessage">[ cannot load extension ]</span>
-      <iframe wicket:id="iframe" 
-              sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
-      </iframe>
+    <div class="hippo-editor-field-value-container">
+      <div class="hippo-editor-field-iframe" wicket:id="iframeParent">
+        <span wicket:id="errorMessage">[ cannot load extension ]</span>
+        <!-- iframe element will be added by javascript -->
+      </div>
     </div>
   </wicket:panel>
 </html>

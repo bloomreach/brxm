@@ -15,10 +15,12 @@
  */
 package org.onehippo.cms7.openui.extensions;
 
+import java.io.Serializable;
+
 /**
  * A UI Extension of the CMS.
  */
-public interface UiExtension {
+public interface UiExtension extends Serializable {
 
     /**
      * @return identifier of the extension. Must be unique across all extensions.
