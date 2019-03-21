@@ -27,6 +27,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
@@ -53,9 +54,15 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private UiExtension extension;
     private String iframeParentId;
+    private String hiddenValueId;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        final HiddenField<String> value = new HiddenField<>("value", getModel());
+        value.setOutputMarkupId(true);
+        queue(value);
+        hiddenValueId = value.getMarkupId();
 
         final String extensionName = config.getString(CONFIG_PROPERTY_UI_EXTENSION);
         final Optional<UiExtension> uiExtension = loadUiExtension(extensionName);
@@ -96,6 +103,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
         variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
         variables.put("iframeParentId", iframeParentId);
+        variables.put("hiddenValueId", hiddenValueId);
 
         final UserSession userSession = UserSession.get();
         addCmsVariables(variables, userSession);
