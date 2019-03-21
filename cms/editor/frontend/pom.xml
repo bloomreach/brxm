@@ -130,6 +130,7 @@
         <includes>
           <include>**/*.xml</include>
           <include>**/*.html</include>
+          <include>**/*.js</include>
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
@@ -141,6 +142,15 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <!-- package resources fetched via NPM -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/node_modules/penpal/dist</directory>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/editor/plugins</targetPath>
+        <includes>
+          <include>penpal.js</include>
         </includes>
       </resource>
     </resources>
@@ -170,6 +180,32 @@
         <configuration>
           <reuseForks>false</reuseForks>
         </configuration>
+      </plugin>
+      <!-- Use NPM to fetch external JavaScript dependencies -->
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <configuration>
+              <nodeVersion>${nodejs.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm ci</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>ci</arguments>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
