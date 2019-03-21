@@ -28,39 +28,79 @@
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
 import Emittery = require('emittery'); // tslint:disable-line:import-name
-import { ChannelScope, ChannelScopeEvents, Emitter, EventHandler, PageScope, PageScopeEvents, UiScope } from './api';
-import { ParentConnection } from './parent';
+import {
+  ChannelScope,
+  ChannelScopeEvents,
+  DocumentScope,
+  Emitter,
+  EventHandler,
+  FieldScope,
+  PageProperties,
+  PageScope,
+  PageScopeEvents,
+  UiProperties,
+  UiScope,
+} from './api';
+import { Parent, ParentConnection, ParentMethod } from './parent';
 
 const SCOPE_CHANNEL = 'channel';
 const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
 
-abstract class Scope {
-  protected constructor(protected _parent: ParentConnection) {
+// Symbols are unique and not listed in object keys so we can hide private methods.
+const PARENT = Symbol('parent');
+const EVENT_EMITTER = Symbol('eventEmitter');
+const EVENT_SCOPE = Symbol('eventScope');
+
+abstract class Scope<T extends Parent = Parent> {
+  protected [PARENT]: ParentConnection<T>;
+
+  protected constructor(parent: ParentConnection<T>) {
+    this[PARENT] = parent;
   }
 }
 
-abstract class ScopeEmitter<Events> extends Scope implements Emitter<Events> {
-  constructor(parent: ParentConnection, private _eventEmitter: Emittery, private _eventScope: string) {
+abstract class ScopeEmitter<Events, T extends Parent> extends Scope<T> implements Emitter<Events> {
+  private [EVENT_EMITTER]: Emittery;
+  private [EVENT_SCOPE]: string;
+
+  constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
     super(parent);
+
+    this[EVENT_EMITTER] = eventEmitter;
+    this[EVENT_SCOPE] = eventScope;
   }
 
   on(eventName: keyof Events, callback: EventHandler<Events>) {
-    const scopedEventName = `${this._eventScope}.${eventName}`;
-    return this._eventEmitter.on(scopedEventName, callback);
+    return this[EVENT_EMITTER].on(`${this[EVENT_SCOPE]}.${eventName}`, callback);
   }
 }
 
-class Page extends ScopeEmitter<PageScopeEvents> implements PageScope {
+interface UiParent extends Parent {
+  getProperties: ParentMethod<UiProperties>;
+}
+
+interface ChannelParent extends UiParent {
+  getPage: ParentMethod<PageProperties>;
+  refreshChannel: ParentMethod;
+  refreshPage: ParentMethod;
+}
+
+interface DocumentParent extends UiParent {
+  getFieldValue: ParentMethod<string>;
+  setFieldValue: ParentMethod<void, [string]>;
+}
+
+class Page extends ScopeEmitter<PageScopeEvents, ChannelParent> implements PageScope {
   get() {
-    return this._parent.call('getPage');
+    return this[PARENT].call('getPage');
   }
 
   refresh() {
-    return this._parent.call('refreshPage');
+    return this[PARENT].call('refreshPage');
   }
 }
 
-class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
+class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements ChannelScope {
   page: Page;
 
   constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
@@ -69,13 +109,28 @@ class Channel extends ScopeEmitter<ChannelScopeEvents> implements ChannelScope {
   }
 
   refresh() {
-    return this._parent.call('refreshChannel');
+    return this[PARENT].call('refreshChannel');
+  }
+}
+
+class Document extends Scope<DocumentParent> implements DocumentScope {
+  field = new Field(this[PARENT]);
+}
+
+class Field extends Scope<DocumentParent> implements FieldScope {
+  getValue() {
+    return this[PARENT].call('getFieldValue');
+  }
+
+  setValue(value: string) {
+    return this[PARENT].call('setFieldValue', value);
   }
 }
 
 export class Ui extends Scope implements UiScope {
   baseUrl: string;
   channel: ChannelScope;
+  document: DocumentScope;
   extension: {
     config: string,
   };
@@ -92,10 +147,11 @@ export class Ui extends Scope implements UiScope {
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
     this.channel = new Channel(parent, eventEmitter, SCOPE_CHANNEL);
+    this.document = new Document(parent);
   }
 
   init(): Promise<Ui> {
-    return this._parent.call('getProperties')
+    return this[PARENT].call('getProperties')
       .then(properties => Object.assign(this, properties));
   }
 }
