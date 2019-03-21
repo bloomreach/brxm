@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.1.0-SNAPSHOT</version>
+    <version>30.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>13.1.0-validation-SNAPSHOT</version>
+  <version>13.2.0-validation-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -39,47 +39,47 @@
   </scm>
 
   <properties>
-    <hippo.release.version>13.1.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>13.2.0-SNAPSHOT</hippo.release.version>
 
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.cargo-extensions.version>13.0.0</hippo.cargo-extensions.version>
 
-    <hippo.configuration-management.version>13.1.0-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.addon-channel-manager.version>13.1.0-validation-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>13.1.0-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>13.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>13.1.0-validation-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>13.1.0-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>13.1.0-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>13.1.0-validation-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>13.1.0-validation-SNAPSHOT</hippo.services.version>
-    <hippo.services.autoreload.version>13.1.0-SNAPSHOT</hippo.services.autoreload.version>
-    <hippo.services.contenttype.version>13.1.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.services.eventbus.version>13.1.0-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.validation.version>13.1.0-validation-SNAPSHOT</hippo.services.validation.version>
-    <hippo.services.webfiles.version>13.1.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.htmlprocessor.version>13.1.0-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.utilities.version>13.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>13.1.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.l10n-tooling.version>13.1.0-SNAPSHOT</hippo.l10n-tooling.version>
+    <hippo.configuration-management.version>13.2.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.addon-channel-manager.version>13.2.0-validation-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>13.2.0-SNAPSHOT</hippo.addon-search-service.version>
+    <hippo.commons.version>13.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>13.2.0-validation-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>13.2.0-SNAPSHOT</hippo.hst.version>
+    <hippo.packages.version>13.2.0-SNAPSHOT</hippo.packages.version>
+    <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
+    <hippo.services.autoreload.version>13.2.0-SNAPSHOT</hippo.services.autoreload.version>
+    <hippo.services.contenttype.version>13.2.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.eventbus.version>13.2.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.validation.version>13.2.0-validation-SNAPSHOT</hippo.services.validation.version>
+    <hippo.services.webfiles.version>13.2.0-SNAPSHOT</hippo.services.webfiles.version>
+    <hippo.services.htmlprocessor.version>13.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.utilities.version>13.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.testutils.version>13.2.0-SNAPSHOT</hippo.testutils.version>
+    <hippo.l10n-tooling.version>13.2.0-SNAPSHOT</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.essentials-components.version>13.1.0-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>13.1.0-validation-SNAPSHOT</hippo.plugin.content-blocks.version>
-    <hippo.plugin.content-tagging.version>13.1.0-SNAPSHOT</hippo.plugin.content-tagging.version>
-    <hippo.plugin.dashboard-document-wizard.version>13.1.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>13.1.0-validation-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>13.1.0-SNAPSHOT</hippo.plugin.poll.version>
-    <hippo.plugin.relateddocs.version>13.1.0-SNAPSHOT</hippo.plugin.relateddocs.version>
-    <hippo.plugin.resourcebundle-editor.version>13.1.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
-    <hippo.plugin.robotstxt.version>13.1.0-SNAPSHOT</hippo.plugin.robotstxt.version>
-    <hippo.plugin.selections.version>13.1.0-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.plugin.seo-support.version>13.1.0-SNAPSHOT</hippo.plugin.seo-support.version>
-    <hippo.plugin.sitemap.version>13.1.0-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>13.1.0-SNAPSHOT</hippo.plugin.taxonomy.version>
-    <hippo.addon-crisp.version>13.1.0-SNAPSHOT</hippo.addon-crisp.version>
+    <hippo.essentials-components.version>13.2.0-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.plugin.content-blocks.version>13.2.0-validation-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-tagging.version>13.2.0-SNAPSHOT</hippo.plugin.content-tagging.version>
+    <hippo.plugin.dashboard-document-wizard.version>13.2.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
+    <hippo.plugin.gallerypicker.version>13.2.0-validation-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.poll.version>13.2.0-SNAPSHOT</hippo.plugin.poll.version>
+    <hippo.plugin.relateddocs.version>13.2.0-SNAPSHOT</hippo.plugin.relateddocs.version>
+    <hippo.plugin.resourcebundle-editor.version>13.2.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
+    <hippo.plugin.robotstxt.version>13.2.0-SNAPSHOT</hippo.plugin.robotstxt.version>
+    <hippo.plugin.selections.version>13.2.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.seo-support.version>13.2.0-SNAPSHOT</hippo.plugin.seo-support.version>
+    <hippo.plugin.sitemap.version>13.2.0-SNAPSHOT</hippo.plugin.sitemap.version>
+    <hippo.plugin.taxonomy.version>13.2.0-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.addon-crisp.version>13.2.0-SNAPSHOT</hippo.addon-crisp.version>
 
     <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
@@ -89,8 +89,6 @@
     <!-- docker related configuration -->
     <!-- used for basic docker interactions -->
     <docker.maven.plugin.version>0.28.0</docker.maven.plugin.version>
-    <!-- used for extended K8s support -->
-    <fabric8.maven.plugin.version>3.5.38</fabric8.maven.plugin.version>
 
     <!-- Open source JDBC drivers included in docker image -->
     <mysql.connector.version>5.1.46</mysql.connector.version>
@@ -135,15 +133,15 @@
     <!-- Jackrabbit cluster node id can be set externally. -->
     <docker.brxm.envRun.REPO_CLUSTER_NODE_ID/>
 
-    <docker.brxm.default.JAVA_OPTS>
-      -Drepo.path=${repo.path}
+    <!-- Default repository workspace and versioning bundle cache sizes -->
+    <docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>256</docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>
+    <docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>64</docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>
+
+    <docker.brxm.envRun.JAVA_OPTS>
       -Dproject.basedir=${docker.brxm.project.path}
-      -Drepo.bootstrap=${repo.bootstrap}
-      -Drepo.autoexport.allowed=${repo.autoexport.allowed}
-      -Dlog4j.configurationFile=file://${docker.brxm.project.path}/conf/log4j2-dev.xml
       -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend}
       ${docker.brxm.jvm.args}
-    </docker.brxm.default.JAVA_OPTS>
+    </docker.brxm.envRun.JAVA_OPTS>
 
     <!-- Default user and user id for brXM container -->
     <docker.brxm.container.username>brxmuser</docker.brxm.container.username>
@@ -1093,11 +1091,6 @@
           <artifactId>docker-maven-plugin</artifactId>
           <version>${docker.maven.plugin.version}</version>
         </plugin>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>fabric8-maven-plugin</artifactId>
-          <version>${fabric8.maven.plugin.version}</version>
-        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -1176,8 +1169,8 @@
       <id>docker.build</id>
       <properties>
         <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.path>${project.build.directory}/storage</repo.path>
-        <repo.config />
+        <docker.brxm.envRun.REPO_PATH>${project.build.directory}/storage</docker.brxm.envRun.REPO_PATH>
+        <docker.brxm.envRun.REPO_CONFIG />
       </properties>
       <dependencies>
         <dependency>
@@ -1274,11 +1267,11 @@
     <profile>
       <id>docker.run</id>
       <properties>
-        <repo.autoexport.allowed>true</repo.autoexport.allowed>
         <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.config />
-        <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
+        <docker.brxm.envRun.REPO_PATH>${docker.brxm.project.path}/target/storage</docker.brxm.envRun.REPO_PATH>
+        <docker.brxm.envRun.REPO_AUTOEXPORT_ALLOWED>true</docker.brxm.envRun.REPO_AUTOEXPORT_ALLOWED>
+        <docker.brxm.envRun.REPO_BOOTSTRAP>true</docker.brxm.envRun.REPO_BOOTSTRAP>
+        <docker.brxm.envRun.REPO_CONFIG />
 
         <!-- private docker network for brXM to DB comms -->
         <docker.autoCreateCustomNetworks>true</docker.autoCreateCustomNetworks>
@@ -1294,12 +1287,8 @@
         <docker.db.username>admin</docker.db.username>
         <docker.db.password>admin</docker.db.password>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
-
-        <!-- COPY development artifacts for DEV image -->
-        <docker.brxm.copy.dev.libs.cmd>COPY --chown=${docker.brxm.container.uid}:${docker.brxm.container.uid} maven/shared /usr/local/tomcat/shared/</docker.brxm.copy.dev.libs.cmd>
+        <!-- COPY development artifacts for DEV image. Should be empty -->
+        <docker.brxm.copy.dev.libs.cmd></docker.brxm.copy.dev.libs.cmd>
 
         <!-- Default assembly used for building docker image -->
         <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</docker.dev.assembly.descriptor>
@@ -1425,10 +1414,7 @@
         <docker.brxm.envRun.MYSQL_DB_HOST>${docker.db.host}</docker.brxm.envRun.MYSQL_DB_HOST>
         <docker.brxm.envRun.MYSQL_DB_PORT>${docker.db.port}</docker.brxm.envRun.MYSQL_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1454,10 +1440,7 @@
 
         <docker.brxm.envRun.MYSQL_DB_PORT>3306</docker.brxm.envRun.MYSQL_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1470,10 +1453,7 @@
         <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.db.host}</docker.brxm.envRun.POSTGRES_DB_HOST>
         <docker.brxm.envRun.POSTGRES_DB_PORT>${docker.db.port}</docker.brxm.envRun.POSTGRES_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1498,41 +1478,8 @@
 
         <docker.brxm.envRun.POSTGRES_DB_PORT>5432</docker.brxm.envRun.POSTGRES_DB_PORT>
 
-        <docker.brxm.envRun.JAVA_OPTS>
-          -Drepo.config=file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml
-          ${docker.brxm.default.JAVA_OPTS}
-        </docker.brxm.envRun.JAVA_OPTS>
+        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
-    </profile>
-
-    <profile>
-      <id>k8s.run</id>
-      <properties>
-        <repo.autoexport.allowed>true</repo.autoexport.allowed>
-        <repo.base.path>${project.basedir}</repo.base.path>
-        <repo.config />
-        <repo.bootstrap>true</repo.bootstrap>
-        <repo.path>${docker.brxm.project.path}/target/storage</repo.path>
-        <fabric8.skip.build.pom>false</fabric8.skip.build.pom>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>fabric8-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>Deploy on the Kubernetes Server</id>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>resource</goal>
-                  <goal>deploy</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 
