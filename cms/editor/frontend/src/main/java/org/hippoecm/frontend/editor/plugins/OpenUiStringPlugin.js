@@ -17,6 +17,7 @@
 const extensionConfig = '${extensionConfig}';
 const extensionUrl = '${extensionUrl}';
 const iframeParentId = '${iframeParentId}';
+const hiddenValueId = '${hiddenValueId}';
 
 const cmsLocale = '${cmsLocale}';
 const cmsTimeZone = '${cmsTimeZone}';
@@ -58,6 +59,7 @@ function getUiProperties(cmsBaseUrl) {
   const antiCache = win.Hippo.antiCache;
   const iframeUrl = getIframeUrl(extensionUrl, cmsOrigin, antiCache);
   const iframeParentElement = doc.getElementById(iframeParentId);
+  const hiddenValueElement = doc.getElementById(hiddenValueId);
 
   const connection = Penpal.connectToChild({
     url: iframeUrl,
@@ -66,6 +68,12 @@ function getUiProperties(cmsBaseUrl) {
       getProperties: function() {
         const cmsBaseUrl = cmsOrigin + win.location.pathname;
         return getUiProperties(cmsBaseUrl);
+      },
+      getFieldValue: function() {
+        return hiddenValueElement.value;
+      },
+      setFieldValue: function(value) {
+        hiddenValueElement.value = value;
       }
     }
   });
