@@ -263,9 +263,51 @@ export interface PageProperties {
  */
 export interface DocumentScope {
   /**
+   * @returns a Promise that resolves with [[DocumentProperties]] of the current document.
+   */
+  get(): Promise<DocumentProperties>;
+
+  /**
    * API for the current field of the current document.
    */
   field: FieldScope;
+}
+
+/**
+ * Properties of a document.
+ */
+export interface DocumentProperties {
+  /**
+   * The UUID of the handle node.
+   */
+  id: string;
+
+  /**
+   * Display name of the document.
+   */
+  displayName: string;
+
+  /**
+   * Locale of the document, e.g. "sv". Is undefined when the document does not have a locale.
+   */
+  locale: string;
+
+  /**
+   * The edit mode of the document, either 'view', 'edit' or 'compare'.
+   */
+  mode: string;
+
+  /**
+   * The URL name of the document.
+   */
+  urlName: string;
+
+  /**
+   * UUID of the currently shown variant, typically 'draft' or 'preview'.
+   */
+  variant: {
+    id: string;
+  };
 }
 
 /**
