@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,19 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <ul>
-      <li>
-        <label wicket:for="name">Name: </label>
-        <fieldset>
-          <input wicket:id="name" type="text"/>
-        </fieldset>
-      </li>
-      <li>
-        <label wicket:for="type">Primary Type: </label>
-        <fieldset>
-          <input wicket:id="type" type="text"/>
-        </fieldset>
-      </li>
-    </ul>
+    <div class="hippo-dialog-body">
+      <div class="label">Name</div>
+      <div class="input">
+        <input wicket:id="name" type="text" class="hippo-form-input"/>
+      </div>
+      <div class="label">Primary type</div>
+      <div class="input">
+        <input wicket:id="type" type="text" class="hippo-form-input"/>
+      </div>
+    </div>
   </wicket:extend>
 </html>

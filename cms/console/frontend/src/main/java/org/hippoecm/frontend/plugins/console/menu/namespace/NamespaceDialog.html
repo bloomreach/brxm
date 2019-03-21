@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <strong>Namespace prefix: </strong>
-    <fieldset>
-      <span wicket:id="prefix"/>
-    </fieldset>
-    <strong>Namespace uri: </strong>
-    <fieldset>
-      <span wicket:id="uri"/>
-    </fieldset>
+    <div class="hippo-dialog-body">
+      <div class="label">Namespace prefix</div>
+      <div class="input">
+        <span wicket:id="prefix" class="hippo-form-input"/>
+      </div>
+      <div class="label">Namespace uri</div>
+      <div class="input">
+        <span wicket:id="uri" class="hippo-form-input"/>
+      </div>
+    </div>
   </wicket:extend>
 </html>
