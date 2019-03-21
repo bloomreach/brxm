@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:extend>
-<pre>
-  <h3>References:</h3>
-  <ul wicket:id="references">
-    <li><a wicket:id="reference"><span wicket:id="name" /></a> (<span wicket:id="property">property</span>)</li>
-  </ul>
-</pre>
-    </wicket:extend>
+  <wicket:extend>
+    <div class="hippo-dialog-body">
+      <pre>
+        <h3>References</h3>
+        <ul wicket:id="references">
+          <li><a wicket:id="reference"><span wicket:id="name"/></a> (<span wicket:id="property">property</span>)</li>
+        </ul>
+      </pre>
+    </div>
+  </wicket:extend>
 </html>
