@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,10 @@ public class MySqlDbLockManager extends DbLockManager {
                 if (lowerCaseMsg.contains("duplicate entry") || lowerCaseMsg.contains("data truncated")) {
                     log.info("After truncate but before table alteration entries have been inserted");
                     correctTableScheme(tableName, connection, retries - 1);
+                } else if (lowerCaseMsg.contains("duplicate key name")) {
+                    // Duplicate key exception means that the unique index is already created
+                    // In this case it's not necessary to either execute the batch query again or throw an exception
+                    return;
                 } else {
                     throw e;
                 }
