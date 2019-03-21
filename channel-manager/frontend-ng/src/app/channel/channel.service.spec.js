@@ -89,7 +89,7 @@ describe('ChannelService', () => {
     spyOn(CatalogService, 'load');
     spyOn(CatalogService, 'getComponents');
     spyOn(CmsService, 'publish');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'doGetWithParams').and.returnValue($q.when({ data: {} }));
@@ -216,7 +216,7 @@ describe('ChannelService', () => {
       'Failed to create preview configuration',
     );
     expect(ChannelService.isEditable()).toBe(false);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_ENTER_EDIT');
   });
 
   it('knows when the current channel is editable', () => {

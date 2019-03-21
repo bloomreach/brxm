@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,25 @@ import './sidePanel.scss';
 
 const FULL_SCREEN_ANIMATION_DURATION = 600;
 class SidePanelService {
-  constructor($document, $mdSidenav, $mdUtil, $q, $timeout, $window, ChannelService, CmsService, HippoIframeService) {
+  constructor(
+    $document,
+    $mdSidenav,
+    $mdUtil,
+    $q,
+    $rootScope,
+    $timeout,
+    $window,
+    ChannelService,
+    CmsService,
+    HippoIframeService,
+  ) {
     'ngInject';
 
     this.$document = $document;
     this.$mdSidenav = $mdSidenav;
     this.$mdUtil = $mdUtil;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.$window = $window;
 
@@ -38,11 +50,12 @@ class SidePanelService {
   initialize(side, sidePanelElement, sideNavElement) {
     const sideNavComponentId = sideNavElement.attr('md-component-id');
     const sideNav = this.$mdSidenav(sideNavComponentId);
-    const sideNavClass = sideNav.isOpen()
-      ? 'side-panel-open'
-      : 'side-panel-closed';
 
-    sidePanelElement.addClass(sideNavClass);
+    this.$rootScope.$watch(() => sideNav.isOpen(), (isOpened) => {
+      sidePanelElement
+        .toggleClass('side-panel-open', isOpened)
+        .toggleClass('side-panel-closed', !isOpened);
+    });
 
     this.panels[side] = {
       sideNav,
@@ -85,10 +98,6 @@ class SidePanelService {
       return this.$q.resolve();
     }
 
-    panel.sidePanelElement
-      .removeClass('side-panel-closed')
-      .addClass('side-panel-open');
-
     return panel.sideNav.open().then(() => {
       panel.sidePanelElement.one('transitionend', () => this.focus(side));
     });
@@ -102,12 +111,7 @@ class SidePanelService {
   close(side) {
     const panel = this.panels[side];
     if (panel && panel.sideNav.isOpen()) {
-      return panel.sideNav.close()
-        .then(() => {
-          panel.sidePanelElement
-            .removeClass('side-panel-open')
-            .addClass('side-panel-closed');
-        });
+      return panel.sideNav.close();
     }
     return this.$q.resolve();
   }

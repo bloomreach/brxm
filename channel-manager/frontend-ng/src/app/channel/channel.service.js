@@ -58,50 +58,54 @@ class ChannelService {
    * @param branchId the ID of the channel branch to show. Defaults to the active project.
    * @returns {*}
    */
-  initializeChannel(channelId, contextPath, hostGroup, branchId) {
-    return this.HstService.getChannel(channelId, contextPath, hostGroup)
-      .then(channel => this.SessionService.initialize(channel)
-        .then(() => this._ensurePreviewHstConfigExists(channel))
-        .then(previewChannel => this._loadProject(channel, branchId || this.ProjectService.selectedProject.id)
-          .then(() => this._setChannel(previewChannel))))
-      .catch((error) => {
-        if (this.hasChannel()) {
-          // restore the session for the previous channel, but still reject the promise chain
-          return this.SessionService.initialize(this.channel)
-            .then(() => this.$q.reject(error));
-        }
-        return this.$q.reject(error);
-      });
+  async initializeChannel(channelId, contextPath, hostGroup, branchId) {
+    try {
+      const channel = await this.HstService.getChannel(channelId, contextPath, hostGroup);
+      await this.SessionService.initialize(channel);
+
+      const previewChannel = await this._ensurePreviewHstConfigExists(channel);
+      await this._loadProject(channel, branchId || this.ProjectService.selectedProject.id);
+      this._setChannel(previewChannel);
+    } catch (error) {
+      if (this.hasChannel()) {
+        // restore the session for the previous channel, but still reject the promise chain
+        await this.SessionService.initialize(this.channel);
+      }
+
+      throw error;
+    }
   }
 
-  _ensurePreviewHstConfigExists(channel) {
-    if (this.SessionService.hasWriteAccess() && !channel.previewHstConfigExists) {
-      return this.HstService
-        .doPost(null, channel.mountId, 'edit')
-        .then(() => this._getPreviewChannel(channel))
-        .catch((error) => {
-          this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
-          this.FeedbackService.showError('ERROR_ENTER_EDIT');
-          return this.$q.reject();
-        });
+  async _ensurePreviewHstConfigExists(channel) {
+    if (!this.SessionService.hasWriteAccess() || channel.previewHstConfigExists) {
+      // channel is already editable or the user is not allowed to edit it
+      return channel;
     }
 
-    // channel is already editable or the user is not allowed to edit it
-    return this.$q.resolve(channel);
+    try {
+      await this.HstService.doPost(null, channel.mountId, 'edit');
+
+      return await this._getPreviewChannel(channel);
+    } catch (error) {
+      this.$log.error(`Failed to load channel '${channel.id}'.`, error.message);
+      this.FeedbackService.showErrorResponse(error.data, 'ERROR_ENTER_EDIT');
+
+      throw error;
+    }
   }
 
-  _getPreviewChannel(channel) {
+  async _getPreviewChannel(channel) {
     if (channel.preview) {
-      return this.$q.resolve(channel);
+      return channel;
     }
+
     return this.HstService.getChannel(`${channel.id}-preview`, channel.contextPath, channel.hostGroup);
   }
 
-  _loadProject(channel, branchId) {
-    if (!this.ConfigService.projectsEnabled) {
-      return this.$q.resolve();
+  async _loadProject(channel, branchId) { // eslint-disable-line consistent-return
+    if (this.ConfigService.projectsEnabled) {
+      return this.ProjectService.load(channel.mountId, branchId);
     }
-    return this.ProjectService.load(channel.mountId, branchId);
   }
 
   _setChannel(channel) {
@@ -145,7 +149,7 @@ class ChannelService {
     return this.channel;
   }
 
-  reload() {
+  async reload() {
     return this.initializeChannel(
       this.channel.id,
       this.channel.contextPath,
@@ -223,41 +227,38 @@ class ChannelService {
     this.CmsService.publish('channel-changed-in-angular');
   }
 
-  publishOwnChanges() {
-    return this.HstService.doPost(null, this.getMountId(), 'publish')
-      .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
+  async publishOwnChanges() {
+    await this.HstService.doPost(null, this.getMountId(), 'publish');
+    await this.reload();
+    this.$rootScope.$broadcast('channel:changes:publish');
   }
 
-  publishChangesOf(users) {
-    const url = 'userswithchanges/publish';
-    return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:changes:publish'));
+  async publishChangesOf(users) {
+    await this.HstService.doPost({ data: users }, this.getMountId(), 'userswithchanges/publish');
+    await this.reload();
+    this.$rootScope.$broadcast('channel:changes:publish');
   }
 
-  discardOwnChanges() {
-    return this.HstService.doPost(null, this.getMountId(), 'discard')
-      .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
+  async discardOwnChanges() {
+    await this.HstService.doPost(null, this.getMountId(), 'discard');
+    await this.reload();
+    this.$rootScope.$broadcast('channel:changes:discard');
   }
 
-  discardChangesOf(users) {
-    const url = 'userswithchanges/discard';
-    return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.reload())
-      .then(() => this.$rootScope.$broadcast('channel:changes:discard'));
+  async discardChangesOf(users) {
+    await this.HstService.doPost({ data: users }, this.getMountId(), 'userswithchanges/discard');
+    await this.reload();
+    this.$rootScope.$broadcast('channel:changes:discard');
   }
 
   getSiteMapId() {
     return this.channel.siteMapId;
   }
 
-  _augmentChannelWithPrototypeInfo() {
-    this.getNewPageModel()
-      .then((data) => {
-        this._hasPrototypes = data.prototypes && data.prototypes.length > 0;
-      });
+  async _augmentChannelWithPrototypeInfo() {
+    const data = await this.getNewPageModel();
+
+    this._hasPrototypes = data.prototypes && data.prototypes.length > 0;
   }
 
   hasPrototypes() {
@@ -268,10 +269,11 @@ class ChannelService {
     return this.channel.workspaceExists;
   }
 
-  getNewPageModel(mountId) {
+  async getNewPageModel(mountId) {
     const params = mountId ? { mountId } : undefined;
-    return this.HstService.doGetWithParams(this.getMountId(), params, 'newpagemodel')
-      .then(response => response.data);
+    const response = await this.HstService.doGetWithParams(this.getMountId(), params, 'newpagemodel');
+
+    return response.data;
   }
 
   getChannelInfoDescription() {
@@ -291,17 +293,16 @@ class ChannelService {
     return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
 
-  loadPageModifiableChannels() {
+  async loadPageModifiableChannels() {
     const params = {
       previewConfigRequired: true,
       workspaceRequired: true,
       skipBranches: true,
       skipConfigurationLocked: true,
     };
-    this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels')
-      .then((response) => {
-        this.pageModifiableChannels = response.data || [];
-      });
+
+    const response = await this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels');
+    this.pageModifiableChannels = response.data || [];
   }
 
   getPageModifiableChannels() {

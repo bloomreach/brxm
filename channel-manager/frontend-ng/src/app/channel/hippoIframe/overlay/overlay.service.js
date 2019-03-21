@@ -97,7 +97,7 @@ class OverlayService {
   }
 
   _onUnload() {
-    this.$rootScope.$apply(() => {
+    this.$rootScope.$evalAsync(() => {
       this.observer.disconnect();
       delete this.overlay;
       delete this.iframeWindow;
@@ -575,7 +575,7 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$apply(() => {
+      this.$rootScope.$evalAsync(() => {
         this.editMenuHandler(structureElement.getUuid());
       });
     });
