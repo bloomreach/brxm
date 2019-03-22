@@ -158,11 +158,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         toolbarHolder.setOutputMarkupId(true);
 
         if (editing) {
-            toolbarHolder.add(new AddButton(Model.of(taxonomy), categoryComparator));
-            toolbarHolder.add(new MoveButton(context, config));
+            toolbarHolder.add(new AddButton());
+            toolbarHolder.add(new MoveButton());
             toolbarHolder.add(new RemoveButton());
-            toolbarHolder.add(new MoveUpButton(categoryComparator));
-            toolbarHolder.add(new MoveDownButton(categoryComparator));
+            toolbarHolder.add(new MoveUpButton());
+            toolbarHolder.add(new MoveDownButton());
 
             updateToolbarForCategory(null);
         } else {
@@ -411,12 +411,12 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         return taxonomy.getCategoryByKey(key);
     }
 
-    TreeNode getSelectedNode() {
+    AbstractNode getSelectedNode() {
         Collection<Object> selected = tree.getTreeState().getSelectedNodes();
         if (selected.size() == 0) {
             return null;
         }
-        return (TreeNode) selected.iterator().next();
+        return (AbstractNode) selected.iterator().next();
     }
 
     private List<IModel<String>> getSynonymList() {
@@ -707,14 +707,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private class AddButton extends AjaxLink<Void> {
 
         public static final String ID = "add-category";
-        private final IModel<Taxonomy> taxonomyModel;
-        private final Comparator<Category> categoryComparator;
 
-        public AddButton(final IModel<Taxonomy> taxonomyModel, final Comparator<Category> categoryComparator) {
+        public AddButton() {
             super(ID);
-
-            this.taxonomyModel = taxonomyModel;
-            this.categoryComparator = categoryComparator;
 
             add(HippoIcon.fromSprite("add-category-icon", Icon.PLUS));
         }
@@ -722,6 +717,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         @Override
         public void onClick(AjaxRequestTarget target) {
             IDialogService dialogService = getDialogService();
+            final Model<Taxonomy> taxonomyModel = Model.of(taxonomy);
             dialogService.show(new NewCategoryDialog(taxonomyModel) {
 
                 @Override
@@ -744,11 +740,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
                 @Override
                 protected void onOk() {
                     final EditableCategory parentCategory = taxonomy.getCategoryByKey(key);
-
-                    final Collection<Object> selectedNodes = tree.getTreeState().getSelectedNodes();
-                    final AbstractNode parent = !selectedNodes.isEmpty()
-                            ? (AbstractNode) selectedNodes.iterator().next()
-                            : null;
+                    final AbstractNode parent = getSelectedNode();
 
                     if (parent == null) {
                         return;
@@ -785,14 +777,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private class MoveButton extends AjaxLink<Void> {
 
         public static final String ID = "move-category";
-        private final IPluginContext context;
-        private final IPluginConfig config;
 
-        public MoveButton(final IPluginContext context, final IPluginConfig config) {
+        public MoveButton() {
             super(ID);
-
-            this.context = context;
-            this.config = config;
 
             add(HippoIcon.fromSprite("move-category-icon", Icon.MOVE_INTO));
         }
@@ -815,14 +802,14 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             TaxonomyModel taxonomyModel;
 
             try {
-                taxonomyModel = new TaxonomyModel(context, config, null, taxonomy.getName(),
+                taxonomyModel = new TaxonomyModel(getPluginContext(), getPluginConfig(), null, taxonomy.getName(),
                         new JcrNodeModel(taxonomy.getJcrNode()));
             } catch (RepositoryException e) {
                 log.error("Failed to read taxonomy document variant node model.", e);
                 return;
             }
 
-            dialogService.show(new TaxonomyMoveDialog(context, config, classificationModel, currentLocaleSelection, taxonomyModel) {
+            dialogService.show(new TaxonomyMoveDialog(getPluginContext(), getPluginConfig(), classificationModel, currentLocaleSelection, taxonomyModel) {
 
                 @Override
                 protected void onOk() {
@@ -1003,7 +990,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         public static final String ID = "moveup-category";
 
-        public MoveUpButton(final Comparator<Category> categoryComparator) {
+        public MoveUpButton() {
             super(ID);
 
             add(HippoIcon.fromSprite("moveup-category-icon", Icon.ARROW_UP));
@@ -1038,7 +1025,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         public static final String ID = "movedown-category";
 
-        public MoveDownButton(final Comparator<Category> categoryComparator) {
+        public MoveDownButton() {
             super(ID);
 
             add(HippoIcon.fromSprite("movedown-category-icon", Icon.ARROW_DOWN));
