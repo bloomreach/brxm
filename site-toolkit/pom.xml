@@ -105,6 +105,8 @@
     <swagger-core.version>1.5.15</swagger-core.version>
     <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
+    <bytebuddy.version>1.9.10</bytebuddy.version>
+
   </properties>
 
   <!--
@@ -616,6 +618,14 @@
         <artifactId>assertj-core</artifactId>
         <version>${assertj.version}</version>
         <scope>test</scope>
+      </dependency>
+
+      <!-- byte buddy dependency -->
+      
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${bytebuddy.version}</version>
       </dependency>
 
     </dependencies>

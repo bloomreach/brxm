@@ -16,10 +16,12 @@
 package org.hippoecm.hst.content.beans.manager;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -30,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanServiceImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
@@ -60,6 +64,10 @@ public class ObjectConverterImpl implements ObjectConverter {
     protected Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs;
     protected Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs;
     protected String[] fallBackJcrNodeTypes;
+    protected DynamicBeanService dynamicBeanService;
+    
+    //TODO: After we integrate content type service, there is no need to this field.
+    private Set<String> dynabeans = new HashSet<String>();
 
     public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String[] fallBackJcrNodeTypes) {
         this.jcrPrimaryNodeTypeBeanPairs = jcrPrimaryNodeTypeBeanPairs;
@@ -73,6 +81,8 @@ public class ObjectConverterImpl implements ObjectConverter {
             this.fallBackJcrNodeTypes = new String[fallBackJcrNodeTypes.length];
             System.arraycopy(fallBackJcrNodeTypes, 0, this.fallBackJcrNodeTypes, 0, fallBackJcrNodeTypes.length);
         }
+
+        dynamicBeanService = new DynamicBeanServiceImpl();
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
@@ -185,17 +195,23 @@ public class ObjectConverterImpl implements ObjectConverter {
                             "removed from all content including from prototypes.");
                     return null;
                 }
-                // no exact match, try a fallback type
-                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
+                //TODO: Enhancing of existing bean is not supported while creating beans only the fly, but it could be.
+                if (useNode.isNodeType(HippoNodeType.NT_DOCUMENT) && useNode.getParent().isNodeType(NT_HANDLE)) {
+                    // There isn't any java bean class for this document so it will be generated on the fly.
+                    delegateeClass = createDynamicBean(useNode);
+                } else {
+                    // no exact match, try a fallback type
+                    for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
 
-                    if (!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
-                        continue;
-                    }
-                    // take the first fallback type
-                    delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                    if(delegateeClass != null) {
-                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, delegateeClass);
-                        break;
+                        if (!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
+                            continue;
+                        }
+                        // take the first fallback type
+                        delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
+                        if (delegateeClass != null) {
+                            log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, delegateeClass);
+                            break;
+                        }
                     }
                 }
             }
@@ -222,6 +238,47 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
+    //TODO: After we integrate content type service for JCR events, there is no need to this method.
+    public void resetType(String type){
+        if (dynabeans.contains(type)){
+            Class cl = jcrPrimaryNodeTypeBeanPairs.get(type);
+            jcrPrimaryNodeTypeBeanPairs.remove(type);
+            jcrBeanPrimaryNodeTypePairs.remove(cl);
+        }
+    }
+    
+    private Class<? extends HippoBean> createDynamicBean(final Node node) throws RepositoryException, ObjectBeanManagerException {
+
+        Class<? extends HippoBean> dynamicType = null;
+
+        final String beanType = node.getPrimaryNodeType().getName();
+
+        Class<? extends HippoBean> baseDocument = getProjectBaseDocument();
+        if (baseDocument != null) {
+            dynamicType = dynamicBeanService.createBean(node, baseDocument);
+        } else {
+            dynamicType = dynamicBeanService.createBean(node);
+        }
+
+        this.jcrBeanPrimaryNodeTypePairs.put(dynamicType, beanType);
+        this.jcrPrimaryNodeTypeBeanPairs.put(beanType, dynamicType);
+
+        this.dynabeans.add(beanType);
+
+        return dynamicType;
+    }
+
+    private Class<? extends HippoBean> getProjectBaseDocument() {
+        //returns the BaseDocument class if the project has one.
+        for (Class<? extends HippoBean> cls : jcrBeanPrimaryNodeTypePairs.keySet()) {
+            org.hippoecm.hst.content.beans.Node node = cls.getAnnotation(org.hippoecm.hst.content.beans.Node.class);
+            if (node != null && node.jcrType() != null && node.jcrType().equals(":document")) {
+                return cls;
+            }
+        }
+        return null;
+    }
+    
     protected Node getActualNode(final Node node) throws RepositoryException {
         if (node instanceof HippoBeanFrozenNode) {
             return node;

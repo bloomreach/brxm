@@ -28,6 +28,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanWrapper;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
@@ -52,12 +53,23 @@ public class HippoItem implements HippoBean {
     protected JCRValueProvider valueProvider;
     protected transient ObjectConverter objectConverter;
     protected boolean detached = false;
+    
+    //TODO: dynamicBeanWrapper could be created in the generated bean
+    protected DynamicBeanWrapper dynamicBeanWrapper;
+
+    public HippoItem() {
+        dynamicBeanWrapper = new DynamicBeanWrapper(this);
+    }
 
     private String canonicalUUID;
 
     private boolean availableTranslationsInitialized;
     @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslations;
+
+    public DynamicBeanWrapper getDynamicBeanWrapper() {
+        return dynamicBeanWrapper;
+    }
 
     public void setObjectConverter(ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;

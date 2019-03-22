@@ -235,5 +235,20 @@ public class ObjectConverterUtils {
         
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
     }
-    
+
+    //TODO: When the object type service is implemented for JCR event, then there is no need to this method    
+
+    public static void flushDocTypeDynamicBean(String path, ObjectConverter objectconverter) {
+        String[] paths = path.split("/");
+        if (paths.length < 4)
+            return;
+
+        path = paths[2] + ":" + paths[3];
+        log.info("flushing dynamic bean -  " + path);
+        if (objectconverter instanceof ObjectConverterImpl) {
+            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectconverter;
+            wrapper.resetType(path);
+        }
+    }
+
 }
