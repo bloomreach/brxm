@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,23 +20,23 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
-public class ResetDialog extends AbstractDialog<Node> {
+public class ResetDialog extends Dialog<Node> {
     private static final long serialVersionUID = 1L;
 
     protected boolean hasPendingChanges;
 
     public ResetDialog() {
+        setTitle(Model.of("Refresh Session"));
+        setSize(DialogConstants.MEDIUM);
+
         Component message;
         try {
             HippoNode rootNode = (HippoNode) UserSession.get().getJcrSession().getRootNode();
@@ -54,13 +54,18 @@ public class ResetDialog extends AbstractDialog<Node> {
                 }
                 message = new MultiLineLabel("message", buf.toString());
             } else {
-                message = new Label("message", "There are no pending changes");
+                message = new Label("message", "There are no pending changes.");
             }
         } catch (RepositoryException e) {
             message = new Label("message", "exception: " + e.getMessage());
             e.printStackTrace();
         }
         add(message);
+
+        Label resetText = new Label("resetText", Model.of("Reset session?"));
+        resetText.setVisible(hasPendingChanges);
+        queue(resetText);
+
         setFocusOnOk();
     }
 
@@ -75,14 +80,4 @@ public class ResetDialog extends AbstractDialog<Node> {
             error(ex.getMessage());
         }
     }
-
-    public IModel getTitle() {
-        return new Model<String>("Refresh Session");
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
-    }
-
 }

@@ -21,11 +21,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 
-public class NodeResetDialog extends AbstractDialog<Node> {
+public class NodeResetDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,33 +33,21 @@ public class NodeResetDialog extends AbstractDialog<Node> {
     public NodeResetDialog(IModel<Node> model) {
         super(model);
 
-        add(new Label("message", "Resetting a node means that you undo all changes that were made to it since the system was bootstrapped." +
-                " Changes will not be automatically saved so you can inspect the result of resetting first."));
+        setSize(DialogConstants.SMALL);
+
+        add(new Label("message", "Resetting a node means that you undo all changes that were made to it since the " +
+                "system was bootstrapped. Changes will not be automatically saved so you can inspect the result of " +
+                "resetting first."));
 
         try {
             final Node node = getModelObject();
             path = node.getPath();
+            setTitle(Model.of("Reset " + path));
             error("This functionality is not available");
             setOkEnabled(false);
-            return;
         } catch (RepositoryException e) {
             error("An unexpected error occurred: " + e.getMessage());
             setOkEnabled(false);
         }
     }
-
-    @Override
-    protected void onOk() {
-    }
-
-    @Override
-    public IModel getTitle() {
-        return new Model<String>("Reset " + path);
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
-    }
-
 }
