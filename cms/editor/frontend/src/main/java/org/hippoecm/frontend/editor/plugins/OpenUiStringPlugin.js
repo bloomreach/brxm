@@ -18,6 +18,9 @@ const extensionConfig = '${extensionConfig}';
 const extensionUrl = '${extensionUrl}';
 const iframeParentId = '${iframeParentId}';
 
+const documentId =  '${documentId}';
+const variantId =  '${variantId}';
+
 const cmsLocale = '${cmsLocale}';
 const cmsTimeZone = '${cmsTimeZone}';
 const cmsVersion = '${cmsVersion}';
@@ -39,6 +42,12 @@ function getUiProperties(cmsBaseUrl) {
     baseUrl: cmsBaseUrl,
     extension: {
       config: extensionConfig
+    },
+    document: {
+      id: documentId,
+      variant: {
+        id: variantId
+      }
     },
     locale: cmsLocale,
     timeZone: cmsTimeZone,

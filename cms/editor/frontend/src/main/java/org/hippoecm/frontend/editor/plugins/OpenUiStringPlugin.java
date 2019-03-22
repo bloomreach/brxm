@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -27,8 +28,11 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.hippoecm.frontend.editor.editor.EditorPlugin;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -53,6 +57,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private UiExtension extension;
     private String iframeParentId;
+    private String documentId;
+    private String variantId;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -71,6 +77,26 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
                 new StringResourceModel("load-error", OpenUiStringPlugin.this).setParameters(extensionName));
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
+        
+        getDocumentMetaData();
+    }
+
+    private void getDocumentMetaData() {
+        // TODO: unfortunately this doesn't work. Can we use a service?
+        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
+        if (editorPlugin != null) {
+            final IModel<?> defaultModel = editorPlugin.getDefaultModel();
+            if (defaultModel instanceof JcrNodeModel) {
+                final Node variant = ((JcrNodeModel) defaultModel).getNode();
+                try {
+                    variantId = variant.getIdentifier();
+                    final Node handle = variant.getParent();
+                    documentId = handle.getIdentifier();
+                } catch (RepositoryException e) {
+                    log.warn("Error getting document id.", e);
+                }
+            }
+        }
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -96,6 +122,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
         variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
         variables.put("iframeParentId", iframeParentId);
+        variables.put("documentId", StringUtils.defaultString(documentId));
+        variables.put("variantId", StringUtils.defaultString(variantId));
 
         final UserSession userSession = UserSession.get();
         addCmsVariables(variables, userSession);
