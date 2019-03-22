@@ -28,6 +28,8 @@ const userFirstName = '${userFirstName}';
 const userLastName = '${userLastName}';
 const userDisplayName = '${userDisplayName}';
 
+const MAX_SIZE = 4096;
+
 function getIframeUrl(extensionUrl, cmsOrigin, antiCache) {
   const iframeUrl = new URL(extensionUrl, cmsOrigin);
   iframeUrl.searchParams.append('br.antiCache', antiCache);
@@ -73,6 +75,9 @@ function getUiProperties(cmsBaseUrl) {
         return hiddenValueElement.value;
       },
       setFieldValue: function(value) {
+        if (value.length >= MAX_SIZE) {
+          throw new Error('Max value length of ' + MAX_SIZE + ' is reached.');
+        }
         hiddenValueElement.value = value;
       }
     }
