@@ -19,6 +19,7 @@ const extensionUrl = '${extensionUrl}';
 const iframeParentId = '${iframeParentId}';
 
 const documentId =  '${documentId}';
+const documentMode =  '${documentMode}';
 const variantId =  '${variantId}';
 
 const cmsLocale = '${cmsLocale}';
@@ -45,6 +46,7 @@ function getUiProperties(cmsBaseUrl) {
     },
     document: {
       id: documentId,
+      mode: documentMode,
       variant: {
         id: variantId
       }

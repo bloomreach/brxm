@@ -58,6 +58,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private UiExtension extension;
     private String iframeParentId;
     private String documentId;
+    private String documentMode;
     private String variantId;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -78,10 +79,12 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
         
-        getDocumentMetaData();
+        getDocumentMetaData(config);
     }
 
-    private void getDocumentMetaData() {
+    private void getDocumentMetaData(final IPluginConfig config) {
+        documentMode = StringUtils.defaultString(config.getString("mode"), "view"); 
+        
         // TODO: unfortunately this doesn't work. Can we use a service?
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
         if (editorPlugin != null) {
@@ -123,6 +126,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
         variables.put("iframeParentId", iframeParentId);
         variables.put("documentId", StringUtils.defaultString(documentId));
+        variables.put("documentMode", StringUtils.defaultString(documentMode));
         variables.put("variantId", StringUtils.defaultString(variantId));
 
         final UserSession userSession = UserSession.get();
