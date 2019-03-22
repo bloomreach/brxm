@@ -46,7 +46,7 @@ export default class OpenuiStringFieldController {
   setValue(value) {
     value = `${value}`;
     if (value.length >= MAX_SIZE) {
-      throw new Error('Max value size is reached.');
+      throw new Error(`Max value length of ${MAX_SIZE} is reached.`);
     }
 
     this.ngModel.$setViewValue(value);
