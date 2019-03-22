@@ -27,6 +27,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
@@ -74,50 +75,57 @@ public class DynamicBeanServiceImpl implements DynamicBeanService {
                         final String fullPropertyName = child.getProperty("hipposysedit:path").getString();
                         String propertyName = fullPropertyName.split(":")[1];
                         propertyName = "get" + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
-                        builder = addMethod(builder, propertyName, returnType, fullPropertyName, hasMultiple);
+
+                        if (ClassUtils.getMethodIfAvailable(baseClass, propertyName) == null) {
+                            //the method doesn't exist in the base class, it will be added
+                            builder = addMethod(builder, propertyName, returnType, fullPropertyName, hasMultiple);
+                        }
                     }
                 }
 
             }
 
             return builder.make().load(getClass().getClassLoader()).getLoaded();
-        } catch (NoSuchMethodException e) {
+
+        } catch (Exception e) {
             throw new ObjectBeanManagerException("The dynamic bean couldn't been generated.", e);
         }
 
     }
 
-    private static Builder<? extends HippoBean> addMethod(Builder<? extends HippoBean> builder, String methodName, String returnType,
-            String propertyName, Boolean hasMultiple) throws NoSuchMethodException {
-
-        Pair<Class<?>, String> retutnTypeAndMethodName = null;
-        if (returnType.equals("String") || returnType.equals("Html") || returnType.equals("Text") || returnType.equals("StaticDropdown")
-                || returnType.equals("DynamicDropdown") || returnType.equals("RadioGroup")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.STRING.getMethod(hasMultiple);
-        } else if (returnType.equals("Date")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.DATE.getMethod(hasMultiple);
-        } else if (returnType.equals("Boolean") || returnType.equals("selection:BooleanRadioGroup")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.BOOLEAN.getMethod(hasMultiple);
-        } else if (returnType.equals("Double")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.DOUBLE.getMethod(hasMultiple);
-        } else if (returnType.equals("Long")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.LONG.getMethod(hasMultiple);
-        } else if (returnType.equals("Docbase")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.DOCBASE.getMethod(hasMultiple);
-        } else if (returnType.equals("hippogallerypicker:imagelink")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.IMAGE.getMethod(hasMultiple);
-        } else if (returnType.equals("hippostd:html")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.HTML.getMethod(hasMultiple);
-        } else if (returnType.contains(":")) {
-            retutnTypeAndMethodName = DynamicBeanMethodTypes.DOCUMENT.getMethod(hasMultiple);
-        } else {
-            log.warn("Return type is not matched.The method is not generated for the property({})", propertyName);
-            return builder;
+    private static Builder<? extends HippoBean> addMethod(Builder<? extends HippoBean> builder, final String methodName, final String returnType,
+            final String propertyName, final Boolean hasMultiple) {
+        try {
+            Pair<Class<?>, String> retutnTypeAndMethodName = null;
+            if (returnType.equals("String") || returnType.equals("Html") || returnType.equals("Text") || returnType.equals("StaticDropdown")
+                    || returnType.equals("DynamicDropdown") || returnType.equals("RadioGroup")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.STRING.getMethod(hasMultiple);
+            } else if (returnType.equals("Date")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.DATE.getMethod(hasMultiple);
+            } else if (returnType.equals("Boolean") || returnType.equals("selection:BooleanRadioGroup")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.BOOLEAN.getMethod(hasMultiple);
+            } else if (returnType.equals("Double")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.DOUBLE.getMethod(hasMultiple);
+            } else if (returnType.equals("Long")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.LONG.getMethod(hasMultiple);
+            } else if (returnType.equals("Docbase")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.DOCBASE.getMethod(hasMultiple);
+            } else if (returnType.equals("hippogallerypicker:imagelink")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.IMAGE.getMethod(hasMultiple);
+            } else if (returnType.equals("hippostd:html")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.HTML.getMethod(hasMultiple);
+            } else if (returnType.contains(":")) {
+                retutnTypeAndMethodName = DynamicBeanMethodTypes.DOCUMENT.getMethod(hasMultiple);
+            } else {
+                log.warn("Return type is not matched. The method '{}' couldn't been added to the bean class.", propertyName);
+                return builder;
+            }
+            builder = builder.defineMethod(methodName, retutnTypeAndMethodName.getLeft(), Modifier.PUBLIC)
+                    .intercept((MethodCall.invoke(DynamicBeanWrapper.class.getMethod(retutnTypeAndMethodName.getRight(), String.class)))
+                            .onMethodCall(MethodCall.invoke(HippoItem.class.getMethod("getDynamicBeanWrapper"))).with(propertyName));
+        } catch (Exception e) {
+            log.warn("The method '{}' couldn't been added to the bean class", methodName);
         }
-        builder = builder.defineMethod(methodName, retutnTypeAndMethodName.getLeft(), Modifier.PUBLIC)
-                .intercept((MethodCall.invoke(DynamicBeanWrapper.class.getMethod(retutnTypeAndMethodName.getRight(), String.class)))
-                        .onMethodCall(MethodCall.invoke(HippoItem.class.getMethod("getDynamicBeanWrapper"))).with(propertyName));
         return builder;
-
     }
 }
