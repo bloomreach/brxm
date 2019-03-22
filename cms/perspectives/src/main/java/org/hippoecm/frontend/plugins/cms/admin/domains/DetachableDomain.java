@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,10 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
             throw new IllegalArgumentException("Path argument can not be empty");
         }
         this.path = path.startsWith("/") ? path.substring(1) : path;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     /**
