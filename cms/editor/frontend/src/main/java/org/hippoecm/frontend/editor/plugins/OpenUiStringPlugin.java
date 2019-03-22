@@ -28,7 +28,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
@@ -38,7 +37,9 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
@@ -57,9 +58,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private UiExtension extension;
     private String iframeParentId;
-    private String documentId;
     private String documentMode;
-    private String variantId;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -74,32 +73,12 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         extension = uiExtension.orElse(null);
 
-        final Label errorMessage = new Label("errorMessage", 
+        final Label errorMessage = new Label("errorMessage",
                 new StringResourceModel("load-error", OpenUiStringPlugin.this).setParameters(extensionName));
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
-        
-        getDocumentMetaData(config);
-    }
 
-    private void getDocumentMetaData(final IPluginConfig config) {
-        documentMode = StringUtils.defaultString(config.getString("mode"), "view"); 
-        
-        // TODO: unfortunately this doesn't work. Can we use a service?
-        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
-        if (editorPlugin != null) {
-            final IModel<?> defaultModel = editorPlugin.getDefaultModel();
-            if (defaultModel instanceof JcrNodeModel) {
-                final Node variant = ((JcrNodeModel) defaultModel).getNode();
-                try {
-                    variantId = variant.getIdentifier();
-                    final Node handle = variant.getParent();
-                    documentId = handle.getIdentifier();
-                } catch (RepositoryException e) {
-                    log.warn("Error getting document id.", e);
-                }
-            }
-        }
+        documentMode = StringUtils.defaultString(config.getString("mode"), "view");
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -125,9 +104,9 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
         variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
         variables.put("iframeParentId", iframeParentId);
-        variables.put("documentId", StringUtils.defaultString(documentId));
         variables.put("documentMode", StringUtils.defaultString(documentMode));
-        variables.put("variantId", StringUtils.defaultString(variantId));
+
+        getVariantNode().ifPresent(node -> addDocumentMetaData(variables, node));
 
         final UserSession userSession = UserSession.get();
         addCmsVariables(variables, userSession);
@@ -135,6 +114,38 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         final PackageTextTemplate javaScript = new PackageTextTemplate(OpenUiStringPlugin.class, JS_TEMPLATE);
         return javaScript.asString(variables);
+    }
+
+    private Optional<Node> getVariantNode() {
+        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
+        if (editorPlugin != null && editorPlugin.getDefaultModel() instanceof JcrNodeModel) {
+            return Optional.of(((JcrNodeModel) editorPlugin.getDefaultModel()).getNode());
+        }
+        log.warn("Cannot find parent plugin to retrieve document meta data.");
+        return Optional.empty();
+    }
+
+    private static void addDocumentMetaData(final Map<String, String> variables, final Node variant) {
+        try {
+            variables.put("variantId", variant.getIdentifier());
+            if (variant.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                variables.put("documentLocale", variant.getProperty(HippoTranslationNodeType.LOCALE).getString());
+            }
+
+            final Node handle = variant.getParent();
+            variables.put("documentId", handle.getIdentifier());
+            final String urlName = handle.getName();
+            final String displayName;
+            if (handle.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                displayName = handle.getProperty(HippoNodeType.HIPPO_NAME).getString();
+            } else {
+                displayName = urlName;
+            }
+            variables.put("documentDisplayName", displayName);
+            variables.put("documentUrlName", urlName);
+        } catch (RepositoryException e) {
+            log.error("Error retrieving document meta data.", e);
+        }
     }
 
     private static void addCmsVariables(final Map<String, String> variables, final UserSession userSession) {
