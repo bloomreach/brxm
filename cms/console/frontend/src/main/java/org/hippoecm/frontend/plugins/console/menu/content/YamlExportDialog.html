@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,17 +15,22 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <div wicket:id="message" class="message"/>
-    <ul>
-      <li style="padding: 1px">
-        Download as <a wicket:id="download-zip-link" style="color: #0000FF">ZIP</a> (or right-click and choose &quot;Save as...&quot;)
-      </li>
-      <li style="padding: 1px">
-        <a wicket:id="view-link" style="color: #0000FF">Show export in this window</a>
-      </li>
-    </ul>
-    <div class="xml-dump">
-      <textarea readonly="true" style="width: 820px; height: 280px;" wicket:id="dump"/>
+    <div class="hippo-dialog-body">
+      <div wicket:id="message" class="message"/>
+      <div class="message">
+      <ul>
+        <li style="padding: 1px">
+          Download as
+          <a wicket:id="download-zip-link" style="color: #0000ff">ZIP</a> (or right-click and choose &quot;Save as...&quot;)
+        </li>
+        <li style="padding: 1px">
+          <a wicket:id="view-link" style="color: #0000ff">Show export in this window</a>
+        </li>
+      </ul>
+      </div>
+      <div class="xml-dump">
+        <textarea readonly="true" style="width: 790px; height: 300px;" wicket:id="dump"/>
+      </div>
     </div>
   </wicket:extend>
 </html>

@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-    <div wicket:id="label" style="margin-bottom: 10px; font-size: 15px;"></div>
-    <table style="width: 100%; margin: 10px;">
+  <div class="hippo-dialog-body">
+    <table class="shortcuts">
         <tr wicket:id="listview">
             <td><span wicket:id="name"></span></td>
             <td><span wicket:id="description"></span></td>
             <td><span wicket:id="shortcut"></span></td>
         </tr>
     </table>
+  </div>
 </wicket:extend>
 </html>

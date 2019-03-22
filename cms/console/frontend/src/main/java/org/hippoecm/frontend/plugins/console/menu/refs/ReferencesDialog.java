@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,15 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.console.menu.refs;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -23,29 +32,22 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-public class ReferencesDialog extends AbstractDialog<Node> {
+public class ReferencesDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
     public ReferencesDialog(final ReferencesPlugin plugin) {
+        setSize(DialogConstants.LARGE);
+        
         final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 
@@ -54,12 +56,12 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
             @Override
             protected Iterator<IModel<Property>> getItemModels() {
-                List<IModel<Property>> refModels = new LinkedList<IModel<Property>>();
-                Node node = ReferencesDialog.this.getModelObject();
+                final List<IModel<Property>> refModels = new LinkedList<>();
+                final Node node = ReferencesDialog.this.getModelObject();
                 try {
                     PropertyIterator refs = node.getReferences();
                     while (refs.hasNext()) {
-                        refModels.add(new JcrPropertyModel(refs.nextProperty()));
+                        refModels.add(new JcrPropertyModel<>(refs.nextProperty()));
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());
@@ -95,20 +97,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
         });
     }
 
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.LARGE;
-    }
-    
-    @Override
-    public void onOk() {
-    }
-
-    @Override
-    public void onCancel() {
-    }
-
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         final IModel<Node> nodeModel = getModel();
         String path;
         try {
@@ -119,5 +108,4 @@ public class ReferencesDialog extends AbstractDialog<Node> {
         }
         return new Model("References for " + path);
     }
-
 }
