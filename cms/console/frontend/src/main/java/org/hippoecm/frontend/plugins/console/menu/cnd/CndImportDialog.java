@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,14 @@ import javax.jcr.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.repository.util.NodeTypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndImportDialog extends AbstractDialog<Void> {
+public class CndImportDialog extends Dialog<Void> {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,18 +40,15 @@ public class CndImportDialog extends AbstractDialog<Void> {
     private final Model<String> msgText;
 
     public CndImportDialog() {
+        setTitle(Model.of("Import node type definition file"));
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
 
-        msgText = new Model<>("Import a CND file.");
+        msgText = Model.of("Import a CND file.");
         add(new Label("message", msgText));
 
-        setOkLabel("import");
-    }
-
-    public IModel getTitle() {
-        return new Model<>("Import node type definition file");
+        setOkLabel("Import");
     }
 
     @Override

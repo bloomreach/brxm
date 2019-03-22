@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,17 +33,16 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.hippoecm.frontend.widgets.download.DownloadLink;
+import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CndExportDialog extends AbstractDialog<Void> {
+public class CndExportDialog extends Dialog<Void> {
 
     private static final Logger log = LoggerFactory.getLogger(CndExportDialog.class);
 
@@ -52,11 +51,12 @@ public class CndExportDialog extends AbstractDialog<Void> {
     private String selectedNs;
 
     public CndExportDialog() {
-        final PropertyModel<String> selectedNsModel = new PropertyModel<String>(this, "selectedNs");
+        setTitle(Model.of("Export CND of namespace"));
+        final PropertyModel<String> selectedNsModel = new PropertyModel<>(this, "selectedNs");
 
         List<String> nsPrefixes = null;
         try {
-            Session session = getJcrSession();
+            final Session session = getJcrSession();
             nsPrefixes = getNsPrefixes(session);
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -89,7 +89,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
             protected void onUpdate(AjaxRequestTarget target) {
                 String export;
                 try {
-                    Session session = getJcrSession();
+                    final Session session = getJcrSession();
                     export = JcrCompactNodeTypeDefWriter.compactNodeTypeDef(session.getWorkspace(), selectedNs);
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while exporting NodeType Definitions of namespace : " + selectedNs,
@@ -99,7 +99,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
                     log.error("IOException while exporting NodeType Definitions of namespace : " + selectedNs, e);
                     export = e.getMessage();
                 }
-                dump.setDefaultModel(new Model<String>(export));
+                dump.setDefaultModel(new Model<>(export));
                 target.add(CndExportDialog.this);
             }
         });
@@ -144,17 +144,13 @@ public class CndExportDialog extends AbstractDialog<Void> {
         return UserSession.get().getJcrSession();
     }
 
-    public IModel<String> getTitle() {
-        return new Model<String>("Export CND of namespace");
-    }
-
     private List<String> getNsPrefixes(Session session) throws RepositoryException {
-        List<String> nsPrefixes = new ArrayList<String>();
+        List<String> nsPrefixes = new ArrayList<>();
         String[] ns = session.getNamespacePrefixes();
-        for (int i = 0; i < ns.length; i++) {
+        for (final String n : ns) {
             // filter
-            if (!"".equals(ns[i])) {
-                nsPrefixes.add(ns[i]);
+            if (!"".equals(n)) {
+                nsPrefixes.add(n);
             }
         }
         Collections.sort(nsPrefixes);
