@@ -842,12 +842,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
                             if (srcCategory != null && srcCategoryNode != null && destParentCategoryNode != null) {
                                 srcCategory.move(destParentCategory);
-                                destParentCategoryNode.getChildren(true);
-                                treeModel.reload(destParentCategoryNode);
-                                tree.expandAllToNode(destParentCategoryNode);
-                                ((AbstractNode) srcCategoryNode.getParent()).getChildren(true);
-                                treeModel.reload(srcCategoryNode.getParent());
                                 updateToolbarForCategory(srcCategory);
+                                reloadTree();
+                                selectNodeByKey(key);
                                 redraw();
                             }
                         } catch (TaxonomyException e) {
@@ -861,9 +858,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
                             if (srcCategory != null && srcCategoryNode != null) {
                                 srcCategory.move(taxonomy);
-                                taxonomyRoot.getChildren(true);
-                                treeModel.reload(taxonomyRoot);
                                 updateToolbarForCategory(srcCategory);
+                                reloadTree();
+                                selectNodeByKey(key);
                                 redraw();
                             }
                         } catch (TaxonomyException e) {
@@ -876,6 +873,39 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
             });
         }
 
+    }
+
+    private void reloadTree() {
+        // save expanded nodes
+        final List<String> expandedNodesByKey = new LinkedList<>();
+        getExpandedNodesByKey((AbstractNode) treeModel.getRoot(), expandedNodesByKey);
+
+        initializeTree();
+        replace(tree);
+
+        // restore expanded nodes
+        final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+        expandedNodesByKey.forEach(key -> tree.expandNode(taxonomyRoot.findCategoryNodeByKey(key)));
+    }
+
+    private void selectNodeByKey(final String selectedKey) {
+        final TaxonomyNode taxonomyRoot = (TaxonomyNode) treeModel.getRoot();
+        final CategoryNode selectedNode = taxonomyRoot.findCategoryNodeByKey(selectedKey);
+        tree.expandAllToNode((AbstractNode) selectedNode.getParent());
+        tree.getTreeState().selectNode(selectedNode, true);
+    }
+
+    private void getExpandedNodesByKey(final AbstractNode parent, final List<String> expandedNodesByKey) {
+        final ITreeState treeState = tree.getTreeState();
+        if (!treeState.isNodeExpanded(parent)) {
+            return;
+        }
+
+        if (parent instanceof CategoryNode) {
+            expandedNodesByKey.add(((CategoryNode) parent).getCategory().getKey());
+        }
+
+        parent.getChildren().forEach(categoryNode -> getExpandedNodesByKey(categoryNode, expandedNodesByKey));
     }
 
     private class RemoveButton extends AjaxLink<Void> {
