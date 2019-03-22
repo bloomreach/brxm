@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.plugin.model.CategoryModel;
 
@@ -31,34 +30,22 @@ public class CategoryNode extends AbstractNode {
     CategoryModel model;
 
     /**
-     * @deprecated Use {@link #CategoryNode(CategoryModel, Locale, Comparator)} isntead.
+     * In order to fix issue HIPPLUG-1583 we had to remove the two deprecated constructors that did not accept a
+     * {@code parent} argument. Strictly speaking, these should have been removed in 13.0, but as we see more value in
+     * fixing HIPPLUG-1583 than maintaining full backwards-compatibility we decided to remove them anyway.
      */
-    @Deprecated
-    public CategoryNode(CategoryModel model, String language) {
-        this(model, TaxonomyUtil.toLocale(language), null);
-    }
-
-    /**
-     * @deprecated Use {@link #CategoryNode(CategoryModel, Locale, Comparator)} isntead.
-     */
-    @Deprecated
-    public CategoryNode(CategoryModel model, String language, Comparator<Category> categoryComparator) {
-        this(model, TaxonomyUtil.toLocale(language), categoryComparator);
-    }
-
-    public CategoryNode(final CategoryModel model, final Locale locale, final Comparator<Category> categoryComparator) {
+    public CategoryNode(final CategoryModel model, final AbstractNode parent, final Locale locale, final Comparator<Category> categoryComparator) {
         super(model.getTaxonomyModel(), locale, categoryComparator);
         this.model = model;
+        this.parent = parent;
+
+        if (this.parent == null) {
+            throw new IllegalStateException("Parent can not be null for category-node " + toString());
+        }
 
         final Category category = getCategory();
         if (category == null) {
-            throw new IllegalStateException("Could not get a Category for '"+model.getKey()+"'.");
-        }
-        Category parentCat = category.getParent();
-        if (parentCat == null) {
-            parent = new TaxonomyNode(model.getTaxonomyModel(), locale, categoryComparator);
-        } else {
-            parent = new CategoryNode(new CategoryModel(model.getTaxonomyModel(), parentCat.getKey()), locale, categoryComparator);
+            throw new IllegalStateException("Could not get a category for '" + model.getKey() + "'.");
         }
     }
 

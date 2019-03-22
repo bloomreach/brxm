@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -371,12 +373,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     @Override
     public void renderHead(final IHeaderResponse response) {
         response.render(CssHeaderItem.forReference(CSS));
-    }
-
-    @Override
-    protected void onModelChanged() {
-        initializeTree();
-        replace(tree);
     }
 
     /**
@@ -747,25 +743,30 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected void onOk() {
-                    EditableCategory parentCategory = taxonomy.getCategoryByKey(key);
-                    AbstractNode node;
-                    if (parentCategory != null) {
-                        node = new CategoryNode(new CategoryModel(taxonomyModel, key), currentLocaleSelection, categoryComparator);
-                    } else {
-                        node = new TaxonomyNode(taxonomyModel, currentLocaleSelection, categoryComparator);
+                    final EditableCategory parentCategory = taxonomy.getCategoryByKey(key);
+
+                    final Collection<Object> selectedNodes = tree.getTreeState().getSelectedNodes();
+                    final AbstractNode parent = !selectedNodes.isEmpty()
+                            ? (AbstractNode) selectedNodes.iterator().next()
+                            : null;
+
+                    if (parent == null) {
+                        return;
                     }
+
                     try {
-                        String newKey = getKey();
-                        Category childCategory = addChildCategory(parentCategory, newKey);
-                        TreeNode child = new CategoryNode(new CategoryModel(taxonomyModel, newKey), currentLocaleSelection, categoryComparator);
+                        final String newKey = getKey();
+                        final Category childCategory = addChildCategory(parentCategory, newKey);
+                        final CategoryModel categoryModel = new CategoryModel(taxonomyModel, newKey);
+                        final TreeNode child = new CategoryNode(categoryModel, parent, currentLocaleSelection, categoryComparator);
                         tree.getTreeState().selectNode(child, true);
                         key = newKey;
                         updateToolbarForCategory(childCategory);
                     } catch (TaxonomyException e) {
                         error(e.getMessage());
                     }
-                    tree.expandNode(node);
-                    tree.markNodeChildrenDirty(node);
+                    tree.expandNode(parent);
+                    tree.markNodeChildrenDirty(parent);
                     redraw();
                 }
 
