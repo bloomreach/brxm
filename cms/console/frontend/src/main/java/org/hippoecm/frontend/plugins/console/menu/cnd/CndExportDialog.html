@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -15,22 +15,28 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-        <div style="margin-bottom: 2px;">
-            <strong>Choose namespace prefix to export: </strong>
+    <div class="hippo-dialog-body">
+      <div class="hippo-dialog-row">
+        <div class="hippo-dialog-row-field-wrapper">
+          <div class="label">Choose namespace prefix to export</div>
+          <div class="input">
             <select wicket:id="nsprefixes">
-                <option>nsprefix 1</option>
-                <option>nsprefix 2</option>
+              <option>nsprefix 1</option>
+              <option>nsprefix 2</option>
             </select>
+          </div>
         </div>
-        <ul>
-            <li>
-                <a wicket:id="download-link">
-                    <span wicket:id="download-link-text"/>
-                </a>
-            </li>
-        </ul>
-        <div class="cnd-export-dump">
-          <textarea readonly="true" style="width: 820px; height: 325px; text-align:left" wicket:id="dump"/>
-        </div>  
-    </wicket:extend>
+      </div>
+      <ul>
+        <li>
+          <a wicket:id="download-link">
+            <span wicket:id="download-link-text"/>
+          </a>
+        </li>
+      </ul>
+      <div class="cnd-export-dump">
+        <textarea readonly="true" style="width: 795px; height: 325px; text-align:left" wicket:id="dump"/>
+      </div>
+    </div>
+  </wicket:extend>
 </html>

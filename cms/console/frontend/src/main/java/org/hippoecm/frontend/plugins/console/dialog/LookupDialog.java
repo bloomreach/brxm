@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,14 +20,14 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 
-public abstract class LookupDialog extends AbstractDialog<Node> {
+public abstract class LookupDialog extends Dialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +38,7 @@ public abstract class LookupDialog extends AbstractDialog<Node> {
     private IModel<Node> originalModel;
 
     protected LookupDialog(JcrTreeNode rootNode, IModel<Node> nodeModel) {
+        setSize(SIZE);
         treeModel = new JcrTreeModel(rootNode);
         this.tree = new LookupTargetTreeView("tree", treeModel, this);
         tree.getTreeState().expandNode(rootNode);
@@ -64,12 +65,7 @@ public abstract class LookupDialog extends AbstractDialog<Node> {
     }
 
     protected IModel<Node> getOriginalModel() {
-      return originalModel;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return SIZE;
+        return originalModel;
     }
 
     protected abstract boolean isValidSelection(IJcrTreeNode targetModel);

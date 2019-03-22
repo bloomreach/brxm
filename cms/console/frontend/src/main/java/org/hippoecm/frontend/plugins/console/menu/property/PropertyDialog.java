@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -67,11 +67,12 @@ import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
-public class PropertyDialog extends AbstractDialog<Node> {
+public class PropertyDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
 
     private static final List<String> ALL_TYPES = new ArrayList<>(11);
+
     static {
         ALL_TYPES.add(PropertyType.TYPENAME_BOOLEAN);
         ALL_TYPES.add(PropertyType.TYPENAME_DATE);
@@ -86,7 +87,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
         ALL_TYPES.add(PropertyType.TYPENAME_WEAKREFERENCE);
     }
 
-    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=420,height=300").makeImmutable();
+    private static final IValueMap SIZE = new ValueMap("width=420,height=300").makeImmutable();
 
     @SuppressWarnings("unused")
     private String name;
@@ -99,6 +100,10 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private boolean focusOnLatestValue;
 
     public PropertyDialog(IModelReference<Node> modelReference) {
+        setTitle(Model.of("Add a new property"));
+        
+        setSize(SIZE);
+
         this.modelReference = modelReference;
         final IModel<Node> model = modelReference.getModel();
 
@@ -209,7 +214,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
         ddChoice.setOutputMarkupId(true);
         ddChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
             @Override
-            protected void onUpdate(AjaxRequestTarget target) {}
+            protected void onUpdate(AjaxRequestTarget target) {
+            }
         });
         add(ddChoice);
 
@@ -256,7 +262,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 };
 
                 deleteLink.add(TitleAttribute.set(getString("property.value.remove")));
-                deleteLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
+                deleteLink.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click) {
                     @Override
                     protected String getTarget() {
                         return "'" + deleteLink.getMarkupId() + "'";
@@ -280,7 +286,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             }
         };
         addLink.add(TitleAttribute.set(getString("property.value.add")));
-        addLink.add(new InputBehavior(new KeyType[] {KeyType.Enter}, EventType.click) {
+        addLink.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click) {
             @Override
             protected String getTarget() {
                 return "'" + addLink.getMarkupId() + "'";
@@ -340,11 +346,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     @Override
-    public IModel<String> getTitle() {
-        return Model.of("Add a new Property");
-    }
-
-    @Override
     public void onOk() {
         try {
             final IModel<Node> nodeModel = modelReference.getModel();
@@ -369,11 +370,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
             error(e.toString());
             log.error(e.getClass().getName() + " : " + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DIALOG_PROPERTIES;
     }
 
     @Override
