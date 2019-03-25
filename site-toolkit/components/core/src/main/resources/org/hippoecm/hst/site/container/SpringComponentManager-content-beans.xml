@@ -28,6 +28,7 @@
     <property name="generateDynamicBean" value="${dynamic.bean.generation:true}"/>
   </bean>
 
+  <!-- Spring API id -->
   <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">
     <constructor-arg ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
     <property name="objectConverter" ref="org.hippoecm.hst.content.beans.manager.ObjectConverter" />
