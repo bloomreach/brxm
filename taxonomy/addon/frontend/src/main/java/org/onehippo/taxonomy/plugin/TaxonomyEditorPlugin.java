@@ -112,10 +112,11 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(TaxonomyEditorPlugin.class);
 
     private static final CssResourceReference CSS = new CssResourceReference(TaxonomyEditorPlugin.class, "style.css");
+
     private static final String MENU_ACTION_STYLE_CLASS = "menu-action";
     private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
     private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
-    public static final String TAXONOMY_ELEMENT_BY_KEY_QUERY = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '%s']/..";
+    private static final String TAXONOMY_ELEMENT_BY_KEY_QUERY = "//element(*, hippotaxonomy:classifiable)[@hippotaxonomy:keys = '%s']/..";
 
     private final boolean editing;
     private final boolean useUrlKeyEncoding;
@@ -681,7 +682,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         try {
             final Session session = getModelObject().getSession();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
-            final String queryString = String.format(TAXONOMY_ELEMENT_BY_KEY_QUERY, key);
+            final String queryString = String.format(TAXONOMY_ELEMENT_BY_KEY_QUERY, escapeXpathQueryValue(key));
 
             @SuppressWarnings("deprecation") final Query query = queryManager.createQuery(queryString, Query.XPATH);
             query.setLimit(maxItems);
@@ -702,6 +703,10 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
         return handleNodePaths;
 
+    }
+
+    private static String escapeXpathQueryValue(final String value) {
+        return StringUtils.replace(value, "'", "''");
     }
 
     private class AddButton extends AjaxLink<Void> {
