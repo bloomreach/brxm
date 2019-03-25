@@ -62,7 +62,6 @@ import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
-import org.onehippo.cms.channelmanager.content.error.ResetContentException;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
@@ -367,6 +366,11 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
+        final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, session, locale);
+        if (documentType.isReadOnlyDueToUnknownValidator()) {
+            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
+        }
+
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
 
         try {
@@ -381,7 +385,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             }
 
             session.save();
-            return getCreatedDocument(handle, documentTypeId, locale);
+            return getCreatedDocument(handle, documentType);
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to add document '{}' of type '{}' to folder '{}' using template query '{}'",
                     encodedSlug, documentTypeId, newDocumentInfo.getRootPath(), documentTemplateQuery, e);
@@ -389,15 +393,10 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static Document getCreatedDocument(final Node handle, final String documentTypeId, final Locale locale) throws ErrorWithPayloadException, RepositoryException {
-        final DocumentType docType = DocumentTypesService.get().getDocumentType(documentTypeId, handle.getSession(), locale);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ResetContentException();
-        }
-
+    private static Document getCreatedDocument(final Node handle, DocumentType documentType) throws ErrorWithPayloadException, RepositoryException {
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
-        return createDocument(handle.getIdentifier(), handle, docType, draftNode);
+        return createDocument(handle.getIdentifier(), handle, documentType, draftNode);
     }
 
     private static Document createDocument(final String uuid, final Node handle, final DocumentType docType, final Node unpublished) {
