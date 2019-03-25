@@ -122,7 +122,7 @@
   "ERROR_TEMPLATE_QUERY_NOT_FOUND": "Template query '{{templateQuery}}' was not found",
   "ERROR_TOAST_DISMISS": "ok",
   "ERROR_UNABLE_TO_SAVE": "Unable to save",
-  "ERROR_UNKNOWN_VALIDATOR": "Failed to save document, it contains an unsupported validator",
+  "ERROR_UNKNOWN_VALIDATOR": "Failed to create document, it contains an unsupported validator",
   "ERROR_UPDATE_COMPONENT": "Failed to edit this component",
   "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot update component: the container is locked by '{{lockedBy}}'",
   "ERROR_WORKFLOW_ERROR": "Failed to update, another user has changed the status of this document",
