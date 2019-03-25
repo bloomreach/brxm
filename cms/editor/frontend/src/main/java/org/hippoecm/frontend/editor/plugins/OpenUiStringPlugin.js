@@ -84,8 +84,16 @@ Hippo.OpenUi.createStringField = function(parameters) {
   const iframeParentElement = document.getElementById(iframeParentId);
   const hiddenValueElement = document.getElementById(hiddenValueId);
 
+  const iframe = document.createElement('iframe');
+
+  // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
+  // - allow-top-navigation
+  // - allow-top-navigation-by-user-activation
+  iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
+
   const connection = Penpal.connectToChild({
     url: iframeUrl,
+    iframe: iframe,
     appendTo: iframeParentElement,
     methods: {
       getDocument: function() {
@@ -106,8 +114,6 @@ Hippo.OpenUi.createStringField = function(parameters) {
       }
     }
   });
-
-  connection.iframe.setAttribute('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
   HippoAjax.registerDestroyFunction(connection.iframe, function() {
     connection.destroy();
