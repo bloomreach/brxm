@@ -134,6 +134,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-testutils</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
