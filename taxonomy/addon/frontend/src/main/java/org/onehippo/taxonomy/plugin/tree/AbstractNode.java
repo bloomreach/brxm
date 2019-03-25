@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,16 +33,16 @@ import org.onehippo.taxonomy.plugin.model.CategoryModel;
 
 public abstract class AbstractNode implements TreeNode, IDetachable {
 
-    final Locale locale;
-    private IModel<Taxonomy> taxonomyModel;
+    private final Locale locale;
+    private final IModel<Taxonomy> taxonomyModel;
     private List<CategoryNode> children = null;
-    private Comparator<Category> categoryComparator;
+    private final Comparator<Category> categoryComparator;
 
     /**
      * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
      */
     @Deprecated
-    public AbstractNode(IModel<Taxonomy> taxonomyModel, String language) {
+    public AbstractNode(final IModel<Taxonomy> taxonomyModel, final String language) {
         this(taxonomyModel, TaxonomyUtil.toLocale(language), null);
     }
 
@@ -50,12 +50,12 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
      * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
      */
     @Deprecated
-    public AbstractNode(IModel<Taxonomy> taxonomyModel, String language, Comparator<Category> categoryComparator) {
+    public AbstractNode(final IModel<Taxonomy> taxonomyModel, final String language, final Comparator<Category> categoryComparator) {
         this(taxonomyModel, TaxonomyUtil.toLocale(language), categoryComparator);
     }
 
     public AbstractNode(final IModel<Taxonomy> taxonomyModel, final Locale locale,
-                        final Comparator<Category> categoryComparator) {
+                 final Comparator<Category> categoryComparator) {
         this.taxonomyModel = taxonomyModel;
         this.locale = locale;
         this.categoryComparator = categoryComparator;
@@ -65,18 +65,19 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
         return getChildren(false);
     }
 
-    public List<CategoryNode> getChildren(boolean refresh) {
+    public List<CategoryNode> getChildren(final boolean refresh) {
         if (children == null || refresh) {
             final List<? extends Category> categories = new LinkedList<Category>(getCategories());
 
             if (categoryComparator != null) {
-                Collections.sort(categories, categoryComparator);
+                categories.sort(categoryComparator);
             }
 
-            List<CategoryNode> tempChildren = new LinkedList<>();
+            final List<CategoryNode> tempChildren = new LinkedList<>();
 
-            for (Category category : categories) {
-                tempChildren.add(new CategoryNode(new CategoryModel(taxonomyModel, category.getKey()), locale, categoryComparator));
+            for (final Category category : categories) {
+                final CategoryModel categoryModel = new CategoryModel(taxonomyModel, category.getKey());
+                tempChildren.add(new CategoryNode(categoryModel, this, locale, categoryComparator));
             }
 
             children = tempChildren;
@@ -91,7 +92,7 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
         return Collections.enumeration(getChildren());
     }
 
-    public TreeNode getChildAt(int childIndex) {
+    public TreeNode getChildAt(final int childIndex) {
         return getChildren().get(childIndex);
     }
 
@@ -103,10 +104,10 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
         return getChildren().size();
     }
 
-    public int getIndex(TreeNode node) {
-        CategoryNode childNode = (CategoryNode) node;
+    public int getIndex(final TreeNode node) {
+        final CategoryNode childNode = (CategoryNode) node;
         int index = 0;
-        for (CategoryNode item : getChildren()) {
+        for (final CategoryNode item : getChildren()) {
             if (childNode.equals(item)) {
                 break;
             }
