@@ -103,10 +103,11 @@ public interface ExternalRepositorySyncRevisionService {
      *                     the revision of the last {@link Event} for the {@link javax.jcr.Node} (including its properties)
      * @param scopes The scopes to return change logs from (including the scope itself,
      *               for example a scope is /content/documents. If all events are needed, use empty scope (not /)
+     * @param ignorePropertyNames The list of property names for which changes can be ignored.
      * @return The List of change logs, where change logs are separated by an {@link  Event#PERSIST}
      */
     List<ChangeLog> getChangeLogs(Session session, long fromRevision,
-                                  long softLimit, List<String> scopes,
+                                  long softLimit, List<String> scopes, List<String> ignorePropertyNames,
                                   boolean squashEvents);
 
 }

@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.core.util.db.DbUtility;
 import org.hippoecm.repository.api.RevisionEvent;
 import org.hippoecm.repository.api.RevisionEventJournal;
@@ -40,6 +41,10 @@ import org.onehippo.repository.journal.ExternalRepositorySyncRevision;
 import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static javax.jcr.observation.Event.PROPERTY_ADDED;
+import static javax.jcr.observation.Event.PROPERTY_CHANGED;
+import static javax.jcr.observation.Event.PROPERTY_REMOVED;
 
 /**
  * ExternalRepositorySyncRevisionService implementation which is provided in the same Jackrabbit package as the
@@ -177,7 +182,7 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
 
     @Override
     public List<ChangeLog> getChangeLogs(final Session session, final long fromRevision, final long softLimit,
-                                         final List<String> scopes, final boolean squashEvents) {
+                                         final List<String> scopes, final List<String> ignorePropertyNames, final boolean squashEvents) {
 
         synchronized (session) {
             try {
@@ -225,6 +230,14 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
                         continue;
                     }
 
+                    if (isPropertyEvent(event)) {
+                        final String propertyName = StringUtils.substringAfterLast(path, "/");
+                        if (ignorePropertyNames.contains(propertyName)) {
+                            log.debug("Skipping property event '{}'", event.getPath());
+                            continue;
+                        }
+                    }
+
                     if (scopes.stream().anyMatch(scope -> path.startsWith(scope + "/") || path.equals(scope))) {
                         if (changeLog.recordChange(event, squashEvents)) {
                             count++;
@@ -251,5 +264,9 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
 
         }
 
+    }
+
+    private boolean isPropertyEvent(final RevisionEvent event) {
+        return event.getType() == PROPERTY_REMOVED || event.getType() == PROPERTY_CHANGED || event.getType() == PROPERTY_ADDED;
     }
 }
