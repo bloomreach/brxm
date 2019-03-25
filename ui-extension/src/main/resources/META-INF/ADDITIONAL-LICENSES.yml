@@ -188,9 +188,9 @@
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
     IN THE SOFTWARE.
-- module name: penpal@3.0.3
+- module name: penpal@3.1.2
   name: penpal
-  version: 3.0.3
+  version: 3.1.2
   description: A promise-based library for communicating with iframes via postMessage.
   copyright: 'Copyright (c) 2016, Aaron Hardy'
   licenses: MIT
