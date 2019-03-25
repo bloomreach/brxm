@@ -306,17 +306,17 @@
                   <properties>
                     <context>/cms</context>
                   </properties>
-                  <location>${dollar}{project.basedir}/cms/target/cms.war</location>
+                  <location>${dollar}{project.basedir}/cms/target/cms</location>
                 </deployable>
                 <deployable>
-                  <location>${dollar}{project.basedir}/site/webapp/target/site.war</location>
+                  <location>${dollar}{project.basedir}/site/webapp/target/site</location>
                   <type>war</type>
                   <properties>
                     <context>/site</context>
                   </properties>
                 </deployable>
                 <deployable>
-                  <location>${dollar}{project.basedir}/essentials/target/essentials.war</location>
+                  <location>${dollar}{project.basedir}/essentials/target/essentials</location>
                   <type>war</type>
                   <properties>
                     <context>/essentials</context>
