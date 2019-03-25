@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.RepositoryException;
@@ -29,7 +27,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -99,43 +96,43 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     }
 
     private String createJavaScript() {
-        final Map<String, String> variables = new HashMap<>();
-        variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
-        variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
-        variables.put("iframeParentId", iframeParentId);
-        variables.put("hiddenValueId", hiddenValueId);
+        final JavaScriptBuilder builder = new JavaScriptBuilder(OpenUiStringPlugin.class, JS_TEMPLATE);
+
+        builder.setVariable("extensionConfig", extension.getConfig());
+        builder.setVariable("extensionUrl", extension.getUrl());
+        builder.setVariable("iframeParentId", iframeParentId);
+        builder.setVariable("hiddenValueId", hiddenValueId);
 
         final UserSession userSession = UserSession.get();
-        addCmsVariables(variables, userSession);
-        addUserVariables(variables, userSession);
+        addCmsVariables(builder, userSession);
+        addUserVariables(builder, userSession);
 
-        final PackageTextTemplate javaScript = new PackageTextTemplate(OpenUiStringPlugin.class, JS_TEMPLATE);
-        return javaScript.asString(variables);
+        return builder.build();
     }
 
-    private static void addCmsVariables(final Map<String, String> variables, final UserSession userSession) {
-        variables.put("cmsLocale", userSession.getLocale().getLanguage());
-        variables.put("cmsTimeZone", StringUtils.defaultString(userSession.getTimeZone().getID()));
-        variables.put("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
+    private static void addCmsVariables(final JavaScriptBuilder builder, final UserSession userSession) {
+        builder.setVariable("cmsLocale", userSession.getLocale().getLanguage());
+        builder.setVariable("cmsTimeZone", userSession.getTimeZone().getID());
+        builder.setVariable("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
     }
 
-    private static void addUserVariables(final Map<String, String> variables, final UserSession userSession) {
+    private static void addUserVariables(final JavaScriptBuilder builder, final UserSession userSession) {
         final Session jcrSession = userSession.getJcrSession();
         final String userId = jcrSession.getUserID();
-        variables.put("userId", userId);
+        builder.setVariable("userId", userId);
 
         final HippoWorkspace workspace = (HippoWorkspace) jcrSession.getWorkspace();
         try {
             final SecurityService securityService = workspace.getSecurityService();
             final User user = securityService.getUser(userId);
 
-            variables.put("userFirstName", StringUtils.defaultString(user.getFirstName()));
-            variables.put("userLastName", StringUtils.defaultString(user.getLastName()));
+            builder.setVariable("userFirstName", user.getFirstName());
+            builder.setVariable("userLastName", user.getLastName());
         } catch (RepositoryException e) {
             log.warn("Unable to retrieve first and last name of user '{}'", userId, e);
         }
 
         UserUtils.getUserName(userId, jcrSession)
-                .ifPresent(displayName -> variables.put("userDisplayName", displayName));
+                .ifPresent(displayName -> builder.setVariable("userDisplayName", displayName));
     }
 }
