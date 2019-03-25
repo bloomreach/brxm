@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.jcr.Repository;
 
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -49,6 +50,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     private HstSiteMenusManager siteMenusManager;
     private HstQueryManagerFactory hstQueryManagerFactory;
     private List<HstComponentWindowFilter> componentWindowFilters;
+    private DynamicBeanService dynamicBeanService;
 
     public HstRequestContextComponentImpl(final Repository repository,
                                           final ContextCredentialsProvider contextCredentialsProvider,
@@ -61,7 +63,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     }
 
     public HstMutableRequestContext create() {
-        HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
+        HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider, dynamicBeanService);
         rc.setContainerConfiguration(config);
         rc.setURLFactory(urlFactory);
         final HstModel hstModel = hstModelProvider.getHstModel();
@@ -96,12 +98,15 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.contentBeansTool = contentBeansTool;
     }
 
-
     public void setCachingObjectConverter(final boolean cachingObjectConverter) {
         this.cachingObjectConverter = cachingObjectConverter;
     }
 
     public void setComponentWindowFilters(final List<HstComponentWindowFilter> componentWindowFilters) {
         this.componentWindowFilters = componentWindowFilters;
+    }
+
+    public void setDynamicBeanService(final DynamicBeanService dynamicBeanService) {
+        this.dynamicBeanService = dynamicBeanService;
     }
 }

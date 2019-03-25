@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetResult;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -236,18 +237,17 @@ public class ObjectConverterUtils {
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
     }
 
-    //TODO: When the object type service is implemented for JCR event, then there is no need to this method    
-
-    public static void flushDocTypeDynamicBean(String path, ObjectConverter objectconverter) {
-        String[] paths = path.split("/");
-        if (paths.length < 4)
-            return;
-
-        path = paths[2] + ":" + paths[3];
-        log.info("flushing dynamic bean -  " + path);
-        if (objectconverter instanceof ObjectConverterImpl) {
-            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectconverter;
-            wrapper.resetType(path);
+    /**
+     * 
+     * @param namespace of the document type
+     * @param contentType of the document type from the contentTypeService
+     * @param objectConverter object to convert document type to dynamic bean
+     */
+    public static void invalidateDynamicBean(String namespace, ContentType contentType, ObjectConverter objectConverter) {
+        if (objectConverter instanceof ObjectConverterImpl) {
+            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectConverter;
+            wrapper.removeDynamicBean(contentType.getName());
+            wrapper.addDynamicBeanContentType(namespace, contentType);
         }
     }
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@
     <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
     <property name="cachingObjectConverter" value="${object.converter.caching}" />
     <property name="componentWindowFilters" ref="org.hippoecm.hst.core.container.HstComponentWindowFilter.list"/>
+    <property name="dynamicBeanService" ref="org.hippoecm.hst.content.beans.dynamic.DynamicBeanService" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">
