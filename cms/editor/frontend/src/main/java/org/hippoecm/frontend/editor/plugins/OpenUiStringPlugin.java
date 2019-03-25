@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -100,7 +101,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private String createJavaScript() {
         final Map<String, String> variables = new HashMap<>();
-        variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
+        variables.put("extensionConfig", jsSafeString(extension.getConfig()));
         variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
         variables.put("iframeParentId", iframeParentId);
         variables.put("hiddenValueId", hiddenValueId);
@@ -115,7 +116,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static void addCmsVariables(final Map<String, String> variables, final UserSession userSession) {
         variables.put("cmsLocale", userSession.getLocale().getLanguage());
-        variables.put("cmsTimeZone", StringUtils.defaultString(userSession.getTimeZone().getID()));
+        variables.put("cmsTimeZone", jsSafeString(userSession.getTimeZone().getID()));
         variables.put("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
     }
 
@@ -129,13 +130,17 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
             final SecurityService securityService = workspace.getSecurityService();
             final User user = securityService.getUser(userId);
 
-            variables.put("userFirstName", StringUtils.defaultString(user.getFirstName()));
-            variables.put("userLastName", StringUtils.defaultString(user.getLastName()));
+            variables.put("userFirstName", jsSafeString(user.getFirstName()));
+            variables.put("userLastName", jsSafeString(user.getLastName()));
         } catch (RepositoryException e) {
             log.warn("Unable to retrieve first and last name of user '{}'", userId, e);
         }
 
         UserUtils.getUserName(userId, jcrSession)
-                .ifPresent(displayName -> variables.put("userDisplayName", displayName));
+                .ifPresent(displayName -> variables.put("userDisplayName", jsSafeString(displayName)));
+    }
+    
+    private static String jsSafeString(final String input) {
+        return StringEscapeUtils.escapeJavaScript(StringUtils.defaultString(input));
     }
 }
