@@ -6,7 +6,7 @@
 
     <!-- cms.log -->
     <RollingFile name="cms" fileName="${dollar}{sys:catalina.base}/logs/cms.log"
-                 filePattern="${dollar}{sys:catalina.base}/logs/cms.log.%i">
+                 filePattern="${dollar}{sys:catalina.base}/logs/cms.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="cms" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
       <Policies>
@@ -17,7 +17,7 @@
 
     <!-- site.log -->
     <RollingFile name="site" fileName="${dollar}{sys:catalina.base}/logs/site.log"
-                 filePattern="${dollar}{sys:catalina.base}/logs/site.log.yyyy-MM-dd">
+                 filePattern="${dollar}{sys:catalina.base}/logs/site.log.%d{yyyy-MM-dd}">
       <LookupFilter key="jndi:logging/contextName" value="site" onMatch="ACCEPT"/>
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
       <Policies>
