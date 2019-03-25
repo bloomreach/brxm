@@ -17,11 +17,12 @@
 const MAX_SIZE = 4096;
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, OpenUiService) {
+  constructor($element, $log, ContentEditor, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
+    this.ContentEditor = ContentEditor;
     this.OpenUiService = OpenUiService;
   }
 
@@ -38,6 +39,7 @@ export default class OpenuiStringFieldController {
         methods: {
           getFieldValue: this.getValue.bind(this),
           setFieldValue: this.setValue.bind(this),
+          getProperties: this.getProperties.bind(this),
         },
       });
     }
@@ -55,5 +57,21 @@ export default class OpenuiStringFieldController {
 
   getValue() {
     return this.value;
+  }
+
+  getProperties() {
+    const document = this.ContentEditor.getDocument();
+    return {
+      document: {
+        displayName: document.displayName,
+        id: document.id,
+        locale: document.info.locale,
+        mode: 'edit',
+        urlName: document.urlName,
+        variant: {
+          id: document.variantId,
+        },
+      },
+    };
   }
 }

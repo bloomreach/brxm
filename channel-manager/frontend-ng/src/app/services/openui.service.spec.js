@@ -86,6 +86,22 @@ describe('OpenUiService', () => {
       }));
     });
 
+    it('merges properties with properties of calling function', () => {
+      spyOn(OpenUiService, 'connect').and.returnValue($q.resolve());
+      spyOn(OpenUiService, 'getProperties').and.returnValue({ a: 'b' });
+
+      const getProperties = jasmine.createSpy('getProperties').and.returnValue({ c: 'd' });
+
+      OpenUiService.initialize('test-id', { methods: { getProperties } });
+      $rootScope.$digest();
+
+      expect(OpenUiService.connect.calls.mostRecent().args[0].url).toEqual('test-url');
+      expect(OpenUiService.connect.calls.mostRecent().args[0].methods.getProperties).toBeDefined();
+      const propertiesResult = OpenUiService.connect.calls.mostRecent().args[0].methods.getProperties();
+      expect(propertiesResult.a).toEqual('b');
+      expect(propertiesResult.c).toEqual('d');
+    });
+
     it('logs a warning when connecting to the child failed', () => {
       const error = new Error('Connection destroyed');
       spyOn(OpenUiService, 'connect').and.returnValue($q.reject(error));
