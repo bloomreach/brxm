@@ -1,4 +1,4 @@
-// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,6 +51,10 @@ node-link {
     display: flex;
     justify-content: flex-end;
     min-height: $button-width;
+
+    // the hippo-internallink-buttons container overlays the input and (optional) hint icon
+    // so it should ignore pointer events unless they are triggered on the buttons themselves
+    pointer-events: none;
     position: absolute;
     top: 0;
     width: 100%;
@@ -63,10 +67,6 @@ node-link {
         margin-left: $first-button-left-padding;
       }
     }
-
-    // the hippo-internallink-buttons container overlays the input and (optional) hint icon
-    // so it should ignore pointer events unless they are triggered on the buttons themselves
-    pointer-events: none;
 
     button {
       pointer-events: all;
