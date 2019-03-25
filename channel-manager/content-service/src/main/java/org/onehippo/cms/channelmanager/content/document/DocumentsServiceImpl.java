@@ -393,7 +393,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static Document getCreatedDocument(final Node handle, DocumentType documentType) throws ErrorWithPayloadException, RepositoryException {
+    private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws ErrorWithPayloadException, RepositoryException {
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
         return createDocument(handle.getIdentifier(), handle, documentType, draftNode);
