@@ -98,6 +98,7 @@
     <maven.plugin.frontend.version>1.6</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.1.0</maven.plugin.jar.version>
+    <maven.plugin.jacoco.version>0.8.3</maven.plugin.jacoco.version>
     <maven.plugin.javadoc.version>3.0.1</maven.plugin.javadoc.version>
     <maven.plugin.jrebel.version>1.1.7</maven.plugin.jrebel.version>
     <maven.plugin.project-info.version>3.0.0</maven.plugin.project-info.version>
@@ -685,6 +686,11 @@
           <artifactId>frontend-maven-plugin</artifactId>
           <version>${maven.plugin.frontend.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${maven.plugin.jacoco.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -960,6 +966,47 @@
                 <phase>process-resources</phase>
                 <goals>
                   <goal>generate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jacoco-initialize</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <excludes>
+                    <exclude>org.hippoecm.*</exclude>
+                  </excludes>
+                  <destFile>${project.build.directory}/jacoco.exec</destFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>pre-integration-test</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+                <configuration>
+                  <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>jacoco-site</id>
+                <goals>
+                  <goal>report</goal>
                 </goals>
               </execution>
             </executions>
