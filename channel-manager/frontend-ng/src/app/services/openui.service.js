@@ -15,9 +15,10 @@
  */
 
 export default class OpenUiService {
-  constructor($log, ConfigService, ExtensionService, Penpal) {
+  constructor($document, $log, ConfigService, ExtensionService, Penpal) {
     'ngInject';
 
+    this.$document = $document;
     this.$log = $log;
     this.ConfigService = ConfigService;
     this.ExtensionService = ExtensionService;
@@ -25,16 +26,14 @@ export default class OpenUiService {
   }
 
   connect(options) {
-    const connection = this.Penpal.connectToChild(options);
+    options.iframe = this.$document[0].createElement('iframe');
 
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
-    angular.element(connection.iframe)
-      .attr(
-        'sandbox',
-        'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
-      );
+    options.iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
+
+    const connection = this.Penpal.connectToChild(options);
 
     return connection.promise;
   }

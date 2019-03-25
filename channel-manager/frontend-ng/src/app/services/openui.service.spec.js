@@ -21,7 +21,6 @@ describe('OpenUiService', () => {
   let $log;
   let $q;
   let $rootScope;
-  let iframe;
   let ConfigService;
   let ExtensionService;
   let OpenUiService;
@@ -29,8 +28,6 @@ describe('OpenUiService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
-
-    iframe = angular.element('<iframe src="about:blank"></iframe>');
 
     inject((_$log_, _$q_, _$rootScope_, _ConfigService_, _ExtensionService_, _OpenUiService_, _Penpal_) => {
       $log = _$log_;
@@ -50,14 +47,13 @@ describe('OpenUiService', () => {
     const params = {};
 
     spyOn(Penpal, 'connectToChild').and.returnValue({
-      iframe,
       promise: $q.resolve('child'),
     });
 
     OpenUiService.connect(params);
     $rootScope.$digest();
 
-    expect(iframe).toHaveAttr(
+    expect(params.iframe).toHaveAttr(
       'sandbox',
       'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
     );
