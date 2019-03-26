@@ -22,11 +22,13 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -34,6 +36,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.UserUtils;
+import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
@@ -43,10 +46,12 @@ import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "uiExtension";
-    private static final String JS_TEMPLATE = "OpenUiStringPlugin.js";
+    private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
     private UiExtension extension;
@@ -92,47 +97,50 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         }
 
         response.render(new PenpalHeaderItem());
-        response.render(OnDomReadyHeaderItem.forScript(createJavaScript()));
+
+        final JavaScriptResourceReference js = new JavaScriptResourceReference(OpenUiStringPlugin.class, OPEN_UI_STRING_PLUGIN_JS);
+        response.render(JavaScriptReferenceHeaderItem.forReference(js));
+
+        response.render(OnDomReadyHeaderItem.forScript(createJavaScriptForField()));
     }
 
-    private String createJavaScript() {
-        final JavaScriptBuilder builder = new JavaScriptBuilder(OpenUiStringPlugin.class, JS_TEMPLATE);
-
-        builder.setVariable("extensionConfig", extension.getConfig());
-        builder.setVariable("extensionUrl", extension.getUrl());
-        builder.setVariable("iframeParentId", iframeParentId);
-        builder.setVariable("hiddenValueId", hiddenValueId);
+    private String createJavaScriptForField() {
+        final ObjectNode parameters = Json.object();
+        parameters.put("extensionConfig", extension.getConfig());
+        parameters.put("extensionUrl", extension.getUrl());
+        parameters.put("iframeParentId", iframeParentId);
+        parameters.put("hiddenValueId", hiddenValueId);
 
         final UserSession userSession = UserSession.get();
-        addCmsVariables(builder, userSession);
-        addUserVariables(builder, userSession);
+        addCmsVariables(parameters, userSession);
+        addUserVariables(parameters, userSession);
 
-        return builder.build();
+        return "Hippo.OpenUi.createStringField(" + parameters.toString() + ");";
     }
 
-    private static void addCmsVariables(final JavaScriptBuilder builder, final UserSession userSession) {
-        builder.setVariable("cmsLocale", userSession.getLocale().getLanguage());
-        builder.setVariable("cmsTimeZone", userSession.getTimeZone().getID());
-        builder.setVariable("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
+    private static void addCmsVariables(final ObjectNode parameters, final UserSession userSession) {
+        parameters.put("cmsLocale", userSession.getLocale().getLanguage());
+        parameters.put("cmsTimeZone", userSession.getTimeZone().getID());
+        parameters.put("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
     }
 
-    private static void addUserVariables(final JavaScriptBuilder builder, final UserSession userSession) {
+    private static void addUserVariables(final ObjectNode parameters, final UserSession userSession) {
         final Session jcrSession = userSession.getJcrSession();
         final String userId = jcrSession.getUserID();
-        builder.setVariable("userId", userId);
+        parameters.put("userId", userId);
 
         final HippoWorkspace workspace = (HippoWorkspace) jcrSession.getWorkspace();
         try {
             final SecurityService securityService = workspace.getSecurityService();
             final User user = securityService.getUser(userId);
 
-            builder.setVariable("userFirstName", user.getFirstName());
-            builder.setVariable("userLastName", user.getLastName());
+            parameters.put("userFirstName", user.getFirstName());
+            parameters.put("userLastName", user.getLastName());
         } catch (RepositoryException e) {
             log.warn("Unable to retrieve first and last name of user '{}'", userId, e);
         }
 
         UserUtils.getUserName(userId, jcrSession)
-                .ifPresent(displayName -> builder.setVariable("userDisplayName", displayName));
+                .ifPresent(displayName -> parameters.put("userDisplayName", displayName));
     }
 }
