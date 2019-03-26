@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('OpenuiStringField', () => {
+fdescribe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
@@ -91,37 +91,37 @@ describe('OpenuiStringField', () => {
 
     describe('displayName', () => {
       it('is set to the display name of a document', () => {
-        expect($ctrl.getDocument().document.displayName).toBe('test name');
+        expect($ctrl.getDocument().displayName).toBe('test name');
       });
     });
 
     describe('id', () => {
       it('is set to the id of a document', () => {
-        expect($ctrl.getDocument().document.id).toBe('handle-id');
+        expect($ctrl.getDocument().id).toBe('handle-id');
       });
     });
 
     describe('locale', () => {
       it('is set to the locale of a document', () => {
-        expect($ctrl.getDocument().document.locale).toBe('sv');
+        expect($ctrl.getDocument().locale).toBe('sv');
       });
     });
 
     describe('mode', () => {
       it('is set to edit, which is the only mode supported', () => {
-        expect($ctrl.getDocument().document.mode).toBe('edit');
+        expect($ctrl.getDocument().mode).toBe('edit');
       });
     });
 
     describe('urlName', () => {
       it('is set to the url name of a document', () => {
-        expect($ctrl.getDocument().document.urlName).toBe('test-url-name');
+        expect($ctrl.getDocument().urlName).toBe('test-url-name');
       });
     });
 
     describe('variant id', () => {
       it('is set to the id of the document variant', () => {
-        expect($ctrl.getDocument().document.variant.id).toBe('variant-id');
+        expect($ctrl.getDocument().variant.id).toBe('variant-id');
       });
     });
   });

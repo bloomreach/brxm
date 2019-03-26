@@ -62,15 +62,13 @@ export default class OpenuiStringFieldController {
   getDocument() {
     const document = this.ContentEditor.getDocument();
     return {
-      document: {
-        displayName: document.displayName,
-        id: document.id,
-        locale: document.info.locale,
-        mode: 'edit',
-        urlName: document.urlName,
-        variant: {
-          id: document.variantId,
-        },
+      displayName: document.displayName,
+      id: document.id,
+      locale: document.info.locale,
+      mode: 'edit',
+      urlName: document.urlName,
+      variant: {
+        id: document.variantId,
       },
     };
   }
