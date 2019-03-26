@@ -274,6 +274,15 @@ export interface DocumentScope {
 }
 
 /**
+ * Defines the different possible edit modes of a document.
+ */
+export enum EditMode {
+  View = 'view',
+  Compare = 'compare',
+  Edit = 'edit',
+}
+
+/**
  * Properties of a document.
  */
 export interface DocumentProperties {
@@ -295,7 +304,7 @@ export interface DocumentProperties {
   /**
    * The edit mode of the document, either 'view', 'edit' or 'compare'.
    */
-  mode: string;
+  mode: EditMode;
 
   /**
    * The URL name of the document.
