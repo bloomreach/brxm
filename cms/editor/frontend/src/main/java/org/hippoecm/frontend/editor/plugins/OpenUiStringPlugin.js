@@ -23,10 +23,11 @@ Hippo.OpenUi.createStringField = function(parameters) {
     cmsTimeZone,
     cmsVersion,
     documentDisplayName,
+    documentEditorMode,
     documentId,
     documentLocale,
-    documentMode,
     documentUrlName,
+    documentVariantId,
     extensionConfig,
     extensionUrl,
     hiddenValueId,
@@ -34,8 +35,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
     userId,
     userDisplayName,
     userFirstName,
-    userLastName,
-    variantId
+    userLastName
   } = parameters;
 
   function getIframeUrl(cmsOrigin, antiCache) {
@@ -68,10 +68,10 @@ Hippo.OpenUi.createStringField = function(parameters) {
       displayName: documentDisplayName,
       id: documentId,
       locale: documentLocale,
-      mode: documentMode,
+      mode: documentEditorMode,
       urlName: documentUrlName,
       variant: {
-        id: variantId
+        id: documentVariantId
       }
     }
   }
