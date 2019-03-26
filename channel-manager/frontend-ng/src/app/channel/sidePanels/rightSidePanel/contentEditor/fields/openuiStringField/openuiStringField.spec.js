@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-describe('OpenuiStringField', () => {
+fdescribe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
   let $q;
   let mdInputContainer;
   let ngModel;
+  let ContentEditor;
   let OpenUiService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _OpenUiService_) => {
+    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _ContentEditor_, _OpenUiService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
+      ContentEditor = _ContentEditor_;
       OpenUiService = _OpenUiService_;
     });
 
@@ -40,6 +42,7 @@ describe('OpenuiStringField', () => {
       ngModel,
       value: 'test-value',
     });
+    spyOn(ContentEditor, 'getDocument');
   });
 
   it('initializes the component', () => {
@@ -72,5 +75,54 @@ describe('OpenuiStringField', () => {
 
   it('fails to set a long value', () => {
     expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
+  });
+
+  describe('getDocument', () => {
+    beforeEach(() => {
+      const document = {
+        id: 'handle-id',
+        displayName: 'test name',
+        info: { locale: 'sv' },
+        urlName: 'test-url-name',
+        variantId: 'variant-id',
+      };
+      ContentEditor.getDocument.and.returnValue(document);
+    });
+
+    describe('displayName', () => {
+      it('is set to the display name of a document', () => {
+        expect($ctrl.getDocument().displayName).toBe('test name');
+      });
+    });
+
+    describe('id', () => {
+      it('is set to the id of a document', () => {
+        expect($ctrl.getDocument().id).toBe('handle-id');
+      });
+    });
+
+    describe('locale', () => {
+      it('is set to the locale of a document', () => {
+        expect($ctrl.getDocument().locale).toBe('sv');
+      });
+    });
+
+    describe('mode', () => {
+      it('is set to edit, which is the only mode supported', () => {
+        expect($ctrl.getDocument().mode).toBe('edit');
+      });
+    });
+
+    describe('urlName', () => {
+      it('is set to the url name of a document', () => {
+        expect($ctrl.getDocument().urlName).toBe('test-url-name');
+      });
+    });
+
+    describe('variant id', () => {
+      it('is set to the id of the document variant', () => {
+        expect($ctrl.getDocument().variant.id).toBe('variant-id');
+      });
+    });
   });
 });

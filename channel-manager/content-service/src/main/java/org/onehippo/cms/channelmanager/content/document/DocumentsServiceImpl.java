@@ -546,6 +546,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             final DocumentVariant documentVariant = new DocumentVariant(variant);
             document.setState(documentVariant.getState());
             document.setBranchId(documentVariant.getBranchId());
+            document.setVariantId(variant.getIdentifier());
         } catch (RepositoryException e) {
             log.warn("Failed to set state and branchId for document with id '{}'", uuid, e);
         }
