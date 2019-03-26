@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins;
 
 import java.util.Optional;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -29,12 +30,17 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.editor.editor.EditorPlugin;
+import org.hippoecm.frontend.editor.viewer.ComparePlugin;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
@@ -57,6 +63,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private UiExtension extension;
     private String iframeParentId;
     private String hiddenValueId;
+    private String documentEditorMode;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -76,10 +83,12 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         extension = uiExtension.orElse(null);
 
-        final Label errorMessage = new Label("errorMessage", 
+        final Label errorMessage = new Label("errorMessage",
                 new StringResourceModel("load-error", OpenUiStringPlugin.this).setParameters(extensionName));
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
+
+        documentEditorMode = StringUtils.defaultString(config.getString("mode"), "view");
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -110,12 +119,58 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
+        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode));
+
+        getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 
         final UserSession userSession = UserSession.get();
         addCmsVariables(parameters, userSession);
         addUserVariables(parameters, userSession);
 
         return "Hippo.OpenUi.createStringField(" + parameters.toString() + ");";
+    }
+
+    private Optional<Node> getVariantNode() {
+        final RenderPlugin plugin = getDocumentPlugin();
+        if (plugin != null && plugin.getDefaultModel() instanceof JcrNodeModel) {
+            return Optional.of(((JcrNodeModel) plugin.getDefaultModel()).getNode());
+        }
+        log.warn("Cannot find parent plugin to retrieve document meta data.");
+        return Optional.empty();
+    }
+
+    /**
+     * Get the plugin containing the document information.
+     */
+    private RenderPlugin getDocumentPlugin() {
+        if (documentEditorMode.equals("edit")) {
+            return findParent(EditorPlugin.class);
+        } else {
+            return findParent(ComparePlugin.class);
+        }
+    }
+    
+    private static void addDocumentMetaData(final ObjectNode parameters, final Node variant) {
+        try {
+            parameters.put("documentVariantId", variant.getIdentifier());
+            if (variant.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                parameters.put("documentLocale", variant.getProperty(HippoTranslationNodeType.LOCALE).getString());
+            }
+
+            final Node handle = variant.getParent();
+            parameters.put("documentId", handle.getIdentifier());
+            final String urlName = handle.getName();
+            final String displayName;
+            if (handle.hasProperty(HippoNodeType.HIPPO_NAME)) {
+                displayName = handle.getProperty(HippoNodeType.HIPPO_NAME).getString();
+            } else {
+                displayName = urlName;
+            }
+            parameters.put("documentDisplayName", displayName);
+            parameters.put("documentUrlName", urlName);
+        } catch (RepositoryException e) {
+            log.error("Error retrieving document meta data.", e);
+        }
     }
 
     private static void addCmsVariables(final ObjectNode parameters, final UserSession userSession) {

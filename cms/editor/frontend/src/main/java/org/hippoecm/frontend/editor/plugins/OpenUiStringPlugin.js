@@ -22,6 +22,12 @@ Hippo.OpenUi.createStringField = function(parameters) {
     cmsLocale,
     cmsTimeZone,
     cmsVersion,
+    documentDisplayName,
+    documentEditorMode,
+    documentId,
+    documentLocale,
+    documentUrlName,
+    documentVariantId,
     extensionConfig,
     extensionUrl,
     hiddenValueId,
@@ -39,7 +45,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
     return iframeUrl;
   }
 
-  function getUiProperties(cmsBaseUrl) {
+  function getProperties(cmsBaseUrl) {
     return {
       baseUrl: cmsBaseUrl,
       extension: {
@@ -57,6 +63,19 @@ Hippo.OpenUi.createStringField = function(parameters) {
     }
   }
 
+  function getDocumentProperties() {
+    return {
+      displayName: documentDisplayName,
+      id: documentId,
+      locale: documentLocale,
+      mode: documentEditorMode,
+      urlName: documentUrlName,
+      variant: {
+        id: documentVariantId
+      }
+    }
+  }
+  
   const MAX_SIZE = 4096;
 
   const cmsOrigin = window.location.origin;
@@ -69,9 +88,12 @@ Hippo.OpenUi.createStringField = function(parameters) {
     url: iframeUrl,
     appendTo: iframeParentElement,
     methods: {
+      getDocument: function() {
+        return getDocumentProperties();
+      },
       getProperties: function() {
         const cmsBaseUrl = cmsOrigin + window.location.pathname;
-        return getUiProperties(cmsBaseUrl);
+        return getProperties(cmsBaseUrl);
       },
       getFieldValue: function() {
         return hiddenValueElement.value;
