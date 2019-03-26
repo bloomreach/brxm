@@ -118,4 +118,32 @@ describe('Ui.init()', () => {
         });
     });
   });
+
+  describe('ui.document.field.getValue()', () => {
+    it('returns the current field value', () => {
+      parentConnection.call = jest.fn(() => Promise.resolve('test'));
+      ui.document.field.getValue().then((value) => {
+        expect(parentConnection.call).toHaveBeenCalledWith('getFieldValue');
+        expect(value).toEqual('test');
+      });
+    });
+  });
+
+  describe('ui.document.field.setValue()', () => {
+    it('sets the current field value', () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      ui.document.field.setValue('test').then(() => {
+        expect(parentConnection.call).toHaveBeenCalledWith('setFieldValue', 'test');
+      });
+    });
+  });
+
+  describe('ui.document.field.setHeight()', () => {
+    it('sets the field height', () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      ui.document.field.setHeight(100).then(() => {
+        expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
+      });
+    });
+  });
 });

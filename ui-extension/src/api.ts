@@ -333,4 +333,10 @@ export interface FieldScope {
    * @param value the new field value
    */
   setValue(value: string): Promise<void>;
+
+  /**
+   * Set the height of the surrounding iframe.
+   * @param pixels the number of pixels
+   */
+  setHeight(pixels: number): Promise<void>;
 }
