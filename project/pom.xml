@@ -137,7 +137,7 @@
     <!-- Default message displayed in the console after the cargo container has started -->
     <cargo.started.message>Press Ctrl-C to stop the Cargo container...</cargo.started.message>
 
-    <!-- default empty javaagent, see also "jrebel" profile below -->
+    <!-- default empty javaagent, to be set for JRebel or HotSwapAgent -->
     <javaagent />
 
   </properties>
@@ -948,9 +948,6 @@
           <name>jrebel</name>
         </property>
       </activation>
-      <properties>
-        <javaagent>-javaagent:${env.REBEL_HOME}/jrebel.jar</javaagent>
-      </properties>
       <build>
         <plugins>
           <plugin>
