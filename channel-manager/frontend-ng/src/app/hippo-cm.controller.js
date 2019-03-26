@@ -20,7 +20,6 @@ class HippoCmCtrl {
     $rootScope,
     $state,
     $timeout,
-    $transitions,
     BrowserService,
     ChannelService,
     CmsService,
@@ -34,7 +33,6 @@ class HippoCmCtrl {
     this.$rootScope = $rootScope;
     this.$state = $state;
     this.$timeout = $timeout;
-    this.$transitions = $transitions;
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -60,6 +58,8 @@ class HippoCmCtrl {
       this.$rootScope.$apply(() => this._reloadChannel());
     });
 
+    this.CmsService.subscribe('close-channel', () => this._closeChannel());
+
     // Reload current channel
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
       this.$rootScope.$apply(() => this.ChannelService.reload());
@@ -71,8 +71,6 @@ class HippoCmCtrl {
       });
       this._restoreAppState();
     }
-
-    this.$transitions.onBefore({ from: 'hippo-cm.*.**', to: 'hippo-cm' }, () => this._closeChannel());
   }
 
   _loadChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
