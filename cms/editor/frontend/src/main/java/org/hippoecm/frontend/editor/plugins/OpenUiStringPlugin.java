@@ -32,6 +32,7 @@ import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
+import org.hippoecm.frontend.editor.viewer.ComparePlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -125,14 +126,25 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     }
 
     private Optional<Node> getVariantNode() {
-        final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
-        if (editorPlugin != null && editorPlugin.getDefaultModel() instanceof JcrNodeModel) {
-            return Optional.of(((JcrNodeModel) editorPlugin.getDefaultModel()).getNode());
+        final RenderPlugin plugin = getDocumentPlugin();
+        if (plugin != null && plugin.getDefaultModel() instanceof JcrNodeModel) {
+            return Optional.of(((JcrNodeModel) plugin.getDefaultModel()).getNode());
         }
         log.warn("Cannot find parent plugin to retrieve document meta data.");
         return Optional.empty();
     }
 
+    /**
+     * Get the plugin containing the document information.
+     */
+    private RenderPlugin getDocumentPlugin() {
+        if (documentMode.equals("edit")) {
+            return findParent(EditorPlugin.class);
+        } else {
+            return findParent(ComparePlugin.class);
+        }
+    }
+    
     private static void addDocumentMetaData(final Map<String, String> variables, final Node variant) {
         try {
             variables.put("variantId", variant.getIdentifier());
