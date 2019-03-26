@@ -48,10 +48,7 @@ export default class OpenUiService {
         ...options,
         methods: {
           ...options.methods,
-          getProperties: () => ({
-            ...this.getProperties(extension),
-            ...options.methods.getProperties && options.methods.getProperties(),
-          }),
+          getProperties: this.getProperties.bind(this, extension),
         },
       });
     } catch (error) {

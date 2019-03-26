@@ -77,7 +77,7 @@ describe('OpenuiStringField', () => {
     expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
   });
 
-  describe('getProperties', () => {
+  describe('getDocument', () => {
     beforeEach(() => {
       const document = {
         id: 'handle-id',
@@ -91,37 +91,37 @@ describe('OpenuiStringField', () => {
 
     describe('displayName', () => {
       it('is set to the display name of a document', () => {
-        expect($ctrl.getProperties().document.displayName).toBe('test name');
+        expect($ctrl.getDocument().document.displayName).toBe('test name');
       });
     });
 
     describe('id', () => {
       it('is set to the id of a document', () => {
-        expect($ctrl.getProperties().document.id).toBe('handle-id');
+        expect($ctrl.getDocument().document.id).toBe('handle-id');
       });
     });
 
     describe('locale', () => {
       it('is set to the locale of a document', () => {
-        expect($ctrl.getProperties().document.locale).toBe('sv');
+        expect($ctrl.getDocument().document.locale).toBe('sv');
       });
     });
 
     describe('mode', () => {
       it('is set to edit, which is the only mode supported', () => {
-        expect($ctrl.getProperties().document.mode).toBe('edit');
+        expect($ctrl.getDocument().document.mode).toBe('edit');
       });
     });
 
     describe('urlName', () => {
       it('is set to the url name of a document', () => {
-        expect($ctrl.getProperties().document.urlName).toBe('test-url-name');
+        expect($ctrl.getDocument().document.urlName).toBe('test-url-name');
       });
     });
 
     describe('variant id', () => {
       it('is set to the id of the document variant', () => {
-        expect($ctrl.getProperties().document.variant.id).toBe('variant-id');
+        expect($ctrl.getDocument().document.variant.id).toBe('variant-id');
       });
     });
   });

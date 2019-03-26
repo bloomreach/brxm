@@ -39,7 +39,7 @@ export default class OpenuiStringFieldController {
         methods: {
           getFieldValue: this.getValue.bind(this),
           setFieldValue: this.setValue.bind(this),
-          getProperties: this.getProperties.bind(this),
+          getDocument: this.getDocument.bind(this),
         },
       });
     }
@@ -59,7 +59,7 @@ export default class OpenuiStringFieldController {
     return this.value;
   }
 
-  getProperties() {
+  getDocument() {
     const document = this.ContentEditor.getDocument();
     return {
       document: {
