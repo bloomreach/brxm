@@ -63,7 +63,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private UiExtension extension;
     private String iframeParentId;
     private String hiddenValueId;
-    private String documentMode;
+    private String documentEditorMode;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -88,7 +88,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
 
-        documentMode = StringUtils.defaultString(config.getString("mode"), "view");
+        documentEditorMode = StringUtils.defaultString(config.getString("mode"), "view");
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -119,7 +119,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
-        parameters.put("documentMode", StringUtils.defaultString(documentMode));
+        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode));
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 
@@ -143,7 +143,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
      * Get the plugin containing the document information.
      */
     private RenderPlugin getDocumentPlugin() {
-        if (documentMode.equals("edit")) {
+        if (documentEditorMode.equals("edit")) {
             return findParent(EditorPlugin.class);
         } else {
             return findParent(ComparePlugin.class);
@@ -152,7 +152,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     
     private static void addDocumentMetaData(final ObjectNode parameters, final Node variant) {
         try {
-            parameters.put("variantId", variant.getIdentifier());
+            parameters.put("documentVariantId", variant.getIdentifier());
             if (variant.hasProperty(HippoTranslationNodeType.LOCALE)) {
                 parameters.put("documentLocale", variant.getProperty(HippoTranslationNodeType.LOCALE).getString());
             }
