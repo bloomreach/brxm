@@ -14,61 +14,63 @@
  * limitations under the License.
  */
 
-const extensionConfig = '${extensionConfig}';
-const extensionUrl = '${extensionUrl}';
-const iframeParentId = '${iframeParentId}';
-const hiddenValueId = '${hiddenValueId}';
+Hippo.OpenUi = Hippo.OpenUi || {};
 
-const cmsLocale = '${cmsLocale}';
-const cmsTimeZone = '${cmsTimeZone}';
-const cmsVersion = '${cmsVersion}';
+Hippo.OpenUi.createStringField = function(parameters) {
 
-const userId = '${userId}';
-const userFirstName = '${userFirstName}';
-const userLastName = '${userLastName}';
-const userDisplayName = '${userDisplayName}';
+  const {
+    cmsLocale,
+    cmsTimeZone,
+    cmsVersion,
+    extensionConfig,
+    extensionUrl,
+    hiddenValueId,
+    iframeParentId,
+    userId,
+    userDisplayName,
+    userFirstName,
+    userLastName
+  } = parameters;
 
-const MAX_SIZE = 4096;
-
-function getIframeUrl(extensionUrl, cmsOrigin, antiCache) {
-  const iframeUrl = new URL(extensionUrl, cmsOrigin);
-  iframeUrl.searchParams.append('br.antiCache', antiCache);
-  iframeUrl.searchParams.append('br.parentOrigin', cmsOrigin);
-  return iframeUrl;
-}
-
-function getUiProperties(cmsBaseUrl) {
-  return {
-    baseUrl: cmsBaseUrl,
-    extension: {
-      config: extensionConfig
-    },
-    locale: cmsLocale,
-    timeZone: cmsTimeZone,
-    user: {
-      id: userId,
-      firstName: userFirstName,
-      lastName: userLastName,
-      displayName: userDisplayName
-    },
-    version: cmsVersion
+  function getIframeUrl(cmsOrigin, antiCache) {
+    const iframeUrl = new URL(extensionUrl, cmsOrigin);
+    iframeUrl.searchParams.append('br.antiCache', antiCache);
+    iframeUrl.searchParams.append('br.parentOrigin', cmsOrigin);
+    return iframeUrl;
   }
-}
 
-(function (win, doc) {
+  function getUiProperties(cmsBaseUrl) {
+    return {
+      baseUrl: cmsBaseUrl,
+      extension: {
+        config: extensionConfig
+      },
+      locale: cmsLocale,
+      timeZone: cmsTimeZone,
+      user: {
+        id: userId,
+        firstName: userFirstName,
+        lastName: userLastName,
+        displayName: userDisplayName
+      },
+      version: cmsVersion
+    }
+  }
 
-  const cmsOrigin = win.location.origin;
-  const antiCache = win.Hippo.antiCache;
-  const iframeUrl = getIframeUrl(extensionUrl, cmsOrigin, antiCache);
-  const iframeParentElement = doc.getElementById(iframeParentId);
-  const hiddenValueElement = doc.getElementById(hiddenValueId);
+  const MAX_SIZE = 4096;
+
+  const cmsOrigin = window.location.origin;
+  const antiCache = window.Hippo.antiCache;
+  const iframeUrl = getIframeUrl(cmsOrigin, antiCache);
+  const iframeParentElement = document.getElementById(iframeParentId);
+  const hiddenValueElement = document.getElementById(hiddenValueId);
 
   const connection = Penpal.connectToChild({
     url: iframeUrl,
     appendTo: iframeParentElement,
     methods: {
       getProperties: function() {
-        const cmsBaseUrl = cmsOrigin + win.location.pathname;
+        const cmsBaseUrl = cmsOrigin + window.location.pathname;
         return getUiProperties(cmsBaseUrl);
       },
       getFieldValue: function() {
@@ -85,8 +87,7 @@ function getUiProperties(cmsBaseUrl) {
 
   connection.iframe.setAttribute('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
-  win.HippoAjax.registerDestroyFunction(connection.iframe, function() {
+  HippoAjax.registerDestroyFunction(connection.iframe, function() {
     connection.destroy();
   });
-
-})(window, document);
+};
