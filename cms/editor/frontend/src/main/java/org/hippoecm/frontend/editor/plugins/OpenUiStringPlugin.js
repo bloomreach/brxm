@@ -44,21 +44,11 @@ function getIframeUrl(extensionUrl, cmsOrigin, antiCache) {
   return iframeUrl;
 }
 
-function getUiProperties(cmsBaseUrl) {
+function getProperties(cmsBaseUrl) {
   return {
     baseUrl: cmsBaseUrl,
     extension: {
       config: extensionConfig
-    },
-    document: {
-      displayName: documentDisplayName,
-      id: documentId,
-      locale: documentLocale,
-      mode: documentMode,
-      urlName: documentUrlName,
-      variant: {
-        id: variantId
-      }
     },
     locale: cmsLocale,
     timeZone: cmsTimeZone,
@@ -69,6 +59,19 @@ function getUiProperties(cmsBaseUrl) {
       displayName: userDisplayName
     },
     version: cmsVersion
+  }
+}
+
+function getDocumentProperties() {
+  return {
+    displayName: documentDisplayName,
+    id: documentId,
+    locale: documentLocale,
+    mode: documentMode,
+    urlName: documentUrlName,
+    variant: {
+      id: variantId
+    }
   }
 }
 
@@ -84,9 +87,12 @@ function getUiProperties(cmsBaseUrl) {
     url: iframeUrl,
     appendTo: iframeParentElement,
     methods: {
+      getDocument: function() {
+        return getDocumentProperties();
+      },
       getProperties: function() {
         const cmsBaseUrl = cmsOrigin + win.location.pathname;
-        return getUiProperties(cmsBaseUrl);
+        return getProperties(cmsBaseUrl);
       },
       getFieldValue: function() {
         return hiddenValueElement.value;
