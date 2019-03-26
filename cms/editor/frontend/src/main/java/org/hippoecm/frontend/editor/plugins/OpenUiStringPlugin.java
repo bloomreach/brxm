@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -25,12 +23,13 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -43,6 +42,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.util.UserUtils;
+import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
@@ -52,10 +52,12 @@ import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "uiExtension";
-    private static final String JS_TEMPLATE = "OpenUiStringPlugin.js";
+    private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
     private UiExtension extension;
@@ -104,25 +106,28 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         }
 
         response.render(new PenpalHeaderItem());
-        response.render(OnDomReadyHeaderItem.forScript(createJavaScript()));
+
+        final JavaScriptResourceReference js = new JavaScriptResourceReference(OpenUiStringPlugin.class, OPEN_UI_STRING_PLUGIN_JS);
+        response.render(JavaScriptReferenceHeaderItem.forReference(js));
+
+        response.render(OnDomReadyHeaderItem.forScript(createJavaScriptForField()));
     }
 
-    private String createJavaScript() {
-        final Map<String, String> variables = new HashMap<>();
-        variables.put("extensionConfig", StringUtils.defaultString(extension.getConfig()));
-        variables.put("extensionUrl", StringUtils.defaultString(extension.getUrl()));
-        variables.put("iframeParentId", iframeParentId);
-        variables.put("hiddenValueId", hiddenValueId);
-        variables.put("documentMode", StringUtils.defaultString(documentMode));
+    private String createJavaScriptForField() {
+        final ObjectNode parameters = Json.object();
+        parameters.put("extensionConfig", extension.getConfig());
+        parameters.put("extensionUrl", extension.getUrl());
+        parameters.put("iframeParentId", iframeParentId);
+        parameters.put("hiddenValueId", hiddenValueId);
+        parameters.put("documentMode", StringUtils.defaultString(documentMode));
 
-        getVariantNode().ifPresent(node -> addDocumentMetaData(variables, node));
+        getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 
         final UserSession userSession = UserSession.get();
-        addCmsVariables(variables, userSession);
-        addUserVariables(variables, userSession);
+        addCmsVariables(parameters, userSession);
+        addUserVariables(parameters, userSession);
 
-        final PackageTextTemplate javaScript = new PackageTextTemplate(OpenUiStringPlugin.class, JS_TEMPLATE);
-        return javaScript.asString(variables);
+        return "Hippo.OpenUi.createStringField(" + parameters.toString() + ");";
     }
 
     private Optional<Node> getVariantNode() {
@@ -145,15 +150,15 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         }
     }
     
-    private static void addDocumentMetaData(final Map<String, String> variables, final Node variant) {
+    private static void addDocumentMetaData(final ObjectNode parameters, final Node variant) {
         try {
-            variables.put("variantId", variant.getIdentifier());
+            parameters.put("variantId", variant.getIdentifier());
             if (variant.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                variables.put("documentLocale", variant.getProperty(HippoTranslationNodeType.LOCALE).getString());
+                parameters.put("documentLocale", variant.getProperty(HippoTranslationNodeType.LOCALE).getString());
             }
 
             final Node handle = variant.getParent();
-            variables.put("documentId", handle.getIdentifier());
+            parameters.put("documentId", handle.getIdentifier());
             final String urlName = handle.getName();
             final String displayName;
             if (handle.hasProperty(HippoNodeType.HIPPO_NAME)) {
@@ -161,36 +166,36 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
             } else {
                 displayName = urlName;
             }
-            variables.put("documentDisplayName", displayName);
-            variables.put("documentUrlName", urlName);
+            parameters.put("documentDisplayName", displayName);
+            parameters.put("documentUrlName", urlName);
         } catch (RepositoryException e) {
             log.error("Error retrieving document meta data.", e);
         }
     }
 
-    private static void addCmsVariables(final Map<String, String> variables, final UserSession userSession) {
-        variables.put("cmsLocale", userSession.getLocale().getLanguage());
-        variables.put("cmsTimeZone", StringUtils.defaultString(userSession.getTimeZone().getID()));
-        variables.put("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
+    private static void addCmsVariables(final ObjectNode parameters, final UserSession userSession) {
+        parameters.put("cmsLocale", userSession.getLocale().getLanguage());
+        parameters.put("cmsTimeZone", userSession.getTimeZone().getID());
+        parameters.put("cmsVersion", new SystemInfoDataProvider().getReleaseVersion());
     }
 
-    private static void addUserVariables(final Map<String, String> variables, final UserSession userSession) {
+    private static void addUserVariables(final ObjectNode parameters, final UserSession userSession) {
         final Session jcrSession = userSession.getJcrSession();
         final String userId = jcrSession.getUserID();
-        variables.put("userId", userId);
+        parameters.put("userId", userId);
 
         final HippoWorkspace workspace = (HippoWorkspace) jcrSession.getWorkspace();
         try {
             final SecurityService securityService = workspace.getSecurityService();
             final User user = securityService.getUser(userId);
 
-            variables.put("userFirstName", StringUtils.defaultString(user.getFirstName()));
-            variables.put("userLastName", StringUtils.defaultString(user.getLastName()));
+            parameters.put("userFirstName", user.getFirstName());
+            parameters.put("userLastName", user.getLastName());
         } catch (RepositoryException e) {
             log.warn("Unable to retrieve first and last name of user '{}'", userId, e);
         }
 
         UserUtils.getUserName(userId, jcrSession)
-                .ifPresent(displayName -> variables.put("userDisplayName", displayName));
+                .ifPresent(displayName -> parameters.put("userDisplayName", displayName));
     }
 }

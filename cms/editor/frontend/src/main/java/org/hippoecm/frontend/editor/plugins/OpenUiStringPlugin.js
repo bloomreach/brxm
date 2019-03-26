@@ -14,74 +14,75 @@
  * limitations under the License.
  */
 
-const extensionConfig = '${extensionConfig}';
-const extensionUrl = '${extensionUrl}';
-const iframeParentId = '${iframeParentId}';
-const hiddenValueId = '${hiddenValueId}';
+Hippo.OpenUi = Hippo.OpenUi || {};
 
-const documentId = '${documentId}';
-const variantId = '${variantId}';
-const documentMode = '${documentMode}';
-const documentLocale = '${documentLocale}';
-const documentDisplayName = '${documentDisplayName}';
-const documentUrlName = '${documentUrlName}';
+Hippo.OpenUi.createStringField = function(parameters) {
 
-const cmsLocale = '${cmsLocale}';
-const cmsTimeZone = '${cmsTimeZone}';
-const cmsVersion = '${cmsVersion}';
+  const {
+    cmsLocale,
+    cmsTimeZone,
+    cmsVersion,
+    documentDisplayName,
+    documentId,
+    documentLocale,
+    documentMode,
+    documentUrlName,
+    extensionConfig,
+    extensionUrl,
+    hiddenValueId,
+    iframeParentId,
+    userId,
+    userDisplayName,
+    userFirstName,
+    userLastName,
+    variantId
+  } = parameters;
 
-const userId = '${userId}';
-const userFirstName = '${userFirstName}';
-const userLastName = '${userLastName}';
-const userDisplayName = '${userDisplayName}';
-
-const MAX_SIZE = 4096;
-
-function getIframeUrl(extensionUrl, cmsOrigin, antiCache) {
-  const iframeUrl = new URL(extensionUrl, cmsOrigin);
-  iframeUrl.searchParams.append('br.antiCache', antiCache);
-  iframeUrl.searchParams.append('br.parentOrigin', cmsOrigin);
-  return iframeUrl;
-}
-
-function getProperties(cmsBaseUrl) {
-  return {
-    baseUrl: cmsBaseUrl,
-    extension: {
-      config: extensionConfig
-    },
-    locale: cmsLocale,
-    timeZone: cmsTimeZone,
-    user: {
-      id: userId,
-      firstName: userFirstName,
-      lastName: userLastName,
-      displayName: userDisplayName
-    },
-    version: cmsVersion
+  function getIframeUrl(cmsOrigin, antiCache) {
+    const iframeUrl = new URL(extensionUrl, cmsOrigin);
+    iframeUrl.searchParams.append('br.antiCache', antiCache);
+    iframeUrl.searchParams.append('br.parentOrigin', cmsOrigin);
+    return iframeUrl;
   }
-}
 
-function getDocumentProperties() {
-  return {
-    displayName: documentDisplayName,
-    id: documentId,
-    locale: documentLocale,
-    mode: documentMode,
-    urlName: documentUrlName,
-    variant: {
-      id: variantId
+  function getProperties(cmsBaseUrl) {
+    return {
+      baseUrl: cmsBaseUrl,
+      extension: {
+        config: extensionConfig
+      },
+      locale: cmsLocale,
+      timeZone: cmsTimeZone,
+      user: {
+        id: userId,
+        firstName: userFirstName,
+        lastName: userLastName,
+        displayName: userDisplayName
+      },
+      version: cmsVersion
     }
   }
-}
 
-(function (win, doc) {
+  function getDocumentProperties() {
+    return {
+      displayName: documentDisplayName,
+      id: documentId,
+      locale: documentLocale,
+      mode: documentMode,
+      urlName: documentUrlName,
+      variant: {
+        id: variantId
+      }
+    }
+  }
+  
+  const MAX_SIZE = 4096;
 
-  const cmsOrigin = win.location.origin;
-  const antiCache = win.Hippo.antiCache;
-  const iframeUrl = getIframeUrl(extensionUrl, cmsOrigin, antiCache);
-  const iframeParentElement = doc.getElementById(iframeParentId);
-  const hiddenValueElement = doc.getElementById(hiddenValueId);
+  const cmsOrigin = window.location.origin;
+  const antiCache = window.Hippo.antiCache;
+  const iframeUrl = getIframeUrl(cmsOrigin, antiCache);
+  const iframeParentElement = document.getElementById(iframeParentId);
+  const hiddenValueElement = document.getElementById(hiddenValueId);
 
   const connection = Penpal.connectToChild({
     url: iframeUrl,
@@ -91,7 +92,7 @@ function getDocumentProperties() {
         return getDocumentProperties();
       },
       getProperties: function() {
-        const cmsBaseUrl = cmsOrigin + win.location.pathname;
+        const cmsBaseUrl = cmsOrigin + window.location.pathname;
         return getProperties(cmsBaseUrl);
       },
       getFieldValue: function() {
@@ -108,8 +109,7 @@ function getDocumentProperties() {
 
   connection.iframe.setAttribute('sandbox', 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts');
 
-  win.HippoAjax.registerDestroyFunction(connection.iframe, function() {
+  HippoAjax.registerDestroyFunction(connection.iframe, function() {
     connection.destroy();
   });
-
-})(window, document);
+};
