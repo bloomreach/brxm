@@ -31,6 +31,7 @@ import Emittery = require('emittery'); // tslint:disable-line:import-name
 import {
   ChannelScope,
   ChannelScopeEvents,
+  DocumentProperties,
   DocumentScope,
   Emitter,
   EventHandler,
@@ -86,6 +87,7 @@ interface ChannelParent extends UiParent {
 }
 
 interface DocumentParent extends UiParent {
+  getDocument: ParentMethod<DocumentProperties>;
   getFieldValue: ParentMethod<string>;
   setFieldValue: ParentMethod<void, [string]>;
 }
@@ -114,6 +116,9 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
 }
 
 class Document extends Scope<DocumentParent> implements DocumentScope {
+  get (): Promise<DocumentProperties> {
+    return this[PARENT].call('getDocument');
+  }
   field = new Field(this[PARENT]);
 }
 
