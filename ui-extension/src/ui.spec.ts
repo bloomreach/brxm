@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,32 +50,28 @@ describe('Ui.init()', () => {
   });
 
   describe('ui.channel.refresh()', () => {
-    it('refreshes the current channel', () => {
+    it('refreshes the current channel', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
-      ui.channel.refresh().then(() => {
-        expect(parentConnection.call).toHaveBeenCalledWith('refreshChannel');
-      });
+      await ui.channel.refresh();
+      expect(parentConnection.call).toHaveBeenCalledWith('refreshChannel');
     });
   });
 
   describe('ui.channel.page.get()', () => {
-    it('returns the current page', () =>
-      ui.channel.page.get()
-        .then((page) => {
-          expect(page.channel.id).toBe('testChannelId');
-          expect(page.id).toBe('testPageId');
-          expect(page.sitemapItem.id).toBe('testSitemapItemId');
-          expect(page.url).toBe('http://www.example.com');
-        }),
-    );
+    it('returns the current page', async () => {
+      const page = await ui.channel.page.get();
+      expect(page.channel.id).toBe('testChannelId');
+      expect(page.id).toBe('testPageId');
+      expect(page.sitemapItem.id).toBe('testSitemapItemId');
+      expect(page.url).toBe('http://www.example.com');
+    });
   });
 
   describe('ui.channel.page.refresh()', () => {
-    it('refreshes the current page', () => {
+    it('refreshes the current page', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
-      ui.channel.page.refresh().then(() => {
-        expect(parentConnection.call).toHaveBeenCalledWith('refreshPage');
-      });
+      await ui.channel.page.refresh();
+      expect(parentConnection.call).toHaveBeenCalledWith('refreshPage');
     });
   });
 
@@ -95,27 +91,50 @@ describe('Ui.init()', () => {
       };
     });
 
-    it('calls the listener whenever the parent emits a \'channel.page.navigate\' event', () => {
+    it('calls the listener whenever the parent emits a \'channel.page.navigate\' event', async () => {
       const listener = jest.fn();
 
       ui.channel.page.on('navigate', listener);
 
-      return eventEmitter.emit('channel.page.navigate', nextPage)
-        .then(() => {
-          expect(listener).toHaveBeenCalledWith(nextPage);
-        });
+      await eventEmitter.emit('channel.page.navigate', nextPage);
+      expect(listener).toHaveBeenCalledWith(nextPage);
     });
 
-    it('returns an unbind function', () => {
+    it('returns an unbind function', async () => {
       const listener = jest.fn();
 
       const unbind = ui.channel.page.on('navigate', listener);
       unbind();
 
-      return eventEmitter.emit('channel.page.navigate', nextPage)
-        .then(() => {
-          expect(listener).not.toHaveBeenCalled();
-        });
+      await eventEmitter.emit('channel.page.navigate', nextPage);
+      expect(listener).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ui.document.field.getValue()', () => {
+    it('returns the current field value', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve('test'));
+
+      const value = await ui.document.field.getValue();
+
+      expect(parentConnection.call).toHaveBeenCalledWith('getFieldValue');
+      expect(value).toEqual('test');
+    });
+  });
+
+  describe('ui.document.field.setValue()', () => {
+    it('sets the current field value', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      await ui.document.field.setValue('test');
+      expect(parentConnection.call).toHaveBeenCalledWith('setFieldValue', 'test');
+    });
+  });
+
+  describe('ui.document.field.setHeight()', () => {
+    it('sets the field height', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      await ui.document.field.setHeight(100);
+      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
     });
   });
 });

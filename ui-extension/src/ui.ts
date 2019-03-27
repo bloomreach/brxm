@@ -90,6 +90,7 @@ interface DocumentParent extends UiParent {
   getDocument: ParentMethod<DocumentProperties>;
   getFieldValue: ParentMethod<string>;
   setFieldValue: ParentMethod<void, [string]>;
+  setFieldHeight: ParentMethod<void, [number]>;
 }
 
 class Page extends ScopeEmitter<PageScopeEvents, ChannelParent> implements PageScope {
@@ -129,6 +130,10 @@ class Field extends Scope<DocumentParent> implements FieldScope {
 
   setValue(value: string) {
     return this[PARENT].call('setFieldValue', value);
+  }
+
+  setHeight(pixels: number) {
+    return this[PARENT].call('setFieldHeight', pixels);
   }
 }
 
