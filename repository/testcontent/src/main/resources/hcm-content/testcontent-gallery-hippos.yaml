@@ -2,7 +2,6 @@
   jcr:primaryType: hippogallery:stdImageGallery
   jcr:mixinTypes: ['mix:versionable']
   jcr:uuid: f770e2fa-e24a-4a1b-beb3-2f4bf2617473
-  hippo:availability: [preview, live]
   hippostd:foldertype: [new-image-folder]
   hippostd:gallerytype: ['hippogallery:imageset']
   /Hippo.jpg:
