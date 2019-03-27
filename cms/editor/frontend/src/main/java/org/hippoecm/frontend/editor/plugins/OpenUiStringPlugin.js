@@ -18,6 +18,10 @@ Hippo.OpenUi = Hippo.OpenUi || {};
 
 Hippo.OpenUi.createStringField = function(parameters) {
 
+  const MIN_HEIGHT_IN_PIXELS = 10;
+  const MAX_HEIGHT_IN_PIXELS = 10000;
+  const MAX_SIZE_IN_BYTES = 4096;
+
   const {
     cmsLocale,
     cmsTimeZone,
@@ -77,9 +81,10 @@ Hippo.OpenUi.createStringField = function(parameters) {
     }
   }
 
-  const MIN_HEIGHT_IN_PIXELS = 10;
-  const MAX_HEIGHT_IN_PIXELS = 10000;
-  const MAX_SIZE_IN_BYTES = 4096;
+  function setHeight(iframe, pixels) {
+    const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
+    iframe.style.height = height + "px";
+  }
 
   const cmsOrigin = window.location.origin;
   const antiCache = window.Hippo.antiCache;
@@ -88,7 +93,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
   const hiddenValueElement = document.getElementById(hiddenValueId);
 
   const iframe = document.createElement('iframe');
-  iframe.style.height = initialHeightInPixels + "px";
+  setHeight(iframe, initialHeightInPixels);
 
   // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
   // - allow-top-navigation
@@ -117,8 +122,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
         hiddenValueElement.value = value;
       },
       setFieldHeight: function(pixels) {
-        const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
-        connection.iframe.style.height = height + "px";
+        setHeight(connection.iframe, pixels);
       }
     }
   });
