@@ -19,8 +19,6 @@ import 'angular-mocks';
 
 describe('OpenUiService', () => {
   let $log;
-  let $q;
-  let $rootScope;
   let ConfigService;
   let ExtensionService;
   let OpenUiService;
@@ -29,10 +27,8 @@ describe('OpenUiService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$log_, _$q_, _$rootScope_, _ConfigService_, _ExtensionService_, _OpenUiService_, _Penpal_) => {
+    inject((_$log_, _ConfigService_, _ExtensionService_, _OpenUiService_, _Penpal_) => {
       $log = _$log_;
-      $q = _$q_;
-      $rootScope = _$rootScope_;
       ConfigService = _ConfigService_;
       ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
@@ -46,12 +42,9 @@ describe('OpenUiService', () => {
   it('connects to the child', () => {
     const params = {};
 
-    spyOn(Penpal, 'connectToChild').and.returnValue({
-      promise: $q.resolve('child'),
-    });
+    spyOn(Penpal, 'connectToChild');
 
     OpenUiService.connect(params);
-    $rootScope.$digest();
 
     expect(params.iframe).toHaveAttr(
       'sandbox',
@@ -71,7 +64,7 @@ describe('OpenUiService', () => {
     });
 
     it('connects to the child', () => {
-      spyOn(OpenUiService, 'connect').and.returnValue($q.resolve());
+      spyOn(OpenUiService, 'connect');
       OpenUiService.initialize('test-id', { appendTo: element });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
@@ -84,11 +77,10 @@ describe('OpenUiService', () => {
 
     it('logs a warning when connecting to the child failed', () => {
       const error = new Error('Connection destroyed');
-      spyOn(OpenUiService, 'connect').and.returnValue($q.reject(error));
+      spyOn(OpenUiService, 'connect').and.throwError(error);
       spyOn($log, 'warn');
 
-      OpenUiService.initialize('test-id', { appendTo: element });
-      $rootScope.$digest();
+      expect(() => OpenUiService.initialize('test-id', { appendTo: element })).toThrow(error);
 
       expect(OpenUiService.connect).toHaveBeenCalled();
       expect($log.warn).toHaveBeenCalledWith(

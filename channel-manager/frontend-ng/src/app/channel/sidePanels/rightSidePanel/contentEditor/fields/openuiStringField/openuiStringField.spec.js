@@ -18,18 +18,17 @@ describe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
-  let $q;
   let mdInputContainer;
   let ngModel;
   let ContentEditor;
   let OpenUiService;
+  let connection;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$log_, _$q_, _$rootScope_, _ContentEditor_, _OpenUiService_) => {
+    inject((_$componentController_, _ContentEditor_, _OpenUiService_) => {
       $componentController = _$componentController_;
-      $q = _$q_;
       ContentEditor = _ContentEditor_;
       OpenUiService = _OpenUiService_;
     });
@@ -43,22 +42,58 @@ describe('OpenuiStringField', () => {
       value: 'test-value',
     });
     spyOn(ContentEditor, 'getDocument');
+
+    connection = {
+      iframe: angular.element('<iframe src="about:blank"></iframe>')[0],
+      destroy: jasmine.createSpy('destroy'),
+    };
+
+    spyOn(OpenUiService, 'initialize').and.returnValue(connection);
   });
 
-  it('initializes the component', () => {
-    $ctrl.$onInit();
+  describe('$onInit', () => {
+    it('initializes the component', () => {
+      $ctrl.$onInit();
+      expect(mdInputContainer.setHasValue).toHaveBeenCalledWith(true);
+    });
 
-    expect(mdInputContainer.setHasValue).toHaveBeenCalledWith(true);
+    it('ignores a missing inputContainer', () => {
+      $ctrl = $componentController('openuiStringField', { $element }, {
+        ngModel,
+        value: 'test-value',
+      });
+      $ctrl.$onInit();
+      expect(mdInputContainer.setHasValue).not.toHaveBeenCalled();
+    });
   });
 
   describe('$onChanges', () => {
+    it('does nothing without an extensionId', () => {
+      expect(() => {
+        $ctrl.$onChanges({});
+      }).not.toThrow();
+    });
+
     it('connects to the child', () => {
-      spyOn(OpenUiService, 'initialize').and.returnValue($q.resolve());
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
 
       expect(OpenUiService.initialize).toHaveBeenCalledWith('test-id', jasmine.objectContaining({
         appendTo: $element[0],
       }));
+    });
+
+    it('destroys a previous connection', () => {
+      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id1' } });
+      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id2' } });
+      expect(connection.destroy).toHaveBeenCalled();
+    });
+  });
+
+  describe('$onDestroy', () => {
+    it('destroys the connection with the child', () => {
+      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
+      $ctrl.$onDestroy();
+      expect(connection.destroy).toHaveBeenCalled();
     });
   });
 
@@ -75,6 +110,14 @@ describe('OpenuiStringField', () => {
 
   it('fails to set a long value', () => {
     expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
+  });
+
+  it('sets the height', () => {
+    $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
+    $ctrl.setHeight(42);
+    expect(connection.iframe).toHaveCss({
+      height: '42px',
+    });
   });
 
   describe('getDocument', () => {

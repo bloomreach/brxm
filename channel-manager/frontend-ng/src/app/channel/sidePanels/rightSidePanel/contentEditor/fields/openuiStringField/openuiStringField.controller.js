@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-const MAX_SIZE = 4096;
+const MIN_HEIGHT = 10; // pixels
+const MAX_HEIGHT = 10000; // pixels
+const MAX_SIZE = 4096; // bytes
 
 export default class OpenuiStringFieldController {
   constructor($element, $log, ContentEditor, OpenUiService) {
@@ -34,14 +36,26 @@ export default class OpenuiStringFieldController {
 
   $onChanges(changes) {
     if (changes.extensionId) {
-      this.OpenUiService.initialize(changes.extensionId.currentValue, {
+      this.destroyConnection();
+      this.connection = this.OpenUiService.initialize(changes.extensionId.currentValue, {
         appendTo: this.$element[0],
         methods: {
           getFieldValue: this.getValue.bind(this),
           setFieldValue: this.setValue.bind(this),
+          setFieldHeight: this.setHeight.bind(this),
           getDocument: this.getDocument.bind(this),
         },
       });
+    }
+  }
+
+  $onDestroy() {
+    this.destroyConnection();
+  }
+
+  destroyConnection() {
+    if (this.connection) {
+      this.connection.destroy();
     }
   }
 
@@ -57,6 +71,11 @@ export default class OpenuiStringFieldController {
 
   getValue() {
     return this.value;
+  }
+
+  setHeight(pixels) {
+    const height = Math.max(MIN_HEIGHT, Math.min(pixels, MAX_HEIGHT));
+    this.connection.iframe.style.height = `${height}px`;
   }
 
   getDocument() {

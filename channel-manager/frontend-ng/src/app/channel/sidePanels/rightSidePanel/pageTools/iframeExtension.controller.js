@@ -35,8 +35,8 @@ export default class IframeExtensionCtrl {
     this.PathService = PathService;
   }
 
-  $onInit() {
-    this._initExtension();
+  async $onInit() {
+    await this._initExtension();
 
     this._unsubscribeFromPublish = this.$rootScope.$on(
       'channel:changes:publish',
@@ -49,6 +49,9 @@ export default class IframeExtensionCtrl {
   }
 
   $onDestroy() {
+    if (this.connection) {
+      this.connection.destroy();
+    }
     if (this._unsubscribeFromPublish) {
       this._unsubscribeFromPublish();
     }
@@ -58,7 +61,7 @@ export default class IframeExtensionCtrl {
   }
 
   async _initExtension() {
-    this.child = await this.OpenUiService.initialize(this.extensionId, {
+    this.connection = this.OpenUiService.initialize(this.extensionId, {
       appendTo: this.$element[0],
       methods: {
         getPage: () => this.context,
@@ -66,6 +69,8 @@ export default class IframeExtensionCtrl {
         refreshPage: () => this.HippoIframeService.reload(),
       },
     });
+
+    this.child = await this.connection.promise;
   }
 
   $onChanges(params) {

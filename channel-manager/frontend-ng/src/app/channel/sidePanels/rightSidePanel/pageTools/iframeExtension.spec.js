@@ -26,6 +26,7 @@ describe('iframeExtension', () => {
   let DomService;
   let HippoIframeService;
   let OpenUiService;
+  let connection;
   let child;
 
   beforeEach(() => {
@@ -56,7 +57,12 @@ describe('iframeExtension', () => {
 
     child = jasmine.createSpyObj('child', ['emitEvent']);
 
-    OpenUiService.initialize.and.returnValue($q.resolve(child));
+    connection = {
+      promise: $q.resolve(child),
+      destroy: jasmine.createSpy('destroy'),
+    };
+
+    OpenUiService.initialize.and.returnValue(connection);
 
     $element = angular.element('<div></div>');
     $ctrl = $componentController('iframeExtension', {
@@ -97,13 +103,6 @@ describe('iframeExtension', () => {
       it('reacts on channel:changes:discard events', () => {
         $rootScope.$emit('channel:changes:discard');
         expect(child.emitEvent).toHaveBeenCalledWith('channel.changes.discard');
-      });
-
-      it('unsubscribes from event', () => {
-        $ctrl.$onDestroy();
-        $rootScope.$emit('channel:changes:publish');
-        $rootScope.$emit('channel:changes:discard');
-        expect(child.emitEvent).not.toHaveBeenCalled();
       });
     });
   });
@@ -195,6 +194,35 @@ describe('iframeExtension', () => {
         });
 
         expect(child.emitEvent).toHaveBeenCalledWith('channel.page.navigate', newContext);
+      });
+    });
+  });
+
+  describe('$onDestroy', () => {
+    describe('without a connected child', () => {
+      it('does nothing', () => {
+        expect(() => {
+          $ctrl.$onDestroy();
+        }).not.toThrow();
+      });
+    });
+
+    describe('with a connected child', () => {
+      beforeEach(() => {
+        $ctrl.$onInit();
+        $rootScope.$digest();
+      });
+
+      it('destroys the connection', () => {
+        $ctrl.$onDestroy();
+        expect(connection.destroy).toHaveBeenCalled();
+      });
+
+      it('unsubscribes from events', () => {
+        $ctrl.$onDestroy();
+        $rootScope.$emit('channel:changes:publish');
+        $rootScope.$emit('channel:changes:discard');
+        expect(child.emitEvent).not.toHaveBeenCalled();
       });
     });
   });
