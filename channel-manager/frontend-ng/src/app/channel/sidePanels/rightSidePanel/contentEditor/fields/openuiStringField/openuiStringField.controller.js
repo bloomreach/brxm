@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-const MAX_SIZE = 4096;
+const MIN_HEIGHT_IN_PIXELS = 10;
+const MAX_HEIGHT_IN_PIXELS = 10000;
+const MAX_SIZE_IN_BYTES = 4096;
 
 export default class OpenuiStringFieldController {
   constructor($element, $log, ContentEditor, OpenUiService) {
@@ -34,21 +36,33 @@ export default class OpenuiStringFieldController {
 
   $onChanges(changes) {
     if (changes.extensionId) {
-      this.OpenUiService.initialize(changes.extensionId.currentValue, {
+      this.destroyConnection();
+      this.connection = this.OpenUiService.initialize(changes.extensionId.currentValue, {
         appendTo: this.$element[0],
         methods: {
           getFieldValue: this.getValue.bind(this),
           setFieldValue: this.setValue.bind(this),
+          setFieldHeight: this.setHeight.bind(this),
           getDocument: this.getDocument.bind(this),
         },
       });
     }
   }
 
+  $onDestroy() {
+    this.destroyConnection();
+  }
+
+  destroyConnection() {
+    if (this.connection) {
+      this.connection.destroy();
+    }
+  }
+
   setValue(value) {
     value = `${value}`;
-    if (value.length >= MAX_SIZE) {
-      throw new Error(`Max value length of ${MAX_SIZE} is reached.`);
+    if (value.length >= MAX_SIZE_IN_BYTES) {
+      throw new Error(`Max value length of ${MAX_SIZE_IN_BYTES} bytes is reached.`);
     }
 
     this.ngModel.$setViewValue(value);
@@ -57,6 +71,11 @@ export default class OpenuiStringFieldController {
 
   getValue() {
     return this.value;
+  }
+
+  setHeight(pixels) {
+    const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
+    this.connection.iframe.style.height = `${height}px`;
   }
 
   getDocument() {

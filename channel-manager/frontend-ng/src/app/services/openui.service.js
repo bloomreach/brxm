@@ -33,16 +33,14 @@ export default class OpenUiService {
     // - allow-top-navigation-by-user-activation
     options.iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
 
-    const connection = this.Penpal.connectToChild(options);
-
-    return connection.promise;
+    return this.Penpal.connectToChild(options);
   }
 
-  async initialize(extensionId, options) {
+  initialize(extensionId, options) {
     const extension = this.ExtensionService.getExtension(extensionId);
 
     try {
-      return await this.connect({
+      return this.connect({
         url: this.ExtensionService.getExtensionUrl(extension),
         ...options,
         methods: {
