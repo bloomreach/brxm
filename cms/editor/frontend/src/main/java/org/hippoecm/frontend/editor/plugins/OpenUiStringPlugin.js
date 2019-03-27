@@ -76,9 +76,9 @@ Hippo.OpenUi.createStringField = function(parameters) {
     }
   }
 
-  const MIN_HEIGHT = 10;    // pixels
-  const MAX_HEIGHT = 10000; // pixels
-  const MAX_SIZE = 4096;    // bytes
+  const MIN_HEIGHT_IN_PIXELS = 10;
+  const MAX_HEIGHT_IN_PIXELS = 10000;
+  const MAX_SIZE_IN_BYTES = 4096;
 
   const cmsOrigin = window.location.origin;
   const antiCache = window.Hippo.antiCache;
@@ -109,13 +109,13 @@ Hippo.OpenUi.createStringField = function(parameters) {
         return hiddenValueElement.value;
       },
       setFieldValue: function(value) {
-        if (value.length >= MAX_SIZE) {
-          throw new Error('Max value length of ' + MAX_SIZE + ' is reached.');
+        if (value.length >= MAX_SIZE_IN_BYTES) {
+          throw new Error('Max value length of ' + MAX_SIZE_IN_BYTES + ' is reached.');
         }
         hiddenValueElement.value = value;
       },
       setFieldHeight: function(pixels) {
-        const height = Math.max(MIN_HEIGHT, Math.min(pixels, MAX_HEIGHT));
+        const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
         connection.iframe.style.height = height + "px";
       }
     }
