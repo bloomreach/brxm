@@ -187,7 +187,7 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
         synchronized (session) {
             try {
                 log.debug("Reading the journal");
-                session.refresh(true);
+                triggerClusterSync(session);
 
                 // TODO what happens if for the session there is also an observation listener? If we 'skip to revision'
                 // TODO this means that events are removed AFAICS....does this have impact? Or should we say that the
@@ -200,24 +200,34 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
                 final ArrayList<ChangeLog> changeLogs = new ArrayList<>();
 
                 ChangeLogImpl changeLog = new ChangeLogImpl();
-                int count = 0;
+
+
+                int recordCount = 0;
                 long lastEventRevision = fromRevision;
 
                 while (eventJournal.hasNext()) {
+
                     RevisionEvent event = eventJournal.nextEvent();
-                    if (count == 0) {
-                        changeLog.setStartRevision(event.getRevision());
-                    }
+
                     lastEventRevision = event.getRevision();
+
+                    if (!changeLogs.contains(changeLog)) {
+                        changeLog.setStartRevision(lastEventRevision);
+                        changeLogs.add(changeLog);
+                    }
+
+                    changeLog.setEndRevision(lastEventRevision);
 
                     if (event.getType() == Event.PERSIST) {
                         if (!changeLog.getRecords().isEmpty()) {
                             changeLog.setEndRevision(lastEventRevision);
-                            changeLogs.add(changeLog);
+                            // change log will only be added if there is at least one more event in next while loop
+                            // and the limit is not yet reached
                             changeLog = new ChangeLogImpl();
                             changeLog.setStartRevision(lastEventRevision + 1);
+
                         }
-                        if (count < softLimit ) {
+                        if (recordCount < softLimit ) {
                             continue;
                         } else {
                             break;
@@ -240,18 +250,13 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
 
                     if (scopes.stream().anyMatch(scope -> path.startsWith(scope + "/") || path.equals(scope))) {
                         if (changeLog.recordChange(event, squashEvents)) {
-                            count++;
+                            recordCount++;
                         }
                     }
 
                 }
-                // add the last change log as well
-                if (!changeLog.getRecords().isEmpty()) {
-                    changeLogs.add(changeLog);
-                    changeLog.setEndRevision(lastEventRevision);
-                }
 
-                log.debug("Read {} changes up to {}", count, lastEventRevision);
+                log.debug("Read {} changes up to {}", recordCount, lastEventRevision);
                 return changeLogs;
 
             } catch (RepositoryException e) {
@@ -264,6 +269,10 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
 
         }
 
+    }
+
+    private void triggerClusterSync(final Session session) throws RepositoryException {
+        session.refresh(true);
     }
 
     private boolean isPropertyEvent(final RevisionEvent event) {

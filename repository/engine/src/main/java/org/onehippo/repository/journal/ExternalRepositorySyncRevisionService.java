@@ -104,7 +104,10 @@ public interface ExternalRepositorySyncRevisionService {
      * @param scopes The scopes to return change logs from (including the scope itself,
      *               for example a scope is /content/documents. If all events are needed, use empty scope (not /)
      * @param ignorePropertyNames The list of property names for which changes can be ignored.
-     * @return The List of change logs, where change logs are separated by an {@link  Event#PERSIST}
+     * @return The List of change logs, where change logs are separated by an {@link  Event#PERSIST}. At least one
+     * {@link ChangeLog} will be present in the returned {@link List}. The <strong>LAST</strong> {@link ChangeLog} in the
+     * return {@link List} can be a {@link ChangeLog} which does not have any recorded {@link Record}s : We still
+     * return that {@link ChangeLog} since it contains valuable information with respect to the start and end revision
      */
     List<ChangeLog> getChangeLogs(Session session, long fromRevision,
                                   long softLimit, List<String> scopes, List<String> ignorePropertyNames,

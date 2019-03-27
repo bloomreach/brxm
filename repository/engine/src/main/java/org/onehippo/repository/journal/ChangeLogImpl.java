@@ -121,8 +121,8 @@ public class ChangeLogImpl implements ChangeLog {
     }
 
     private final Map<Key,RecordImpl> records = new HashMap<>();
-    private long endRevision;
-    private long startRevision;
+    private long endRevision = -1L;
+    private long startRevision = -1L;
 
     @Override
     public Collection<? extends Record> getRecords() {
