@@ -46,6 +46,9 @@ export default class OpenuiStringFieldController {
           getDocument: this.getDocument.bind(this),
         },
       });
+      if (changes.initialHeightInPixels) {
+        this.setHeight(changes.initialHeightInPixels.currentValue);
+      }
     }
   }
 

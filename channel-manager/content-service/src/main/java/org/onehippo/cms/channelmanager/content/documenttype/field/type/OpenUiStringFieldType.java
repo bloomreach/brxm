@@ -34,7 +34,8 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 
     private String uiExtension = null;
-    
+    private int initialHeightInPixels = 150;
+
     public OpenUiStringFieldType() {
         setType(Type.OPEN_UI);
     }
@@ -42,6 +43,7 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         fieldContext.getStringConfig("uiExtension").ifPresent(this::setUiExtension);
+        fieldContext.getStringConfig("initialHeightInPixels").ifPresent(this::setInitialHeightInPixels);
         return super.init(fieldContext);
     }
 
@@ -51,6 +53,14 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
 
     public String getUiExtension() {
         return uiExtension;
+    }
+
+    private void setInitialHeightInPixels(final String initialHeightInPixels) {
+        this.initialHeightInPixels = Integer.parseInt(initialHeightInPixels);
+    }
+
+    public int getInitialHeightInPixels() {
+        return initialHeightInPixels;
     }
 
     @Override

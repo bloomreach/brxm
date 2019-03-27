@@ -62,6 +62,7 @@ public class OpenUiStringFieldTypeTest {
     public void testFieldConfig() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
         expect(fieldTypeContext.getStringConfig("uiExtension")).andReturn(Optional.of("myExtension"));
+        expect(fieldTypeContext.getStringConfig("initialHeightInPixels")).andReturn(Optional.of("42"));
 
         replayAll();
 
@@ -69,8 +70,24 @@ public class OpenUiStringFieldTypeTest {
         openUiStringFieldType.init(fieldTypeContext);
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo("myExtension"));
+        assertThat(openUiStringFieldType.getInitialHeightInPixels(), equalTo(42));
     }
-    
+
+    @Test
+    public void testDefaultFieldConfig() {
+        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        expect(fieldTypeContext.getStringConfig("uiExtension")).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig("initialHeightInPixels")).andReturn(Optional.empty());
+
+        replayAll();
+
+        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
+        openUiStringFieldType.init(fieldTypeContext);
+
+        assertThat(openUiStringFieldType.getUiExtension(), equalTo(null));
+        assertThat(openUiStringFieldType.getInitialHeightInPixels(), equalTo(150));
+    }
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();

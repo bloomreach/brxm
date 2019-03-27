@@ -82,6 +82,17 @@ describe('OpenuiStringField', () => {
       }));
     });
 
+    it('sets the initial height when provided', () => {
+      $ctrl.$onChanges({
+        extensionId: { currentValue: 'test-id' },
+        initialHeightInPixels: { currentValue: 42 },
+      });
+
+      expect(connection.iframe).toHaveCss({
+        height: '42px',
+      });
+    });
+
     it('destroys a previous connection', () => {
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id1' } });
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id2' } });

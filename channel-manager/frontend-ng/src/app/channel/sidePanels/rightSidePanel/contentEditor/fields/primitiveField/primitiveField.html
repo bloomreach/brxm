@@ -193,6 +193,7 @@
     <openui-string-field ng-switch-when="OPEN_UI"
                          layout="row"
                          extension-id="{{:: $ctrl.fieldType.uiExtension }}"
+                         initial-height-in-pixels="{{:: $ctrl.fieldType.initialHeightInPixels }}"
                          ng-change="$ctrl.valueChanged()"
                          ng-model="fieldValue.value">
     </openui-string-field>
