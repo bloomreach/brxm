@@ -32,6 +32,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
     extensionUrl,
     hiddenValueId,
     iframeParentId,
+    initialHeightInPixels,
     userId,
     userDisplayName,
     userFirstName,
@@ -87,6 +88,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
   const hiddenValueElement = document.getElementById(hiddenValueId);
 
   const iframe = document.createElement('iframe');
+  iframe.style.height = initialHeightInPixels + "px";
 
   // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
   // - allow-top-navigation
