@@ -57,13 +57,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "uiExtension";
+    private static final String CONFIG_PROPERTY_INIITAL_HEIGHT_IN_PIXELS = "initialHeightInPixels";
+    private static final int DEFAULT_INITIAL_HEIGHT_IN_PIXELS = 150;
     private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
-    private UiExtension extension;
-    private String iframeParentId;
-    private String hiddenValueId;
-    private String documentEditorMode;
+    private final UiExtension extension;
+    private final String iframeParentId;
+    private final String hiddenValueId;
+    private final String documentEditorMode;
+    private final int initialHeightInPixels;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -88,7 +91,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
 
-        documentEditorMode = StringUtils.defaultString(config.getString("mode"), "view");
+        documentEditorMode = config.getString("mode", "view");
+        initialHeightInPixels = config.getInt(CONFIG_PROPERTY_INIITAL_HEIGHT_IN_PIXELS, DEFAULT_INITIAL_HEIGHT_IN_PIXELS);
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -119,7 +123,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
-        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode));
+        parameters.put("documentEditorMode", documentEditorMode);
+        parameters.put("initialHeightInPixels", initialHeightInPixels);
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 
