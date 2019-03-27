@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('OpenuiStringField', () => {
+describe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
