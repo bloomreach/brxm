@@ -28,14 +28,18 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -63,7 +67,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private UiExtension extension;
     private String iframeParentId;
     private String hiddenValueId;
-    private String documentEditorMode;
+    private IEditor.Mode documentEditorMode;
+    private String compareValue;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -88,7 +93,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
 
-        documentEditorMode = StringUtils.defaultString(config.getString("mode"), "view");
+        documentEditorMode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        getCompareValue(context, config);
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -99,6 +105,14 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD);
     }
 
+    private void getCompareValue(final IPluginContext context, final IPluginConfig config) {
+        if (documentEditorMode == IEditor.Mode.COMPARE) {
+            final IModel<?> compareModel = context.getService(config.getString("model.compareTo"), 
+                    IModelReference.class) .getModel();
+            compareValue = Strings.toString(compareModel.getObject());
+        }
+    }
+    
     @Override
     public void renderHead(final IHeaderResponse response) {
         if (extension == null) {
@@ -119,7 +133,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
-        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode));
+        parameters.put("compareValue", compareValue);
+        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode.toString()));
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 
@@ -143,7 +158,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
      * Get the plugin containing the document information.
      */
     private RenderPlugin getDocumentPlugin() {
-        if (documentEditorMode.equals("edit")) {
+        if (documentEditorMode == IEditor.Mode.EDIT) {
             return findParent(EditorPlugin.class);
         } else {
             return findParent(ComparePlugin.class);

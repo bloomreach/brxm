@@ -22,6 +22,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
     cmsLocale,
     cmsTimeZone,
     cmsVersion,
+    compareValue,
     documentDisplayName,
     documentEditorMode,
     documentId,
@@ -113,6 +114,9 @@ Hippo.OpenUi.createStringField = function(parameters) {
           throw new Error('Max value length of ' + MAX_SIZE_IN_BYTES + ' is reached.');
         }
         hiddenValueElement.value = value;
+      },
+      getCompareValue: function() {
+        return compareValue;
       },
       setFieldHeight: function(pixels) {
         const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
