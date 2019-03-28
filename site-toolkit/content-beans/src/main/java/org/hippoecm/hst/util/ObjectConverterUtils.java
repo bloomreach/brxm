@@ -48,7 +48,6 @@ import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetResult;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSearch;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetsAvailableNavigation;
-import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -239,15 +238,20 @@ public class ObjectConverterUtils {
 
     /**
      * 
-     * @param namespace of the document type
      * @param contentType of the document type from the contentTypeService
      * @param objectConverter object to convert document type to dynamic bean
      */
-    public static void invalidateDynamicBean(String namespace, ContentType contentType, ObjectConverter objectConverter) {
+    public static void invalidateDynamicBean(final String documentType, final ObjectConverter objectConverter) {
         if (objectConverter instanceof ObjectConverterImpl) {
             ObjectConverterImpl wrapper = (ObjectConverterImpl) objectConverter;
-            wrapper.removeDynamicBean(contentType.getName());
-            wrapper.addDynamicBeanContentType(namespace, contentType);
+            wrapper.removeDynamicBean(documentType);
+        }
+    }
+
+    public static void updateDynamicBeanDefinition(final Class<? extends HippoBean> generatedBean, final String documentType, final ObjectConverter objectConverter) {
+        if (objectConverter instanceof ObjectConverterImpl) {
+            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectConverter;
+            wrapper.updateBeanDefinition(generatedBean, documentType);
         }
     }
 
