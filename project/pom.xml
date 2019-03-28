@@ -1078,6 +1078,72 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>enforce-banned-dependencies</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>enforce-banned-dependencies</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <bannedDependencies>
+                      <excludes>
+                        <!--Provided dependencies-->
+                        <exclude>javax.activation:activation</exclude>
+                        <exclude>com.sun.activation:javax.activation</exclude>
+                        <exclude>javax.servlet:javax.servlet-api</exclude>
+                        <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
+                        <exclude>javax.jcr:jcr</exclude>
+                        <exclude>javax.mail:mail</exclude>
+                        <exclude>org.slf4j:slf4j-api</exclude>
+
+                        <!-- Banned dependencies -->
+                        <exclude>xml-apis:xml-apis</exclude>
+                        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+                        <exclude>org.slf4j:jcl-over-slf4j</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-slf4j-impl</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-api</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-core</exclude>
+                        <exclude>org.apache.logging.log4j:log4j-1.2-api</exclude>
+                        <exclude>commons-logging:commons-logging</exclude>
+                        <exclude>commons-logging:commons-logging-api</exclude>
+                      </excludes>
+                      <includes>
+                        <include>javax.activation:activation:*:*:provided</include>
+                        <include>com.sun.activation:javax.activation:*:*:provided</include>
+                        <include>javax.servlet:javax.servlet-api:*:*:provided</include>
+                        <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec:*:*:provided</include>
+                        <include>javax.jcr:jcr:*:*:provided</include>
+                        <include>javax.mail:mail:*:*:provided</include>
+                        <include>org.slf4j:slf4j-api:*:*:provided</include>
+
+                        <include>xml-apis:xml-apis:*:*:test</include>
+                        <include>org.apache.geronimo.specs:geronimo-javamail_1.4_spec:*:*:test</include>
+                        <include>org.slf4j:jcl-over-slf4j:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-slf4j-impl:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-api:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-core:*:*:test</include>
+                        <include>org.apache.logging.log4j:log4j-1.2-api:*:*:test</include>
+                        <include>commons-logging:commons-logging:*:*:test</include>
+                        <include>commons-logging:commons-logging-api:*:*:test</include>
+                      </includes>
+                    </bannedDependencies>
+                  </rules>
+                  <fail>true</fail>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
 </project>
