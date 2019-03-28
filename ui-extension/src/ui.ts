@@ -31,6 +31,8 @@ import Emittery = require('emittery'); // tslint:disable-line:import-name
 import {
   ChannelScope,
   ChannelScopeEvents,
+  DialogProperties,
+  DialogScope,
   DocumentProperties,
   DocumentScope,
   Emitter,
@@ -93,6 +95,13 @@ interface DocumentParent extends UiParent {
   setFieldHeight: ParentMethod<void, [number]>;
 }
 
+interface DialogParent extends UiParent {
+  cancelDialog: ParentMethod;
+  closeDialog: ParentMethod<void, [Transferable]>;
+  getOptions: ParentMethod<DialogProperties>;
+  openDialog: ParentMethod<void, [DialogProperties]>;
+}
+
 class Page extends ScopeEmitter<PageScopeEvents, ChannelParent> implements PageScope {
   get() {
     return this[PARENT].call('getPage');
@@ -117,7 +126,7 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
 }
 
 class Document extends Scope<DocumentParent> implements DocumentScope {
-  get (): Promise<DocumentProperties> {
+  get(): Promise<DocumentProperties> {
     return this[PARENT].call('getDocument');
   }
   field = new Field(this[PARENT]);
@@ -137,9 +146,28 @@ class Field extends Scope<DocumentParent> implements FieldScope {
   }
 }
 
+class Dialog extends Scope<DialogParent> implements DialogScope {
+  cancel() {
+    return this[PARENT].call('cancelDialog');
+  }
+
+  close(value: Transferable) {
+    return this[PARENT].call('closeDialog', value);
+  }
+
+  open(options: DialogProperties) {
+    return this[PARENT].call('openDialog', options);
+  }
+
+  options() {
+    return this[PARENT].call('getOptions');
+  }
+}
+
 export class Ui extends Scope implements UiScope {
   baseUrl: string;
   channel: ChannelScope;
+  dialog: DialogScope;
   document: DocumentScope;
   extension: {
     config: string,
@@ -157,6 +185,7 @@ export class Ui extends Scope implements UiScope {
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
     this.channel = new Channel(parent, eventEmitter, SCOPE_CHANNEL);
+    this.dialog = new Dialog(parent);
     this.document = new Document(parent);
   }
 

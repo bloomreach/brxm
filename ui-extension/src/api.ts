@@ -145,6 +145,11 @@ export interface UiScope extends UiProperties {
    * API for the current document.
    */
   document: DocumentScope;
+
+  /**
+   * API for dialogs.
+   */
+  dialog: DialogScope;
 }
 
 /**
@@ -187,12 +192,12 @@ export interface PageScope extends Emitter<PageScopeEvents> {
   /**
    * @returns a Promise that resolves with [[PageProperties]] of the current page.
    */
-  get: () => Promise<PageProperties>;
+  get(): Promise<PageProperties>;
 
   /**
    * Refreshes the page currently shown in the Channel Manager.
    */
-  refresh: () => Promise<void>;
+  refresh(): Promise<void>;
 }
 
 /**
@@ -208,7 +213,7 @@ export interface Emitter<Events> {
    *
    * @returns a function to unsubscribe the handler again.
    */
-  on: (eventName: keyof Events, handler: EventHandler<Events>) => UnsubscribeFn;
+  on(eventName: keyof Events, handler: EventHandler<Events>): UnsubscribeFn;
 }
 
 /**
@@ -339,4 +344,60 @@ export interface FieldScope {
    * @param pixels the number of pixels
    */
   setHeight(pixels: number): Promise<void>;
+}
+
+/**
+ * API to open, close and communicate with dialogs.
+ */
+export interface DialogScope {
+
+  /**
+   * Closes an open dialog, rejecting the promise returned by ui.dialog.open().
+   */
+  cancel(): Promise<void>;
+
+  /**
+   * Closes an open dialog, resolving the promise returned by ui.dialog.open().
+   */
+  close(value: Transferable): Promise<void>;
+
+  /**
+   * Gathers current field value.
+   */
+  open(options: DialogProperties): Promise<void>;
+
+  /**
+   * @returns a Promise that resolves with [[DialogProperties]] of the current page.
+   */
+  options(): Promise<DialogProperties>;
+}
+
+/**
+ * Properties of a dialog.
+ */
+export interface DialogProperties {
+  /**
+   * A value that can be used to preselect an item in the dialog.
+   */
+  value?: any;
+
+  /**
+   * Indicates if the dialog has to shown fullscreen.
+   */
+  fullscreen?: boolean;
+
+  /**
+   * Title of the dialog.
+   */
+  title: string;
+
+  /**
+   * A hex color for the background color of the title bar.
+   */
+  titleBarColor?: string;
+
+  /**
+   * The URL to load the dialog contents from.
+   */
+  url: string;
 }

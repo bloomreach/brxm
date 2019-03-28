@@ -18,6 +18,7 @@
  * Disable TSLint for imports that start with an uppercase letter
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
+import { DialogProperties } from './api';
 import Emittery = require('emittery'); // tslint:disable-line:import-name
 import { parent } from './__mocks__/penpal';
 import { PageProperties } from './api';
@@ -135,6 +136,40 @@ describe('Ui.init()', () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
       await ui.document.field.setHeight(100);
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
+    });
+  });
+
+  describe('ui.dialog.cancel()', () => {
+    it('cancels an open dialog', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      await ui.dialog.cancel();
+      expect(parentConnection.call).toHaveBeenCalledWith('cancelDialog');
+    });
+  });
+
+  describe('ui.dialog.close()', () => {
+    it('closes an open dialog', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      const transferable = new ArrayBuffer(1);
+      await ui.dialog.close(transferable);
+      expect(parentConnection.call).toHaveBeenCalledWith('closeDialog', transferable);
+    });
+  });
+
+  describe('ui.dialog.open()', () => {
+    it('opens a dialog', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      let dialogProperties: DialogProperties;
+      await ui.dialog.open(dialogProperties);
+      expect(parentConnection.call).toHaveBeenCalledWith('openDialog', dialogProperties);
+    });
+  });
+
+  describe('ui.dialog.options()', () => {
+    it('gets the dialog options', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      await ui.dialog.options();
+      expect(parentConnection.call).toHaveBeenCalledWith('getOptions');
     });
   });
 });
