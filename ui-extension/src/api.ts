@@ -329,6 +329,11 @@ export interface FieldScope {
   getValue(): Promise<string>;
 
   /**
+   * Gathers previous field value to compare the current value to.
+   */
+  getCompareValue(): Promise<string>;
+
+  /**
    * Updates current field value.
    * @param value the new field value
    */
