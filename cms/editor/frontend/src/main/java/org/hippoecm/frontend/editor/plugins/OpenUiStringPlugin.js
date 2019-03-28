@@ -79,7 +79,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
 
   const MIN_HEIGHT_IN_PIXELS = 10;
   const MAX_HEIGHT_IN_PIXELS = 10000;
-  const MAX_SIZE_IN_BYTES = 4096;
+  const MAX_SIZE_IN_BYTES = 102400;
 
   const cmsOrigin = window.location.origin;
   const antiCache = window.Hippo.antiCache;
