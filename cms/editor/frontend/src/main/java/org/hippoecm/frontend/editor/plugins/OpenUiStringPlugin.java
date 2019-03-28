@@ -106,10 +106,12 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     }
 
     private void getCompareValue(final IPluginContext context, final IPluginConfig config) {
-        if (documentEditorMode == IEditor.Mode.COMPARE) {
+        if (documentEditorMode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
             final IModel<?> compareModel = context.getService(config.getString("model.compareTo"), 
                     IModelReference.class) .getModel();
-            compareValue = Strings.toString(compareModel.getObject());
+            if (compareModel != null) {
+                compareValue = Strings.toString(compareModel.getObject());
+            }
         }
     }
     
