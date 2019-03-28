@@ -16,7 +16,7 @@
 
 const MIN_HEIGHT_IN_PIXELS = 10;
 const MAX_HEIGHT_IN_PIXELS = 10000;
-const MAX_SIZE_IN_BYTES = 4096;
+const MAX_SIZE_IN_BYTES = 102400;
 
 export default class OpenuiStringFieldController {
   constructor($element, $log, ContentEditor, OpenUiService) {
