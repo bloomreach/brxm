@@ -36,8 +36,4 @@
         class="org.hippoecm.hst.content.service.translation.HippoTranslationBeanServiceImpl">
   </bean>
 
-  <bean id="org.hippoecm.hst.content.beans.dynamic.DynamicBeanService" class="org.hippoecm.hst.content.beans.dynamic.HippoDynamicBeanService">
-    <property name="objectConverter" ref="org.hippoecm.hst.content.beans.manager.ObjectConverter" />
-  </bean>
-
 </beans>

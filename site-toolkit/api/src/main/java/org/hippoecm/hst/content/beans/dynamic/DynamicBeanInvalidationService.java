@@ -15,23 +15,18 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 
 /**
- * Contains services for dynamic bean generation to regenerate the beans on the fly
- * after a document type update is done in the jackrabbit.
+ * Contains services for the invalidation of runtime generated beans
  *
  */
-public interface DynamicBeanService {
+public interface DynamicBeanInvalidationService {
 
     /**
-     * Creates dynamic beans for standard document types
-     * 
-     * @param parentBean if the bean is inherited from another bean this paramer is used to describe the parent bean
-     * @param namespace of the document type
-     * @param contentType of the document type which is read from contentTypeService
-     * @return
+     * If a document type is modified, removes initialized dynamic beans of all
+     * document types from {@link ObjectConverter} for the regeneration of the beans.
      */
-    Class<? extends HippoBean> createDynamicDocumentBean(final Class<? extends HippoBean> parentBean, final String documentType);
+    void invalidate();
 
 }

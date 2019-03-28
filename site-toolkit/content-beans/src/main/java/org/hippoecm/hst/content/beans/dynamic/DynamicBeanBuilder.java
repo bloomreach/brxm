@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
@@ -50,8 +51,8 @@ public class DynamicBeanBuilder {
 
     private Builder<? extends HippoBean> builder;
 
-    public DynamicBeanBuilder(final String documentTypeName, final Class<? extends HippoBean> parentBean) {
-        builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(documentTypeName)).subclass(parentBean);
+    public DynamicBeanBuilder(final String className, final Class<? extends HippoBean> parentBean) {
+        builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
     }
 
     public void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
@@ -147,15 +148,11 @@ public class DynamicBeanBuilder {
         }
     }
 
-    public void addBeanMethodInternalType(final String className, final String methodName, final String propertyName, final boolean multiple) {
-        try {
-            if (multiple) {
-                addParameterizedMethod(methodName, List.class, Class.forName(className), METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
-            } else {
-                addTwoArgumentsMethod(METHOD_GET_BEAN, Class.forName(className), methodName, propertyName);
-            }
-        } catch (Exception e) {
-            log.error("Class {} is not available.", className);
+    public void addBeanMethodInternalType(final Class<?> returnType, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, List.class, returnType, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
+        } else {
+            addTwoArgumentsMethod(METHOD_GET_BEAN, returnType, methodName, propertyName);
         }
     }
 
@@ -210,7 +207,7 @@ public class DynamicBeanBuilder {
     }
 
     public Class<? extends HippoBean> create() {
-        return builder.make().load(getClass().getClassLoader()).getLoaded();
+        return builder.make().load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION).getLoaded();
     }
 
 }

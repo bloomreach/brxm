@@ -20,6 +20,9 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Logic for creating a bean based on document types.
+ */
 public abstract class AbstractBeanBuilderService {
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
     private static final String DOCBASE = "Docbase";
@@ -60,6 +63,12 @@ public abstract class AbstractBeanBuilderService {
         }
     }
 
+    /**
+     * Generates bean method by its properties
+     * 
+     * @param bean
+     * @param builderParameters
+     */
     protected void generateMethodsByProperties(HippoContentBean bean, BeanBuilderServiceParameters builderParameters) {
         for (HippoContentProperty property : bean.getProperties()) {
             final String name = property.getName();
@@ -107,12 +116,18 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodDocbase(name, multiple, builderParameters);
                 break;
             default:
-                addDefaultPropertyType(name, type, builderParameters);
+                addCustomPropertyType(name, multiple, type, builderParameters);
                 break;
             }
         }
     }
 
+    /**
+     * Generated bean methods by its child nodes
+     * 
+     * @param bean
+     * @param builderParameters
+     */
     protected void generateMethodsByNodes(HippoContentBean bean, BeanBuilderServiceParameters builderParameters) {
         for (HippoContentChildNode child : bean.getChildren()) {
             final String name = child.getName();
@@ -150,38 +165,139 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodHippoResource(name, multiple, builderParameters);
                 break;
             default:
-                addDefaultNodeType(name, multiple, child.getPrefix(), type, builderParameters);
+                addCustomNodeType(name, multiple, type, builderParameters);
                 break;
             }
         }
     }
 
+    /**
+     * Checks whether a property/node should be generated as a method for the bean or not
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     * @return true if the property/node has to be generated as method
+     */
     public abstract boolean hasChange(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link String} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodString(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link Calendar} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodCalendar(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link Boolean} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodBoolean(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link Long} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodLong(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link Double} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodDouble(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoBean} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodDocbase(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
-    public abstract void addDefaultPropertyType(String name, String type, BeanBuilderServiceParameters builderParameters);
+    /**
+     * Adds a custom implementation if there isn't any matching object type for the property
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param type of the document property
+     * @param builderParameters additional parameters for builder implementation
+     */
+    public abstract void addCustomPropertyType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoHtml} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodHippoHtml(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoGalleryImageSet} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodImageLink(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoBean} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodHippoMirror(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoGalleryImageBean} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodHippoImage(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
+    /**
+     * Adds a method to the bean which returns {@link HippoResourceBean} object type
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builderParameters additional parameters for builder implementation
+     */
     public abstract void addBeanMethodHippoResource(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
-    public abstract void addDefaultNodeType(String name, boolean multiple, String prefix, String type, BeanBuilderServiceParameters builderParameters);
+    /**
+     * Adds a custom implementation if there isn't any matching object type for the child node
+     * 
+     * @param name of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param type of the document property
+     * @param builderParameters additional parameters for builder implementation
+     */
+    public abstract void addCustomNodeType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
 
 }

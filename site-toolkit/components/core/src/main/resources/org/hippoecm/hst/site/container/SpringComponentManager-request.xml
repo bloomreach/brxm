@@ -39,7 +39,6 @@
     <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
     <property name="cachingObjectConverter" value="${object.converter.caching}" />
     <property name="componentWindowFilters" ref="org.hippoecm.hst.core.container.HstComponentWindowFilter.list"/>
-    <property name="dynamicBeanService" ref="org.hippoecm.hst.content.beans.dynamic.DynamicBeanService" />
   </bean>
   
   <bean id="org.hippoecm.hst.core.container.HstRequestProcessor" class="org.hippoecm.hst.core.container.HstRequestProcessorImpl">

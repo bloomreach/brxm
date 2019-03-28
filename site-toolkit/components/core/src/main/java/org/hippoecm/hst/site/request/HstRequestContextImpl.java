@@ -42,7 +42,6 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -126,8 +125,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private Map<String, HeadContributable> headContributablesMap;
 
-    private DynamicBeanService dynamicBeanService;
-
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
     }
@@ -135,12 +132,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
-    }
-
-    public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider, DynamicBeanService dynamicBeanService) {
-        this.repository = repository;
-        this.contextCredentialsProvider = contextCredentialsProvider;
-        this.dynamicBeanService = dynamicBeanService;
     }
 
     @Override
@@ -749,7 +740,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         checkStateValidity();
         checkMatchingPhaseFinished("getContentBean");
         if (getResolvedSiteMapItem() != null) {
-            dynamicBeanService.invalidateDynamicBeans();
             return getBeanForResolvedSiteMapItem(getResolvedSiteMapItem());
         }
 
