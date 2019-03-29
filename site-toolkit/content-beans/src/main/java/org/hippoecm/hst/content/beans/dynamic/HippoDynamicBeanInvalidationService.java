@@ -15,8 +15,12 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanInvalidationService;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -25,15 +29,12 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
 public class HippoDynamicBeanInvalidationService implements DynamicBeanInvalidationService {
     private static final Logger log = LoggerFactory.getLogger(HippoDynamicBeanInvalidationService.class);
     private static final String CONTENT_TYPES_VERSION_CACHE_KEY = "CONTENT_TYPES_VERSION_CACHE_KEY";
 
     private ObjectConverter objectConverter;
-    private final Cache<String, Long> contentTypesVersionCache = CacheBuilder.newBuilder().build();
+    private Map<String, Long> contentTypesVersionCache = new ConcurrentHashMap<>();
 
     public HippoDynamicBeanInvalidationService(final ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;
@@ -44,7 +45,7 @@ public class HippoDynamicBeanInvalidationService implements DynamicBeanInvalidat
     }
 
     @Override
-    public void invalidate() {
+    public void invalidateOnDocumentTypeModification() {
         ContentTypeService contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
         if (contentTypeService == null) {
             log.warn("ContentTypeService hasn't been initialized yet.");
@@ -53,9 +54,9 @@ public class HippoDynamicBeanInvalidationService implements DynamicBeanInvalidat
 
         try {
             final ContentTypes contentTypes = contentTypeService.getContentTypes();
-            final Long currentContentTypesVersion = contentTypesVersionCache.getIfPresent(CONTENT_TYPES_VERSION_CACHE_KEY);
+            final Long currentContentTypesVersion = contentTypesVersionCache.getOrDefault(CONTENT_TYPES_VERSION_CACHE_KEY, 0L);
 
-            if (currentContentTypesVersion != null && contentTypes.version() == currentContentTypesVersion) {
+            if (contentTypes.version() == currentContentTypesVersion) {
                 // if there isn't any change in version number, no need to invalidate document types
                 return;
             }

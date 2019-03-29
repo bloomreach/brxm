@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.regex.Pattern;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
@@ -49,8 +50,6 @@ public class HippoContentBean {
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentChildNode> children = new ArrayList<>();
     private final Set<String> superTypes = new HashSet<>();
-    private static final String BASE_TYPE = "hippo:document";
-    private static final String BASE_COMPOUND_TYPE = "hippo:compound";
 
     public HippoContentBean(final String projectNamespace, final ContentType contentType) {
         this.contentType = contentType;
@@ -86,15 +85,15 @@ public class HippoContentBean {
 
     private void processSupertypes() {
         if (name.endsWith("basedocument")) {
-            addSuperType(BASE_TYPE);
+            addSuperType(HippoNodeType.NT_DOCUMENT);
         }
         boolean documentType = false;
         boolean compoundType = false;
         final SortedSet<String> mySupertypes = contentType.getSuperTypes();
         for (String mySupertype : mySupertypes) {
-            if (mySupertype.equals(BASE_TYPE)) {
+            if (mySupertype.equals(HippoNodeType.NT_DOCUMENT)) {
                 documentType = true;
-            } else if (mySupertype.equals(BASE_COMPOUND_TYPE)) {
+            } else if (mySupertype.equals(HippoNodeType.NT_COMPOUND)) {
                 compoundType = true;
             }
             if (mySupertype.startsWith(prefix)) {
@@ -103,9 +102,9 @@ public class HippoContentBean {
         }
         if (superTypes.size() == 0) {
             if (documentType) {
-                addSuperType(BASE_TYPE);
+                addSuperType(HippoNodeType.NT_DOCUMENT);
             } else if (compoundType) {
-                addSuperType(BASE_COMPOUND_TYPE);
+                addSuperType(HippoNodeType.NT_COMPOUND);
             } else {
                 log.warn("Unknown supertype for {}", this);
             }

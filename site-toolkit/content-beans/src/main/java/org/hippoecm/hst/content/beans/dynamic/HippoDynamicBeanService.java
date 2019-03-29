@@ -22,8 +22,11 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.BeanBuilderServiceParameters;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -34,10 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class HippoDynamicBeanService extends AbstractBeanBuilderService implements DynamicBeanService {
     private static final Logger log = LoggerFactory.getLogger(HippoDynamicBeanService.class);
-    private static final String HIPPO_DOCUMENT_CLASS_PATH = "org.hippoecm.hst.content.beans.standard.HippoDocument";
-    private static final String HIPPO_COMPOUND_CLASS_PATH = "org.hippoecm.hst.content.beans.standard.HippoCompound";
 
-    private ContentTypeService contentTypeService;
     private ObjectConverter objectConverter;
 
     class DynamicBeanBuilderServiceParameters implements BeanBuilderServiceParameters {
@@ -54,34 +54,31 @@ public class HippoDynamicBeanService extends AbstractBeanBuilderService implemen
 
     public HippoDynamicBeanService(final ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;
-        this.contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
     }
 
     public void setObjectConverter(ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;
     }
 
-    @SuppressWarnings("unchecked")
     private Class<? extends HippoBean> createDynamicCompoundBean(ContentType contentType) {
         final Set<String> superTypes = contentType.getSuperTypes();
         if (superTypes.size() == 0 || !superTypes.iterator().next().equals(HippoNodeType.NT_COMPOUND)) {
             return null;
         }
 
-        Class<? extends HippoBean> parentBean = null;
-        try {
-            parentBean = (Class<? extends HippoBean>) Class.forName(HIPPO_COMPOUND_CLASS_PATH);
-        } catch (ClassNotFoundException e) {
-            log.error("Problem while creating hippo compound bean.");
-        }
+        Class<? extends HippoBean> parentBean = HippoCompound.class;
 
         return generateBean(parentBean, contentType);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Class<? extends HippoBean> createDynamicDocumentBean(Class<? extends HippoBean> parentBean,
             final String documentType) {
+        ContentTypeService contentTypeService = getContentTypeService();
+        if (contentTypeService == null) {
+            return null;
+        }
+
         final ContentType contentType;
         try {
             contentType = contentTypeService.getContentTypes().getType(documentType);
@@ -91,11 +88,7 @@ public class HippoDynamicBeanService extends AbstractBeanBuilderService implemen
         }
 
         if (parentBean == null) {
-            try {
-                parentBean = (Class<? extends HippoBean>) Class.forName(HIPPO_DOCUMENT_CLASS_PATH);
-            } catch (ClassNotFoundException e) {
-                log.error("Problem while creating hippo document bean.");
-            }
+            parentBean = HippoDocument.class;
         }
 
         return generateBean(parentBean, contentType);
@@ -120,6 +113,7 @@ public class HippoDynamicBeanService extends AbstractBeanBuilderService implemen
 
         final Class<? extends HippoBean> generatedBean = builder.create();
         ObjectConverterUtils.updateDynamicBeanDefinition(generatedBean, contentBean.getName(), objectConverter);
+
         return generatedBean;
     }
 
@@ -212,6 +206,11 @@ public class HippoDynamicBeanService extends AbstractBeanBuilderService implemen
 
     @Override
     public void addCustomNodeType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters) {
+        ContentTypeService contentTypeService = getContentTypeService();
+        if (contentTypeService == null) {
+            return;
+        }
+
         DynamicBeanBuilderServiceParameters parameters = (DynamicBeanBuilderServiceParameters) builderParameters;
         final String methodName = DynamicBeanUtils.createMethodName(name);
 
@@ -228,6 +227,15 @@ public class HippoDynamicBeanService extends AbstractBeanBuilderService implemen
         }
 
         parameters.getDynamicBeanBuilder().addBeanMethodInternalType(generatedBean, methodName, name, multiple);
+    }
+
+    private ContentTypeService getContentTypeService() {
+        ContentTypeService contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
+        if (contentTypeService == null) {
+            log.warn("ContentTypeService hasn't been initialized yet.");
+        }
+
+        return contentTypeService;
     }
 
 }

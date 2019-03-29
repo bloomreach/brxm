@@ -27,6 +27,6 @@ public interface DynamicBeanInvalidationService {
      * If a document type is modified, removes initialized dynamic beans of all
      * document types from {@link ObjectConverter} for the regeneration of the beans.
      */
-    void invalidate();
+    void invalidateOnDocumentTypeModification();
 
 }

@@ -237,21 +237,31 @@ public class ObjectConverterUtils {
     }
 
     /**
+     * Delegates to {@link ObjectConverterImpl} to remove the dynamic bean
+     * of the given document type.
      * 
      * @param contentType of the document type from the contentTypeService
-     * @param objectConverter object to convert document type to dynamic bean
+     * @param objectConverter converter instance of the {@link ObjectConverterImpl}
      */
     public static void invalidateDynamicBean(final String documentType, final ObjectConverter objectConverter) {
         if (objectConverter instanceof ObjectConverterImpl) {
-            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectConverter;
-            wrapper.removeDynamicBean(documentType);
+            ObjectConverterImpl objectConverterImpl = (ObjectConverterImpl) objectConverter;
+            objectConverterImpl.removeDynamicBean(documentType);
         }
     }
 
+    /**
+     * Delegates to {@link ObjectConverterImpl} to update the definition
+     * of the given dynamicBean.
+     * 
+     * @param generatedBean {@link HippoBean} instance which is generated on the fly
+     * @param documentType name of the document type
+     * @param objectConverter converter instance of the {@link ObjectConverterImpl}
+     */
     public static void updateDynamicBeanDefinition(final Class<? extends HippoBean> generatedBean, final String documentType, final ObjectConverter objectConverter) {
         if (objectConverter instanceof ObjectConverterImpl) {
-            ObjectConverterImpl wrapper = (ObjectConverterImpl) objectConverter;
-            wrapper.updateBeanDefinition(generatedBean, documentType);
+            ObjectConverterImpl objectConverterImpl = (ObjectConverterImpl) objectConverter;
+            objectConverterImpl.updateBeanDefinition(generatedBean, documentType);
         }
     }
 
