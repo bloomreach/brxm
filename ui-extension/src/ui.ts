@@ -91,6 +91,7 @@ interface ChannelParent extends UiParent {
 interface DocumentParent extends UiParent {
   getDocument: ParentMethod<DocumentProperties>;
   getFieldValue: ParentMethod<string>;
+  getFieldCompareValue: ParentMethod<string>;
   setFieldValue: ParentMethod<void, [string]>;
   setFieldHeight: ParentMethod<void, [number]>;
 }
@@ -135,6 +136,10 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
 class Field extends Scope<DocumentParent> implements FieldScope {
   getValue() {
     return this[PARENT].call('getFieldValue');
+  }
+
+  getCompareValue (): Promise<string> {
+    return this[PARENT].call('getFieldCompareValue');
   }
 
   setValue(value: string) {

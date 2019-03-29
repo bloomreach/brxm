@@ -190,7 +190,7 @@ export interface ChannelScopeEvents {
  */
 export interface PageScope extends Emitter<PageScopeEvents> {
   /**
-   * @returns a Promise that resolves with [[PageProperties]] of the current page.
+   * @returns A Promise that resolves with [[PageProperties]] of the current page.
    */
   get(): Promise<PageProperties>;
 
@@ -211,7 +211,7 @@ export interface Emitter<Events> {
    * @param eventName the name of the emitted event.
    * @param handler the function to call with the emitted value.
    *
-   * @returns a function to unsubscribe the handler again.
+   * @returns A function to unsubscribe the handler again.
    */
   on(eventName: keyof Events, handler: EventHandler<Events>): UnsubscribeFn;
 }
@@ -268,7 +268,7 @@ export interface PageProperties {
  */
 export interface DocumentScope {
   /**
-   * @returns a Promise that resolves with [[DocumentProperties]] of the current document.
+   * @returns A Promise that resolves with [[DocumentProperties]] of the current document.
    */
   get(): Promise<DocumentProperties>;
 
@@ -329,9 +329,19 @@ export interface DocumentProperties {
  */
 export interface FieldScope {
   /**
-   * Gathers current field value.
+   * Gets the current field value.
+   * @return A promise that resolves with the current field value.
    */
   getValue(): Promise<string>;
+
+  /**
+   * Gets the field value to compare the current value to.
+   * Only valid when the document editor mode is [[DocumentEditorMode.Compare]].
+   *
+   * @return A promise that resolves with the compare value, or null when the
+   * document editor mode is not [[DocumentEditorMode.Compare]].
+   */
+  getCompareValue(): Promise<string>;
 
   /**
    * Updates current field value.

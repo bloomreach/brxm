@@ -123,6 +123,17 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.document.field.getCompareValue()', () => {
+    it('returns the previous field value', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve('test'));
+
+      const compareValue = await ui.document.field.getCompareValue();
+
+      expect(parentConnection.call).toHaveBeenCalledWith('getFieldCompareValue');
+      expect(compareValue).toEqual('test');
+    });
+  });
+
   describe('ui.document.field.setValue()', () => {
     it('sets the current field value', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
