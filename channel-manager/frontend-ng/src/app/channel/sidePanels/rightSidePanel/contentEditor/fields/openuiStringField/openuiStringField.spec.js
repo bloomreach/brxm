@@ -120,7 +120,7 @@ describe('OpenuiStringField', () => {
   });
 
   it('fails to set a long value', () => {
-    expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
+    expect(() => $ctrl.setValue('a'.repeat(102401))).toThrow();
   });
 
   it('sets the height', () => {
