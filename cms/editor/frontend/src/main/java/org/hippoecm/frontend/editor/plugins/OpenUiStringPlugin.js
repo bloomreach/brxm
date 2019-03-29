@@ -115,7 +115,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
         }
         hiddenValueElement.value = value;
       },
-      getCompareValue: function() {
+      getFieldCompareValue: function() {
         return compareValue;
       },
       setFieldHeight: function(pixels) {
