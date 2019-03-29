@@ -28,14 +28,18 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -65,7 +69,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private final UiExtension extension;
     private final String iframeParentId;
     private final String hiddenValueId;
-    private final String documentEditorMode;
+    private final IEditor.Mode documentEditorMode;
+    private final String compareValue;
     private final int initialHeightInPixels;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -91,7 +96,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         errorMessage.setVisible(!uiExtension.isPresent());
         queue(errorMessage);
 
-        documentEditorMode = config.getString("mode", "view");
+        documentEditorMode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
+        compareValue = getCompareValue(context, config).orElse(null);
         initialHeightInPixels = config.getInt(CONFIG_PROPERTY_INIITAL_HEIGHT_IN_PIXELS, DEFAULT_INITIAL_HEIGHT_IN_PIXELS);
     }
 
@@ -101,6 +107,17 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         }
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
         return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD);
+    }
+
+    private Optional<String> getCompareValue(final IPluginContext context, final IPluginConfig config) {
+        if (documentEditorMode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
+            final IModel<?> compareModel = context.getService(config.getString("model.compareTo"),
+                    IModelReference.class) .getModel();
+            if (compareModel != null) {
+                return Optional.of(Strings.toString(compareModel.getObject()));
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -123,7 +140,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
-        parameters.put("documentEditorMode", documentEditorMode);
+        parameters.put("compareValue", compareValue);
+        parameters.put("documentEditorMode", documentEditorMode.toString());
         parameters.put("initialHeightInPixels", initialHeightInPixels);
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
@@ -148,7 +166,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
      * Get the plugin containing the document information.
      */
     private RenderPlugin getDocumentPlugin() {
-        if (documentEditorMode.equals("edit")) {
+        if (documentEditorMode == IEditor.Mode.EDIT) {
             return findParent(EditorPlugin.class);
         } else {
             return findParent(ComparePlugin.class);
