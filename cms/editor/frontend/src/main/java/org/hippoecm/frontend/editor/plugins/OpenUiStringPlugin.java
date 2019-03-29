@@ -94,7 +94,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         queue(errorMessage);
 
         documentEditorMode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
-        getCompareValue(context, config);
+        compareValue = getCompareValue(context, config).orElse(null);
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -105,14 +105,15 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         return loader.loadUiExtension(uiExtensionName, UiExtensionPoint.DOCUMENT_FIELD);
     }
 
-    private void getCompareValue(final IPluginContext context, final IPluginConfig config) {
+    private Optional<String> getCompareValue(final IPluginContext context, final IPluginConfig config) {
         if (documentEditorMode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
             final IModel<?> compareModel = context.getService(config.getString("model.compareTo"), 
                     IModelReference.class) .getModel();
             if (compareModel != null) {
-                compareValue = Strings.toString(compareModel.getObject());
+                return Optional.of(Strings.toString(compareModel.getObject()));
             }
         }
+        return Optional.empty();
     }
     
     @Override
