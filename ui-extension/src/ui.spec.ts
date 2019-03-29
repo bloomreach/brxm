@@ -128,7 +128,7 @@ describe('Ui.init()', () => {
 
       const compareValue = await ui.document.field.getCompareValue();
 
-      expect(parentConnection.call).toHaveBeenCalledWith('getCompareValue');
+      expect(parentConnection.call).toHaveBeenCalledWith('getFieldCompareValue');
       expect(compareValue).toEqual('test');
     });
   });
