@@ -158,7 +158,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(Reason.UNKNOWN_VALIDATOR), handle)
+                    withDisplayName(new ErrorInfo(Reason.CREATE_UNKNOWN_VALIDATOR), handle)
             );
         }
 
@@ -209,7 +209,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(Reason.UNKNOWN_VALIDATOR), handle)
+                    withDisplayName(new ErrorInfo(Reason.CREATE_UNKNOWN_VALIDATOR), handle)
             );
         }
 
@@ -254,7 +254,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
+            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_UNKNOWN_VALIDATOR));
         }
 
         // Push fields onto draft node
@@ -309,7 +309,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType docType = getDocumentType(handle, locale);
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
+            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_UNKNOWN_VALIDATOR));
         }
 
         // Write field value to draft node
@@ -368,7 +368,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, session, locale);
         if (documentType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.UNKNOWN_VALIDATOR));
+            throw new ForbiddenException(new ErrorInfo(Reason.CREATE_UNKNOWN_VALIDATOR));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);
