@@ -392,11 +392,6 @@ export interface DialogProperties {
   title: string;
 
   /**
-   * A hex color for the background color of the title bar.
-   */
-  titleBarColor?: string;
-
-  /**
    * The URL to load the dialog contents from.
    */
   url: string;
