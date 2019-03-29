@@ -61,8 +61,8 @@ public class OpenUiStringFieldTypeTest {
     @Test
     public void testFieldConfig() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
-        expect(fieldTypeContext.getStringConfig("uiExtension")).andReturn(Optional.of("myExtension"));
-        expect(fieldTypeContext.getStringConfig("initialHeightInPixels")).andReturn(Optional.of("42"));
+        expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.of("myExtension"));
+        expect(fieldTypeContext.getStringConfig("initial.height.in.pixels")).andReturn(Optional.of("42"));
 
         replayAll();
 
@@ -76,8 +76,8 @@ public class OpenUiStringFieldTypeTest {
     @Test
     public void testDefaultFieldConfig() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
-        expect(fieldTypeContext.getStringConfig("uiExtension")).andReturn(Optional.empty());
-        expect(fieldTypeContext.getStringConfig("initialHeightInPixels")).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig("initial.height.in.pixels")).andReturn(Optional.empty());
 
         replayAll();
 

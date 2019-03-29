@@ -42,8 +42,8 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        fieldContext.getStringConfig("uiExtension").ifPresent(this::setUiExtension);
-        fieldContext.getStringConfig("initialHeightInPixels").ifPresent(this::setInitialHeightInPixels);
+        fieldContext.getStringConfig("ui.extension").ifPresent(this::setUiExtension);
+        fieldContext.getStringConfig("initial.height.in.pixels").ifPresent(this::setInitialHeightInPixels);
         return super.init(fieldContext);
     }
 
