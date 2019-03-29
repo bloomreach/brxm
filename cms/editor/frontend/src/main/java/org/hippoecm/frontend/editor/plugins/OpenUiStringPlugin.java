@@ -73,7 +73,11 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final HiddenField<String> value = new HiddenField<>("value", getModel());
+        final HiddenField<String> value = new HiddenField<String>("value", getModel()) {
+            {
+                setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
+            }
+        };
         value.setOutputMarkupId(true);
         queue(value);
         hiddenValueId = value.getMarkupId();
