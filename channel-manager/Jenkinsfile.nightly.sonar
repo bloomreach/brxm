@@ -1,0 +1,49 @@
+// Copyright 2018-2019 BloomReach B.V. (https://www.bloomreach.com)
+
+import groovy.json.JsonSlurper
+
+pipeline {
+    agent {
+        docker {
+            label 'docker'
+            image 'onehippo/buildcms:latest'
+            registryUrl 'https://docker.io/'
+            //customWorkspace "workspace/"
+            args "-v /dev/urandom:/dev/random \
+                  --cap-add=SYS_ADMIN"
+        }
+    }
+    environment {
+        gitCredentialsID = 'a9511950-0b5d-4727-aa82-a0d7f205b1f4'
+        mavenSettingsID = 'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig1412272376940'
+
+        def workspace = pwd()
+    }
+
+    stages {
+        stage('Prepare') {
+            steps {
+                echo "=== Build Environment ================"
+                sh "java -version && javac -version && node --version && mvn --version && google-chrome --version"
+                echo "======================================"
+            }
+        }
+        stage('Build') {
+            steps {
+                // Run the maven build
+                echo "Build the distribution:"
+                withMaven(
+                    options: [artifactsPublisher(disabled: true)],
+                    mavenSettingsConfig: mavenSettingsID) {
+                    // sh '$MVN_CMD help:effective-settings -U -Dhippo.snapshots=true'
+                    sh '$MVN_CMD clean verify sonar:sonar -Dsonar.host.url=https://ci-xm.corp.bloomreach.com/analysis'
+                }
+            }
+        }
+        stage('Results') {
+            steps {
+                slackSend channel: 'content-eng-tiger-ci', color: '#0000ff', message: "Channel Manager 13.2 analyzed. Sonar URL https://ci-xm.corp.bloomreach.com/analysis/dashboard?id=org.onehippo.cms7%3Ahippo-addon-channel-manager"
+            }
+        }
+    }
+}
