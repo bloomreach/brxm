@@ -126,6 +126,12 @@ Hippo.OpenUi.createStringField = function(parameters) {
   });
 
   HippoAjax.registerDestroyFunction(connection.iframe, function() {
-    connection.destroy();
+    try {
+      connection.destroy();
+    } catch (error) {
+      if (error.code !== Penpal.ERR_CONNECTION_DESTROYED) {
+        console.warn('Unexpected error while destroying connection with document field extension:', error);
+      }
+    }
   });
 };
