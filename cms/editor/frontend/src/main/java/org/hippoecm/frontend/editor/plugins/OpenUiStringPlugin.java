@@ -61,8 +61,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "ui.extension";
-    private static final String CONFIG_PROPERTY_INIITAL_HEIGHT_IN_PIXELS = "initial.height.in.pixels";
-    private static final int DEFAULT_INITIAL_HEIGHT_IN_PIXELS = 150;
     private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
@@ -71,7 +69,6 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
     private final String hiddenValueId;
     private final IEditor.Mode documentEditorMode;
     private final String compareValue;
-    private final int initialHeightInPixels;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -98,7 +95,6 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         documentEditorMode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         compareValue = getCompareValue(context, config).orElse(null);
-        initialHeightInPixels = config.getInt(CONFIG_PROPERTY_INIITAL_HEIGHT_IN_PIXELS, DEFAULT_INITIAL_HEIGHT_IN_PIXELS);
     }
 
     private Optional<UiExtension> loadUiExtension(final String uiExtensionName) {
@@ -142,7 +138,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("hiddenValueId", hiddenValueId);
         parameters.put("compareValue", compareValue);
         parameters.put("documentEditorMode", documentEditorMode.toString());
-        parameters.put("initialHeightInPixels", initialHeightInPixels);
+        parameters.put("initialHeightInPixels", extension.getInitialHeightInPixels());
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 

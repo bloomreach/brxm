@@ -43,6 +43,11 @@ public interface UiExtension extends Serializable {
     String getUrl();
 
     /**
+     * @return the initial height in pixels. Only used by {@link UiExtensionPoint#DOCUMENT_FIELD} extensions.
+     */
+    int getInitialHeightInPixels();
+
+    /**
      * @return the configuration to pass to the extension.
      */
     String getConfig();
