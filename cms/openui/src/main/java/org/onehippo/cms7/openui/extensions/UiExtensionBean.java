@@ -20,7 +20,7 @@ class UiExtensionBean implements UiExtension {
     private String id;
     private String displayName;
     private String url;
-    private int initialHeightInPixels;
+    private int initialHeightInPixels = DEFAULT_INITIAL_HEIGHT_IN_PIXELS;
     private String config;
     private UiExtensionPoint extensionPoint;
 
