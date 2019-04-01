@@ -22,6 +22,8 @@ import java.io.Serializable;
  */
 public interface UiExtension extends Serializable {
 
+    int DEFAULT_INITIAL_HEIGHT_IN_PIXELS = 150;
+
     /**
      * @return identifier of the extension. Must be unique across all extensions.
      */
