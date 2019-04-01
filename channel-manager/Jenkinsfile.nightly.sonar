@@ -32,6 +32,7 @@ pipeline {
         mavenSettingsID = 'org.jenkinsci.plugins.configfiles.maven.MavenSettingsConfig1412272376940'
 
         def workspace = pwd()
+        HOME = "${env.WORKSPACE}"
     }
 
     stages {
