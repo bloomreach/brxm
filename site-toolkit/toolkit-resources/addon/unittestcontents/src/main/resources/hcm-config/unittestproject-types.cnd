@@ -28,3 +28,5 @@
 
 [unittestproject:newspage] > unittestproject:basedocument, hippostd:relaxed
 
+[unittestproject:dynamicbeanpage] > unittestproject:basedocument, hippostd:relaxed
+

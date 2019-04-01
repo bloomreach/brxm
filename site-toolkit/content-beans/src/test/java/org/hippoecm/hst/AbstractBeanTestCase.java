@@ -39,7 +39,11 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
     protected ObjectConverter getObjectConverter() {
         return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);
     }
-    
+ 
+    protected ObjectConverter getObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
+        return ObjectConverterUtils.createObjectConverter(annotatedClasses, true);
+    }
+
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         annotatedClasses.add(PersistableTextPage.class);

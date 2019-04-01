@@ -91,7 +91,10 @@
     <hippo.services.search.version>13.2.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>13.2.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.testutils.version>13.2.0-SNAPSHOT</hippo.testutils.version>
-
+    <hippo.plugin.gallerypicker.version>13.2.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.selections.version>13.2.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.packages.version>13.2.0-SNAPSHOT</hippo.packages.version>
+    
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <stax2-api.version>3.1.4</stax2-api.version>
