@@ -50,7 +50,7 @@ pipeline {
                     options: [artifactsPublisher(disabled: true)],
                     mavenSettingsConfig: mavenSettingsID) {
                     // sh '$MVN_CMD help:effective-settings -U -Dhippo.snapshots=true'
-                    sh '$MVN_CMD clean verify sonar:sonar -Dsonar.host.url=https://ci-xm.corp.bloomreach.com/analysis'
+                    sh '$MVN_CMD clean verify -Dhippo.snapshots sonar:sonar -Dsonar.host.url=https://ci-xm.corp.bloomreach.com/analysis'
                 }
             }
         }
