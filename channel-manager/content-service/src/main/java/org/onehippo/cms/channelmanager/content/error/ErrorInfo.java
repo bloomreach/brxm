@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ public class ErrorInfo {
         CANCELABLE_PUBLICATION_REQUEST_PENDING,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         CORE_PROJECT,
+        CREATE_WITH_UNKNOWN_VALIDATOR,
         DOES_NOT_EXIST,
         INVALID_DATA,
         INVALID_TEMPLATE_QUERY,
@@ -102,10 +103,10 @@ public class ErrorInfo {
         PROJECT_INVALID_STATE,
         PROJECT_NOT_FOUND,
         REQUEST_PENDING,
+        SAVE_WITH_UNKNOWN_VALIDATOR,
         SERVER_ERROR,
         SLUG_ALREADY_EXISTS,
         TEMPLATE_QUERY_NOT_FOUND,
-        UNKNOWN_VALIDATOR,
         WORKFLOW_ERROR,
         WORKFLOW_ACTION_NOT_AVAILABLE,
         WORKFLOW_ACTION_NOT_IMPLEMENTED,
