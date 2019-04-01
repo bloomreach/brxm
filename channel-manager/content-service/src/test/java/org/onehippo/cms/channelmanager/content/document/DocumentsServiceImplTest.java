@@ -387,7 +387,7 @@ public class DocumentsServiceImplTest {
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_UNKNOWN_VALIDATOR));
+            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR));
             assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
         }
 
@@ -769,7 +769,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -1208,7 +1208,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
 
         verifyAll();

@@ -85,7 +85,7 @@ public class ErrorInfo {
         CANCELABLE_PUBLICATION_REQUEST_PENDING,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         CORE_PROJECT,
-        CREATE_UNKNOWN_VALIDATOR,
+        CREATE_WITH_UNKNOWN_VALIDATOR,
         DOES_NOT_EXIST,
         INVALID_DATA,
         INVALID_TEMPLATE_QUERY,
@@ -103,7 +103,7 @@ public class ErrorInfo {
         PROJECT_INVALID_STATE,
         PROJECT_NOT_FOUND,
         REQUEST_PENDING,
-        SAVE_UNKNOWN_VALIDATOR,
+        SAVE_WITH_UNKNOWN_VALIDATOR,
         SERVER_ERROR,
         SLUG_ALREADY_EXISTS,
         TEMPLATE_QUERY_NOT_FOUND,
