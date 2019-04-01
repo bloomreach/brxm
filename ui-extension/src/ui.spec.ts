@@ -24,6 +24,23 @@ import { PageProperties } from './api';
 import { ParentConnection } from './parent';
 import { Ui } from './ui';
 
+const observe = jest.fn();
+const disconnect = jest.fn();
+
+window['MutationObserver'] = class {
+  constructor(callback: () => {}) {}
+  observe(element: HTMLElement, init: MutationObserverInit) {
+    observe(element, init);
+    return disconnect;
+  }
+  disconnect() { disconnect(); }
+};
+
+afterEach(() => {
+  observe.mockClear();
+  disconnect.mockClear();
+});
+
 describe('Ui.init()', () => {
   let parentConnection: ParentConnection;
   let eventEmitter: Emittery;
@@ -111,6 +128,19 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.document.get()', () => {
+    it('returns the current document properties', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve({
+        id: 'test',
+      }));
+
+      const documentProperties = await ui.document.get();
+
+      expect(parentConnection.call).toHaveBeenCalledWith('getDocument');
+      expect(documentProperties).toEqual({ id: 'test' });
+    });
+  });
+
   describe('ui.document.field.getValue()', () => {
     it('returns the current field value', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve('test'));
@@ -146,6 +176,56 @@ describe('Ui.init()', () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
       await ui.document.field.setHeight(100);
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
+    });
+  });
+
+  describe('ui.document.field.updateHeight()', () => {
+    it('sets the field height to the value of document.body.scrollHeight', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
+      await ui.document.field.updateHeight();
+      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
+    });
+
+    it('does not set the field height if it has not changed', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
+      await ui.document.field.updateHeight();
+      await ui.document.field.updateHeight();
+      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
+      expect(parentConnection.call).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('ui.document.field.autoUpdateHeight()', () => {
+    it('starts a MutationObserver for document.body', async () => {
+      await ui.document.field.autoUpdateHeight();
+      expect(observe).toHaveBeenCalledWith(document.body, {
+        attributes: true,
+        characterData: true,
+        childList: true,
+        subtree: true,
+      });
+    });
+
+    it('hides vertical overflow on document.body to prevent vertical scrollbars', async () => {
+      await ui.document.field.autoUpdateHeight();
+      expect(document.body.style.overflowY).toBe('hidden');
+    });
+
+    describe('and the returned function', () => {
+      it('disconnects the MutationObserver', async () => {
+        const stopFn = await ui.document.field.autoUpdateHeight();
+        stopFn();
+        expect(disconnect).toHaveBeenCalled();
+      });
+
+      it('restores the original vertical overflow on document.body', async () => {
+        document.body.style.overflowY = 'scroll';
+        const stopFn = await ui.document.field.autoUpdateHeight();
+        stopFn();
+        expect(document.body.style.overflowY).toBe('scroll');
+      });
     });
   });
 });
