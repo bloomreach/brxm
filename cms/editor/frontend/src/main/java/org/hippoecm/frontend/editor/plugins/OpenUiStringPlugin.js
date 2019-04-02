@@ -23,6 +23,8 @@ Hippo.OpenUi.createStringField = function(parameters) {
   const MAX_SIZE_IN_BYTES = 102400;
 
   const {
+    autoSaveUrl,
+    autoSaveDelay,
     cmsLocale,
     cmsTimeZone,
     cmsVersion,
@@ -97,6 +99,23 @@ Hippo.OpenUi.createStringField = function(parameters) {
     iframe.style.height = height + 'px';
   }
 
+  let scheduledSave = null;
+  function save(data) {
+    Wicket.Ajax.post({
+      u: autoSaveUrl,
+      ep: {
+        data: data
+      }
+    });
+  }
+
+  function scheduleSave(data) {
+    clearTimeout(scheduledSave);
+    scheduledSave = setTimeout(function () {
+      save(data);
+    }, autoSaveDelay);
+  }
+
   const cmsOrigin = window.location.origin;
   const antiCache = window.Hippo.antiCache;
   const iframeUrl = getIframeUrl(cmsOrigin, antiCache);
@@ -119,22 +138,28 @@ Hippo.OpenUi.createStringField = function(parameters) {
       getDocument: function() {
         return getDocumentProperties();
       },
+
       getProperties: function() {
         const cmsBaseUrl = cmsOrigin + window.location.pathname;
         return getProperties(cmsBaseUrl);
       },
+
       getFieldValue: function() {
         return hiddenValueElement.value;
       },
+
       setFieldValue: function(value) {
         if (value.length >= MAX_SIZE_IN_BYTES) {
           throw new Error('Max value length of ' + MAX_SIZE_IN_BYTES + ' is reached.');
         }
         hiddenValueElement.value = value;
+        scheduleSave(value);
       },
+
       getFieldCompareValue: function() {
         return compareValue;
       },
+
       setFieldHeight: function(pixels) {
         setHeight(connection.iframe, pixels);
       }
@@ -142,6 +167,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
   });
 
   HippoAjax.registerDestroyFunction(connection.iframe, function() {
+    clearTimeout(scheduledSave);
     try {
       connection.destroy();
     } catch (error) {
