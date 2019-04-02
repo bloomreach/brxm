@@ -34,14 +34,14 @@ public class OpenUiStringFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 
     private String uiExtension = null;
-    
+
     public OpenUiStringFieldType() {
         setType(Type.OPEN_UI);
     }
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        fieldContext.getStringConfig("uiExtension").ifPresent(this::setUiExtension);
+        fieldContext.getStringConfig("ui.extension").ifPresent(this::setUiExtension);
         return super.init(fieldContext);
     }
 
