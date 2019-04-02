@@ -70,7 +70,6 @@ public class OpenUiStringFieldTypeTest {
         openUiStringFieldType.init(fieldTypeContext);
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo("myExtension"));
-        assertThat(openUiStringFieldType.getInitialHeightInPixels(), equalTo(42));
     }
 
     @Test
@@ -85,7 +84,6 @@ public class OpenUiStringFieldTypeTest {
         openUiStringFieldType.init(fieldTypeContext);
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo(null));
-        assertThat(openUiStringFieldType.getInitialHeightInPixels(), equalTo(150));
     }
 
     @Test

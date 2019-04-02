@@ -21,7 +21,6 @@ export default {
   controller,
   bindings: {
     extensionId: '@',
-    initialHeightInPixels: '@',
     value: '<ngModel',
   },
   require: {

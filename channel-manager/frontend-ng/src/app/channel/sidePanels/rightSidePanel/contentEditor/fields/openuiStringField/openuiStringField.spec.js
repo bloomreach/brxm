@@ -21,15 +21,18 @@ describe('OpenuiStringField', () => {
   let mdInputContainer;
   let ngModel;
   let ContentEditor;
+  let ExtensionService;
   let OpenUiService;
   let connection;
+  let extension;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _ContentEditor_, _OpenUiService_) => {
+    inject((_$componentController_, _ContentEditor_, _ExtensionService_, _OpenUiService_) => {
       $componentController = _$componentController_;
       ContentEditor = _ContentEditor_;
+      ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
     });
 
@@ -42,6 +45,11 @@ describe('OpenuiStringField', () => {
       value: 'test-value',
     });
     spyOn(ContentEditor, 'getDocument');
+
+    extension = {
+      initialHeightInPixels: 150,
+    };
+    spyOn(ExtensionService, 'getExtension').and.returnValue(extension);
 
     connection = {
       iframe: angular.element('<iframe src="about:blank"></iframe>')[0],
@@ -82,14 +90,11 @@ describe('OpenuiStringField', () => {
       }));
     });
 
-    it('sets the initial height when provided', () => {
-      $ctrl.$onChanges({
-        extensionId: { currentValue: 'test-id' },
-        initialHeightInPixels: { currentValue: 42 },
-      });
+    it('sets the initial height', () => {
+      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
 
       expect(connection.iframe).toHaveCss({
-        height: '42px',
+        height: '150px',
       });
     });
 
