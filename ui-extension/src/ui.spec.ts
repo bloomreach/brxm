@@ -51,7 +51,7 @@ describe('Ui.init()', () => {
 
   describe('ui.channel.refresh()', () => {
     it('refreshes the current channel', () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       ui.channel.refresh().then(() => {
         expect(parentConnection.call).toHaveBeenCalledWith('refreshChannel');
       });
@@ -72,7 +72,7 @@ describe('Ui.init()', () => {
 
   describe('ui.channel.page.refresh()', () => {
     it('refreshes the current page', () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       ui.channel.page.refresh().then(() => {
         expect(parentConnection.call).toHaveBeenCalledWith('refreshPage');
       });
