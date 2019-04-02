@@ -94,7 +94,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
 
   function setHeight(iframe, pixels) {
     const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
-    iframe.style.height = height + "px";
+    iframe.style.height = height + 'px';
   }
 
   const cmsOrigin = window.location.origin;
