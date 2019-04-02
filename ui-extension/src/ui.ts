@@ -51,6 +51,9 @@ const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
 const PARENT = Symbol('parent');
 const EVENT_EMITTER = Symbol('eventEmitter');
 const EVENT_SCOPE = Symbol('eventScope');
+const FIELD_DOM_OBSERVER = Symbol('fieldDomObserver');
+const FIELD_OVERFLOW_STYLE = Symbol('fieldOverflowStyle');
+const FIELD_HEIGHT = Symbol('fieldHeight');
 
 abstract class Scope<T extends Parent = Parent> {
   protected [PARENT]: ParentConnection<T>;
@@ -125,6 +128,12 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
 }
 
 class Field extends Scope<DocumentParent> implements FieldScope {
+  constructor(parent: ParentConnection) {
+    super(parent);
+    this[FIELD_DOM_OBSERVER] = new MutationObserver(this.updateHeight.bind(this));
+    this[FIELD_HEIGHT] = null;
+  }
+
   getValue() {
     return this[PARENT].call('getFieldValue');
   }
@@ -138,7 +147,37 @@ class Field extends Scope<DocumentParent> implements FieldScope {
   }
 
   setHeight(pixels: number) {
+    if (this[FIELD_HEIGHT] !== pixels) {
+      this[FIELD_HEIGHT] = null;
+    }
     return this[PARENT].call('setFieldHeight', pixels);
+  }
+
+  updateHeight() {
+    const height = document.body.scrollHeight;
+
+    // cache the field height to avoid unnecessary method calls
+    if (this[FIELD_HEIGHT] !== height) {
+      this[FIELD_HEIGHT] = height;
+      return this.setHeight(height);
+    }
+  }
+
+  autoUpdateHeight() {
+    this[FIELD_DOM_OBSERVER].observe(document.body, {
+      attributes: true,
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+
+    this[FIELD_OVERFLOW_STYLE] = document.body.style.overflowY;
+    document.body.style.overflowY = 'hidden';
+
+    return () => {
+      this[FIELD_DOM_OBSERVER].disconnect();
+      document.body.style.overflowY = this[FIELD_OVERFLOW_STYLE];
+    };
   }
 }
 
