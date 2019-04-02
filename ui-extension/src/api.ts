@@ -418,6 +418,7 @@ export interface DialogScope {
 export enum DialogSize {
   Large = 'large',
   Medium = 'medium',
+  Small = 'small',
 }
 
 /**
