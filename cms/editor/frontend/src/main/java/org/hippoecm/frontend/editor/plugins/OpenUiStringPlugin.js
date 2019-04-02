@@ -18,6 +18,10 @@ Hippo.OpenUi = Hippo.OpenUi || {};
 
 Hippo.OpenUi.createStringField = function(parameters) {
 
+  const MIN_HEIGHT_IN_PIXELS = 10;
+  const MAX_HEIGHT_IN_PIXELS = 10000;
+  const MAX_SIZE_IN_BYTES = 102400;
+
   const {
     cmsLocale,
     cmsTimeZone,
@@ -33,11 +37,22 @@ Hippo.OpenUi.createStringField = function(parameters) {
     extensionUrl,
     hiddenValueId,
     iframeParentId,
+    initialHeightInPixels,
     userId,
     userDisplayName,
     userFirstName,
     userLastName
-  } = parameters;
+  } = unescapeProperties(parameters);
+
+  function unescapeProperties(parameters) {
+    const unescaped = {};
+    Object.keys(parameters).forEach(parameter => unescaped[parameter] = unescapeProperty(parameters[parameter]));
+    return unescaped;
+  }
+
+  function unescapeProperty(value) {
+    return typeof value === 'string' ? value.replace('\\"', '"') : value;
+  }
 
   function getIframeUrl(cmsOrigin, antiCache) {
     const iframeUrl = new URL(extensionUrl, cmsOrigin);
@@ -77,9 +92,10 @@ Hippo.OpenUi.createStringField = function(parameters) {
     }
   }
 
-  const MIN_HEIGHT_IN_PIXELS = 10;
-  const MAX_HEIGHT_IN_PIXELS = 10000;
-  const MAX_SIZE_IN_BYTES = 102400;
+  function setHeight(iframe, pixels) {
+    const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
+    iframe.style.height = height + 'px';
+  }
 
   const cmsOrigin = window.location.origin;
   const antiCache = window.Hippo.antiCache;
@@ -88,6 +104,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
   const hiddenValueElement = document.getElementById(hiddenValueId);
 
   const iframe = document.createElement('iframe');
+  setHeight(iframe, initialHeightInPixels);
 
   // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
   // - allow-top-navigation
@@ -119,8 +136,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
         return compareValue;
       },
       setFieldHeight: function(pixels) {
-        const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
-        connection.iframe.style.height = height + "px";
+        setHeight(connection.iframe, pixels);
       }
     }
   });

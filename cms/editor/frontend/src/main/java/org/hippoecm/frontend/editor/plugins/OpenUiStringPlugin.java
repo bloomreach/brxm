@@ -60,15 +60,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
-    private static final String CONFIG_PROPERTY_UI_EXTENSION = "uiExtension";
+    private static final String CONFIG_PROPERTY_UI_EXTENSION = "ui.extension";
     private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
     private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
-    private UiExtension extension;
-    private String iframeParentId;
-    private String hiddenValueId;
-    private IEditor.Mode documentEditorMode;
-    private String compareValue;
+    private final UiExtension extension;
+    private final String iframeParentId;
+    private final String hiddenValueId;
+    private final IEditor.Mode documentEditorMode;
+    private final String compareValue;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -111,7 +111,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private Optional<String> getCompareValue(final IPluginContext context, final IPluginConfig config) {
         if (documentEditorMode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
-            final IModel<?> compareModel = context.getService(config.getString("model.compareTo"), 
+            final IModel<?> compareModel = context.getService(config.getString("model.compareTo"),
                     IModelReference.class) .getModel();
             if (compareModel != null) {
                 return Optional.of(Strings.toString(compareModel.getObject()));
@@ -119,7 +119,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         }
         return Optional.empty();
     }
-    
+
     @Override
     public void renderHead(final IHeaderResponse response) {
         if (extension == null) {
@@ -141,7 +141,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
         parameters.put("iframeParentId", iframeParentId);
         parameters.put("hiddenValueId", hiddenValueId);
         parameters.put("compareValue", compareValue);
-        parameters.put("documentEditorMode", StringUtils.defaultString(documentEditorMode.toString()));
+        parameters.put("documentEditorMode", documentEditorMode.toString());
+        parameters.put("initialHeightInPixels", extension.getInitialHeightInPixels());
 
         getVariantNode().ifPresent(node -> addDocumentMetaData(parameters, node));
 

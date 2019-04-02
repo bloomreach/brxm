@@ -20,6 +20,7 @@ class UiExtensionBean implements UiExtension {
     private String id;
     private String displayName;
     private String url;
+    private int initialHeightInPixels = DEFAULT_INITIAL_HEIGHT_IN_PIXELS;
     private String config;
     private UiExtensionPoint extensionPoint;
 
@@ -48,6 +49,15 @@ class UiExtensionBean implements UiExtension {
 
     public void setUrl(final String url) {
         this.url = url;
+    }
+
+    @Override
+    public int getInitialHeightInPixels() {
+        return initialHeightInPixels;
+    }
+
+    public void setInitialHeightInPixels(final int initialHeightInPixels) {
+        this.initialHeightInPixels = initialHeightInPixels;
     }
 
     @Override
