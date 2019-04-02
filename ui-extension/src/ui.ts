@@ -97,7 +97,7 @@ interface DocumentParent extends UiParent {
 }
 
 interface DialogParent extends UiParent {
-  cancelDialog: ParentMethod;
+  cancelDialog: ParentMethod<void>;
   closeDialog: ParentMethod<void, [Transferable]>;
   getOptions: ParentMethod<DialogProperties>;
   openDialog: ParentMethod<void, [DialogProperties]>;

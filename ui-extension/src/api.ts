@@ -34,25 +34,35 @@ type UnsubscribeFn = () => void;
  */
 export enum UiExtensionErrorCode {
   /**
-   * The UI extension is not running in an iframe.
+   * The connection with the CMS has been destroyed.
    */
-  'NotInIframe' = 'NotInIframe',
+  ConnectionDestroyed = 'ConnectionDestroyed',
+
+  /**
+   * A dialog was cancelled.
+   */
+  DialogCanceled = 'DialogCanceled',
+
+  /**
+   * A dialog was cancelled.
+   */
+  DialogExists = 'DialogExists',
 
   /**
    * The version of the CMS in which the UI extension is loaded is not compatible with the version of the
    * ui-extension library used by the UI extension.
    */
-  'IncompatibleParent' = 'IncompatibleParent',
-
-  /**
-   * The connection with the CMS has been destroyed.
-   */
-  'ConnectionDestroyed' = 'ConnectionDestroyed',
+  IncompatibleParent = 'IncompatibleParent',
 
   /**
    * An internal error occurred.
    */
-  'InternalError' = 'InternalError',
+  InternalError = 'InternalError',
+
+  /**
+   * The UI extension is not running in an iframe.
+   */
+  NotInIframe = 'NotInIframe',
 }
 
 /**
@@ -383,6 +393,14 @@ export interface DialogScope {
 }
 
 /**
+ * Defines the different possible modes of a document editor.
+ */
+export enum DialogSize {
+  Large = 'large',
+  Medium = 'medium',
+}
+
+/**
  * Properties of a dialog.
  */
 export interface DialogProperties {
@@ -392,9 +410,9 @@ export interface DialogProperties {
   value?: any;
 
   /**
-   * Indicates if the dialog has to shown fullscreen.
+   * The size of the dialog.
    */
-  fullscreen?: boolean;
+  size?: DialogSize;
 
   /**
    * Title of the dialog.

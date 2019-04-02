@@ -65,6 +65,10 @@ class ParentError extends Error implements UiExtensionError {
         return UiExtensionErrorCode.NotInIframe;
       case Penpal.ERR_CONNECTION_DESTROYED:
         return UiExtensionErrorCode.ConnectionDestroyed;
+      case 'DialogCanceled':
+        return UiExtensionErrorCode.DialogCanceled;
+      case 'DialogExists':
+        return UiExtensionErrorCode.DialogExists;
       default:
         return UiExtensionErrorCode.InternalError;
     }
