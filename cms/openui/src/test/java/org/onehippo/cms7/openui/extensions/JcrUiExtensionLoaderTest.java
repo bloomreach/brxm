@@ -218,6 +218,7 @@ public class JcrUiExtensionLoaderTest {
 
         final UiExtension extension = loader.loadUiExtensions().iterator().next();
         assertThat(extension.getDisplayName(), equalTo("extension1"));
+        assertThat(extension.getInitialHeightInPixels(), equalTo(150));
     }
 
     @Test

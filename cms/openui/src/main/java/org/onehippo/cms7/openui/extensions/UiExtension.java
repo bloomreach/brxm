@@ -22,6 +22,8 @@ import java.io.Serializable;
  */
 public interface UiExtension extends Serializable {
 
+    int DEFAULT_INITIAL_HEIGHT_IN_PIXELS = 150;
+
     /**
      * @return identifier of the extension. Must be unique across all extensions.
      */
@@ -41,6 +43,11 @@ public interface UiExtension extends Serializable {
      * @return the URL that loads the extension.
      */
     String getUrl();
+
+    /**
+     * @return the initial height in pixels. Only used by {@link UiExtensionPoint#DOCUMENT_FIELD} extensions.
+     */
+    int getInitialHeightInPixels();
 
     /**
      * @return the configuration to pass to the extension.
