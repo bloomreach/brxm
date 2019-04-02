@@ -22,6 +22,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -30,7 +32,11 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
@@ -60,15 +66,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OpenUiStringPlugin extends RenderPlugin<String> {
 
+    private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
+
     private static final String CONFIG_PROPERTY_UI_EXTENSION = "ui.extension";
     private static final String OPEN_UI_STRING_PLUGIN_JS = "OpenUiStringPlugin.js";
-    private static final Logger log = LoggerFactory.getLogger(OpenUiStringPlugin.class);
 
     private final UiExtension extension;
     private final String iframeParentId;
     private final String hiddenValueId;
     private final IEditor.Mode documentEditorMode;
     private final String compareValue;
+    private final AutoSaveBehavior autoSaveBehavior;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -79,6 +87,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
             }
         };
         value.setOutputMarkupId(true);
+        value.add(autoSaveBehavior = new AutoSaveBehavior());
         queue(value);
         hiddenValueId = value.getMarkupId();
 
@@ -136,6 +145,8 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
     private String createJavaScriptForField() {
         final ObjectNode parameters = Json.object();
+        parameters.put("autoSaveUrl", autoSaveBehavior.getCallbackUrl().toString());
+        parameters.put("autoSaveDelay", 2000);
         parameters.put("extensionConfig", extension.getConfig());
         parameters.put("extensionUrl", extension.getUrl());
         parameters.put("iframeParentId", iframeParentId);
@@ -172,7 +183,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
             return findParent(ComparePlugin.class);
         }
     }
-    
+
     private static void addDocumentMetaData(final ObjectNode parameters, final Node variant) {
         try {
             parameters.put("documentVariantId", variant.getIdentifier());
@@ -220,5 +231,26 @@ public class OpenUiStringPlugin extends RenderPlugin<String> {
 
         UserUtils.getUserName(userId, jcrSession)
                 .ifPresent(displayName -> parameters.put("userDisplayName", displayName));
+    }
+
+    private class AutoSaveBehavior extends AbstractDefaultAjaxBehavior {
+
+        private static final String POST_PARAM_DATA = "data";
+
+        @Override
+        protected void respond(final AjaxRequestTarget target) {
+            final Request request = RequestCycle.get().getRequest();
+            final IRequestParameters requestParameters = request.getPostParameters();
+            final StringValue data = requestParameters.getParameterValue(POST_PARAM_DATA);
+
+            if (data.isNull()) {
+                log.warn("Cannot auto-save value of OpenUI field '{}' because the request parameter '{}' is missing",
+                        extension.getId(), POST_PARAM_DATA);
+            } else {
+                log.debug("Auto-saving OpenUI field '{}' with value '{}'", extension.getId(), data);
+                getModel().setObject(data.toString());
+            }
+        }
+
     }
 }
