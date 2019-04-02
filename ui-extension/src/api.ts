@@ -335,6 +335,11 @@ export interface DocumentProperties {
 }
 
 /**
+ * Function to stop the auto-update of field height with.
+ */
+type StopAutoUpdateHeightFn = () => void;
+
+/**
  * API to access information about and communicate with the current document field.
  */
 export interface FieldScope {
@@ -364,6 +369,21 @@ export interface FieldScope {
    * @param pixels the number of pixels
    */
   setHeight(pixels: number): Promise<void>;
+
+  /**
+   * Set the height of the surrounding iframe to the value of `document.body.scrollHeight`,
+   * but only when the height differs from the previous time [[updateHeight]] was called.
+   */
+  updateHeight(): Promise<void>;
+
+  /**
+   * Starts monitoring the DOM below `document.body` for changes, and calls
+   * [[updateHeight]] for every change.
+   *
+   * @return a function that stops the DOM monitoring.
+   */
+  autoUpdateHeight(): StopAutoUpdateHeightFn;
+
 }
 
 /**
