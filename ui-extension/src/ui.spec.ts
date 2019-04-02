@@ -31,7 +31,7 @@ window['MutationObserver'] = class {
   constructor(callback: () => {}) {}
   observe(element: HTMLElement, init: MutationObserverInit) {
     observe(element, init);
-    return disconnect;
+    return () => this.disconnect();
   }
   disconnect() { disconnect(); }
 };

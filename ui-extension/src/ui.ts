@@ -169,7 +169,7 @@ class Field extends Scope<DocumentParent> implements FieldScope {
     });
 
     this[FIELD_OVERFLOW_STYLE] = document.body.style.overflowY;
-    document.body.style['overflow-y'] = 'hidden';
+    document.body.style.overflowY = 'hidden';
 
     return () => {
       this[FIELD_DOM_OBSERVER].disconnect();
