@@ -177,6 +177,19 @@ describe('Ui.init()', () => {
       await ui.document.field.setHeight(100);
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
     });
+
+    it('resets the cached height used by updateHeight()', async () => {
+      parentConnection.call = jest.fn(() => Promise.resolve());
+      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
+
+      await ui.document.field.updateHeight();
+      await ui.document.field.setHeight(100);
+      await ui.document.field.updateHeight();
+
+      expect(parentConnection.call).toHaveBeenNthCalledWith(1, 'setFieldHeight', 42);
+      expect(parentConnection.call).toHaveBeenNthCalledWith(2, 'setFieldHeight', 100);
+      expect(parentConnection.call).toHaveBeenNthCalledWith(3, 'setFieldHeight', 42);
+    });
   });
 
   describe('ui.document.field.updateHeight()', () => {

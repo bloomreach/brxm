@@ -147,6 +147,9 @@ class Field extends Scope<DocumentParent> implements FieldScope {
   }
 
   setHeight(pixels: number) {
+    if (this[FIELD_HEIGHT] !== pixels) {
+      this[FIELD_HEIGHT] = null;
+    }
     return this[PARENT].call('setFieldHeight', pixels);
   }
 
