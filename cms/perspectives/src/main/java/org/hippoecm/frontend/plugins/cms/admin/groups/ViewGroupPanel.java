@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
-import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewDomainActionLink;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
@@ -56,7 +55,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(ViewGroupPanel.class);
 
     private final Group group;
+    private final PermissionsListView permissionsListView;
     private final GroupMembersListView groupMembersListView;
+
     private final IDialogService dialogService;
 
     public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
@@ -74,7 +75,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(new Label("groupname", group.getGroupname())); // groups cannot be renamed, so no model needed
         add(new Label("description", ReadOnlyModel.of(group::getDescription)));
 
-        final PermissionsListView permissionsListView = new PermissionsListView("permissions");
+        permissionsListView = new PermissionsListView("permissions");
         add(permissionsListView);
 
         // actions
@@ -103,7 +104,6 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         getString("group-delete-text", groupModel)
                 ).ok(() -> {
                     deleteGroup(group);
-                    DomainDataProvider.setDirty();
                 });
 
                 dialogService.show(confirm);
@@ -126,6 +126,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     @Override
     public void onActivate(IBreadCrumbParticipant previous) {
         super.onActivate(previous);
+        permissionsListView.updatePermissions();
         groupMembersListView.updateMembers();
     }
 
@@ -196,6 +197,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         PermissionsListView(final String id) {
             super(id, group.getPermissions());
             setReuseItems(false);
+        }
+
+        void updatePermissions() {
+            setModelObject(group.getPermissions());
         }
 
         @Override

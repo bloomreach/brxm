@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.admin.permissions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -31,9 +30,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.DetachableDomain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
@@ -41,22 +40,13 @@ import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.UserGroupListPanel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PermissionsPanel extends AdminBreadCrumbPanel {
-
-    private static final Logger log = LoggerFactory.getLogger(PermissionsPanel.class);
-    /**
-     * Visibility toggle so that either the link or the form is visible.
-     */
-    private boolean formVisible = false;
 
     public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext pluginContext) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        final List<String> roles = Group.getAllRoles();
         final List<IColumn<Domain, String>> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-header"), "name") {
@@ -74,30 +64,15 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
             }
         });
 
+        final List<String> roles = Group.getAllRoles();
         for (final String role : roles) {
             columns.add(new AbstractColumn<Domain, String>(new Model<>("Role: " + role)) {
                 public void populateItem(final Item<ICellPopulator<Domain>> cellItem, final String componentId, final IModel<Domain> model) {
                     final Domain domain = model.getObject();
-                    if (domain == null) {
-                        if (model instanceof DetachableDomain) {
-                            final DetachableDomain myModel = (DetachableDomain) model;
-                            log.error("Domain not found: {} while checking role: {}", myModel.getPath(), role);
-                        } else {
-                            log.error("Domain not found while checking role: {}.", role);
-                        }
-                        // skip processing, it makes CMS perspective unusable
-                        return;
-                    }
                     final List<User> userList = new ArrayList<>();
                     final List<Group> groupList = new ArrayList<>();
 
-                    final SortedMap<String, Domain.AuthRole> authRoles = domain.getAuthRoles();
-                    if (authRoles == null) {
-                        log.error("No auth roles defined for role: {}", role);
-                        // skip processing, it makes CMS perspective unusable
-                        return;
-                    }
-                    final Domain.AuthRole authRole = authRoles.get(role);
+                    final Domain.AuthRole authRole = domain.getAuthRoles().get(role);
 
                     if (authRole != null) {
                         for (final String userName : authRole.getUsernames()) {
@@ -121,15 +96,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
             });
         }
 
-
-        final AdminDataTable<Domain> table = new AdminDataTable<Domain>("table", columns, new DomainDataProvider(), 20) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return !formVisible;
-            }
-        };
+        final AdminDataTable<Domain> table = new AdminDataTable<Domain>("table", columns, new DomainDataProvider(), 20);
         add(table);
     }
 
