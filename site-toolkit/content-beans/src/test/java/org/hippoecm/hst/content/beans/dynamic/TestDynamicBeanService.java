@@ -37,6 +37,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
+import org.joda.time.DateTimeComparator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +49,7 @@ import org.junit.Test;
  */
 public class TestDynamicBeanService extends AbstractBeanTestCase {
 
-    private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/unittestcontent/documents/unittestproject/common/dynamiccontent/dynamiccontent";
+    private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
     private static final String BOOLEAN_TYPE_FIELD_NAME = "getBooleanTypeField";
     private static final String BOOLEAN_RADIO_GROUP_TYPE_FIELD_NAME = "getBooleanRadioGroupTypeField";
@@ -173,7 +174,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
         assertNotNull("The method '" + DATE_TYPE_FIELD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-        assertEquals(result, value.getTime());
+        assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
     }
 
     @Test
@@ -186,7 +187,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
         assertNotNull("The method '" + CALENDER_DATE_TYPE_FIELD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-        assertEquals(result, value.getTime());
+        assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
     }
 
     @Test

@@ -28,3 +28,4 @@
 [contentbeanstest:toodeeplink] > hippo:compound, hippostd:relaxed
   orderable
 
+[contentbeanstest:dynamicbeanpage] > contentbeanstest:basedocument, hippostd:relaxed

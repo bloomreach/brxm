@@ -56,56 +56,6 @@ definitions:
                 /unittestproject:body:
                   jcr:primaryType: hippostd:html
                   hippostd:content: This is the content of the homepage
-            /dynamiccontent:
-              jcr:primaryType: hippo:handle
-              jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
-              hippo:name: DynamicContent
-              hippo:versionHistory: 05b06f75-7241-4005-a0a6-2e9ad49508ce
-              /dynamiccontent:
-                jcr:primaryType: unittestproject:dynamicbeanpage
-                jcr:mixinTypes: ['mix:referenceable']
-                unittestproject:booleanRadioGroupTypeField: false
-                unittestproject:booleanTypeField: false
-                unittestproject:calendardateTypeField: 2019-03-25T00:00:00+01:00
-                unittestproject:dateTypeField: 2019-03-25T00:00:00+01:00
-                unittestproject:docbaseTypeField: 30092f4e-2ef7-4c72-86a5-8ce895908937
-                unittestproject:doubleTypeField: 100.0
-                unittestproject:dynamicdropdownTypeField: 'dynamicvalue'
-                unittestproject:staticdropdownTypeField: 'staticvalue'
-                unittestproject:htmlTypeField: htmltypecontent
-                unittestproject:longTypeField: 50  
-                unittestproject:radioGroupTypeField: 'radiogroupvalue'
-                unittestproject:stringTypeField: string Value
-                unittestproject:textTypeField: textvalue
-                hippo:availability: []
-                hippostd:state: draft
-                hippostdpubwf:createdBy: admin
-                hippostdpubwf:creationDate: 2019-03-25T13:55:43.203+01:00
-                hippostdpubwf:lastModificationDate: 2019-03-26T19:54:24.640+01:00
-                hippostdpubwf:lastModifiedBy: admin
-                hippotranslation:id: efb230e0-e336-43ef-b7c4-8d7c217ca7b5
-                hippotranslation:locale: en
-                /unittestproject:richTextEditorCompoundType:
-                  jcr:primaryType: hippostd:html
-                  hippostd:content: richtexteditorcontent
-                /unittestproject:imagelinkCompoundType:
-                  jcr:primaryType: hippogallerypicker:imagelink
-                  hippo:docbase: db02dde5-0098-4488-a72c-2a4fc6d51beb
-                  hippo:facets: []
-                  hippo:modes: []
-                  hippo:values: []
-                /unittestproject:mirrorCompoundType:
-                  jcr:primaryType: hippo:mirror
-                  hippo:docbase: 30092f4e-2ef7-4c72-86a5-8ce895908937
-                /unittestproject:resourceCompoundType:
-                  jcr:primaryType: hippo:resource
-                  hippo:filename: picture_thumbnail.jpeg
-                  jcr:data:
-                    type: binary
-                    resource: /unittestcontent/gallery/picture.jpeg/picture_thumbnail.jpeg
-                  jcr:encoding: UTF-8
-                  jcr:lastModified: 2008-03-26T12:03:00+01:00
-                  jcr:mimeType: application/vnd.hippo.blank
             /aboutfolder:
               jcr:primaryType: hippostd:folder
               jcr:mixinTypes: ['mix:referenceable', 'hippotranslation:translated']

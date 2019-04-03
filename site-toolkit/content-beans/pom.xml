@@ -132,6 +132,7 @@
    	<dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services-contenttype</artifactId>
+      <version>${hippo.services.version}</version>
       <scope>test</scope>
     </dependency>
     

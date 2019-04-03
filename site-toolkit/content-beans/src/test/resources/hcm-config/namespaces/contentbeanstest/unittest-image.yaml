@@ -1,0 +1,28 @@
+definitions:
+  config:
+    /contentsource:
+      jcr:primaryType: hippostd:directory
+      jcr:mixinTypes: ['mix:referenceable']
+      jcr:uuid: 6e115c5c-1284-4b34-954e-1b741b703bb6
+      hippostd:foldertype: [new-document, new-folder]
+      /gallery:
+        jcr:primaryType: hippogallery:stdImageGallery
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: b393625e-6eeb-4d2c-843d-92604a8fecc6
+        hippostd:foldertype: [new-image-folder]
+        hippostd:gallerytype: ['hippogallery:exampleImageSet']
+        /picture:
+          jcr:primaryType: hippo:handle
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: 77607942-15cb-4a30-8cd8-f8ab3dc9b584
+          /picture.jpeg:
+            jcr:primaryType: hippogallery:imageset
+            jcr:mixinTypes: ['mix:referenceable']
+            jcr:uuid: dca66ecf-bb42-4dc0-93b0-94c209adb53b
+            /hippogallery:thumbnail:
+              jcr:primaryType: hippogallery:image
+              jcr:data:
+                type: binary
+                resource: /namespaces/contentbeanstest/contentsource/gallery/picture/picture_thumbnail.jpeg
+              jcr:lastModified: 2009-03-12T19:01:57.884+01:00
+              jcr:mimeType: image/jpeg
