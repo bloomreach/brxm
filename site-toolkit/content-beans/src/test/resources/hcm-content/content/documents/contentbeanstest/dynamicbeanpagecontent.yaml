@@ -10,7 +10,7 @@
     contentbeanstest:booleanTypeField: false
     contentbeanstest:calendardateTypeField: 2019-03-25T00:00:00
     contentbeanstest:dateTypeField: 2019-03-25T00:00:00
-    contentbeanstest:docbaseTypeField: 30092f4e-2ef7-4c72-86a5-8ce895908937
+    contentbeanstest:docbaseTypeField: 2dcef400-50e2-456e-9722-fd496defa56b
     contentbeanstest:doubleTypeField: 100.0
     contentbeanstest:dynamicdropdownTypeField: 'dynamicvalue'
     contentbeanstest:staticdropdownTypeField: 'staticvalue'
@@ -38,7 +38,7 @@
       hippo:values: []
     /contentbeanstest:mirrorCompoundType:
       jcr:primaryType: hippo:mirror
-      hippo:docbase: 30092f4e-2ef7-4c72-86a5-8ce895908937
+      hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b
     /contentbeanstest:resourceCompoundType:
       jcr:primaryType: hippo:resource
       hippo:filename: picture_thumbnail.jpeg

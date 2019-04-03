@@ -184,7 +184,7 @@ definitions:
             hippo:values: []
           /contentbeanstest:mirrorCompoundType:
             jcr:primaryType: hippo:mirror
-            hippo:docbase: 30092f4e-2ef7-4c72-86a5-8ce895908937
+            hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b
           /contentbeanstest:resourceCompoundType:
             jcr:primaryType: hippo:resource
             hippo:filename: ''

@@ -240,7 +240,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
         assertNotNull("The method '" + DOCBASE_TYPE_FIELD_NAME + "' didn't return any value", value);
 
         if (value != null) {
-            assertEquals("30092f4e-2ef7-4c72-86a5-8ce895908937", value.getNode().getProperty("hippo:related").getValues()[0].getString());
+            assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", value.getNode().getIdentifier());
         }
 
     }
@@ -303,7 +303,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
         assertNotNull("The method '" + LINK_COMPOUND_TYPE_FIELD_NAME + "' didn't return any value", hippoBean);
 
         if (hippoBean != null) {
-            assertEquals("30092f4e-2ef7-4c72-86a5-8ce895908937", hippoBean.getNode().getParent().getIdentifier());
+            assertEquals("64ab4648-0c20-40d2-9f18-d7a394f0334b", hippoBean.getNode().getParent().getIdentifier());
         }
     }
 
