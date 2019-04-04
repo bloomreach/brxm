@@ -41,7 +41,7 @@ export default class OpenUiService {
 
     try {
       return this.connect({
-        url: this.ExtensionService.getExtensionUrl(extension),
+        url: options.url || this.ExtensionService.getExtensionUrl(extension),
         ...options,
         methods: {
           ...options.methods,

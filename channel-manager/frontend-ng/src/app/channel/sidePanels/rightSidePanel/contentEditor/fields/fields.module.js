@@ -20,7 +20,7 @@ import compoundFieldComponent from './compoundField/compoundField.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
-import openuiStringFieldComponent from './openuiStringField/openuiStringField.component';
+import openuiStringFieldModule from './openuiStringField/openuiStringField.module';
 import primitiveFieldComponent from './primitiveField/primitiveField.component';
 import radioGroupFieldComponent from './radioGroup/radioGroup.component';
 
@@ -29,12 +29,12 @@ import './fields.scss';
 const fieldsModule = angular
   .module('hippo-cm.channel.rightSidePanel.contentEditor.fields', [
     ckeditorModule,
+    openuiStringFieldModule,
   ])
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
   .component('documentFields', documentFieldsComponent)
   .component('imageLink', imageLinkComponent)
-  .component('openuiStringField', openuiStringFieldComponent)
   .component('primitiveField', primitiveFieldComponent)
   .component('radioGroup', radioGroupFieldComponent)
   .service('FieldService', fieldService);

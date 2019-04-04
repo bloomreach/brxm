@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
+import dialogTemplate from './openuiDialog/openuiDialog.html';
+
 const MIN_HEIGHT_IN_PIXELS = 10;
 const MAX_HEIGHT_IN_PIXELS = 10000;
 const MAX_SIZE_IN_BYTES = 4096;
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, ContentEditor, OpenUiService) {
+  constructor($element, $log, ContentEditor, DialogService, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
     this.ContentEditor = ContentEditor;
+    this.DialogService = DialogService;
     this.OpenUiService = OpenUiService;
   }
 
@@ -36,14 +39,16 @@ export default class OpenuiStringFieldController {
 
   $onChanges(changes) {
     if (changes.extensionId) {
+      this.extensionId = changes.extensionId.currentValue;
       this.destroyConnection();
-      this.connection = this.OpenUiService.initialize(changes.extensionId.currentValue, {
+      this.connection = this.OpenUiService.initialize(this.extensionId, {
         appendTo: this.$element[0],
         methods: {
+          getDocument: this.getDocument.bind(this),
           getFieldValue: this.getValue.bind(this),
           setFieldValue: this.setValue.bind(this),
           setFieldHeight: this.setHeight.bind(this),
-          getDocument: this.getDocument.bind(this),
+          openDialog: this.openDialog.bind(this),
         },
       });
     }
@@ -90,5 +95,26 @@ export default class OpenuiStringFieldController {
         id: document.variantId,
       },
     };
+  }
+
+  async openDialog(options) {
+    if (this.isDialogOpen) {
+      throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal
+    }
+
+    try {
+      this.isDialogOpen = true;
+      return await this.DialogService.show(angular.extend({
+        clickOutsideToClose: true,
+        locals: { dialogOptions: options, extensionId: this.extensionId },
+        template: dialogTemplate,
+        controller: 'OpenuiDialogCtrl',
+        controllerAs: '$ctrl',
+      }));
+    } catch (error) {
+      throw { code: 'DialogCanceled', message: 'The dialog is canceled' }; // eslint-disable-line no-throw-literal
+    } finally {
+      this.isDialogOpen = false;
+    }
   }
 }
