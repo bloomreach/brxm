@@ -72,6 +72,6 @@ export default class ExtensionService {
     const url = new URL(path, this.$window.location.origin);
     this._addQueryParameters(url);
 
-    return url.href;
+    return url.pathname + url.search;
   }
 }

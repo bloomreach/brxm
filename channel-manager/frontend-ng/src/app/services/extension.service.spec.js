@@ -114,15 +114,15 @@ describe('ExtensionService', () => {
 
     describe('for extensions from a different origin', () => {
       it('works for URLs without parameters', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com' })).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for URLs with parameters', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com?customParam=X' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com?customParam=X' })).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for HTTPS URLs', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'https://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'https://www.bloomreach.com' })).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
     });
   });
