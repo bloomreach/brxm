@@ -16,12 +16,13 @@
 package org.hippoecm.hst.content.beans.manager;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,18 +32,12 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.dynamic.AutoEnhancedBean;
-import org.hippoecm.hst.content.beans.dynamic.DynamicBeanInvalidationService;
-import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
-import org.hippoecm.hst.content.beans.dynamic.HippoDynamicBeanInvalidationService;
-import org.hippoecm.hst.content.beans.dynamic.HippoDynamicBeanService;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNode;
 import org.hippoecm.hst.content.beans.version.HippoBeanFrozenNodeUtils;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.service.ServiceFactory;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -51,6 +46,7 @@ import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
@@ -64,27 +60,30 @@ public class ObjectConverterImpl implements ObjectConverter {
 
     private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
 
-    protected Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs;
-    protected Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs;
-    protected String[] fallBackJcrNodeTypes;
-    protected DynamicBeanService dynamicBeanService;
-    protected DynamicBeanInvalidationService dynamicBeanInvalidationService;
+    final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs = new ConcurrentHashMap<>();
+    final Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs = new ConcurrentHashMap<>();
+    private List<String> fallBackJcrNodeTypes;
 
-    public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String[] fallBackJcrNodeTypes) {
-        this.jcrPrimaryNodeTypeBeanPairs = jcrPrimaryNodeTypeBeanPairs;
-        this.jcrBeanPrimaryNodeTypePairs = new HashMap<>();
+    public ObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes) {
 
-        for (Entry<String, Class<? extends HippoBean>> entry : jcrPrimaryNodeTypeBeanPairs.entrySet()) {
-            jcrBeanPrimaryNodeTypePairs.put(entry.getValue(), entry.getKey());
+        if (isNotEmpty(jcrPrimaryNodeTypeBeanPairs)) {
+            jcrPrimaryNodeTypeBeanPairs.forEach(this::addBeanDefinition);
         }
 
         if (fallBackJcrNodeTypes != null) {
-            this.fallBackJcrNodeTypes = new String[fallBackJcrNodeTypes.length];
-            System.arraycopy(fallBackJcrNodeTypes, 0, this.fallBackJcrNodeTypes, 0, fallBackJcrNodeTypes.length);
+            this.fallBackJcrNodeTypes = Arrays.asList(fallBackJcrNodeTypes);
         }
+    }
 
-        dynamicBeanService = new HippoDynamicBeanService(this);
-        dynamicBeanInvalidationService = new HippoDynamicBeanInvalidationService(this);
+    /**
+     * Add bean class definition and its underlying node type to cache
+     *
+     * @param documentType name of the document type
+     * @param beanClass of {@link HippoBean}
+     */
+    protected void addBeanDefinition(@Nonnull final String documentType, @Nonnull final Class<? extends HippoBean> beanClass) {
+        jcrPrimaryNodeTypeBeanPairs.put(documentType, beanClass);
+        jcrBeanPrimaryNodeTypePairs.put(beanClass, documentType);
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
@@ -92,7 +91,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
-        String relPath = path.substring(1);
+        final String relPath = path.substring(1);
         try {
             return getObject(session.getRootNode(), relPath);
         } catch (RepositoryException re) {
@@ -187,19 +186,8 @@ public class ObjectConverterImpl implements ObjectConverter {
                     return null;
                 }
             }
-
-            dynamicBeanInvalidationService.invalidateOnDocumentTypeModification();
-
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
-
-            if (delegateeClass != null && useNode.isNodeType(NT_DOCUMENT) && useNode.getParent().isNodeType(NT_HANDLE)) {
-                // Check if the document bean is marked as enhanced, which means this bean will be generated by dynamic bean service
-                AutoEnhancedBean autoEnhanceBean = delegateeClass.getDeclaredAnnotation(AutoEnhancedBean.class);
-                if (autoEnhanceBean != null && autoEnhanceBean.allowModifications()) {
-                    delegateeClass = createDynamicBean(useNode, delegateeClass);
-                }
-            }
 
             if (delegateeClass == null) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
@@ -207,40 +195,12 @@ public class ObjectConverterImpl implements ObjectConverter {
                             "removed from all content including from prototypes.");
                     return null;
                 }
-
-                if (useNode.isNodeType(HippoNodeType.NT_DOCUMENT) && useNode.getParent().isNodeType(NT_HANDLE)) {
-                    delegateeClass = createDynamicBean(useNode, null);
-                }
-
-                if (delegateeClass == null) {
-                    // no exact match, try a fallback type
-                    for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
-
-                        if (!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
-                            continue;
-                        }
-                        // take the first fallback type
-                        delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                        if (delegateeClass != null) {
-                            log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType,
-                                    delegateeClass);
-                            break;
-                        }
-                    }
-                }
+                // no exact match, try a fallback type
+                delegateeClass = getFallbackClass(jcrPrimaryNodeType, useNode);
             }
-            
+
             if (delegateeClass != null) {
-				final Object object = ServiceFactory.create(delegateeClass);
-				if (object != null) {
-					if (object instanceof NodeAware) {
-						((NodeAware) object).setNode(useNode);
-					}
-					if (object instanceof ObjectConverterAware) {
-						((ObjectConverterAware) object).setObjectConverter(this);
-					}
-				}
-                return object;
+                return instantiateObject(delegateeClass, useNode);
             }
             path = useNode.getPath();
         } catch (RepositoryException e) {
@@ -253,59 +213,50 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     /**
-     * There isn't any java bean class for this document type so it will be generated on the fly.
+     * Instantiate given class, and if applicable attach node & converter instance to it.
+     * @param clazz HippoBean class to instantiate
+     * @param node Underlying JCR node
+     * @return Object instance
+     * @throws Exception
      */
-    private Class<? extends HippoBean> createDynamicBean(final Node node, Class<? extends HippoBean> parentBean) throws RepositoryException {
-        final String documentType = node.getPrimaryNodeType().getName();
-
-        if (parentBean == null) {
-            parentBean = findBaseDocumentBean();
+    Object instantiateObject(final Class<? extends HippoBean> clazz, final Node node) throws Exception {
+        Object object = ServiceFactory.create(clazz);
+        if (object != null) {
+            if (object instanceof NodeAware) {
+                ((NodeAware) object).setNode(node);
+            }
+            if (object instanceof ObjectConverterAware) {
+                ((ObjectConverterAware) object).setObjectConverter(this);
+            }
         }
-
-        return dynamicBeanService.createDynamicDocumentBean(parentBean, documentType);
+        return object;
     }
 
-    /**
-     * Return the basedocument if that exists in the jcrBeanPrimaryNodeTypePairs
-     */
-    private Class<? extends HippoBean> findBaseDocumentBean() {
-        return jcrBeanPrimaryNodeTypePairs.entrySet()
-                  .stream()
-                  .filter(entry -> entry.getValue().endsWith(":basedocument"))
-                  .map(Entry::getKey)
-                  .findFirst()
-                  .orElse(null);
-    }
+    Class<? extends HippoBean> getFallbackClass(final String jcrPrimaryNodeType, final Node node) throws RepositoryException {
 
-    /**
-     * Removes the referenced {@link HippoBean} to allow regeneration of the bean on the fly
-     * 
-     * @param documentType name of the document type to remove from the map
-     */
-    public void removeDynamicBean(String documentType) {
-        if (jcrPrimaryNodeTypeBeanPairs.containsKey(documentType)
-                && !Arrays.asList(ObjectConverterUtils.getDefaultFallbackNodeTypes()).contains(documentType)) {
-            Class<? extends HippoBean> beanlessClass = jcrPrimaryNodeTypeBeanPairs.get(documentType);
-            jcrPrimaryNodeTypeBeanPairs.remove(documentType);
-            jcrBeanPrimaryNodeTypePairs.remove(beanlessClass);
+        Class<? extends HippoBean> clazz = null;
+
+        for (final String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
+
+            if (!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+                continue;
+            }
+
+            // take the first fallback type
+            clazz = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
+            if (clazz != null) {
+                log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, clazz);
+                break;
+            }
         }
+        return clazz;
     }
 
-    /**
-     * Updates the definition of a runtime generated {@link HippoBean} on the fly
-     * 
-     * @param generatedBean which is generated by bytebuddy
-     * @param documentType name of the document type
-     */
-    public void updateBeanDefinition(final Class<? extends HippoBean> generatedBean, final String documentType) {
-        if (generatedBean != null) {
-            this.jcrBeanPrimaryNodeTypePairs.put(generatedBean, documentType);
-            this.jcrPrimaryNodeTypeBeanPairs.put(documentType, generatedBean);
-            log.info("DynamicBean is generated for the document type {}", documentType);
-        }
+    boolean isDocumentType(final Node node) throws RepositoryException {
+        return node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE);
     }
 
-    protected Node getActualNode(final Node node) throws RepositoryException {
+    Node getActualNode(final Node node) throws RepositoryException {
         if (node instanceof HippoBeanFrozenNode) {
             return node;
         }
@@ -411,7 +362,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         return Optional.empty();
     }
 
-    public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
+    public String getPrimaryObjectType(final Node node) throws ObjectBeanManagerException {
         String jcrPrimaryNodeType;
         String path;
         try {
@@ -461,7 +412,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
-    private void checkUUID(String uuid) throws ObjectBeanManagerException {
+    private void checkUUID(final String uuid) throws ObjectBeanManagerException {
         try {
             UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
@@ -469,11 +420,11 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
     }
 
-    public Class<? extends HippoBean> getAnnotatedClassFor(String jcrPrimaryNodeType) {
+    public Class<? extends HippoBean> getAnnotatedClassFor(final String jcrPrimaryNodeType) {
         return this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
     }
 
-    public String getPrimaryNodeTypeNameFor(Class<? extends HippoBean> hippoBean) {
+    public String getPrimaryNodeTypeNameFor(final Class<? extends HippoBean> hippoBean) {
         return jcrBeanPrimaryNodeTypePairs.get(hippoBean);
     }
 }

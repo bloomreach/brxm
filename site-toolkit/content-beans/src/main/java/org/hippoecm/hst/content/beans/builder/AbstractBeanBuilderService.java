@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
 
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +51,12 @@ public abstract class AbstractBeanBuilderService {
             return this.type;
         }
 
-        private DocumentType(String type) {
+        DocumentType(String type) {
             this.type = type;
         }
 
         public static DocumentType getDocumentType(String type) {
-            return Arrays.asList(DocumentType.values())
-                .stream()
+            return Arrays.stream(DocumentType.values())
                 .filter(doc -> doc.getDocumentType().equals(type))
                 .findFirst()
                 .orElse(DocumentType.UNKNOWN);
@@ -66,8 +66,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Generates bean method by its properties
      * 
-     * @param bean
-     * @param builderParameters
+     * @param bean {@link HippoContentBean}
+     * @param builderParameters {@link BeanBuilderServiceParameters}
      */
     protected void generateMethodsByProperties(HippoContentBean bean, BeanBuilderServiceParameters builderParameters) {
         for (HippoContentProperty property : bean.getProperties()) {
@@ -125,10 +125,10 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Generated bean methods by its child nodes
      * 
-     * @param bean
-     * @param builderParameters
+     * @param bean {@link HippoContentBean}
+     * @param builderParameters {@link BeanBuilderServiceParameters}
      */
-    protected void generateMethodsByNodes(HippoContentBean bean, BeanBuilderServiceParameters builderParameters) {
+    protected void generateMethodsByNodes(HippoContentBean bean, BeanBuilderServiceParameters builderParameters, ContentType contentType) {
         for (HippoContentChildNode child : bean.getChildren()) {
             final String name = child.getName();
             final boolean multiple = child.isMultiple();
@@ -165,7 +165,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodHippoResource(name, multiple, builderParameters);
                 break;
             default:
-                addCustomNodeType(name, multiple, type, builderParameters);
+                addCustomNodeType(name, multiple, contentType, builderParameters);
                 break;
             }
         }
@@ -179,7 +179,7 @@ public abstract class AbstractBeanBuilderService {
      * @param builderParameters additional parameters for builder implementation
      * @return true if the property/node has to be generated as method
      */
-    public abstract boolean hasChange(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract boolean hasChange(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a method to the bean which returns {@link String} object type
@@ -188,16 +188,16 @@ public abstract class AbstractBeanBuilderService {
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodString(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodString(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link Calendar} object type
+     * Adds a method to the bean which returns {@link java.util.Calendar} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodCalendar(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodCalendar(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a method to the bean which returns {@link Boolean} object type
@@ -206,7 +206,7 @@ public abstract class AbstractBeanBuilderService {
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodBoolean(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodBoolean(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a method to the bean which returns {@link Long} object type
@@ -215,7 +215,7 @@ public abstract class AbstractBeanBuilderService {
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodLong(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodLong(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a method to the bean which returns {@link Double} object type
@@ -224,16 +224,16 @@ public abstract class AbstractBeanBuilderService {
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodDouble(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodDouble(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoBean} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodDocbase(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodDocbase(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a custom implementation if there isn't any matching object type for the property
@@ -243,61 +243,61 @@ public abstract class AbstractBeanBuilderService {
      * @param type of the document property
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addCustomPropertyType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addCustomPropertyType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoHtml} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoHtmlBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodHippoHtml(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodHippoHtml(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoGalleryImageSet} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodImageLink(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodImageLink(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoBean} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodHippoMirror(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodHippoMirror(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoGalleryImageBean} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodHippoImage(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodHippoImage(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
-     * Adds a method to the bean which returns {@link HippoResourceBean} object type
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoResourceBean} object type
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addBeanMethodHippoResource(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addBeanMethodHippoResource(String name, boolean multiple, BeanBuilderServiceParameters builderParameters);
 
     /**
      * Adds a custom implementation if there isn't any matching object type for the child node
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
-     * @param type of the document property
+     * @param contentType of the document property
      * @param builderParameters additional parameters for builder implementation
      */
-    public abstract void addCustomNodeType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addCustomNodeType(String name, boolean multiple, ContentType contentType, BeanBuilderServiceParameters builderParameters);
 
 }

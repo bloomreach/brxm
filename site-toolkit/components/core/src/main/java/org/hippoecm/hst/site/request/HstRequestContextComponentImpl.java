@@ -18,6 +18,7 @@ package org.hippoecm.hst.site.request;
 import java.util.List;
 
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -31,6 +32,8 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.model.HstModel;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
 
 /**
  * HstRequestContextComponentImpl
@@ -49,15 +52,18 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     private HstSiteMenusManager siteMenusManager;
     private HstQueryManagerFactory hstQueryManagerFactory;
     private List<HstComponentWindowFilter> componentWindowFilters;
+    private ContentTypeService contentTypeService;
 
     public HstRequestContextComponentImpl(final Repository repository,
                                           final ContextCredentialsProvider contextCredentialsProvider,
                                           final ContainerConfiguration config,
-                                          final HstModelProvider hstModelProvider) {
+                                          final HstModelProvider hstModelProvider,
+                                          final ContentTypeService contentTypeService) {
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
         this.config = config;
         this.hstModelProvider = hstModelProvider;
+        this.contentTypeService = contentTypeService;
     }
 
     public HstMutableRequestContext create() {
@@ -65,6 +71,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         rc.setContainerConfiguration(config);
         rc.setURLFactory(urlFactory);
         final HstModel hstModel = hstModelProvider.getHstModel();
+        setCurrentContentTypes(rc);
         rc.setLinkCreator(hstModel.getHstLinkCreator());
         rc.setSiteMapMatcher(hstModel.getHstSiteMapMatcher());
         rc.setHstSiteMenusManager(siteMenusManager);
@@ -73,6 +80,20 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         rc.setCachingObjectConverter(cachingObjectConverter);
         rc.setComponentWindowFilters(componentWindowFilters);
         return rc;
+    }
+
+    private void setCurrentContentTypes(final HstMutableRequestContext rc) {
+        try {
+            if (contentTypeService == null) {
+                contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
+            }
+            if (contentTypeService == null) {
+                throw new IllegalStateException("ContentTypeService is not available");
+            }
+            rc.setContentTypes(contentTypeService.getContentTypes());
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Fetching ContentTypeService failed", e);
+        }
     }
 
     public void release(HstRequestContext context) {

@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 
 /**
@@ -158,4 +159,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void matchingFinished();
 
     void setHstSiteMenusManager(HstSiteMenusManager siteMenusManager);
+
+    /**
+     * Store current version {@link ContentTypes} in current {@link HstRequestContext}
+     * @param contentTypes
+     */
+    void setContentTypes(ContentTypes contentTypes);
 }

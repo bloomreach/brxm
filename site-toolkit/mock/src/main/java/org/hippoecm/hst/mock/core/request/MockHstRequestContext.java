@@ -59,6 +59,7 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public class MockHstRequestContext implements HstMutableRequestContext {
 
@@ -108,6 +109,8 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     private Map<String, HeadContributable> headContributablesMap;
+
+    private ContentTypes contentTypes;
 
     private boolean disposed;
 
@@ -656,6 +659,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         nonDefaultObjectBeanManagers = null;
         defaultHstQueryManager = null;
         nonDefaultHstQueryManagers = null;
+        contentTypes = null;
 
         disposed = true;
     }
@@ -689,6 +693,17 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         }
 
         headContributablesMap.put(name, headContributable);
+    }
+
+    @Override
+    public void setContentTypes(final ContentTypes contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+
+    @Override
+    public ContentTypes getContentTypes() {
+        checkStateValidity();
+        return contentTypes;
     }
 
     private void checkStateValidity() {

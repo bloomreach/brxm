@@ -165,6 +165,12 @@
     <!-- Test dependencies -->
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-contenttype</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-platform</artifactId>
       <version>${project.version}</version>

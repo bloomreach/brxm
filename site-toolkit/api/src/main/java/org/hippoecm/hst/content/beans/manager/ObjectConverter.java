@@ -53,11 +53,19 @@ public interface ObjectConverter
     Object getObject(String uuid, Node node) throws ObjectBeanManagerException;
     
     /**
-     * @param jcrPrimaryNodeType
+     * @param jcrPrimaryNodeType Primary node type
      * @return the annotated <code>Class</code> for this jcrPrimaryNodeType or <code>null</code> if no annotated class can be found
+     * @deprecated Use the {@link #getClassFor(String) getClassFor} method.
      */
     Class<? extends HippoBean> getAnnotatedClassFor(String jcrPrimaryNodeType);
-    
+
+    /**
+     * @param jcrPrimaryNodeType Primary node type
+     * @return <code>Class</code> for this jcrPrimaryNodeType or <code>null</code> if no annotated class can be found
+     */
+    default Class<? extends HippoBean> getClassFor(String jcrPrimaryNodeType) {
+        return getAnnotatedClassFor(jcrPrimaryNodeType);
+    }
+
     String getPrimaryNodeTypeNameFor(Class<? extends HippoBean> hippoBean);
-    
 }
