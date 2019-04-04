@@ -61,7 +61,7 @@ public class OpenUiStringFieldTypeTest {
     @Test
     public void testFieldConfig() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
-        expect(fieldTypeContext.getStringConfig("uiExtension")).andReturn(Optional.of("myExtension"));
+        expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.of("myExtension"));
 
         replayAll();
 
@@ -70,7 +70,20 @@ public class OpenUiStringFieldTypeTest {
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo("myExtension"));
     }
-    
+
+    @Test
+    public void testDefaultFieldConfig() {
+        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.empty());
+
+        replayAll();
+
+        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
+        openUiStringFieldType.init(fieldTypeContext);
+
+        assertThat(openUiStringFieldType.getUiExtension(), equalTo(null));
+    }
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();

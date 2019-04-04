@@ -18,16 +18,17 @@ import dialogTemplate from './openuiDialog/openuiDialog.html';
 
 const MIN_HEIGHT_IN_PIXELS = 10;
 const MAX_HEIGHT_IN_PIXELS = 10000;
-const MAX_SIZE_IN_BYTES = 4096;
+const MAX_SIZE_IN_BYTES = 102400;
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, ContentEditor, DialogService, OpenUiService) {
+  constructor($element, $log, ContentEditor, DialogService, ExtensionService, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
     this.ContentEditor = ContentEditor;
     this.DialogService = DialogService;
+    this.ExtensionService = ExtensionService;
     this.OpenUiService = OpenUiService;
   }
 
@@ -39,23 +40,33 @@ export default class OpenuiStringFieldController {
 
   $onChanges(changes) {
     if (changes.extensionId) {
-      this.extensionId = changes.extensionId.currentValue;
-      this.destroyConnection();
-      this.connection = this.OpenUiService.initialize(this.extensionId, {
-        appendTo: this.$element[0],
-        methods: {
-          getDocument: this.getDocument.bind(this),
-          getFieldValue: this.getValue.bind(this),
-          setFieldValue: this.setValue.bind(this),
-          setFieldHeight: this.setHeight.bind(this),
-          openDialog: this.openDialog.bind(this),
-        },
-      });
+      const extensionId = changes.extensionId.currentValue;
+      this.createConnection(extensionId);
+      this.setInitialHeight(extensionId);
     }
   }
 
   $onDestroy() {
     this.destroyConnection();
+  }
+
+  createConnection(extensionId) {
+    this.destroyConnection();
+    this.connection = this.OpenUiService.initialize(extensionId, {
+      appendTo: this.$element[0],
+      methods: {
+        getDocument: this.getDocument.bind(this),
+        getFieldValue: this.getValue.bind(this),
+        setFieldValue: this.setValue.bind(this),
+        setFieldHeight: this.setHeight.bind(this),
+        openDialog: this.openDialog.bind(this),
+      },
+    });
+  }
+
+  setInitialHeight(extensionId) {
+    const extension = this.ExtensionService.getExtension(extensionId);
+    this.setHeight(extension.initialHeightInPixels);
   }
 
   destroyConnection() {

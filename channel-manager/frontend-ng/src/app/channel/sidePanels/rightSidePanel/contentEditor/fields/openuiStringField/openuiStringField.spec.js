@@ -24,18 +24,21 @@ describe('OpenuiStringField', () => {
   let ngModel;
   let ContentEditor;
   let DialogService;
+  let ExtensionService;
   let OpenUiService;
   let connection;
+  let extension;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _ContentEditor_, _DialogService_, _OpenUiService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _ContentEditor_, _DialogService_, _ExtensionService_, _OpenUiService_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ContentEditor = _ContentEditor_;
       DialogService = _DialogService_;
+      ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
     });
 
@@ -49,6 +52,11 @@ describe('OpenuiStringField', () => {
     });
     spyOn(ContentEditor, 'getDocument');
     spyOn(DialogService, 'show');
+
+    extension = {
+      initialHeightInPixels: 150,
+    };
+    spyOn(ExtensionService, 'getExtension').and.returnValue(extension);
 
     connection = {
       iframe: angular.element('<iframe src="about:blank"></iframe>')[0],
@@ -89,6 +97,14 @@ describe('OpenuiStringField', () => {
       }));
     });
 
+    it('sets the initial height', () => {
+      $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
+
+      expect(connection.iframe).toHaveCss({
+        height: '150px',
+      });
+    });
+
     it('destroys a previous connection', () => {
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id1' } });
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id2' } });
@@ -116,7 +132,7 @@ describe('OpenuiStringField', () => {
   });
 
   it('fails to set a long value', () => {
-    expect(() => $ctrl.setValue('a'.repeat(4097))).toThrow();
+    expect(() => $ctrl.setValue('a'.repeat(102401))).toThrow();
   });
 
   it('sets the height', () => {
