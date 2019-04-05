@@ -254,7 +254,7 @@ describe('Ui.init()', () => {
   describe('ui.dialog.close()', () => {
     it('closes an open dialog', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
-      const transferable = new ArrayBuffer(1);
+      const transferable = { value: 'test value' };
       await ui.dialog.close(transferable);
       expect(parentConnection.call).toHaveBeenCalledWith('closeDialog', transferable);
     });
@@ -273,7 +273,7 @@ describe('Ui.init()', () => {
     it('gets the dialog options', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve());
       await ui.dialog.options();
-      expect(parentConnection.call).toHaveBeenCalledWith('getOptions');
+      expect(parentConnection.call).toHaveBeenCalledWith('getDialogOptions');
     });
   });
 });

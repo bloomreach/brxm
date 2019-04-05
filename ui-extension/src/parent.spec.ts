@@ -117,6 +117,32 @@ describe('connect', () => {
 
           expect(parentConnection.call('refreshChannel')).rejects.toMatchObject(error);
         });
+
+        it('rejects with error code "DialogExists" when the parent throws the same error', () => {
+          // @ts-ignore: noSuchMethod is not assignable
+          jest.spyOn(parent, 'refreshChannel').mockImplementation(() => {
+            throw { code: 'DialogExists', message: 'test message' };
+          });
+
+          return expect(parentConnection.call('refreshChannel')).rejects
+            .toMatchObject({
+              code: 'DialogExists',
+              message: 'test message',
+            });
+        });
+
+        it('rejects with error code "DialogCanceled" when the parent throws the same error', () => {
+          // @ts-ignore: noSuchMethod is not assignable
+          jest.spyOn(parent, 'refreshChannel').mockImplementation(() => {
+            throw { code: 'DialogCanceled', message: 'test message' };
+          });
+
+          return expect(parentConnection.call('refreshChannel')).rejects
+            .toMatchObject({
+              code: 'DialogCanceled',
+              message: 'test message',
+            });
+        });
       });
     });
 

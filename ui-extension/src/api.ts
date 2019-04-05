@@ -39,12 +39,12 @@ export enum UiExtensionErrorCode {
   ConnectionDestroyed = 'ConnectionDestroyed',
 
   /**
-   * A dialog was cancelled.
+   * A dialog was canceled.
    */
   DialogCanceled = 'DialogCanceled',
 
   /**
-   * A dialog was cancelled.
+   * A dialog was canceled.
    */
   DialogExists = 'DialogExists',
 
@@ -392,22 +392,24 @@ export interface FieldScope {
 export interface DialogScope {
 
   /**
-   * Closes an open dialog, rejecting the promise returned by ui.dialog.open().
+   * Closes an open dialog, rejecting the promise returned by [[open]].
    */
   cancel(): Promise<void>;
 
   /**
-   * Closes an open dialog, resolving the promise returned by ui.dialog.open().
+   * Closes an open dialog, resolving the promise returned by [[open]] with a value.
+   * @param value The value selected in the dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
    */
-  close(value: Transferable): Promise<void>;
+  close(value: any): Promise<void>;
 
   /**
-   * Gathers current field value.
+   * Opens a dialog.
    */
   open(options: DialogProperties): Promise<void>;
 
   /**
-   * @returns a Promise that resolves with [[DialogProperties]] of the current page.
+   * @returns A Promise that resolves with [[DialogProperties]] of the current dialog.
    */
   options(): Promise<DialogProperties>;
 }
@@ -426,12 +428,14 @@ export enum DialogSize {
  */
 export interface DialogProperties {
   /**
-   * A value that can be used to preselect an item in the dialog.
+   * A value to pass to the dialog. For example the current field value, that can be used to preselect an item in the
+   * dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
    */
   value?: any;
 
   /**
-   * The size of the dialog.
+   * The size of the dialog. Defaults to [[Medium]].
    */
   size?: DialogSize;
 

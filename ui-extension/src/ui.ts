@@ -101,8 +101,8 @@ interface DocumentParent extends UiParent {
 
 interface DialogParent extends UiParent {
   cancelDialog: ParentMethod<void>;
-  closeDialog: ParentMethod<void, [Transferable]>;
-  getOptions: ParentMethod<DialogProperties>;
+  closeDialog: ParentMethod<void, [any]>;
+  getDialogOptions: ParentMethod<DialogProperties>;
   openDialog: ParentMethod<void, [DialogProperties]>;
 }
 
@@ -147,7 +147,7 @@ class Field extends Scope<DocumentParent> implements FieldScope {
     return this[PARENT].call('getFieldValue');
   }
 
-  getCompareValue (): Promise<string> {
+  getCompareValue(): Promise<string> {
     return this[PARENT].call('getFieldCompareValue');
   }
 
@@ -195,7 +195,7 @@ class Dialog extends Scope<DialogParent> implements DialogScope {
     return this[PARENT].call('cancelDialog');
   }
 
-  close(value: Transferable) {
+  close(value: any) {
     return this[PARENT].call('closeDialog', value);
   }
 
@@ -204,7 +204,7 @@ class Dialog extends Scope<DialogParent> implements DialogScope {
   }
 
   options() {
-    return this[PARENT].call('getOptions');
+    return this[PARENT].call('getDialogOptions');
   }
 }
 
