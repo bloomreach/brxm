@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
 
     private static final Logger log = LoggerFactory.getLogger(TextAreaWidget.class);
 
+    private String maxlength;
     private String rows;
     private TextArea<String> textArea;
 
@@ -34,14 +35,6 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
         textArea = createTextArea(model);
         textArea.setType(String.class);
         addFormField(textArea);
-    }
-
-    public void setRows(String rows) {
-        this.rows = rows;
-    }
-
-    public String getRows() {
-        return rows;
     }
 
     public void addBehaviourOnFormComponent(Behavior behavior){
@@ -56,8 +49,11 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
 
             @Override
             protected void onComponentTag(final ComponentTag tag) {
-                String rows = getRows();
+                if (getMaxlength() != null) {
+                    tag.put("maxlength", getMaxlength());
+                }
 
+                final String rows = getRows();
                 if (rows != null) {
                     try {
                         double rowCount = Double.parseDouble(rows);
@@ -74,5 +70,21 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
                 super.onComponentTag(tag);
             }
         };
+    }
+
+    public String getMaxlength() {
+        return maxlength;
+    }
+
+    public void setMaxlength(final String maxlength) {
+        this.maxlength = maxlength;
+    }
+
+    public void setRows(final String rows) {
+        this.rows = rows;
+    }
+
+    public String getRows() {
+        return rows;
     }
 }
