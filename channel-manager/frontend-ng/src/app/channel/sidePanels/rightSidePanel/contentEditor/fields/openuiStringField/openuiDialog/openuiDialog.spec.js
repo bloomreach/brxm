@@ -28,7 +28,7 @@ describe('OpenuiDialogCtrl', () => {
 
     inject(($controller, _$log_, _$rootScope_) => {
       OpenUiService = jasmine.createSpyObj('OpenUiService', ['connect', 'initialize']);
-      ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionUrl']);
+      ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionRelativeUrl']);
       $element = angular.element('<md-dialog><md-dialog-content/></md-dialog>');
       $log = _$log_;
       $rootScope = _$rootScope_;
@@ -53,7 +53,7 @@ describe('OpenuiDialogCtrl', () => {
   describe('$onInit', () => {
     it('connects to the child', () => {
       ExtensionService.getExtension.and.returnValue({});
-      ExtensionService.getExtensionUrl.and.returnValue('http://test-url?a=b');
+      ExtensionService.getExtensionRelativeUrl.and.returnValue('http://test-url/dialog?a=b');
       spyOn($scope, '$on');
 
       $ctrl.$onInit();
@@ -71,7 +71,7 @@ describe('OpenuiDialogCtrl', () => {
 
       OpenUiService.initialize.and.throwError(error);
       ExtensionService.getExtension.and.returnValue({});
-      ExtensionService.getExtensionUrl.and.returnValue('http://test-url?a=b');
+      ExtensionService.getExtensionRelativeUrl.and.returnValue('http://test-url?a=b');
 
       expect(() => $ctrl.$onInit()).toThrow(error);
 

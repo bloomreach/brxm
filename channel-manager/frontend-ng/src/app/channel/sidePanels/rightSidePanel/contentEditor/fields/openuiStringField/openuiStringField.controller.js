@@ -108,6 +108,10 @@ export default class OpenuiStringFieldController {
     };
   }
 
+  /**
+   * Opens a dialog.
+   * Note that we cannot throw Errors because in that case Penpal does not transfer the code property correctly.
+   */
   async openDialog(options) {
     if (this.isDialogOpen) {
       throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal

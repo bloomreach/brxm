@@ -35,7 +35,7 @@ class OpenuiDialogCtrl {
         methods: {
           cancelDialog: this.cancel.bind(this),
           closeDialog: this.closeDialog.bind(this),
-          getOptions: this.getOptions.bind(this),
+          getDialogOptions: this.getDialogOptions.bind(this),
         },
       });
       this.$scope.$on('$destroy', this.destroyConnection.bind(this));
@@ -46,7 +46,7 @@ class OpenuiDialogCtrl {
   }
 
   closeDialog(value) {
-    return this.$mdDialog.hide(value.value);
+    return this.$mdDialog.hide(value);
   }
 
   cancel() {
@@ -65,14 +65,10 @@ class OpenuiDialogCtrl {
 
   getUrl() {
     const extension = this.ExtensionService.getExtension(this.locals.extensionId);
-    const extensionUrl = new URL(this.ExtensionService.getExtensionUrl(extension));
-    const dialogUrl = new URL(this.locals.dialogOptions.url, extensionUrl);
-    extensionUrl.searchParams.forEach((name, value) => dialogUrl.searchParams.append(value, name));
-
-    return dialogUrl.toString();
+    return this.ExtensionService.getExtensionRelativeUrl(extension, this.locals.dialogOptions.url);
   }
 
-  getOptions() {
+  getDialogOptions() {
     return this.locals.dialogOptions;
   }
 }

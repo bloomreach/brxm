@@ -19,7 +19,7 @@ import openuiStringFieldComponent from './openuiStringField.component';
 import './openuiDialog/openuiDialog.scss';
 
 const openuiStringFieldModule = angular
-  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields.openuiDialog', [])
+  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields.openuiStringField', [])
   .component('openuiStringField', openuiStringFieldComponent)
   .controller('OpenuiDialogCtrl', OpenuiDialogCtrl);
 

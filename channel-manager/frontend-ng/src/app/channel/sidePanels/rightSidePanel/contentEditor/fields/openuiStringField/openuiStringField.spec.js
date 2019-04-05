@@ -32,7 +32,15 @@ describe('OpenuiStringField', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _ContentEditor_, _DialogService_, _ExtensionService_, _OpenUiService_) => {
+    inject((
+      _$componentController_,
+      _$q_,
+      _$rootScope_,
+      _ContentEditor_,
+      _DialogService_,
+      _ExtensionService_,
+      _OpenUiService_,
+    ) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -217,14 +225,15 @@ describe('OpenuiStringField', () => {
       $rootScope.$digest();
     });
 
-    it('rejects with DialogExists when another dialog is already open', () => {
+    it('rejects with DialogExists when another dialog is already open', (done) => {
       $ctrl.isDialogOpen = true;
-      const result = $ctrl.openDialog({});
+      $ctrl.openDialog({}).catch((error) => {
+        expect(DialogService.show).not.toHaveBeenCalled();
+        expect(error).toEqual({ code: 'DialogExists', message: 'A dialog already exists' });
+        expect($ctrl.isDialogOpen).toBe(true);
+        done();
+      });
       $rootScope.$digest();
-
-      expect(DialogService.show).not.toHaveBeenCalled();
-      expect(result.$$state.value).toEqual({ code: 'DialogExists', message: 'A dialog already exists' });
-      expect($ctrl.isDialogOpen).toBe(true);
     });
   });
 });

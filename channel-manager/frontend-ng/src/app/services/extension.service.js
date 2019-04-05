@@ -54,6 +54,13 @@ export default class ExtensionService {
       : this._getUrlRelativeToCmsLocation(extension.url);
   }
 
+  getExtensionRelativeUrl(extension, relativeUrl) {
+    const extensionUrl = this.getExtensionUrl(extension);
+    const newUrl = new URL(relativeUrl, extensionUrl);
+    this._addQueryParameters(newUrl);
+    return newUrl.href;
+  }
+
   _addQueryParameters(url) {
     url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
     url.searchParams.append('br.parentOrigin', this.$window.location.origin);

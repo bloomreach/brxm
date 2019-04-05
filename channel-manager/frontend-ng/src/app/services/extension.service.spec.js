@@ -126,4 +126,22 @@ describe('ExtensionService', () => {
       });
     });
   });
+
+  describe('getExtensionRelativeUrl', () => {
+    beforeEach(() => {
+      $window.location = { origin: 'https://www.example.com:443' };
+      ConfigService.antiCache = 42;
+      spyOn(ExtensionService, 'getExtensionUrl');
+    });
+
+    it('combines the extension url with a relative path', () => {
+      ExtensionService.getExtensionUrl.and.returnValue('http://domain/extension/');
+      expect(ExtensionService.getExtensionRelativeUrl({}, './dialog')).toEqual('http://domain/extension/dialog?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+    });
+
+    it('combines the extension url with a relative path and keeps only parameters of the relative path', () => {
+      ExtensionService.getExtensionUrl.and.returnValue('http://domain/extension/?a=b');
+      expect(ExtensionService.getExtensionRelativeUrl({}, './dialog?c=d')).toEqual('http://domain/extension/dialog?c=d&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+    });
+  });
 });
