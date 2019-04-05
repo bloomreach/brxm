@@ -34,25 +34,35 @@ type UnsubscribeFn = () => void;
  */
 export enum UiExtensionErrorCode {
   /**
-   * The UI extension is not running in an iframe.
+   * The connection with the CMS has been destroyed.
    */
-  'NotInIframe' = 'NotInIframe',
+  ConnectionDestroyed = 'ConnectionDestroyed',
+
+  /**
+   * A dialog was canceled.
+   */
+  DialogCanceled = 'DialogCanceled',
+
+  /**
+   * A dialog was canceled.
+   */
+  DialogExists = 'DialogExists',
 
   /**
    * The version of the CMS in which the UI extension is loaded is not compatible with the version of the
    * ui-extension library used by the UI extension.
    */
-  'IncompatibleParent' = 'IncompatibleParent',
-
-  /**
-   * The connection with the CMS has been destroyed.
-   */
-  'ConnectionDestroyed' = 'ConnectionDestroyed',
+  IncompatibleParent = 'IncompatibleParent',
 
   /**
    * An internal error occurred.
    */
-  'InternalError' = 'InternalError',
+  InternalError = 'InternalError',
+
+  /**
+   * The UI extension is not running in an iframe.
+   */
+  NotInIframe = 'NotInIframe',
 }
 
 /**
@@ -145,6 +155,11 @@ export interface UiScope extends UiProperties {
    * API for the current document.
    */
   document: DocumentScope;
+
+  /**
+   * API for dialogs.
+   */
+  dialog: DialogScope;
 }
 
 /**
@@ -187,12 +202,12 @@ export interface PageScope extends Emitter<PageScopeEvents> {
   /**
    * @returns A Promise that resolves with [[PageProperties]] of the current page.
    */
-  get: () => Promise<PageProperties>;
+  get(): Promise<PageProperties>;
 
   /**
    * Refreshes the page currently shown in the Channel Manager.
    */
-  refresh: () => Promise<void>;
+  refresh(): Promise<void>;
 }
 
 /**
@@ -208,7 +223,7 @@ export interface Emitter<Events> {
    *
    * @returns A function to unsubscribe the handler again.
    */
-  on: (eventName: keyof Events, handler: EventHandler<Events>) => UnsubscribeFn;
+  on(eventName: keyof Events, handler: EventHandler<Events>): UnsubscribeFn;
 }
 
 /**
@@ -369,4 +384,68 @@ export interface FieldScope {
    */
   autoUpdateHeight(): StopAutoUpdateHeightFn;
 
+}
+
+/**
+ * API to open, close and communicate with dialogs.
+ */
+export interface DialogScope {
+
+  /**
+   * Closes an open dialog, rejecting the promise returned by [[open]].
+   */
+  cancel(): Promise<void>;
+
+  /**
+   * Closes an open dialog, resolving the promise returned by [[open]] with a value.
+   * @param value The value selected in the dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   */
+  close(value: any): Promise<void>;
+
+  /**
+   * Opens a dialog.
+   */
+  open(options: DialogProperties): Promise<void>;
+
+  /**
+   * @returns A Promise that resolves with [[DialogProperties]] of the current dialog.
+   */
+  options(): Promise<DialogProperties>;
+}
+
+/**
+ * Defines the different possible modes of a document editor.
+ */
+export enum DialogSize {
+  Large = 'large',
+  Medium = 'medium',
+  Small = 'small',
+}
+
+/**
+ * Properties of a dialog.
+ */
+export interface DialogProperties {
+  /**
+   * A value to pass to the dialog. For example the current field value, that can be used to preselect an item in the
+   * dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   */
+  value?: any;
+
+  /**
+   * The size of the dialog. Defaults to [[Medium]].
+   */
+  size?: DialogSize;
+
+  /**
+   * Title of the dialog.
+   */
+  title: string;
+
+  /**
+   * The URL to load the dialog contents from.
+   */
+  url: string;
 }
