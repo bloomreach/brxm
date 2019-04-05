@@ -97,7 +97,7 @@ export function connect(parentOrigin: string, eventEmitter: Emittery): Promise<P
       methods: {
         emitEvent: eventEmitter.emit.bind(eventEmitter),
       },
-    }).promise.then(parent => new ParentConnection(parent));
+    }).promise.then((parent: Parent) => new ParentConnection(parent));
   } catch (penpalError) {
     return ParentError.fromPenpal(penpalError).toPromise();
   }
