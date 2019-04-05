@@ -19,10 +19,9 @@ function isAbsoluteUrl(url) {
 }
 
 export default class ExtensionService {
-  constructor($sce, $window, ConfigService, PathService) {
+  constructor($window, ConfigService, PathService) {
     'ngInject';
 
-    this.$sce = $sce;
     this.$window = $window;
     this.ConfigService = ConfigService;
     this.PathService = PathService;
@@ -51,8 +50,15 @@ export default class ExtensionService {
 
   getExtensionUrl(extension) {
     return isAbsoluteUrl(extension.url)
-      ? this._getTrustedAbsoluteUrl(extension.url)
+      ? this._getAbsoluteUrl(extension.url)
       : this._getUrlRelativeToCmsLocation(extension.url);
+  }
+
+  getExtensionRelativeUrl(extension, relativeUrl) {
+    const extensionUrl = this.getExtensionUrl(extension);
+    const newUrl = new URL(relativeUrl, extensionUrl);
+    this._addQueryParameters(newUrl);
+    return newUrl.href;
   }
 
   _addQueryParameters(url) {
@@ -60,11 +66,10 @@ export default class ExtensionService {
     url.searchParams.append('br.parentOrigin', this.$window.location.origin);
   }
 
-  _getTrustedAbsoluteUrl(extensionUrl) {
+  _getAbsoluteUrl(extensionUrl) {
     const url = new URL(extensionUrl);
     this._addQueryParameters(url);
-
-    return this.$sce.trustAsResourceUrl(url.href);
+    return url.href;
   }
 
   _getUrlRelativeToCmsLocation(extensionUrl) {
@@ -74,6 +79,6 @@ export default class ExtensionService {
     const url = new URL(path, this.$window.location.origin);
     this._addQueryParameters(url);
 
-    return url.pathname + url.search;
+    return url.href;
   }
 }

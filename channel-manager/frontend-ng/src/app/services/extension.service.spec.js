@@ -88,42 +88,60 @@ describe('ExtensionService', () => {
     describe('for extensions from the same origin', () => {
       it('works when the CMS location has a context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('https://www.example.com/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the CMS location has no context path', () => {
         ConfigService.getCmsContextPath.and.returnValue('/');
-        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl' })).toEqual('https://www.example.com/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path contains search parameters', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect(ExtensionService.getExtensionUrl({ url: '/testUrl?customParam=X' })).toEqual('/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: '/testUrl?customParam=X' })).toEqual('https://www.example.com/cms/testUrl?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path does not start with a slash', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect(ExtensionService.getExtensionUrl({ url: 'testUrl' })).toEqual('/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'testUrl' })).toEqual('https://www.example.com/cms/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works when the extension URL path contains dots', () => {
         ConfigService.getCmsContextPath.and.returnValue('/cms/');
-        expect(ExtensionService.getExtensionUrl({ url: '../testUrl' })).toEqual('/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: '../testUrl' })).toEqual('https://www.example.com/testUrl?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
     });
 
     describe('for extensions from a different origin', () => {
       it('works for URLs without parameters', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com' })).toEqual('http://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for URLs with parameters', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com?customParam=X' }).$$unwrapTrustedValue()).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'http://www.bloomreach.com?customParam=X' })).toEqual('http://www.bloomreach.com/?customParam=X&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
 
       it('works for HTTPS URLs', () => {
-        expect(ExtensionService.getExtensionUrl({ url: 'https://www.bloomreach.com' }).$$unwrapTrustedValue()).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+        expect(ExtensionService.getExtensionUrl({ url: 'https://www.bloomreach.com' })).toEqual('https://www.bloomreach.com/?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
       });
+    });
+  });
+
+  describe('getExtensionRelativeUrl', () => {
+    beforeEach(() => {
+      $window.location = { origin: 'https://www.example.com:443' };
+      ConfigService.antiCache = 42;
+      spyOn(ExtensionService, 'getExtensionUrl');
+    });
+
+    it('combines the extension url with a relative path', () => {
+      ExtensionService.getExtensionUrl.and.returnValue('http://domain/extension/');
+      expect(ExtensionService.getExtensionRelativeUrl({}, './dialog')).toEqual('http://domain/extension/dialog?br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
+    });
+
+    it('combines the extension url with a relative path and keeps only parameters of the relative path', () => {
+      ExtensionService.getExtensionUrl.and.returnValue('http://domain/extension/?a=b');
+      expect(ExtensionService.getExtensionRelativeUrl({}, './dialog?c=d')).toEqual('http://domain/extension/dialog?c=d&br.antiCache=42&br.parentOrigin=https%3A%2F%2Fwww.example.com%3A443'); // eslint-disable-line max-len
     });
   });
 });

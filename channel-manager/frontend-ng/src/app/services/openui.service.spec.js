@@ -63,7 +63,7 @@ describe('OpenUiService', () => {
       spyOn(ExtensionService, 'getExtensionUrl').and.returnValue('test-url');
     });
 
-    it('connects to the child', () => {
+    it('connects to the child and gets url from the extension', () => {
       spyOn(OpenUiService, 'connect');
       OpenUiService.initialize('test-id', { appendTo: element });
 
@@ -71,6 +71,17 @@ describe('OpenUiService', () => {
       expect(ExtensionService.getExtensionUrl).toHaveBeenCalledWith(extension);
       expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
         url: 'test-url',
+        appendTo: element,
+      }));
+    });
+
+    it('connects to the child and uses provided url', () => {
+      spyOn(OpenUiService, 'connect');
+      OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element });
+
+      expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
+      expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
+        url: 'my-url',
         appendTo: element,
       }));
     });

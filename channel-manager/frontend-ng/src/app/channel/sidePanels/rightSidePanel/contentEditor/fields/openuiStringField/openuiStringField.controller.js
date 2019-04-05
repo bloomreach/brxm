@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
+import dialogTemplate from './openuiDialog/openuiDialog.html';
+
 const MIN_HEIGHT_IN_PIXELS = 10;
 const MAX_HEIGHT_IN_PIXELS = 10000;
 const MAX_SIZE_IN_BYTES = 102400;
 
 export default class OpenuiStringFieldController {
-  constructor($element, $log, ContentEditor, ExtensionService, OpenUiService) {
+  constructor($element, $log, ContentEditor, DialogService, ExtensionService, OpenUiService) {
     'ngInject';
 
     this.$element = $element;
     this.$log = $log;
     this.ContentEditor = ContentEditor;
+    this.DialogService = DialogService;
     this.ExtensionService = ExtensionService;
     this.OpenUiService = OpenUiService;
   }
@@ -52,10 +55,11 @@ export default class OpenuiStringFieldController {
     this.connection = this.OpenUiService.initialize(extensionId, {
       appendTo: this.$element[0],
       methods: {
+        getDocument: this.getDocument.bind(this),
         getFieldValue: this.getValue.bind(this),
         setFieldValue: this.setValue.bind(this),
         setFieldHeight: this.setHeight.bind(this),
-        getDocument: this.getDocument.bind(this),
+        openDialog: this.openDialog.bind(this),
       },
     });
   }
@@ -102,5 +106,30 @@ export default class OpenuiStringFieldController {
         id: document.variantId,
       },
     };
+  }
+
+  /**
+   * Opens a dialog.
+   * Note that we cannot throw Errors because in that case Penpal does not transfer the code property correctly.
+   */
+  async openDialog(options) {
+    if (this.isDialogOpen) {
+      throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal
+    }
+
+    try {
+      this.isDialogOpen = true;
+      return await this.DialogService.show(angular.extend({
+        clickOutsideToClose: true,
+        locals: { dialogOptions: options, extensionId: this.extensionId },
+        template: dialogTemplate,
+        controller: 'OpenuiDialogCtrl',
+        controllerAs: '$ctrl',
+      }));
+    } catch (error) {
+      throw { code: 'DialogCanceled', message: 'The dialog is canceled' }; // eslint-disable-line no-throw-literal
+    } finally {
+      this.isDialogOpen = false;
+    }
   }
 }
