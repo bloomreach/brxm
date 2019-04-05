@@ -44,17 +44,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
     userDisplayName,
     userFirstName,
     userLastName
-  } = unescapeProperties(parameters);
-
-  function unescapeProperties(parameters) {
-    const unescaped = {};
-    Object.keys(parameters).forEach(parameter => unescaped[parameter] = unescapeProperty(parameters[parameter]));
-    return unescaped;
-  }
-
-  function unescapeProperty(value) {
-    return typeof value === 'string' ? value.replace('\\"', '"') : value;
-  }
+  } = parameters;
 
   function getIframeUrl(cmsOrigin, antiCache) {
     const iframeUrl = new URL(extensionUrl, cmsOrigin);
