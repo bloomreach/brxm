@@ -223,6 +223,9 @@ describe('ContentEditorService', () => {
         expectError({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_UNKNOWN_ERROR',
+          messageParams: {
+            errorKey: 'unknown',
+          },
         });
       }
 

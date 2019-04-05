@@ -302,10 +302,14 @@ class ContentEditorService {
         : 'UNAVAILABLE';
     }
 
-    this.error = ERROR_MAP[errorKey] || ERROR_MAP.UNKNOWN_ERROR;
-
-    if (params) {
-      this.error.messageParams = params;
+    if (!ERROR_MAP[errorKey]) {
+      this.error = ERROR_MAP.UNKNOWN_ERROR;
+      this.error.messageParams = { errorKey };
+    } else {
+      this.error = ERROR_MAP[errorKey];
+      if (params) {
+        this.error.messageParams = params;
+      }
     }
   }
 

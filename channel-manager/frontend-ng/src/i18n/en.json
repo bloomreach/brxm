@@ -154,6 +154,7 @@
   "FEEDBACK_PROJECT_NOT_FOUND": "Document has project id {{projectId}} which does not exist (any more)",
   "FEEDBACK_REQUEST_PENDING_MESSAGE": "The document is waiting to be published or unpublished.",
   "FEEDBACK_SWITCH_TO_CONTENT_EDITOR": "Switch to content editor",
+  "FEEDBACK_UNKNOWN_ERROR": "The server responded with an unknown error: '{{errorKey}}'.",
   "FIELD_REQUIRED": "This field is required",
   "FULL_SIZE": "Full size",
   "HIDE_COMPONENTS": "Hide components",
