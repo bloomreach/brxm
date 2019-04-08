@@ -27,6 +27,7 @@ import org.hippoecm.hst.content.beans.dynamic.AutoEnhancedBean;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanDefinitionService;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,4 +150,16 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
                 .findFirst()
                 .orElse(null);
     }
+    
+    /**
+     * Return content type of the given document type name
+     */
+    public ContentType getContentType(String name) {
+        final ContentTypes contentTypes = contentTypesRef.get();
+        if (contentTypes == null) {
+            return null;
+        }
+        return contentTypes.getType(name);
+    }
+
 }

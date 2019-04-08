@@ -1,0 +1,88 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/dynamiccompound:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      jcr:uuid: 5d8e0291-fdba-48db-ae73-48f34b9a8e2f
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 1608ff13-6097-4f99-a04e-e25d457ab996
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: da24293b-8f8e-4189-aa17-cb7cf1eb595b
+          hipposysedit:node: true
+          hipposysedit:supertype: ['hippo:compound', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.contentbeanstest.com/contentbeanstest/nt/1.0
+          /stringTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:stringTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: String
+          /dynamicinnercompound:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dynamicinnercompound
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:dynamicinnercompound
+          /richTextEditorCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:richTextEditorCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippostd:html
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:dynamiccompound
+          contentbeanstest:stringTypeField: ''
+          /contentbeanstest:dynamicinnercompound:
+            jcr:primaryType: contentbeanstest:dynamicinnercompound
+            contentbeanstest:stringTypeField: ''
+          /contentbeanstest:richTextEditorCompoundType:
+            jcr:primaryType: hippostd:html
+            hippostd:content: ''
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /stringTypeField:
+            jcr:primaryType: frontend:plugin
+            caption: Street
+            field: stringTypeField
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /dynamicinnercompound:
+            jcr:primaryType: frontend:plugin
+            caption: DynamicInnerCompound
+            field: dynamicinnercompound
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            hint: ''
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /richTextEditorCompoundType:
+            jcr:primaryType: frontend:plugin
+            caption: Detail
+            field: richTextEditorCompoundType
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig

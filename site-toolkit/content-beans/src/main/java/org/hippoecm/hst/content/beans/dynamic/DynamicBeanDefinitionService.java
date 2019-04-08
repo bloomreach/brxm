@@ -52,7 +52,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     private Class<? extends HippoBean> createDynamicCompoundBean(ContentType contentType) {
         final Set<String> superTypes = contentType.getSuperTypes();
-        if (superTypes.size() == 0 || !superTypes.iterator().next().equals(HippoNodeType.NT_COMPOUND)) {
+        if (superTypes.isEmpty() || !superTypes.iterator().next().equals(HippoNodeType.NT_COMPOUND)) {
             return null;
         }
 
@@ -84,7 +84,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         final BeanBuilderServiceParameters builderParameters = new DynamicBeanBuilderServiceParameters(builder);
 
         generateMethodsByProperties(contentBean, builderParameters);
-        generateMethodsByNodes(contentBean, builderParameters, contentType);
+        generateMethodsByNodes(contentBean, builderParameters);
 
         final Class<? extends HippoBean> generatedBean = builder.create();
         objectConverter.addBeanDefinition(contentBean.getName(), generatedBean);
@@ -180,14 +180,19 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addCustomNodeType(String name, boolean multiple, ContentType contentType, BeanBuilderServiceParameters builderParameters) {
+    protected void addCustomNodeType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters) {
 
         DynamicBeanBuilderServiceParameters parameters = (DynamicBeanBuilderServiceParameters) builderParameters;
         final String methodName = DynamicBeanUtils.createMethodName(name);
 
-        Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(name);
+        Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
         if (generatedBeanDef == null) {
-            generatedBeanDef = createDynamicCompoundBean(contentType);
+            final ContentType compoundContentType = objectConverter.getContentType(type);
+            if (compoundContentType == null) {
+                return;
+            }
+            generatedBeanDef = createDynamicCompoundBean(compoundContentType);
+
         }
 
         parameters.getDynamicBeanBuilder().addBeanMethodInternalType(generatedBeanDef, methodName, name, multiple);

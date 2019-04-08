@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
@@ -50,9 +51,11 @@ public class DynamicBeanBuilder {
     private static final String METHOD_GET_BEAN = "getBean";
 
     private Builder<? extends HippoBean> builder;
+    private final Class<? extends HippoBean> parentBean;
 
     public DynamicBeanBuilder(final String className, final Class<? extends HippoBean> parentBean) {
         builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
+        this.parentBean = parentBean;
     }
 
     public void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
@@ -162,7 +165,9 @@ public class DynamicBeanBuilder {
 
     private void addSimpleMethod(final String hippoMethodName, final String methodName, final String propertyName, final Class<?> returnType) {
         try {
-            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(hippoMethodName)) ? HippoDocument.class : HippoBean.class;
+            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(hippoMethodName))
+                    ? (parentBean.isAssignableFrom(HippoCompound.class) ? HippoCompound.class : HippoDocument.class)
+                    : HippoBean.class;
             builder = builder
                         .defineMethod(methodName, returnType, Modifier.PUBLIC)
                         .intercept(

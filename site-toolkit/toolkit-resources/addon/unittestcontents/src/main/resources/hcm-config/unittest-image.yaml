@@ -10,6 +10,7 @@ definitions:
         jcr:uuid: 669f4436-9399-491e-b443-6060f20b6e06
         /hippogallery:thumbnail:
           jcr:primaryType: hippogallery:image
+          hippo:filename: picture_thumbnail.jpeg
           jcr:data:
             type: binary
             resource: /unittestcontent/gallery/picture.jpeg/picture_thumbnail.jpeg
@@ -17,6 +18,7 @@ definitions:
           jcr:mimeType: image/jpeg
         /hippogallery:original:
           jcr:primaryType: hippogallery:image
+          hippo:filename: picture_original.jpeg
           jcr:data:
             type: binary
             resource: /unittestcontent/gallery/picture.jpeg/picture_original.jpeg

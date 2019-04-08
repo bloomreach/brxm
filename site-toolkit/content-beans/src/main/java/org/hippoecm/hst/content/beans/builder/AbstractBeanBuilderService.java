@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
 
-import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +127,7 @@ public abstract class AbstractBeanBuilderService {
      * @param bean {@link HippoContentBean}
      * @param builderParameters {@link BeanBuilderServiceParameters}
      */
-    protected void generateMethodsByNodes(HippoContentBean bean, BeanBuilderServiceParameters builderParameters, ContentType contentType) {
+    protected void generateMethodsByNodes(HippoContentBean bean, BeanBuilderServiceParameters builderParameters) {
         for (HippoContentChildNode child : bean.getChildren()) {
             final String name = child.getName();
             final boolean multiple = child.isMultiple();
@@ -165,7 +164,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodHippoResource(name, multiple, builderParameters);
                 break;
             default:
-                addCustomNodeType(name, multiple, contentType, builderParameters);
+                addCustomNodeType(name, multiple, type, builderParameters);
                 break;
             }
         }
@@ -295,9 +294,9 @@ public abstract class AbstractBeanBuilderService {
      * 
      * @param name of the method
      * @param multiple whether a document property keeps multiple values or not
-     * @param contentType of the document property
+     * @param type of the node
      * @param builderParameters additional parameters for builder implementation
      */
-    protected abstract void addCustomNodeType(String name, boolean multiple, ContentType contentType, BeanBuilderServiceParameters builderParameters);
+    protected abstract void addCustomNodeType(String name, boolean multiple, String type, BeanBuilderServiceParameters builderParameters);
 
 }

@@ -178,7 +178,7 @@ definitions:
             hippostd:content: ''
           /contentbeanstest:imagelinkCompoundType:
             jcr:primaryType: hippogallerypicker:imagelink
-            hippo:docbase: 6e115c5c-1284-4b34-954e-1b741b703bb6
+            hippo:docbase: db02dde5-0098-4488-a72c-2a4fc6d51beb
             hippo:facets: []
             hippo:modes: []
             hippo:values: []

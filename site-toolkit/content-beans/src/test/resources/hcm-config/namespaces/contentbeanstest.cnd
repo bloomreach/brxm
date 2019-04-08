@@ -29,3 +29,15 @@
   orderable
 
 [contentbeanstest:dynamicbeanpage] > contentbeanstest:basedocument, hippostd:relaxed
+
+[contentbeanstest:dynamiccompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[contentbeanstest:dynamicinnercompound] > hippo:compound, hippostd:relaxed
+  orderable
+  
+[contentbeanstest:dynamicdocument] > hippostd:relaxed, hippotranslation:translated, contentbeanstest:basedocument
+  orderable
+
+[contentbeanstest:dynamicsubdocument] > hippostd:relaxed, hippotranslation:translated, contentbeanstest:dynamicdocument
+  orderable
