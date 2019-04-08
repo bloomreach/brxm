@@ -1,4 +1,4 @@
-// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ $hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
 
 image-link {
   .input-bottom-border {
-    bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
     border-bottom: 1px solid;
+    bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
     max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
     position: absolute;
     width: 100%;
@@ -81,9 +81,15 @@ image-link {
   }
 
   .hippo-imagelink-buttons {
+    align-items: flex-end;
+    display: flex;
+    min-height: $button-width;
     // the hippo-imagelink-buttons container will overlay the selected image and (optional) hint icon,
     // so it should pass through pointer events to allow the image to be clickable and the hint label to show on hover
     pointer-events: none;
+    position: absolute;
+    top: 0;
+    z-index: 1;
 
     button {
       pointer-events: all;
@@ -128,13 +134,6 @@ image-link {
         display: none;
       }
     }
-
-    align-items: flex-end;
-    display: flex;
-    min-height: $button-width;
-    position: absolute;
-    top: 0;
-    z-index: 1;
   }
 
   .hippo-imagelink-picked {

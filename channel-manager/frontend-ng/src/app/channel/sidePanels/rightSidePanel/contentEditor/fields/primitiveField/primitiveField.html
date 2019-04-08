@@ -140,6 +140,7 @@
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
+              ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
               name="{{::$ctrl.getFieldName($index)}}"
               aria-label="::$ctrl.fieldType.displayName"
               ng-required="::$ctrl.fieldType.required"

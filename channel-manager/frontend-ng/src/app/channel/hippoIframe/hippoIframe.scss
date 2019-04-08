@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@
 @import 'variables';
 
 %parent-size {
-  position: absolute;
-  top: 0;
-  right: 0;
   bottom: 0;
   left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 hippo-iframe {
-  position: relative;
 
   // The value of this variable is set by the HippoIframeService
   --locked-width: 100%;
+
+  position: relative;
 
   &.locked-width {
     opacity: 0;
@@ -44,15 +45,15 @@ hippo-iframe {
 
   // Lock the width of the iframe to make the side-panel overlap when going full-screen
   &.locked-width-add-active .channel-iframe-canvas {
-    width: var(--locked-width);
     min-width: var(--locked-width);
+    width: var(--locked-width);
   }
 
   &.locked-width-remove-active .channel-iframe-canvas {
+    min-width: var(--locked-width);
     // When we close a full-screen panel completely (instead of transitioning to normal-screen) the canvas
     // should be allowed to use 100% width because it can be bigger due to the closing of the side-panel
     width: 100%;
-    min-width: var(--locked-width);
   }
 }
 
@@ -78,19 +79,19 @@ hippo-iframe {
 .channel-iframe-sheet {
   background-color: $grey-50;
   box-shadow: 0 0 20px $black-shadow;
-
-  // center the sheet on the canvas; use margin instead of flexbox
-  // to properly center fixed-width viewports (Tablet etc.)
-  position: relative;
+  height: 100%;
   margin-left: auto;
   margin-right: auto;
 
   // use explicit max-width and min-width so its transition can be animated
   max-width: 100%;
   min-width: 0;
-  width: 100%;
-  height: 100%;
+
+  // center the sheet on the canvas; use margin instead of flexbox
+  // to properly center fixed-width viewports (Tablet etc.)
+  position: relative;
   transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
+  width: 100%;
 
   .channel-dragula-mirror {
     @extend %parent-size;

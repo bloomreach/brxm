@@ -24,11 +24,11 @@ property-group {
   }
 
   label {
+    display: flex;
     // md-tooltip searches for the first parent with pointer-events
     // ng-material disables pointer events on labels, they should be enabled
     // when using md-no-float
     pointer-events: auto !important;
-    display: flex;
 
     &::after {
       content: '' !important; // hide material required mark

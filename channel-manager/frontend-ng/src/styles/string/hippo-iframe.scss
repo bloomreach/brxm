@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@
 
 @font-face {
   font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: normal;
   src:
     url('~open-sans-fontface/fonts/Regular/OpenSans-Regular.woff2') format('woff2'),
     url('~open-sans-fontface/fonts/Regular/OpenSans-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
 }
 
 .hst-fab {

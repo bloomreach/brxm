@@ -1,4 +1,4 @@
-// Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
   // and hide the element using the workaround below.
   .retain-iframe-scroll-position-when-hiding-in-chrome.ng-hide:not(.ng-hide-animate) {
     display: block !important;
+    left: -9999px;
     position: absolute;
     top: -9999px;
-    left: -9999px;
   }
 }

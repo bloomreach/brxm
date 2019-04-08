@@ -45,6 +45,7 @@ describe('FeedbackService', () => {
     spyOn($translate, 'instant').and.returnValue(message);
     spyOn($mdToast, 'simple').and.returnValue(toast);
     spyOn($mdToast, 'show');
+    spyOn($mdToast, 'hide');
   });
 
   it('shows a translated notification message', () => {
@@ -181,5 +182,12 @@ describe('FeedbackService', () => {
       FeedbackService.showErrorResponse(response, 'defaultKey');
       expect(toast.textContent).toHaveBeenCalledWith('Message intended for Tester');
     });
+  });
+
+  it('hides all toasts', () => {
+    $mdToast.hide.and.returnValue('something');
+
+    expect(FeedbackService.hideAll()).toBe('something');
+    expect($mdToast.hide).toHaveBeenCalled();
   });
 });
