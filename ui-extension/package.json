@@ -23,7 +23,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run lint && rollup -c rollup.config.js",
+    "build": "rollup -c rollup.config.js",
     "lint": "tslint --project .",
     "test": "jest",
     "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
