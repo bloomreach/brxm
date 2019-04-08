@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,26 @@ import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.control
 import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
+  CANCELABLE_PUBLICATION_REQUEST_PENDING: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE',
+    cancelRequest: true,
+    color: 'hippo-grey-200',
+  },
+  CORE_PROJECT: {
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
+  },
+  CREATE_WITH_UNKNOWN_VALIDATOR: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
+    linkToContentEditor: true,
+  },
+  DOCUMENT_INVALID: {
+    titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+    messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
+    linkToContentEditor: true,
+  },
   DOES_NOT_EXIST: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
@@ -30,13 +50,13 @@ const ERROR_MAP = {
   },
   NOT_A_DOCUMENT: {
     titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_EDITABLE: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_EDITABLE_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_FOUND: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
@@ -47,34 +67,10 @@ const ERROR_MAP = {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
   },
-  CANCELABLE_PUBLICATION_REQUEST_PENDING: {
-    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_CANCELABLE_PUBLICATION_REQUEST_PENDING_MESSAGE',
-    cancelRequest: true,
-    color: 'hippo-grey-200',
-  },
-  REQUEST_PENDING: {
-    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
-  },
-  UNAVAILABLE: { // default catch-all
-    titleKey: 'FEEDBACK_DEFAULT_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
-  },
-  UNKNOWN_VALIDATOR: {
-    titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
-    linkToContentEditor: true,
-    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
-  },
   PART_OF_PROJECT: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PART_OF_PROJECT_MESSAGE',
     hasUser: true,
-  },
-  CORE_PROJECT: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
   },
   PROJECT_INVALID_STATE: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -83,6 +79,19 @@ const ERROR_MAP = {
   PROJECT_NOT_FOUND: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PROJECT_NOT_FOUND',
+  },
+  REQUEST_PENDING: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
+  },
+  UNAVAILABLE: {
+    titleKey: 'FEEDBACK_DEFAULT_TITLE',
+    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
+    linkToContentEditor: true,
+  },
+  UNKNOWN_ERROR: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_UNKNOWN_ERROR',
   },
 };
 
@@ -98,13 +107,13 @@ function hasFields(document) {
   return document.fields && Object.keys(document.fields).length > 0;
 }
 
-function createNoContentResponse({ displayName }) {
-  return {
-    data: {
-      reason: 'NO_CONTENT',
-      params: { displayName },
-    },
-  };
+class ErrorResponse {
+  constructor(reason, params) {
+    this.data = {
+      reason,
+      params,
+    };
+  }
 }
 
 class ContentEditorService {
@@ -197,20 +206,36 @@ class ContentEditorService {
     return this._loadDocument(documentId);
   }
 
-  _loadDocument(id) {
+  async _loadDocument(id) {
     this._setDocumentId(id);
 
-    return this.CmsService.closeDocumentWhenValid(id)
-      .then(() => this.ContentService.getEditableDocument(id)
-        .then((document) => {
-          if (hasFields(document)) {
-            return this.loadDocumentType(document);
-          }
+    try {
+      // close previously opened document if there are no validation errors
+      await this._closeDocumentWhenValid(id);
 
-          return this.$q.reject(createNoContentResponse(document));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDocumentInvalid());
+      // create an editable instance
+      const document = await this.ContentService.getEditableDocument(id);
+
+      // don't edit documents without fields
+      if (!hasFields(document)) {
+        throw new ErrorResponse('NO_CONTENT', { displayName: document.displayName });
+      }
+
+      // ensure the document has a valid type
+      await this.loadDocumentType(document);
+      return document;
+    } catch (e) {
+      this._onLoadFailure(e);
+      return null;
+    }
+  }
+
+  async _closeDocumentWhenValid(id) {
+    try {
+      await this.CmsService.closeDocumentWhenValid(id);
+    } catch (e) {
+      throw new ErrorResponse('DOCUMENT_INVALID');
+    }
   }
 
   loadDocumentType(document) {
@@ -277,9 +302,14 @@ class ContentEditorService {
         : 'UNAVAILABLE';
     }
 
-    this.error = ERROR_MAP[errorKey];
-    if (params) {
-      this.error.messageParams = params;
+    if (!ERROR_MAP[errorKey]) {
+      this.error = ERROR_MAP.UNKNOWN_ERROR;
+      this.error.messageParams = { errorKey };
+    } else {
+      this.error = ERROR_MAP[errorKey];
+      if (params) {
+        this.error.messageParams = params;
+      }
     }
   }
 

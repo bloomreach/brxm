@@ -24,6 +24,7 @@ class HippoCmCtrl {
     ChannelService,
     CmsService,
     ConfigService,
+    FeedbackService,
     HippoIframeService,
   ) {
     'ngInject';
@@ -36,6 +37,7 @@ class HippoCmCtrl {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
   }
 
@@ -55,6 +57,8 @@ class HippoCmCtrl {
     this.CmsService.subscribe('reload-channel', () => {
       this.$rootScope.$apply(() => this._reloadChannel());
     });
+
+    this.CmsService.subscribe('close-channel', () => this._closeChannel());
 
     // Reload current channel
     this.CmsService.subscribe('channel-changed-in-extjs', () => {
@@ -91,6 +95,10 @@ class HippoCmCtrl {
   _reloadChannel() {
     this.ChannelService.reload()
       .then(() => this.HippoIframeService.reload());
+  }
+
+  _closeChannel() {
+    return this.FeedbackService.hideAll();
   }
 
   _storeAppState(channelId, contextPath, hostGroup, branchId, initialPath) {

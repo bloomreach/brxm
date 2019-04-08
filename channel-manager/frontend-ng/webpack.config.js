@@ -20,7 +20,6 @@ const config = require('@bloomreach/frontend-build/lib/webpack.config');
 const {
   dist,
   env,
-  opts,
   root,
   src,
 } = require('@bloomreach/frontend-build/lib/env');
@@ -74,12 +73,6 @@ const webpackConfig = merge(config, {
       },
     ]),
   ].filter(Boolean),
-
-  ...opts.watch && {
-    serve: {
-      port: 9090,
-    },
-  },
 });
 
 if (env === 'test') {

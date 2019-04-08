@@ -387,7 +387,7 @@ public class DocumentsServiceImplTest {
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.UNKNOWN_VALIDATOR));
+            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR));
             assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
         }
 
@@ -772,7 +772,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, session, locale);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -1211,7 +1211,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
 
         verifyAll();
@@ -1547,6 +1547,8 @@ public class DocumentsServiceImplTest {
     @Test
     public void createDocumentNoWorkflow() throws Exception {
         final Node folderNode = createMock(Node.class);
+        final Node documentHandle = createMock(Node.class);
+
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
         expect(FolderUtils.getLocale(folderNode))
@@ -1559,6 +1561,9 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(folderNode))
@@ -1581,6 +1586,7 @@ public class DocumentsServiceImplTest {
     @Test(expected = InternalServerErrorException.class)
     public void createDocumentWorkflowThrowsException() throws Exception {
         final Node folderNode = createMock(Node.class);
+        final Node documentHandle = createMock(Node.class);
         final FolderWorkflow folderWorkflow = createMock(FolderWorkflow.class);
 
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
@@ -1595,6 +1601,8 @@ public class DocumentsServiceImplTest {
                 .andReturn("breaking-news");
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
+        final DocumentType docType = provideDocumentType(documentHandle);
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))

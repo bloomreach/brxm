@@ -19,7 +19,8 @@
     "npm": ">=6"
   },
   "config": {
-    "dist": "target/classes/angular/hippo-cm/"
+    "dist": "target/classes/angular/hippo-cm/",
+    "port": 9090
   },
   "scripts": {
     "build": "febuild build",
@@ -76,9 +77,9 @@
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "10.0.0-beta.4",
+    "@bloomreach/frontend-build": "10.0.1",
     "angular-mocks": "1.6.9",
-    "babel-plugin-transform-async-to-promises": "0.8.4",
+    "babel-plugin-transform-async-to-promises": "0.8.8",
     "string-replace-loader": "2.1.1"
   }
 }

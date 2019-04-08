@@ -18,7 +18,7 @@ const DELAY_NOTIFICATION = 1000;
 const DELAY_ERROR = 3 * 1000;
 const DELAY_DISMISSIBLE = 30 * 1000;
 
-class FeedbackService {
+export default class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
     'ngInject';
 
@@ -102,7 +102,8 @@ class FeedbackService {
 
     this.showDismissibleText(text);
   }
+
+  hideAll() {
+    return this.$mdToast.hide();
+  }
 }
-
-
-export default FeedbackService;
