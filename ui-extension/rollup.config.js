@@ -68,7 +68,7 @@ export default [
     ],
     plugins: [
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
-      babel({ extensions: ['.js', '.ts'] }),
+      babel({ extensions: ['.ts'] }),
       terser({
         ecma: 5,
         mangle: false,
