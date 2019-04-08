@@ -25,7 +25,7 @@ const ERROR_MAP = {
     color: 'hippo-grey-200',
   },
   CORE_PROJECT: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
   },
   CREATE_WITH_UNKNOWN_VALIDATOR: {
@@ -42,7 +42,7 @@ const ERROR_MAP = {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
-  },
+   },
   NO_CONTENT: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
@@ -68,16 +68,16 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
   },
   PART_OF_PROJECT: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PART_OF_PROJECT_MESSAGE',
     hasUser: true,
   },
   PROJECT_INVALID_STATE: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PROJECT_INVALID_STATE',
   },
   PROJECT_NOT_FOUND: {
-    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PROJECT_NOT_FOUND',
   },
   REQUEST_PENDING: {
