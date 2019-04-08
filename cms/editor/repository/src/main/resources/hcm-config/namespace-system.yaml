@@ -39,7 +39,7 @@ definitions:
           jcr:primaryType: editor:templateset
           /_default_:
             jcr:primaryType: frontend:plugincluster
-            frontend:properties: [mode, rows]
+            frontend:properties: [mode, rows, maxlength]
             frontend:references: [wicket.model, engine, model.compareTo]
             frontend:services: [wicket.id]
             /root:
