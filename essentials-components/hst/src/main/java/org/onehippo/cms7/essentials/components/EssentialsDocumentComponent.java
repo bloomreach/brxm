@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hippo HST component for simple (document detail) request handling.
- * If document path is not defined, EssentialsDocumentComponent will try to fetch sitemap mapped bean.
- * @version "$Id$"
- * @see EssentialsContentComponent
  */
 @ParametersInfo(type = EssentialsDocumentComponentInfo.class)
 public class EssentialsDocumentComponent extends CommonComponent {
@@ -39,7 +36,7 @@ public class EssentialsDocumentComponent extends CommonComponent {
         super.doBeforeRender(request, response);
         final EssentialsDocumentComponentInfo paramInfo = getComponentParametersInfo(request);
         final String documentPath = paramInfo.getDocument();
-        log.debug("Calling EssentialsDocumentComponent for document path:  [{}]", documentPath);
+        log.debug("Calling setContentBeanForPath for document path: [{}]", documentPath);
         setContentBeanForPath(documentPath, request, response);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
