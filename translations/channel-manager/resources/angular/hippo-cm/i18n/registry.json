@@ -837,10 +837,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "ERROR_UNKNOWN_VALIDATOR" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_WORKFLOW_ERROR" : {
       "status" : "CLEAN",
       "locales" : null
@@ -1143,6 +1139,36 @@
       "status" : "UPDATED",
       "locales" : {
         "nl" : "RESOLVED"
+      }
+    },
+    "FEEDBACK_UNKNOWN_ERROR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_CREATE_WITH_UNKNOWN_VALIDATOR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_SAVE_WITH_UNKNOWN_VALIDATOR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
       }
     }
   }

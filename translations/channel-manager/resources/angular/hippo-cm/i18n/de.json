@@ -278,7 +278,6 @@
   "CREATE_DOCUMENT_LOCKED": "Kann Dokument nicht erstellen (Komponente ist gesperrt)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Veröffentlichung angefragt für '{{documentName}}'",
   "NOTIFICATION_DOCUMENT_SAVED": "Dokument gespeichert",
-  "ERROR_UNKNOWN_VALIDATOR": "Konnte das Dokument nicht speichern, es enthält einen nicht-unterstützten Validator",
   "ERROR_WORKFLOW_ERROR": "Aktualisierung fehlgeschlagen, ein anderer Benutzer hat den Status dieses Dokuments geändert",
   "ADD_TO_PROJECT": "Zu Projekt hinzufügen",
   "SHOW_CONTENT": "Inhalt einblenden",
