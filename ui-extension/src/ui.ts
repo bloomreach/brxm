@@ -27,7 +27,7 @@
  * Disable TSLint for imports that start with an uppercase letter
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
-import Emittery = require('emittery'); // tslint:disable-line:import-name
+import Emittery from 'emittery'; // tslint:disable-line:import-name
 import {
   ChannelScope,
   ChannelScopeEvents,

@@ -18,10 +18,9 @@
  * Disable TSLint for imports that start with an uppercase letter
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
-import { DialogProperties } from './api';
 import Emittery = require('emittery'); // tslint:disable-line:import-name
 import { parent } from './__mocks__/penpal';
-import { PageProperties } from './api';
+import { DialogProperties, PageProperties } from './api';
 import { ParentConnection } from './parent';
 import { Ui } from './ui';
 
@@ -69,7 +68,7 @@ describe('Ui.init()', () => {
 
   describe('ui.channel.refresh()', () => {
     it('refreshes the current channel', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.channel.refresh();
       expect(parentConnection.call).toHaveBeenCalledWith('refreshChannel');
     });
@@ -87,7 +86,7 @@ describe('Ui.init()', () => {
 
   describe('ui.channel.page.refresh()', () => {
     it('refreshes the current page', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.channel.page.refresh();
       expect(parentConnection.call).toHaveBeenCalledWith('refreshPage');
     });
@@ -166,7 +165,7 @@ describe('Ui.init()', () => {
 
   describe('ui.document.field.setValue()', () => {
     it('sets the current field value', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.document.field.setValue('test');
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldValue', 'test');
     });
@@ -174,13 +173,13 @@ describe('Ui.init()', () => {
 
   describe('ui.document.field.setHeight()', () => {
     it('sets the field height', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.document.field.setHeight(100);
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
     });
 
     it('resets the cached height used by updateHeight()', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
 
       await ui.document.field.updateHeight();
@@ -195,14 +194,14 @@ describe('Ui.init()', () => {
 
   describe('ui.document.field.updateHeight()', () => {
     it('sets the field height to the value of document.body.scrollHeight', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
       await ui.document.field.updateHeight();
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
     });
 
     it('does not set the field height if it has not changed', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
       await ui.document.field.updateHeight();
       await ui.document.field.updateHeight();
@@ -245,7 +244,7 @@ describe('Ui.init()', () => {
 
   describe('ui.dialog.cancel()', () => {
     it('cancels an open dialog', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.dialog.cancel();
       expect(parentConnection.call).toHaveBeenCalledWith('cancelDialog');
     });
@@ -253,7 +252,7 @@ describe('Ui.init()', () => {
 
   describe('ui.dialog.close()', () => {
     it('closes an open dialog', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       const transferable = { value: 'test value' };
       await ui.dialog.close(transferable);
       expect(parentConnection.call).toHaveBeenCalledWith('closeDialog', transferable);
@@ -262,8 +261,8 @@ describe('Ui.init()', () => {
 
   describe('ui.dialog.open()', () => {
     it('opens a dialog', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
-      let dialogProperties: DialogProperties;
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
+      const dialogProperties = {} as DialogProperties;
       await ui.dialog.open(dialogProperties);
       expect(parentConnection.call).toHaveBeenCalledWith('openDialog', dialogProperties);
     });
@@ -271,7 +270,7 @@ describe('Ui.init()', () => {
 
   describe('ui.dialog.options()', () => {
     it('gets the dialog options', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve());
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
       await ui.dialog.options();
       expect(parentConnection.call).toHaveBeenCalledWith('getDialogOptions');
     });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,12 @@
  * Disable TSLint for imports that start with an uppercase letter
  * @see https://github.com/Microsoft/tslint-microsoft-contrib/issues/387
  */
-import Emittery = require('emittery');  // tslint:disable-line:import-name
+import Emittery from 'emittery';  // tslint:disable-line:import-name
 import { UiScope } from './api';
 import { connect } from './parent';
 import { Ui } from './ui';
+
+export * from './api';
 
 /**
  * Main entry point of the ui-extension library.
