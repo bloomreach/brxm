@@ -275,21 +275,25 @@ export interface PageProperties {
 
 /**
  * API to access information about and communicate with the current document.
+ * @since 13.2
  */
 export interface DocumentScope {
   /**
+   * @since 13.2
    * @returns A Promise that resolves with [[DocumentProperties]] of the current document.
    */
   get(): Promise<DocumentProperties>;
 
   /**
    * API for the current field of the current document.
+   * @since 13.2
    */
   field: FieldScope;
 }
 
 /**
  * Defines the different possible modes of a document editor.
+ * @since 13.2
  */
 export enum DocumentEditorMode {
   View = 'view',
@@ -299,35 +303,42 @@ export enum DocumentEditorMode {
 
 /**
  * Properties of a document.
+ * @since 13.2
  */
 export interface DocumentProperties {
   /**
    * The UUID of the handle node.
+   * @since 13.2
    */
   id: string;
 
   /**
    * Display name of the document.
+   * @since 13.2
    */
   displayName: string;
 
   /**
    * Locale of the document, e.g. "sv". Is undefined when the document does not have a locale.
+   * @since 13.2
    */
   locale: string;
 
   /**
    * The mode of the document editor.
+   * @since 13.2
    */
   mode: DocumentEditorMode;
 
   /**
    * The URL name of the document.
+   * @since 13.2
    */
   urlName: string;
 
   /**
    * UUID of the currently shown variant, typically 'draft' or 'preview'.
+   * @since 13.2
    */
   variant: {
     id: string;
@@ -336,15 +347,18 @@ export interface DocumentProperties {
 
 /**
  * Function to stop the auto-update of field height with.
+ * @since 13.2
  */
 type StopAutoUpdateHeightFn = () => void;
 
 /**
  * API to access information about and communicate with the current document field.
+ * @since 13.2
  */
 export interface FieldScope {
   /**
    * Gets the current field value.
+   * @since 13.2
    * @return A promise that resolves with the current field value.
    */
   getValue(): Promise<string>;
@@ -353,6 +367,7 @@ export interface FieldScope {
    * Gets the field value to compare the current value to.
    * Only valid when the document editor mode is [[DocumentEditorMode.Compare]].
    *
+   * @since 13.2
    * @return A promise that resolves with the compare value, or null when the
    * document editor mode is not [[DocumentEditorMode.Compare]].
    */
@@ -360,12 +375,14 @@ export interface FieldScope {
 
   /**
    * Updates current field value.
+   * @since 13.2
    * @param value the new field value
    */
   setValue(value: string): Promise<void>;
 
   /**
    * Set the height of the surrounding iframe.
+   * @since 13.2
    * @param pixels the number of pixels
    */
   setHeight(pixels: number): Promise<void>;
@@ -373,6 +390,7 @@ export interface FieldScope {
   /**
    * Set the height of the surrounding iframe to the value of `document.body.scrollHeight`,
    * but only when the height differs from the previous time [[updateHeight]] was called.
+   * @since 13.2
    */
   updateHeight(): Promise<void>;
 
@@ -380,6 +398,7 @@ export interface FieldScope {
    * Starts monitoring the DOM below `document.body` for changes, and calls
    * [[updateHeight]] for every change.
    *
+   * @since 13.2
    * @return a function that stops the DOM monitoring.
    */
   autoUpdateHeight(): StopAutoUpdateHeightFn;
@@ -388,11 +407,13 @@ export interface FieldScope {
 
 /**
  * API to open, close and communicate with dialogs.
+ * @since 13.2
  */
 export interface DialogScope {
 
   /**
    * Closes an open dialog, rejecting the promise returned by [[open]].
+   * @since 13.2
    */
   cancel(): Promise<void>;
 
@@ -400,15 +421,18 @@ export interface DialogScope {
    * Closes an open dialog, resolving the promise returned by [[open]] with a value.
    * @param value The value selected in the dialog. The value should be compatible with [the structured clone
    * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   * @since 13.2
    */
   close(value: any): Promise<void>;
 
   /**
    * Opens a dialog.
+   * @since 13.2
    */
   open(options: DialogProperties): Promise<void>;
 
   /**
+   * @since 13.2
    * @returns A Promise that resolves with [[DialogProperties]] of the current dialog.
    */
   options(): Promise<DialogProperties>;
@@ -416,6 +440,7 @@ export interface DialogScope {
 
 /**
  * Defines the different possible modes of a document editor.
+ * @since 13.2
  */
 export enum DialogSize {
   Large = 'large',
@@ -425,27 +450,32 @@ export enum DialogSize {
 
 /**
  * Properties of a dialog.
+ * @since 13.2
  */
 export interface DialogProperties {
   /**
    * A value to pass to the dialog. For example the current field value, that can be used to preselect an item in the
    * dialog. The value should be compatible with [the structured clone
    * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   * @since 13.2
    */
   value?: any;
 
   /**
    * The size of the dialog. Defaults to [[Medium]].
+   * @since 13.2
    */
   size?: DialogSize;
 
   /**
    * Title of the dialog.
+   * @since 13.2
    */
   title: string;
 
   /**
-   * The URL to load the dialog contents from.
+   * The URL to load the dialog contents from. Can be absolute or relative to the url of the UI extension.
+   * @since 13.2
    */
   url: string;
 }
