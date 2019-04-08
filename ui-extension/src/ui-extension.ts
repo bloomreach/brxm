@@ -31,6 +31,8 @@ import { UiScope } from './api';
 import { connect } from './parent';
 import { Ui } from './ui';
 
+export * from './api';
+
 /**
  * Main entry point of the ui-extension library.
  */
