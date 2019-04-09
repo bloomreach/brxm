@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hippoecm.frontend.editor.plugins;
+package org.hippoecm.frontend.editor.plugins.openui;
 
 import java.util.Collections;
 
