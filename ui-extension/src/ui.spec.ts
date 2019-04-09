@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,10 +62,13 @@ describe('Ui.init()', () => {
     it('returns the current page', () =>
       ui.channel.page.get()
         .then((page) => {
+          expect(page.channel.contextPath).toBe('/site');
           expect(page.channel.id).toBe('testChannelId');
+          expect(page.channel.mountPath).toBe('/sub-mount');
           expect(page.id).toBe('testPageId');
           expect(page.sitemapItem.id).toBe('testSitemapItemId');
-          expect(page.url).toBe('http://www.example.com');
+          expect(page.path).toBe('/news/mypage.html');
+          expect(page.url).toBe('http://www.example.com/site/sub-mount/news/mypage.html');
         }),
     );
   });
@@ -85,13 +88,16 @@ describe('Ui.init()', () => {
     beforeEach(() => {
       nextPage = {
         channel: {
+          contextPath: '/',
           id: 'channelId',
+          mountPath: '',
         },
         id: 'pageId',
         sitemapItem: {
           id: 'sitemapItemId',
         },
-        url: 'http://www.example.com/page',
+        path: '/news/mypage.html',
+        url: 'http://www.example.com/news/mypage.html',
       };
     });
 

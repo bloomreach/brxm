@@ -227,9 +227,19 @@ export interface PageProperties {
    */
   channel: {
     /**
+     * The context path of the site application. For example "/site" or "/".
+     * @since 13.2
+     */
+    contextPath: string;
+    /**
      * The identifier of the channel. For example: "example-preview".
      */
     id: string;
+    /**
+     * The mount path of the channel. For example "/subsite", "/europe/nl" or an empty string for the root mount.
+     * @since 13.2
+     */
+    mountPath: string;
   };
 
   /**
@@ -246,6 +256,13 @@ export interface PageProperties {
      */
     id: string;
   };
+
+  /**
+   * The URL of the page relative to the mount path of the channel. For example "/news/mypage.html" or an empty string
+   * for the home page.
+   * @since 13.2
+   */
+  path: string;
 
   /**
    * The public URL of the page.

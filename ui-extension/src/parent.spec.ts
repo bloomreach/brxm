@@ -80,10 +80,12 @@ describe('connect', () => {
 
         it('resolves with the data returned by the parent method', () => {
           return parentConnection.call('getPage').then((page) => {
+            expect(page.channel.contextPath).toBe('/site');
             expect(page.channel.id).toBe('testChannelId');
+            expect(page.channel.mountPath).toBe('/sub-mount');
             expect(page.id).toBe('testPageId');
             expect(page.sitemapItem.id).toBe('testSitemapItemId');
-            expect(page.url).toBe('http://www.example.com');
+            expect(page.url).toBe('http://www.example.com/site/sub-mount/news/mypage.html');
           });
         });
 
