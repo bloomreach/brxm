@@ -42,7 +42,7 @@ const ERROR_MAP = {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
-   },
+  },
   NO_CONTENT: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
