@@ -69,7 +69,7 @@ definitions:
             jcr:primaryType: hipposys:moduleconfig
           /iframe:
             jcr:primaryType: hipposys:moduleconfig
-            attributes: [align, allowfullscreen, class, frameborder, height, id, longdesc,
+            attributes: [align, allow, allowfullscreen, class, frameborder, height, id, longdesc,
               name, scrolling, src, style, title, width]
           /img:
             jcr:primaryType: hipposys:moduleconfig
