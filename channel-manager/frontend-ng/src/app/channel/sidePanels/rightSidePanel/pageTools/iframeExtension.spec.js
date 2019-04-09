@@ -53,7 +53,7 @@ describe('iframeExtension', () => {
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
     DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-    OpenUiService = jasmine.createSpyObj('OpenUiService', ['initialize']);
+    OpenUiService = jasmine.createSpyObj('OpenUiService', ['initialize', 'openDialog']);
 
     child = jasmine.createSpyObj('child', ['emitEvent']);
 
@@ -87,6 +87,12 @@ describe('iframeExtension', () => {
         methods: jasmine.any(Object),
       });
       expect($ctrl.child).toBe(child);
+    });
+
+    it('destroys a previous connection', () => {
+      $ctrl.$onInit();
+      $ctrl.$onInit();
+      expect(connection.destroy).toHaveBeenCalled();
     });
 
     describe('channel events', () => {
@@ -224,6 +230,19 @@ describe('iframeExtension', () => {
         $rootScope.$emit('channel:changes:discard');
         expect(child.emitEvent).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('openDialog', () => {
+    it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
+      OpenUiService.openDialog.and.returnValue($q.resolve('test-value'));
+
+      $ctrl.openDialog().then((value) => {
+        expect(OpenUiService.openDialog).toHaveBeenCalled();
+        expect(value).toBe('test-value');
+        done();
+      });
+      $rootScope.$digest();
     });
   });
 });
