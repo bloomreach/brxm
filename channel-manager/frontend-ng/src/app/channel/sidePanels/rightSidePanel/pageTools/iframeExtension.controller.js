@@ -49,7 +49,9 @@ export default class IframeExtensionCtrl {
   }
 
   $onDestroy() {
-    this.destroyConnection();
+    if (this.connection) {
+      this.connection.destroy();
+    }
     if (this._unsubscribeFromPublish) {
       this._unsubscribeFromPublish();
     }
@@ -59,7 +61,6 @@ export default class IframeExtensionCtrl {
   }
 
   async _initExtension() {
-    this.destroyConnection();
     this.connection = this.OpenUiService.initialize(this.extensionId, {
       appendTo: this.$element[0],
       methods: {
@@ -83,12 +84,6 @@ export default class IframeExtensionCtrl {
       if (this.child) {
         this.child.emitEvent('channel.page.navigate', this.context);
       }
-    }
-  }
-
-  destroyConnection() {
-    if (this.connection) {
-      this.connection.destroy();
     }
   }
 

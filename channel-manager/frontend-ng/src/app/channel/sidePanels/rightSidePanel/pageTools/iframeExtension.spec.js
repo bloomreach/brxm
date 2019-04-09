@@ -89,12 +89,6 @@ describe('iframeExtension', () => {
       expect($ctrl.child).toBe(child);
     });
 
-    it('destroys a previous connection', () => {
-      $ctrl.$onInit();
-      $ctrl.$onInit();
-      expect(connection.destroy).toHaveBeenCalled();
-    });
-
     describe('channel events', () => {
       beforeEach(() => {
         $ctrl.$onInit();
