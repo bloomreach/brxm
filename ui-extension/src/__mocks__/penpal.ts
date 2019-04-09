@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,16 @@ const uiProperties: UiProperties = {
 
 const testPage: PageProperties = {
   channel: {
+    contextPath: '/site',
     id: 'testChannelId',
+    mountPath: '/sub-mount',
   },
   id: 'testPageId',
   sitemapItem: {
     id: 'testSitemapItemId',
   },
-  url: 'http://www.example.com',
+  path: '/news/mypage.html',
+  url: 'http://www.example.com/site/sub-mount/news/mypage.html',
 };
 
 export const parent: Parent = {
