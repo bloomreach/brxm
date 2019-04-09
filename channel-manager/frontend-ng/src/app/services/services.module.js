@@ -29,7 +29,6 @@ import FeedbackService from './feedback.service';
 import HippoGlobal from './hippoGlobal.service';
 import HstComponentService from './hstComponent.service';
 import HstService from './hst.service';
-import OpenUiService from './openui.service';
 import PathService from './path.service';
 import PickerService from './picker.service';
 import ProjectService from './project.service';
@@ -55,7 +54,6 @@ const servicesModule = angular
   .service('HippoGlobal', HippoGlobal)
   .service('HstComponentService', HstComponentService)
   .service('HstService', HstService)
-  .service('OpenUiService', OpenUiService)
   .service('PathService', PathService)
   .service('PickerService', PickerService)
   .service('ProjectService', ProjectService)

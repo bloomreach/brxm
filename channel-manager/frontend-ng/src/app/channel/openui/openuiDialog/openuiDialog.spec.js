@@ -18,6 +18,7 @@ describe('OpenuiDialogCtrl', () => {
   let $ctrl;
   let $element;
   let $log;
+  let $q;
   let $rootScope;
   let $scope;
   let ExtensionService;
@@ -26,11 +27,12 @@ describe('OpenuiDialogCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$log_, _$rootScope_) => {
+    inject(($controller, _$log_, _$rootScope_, _$q_) => {
       OpenUiService = jasmine.createSpyObj('OpenUiService', ['connect', 'initialize']);
       ExtensionService = jasmine.createSpyObj('ExtensionService', ['getExtension', 'getExtensionRelativeUrl']);
       $element = angular.element('<md-dialog><md-dialog-content/></md-dialog>');
       $log = _$log_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $scope = $rootScope.$new();
 
@@ -56,7 +58,14 @@ describe('OpenuiDialogCtrl', () => {
       ExtensionService.getExtensionRelativeUrl.and.returnValue('http://test-url/dialog?a=b');
       spyOn($scope, '$on');
 
+      const connection = {
+        promise: $q.resolve(),
+      };
+
+      OpenUiService.initialize.and.returnValue(connection);
+
       $ctrl.$onInit();
+      $rootScope.$digest();
 
       expect(OpenUiService.initialize).toHaveBeenCalledWith('test-id', jasmine.objectContaining({
         url: 'http://test-url/dialog?a=b',
@@ -73,7 +82,8 @@ describe('OpenuiDialogCtrl', () => {
       ExtensionService.getExtension.and.returnValue({});
       ExtensionService.getExtensionRelativeUrl.and.returnValue('http://test-url?a=b');
 
-      expect(() => $ctrl.$onInit()).toThrow(error);
+      $ctrl.$onInit();
+      $rootScope.$digest();
 
       expect($log.warn).toHaveBeenCalledWith('Dialog \'Test title\' failed to connect with the client library.', error);
     });

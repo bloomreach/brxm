@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import openUiService from './openui.service';
 import OpenuiDialogCtrl from './openuiDialog/openuiDialog.controller';
-import openuiStringFieldComponent from './openuiStringField.component';
 import './openuiDialog/openuiDialog.scss';
 
-const openuiStringFieldModule = angular
-  .module('hippo-cm.channel.rightSidePanel.contentEditor.fields.openuiStringField', [])
-  .component('openuiStringField', openuiStringFieldComponent)
-  .controller('OpenuiDialogCtrl', OpenuiDialogCtrl);
+const openUiModule = angular
+  .module('hippo-cm.channel.openui', [])
+  .controller('OpenuiDialogCtrl', OpenuiDialogCtrl)
+  .service('OpenUiService', openUiService);
 
-export default openuiStringFieldModule.name;
+export default openUiModule.name;

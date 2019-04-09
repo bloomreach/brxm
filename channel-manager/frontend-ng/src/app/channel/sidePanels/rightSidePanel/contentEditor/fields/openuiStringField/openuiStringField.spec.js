@@ -23,7 +23,6 @@ describe('OpenuiStringField', () => {
   let mdInputContainer;
   let ngModel;
   let ContentEditor;
-  let DialogService;
   let ExtensionService;
   let OpenUiService;
   let connection;
@@ -37,7 +36,6 @@ describe('OpenuiStringField', () => {
       _$q_,
       _$rootScope_,
       _ContentEditor_,
-      _DialogService_,
       _ExtensionService_,
       _OpenUiService_,
     ) => {
@@ -45,7 +43,6 @@ describe('OpenuiStringField', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ContentEditor = _ContentEditor_;
-      DialogService = _DialogService_;
       ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
     });
@@ -59,7 +56,6 @@ describe('OpenuiStringField', () => {
       value: 'test-value',
     });
     spyOn(ContentEditor, 'getDocument');
-    spyOn(DialogService, 'show');
 
     extension = {
       initialHeightInPixels: 150,
@@ -202,35 +198,11 @@ describe('OpenuiStringField', () => {
 
   describe('openDialog', () => {
     it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
-      DialogService.show.and.returnValue($q.resolve('test-value'));
+      spyOn(OpenUiService, 'openDialog').and.returnValue($q.resolve('test-value'));
 
       $ctrl.openDialog().then((value) => {
-        expect(DialogService.show).toHaveBeenCalled();
+        expect(OpenUiService.openDialog).toHaveBeenCalled();
         expect(value).toBe('test-value');
-        expect($ctrl.isDialogOpen).toBe(false);
-        done();
-      });
-      $rootScope.$digest();
-    });
-
-    it('rejects with DialogCanceled when the dialog is canceled', (done) => {
-      DialogService.show.and.returnValue($q.reject());
-
-      $ctrl.openDialog().catch((value) => {
-        expect(value).toEqual({ code: 'DialogCanceled', message: 'The dialog is canceled' });
-        expect(DialogService.show).toHaveBeenCalled();
-        expect($ctrl.isDialogOpen).toBe(false);
-        done();
-      });
-      $rootScope.$digest();
-    });
-
-    it('rejects with DialogExists when another dialog is already open', (done) => {
-      $ctrl.isDialogOpen = true;
-      $ctrl.openDialog({}).catch((error) => {
-        expect(DialogService.show).not.toHaveBeenCalled();
-        expect(error).toEqual({ code: 'DialogExists', message: 'A dialog already exists' });
-        expect($ctrl.isDialogOpen).toBe(true);
         done();
       });
       $rootScope.$digest();
