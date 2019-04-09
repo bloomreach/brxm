@@ -48,7 +48,7 @@ export default class OpenuiStringFieldController {
     this.destroyConnection();
   }
 
-  createConnection(extensionId) {
+  async createConnection(extensionId) {
     this.destroyConnection();
     this.connection = this.OpenUiService.initialize(extensionId, {
       appendTo: this.$element[0],
@@ -60,6 +60,7 @@ export default class OpenuiStringFieldController {
         openDialog: this.openDialog.bind(this),
       },
     });
+    await this.connection.promise;
   }
 
   setInitialHeight(extensionId) {

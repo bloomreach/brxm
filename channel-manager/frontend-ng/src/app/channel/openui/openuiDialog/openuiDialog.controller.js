@@ -27,7 +27,7 @@ class OpenuiDialogCtrl {
     this.OpenUiService = OpenUiService;
   }
 
-  $onInit() {
+  async $onInit() {
     try {
       this.connection = this.OpenUiService.initialize(this.locals.extensionId, {
         url: this.getUrl(),
@@ -38,10 +38,10 @@ class OpenuiDialogCtrl {
           getDialogOptions: this.getDialogOptions.bind(this),
         },
       });
+      await this.connection.promise;
       this.$scope.$on('$destroy', this.destroyConnection.bind(this));
     } catch (error) {
       this.$log.warn(`Dialog '${this.locals.dialogOptions.title}' failed to connect with the client library.`, error);
-      throw error;
     }
   }
 
