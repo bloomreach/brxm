@@ -153,7 +153,7 @@
       <resource>
         <filtering>false</filtering>
         <directory>${basedir}/node_modules/penpal/dist</directory>
-        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/editor/plugins</targetPath>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/editor/plugins/openui</targetPath>
         <includes>
           <include>penpal.js</include>
         </includes>
