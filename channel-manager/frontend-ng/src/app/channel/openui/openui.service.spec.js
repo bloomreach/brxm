@@ -19,7 +19,10 @@ import 'angular-mocks';
 
 describe('OpenUiService', () => {
   let $log;
+  let $q;
+  let $rootScope;
   let ConfigService;
+  let DialogService;
   let ExtensionService;
   let OpenUiService;
   let Penpal;
@@ -27,15 +30,28 @@ describe('OpenUiService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$log_, _ConfigService_, _ExtensionService_, _OpenUiService_, _Penpal_) => {
+    inject((
+      _$log_,
+      _$q_,
+      _$rootScope_,
+      _ConfigService_,
+      _DialogService_,
+      _ExtensionService_,
+      _OpenUiService_,
+      _Penpal_,
+    ) => {
       $log = _$log_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       ConfigService = _ConfigService_;
+      DialogService = _DialogService_;
       ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
       Penpal = _Penpal_;
 
       spyOn(ConfigService, 'getCmsContextPath');
       spyOn(ConfigService, 'getCmsOrigin');
+      spyOn(DialogService, 'show');
     });
   });
 
@@ -163,6 +179,43 @@ describe('OpenUiService', () => {
         ConfigService.cmsVersion = '13.0.0';
         expect(OpenUiService.getProperties({}).version).toBe('13.0.0');
       });
+    });
+  });
+
+  describe('openDialog', () => {
+    it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
+      DialogService.show.and.returnValue($q.resolve('test-value'));
+
+      OpenUiService.openDialog().then((value) => {
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(value).toBe('test-value');
+        expect(OpenUiService.isDialogOpen).toBe(false);
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('rejects with DialogCanceled when the dialog is canceled', (done) => {
+      DialogService.show.and.returnValue($q.reject());
+
+      OpenUiService.openDialog().catch((value) => {
+        expect(value).toEqual({ code: 'DialogCanceled', message: 'The dialog is canceled' });
+        expect(DialogService.show).toHaveBeenCalled();
+        expect(OpenUiService.isDialogOpen).toBe(false);
+        done();
+      });
+      $rootScope.$digest();
+    });
+
+    it('rejects with DialogExists when another dialog is already open', (done) => {
+      OpenUiService.isDialogOpen = true;
+      OpenUiService.openDialog({}).catch((error) => {
+        expect(DialogService.show).not.toHaveBeenCalled();
+        expect(error).toEqual({ code: 'DialogExists', message: 'A dialog already exists' });
+        expect(OpenUiService.isDialogOpen).toBe(true);
+        done();
+      });
+      $rootScope.$digest();
     });
   });
 });

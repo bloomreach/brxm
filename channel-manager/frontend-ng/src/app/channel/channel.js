@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import channelService from './channel.service';
 import hippoIframeModule from './hippoIframe/hippoIframe';
 import maskModule from './mask/mask.module';
 import menuModule from './menu/menu.module';
+import openUiModule from './openui/openui.service.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
 import projectToggleModule from './projectToggle/projectToggle.module';
 import relevanceModule from './relevance/relevance';
@@ -36,6 +37,7 @@ const channelModule = angular
     hippoIframeModule.name,
     maskModule.name,
     menuModule.name,
+    openUiModule,
     overlayToggleModule.name,
     projectToggleModule.name,
     relevanceModule.name,

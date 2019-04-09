@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import dialogTemplate from './openuiDialog/openuiDialog.html';
+
 export default class OpenUiService {
-  constructor($document, $log, ConfigService, ExtensionService, Penpal) {
+  constructor($document, $log, ConfigService, DialogService, ExtensionService, Penpal) {
     'ngInject';
 
     this.$document = $document;
     this.$log = $log;
     this.ConfigService = ConfigService;
+    this.DialogService = DialogService;
     this.ExtensionService = ExtensionService;
     this.Penpal = Penpal;
   }
@@ -71,5 +74,30 @@ export default class OpenUiService {
       },
       version: this.ConfigService.cmsVersion,
     };
+  }
+
+  /**
+   * Opens a dialog.
+   * Note that we cannot throw Errors because in that case Penpal does not transfer the code property correctly.
+   */
+  async openDialog(locals) {
+    if (this.isDialogOpen) {
+      throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal
+    }
+
+    try {
+      this.isDialogOpen = true;
+      return await this.DialogService.show(angular.extend({
+        clickOutsideToClose: true,
+        locals,
+        template: dialogTemplate,
+        controller: 'OpenuiDialogCtrl',
+        controllerAs: '$ctrl',
+      }));
+    } catch (error) {
+      throw { code: 'DialogCanceled', message: 'The dialog is canceled' }; // eslint-disable-line no-throw-literal
+    } finally {
+      this.isDialogOpen = false;
+    }
   }
 }

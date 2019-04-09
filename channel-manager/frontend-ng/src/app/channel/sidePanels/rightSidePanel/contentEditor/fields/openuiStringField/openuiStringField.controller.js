@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import dialogTemplate from './openuiDialog/openuiDialog.html';
-
 const MIN_HEIGHT_IN_PIXELS = 10;
 const MAX_HEIGHT_IN_PIXELS = 10000;
 const MAX_SIZE_IN_BYTES = 102400;
@@ -108,28 +106,7 @@ export default class OpenuiStringFieldController {
     };
   }
 
-  /**
-   * Opens a dialog.
-   * Note that we cannot throw Errors because in that case Penpal does not transfer the code property correctly.
-   */
-  async openDialog(options) {
-    if (this.isDialogOpen) {
-      throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal
-    }
-
-    try {
-      this.isDialogOpen = true;
-      return await this.DialogService.show(angular.extend({
-        clickOutsideToClose: true,
-        locals: { dialogOptions: options, extensionId: this.extensionId },
-        template: dialogTemplate,
-        controller: 'OpenuiDialogCtrl',
-        controllerAs: '$ctrl',
-      }));
-    } catch (error) {
-      throw { code: 'DialogCanceled', message: 'The dialog is canceled' }; // eslint-disable-line no-throw-literal
-    } finally {
-      this.isDialogOpen = false;
-    }
+  openDialog(options) {
+    return this.OpenUiService.openDialog({ dialogOptions: options, extensionId: this.extensionId });
   }
 }
