@@ -31,6 +31,8 @@ export default class OpenuiStringFieldController {
   }
 
   $onInit() {
+    this.$element.attr('tabindex', 0);
+
     if (this.mdInputContainer) {
       this.mdInputContainer.setHasValue(true);
     }
@@ -41,6 +43,9 @@ export default class OpenuiStringFieldController {
       const extensionId = changes.extensionId.currentValue;
       this.createConnection(extensionId);
       this.setInitialHeight(extensionId);
+
+      this.connection.emitter.on('focus', () => this.$element.triggerHandler('focus'));
+      this.connection.emitter.on('blur', () => this.$element.triggerHandler('blur'));
     }
   }
 
@@ -70,6 +75,7 @@ export default class OpenuiStringFieldController {
 
   destroyConnection() {
     if (this.connection) {
+      this.connection.emitter.clearListeners();
       this.connection.destroy();
     }
   }

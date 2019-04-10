@@ -63,6 +63,7 @@ describe('OpenuiStringField', () => {
     spyOn(ExtensionService, 'getExtension').and.returnValue(extension);
 
     connection = {
+      emitter: jasmine.createSpyObj('Emittery', ['on', 'clearListeners']),
       iframe: angular.element('<iframe src="about:blank"></iframe>')[0],
       destroy: jasmine.createSpy('destroy'),
     };
@@ -74,6 +75,7 @@ describe('OpenuiStringField', () => {
     it('initializes the component', () => {
       $ctrl.$onInit();
       expect(mdInputContainer.setHasValue).toHaveBeenCalledWith(true);
+      expect($element).toHaveAttr('tabindex');
     });
 
     it('ignores a missing inputContainer', () => {
@@ -109,6 +111,25 @@ describe('OpenuiStringField', () => {
       });
     });
 
+    describe('focus events', () => {
+      beforeEach(() => {
+        $element.triggerHandler = jasmine.createSpy('triggerHandler');
+        $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
+      });
+
+      it('reacts on focus event', () => {
+        const [, onFocus] = connection.emitter.on.calls.argsFor(0);
+        onFocus();
+        expect($element.triggerHandler).toHaveBeenCalledWith('focus');
+      });
+
+      it('reacts on blur event', () => {
+        const [, onBlur] = connection.emitter.on.calls.argsFor(1);
+        onBlur();
+        expect($element.triggerHandler).toHaveBeenCalledWith('blur');
+      });
+    });
+
     it('destroys a previous connection', () => {
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id1' } });
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id2' } });
@@ -120,6 +141,7 @@ describe('OpenuiStringField', () => {
     it('destroys the connection with the child', () => {
       $ctrl.$onChanges({ extensionId: { currentValue: 'test-id' } });
       $ctrl.$onDestroy();
+      expect(connection.emitter.clearListeners).toHaveBeenCalled();
       expect(connection.destroy).toHaveBeenCalled();
     });
   });

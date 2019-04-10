@@ -195,7 +195,9 @@
                          layout="row"
                          extension-id="{{:: $ctrl.fieldType.uiExtension }}"
                          ng-change="$ctrl.valueChanged()"
-                         ng-model="fieldValue.value">
+                         ng-model="fieldValue.value"
+                         ng-focus="$ctrl.focusPrimitive($event)"
+                         ng-blur="$ctrl.blurPrimitive($event)">
     </openui-string-field>
 
     <div ng-if="::$last"
