@@ -87,6 +87,11 @@ public class CacheableResourceServiceBrokerTest {
             }
 
             @Override
+            public Resource resolveBinaryAsResource(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
+                return null;
+            }
+
+            @Override
             public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
                     throws ResourceException {
                 demo1CallCounter.incrementAndGet();

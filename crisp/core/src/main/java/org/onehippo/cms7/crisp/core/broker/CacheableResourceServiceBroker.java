@@ -193,12 +193,18 @@ public class CacheableResourceServiceBroker extends AbstractResourceServiceBroke
         return resource;
     }
 
-
     @Override
     public Binary resolveBinary(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
         return resourceResolver.resolveBinary(absPath, pathVariables, exchangeHint);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        ResourceResolver resourceResolver = getResourceResolver(resourceSpace);
+        return resourceResolver.resolveBinaryAsResource(absPath, pathVariables, exchangeHint);
     }
 
     /**

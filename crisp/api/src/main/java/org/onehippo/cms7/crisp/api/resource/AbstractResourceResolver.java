@@ -79,6 +79,21 @@ public abstract class AbstractResourceResolver extends AbstractResourceCacheReso
         return resolveBinary(absPath, pathVariables, null);
     }
 
+    @Override
+    public Resource resolveBinaryAsResource(String absPath) throws ResourceException {
+        return resolveBinaryAsResource(absPath, Collections.emptyMap(), null);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolveBinaryAsResource(absPath, Collections.emptyMap(), exchangeHint);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String absPath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolveBinaryAsResource(absPath, pathVariables, null);
+    }
+
     /**
      * {@inheritDoc}
      */

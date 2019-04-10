@@ -15,11 +15,14 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.http.HttpMethod;
@@ -86,6 +89,23 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
         } catch (Exception e) {
             throw new ResourceException("Unknown error.", e);
         }
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String absPath, Map<String, Object> pathVariables,
+            ExchangeHint exchangeHint) throws ResourceException {
+        final Binary binary = resolveBinary(absPath, pathVariables, exchangeHint);
+
+        if (binary != null) {
+            try (InputStream input = new BufferedInputStream(binary.getInputStream())) {
+                JsonNode jsonNode = getObjectMapper().readTree(input);
+                return new JacksonResource(jsonNode);
+            } catch (Exception e) {
+                throw new ResourceException("Error in Jackson conversion to resource.", e);
+            }
+        }
+
+        return null;
     }
 
     @Override

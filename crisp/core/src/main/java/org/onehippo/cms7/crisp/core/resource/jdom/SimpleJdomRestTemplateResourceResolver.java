@@ -15,11 +15,14 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jdom2.Element;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
+import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.core.io.ByteArrayResource;
@@ -72,6 +75,23 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
         } catch (Exception e) {
             throw new ResourceException("Unknown error.", e);
         }
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String absPath, Map<String, Object> pathVariables,
+            ExchangeHint exchangeHint) throws ResourceException {
+        final Binary binary = resolveBinary(absPath, pathVariables, exchangeHint);
+
+        if (binary != null) {
+            try (InputStream input = new BufferedInputStream(binary.getInputStream())) {
+                final Element rootElem = inputStreamToElement(input);
+                return new JdomResource(rootElem);
+            } catch (Exception e) {
+                throw new ResourceException("Error in JDOM conversion to resource.", e);
+            }
+        }
+
+        return null;
     }
 
     @Override

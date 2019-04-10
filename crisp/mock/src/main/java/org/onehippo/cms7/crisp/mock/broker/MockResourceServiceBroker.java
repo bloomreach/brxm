@@ -101,6 +101,16 @@ public class MockResourceServiceBroker extends AbstractResourceServiceBroker {
     }
 
     @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables,
+            ExchangeHint exchangeHint) throws ResourceException {
+        if (resourceResolverMap == null || !resourceResolverMap.containsKey(resourceSpace)) {
+            return null;
+        }
+
+        return resourceResolverMap.get(resourceSpace).resolveBinaryAsResource(absPath, pathVariables, exchangeHint);
+    }
+
+    @Override
     public Resource findResources(String resourceSpace, String baseAbsPath, Map<String, Object> pathVariables,
             ExchangeHint exchangeHint) throws ResourceException {
         if (resourceResolverMap == null || !resourceResolverMap.containsKey(resourceSpace)) {

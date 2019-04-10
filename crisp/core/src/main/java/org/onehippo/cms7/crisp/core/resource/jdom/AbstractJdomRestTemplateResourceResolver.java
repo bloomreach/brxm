@@ -154,17 +154,17 @@ public abstract class AbstractJdomRestTemplateResourceResolver extends AbstractR
 
     protected Element byteArrayToElement(final byte[] body) throws JDOMException, IOException {
         try (InputStream input = new ByteArrayInputStream(body)) {
-            return byteArrayResourceToElement(input);
+            return inputStreamToElement(input);
         }
     }
 
     protected Element byteArrayResourceToElement(final ByteArrayResource body) throws JDOMException, IOException {
         try (InputStream input = body.getInputStream()) {
-            return byteArrayResourceToElement(input);
+            return inputStreamToElement(input);
         }
     }
 
-    private Element byteArrayResourceToElement(final InputStream input) throws JDOMException, IOException {
+    protected Element inputStreamToElement(final InputStream input) throws JDOMException, IOException {
         SAXBuilder jdomBuilder = new SAXBuilder();
         final Document document = jdomBuilder.build(input);
         final Element elem = document.getRootElement();

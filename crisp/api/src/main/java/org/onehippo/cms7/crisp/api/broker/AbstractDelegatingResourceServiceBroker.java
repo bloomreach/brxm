@@ -82,6 +82,28 @@ public abstract class AbstractDelegatingResourceServiceBroker implements Resourc
     }
 
     @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath) throws ResourceException {
+        return delegated.resolveBinaryAsResource(resourceSpace, absPath);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        return delegated.resolveBinaryAsResource(resourceSpace, absPath, exchangeHint);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        return delegated.resolveBinaryAsResource(resourceSpace, absPath, pathVariables);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        return delegated.resolveBinaryAsResource(resourceSpace, absPath, pathVariables, exchangeHint);
+    }
+
+    @Override
     public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         return delegated.findResources(resourceSpace, baseAbsPath);
     }

@@ -122,6 +122,48 @@ public class RequestContextResolvingDelegatingResourceServiceBroker extends Abst
     }
 
     @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinaryAsResource(resourceSpace, absPath);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, ExchangeHint exchangeHint) throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinaryAsResource(resourceSpace, absPath, exchangeHint);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinaryAsResource(resourceSpace, absPath, pathVariables);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        try {
+            resolveResourceServiceBrokerRequestContext();
+            return super.resolveBinaryAsResource(resourceSpace, absPath, pathVariables, exchangeHint);
+        } finally {
+            clearResourceServiceBrokerRequestContext();
+        }
+    }
+
+    @Override
     public Resource findResources(String resourceSpace, String baseAbsPath) throws ResourceException {
         try {
             resolveResourceServiceBrokerRequestContext();

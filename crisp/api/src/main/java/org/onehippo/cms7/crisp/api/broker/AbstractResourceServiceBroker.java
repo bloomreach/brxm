@@ -151,6 +151,21 @@ public abstract class AbstractResourceServiceBroker implements ResourceServiceBr
         return resolveBinary(resourceSpace, absResourcePath, pathVariables, null);
     }
 
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absResourcePath) throws ResourceException {
+        return resolveBinaryAsResource(resourceSpace, absResourcePath, Collections.emptyMap(), null);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absResourcePath, ExchangeHint exchangeHint) throws ResourceException {
+        return resolveBinaryAsResource(resourceSpace, absResourcePath, Collections.emptyMap(), exchangeHint);
+    }
+
+    @Override
+    public Resource resolveBinaryAsResource(String resourceSpace, String absResourcePath, Map<String, Object> pathVariables) throws ResourceException {
+        return resolveBinaryAsResource(resourceSpace, absResourcePath, pathVariables, null);
+    }
+
     /**
      * {@inheritDoc}
      */

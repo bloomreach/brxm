@@ -50,6 +50,12 @@ public abstract class AbstractMockResourceResolverAdapter extends AbstractResour
     }
 
     @Override
+    public Resource resolveBinaryAsResource(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        return null;
+    }
+
+    @Override
     public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
             throws ResourceException {
         return null;
