@@ -134,6 +134,41 @@
           }
         }
       }
+    },
+    "navigationApplication": {
+      "root": "projects/navigation-application",
+      "sourceRoot": "projects/navigation-application/src",
+      "projectType": "library",
+      "prefix": "brna",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/navigation-application/tsconfig.lib.json",
+            "project": "projects/navigation-application/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/navigation-application/src/test.ts",
+            "tsConfig": "projects/navigation-application/tsconfig.spec.json",
+            "karmaConfig": "projects/navigation-application/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/navigation-application/tsconfig.lib.json",
+              "projects/navigation-application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "navigationApplicationWorkspace"
