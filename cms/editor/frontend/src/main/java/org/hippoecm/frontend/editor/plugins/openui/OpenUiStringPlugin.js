@@ -14,156 +14,84 @@
  * limitations under the License.
  */
 
-Hippo.OpenUi = Hippo.OpenUi || {};
+class OpenUiStringPlugin {
 
-Hippo.OpenUi.createStringField = function(parameters) {
+  MIN_HEIGHT_IN_PIXELS = 10;
+  MAX_HEIGHT_IN_PIXELS = 10000;
+  MAX_SIZE_IN_BYTES = 102400;
 
-  const MIN_HEIGHT_IN_PIXELS = 10;
-  const MAX_HEIGHT_IN_PIXELS = 10000;
-  const MAX_SIZE_IN_BYTES = 102400;
-
-  const {
-    autoSaveUrl,
-    autoSaveDelay,
-    cmsLocale,
-    cmsTimeZone,
-    cmsVersion,
-    compareValue,
-    documentDisplayName,
-    documentEditorMode,
-    documentId,
-    documentLocale,
-    documentUrlName,
-    documentVariantId,
-    extensionConfig,
-    extensionUrl,
-    hiddenValueId,
-    iframeParentId,
-    initialHeightInPixels,
-    userId,
-    userDisplayName,
-    userFirstName,
-    userLastName
-  } = parameters;
-
-  function getIframeUrl(cmsOrigin, antiCache) {
-    const iframeUrl = new URL(extensionUrl, cmsOrigin);
-    iframeUrl.searchParams.append('br.antiCache', antiCache);
-    iframeUrl.searchParams.append('br.parentOrigin', cmsOrigin);
-    return iframeUrl;
+  constructor(parameters) {
+    this.parameters = parameters;
+    this.hiddenValueElement = document.getElementById(parameters.hiddenValueId);
+    this.scheduledSave = null;
   }
 
-  function getProperties(cmsBaseUrl) {
+  onConnect(connection) {
+    this.iframe = connection.iframe;
+    this.setFieldHeight(this.parameters.initialHeightInPixels);
+  }
+
+  onDestroy() {
+    clearTimeout(this.scheduledSave);
+  }
+
+  getMethods() {
     return {
-      baseUrl: cmsBaseUrl,
-      extension: {
-        config: extensionConfig
-      },
-      locale: cmsLocale,
-      timeZone: cmsTimeZone,
-      user: {
-        id: userId,
-        firstName: userFirstName,
-        lastName: userLastName,
-        displayName: userDisplayName
-      },
-      version: cmsVersion
+      getDocument: this.getDocumentProperties.bind(this),
+      getFieldValue: this.getFieldValue.bind(this),
+      setFieldValue: this.setFieldValue.bind(this),
+      getFieldCompareValue: this.getFieldCompareValue.bind(this),
+      setFieldHeight: this.setFieldHeight.bind(this),
     }
   }
 
-  function getDocumentProperties() {
+  getDocumentProperties() {
     return {
-      displayName: documentDisplayName,
-      id: documentId,
-      locale: documentLocale,
-      mode: documentEditorMode,
-      urlName: documentUrlName,
+      displayName: this.parameters.documentDisplayName,
+      id: this.parameters.documentId,
+      locale: this.parameters.documentLocale,
+      mode: this.parameters.documentEditorMode,
+      urlName: this.parameters.documentUrlName,
       variant: {
-        id: documentVariantId
+        id: this.parameters.documentVariantId
       }
     }
   }
 
-  function setHeight(iframe, pixels) {
-    const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
-    iframe.style.height = height + 'px';
+  getFieldValue() {
+    return this.hiddenValueElement.value;
   }
 
-  let scheduledSave = null;
-  function save(data) {
+  setFieldValue(value) {
+    if (value.length >= this.MAX_SIZE_IN_BYTES) {
+      throw new Error('Max value length of ' + this.MAX_SIZE_IN_BYTES + ' is reached.');
+    }
+    this.hiddenValueElement.value = value;
+    this.scheduleSave(value);
+  }
+
+  getFieldCompareValue() {
+    return this.parameters.compareValue;
+  }
+
+  setFieldHeight(pixels) {
+    const height = Math.max(this.MIN_HEIGHT_IN_PIXELS, Math.min(pixels, this.MAX_HEIGHT_IN_PIXELS));
+    this.iframe.style.height = height + 'px';
+  }
+
+  scheduleSave(data) {
+    clearTimeout(this.scheduledSave);
+    this.scheduledSave = setTimeout(() => this.save(data), this.parameters.autoSaveDelay);
+  }
+
+  save(data) {
     Wicket.Ajax.post({
-      u: autoSaveUrl,
+      u: this.parameters.autoSaveUrl,
       ep: {
         data: data
       }
     });
   }
+}
 
-  function scheduleSave(data) {
-    clearTimeout(scheduledSave);
-    scheduledSave = setTimeout(function () {
-      save(data);
-    }, autoSaveDelay);
-  }
-
-  const cmsOrigin = window.location.origin;
-  const antiCache = window.Hippo.antiCache;
-  const iframeUrl = getIframeUrl(cmsOrigin, antiCache);
-  const iframeParentElement = document.getElementById(iframeParentId);
-  const hiddenValueElement = document.getElementById(hiddenValueId);
-
-  const iframe = document.createElement('iframe');
-  setHeight(iframe, initialHeightInPixels);
-
-  // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
-  // - allow-top-navigation
-  // - allow-top-navigation-by-user-activation
-  iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
-
-  const connection = Penpal.connectToChild({
-    url: iframeUrl,
-    iframe: iframe,
-    appendTo: iframeParentElement,
-    methods: {
-      getDocument: function() {
-        return getDocumentProperties();
-      },
-
-      getProperties: function() {
-        const cmsBaseUrl = cmsOrigin + window.location.pathname;
-        return getProperties(cmsBaseUrl);
-      },
-
-      getFieldValue: function() {
-        return hiddenValueElement.value;
-      },
-
-      setFieldValue: function(value) {
-        if (value.length >= MAX_SIZE_IN_BYTES) {
-          throw new Error('Max value length of ' + MAX_SIZE_IN_BYTES + ' is reached.');
-        }
-        hiddenValueElement.value = value;
-        scheduleSave(value);
-      },
-
-      getFieldCompareValue: function() {
-        return compareValue;
-      },
-
-      setFieldHeight: function(pixels) {
-        setHeight(connection.iframe, pixels);
-      }
-    }
-  });
-
-  HippoAjax.registerDestroyFunction(connection.iframe, function() {
-    clearTimeout(scheduledSave);
-    try {
-      connection.destroy();
-    } catch (error) {
-      if (error.code !== Penpal.ERR_CONNECTION_DESTROYED) {
-        console.warn('Unexpected error while destroying connection with document field extension:', error);
-      }
-    }
-  });
-};
+OpenUi.registerClass(OpenUiStringPlugin);
