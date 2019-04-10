@@ -139,10 +139,14 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
 }
 
 class Field extends Scope<DocumentParent> implements FieldScope {
+  private [FIELD_DOM_OBSERVER] = new MutationObserver(this.updateHeight.bind(this));
+  private [FIELD_HEIGHT]: number = null;
+
   constructor(parent: ParentConnection) {
     super(parent);
-    this[FIELD_DOM_OBSERVER] = new MutationObserver(this.updateHeight.bind(this));
-    this[FIELD_HEIGHT] = null;
+
+    window.addEventListener('focus', () => parent.call('emitEvent', 'focus'));
+    window.addEventListener('blur', () => parent.call('emitEvent', 'blur'));
   }
 
   getValue() {

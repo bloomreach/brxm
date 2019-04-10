@@ -148,6 +148,22 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.document.field', () => {
+    it('reacts on focus event', async () => {
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
+
+      window.dispatchEvent(new Event('focus'));
+      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'focus');
+    });
+
+    it('reacts on blur event', async () => {
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
+
+      window.dispatchEvent(new Event('blur'));
+      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'blur');
+    });
+  });
+
   describe('ui.document.field.getValue()', () => {
     it('returns the current field value', async () => {
       parentConnection.call = jest.fn(() => Promise.resolve('test'));
