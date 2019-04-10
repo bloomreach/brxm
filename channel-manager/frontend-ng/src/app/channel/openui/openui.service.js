@@ -17,13 +17,14 @@
 import dialogTemplate from './openuiDialog/openuiDialog.html';
 
 export default class OpenUiService {
-  constructor($document, $log, ConfigService, DialogService, ExtensionService, Penpal) {
+  constructor($document, $log, ConfigService, DialogService, Emittery, ExtensionService, Penpal) {
     'ngInject';
 
     this.$document = $document;
     this.$log = $log;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
+    this.Emittery = Emittery;
     this.ExtensionService = ExtensionService;
     this.Penpal = Penpal;
   }
@@ -41,16 +42,21 @@ export default class OpenUiService {
 
   initialize(extensionId, options) {
     const extension = this.ExtensionService.getExtension(extensionId);
+    const emitter = new this.Emittery();
 
     try {
-      return this.connect({
-        url: options.url || this.ExtensionService.getExtensionUrl(extension),
-        ...options,
-        methods: {
-          ...options.methods,
-          getProperties: this.getProperties.bind(this, extension),
-        },
-      });
+      return Object.assign(
+        this.connect({
+          url: options.url || this.ExtensionService.getExtensionUrl(extension),
+          ...options,
+          methods: {
+            ...options.methods,
+            getProperties: this.getProperties.bind(this, extension),
+            emitEvent: emitter.emit.bind(emitter),
+          },
+        }),
+        { emitter },
+      );
     } catch (error) {
       this.$log.warn(`Extension '${extension.displayName}' failed to connect with the client library.`, error);
 

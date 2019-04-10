@@ -26,9 +26,19 @@ describe('OpenUiService', () => {
   let ExtensionService;
   let OpenUiService;
   let Penpal;
+  let emitEvent;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    emitEvent = jasmine.createSpy('emit');
+    angular.mock.module(($provide) => {
+      $provide.constant('Emittery', function Emittery() { // eslint-disable-line prefer-arrow-callback
+        return {
+          emit: () => emitEvent(),
+        };
+      });
+    });
 
     inject((
       _$log_,
@@ -80,7 +90,7 @@ describe('OpenUiService', () => {
     });
 
     it('connects to the child and gets url from the extension', () => {
-      spyOn(OpenUiService, 'connect');
+      spyOn(OpenUiService, 'connect').and.returnValue({});
       OpenUiService.initialize('test-id', { appendTo: element });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
@@ -92,7 +102,7 @@ describe('OpenUiService', () => {
     });
 
     it('connects to the child and uses provided url', () => {
-      spyOn(OpenUiService, 'connect');
+      spyOn(OpenUiService, 'connect').and.returnValue({});
       OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
@@ -100,6 +110,16 @@ describe('OpenUiService', () => {
         url: 'my-url',
         appendTo: element,
       }));
+    });
+
+    it('binds event emitter', () => {
+      spyOn(OpenUiService, 'connect').and.returnValue({});
+      expect(OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element })).toEqual({
+        emitter: jasmine.anything(),
+      });
+
+      OpenUiService.connect.calls.mostRecent().args[0].methods.emitEvent();
+      expect(emitEvent).toHaveBeenCalled();
     });
 
     it('logs a warning when connecting to the child failed', () => {
