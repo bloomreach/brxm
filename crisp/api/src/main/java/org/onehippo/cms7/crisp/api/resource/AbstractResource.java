@@ -276,4 +276,8 @@ public abstract class AbstractResource implements Resource {
         return getValueMap().get("", type);
     }
 
+    @Override
+    public Object getNodeData() {
+        return null;
+    }
 }

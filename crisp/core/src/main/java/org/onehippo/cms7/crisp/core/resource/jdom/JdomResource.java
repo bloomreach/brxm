@@ -180,6 +180,11 @@ public class JdomResource extends AbstractResource {
     }
 
     @Override
+    public Object getNodeData() {
+        return getJdomElement();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;

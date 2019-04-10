@@ -17,14 +17,15 @@ package org.onehippo.cms7.crisp.core.resource.jackson;
 
 import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
+import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -273,5 +274,13 @@ public class JacksonResourceTest {
             Resource child = children.get(i);
             assertEquals(EXIF_GEO_LOCATION[i], child.getDefaultValue());
         }
+    }
+
+    @Test
+    public void testGetNodeData() throws Exception {
+        final String rootNodeInJson = ((JacksonResource) rootResource).toJsonString(objectMapper);
+        assertTrue(StringUtils.isNotBlank(rootNodeInJson));
+        final String nodeDataInJson = objectMapper.writeValueAsString(rootResource.getNodeData());
+        assertEquals(rootNodeInJson, nodeDataInJson);
     }
 }

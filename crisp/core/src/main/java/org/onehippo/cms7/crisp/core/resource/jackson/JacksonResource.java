@@ -101,6 +101,11 @@ public class JacksonResource extends AbstractResource {
     }
 
     @Override
+    public Object getNodeData() {
+        return getJsonNode();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;

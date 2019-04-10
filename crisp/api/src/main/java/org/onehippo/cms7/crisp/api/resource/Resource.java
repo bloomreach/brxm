@@ -148,4 +148,21 @@ public interface Resource extends Serializable {
      */
     ResourceCollection getChildren(long offset, long limit);
 
+    /**
+     * Return the underlying, internal node data that this <code>Resource</code> represents.
+     * <P>
+     * <EM>WARNING:</EM> This method is for experts only who understands the risk of accessing the underlying internal,
+     * node data, and who is willing to change and upgrade their applications if the type of the underlying, internal
+     * data changes at any time in the future. The return object and its type of the underlying, internal data is
+     * not guaranteed in the future versions because this method is really implementation specific.
+     * </P>
+     * <P>
+     * <EM>NOTE:</EM> The return of this method is really implementation specific. If a underlying {@link ResourceResolver}
+     * maintains a Jackson node object for a <code>Resource</code> object, then it might support this method by
+     * returning the Jackson node or just return {@code null} when it doesn't support this method.
+     * </P>
+     * @return the underlying node data if supported by the underlying {@link ResourceResolver} or {@code null} otherwise.
+     */
+    Object getNodeData();
+
 }

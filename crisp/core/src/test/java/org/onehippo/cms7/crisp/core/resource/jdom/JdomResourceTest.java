@@ -16,10 +16,13 @@
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
 import java.io.InputStream;
+import java.io.StringWriter;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
@@ -243,6 +246,22 @@ public class JdomResourceTest {
             fail("Out of index offset.");
         } catch (IllegalArgumentException expectedException) {
         }
+    }
+
+    @Test
+    public void testGetNodeData() throws Exception {
+        final XMLOutputter xmlOutputter = new XMLOutputter();
+
+        StringWriter writer = new StringWriter();
+        ((JdomResource) rootResource).write(xmlOutputter, writer);
+        final String rootNodeInXml = writer.toString();
+
+        assertTrue(StringUtils.isNotBlank(rootNodeInXml));
+
+        writer = new StringWriter();
+        xmlOutputter.output((org.jdom2.Element) rootResource.getNodeData(), writer);
+        final String nodeDataInXml = writer.toString();
+        assertEquals(rootNodeInXml, nodeDataInXml);
     }
 
 }
