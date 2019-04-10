@@ -84,6 +84,7 @@ abstract class ScopeEmitter<Events, T extends Parent> extends Scope<T> implement
 
 interface UiParent extends Parent {
   getProperties: ParentMethod<UiProperties>;
+  emitEvent: ParentMethod<void, [string]>;
 }
 
 interface ChannelParent extends UiParent {

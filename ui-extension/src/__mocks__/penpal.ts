@@ -49,6 +49,7 @@ const testPage: PageProperties = {
 };
 
 export const parent: Parent = {
+  emitEvent: () => Promise.resolve(),
   getProperties: () => Promise.resolve(uiProperties),
   getPage: () => Promise.resolve(testPage),
   openDialog: () => Promise.resolve(),
