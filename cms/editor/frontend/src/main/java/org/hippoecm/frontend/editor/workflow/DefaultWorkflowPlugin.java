@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.workflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -29,10 +30,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
+
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -54,6 +57,8 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
+
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
@@ -61,7 +66,10 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.gallery.GalleryWorkflow;
+import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +91,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     private final StdWorkflow whereUsedAction;
 
     private static final String NUMBER_EXPRESSION = "[0-9]*";
+
+    private static final String GALLERYWORKFLOW_CATEGORY = "gallery";
 
     public DefaultWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -180,6 +190,8 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         });
 
         add(copyAction = new StdWorkflow("copy", Model.of(getString("copy-label")), context, getModel()) {
+
+            final WorkflowDescriptorModel source = getModel();
             NodeModelWrapper<Node> destination = null;
             String name = null;
 
@@ -200,8 +212,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 try {
                     String nodeName = getDisplayName().getObject().toLowerCase();
 
-                    if (getModel().getNode().isNodeType("hippogallery:imageset")
-                            || getModel().getNode().isNodeType("hippogallery:exampleAssetSet")) {
+                    if (isGalleryType(source.getNode())) {
                         createNewFileNodeNameWithBaseNameSuffix(nodeName);
                     } else {
                         String locale = CodecUtils.getLocaleFromNode(getFolder().getNode());
@@ -225,6 +236,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         copyAction.invokeWorkflow();
+                    }
+
+                    @Override
+                    protected boolean checkFolderTypes() {
+                        return isContentAllowedInFolder(source, destination.getChainedModel());
                     }
                 };
             }
@@ -303,7 +319,9 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         });
 
         add(moveAction = new StdWorkflow("move", Model.of(getString("move-label")), context, getModel()) {
-            public NodeModelWrapper<Node> destination = null;
+
+            final WorkflowDescriptorModel source = getModel();
+            NodeModelWrapper<Node> destination = null;
 
             @Override
             public String getSubMenu() {
@@ -324,17 +342,21 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     public void invokeWorkflow() throws Exception {
                         moveAction.invokeWorkflow();
                     }
+
+                    @Override
+                    protected boolean checkFolderTypes() {
+                        return isContentAllowedInFolder(source, destination.getChainedModel());
+                    }
                 };
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
 
-                final Node src = getModel().getNode();
                 final Node dest = destination != null ?
                         destination.getChainedModel().getObject() : UserSession.get().getJcrSession().getRootNode();
 
-                final String srcLocale = CodecUtils.getLocaleFromNodeAndAncestors(src);
+                final String srcLocale = CodecUtils.getLocaleFromNodeAndAncestors(source.getNode());
                 final String destLocale = CodecUtils.getLocaleFromNodeAndAncestors(dest);
 
                 StringCodec codec = null;
@@ -352,7 +374,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     nodeName = codec.encode(getDisplayName().getObject());
                 } else {
                     // use original node name
-                    nodeName = src.getName();
+                    nodeName = source.getNode().getName();
                 }
 
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
@@ -517,6 +539,55 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         moveAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("move")));
         copyAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("copy")));
         whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
+    }
+
+
+    protected boolean isGalleryType(final Node node) throws RepositoryException {
+        return node.isNodeType(HippoGalleryNodeType.IMAGE_SET)
+                || node.isNodeType("hippogallery:exampleAssetSet")
+                || node.isNodeType("hippogallery:stdgalleryset");
+    }
+
+    protected boolean isContentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
+
+        try {
+            final Node documentNode = documentModel.getNode();
+            if (isGalleryType(documentNode)) {
+
+                final String galleryType =  documentNode.getPrimaryNodeType().getName();
+
+                if (destinationFolder.getObject().hasProperty(HippoStdNodeType.HIPPOSTD_GALLERYTYPE)) {
+
+                    // get allowed gallery types from gallery workflow
+                    final Workflow workflow = new WorkflowDescriptorModel(GALLERYWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
+                    if (workflow instanceof GalleryWorkflow) {
+
+                        final List<String> allowedTypes = ((GalleryWorkflow) workflow).getGalleryTypes();
+
+                        log.debug("Gallery type {} {} allowed in folder {} by gallery types {}",
+                                galleryType, (allowedTypes.contains(galleryType) ? "is" : "is NOT"),
+                                destinationFolder.getObject().getPath(), allowedTypes);
+                        return allowedTypes.contains(galleryType);
+                    }
+                    else {
+                        log.info("Workflow by category {} on subject {} is not a GalleryWorkflow but {}",
+                                GALLERYWORKFLOW_CATEGORY, destinationFolder.getObject(),
+                                ((workflow == null) ? "null" : workflow.getClass().getName()));
+                    }
+                }
+
+                // no gallery type on destination folder
+                return false;
+            }
+
+            // allow for non-gallery documents
+            return true;
+
+        } catch (RepositoryException | RemoteException e) {
+            log.error(e.getClass().getName() + " during check for workflow allowed in folder: " + e.getMessage());
+            // forbid workflow action if something's wrong
+            return false;
+        }
     }
 
 
