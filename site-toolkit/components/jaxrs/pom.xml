@@ -240,6 +240,17 @@
       <artifactId>aspectjweaver</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>joor-java-8</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
