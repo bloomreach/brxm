@@ -60,6 +60,7 @@ Hippo.OpenUi.createStringField = function(parameters) {
         config: extensionConfig
       },
       locale: cmsLocale,
+      styling: 'classic',
       timeZone: cmsTimeZone,
       user: {
         id: userId,
