@@ -97,7 +97,7 @@ class OverlayService {
   }
 
   _onUnload() {
-    this.$rootScope.$evalAsync(() => {
+    this.$rootScope.$apply(() => {
       this.observer.disconnect();
       delete this.overlay;
       delete this.iframeWindow;
