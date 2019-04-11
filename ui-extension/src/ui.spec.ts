@@ -77,10 +77,13 @@ describe('Ui.init()', () => {
   describe('ui.channel.page.get()', () => {
     it('returns the current page', async () => {
       const page = await ui.channel.page.get();
+      expect(page.channel.contextPath).toBe('/site');
       expect(page.channel.id).toBe('testChannelId');
+      expect(page.channel.mountPath).toBe('/sub-mount');
       expect(page.id).toBe('testPageId');
       expect(page.sitemapItem.id).toBe('testSitemapItemId');
-      expect(page.url).toBe('http://www.example.com');
+      expect(page.path).toBe('/news/mypage.html');
+      expect(page.url).toBe('http://www.example.com/site/sub-mount/news/mypage.html');
     });
   });
 
@@ -98,13 +101,16 @@ describe('Ui.init()', () => {
     beforeEach(() => {
       nextPage = {
         channel: {
+          contextPath: '/',
           id: 'channelId',
+          mountPath: '',
         },
         id: 'pageId',
         sitemapItem: {
           id: 'sitemapItemId',
         },
-        url: 'http://www.example.com/page',
+        path: '/news/mypage.html',
+        url: 'http://www.example.com/news/mypage.html',
       };
     });
 

@@ -35,13 +35,16 @@ const uiProperties: UiProperties = {
 
 const testPage: PageProperties = {
   channel: {
+    contextPath: '/site',
     id: 'testChannelId',
+    mountPath: '/sub-mount',
   },
   id: 'testPageId',
   sitemapItem: {
     id: 'testSitemapItemId',
   },
-  url: 'http://www.example.com',
+  path: '/news/mypage.html',
+  url: 'http://www.example.com/site/sub-mount/news/mypage.html',
 };
 
 export const parent: Parent = {

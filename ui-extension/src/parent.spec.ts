@@ -79,10 +79,13 @@ describe('connect', () => {
         it('resolves with the data returned by the parent method', async () => {
           const page = await parentConnection.call('getPage') as any;
 
+          expect(page.channel.contextPath).toBe('/site');
           expect(page.channel.id).toBe('testChannelId');
+          expect(page.channel.mountPath).toBe('/sub-mount');
           expect(page.id).toBe('testPageId');
           expect(page.sitemapItem.id).toBe('testSitemapItemId');
-          expect(page.url).toBe('http://www.example.com');
+          expect(page.path).toBe('/news/mypage.html');
+          expect(page.url).toBe('http://www.example.com/site/sub-mount/news/mypage.html');
         });
 
         it('rejects with error code "IncompatibleParent" when the parent method does not exist', () => {
