@@ -58,6 +58,7 @@ describe('Ui.init()', () => {
     expect(ui.baseUrl).toBe('https://cms.example.com');
     expect(ui.extension.config).toBe('testConfig');
     expect(ui.locale).toBe('en');
+    expect(ui.styling).toBe('classic');
     expect(ui.timeZone).toBe('Europe/Amsterdam');
     expect(ui.user.id).toBe('admin');
     expect(ui.user.firstName).toBe('Ad');

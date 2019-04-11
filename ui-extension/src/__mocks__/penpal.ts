@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PageProperties, UiProperties } from '../api';
-import { Parent } from '../parent';
+import {EditorStyling, PageProperties, UiProperties} from '../api';
+import {Parent} from '../parent';
 
 const uiProperties: UiProperties = {
   baseUrl: 'https://cms.example.com',
@@ -23,6 +23,7 @@ const uiProperties: UiProperties = {
     config: 'testConfig',
   },
   locale: 'en',
+  styling: EditorStyling.Classic,
   timeZone: 'Europe/Amsterdam',
   user: {
     id: 'admin',

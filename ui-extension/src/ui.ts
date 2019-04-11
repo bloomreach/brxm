@@ -35,6 +35,7 @@ import {
   DialogScope,
   DocumentProperties,
   DocumentScope,
+  EditorStyling,
   Emitter,
   EventHandler,
   FieldScope,
@@ -224,6 +225,7 @@ export class Ui extends Scope implements UiScope {
     lastName: string,
     displayName: string,
   };
+  styling: EditorStyling;
   version: string;
 
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
