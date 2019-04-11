@@ -75,7 +75,6 @@ class OpenUiBehavior extends Behavior {
 
     OpenUiBehavior(final OpenUiPlugin openUiPlugin, final String extensionName, final UiExtensionPoint extensionPoint) {
         this.openUiPlugin = openUiPlugin;
-        this.openUiPlugin.setOutputMarkupId(true);
 
         extension = loadUiExtension(extensionName, extensionPoint).orElse(null);
     }
@@ -94,6 +93,11 @@ class OpenUiBehavior extends Behavior {
 
     boolean isActive() {
         return extension != null;
+    }
+
+    @Override
+    public void bind(final Component component) {
+        component.setOutputMarkupId(true);
     }
 
     @Override
