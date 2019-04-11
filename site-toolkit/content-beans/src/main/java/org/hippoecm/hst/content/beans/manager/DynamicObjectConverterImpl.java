@@ -127,28 +127,12 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
     private Class<? extends HippoBean> createDynamicBeanDefinition(final Node node, Class<? extends HippoBean> parentBeanDef) throws RepositoryException {
         final String documentType = node.getPrimaryNodeType().getName();
 
-        if (parentBeanDef == null) {
-            parentBeanDef = findBaseDocumentBean();
-        }
-
         final ContentTypes contentTypes = contentTypesRef.get();
         if (contentTypes == null) {
             //The object has been already garbage collected, in practice, it should never happen
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
         return dynamicBeanService.createDynamicDocumentBeanDef(parentBeanDef, contentTypes.getType(documentType));
-    }
-
-    /**
-     * Return the basedocument if that exists in the jcrBeanPrimaryNodeTypePairs
-     */
-    private Class<? extends HippoBean> findBaseDocumentBean() {
-        return jcrBeanPrimaryNodeTypePairs.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().endsWith(":basedocument"))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
     }
     
     /**

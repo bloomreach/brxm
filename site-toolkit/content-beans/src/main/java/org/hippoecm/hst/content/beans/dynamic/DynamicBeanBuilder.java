@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.dynamic;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -31,9 +32,12 @@ import org.slf4j.LoggerFactory;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
+import net.bytebuddy.dynamic.TargetType;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodCall;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Super;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 /**
@@ -42,7 +46,6 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 public class DynamicBeanBuilder {
     private static final Logger log = LoggerFactory.getLogger(DynamicBeanBuilder.class);
     private static final String METHOD_GET_PROPERTY = "getProperty";
-    private static final String METHOD_GET_BEAN_BY_UUID = "getBeanByUUID";
     private static final String METHOD_GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
     private static final String METHOD_GET_HIPPO_HTML = "getHippoHtml";
     private static final String METHOD_GET_LINKED_BEANS = "getLinkedBeans";
@@ -52,6 +55,50 @@ public class DynamicBeanBuilder {
 
     private Builder<? extends HippoBean> builder;
     private final Class<? extends HippoBean> parentBean;
+
+    public static class SingleDocbaseInterceptor {
+
+        private final String propertyName;
+
+        public SingleDocbaseInterceptor(final String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public HippoBean getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) throws Throwable {
+            final HippoBean superBean = (HippoBean) superObject;
+            final String item = (String) superBean.getProperty(propertyName);
+            if (item == null) {
+                return null;
+            }
+            return superBean.getBeanByUUID(item, HippoBean.class);
+        }
+    }
+
+    public static class MultipleDocbaseInterceptor {
+
+        private final String propertyName;
+
+        public MultipleDocbaseInterceptor(final String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public List<HippoBean> getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject)
+                throws Throwable {
+            final HippoBean superBean = (HippoBean) superObject;
+            final List<HippoBean> beans = new ArrayList<>();
+            final String[] items = (String[]) superBean.getProperty(propertyName);
+            if (items == null) {
+                return beans;
+            }
+            for (String item : items) {
+                final HippoBean bean = superBean.getBeanByUUID(item, HippoBean.class);
+                if (bean != null) {
+                    beans.add(bean);
+                }
+            }
+            return beans;
+        }
+    }
 
     public DynamicBeanBuilder(final String className, final Class<? extends HippoBean> parentBean) {
         builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
@@ -85,20 +132,16 @@ public class DynamicBeanBuilder {
 
     public void addBeanMethodDocbase(final String methodName, final String propertyName, final boolean multiple) {
         try {
-            builder = builder
-                        .defineMethod(methodName, HippoBean.class, Modifier.PUBLIC)
-                        .intercept(
-                            MethodCall
-                                .invoke(HippoBean.class.getDeclaredMethod(METHOD_GET_BEAN_BY_UUID, String.class, Class.class))
-                                .onSuper()
-                                .withMethodCall(
-                                    MethodCall
-                                        .invoke(HippoBean.class.getDeclaredMethod(METHOD_GET_PROPERTY, String.class))
-                                        .onSuper()
-                                        .with(propertyName))
-                                .with(HippoBean.class)
-                                .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-        } catch (NoSuchMethodException e) {
+            if (multiple) {
+                builder = builder
+                            .defineMethod(methodName, HippoBean.class, Modifier.PUBLIC)
+                            .intercept(MethodDelegation.to(new MultipleDocbaseInterceptor(propertyName)));
+            } else {
+                builder = builder
+                            .defineMethod(methodName, HippoBean.class, Modifier.PUBLIC)
+                            .intercept(MethodDelegation.to(new SingleDocbaseInterceptor(propertyName)));
+            }
+        } catch (IllegalArgumentException e) {
             log.error("Cant't define method {} : {}", methodName, e);
         }
     }
@@ -176,7 +219,7 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, hippoMethodName, returnType, e);
         }
     }
@@ -191,7 +234,7 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName, genericsType)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
         }
     }
@@ -206,7 +249,7 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName, returnType)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
         }
     }
