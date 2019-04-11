@@ -65,6 +65,7 @@ export default class OpenUiService {
         config: extension.config,
       },
       locale: this.ConfigService.locale,
+      styling: 'material',
       timeZone: this.ConfigService.timeZone,
       user: {
         id: this.ConfigService.cmsUser,

@@ -145,6 +145,12 @@ describe('OpenUiService', () => {
       });
     });
 
+    describe('styling', () => {
+      it('is set to material', () => {
+        expect(OpenUiService.getProperties({}).styling).toBe('material');
+      });
+    });
+
     describe('timeZone', () => {
       it('is set to the current CMS time zone', () => {
         ConfigService.timeZone = 'Europe/Amsterdam';
