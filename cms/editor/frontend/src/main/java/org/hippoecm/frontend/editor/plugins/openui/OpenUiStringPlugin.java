@@ -194,7 +194,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         @Override
         protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
             final String instanceId = OpenUiStringPlugin.this.getMarkupId();
-            return new OpenUiStringDialog(instanceId);
+            return new OpenUiStringDialog(instanceId, parameters);
         }
     }
 }
