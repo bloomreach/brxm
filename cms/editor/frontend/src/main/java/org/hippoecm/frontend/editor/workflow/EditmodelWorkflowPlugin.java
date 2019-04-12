@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,17 +25,16 @@ import javax.jcr.Session;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.IErrorMessageSource;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.IValidator;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -48,6 +47,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
@@ -59,16 +59,16 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
-    private WorkflowAction editAction;
+    private StdWorkflow editAction;
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this)) {
+        add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this), context, (WorkflowDescriptorModel) getDefaultModel()) {
 
             @Override
             public String getSubMenu() {
@@ -125,7 +125,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("copy", new StringResourceModel("copy", this)) {
+        add(new StdWorkflow("copy", new StringResourceModel("copy", this), context, (WorkflowDescriptorModel) getDefaultModel()) {
             private static final long serialVersionUID = 1L;
 
             String name;
@@ -201,12 +201,15 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
     }
 
-    public class CopyModelDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+    public class CopyModelDialog extends WorkflowDialog<WorkflowDescriptor> {
 
         private String name;
 
-        public CopyModelDialog(CompatibilityWorkflowPlugin.WorkflowAction action) {
-            action.super();
+        public CopyModelDialog(final StdWorkflow action) {
+            super(action);
+            setTitle(new StringResourceModel("copy-model", this).setParameters(new PropertyModel(this, "name")));
+            setSize(DialogConstants.SMALL);
+            
             WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
             PropertyModel<String> model = new PropertyModel<>(action, "name");
             try {
@@ -229,17 +232,6 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }).setRequired(true);
             add(widget);
             setFocus(widget);
-        }
-
-        @Override
-        public IModel getTitle() {
-            return new StringResourceModel("copy-model", this)
-                    .setParameters(new PropertyModel(this, "name"));
-        }
-
-        @Override
-        public IValueMap getProperties() {
-            return DialogConstants.SMALL;
         }
     }
 
