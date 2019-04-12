@@ -264,6 +264,17 @@ describe('Ui.init()', () => {
     });
   });
 
+  describe('ui.dialog', () => {
+    beforeEach(() => { ui.dialog; });
+
+    it('reacts on escape key press', () => {
+      spyOn(ui.dialog, 'cancel');
+      window.dispatchEvent(Object.assign(new Event('keydown'), { which: 27 }));
+
+      expect(ui.dialog.cancel).toHaveBeenCalledWith();
+    });
+  });
+
   describe('ui.dialog.cancel()', () => {
     it('cancels an open dialog', async () => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());

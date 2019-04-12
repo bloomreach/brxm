@@ -59,6 +59,7 @@ const EVENT_SCOPE = Symbol('eventScope');
 const FIELD_DOM_OBSERVER = Symbol('fieldDomObserver');
 const FIELD_OVERFLOW_STYLE = Symbol('fieldOverflowStyle');
 const FIELD_HEIGHT = Symbol('fieldHeight');
+const KEY_ESCAPE = 27;
 
 function lazy<T extends object, K extends keyof T>(object: T, property: K, getter: Callable<T[K]>) {
   let value: T[K];
@@ -223,6 +224,12 @@ class Field extends Scope<DocumentParent> implements FieldScope {
 }
 
 class Dialog extends Scope<DialogParent> implements DialogScope {
+  constructor(parent: ParentConnection<DialogParent>) {
+    super(parent);
+
+    window.addEventListener('keydown', ({ which }) => which === KEY_ESCAPE && this.cancel());
+  }
+
   cancel() {
     return this[PARENT].call('cancelDialog');
   }
