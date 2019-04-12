@@ -20,7 +20,11 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 'has-focused-field': $ctrl.hasFocus, 'has-hint': $ctrl.fieldType.hint, 'md-input-has-value' : $ctrl.fieldType.type === 'RADIO_GROUP' }">
+                      ng-class="{ 
+                      'has-focused-field': $ctrl.hasFocus, 
+                      'has-hint': $ctrl.fieldType.hint, 
+                      'md-input-has-value': $ctrl.fieldType.type === 'RADIO_GROUP' || $ctrl.fieldType.type === 'BOOLEAN_RADIO_GROUP'  
+                      }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
            layout
@@ -123,6 +127,7 @@
     </md-select>
 
     <radio-group ng-switch-when="RADIO_GROUP"
+                 field-type="::$ctrl.fieldType.type"
                  locale="::$ctrl.locale"
                  name="::$ctrl.getFieldName($index)"
                  ng-change="$ctrl.valueChanged()"
@@ -134,6 +139,19 @@
                  sort-by="::$ctrl.fieldType.sortBy"
                  sort-order="::$ctrl.fieldType.sortOrder"
                  orientation="::$ctrl.fieldType.orientation"
+                 is-required="::$ctrl.fieldType.required">
+    </radio-group>
+
+    <radio-group ng-switch-when="BOOLEAN_RADIO_GROUP"
+                 field-type="::$ctrl.fieldType.type"
+                 locale="::$ctrl.locale"
+                 name="::$ctrl.getFieldName($index)"
+                 ng-change="$ctrl.valueChanged()"
+                 on-field-blur="$ctrl.blurPrimitive($event)"
+                 on-field-focus="$ctrl.focusPrimitive($event)"
+                 ng-model="fieldValue.value"
+                 false-label="::$ctrl.fieldType.falseLabel"
+                 true-label="::$ctrl.fieldType.trueLabel"
                  is-required="::$ctrl.fieldType.required">
     </radio-group>
       
