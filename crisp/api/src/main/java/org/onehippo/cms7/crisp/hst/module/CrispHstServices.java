@@ -74,11 +74,11 @@ public class CrispHstServices {
      * Returns a component registered in CRISP HST Addon Module's {@link ComponentManager}.
      * @param name a component bean name registered in CRISP HST Addon Module's {@link ComponentManager}
      * @return a component registered in CRISP HST Addon Module's {@link ComponentManager}
-     * @deprecated since 13.1.1. Use {@link #getModuleComponent(ComponentManager, String)} instead.
+     * @deprecated Use {@link #getModuleComponent(ComponentManager, String)} instead.
      */
     @Deprecated
     public static <T> T getModuleComponent(String name) {
-        log.warn("Invocation on the deprecated CrispHstServices#getModuleComponent(name) since v13.1.1. "
+        log.warn("Invocation on the deprecated CrispHstServices#getModuleComponent(name). "
                 + "Use CrispHstServices#getModuleComponent(HstServices.getComponentManager(), name) instead.");
 
         final ComponentManager componentManager = HstServicesAccess.getComponentManager();
@@ -113,11 +113,11 @@ public class CrispHstServices {
     /**
      * Returns the singleton {@link ResourceServiceBroker} instance.
      * @return the singleton {@link ResourceServiceBroker} instance
-     * @deprecated since 13.1.1. Use {@link #getDefaultResourceServiceBroker(ComponentManager)} instead.
+     * @deprecated Use {@link #getDefaultResourceServiceBroker(ComponentManager)} instead.
      */
     @Deprecated
     public static ResourceServiceBroker getDefaultResourceServiceBroker() {
-        log.warn("Invocation on the deprecated CrispHstServices#getDefaultResourceServiceBroker() since v13.1.1. "
+        log.warn("Invocation on the deprecated CrispHstServices#getDefaultResourceServiceBroker(). "
                 + "Use CrispHstServices#getDefaultResourceServiceBroker(HstServices.getComponentManager()) instead.");
 
         ResourceServiceBroker broker = null;
