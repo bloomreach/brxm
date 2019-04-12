@@ -29,7 +29,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.validation.IErrorMessageSource;
-import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidationError;
 import org.apache.wicket.validation.IValidator;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -59,16 +58,19 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This plugin defines the Edit and Copy workflow actions in the top bar of the Document Type Editor.
+ */
 public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
     private StdWorkflow editAction;
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this), context, (WorkflowDescriptorModel) getDefaultModel()) {
+        add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this), context,
+                (WorkflowDescriptorModel) getDefaultModel()) {
 
             @Override
             public String getSubMenu() {
@@ -81,7 +83,7 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
             }
 
             @Override
-            public String execute(Workflow workflow) throws Exception {
+            public String execute(final Workflow workflow) throws Exception {
                 if (workflow == null) {
                     log.error("No workflow defined on model for selected node");
                     return null;
@@ -125,9 +127,8 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
             }
         });
 
-        add(new StdWorkflow("copy", new StringResourceModel("copy", this), context, (WorkflowDescriptorModel) getDefaultModel()) {
-            private static final long serialVersionUID = 1L;
-
+        add(new StdWorkflow("copy", new StringResourceModel("copy", this), context,
+                (WorkflowDescriptorModel) getDefaultModel()) {
             String name;
 
             @Override
@@ -146,37 +147,35 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
             }
 
             @Override
-            protected String execute(Workflow wf) {
+            protected String execute(final Workflow workflow) {
                 try {
-                    EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
-                    if (workflow != null) {
-                        String path = workflow.copy(name);
-                        UserSession.get().getJcrSession().refresh(true);
-
-                        JcrNodeModel nodeModel = new JcrNodeModel(path);
-                        if (path != null) {
-                            IPluginContext context = EditmodelWorkflowPlugin.this.getPluginContext();
-                            IPluginConfig config = EditmodelWorkflowPlugin.this.getPluginConfig();
-
-                            IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditorManager.class);
-                            IEditor editor = editService.openEditor(nodeModel);
-                            IRenderService renderer = context.getService(context.getReference(editor).getServiceId(), IRenderService.class);
-                            if (renderer != null) {
-                                renderer.focus(null);
-                            }
-                        } else {
-                            log.error("no model found to edit");
-                        }
-                    } else {
+                    final EditmodelWorkflow editmodelWorkflow = (EditmodelWorkflow) workflow;
+                    if (editmodelWorkflow == null) {
                         log.error("no workflow defined on model for selected node");
+                        return null;
                     }
-                } catch (WorkflowException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (ServiceException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RemoteException ex) {
-                    return ex.getClass().getName() + ": " + ex.getMessage();
-                } catch (RepositoryException ex) {
+
+                    final String path = editmodelWorkflow.copy(name);
+                    UserSession.get().getJcrSession().refresh(true);
+
+                    final JcrNodeModel nodeModel = new JcrNodeModel(path);
+                    if (path == null) {
+                        log.error("no model found to edit");
+                        return null;                        
+                    }
+                    
+                    final IPluginContext context = EditmodelWorkflowPlugin.this.getPluginContext();
+                    final IPluginConfig config = EditmodelWorkflowPlugin.this.getPluginConfig();
+
+                    final IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID), 
+                            IEditorManager.class);
+                    final IEditor editor = editService.openEditor(nodeModel);
+                    final IRenderService renderer = context.getService(context.getReference(editor).getServiceId(), 
+                            IRenderService.class);
+                    if (renderer != null) {
+                        renderer.focus(null);
+                    }
+                } catch (WorkflowException | ServiceException | RemoteException | RepositoryException ex) {
                     return ex.getClass().getName() + ": " + ex.getMessage();
                 }
                 return null;
@@ -209,34 +208,31 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
             super(action);
             setTitle(new StringResourceModel("copy-model", this).setParameters(new PropertyModel(this, "name")));
             setSize(DialogConstants.SMALL);
-            
-            WorkflowDescriptorModel workflowModel = (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
-            PropertyModel<String> model = new PropertyModel<>(action, "name");
+
+            final WorkflowDescriptorModel workflowModel =
+                    (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
+            final PropertyModel<String> model = new PropertyModel<>(action, "name");
             try {
                 model.setObject(name = workflowModel.getNode().getName());
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            TextFieldWidget widget = new TextFieldWidget("name", model);
-            ((FormComponent) widget.get("widget")).add(new IValidator() {
-                private static final long serialVersionUID = 1L;
-
-                public void validate(IValidatable validatable) {
-                    try {
-                        NamespaceValidator.checkName((String) validatable.getValue());
-                    } catch (Exception e) {
-                        validatable.error(new ExceptionError(e));
-                    }
+            final TextFieldWidget widget = new TextFieldWidget("name", model);
+            final FormComponent<String> textField = (FormComponent) widget.get("widget");
+            textField.setRequired(true);
+            textField.add((IValidator<String>) validatable -> {
+                try {
+                    NamespaceValidator.checkName((validatable.getValue()));
+                } catch (Exception e) {
+                    validatable.error(new ExceptionError(e));
                 }
-
-            }).setRequired(true);
-            add(widget);
+            });
+            queue(widget);
             setFocus(widget);
         }
     }
 
     private static class ExceptionError implements IValidationError, IClusterable {
-
         private Exception exception;
 
         ExceptionError(Exception e) {
@@ -246,6 +242,5 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
         public String getErrorMessage(IErrorMessageSource messageSource) {
             return exception.getLocalizedMessage();
         }
-
     }
 }
