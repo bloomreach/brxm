@@ -95,46 +95,6 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     }
 
     @Override
-    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
-            throws ResourceException {
-        try {
-            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = getRequestEntityObject(exchangeHint);
-
-            RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<ByteArrayResource> result;
-
-            if (HttpMethod.POST.equals(httpMethod)) {
-                result = restTemplate.postForEntity(getBaseResourceURI(baseAbsPath), requestObject,
-                        ByteArrayResource.class, pathVariables);
-            } else {
-                result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath),
-                        ByteArrayResource.class, pathVariables);
-            }
-
-            extractResponseDataToExchangeHint(result, exchangeHint);
-
-            if (isSuccessfulResponse(result)) {
-                final ByteArrayResource body = result.getBody();
-                final Element rootElem = byteArrayResourceToElement(body);
-                final Resource rootResource = new JdomResource(rootElem);
-                return rootResource;
-            } else {
-                throw new ResourceException("Unexpected response status: " + result.getStatusCode());
-            }
-        } catch (RestClientResponseException e) {
-            extractResponseDataToExchangeHint(e, exchangeHint);
-            throw new ResourceException("REST client response error.", e);
-        } catch (RestClientException e) {
-            throw new ResourceException("REST client invocation error.", e);
-        } catch (IOException e) {
-            throw new ResourceException("IO error.", e);
-        } catch (Exception e) {
-            throw new ResourceException("Unknown error.", e);
-        }
-    }
-
-    @Override
     public boolean isCacheable(Resource resource) {
         return (isCacheEnabled() && resource instanceof JdomResource);
     }

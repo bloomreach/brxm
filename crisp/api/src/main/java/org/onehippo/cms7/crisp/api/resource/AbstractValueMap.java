@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.crisp.api.resource;
 
-import java.math.BigDecimal;
-
 /**
  * Abstract {@link ValueMap} base class.
  */
@@ -30,18 +28,10 @@ public abstract class AbstractValueMap implements ValueMap {
         final Object value = get(name, (T) null);
 
         if (value != null && type != null) {
-            if (value instanceof String) {
-                if (type == Integer.class) {
-                    return (T) Integer.valueOf((String) value);
-                } else if (type == Long.class) {
-                    return (T) Long.valueOf((String) value);
-                } else if (type == Double.class) {
-                    return (T) Double.valueOf((String) value);
-                } else if (type == Boolean.class) {
-                    return (T) Boolean.valueOf((String) value);
-                } else if (type == BigDecimal.class) {
-                    return (T) new BigDecimal((String) value);
-                }
+            final T converted = AbstractResource.convertValueOfBasicType(value, type);
+
+            if (converted != null) {
+                return converted;
             }
 
             if (!type.isAssignableFrom(value.getClass())) {
@@ -51,7 +41,6 @@ public abstract class AbstractValueMap implements ValueMap {
 
         return (T) value;
     }
-
 
     @SuppressWarnings("unchecked")
     @Override

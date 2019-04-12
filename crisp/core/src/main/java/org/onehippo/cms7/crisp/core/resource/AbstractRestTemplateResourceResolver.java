@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.crisp.api.exchange.ExchangeHint;
 import org.onehippo.cms7.crisp.api.resource.Binary;
+import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
 import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
@@ -133,6 +134,23 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
      */
     public void setMaxInMemoryBinarySize(long maxInMemoryBinarySize) {
         this.maxInMemoryBinarySize = maxInMemoryBinarySize;
+    }
+
+    /**
+     * In most REST API based backend integration, it is very likely to retrieve a search result containing multiple
+     * resource items inside a root or container resource as well, such as root JSON node or XML node, it is okay
+     * to invoke {@link #resolve(String, Map, ExchangeHint)} by default for this operation.
+     * <P>
+     * Otherwise - for example, different communications are needed for this operation by the backend -- this method
+     * must be overridden properly.
+     */
+    @Override
+    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
+            throws ResourceException {
+        // Suppose we retrieve a search result which is wrapped by a resource representation such as a JSON node
+        // or XML node here...
+        final Resource rootResource = resolve(baseAbsPath, pathVariables, exchangeHint);
+        return rootResource;
     }
 
     @Override

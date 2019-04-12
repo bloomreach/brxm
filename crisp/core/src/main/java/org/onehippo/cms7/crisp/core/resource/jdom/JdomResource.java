@@ -116,32 +116,32 @@ public class JdomResource extends AbstractResource {
         final Object value = getValue(relPath);
 
         if (value != null && type != null) {
-            if (value instanceof String) {
+            T converted = null;
+
+            if (value instanceof Resource) {
                 if (type == Integer.class) {
-                    return (T) Integer.valueOf((String) value);
+                    converted = (T) ((Resource) value).getValueMap().get("", Integer.class);
                 } else if (type == Long.class) {
-                    return (T) Long.valueOf((String) value);
+                    converted = (T) ((Resource) value).getValueMap().get("", Long.class);
                 } else if (type == Double.class) {
-                    return (T) Double.valueOf((String) value);
+                    converted = (T) ((Resource) value).getValueMap().get("", Double.class);
                 } else if (type == Boolean.class) {
-                    return (T) Boolean.valueOf((String) value);
+                    converted = (T) ((Resource) value).getValueMap().get("", Boolean.class);
                 } else if (type == BigDecimal.class) {
-                    return (T) new BigDecimal((String) value);
-                }
-            } else if (value instanceof Resource) {
-                if (type == Integer.class) {
-                    return (T) ((Resource) value).getValueMap().get("", Integer.class);
-                } else if (type == Long.class) {
-                    return (T) ((Resource) value).getValueMap().get("", Long.class);
-                } else if (type == Double.class) {
-                    return (T) ((Resource) value).getValueMap().get("", Double.class);
-                } else if (type == Boolean.class) {
-                    return (T) ((Resource) value).getValueMap().get("", Boolean.class);
-                } else if (type == BigDecimal.class) {
-                    return (T) ((Resource) value).getValueMap().get("", BigDecimal.class);
+                    converted = (T) ((Resource) value).getValueMap().get("", BigDecimal.class);
                 } else if (type == String.class) {
-                    return (T) ((Resource) value).getValueMap().get("", String.class);
+                    converted = (T) ((Resource) value).getValueMap().get("", String.class);
                 }
+            }
+
+            if (converted != null) {
+                return converted;
+            }
+
+            converted = convertValueOfBasicType(value, type);
+
+            if (converted != null) {
+                return converted;
             }
 
             if (!type.isAssignableFrom(value.getClass())) {

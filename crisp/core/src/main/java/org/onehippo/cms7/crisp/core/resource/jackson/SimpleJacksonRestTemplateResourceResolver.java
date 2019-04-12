@@ -109,53 +109,6 @@ public class SimpleJacksonRestTemplateResourceResolver extends AbstractJacksonRe
     }
 
     @Override
-    public Resource findResources(String baseAbsPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint)
-            throws ResourceException {
-        try {
-            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = getRequestEntityObject(exchangeHint);
-
-            RestTemplate restTemplate = getRestTemplate();
-            ResponseEntity<String> result;
-
-            if (HttpMethod.POST.equals(httpMethod)) {
-                result = restTemplate.postForEntity(getBaseResourceURI(baseAbsPath), requestObject, String.class,
-                    pathVariables);
-            } else {
-                result = restTemplate.getForEntity(getBaseResourceURI(baseAbsPath), String.class,
-                        pathVariables);
-            }
-
-            extractResponseDataToExchangeHint(result, exchangeHint);
-
-            if (isSuccessfulResponse(result)) {
-                final String bodyText = result.getBody();
-                JsonNode jsonNode = getObjectMapper().readTree(bodyText);
-                Resource rootResource = new JacksonResource(jsonNode);
-
-                if (isCacheEnabled()) {
-                    tlResourceResultCache.get().put(rootResource, bodyText);
-                }
-
-                return rootResource;
-            } else {
-                throw new ResourceException("Unexpected response status: " + result.getStatusCode());
-            }
-        } catch (RestClientResponseException e) {
-            extractResponseDataToExchangeHint(e, exchangeHint);
-            throw new ResourceException("REST client response error.", e);
-        } catch (JsonProcessingException e) {
-            throw new ResourceException("JSON processing error.", e);
-        } catch (RestClientException e) {
-            throw new ResourceException("REST client invocation error.", e);
-        } catch (IOException e) {
-            throw new ResourceException("IO error.", e);
-        } catch (Exception e) {
-            throw new ResourceException("Unknown error.", e);
-        }
-    }
-
-    @Override
     public boolean isCacheable(Resource resource) {
         return (isCacheEnabled() && resource instanceof JacksonResource);
     }

@@ -27,6 +27,30 @@ public abstract class AbstractResource implements Resource {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Convert the {@code value} of a basic type to one of the {@code expectedType}.
+     * @param value the input value of a basic type
+     * @param expectedType the expected type to convert to
+     * @return Converted value of the {@code expectedType}
+     */
+    protected static <T> T convertValueOfBasicType(Object value, Class<T> expectedType) {
+        if (value instanceof String) {
+            if (expectedType == Integer.class) {
+                return (T) Integer.valueOf((String) value);
+            } else if (expectedType == Long.class) {
+                return (T) Long.valueOf((String) value);
+            } else if (expectedType == Double.class) {
+                return (T) Double.valueOf((String) value);
+            } else if (expectedType == Boolean.class) {
+                return (T) Boolean.valueOf((String) value);
+            } else if (expectedType == BigDecimal.class) {
+                return (T) new BigDecimal((String) value);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Array index notation regex pattern.
      */
     private static final Pattern INDEXED_NAME_PATTERN = Pattern.compile("^(.+)\\[(\\d+)\\]$");
@@ -232,18 +256,10 @@ public abstract class AbstractResource implements Resource {
         final Object value = getValue(relPath);
 
         if (value != null && type != null) {
-            if (value instanceof String) {
-                if (type == Integer.class) {
-                    return (T) Integer.valueOf((String) value);
-                } else if (type == Long.class) {
-                    return (T) Long.valueOf((String) value);
-                } else if (type == Double.class) {
-                    return (T) Double.valueOf((String) value);
-                } else if (type == Boolean.class) {
-                    return (T) Boolean.valueOf((String) value);
-                } else if (type == BigDecimal.class) {
-                    return (T) new BigDecimal((String) value);
-                }
+            final T converted = convertValueOfBasicType(value, type);
+
+            if (converted != null) {
+                return converted;
             }
 
             if (!type.isAssignableFrom(value.getClass())) {
