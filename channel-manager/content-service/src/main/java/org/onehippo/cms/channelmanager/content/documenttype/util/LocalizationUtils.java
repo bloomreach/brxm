@@ -72,7 +72,7 @@ public class LocalizationUtils {
 
         // Fall-back to node name, use part after namespace prefix
         if (id.contains(":")) {
-            String unNamespaced = id.substring(id.indexOf(":") + 1);
+            String unNamespaced = id.substring(id.indexOf(':') + 1);
             return Optional.of(NodeNameCodec.decode(unNamespaced));
         }
         // No display name available

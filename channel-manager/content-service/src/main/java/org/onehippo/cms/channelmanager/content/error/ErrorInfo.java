@@ -73,9 +73,8 @@ public class ErrorInfo {
 
     public static ErrorInfo withDisplayName(final ErrorInfo errorInfo, final Node handle) {
         if (errorInfo != null) {
-            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
-                errorInfo.addParam("displayName", displayName);
-            });
+            DocumentUtils.getDisplayName(handle)
+                    .ifPresent(displayName -> errorInfo.addParam("displayName", displayName));
         }
         return errorInfo;
     }
