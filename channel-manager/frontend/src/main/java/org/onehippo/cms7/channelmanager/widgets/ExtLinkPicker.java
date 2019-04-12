@@ -20,6 +20,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -159,7 +160,7 @@ public class ExtLinkPicker extends ExtObservable {
             String[] selectableNodeTypes = DEFAULT_PICKER_SELECTABLE_NODE_TYPES;
             JSONArray selectableNodeTypesArray = json.optJSONArray("selectableNodeTypes");
             if (selectableNodeTypesArray != null && selectableNodeTypesArray.length() > 0) {
-                List<String> selectableNodeTypesList = new ArrayList<String>();
+                List<String> selectableNodeTypesList = new ArrayList<>();
                 for (int i = 0; i < selectableNodeTypesArray.length(); i++) {
                     try {
                         selectableNodeTypesList.add(selectableNodeTypesArray.getString(i));
@@ -279,6 +280,26 @@ public class ExtLinkPicker extends ExtObservable {
             if (enabledEvents) {
                 fireLinkPickerFactoryEvent("picked", documentLinkInfo.getPath(), documentLinkInfo.getDocumentName());
             }
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+            final PickedNodeModel that = (PickedNodeModel) o;
+            return enabledEvents == that.enabledEvents;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(super.hashCode(), enabledEvents);
         }
     }
 }

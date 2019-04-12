@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class CountryGroupingChannelStore extends ChannelStore {
         super(storeId, fields, sortFieldName, sortOrder, localeResolver, blueprintStore);
     }
 
+    @Override
     protected void populateChannelRegion(final Channel channel, final JSONObject object) throws JSONException {
         String countryCode = getCountryCode(channel);
         Map<String, String> channelFieldValues = new HashMap<>();
@@ -99,7 +100,8 @@ public class CountryGroupingChannelStore extends ChannelStore {
                 return countryCode;
             }
         } catch (IllegalArgumentException e){
-            log.warn("Channel locale is not a legal locale. Channel name: {}, id: {}, locale: {}", new String[]{channel.getName(), channel.getId(), channel.getLocale()});
+            log.warn("Channel locale is not a legal locale. Channel name: {}, id: {}, locale: {}",
+                    channel.getName(), channel.getId(), channel.getLocale());
         }
         return UNKNOWN_COUNTRYCODE;
     }
