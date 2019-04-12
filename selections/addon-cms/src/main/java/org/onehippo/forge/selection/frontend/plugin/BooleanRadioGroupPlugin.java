@@ -16,6 +16,7 @@
 
 package org.onehippo.forge.selection.frontend.plugin;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.forge.selection.frontend.model.ListItem;
@@ -68,8 +69,8 @@ public class BooleanRadioGroupPlugin extends RadioGroupPlugin {
     protected ValueList getValueList() {
         if (valueList == null) {
             final IPluginConfig config = getPluginConfig();
-            final String trueLabel = config.getString(Config.TRUE_LABEL, "true");
-            final String falseLabel = config.getString(Config.FALSE_LABEL, "false");
+            final String trueLabel = StringUtils.defaultIfBlank(config.getString(Config.TRUE_LABEL), "true");
+            final String falseLabel = StringUtils.defaultIfBlank(config.getString(Config.FALSE_LABEL), "false");
 
             valueList = new ValueList();
             valueList.add(new ListItem("true", trueLabel));
