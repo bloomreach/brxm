@@ -24,6 +24,7 @@ class OpenUiStringPlugin {
     this.parameters = parameters;
     this.hiddenValueElement = document.getElementById(parameters.hiddenValueId);
     this.scheduledSave = null;
+    this.dialog = {};
   }
 
   onConnect(connection) {
@@ -42,6 +43,7 @@ class OpenUiStringPlugin {
       setFieldValue: this.setFieldValue.bind(this),
       getFieldCompareValue: this.getFieldCompareValue.bind(this),
       setFieldHeight: this.setFieldHeight.bind(this),
+      openDialog: this.openDialog.bind(this),
     }
   }
 
@@ -77,6 +79,29 @@ class OpenUiStringPlugin {
   setFieldHeight(pixels) {
     const height = Math.max(this.MIN_HEIGHT_IN_PIXELS, Math.min(pixels, this.MAX_HEIGHT_IN_PIXELS));
     this.iframe.style.height = height + 'px';
+  }
+
+  openDialog() {
+    return new Promise((resolve, reject) => {
+      this.dialog = {
+        resolve,
+        reject,
+      };
+
+      Wicket.Ajax.get({
+        u: this.parameters.dialogUrl,
+        fh: (e) => reject(e),
+      });
+
+    });
+  }
+
+  closeDialog(result) {
+    this.dialog.resolve(result);
+  }
+
+  cancelDialog() {
+    this.dialog.reject({ code: 'DialogCanceled' });
   }
 
   scheduleSave(data) {
