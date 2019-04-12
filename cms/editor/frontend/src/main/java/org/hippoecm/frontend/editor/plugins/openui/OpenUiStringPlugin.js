@@ -81,15 +81,16 @@ class OpenUiStringPlugin {
     this.iframe.style.height = height + 'px';
   }
 
-  openDialog() {
+  openDialog(options) {
     return new Promise((resolve, reject) => {
       this.dialog = {
         resolve,
         reject,
       };
 
-      Wicket.Ajax.get({
+      Wicket.Ajax.post({
         u: this.parameters.dialogUrl,
+        ep: options,
         fh: (e) => reject(e),
       });
 

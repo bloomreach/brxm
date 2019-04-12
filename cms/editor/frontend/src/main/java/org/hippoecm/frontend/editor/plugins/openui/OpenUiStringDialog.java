@@ -15,17 +15,40 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.Map;
+
+import org.apache.wicket.model.Model;
+import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.ScriptAction;
 
 public class OpenUiStringDialog extends Dialog<String> {
 
-    OpenUiStringDialog(final String instanceId) {
+    OpenUiStringDialog(final String instanceId, final Map<String, String> parameters) {
+
+        setTitle(Model.of(parameters.getOrDefault("title", "OpenUi Dialog")));
+        setSize(parseSize(parameters));
+
         setCloseAction((ScriptAction<String>) model -> String.format(
                 "OpenUi.getInstance('%s').closeDialog('%s');", instanceId, instanceId));
 
         setCancelAction((ScriptAction<String>) model -> String.format(
                 "OpenUi.getInstance('%s').cancelDialog();", instanceId));
 
+    }
+
+    private static IValueMap parseSize(final Map<String, String> parameters) {
+        final String size = parameters.getOrDefault("size", "large");
+        switch (size.toLowerCase()) {
+            case "small":
+                return DialogConstants.SMALL;
+            case "medium":
+                return DialogConstants.MEDIUM;
+            case "large":
+                return DialogConstants.LARGE;
+            default:
+                return DialogConstants.LARGE;
+        }
     }
 }
