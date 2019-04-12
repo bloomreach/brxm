@@ -34,4 +34,6 @@ public class Config {
     public final static String OBSERVER_ID = "observerId";
     public final static String ORIENTATION = "orientation";
     public final static String SHOW_DEFAULT = "showDefault";
+    public final static String TRUE_LABEL = "trueLabel";
+    public final static String FALSE_LABEL = "falseLabel";
 }
