@@ -22,7 +22,11 @@ class RadioGroupFieldController {
   }
 
   $onInit() {
-    this._loadOptionsList();
+    if (this.fieldType === 'BOOLEAN_RADIO_GROUP') {
+      this._setBooleanOptions();
+    } else {
+      this._loadOptionsList();
+    }
   }
 
   isOrientationHorizontal() {
@@ -37,16 +41,26 @@ class RadioGroupFieldController {
     return this.labels[index];
   }
 
-  _loadOptionsList() {
+  async _loadOptionsList() {
     this.keys = [];
     this.labels = [];
-    this.ContentService.getValueList(this.optionsSource, this.locale, this.sortComparator, this.sortBy, this.sortOrder)
-      .then((document) => {
-        document.forEach((item) => {
-          this.keys.push(item.key);
-          this.labels.push(item.label);
-        });
-      });
+    const document = await this.ContentService.getValueList(
+      this.optionsSource,
+      this.locale,
+      this.sortComparator,
+      this.sortBy,
+      this.sortOrder,
+    );
+
+    document.forEach((item) => {
+      this.keys.push(item.key);
+      this.labels.push(item.label);
+    });
+  }
+
+  _setBooleanOptions() {
+    this.keys = ['true', 'false'];
+    this.labels = [this.trueLabel, this.falseLabel];
   }
 }
 

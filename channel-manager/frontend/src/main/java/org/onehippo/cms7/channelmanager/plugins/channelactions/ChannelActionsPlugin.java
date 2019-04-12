@@ -146,14 +146,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
 
     private MarkupContainer createMenu(final String documentUuid) {
-        final String branchId;
-        final BranchIdModel branchIdModel = new BranchIdModel(getPluginContext(), documentUuid);
-        if (branchIdModel == null) {
-            branchId = MASTER_BRANCH_ID;
-        } else {
-            branchId = branchIdModel.getBranchId();
-        }
-
+        final String branchId = new BranchIdModel(getPluginContext(), documentUuid).getBranchId();
         List<ChannelDocument> channelDocuments;
 
         try {
