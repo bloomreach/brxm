@@ -20,7 +20,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.crisp.api.broker.ResourceServiceBroker;
 
 /**
- * Convenient utility to allow easy access to the singleton {@link ResourceServiceBroker} in a Content Deliery tier
+ * Convenient utility to allow easy access to the singleton {@link ResourceServiceBroker} in a Content Delivery tier
  * application.
  * <P>
  * <EM>Note</EM>: If you need to access the singleton {@link ResourceServiceBroker} in a Content Authoring tier
