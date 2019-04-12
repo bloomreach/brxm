@@ -21,6 +21,7 @@ OpenUi = new class {
     this.cmsBaseUrl = this.cmsOrigin + window.location.pathname;
     this.antiCache = window.Hippo.antiCache;
     this.classes = {};
+    this.instances = {};
   }
 
   registerClass(classDefinition) {
@@ -31,11 +32,21 @@ OpenUi = new class {
     this.classes[className] = classDefinition;
   };
 
+  getInstance(id) {
+    if (!this.instances[id]) {
+      throw new Error(`Cannot retrieve instance '${id}' of OpenUI field. Has it been instantiated or has it already been destroyed?`);
+    }
+    return this.instances[id];
+  }
+
   _instantiateClass(className, parameters) {
     if (!this.classes[className]) {
       throw new Error(`Cannot instantiate class '${className}'. Has it been registered with 'OpenUi.registerClass()'?`);
     }
-    return new this.classes[className](parameters);
+
+    const instance = new this.classes[className](parameters);
+    this.instances[parameters.iframeParentId] = instance;
+    return instance;
   }
 
   showExtension(className, parameters) {
@@ -50,7 +61,10 @@ OpenUi = new class {
   }
 
   _destroyConnectionWhenIframeDies(connection, openUiParent) {
-    HippoAjax.registerDestroyFunction(connection.iframe, function() {
+    HippoAjax.registerDestroyFunction(connection.iframe, () => {
+      const instanceId = openUiParent.parameters.iframeParentId;
+      delete this.instances[instanceId];
+
       try {
         connection.destroy();
       } catch (error) {
