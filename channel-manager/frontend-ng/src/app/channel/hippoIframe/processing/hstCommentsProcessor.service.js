@@ -73,13 +73,6 @@ class HstCommentsProcessorService {
   }
 
   _getCommentData(element) {
-    if (element.length < 0) {
-      // Skip conditional comments in IE: reading their 'data' property throws an
-      // Error "Not enough storage space is available to complete this operation."
-      // Conditional comments can be recognized by a negative 'length' property.
-      return null;
-    }
-
     if (!element.data || element.data.length === 0) {
       // no data available
       return null;
