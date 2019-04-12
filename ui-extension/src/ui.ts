@@ -60,10 +60,26 @@ const FIELD_DOM_OBSERVER = Symbol('fieldDomObserver');
 const FIELD_OVERFLOW_STYLE = Symbol('fieldOverflowStyle');
 const FIELD_HEIGHT = Symbol('fieldHeight');
 
+function lazy<T extends object, K extends keyof T>(object: T, property: K, getter: Callable<T[K]>) {
+  let value: T[K];
+
+  Object.defineProperty(object, property, {
+    get: () => {
+      if (undefined === value) {
+        value = getter();
+      }
+
+      return value;
+    },
+    configurable: false,
+    enumerable: true,
+  });
+}
+
 abstract class Scope<T extends Parent = Parent> {
   protected [PARENT]: ParentConnection<T>;
 
-  protected constructor(parent: ParentConnection<T>) {
+  constructor(parent: ParentConnection<T>) {
     this[PARENT] = parent;
   }
 }
@@ -125,7 +141,8 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
 
   constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
     super(parent, eventEmitter, eventScope);
-    this.page = new Page(parent, eventEmitter, SCOPE_PAGE);
+
+    lazy(this, 'page', () => new Page(parent, eventEmitter, SCOPE_PAGE));
   }
 
   refresh() {
@@ -134,17 +151,24 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
 }
 
 class Document extends Scope<DocumentParent> implements DocumentScope {
+  field: Field;
+
+  constructor(parent: ParentConnection<DocumentParent>) {
+    super(parent);
+
+    lazy(this, 'field', () => new Field(this[PARENT]));
+  }
+
   get(): Promise<DocumentProperties> {
     return this[PARENT].call('getDocument');
   }
-  field = new Field(this[PARENT]);
 }
 
 class Field extends Scope<DocumentParent> implements FieldScope {
   private [FIELD_DOM_OBSERVER] = new MutationObserver(this.updateHeight.bind(this));
   private [FIELD_HEIGHT]: number = null;
 
-  constructor(parent: ParentConnection) {
+  constructor(parent: ParentConnection<DocumentParent>) {
     super(parent);
 
     window.addEventListener('focus', () => parent.call('emitEvent', `${SCOPE_FIELD}.focus`));
@@ -237,9 +261,10 @@ export class Ui extends Scope implements UiScope {
 
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
-    this.channel = new Channel(parent, eventEmitter, SCOPE_CHANNEL);
-    this.dialog = new Dialog(parent);
-    this.document = new Document(parent);
+
+    lazy(this, 'channel', () => new Channel(parent, eventEmitter, SCOPE_CHANNEL));
+    lazy(this, 'dialog', () => new Dialog(parent));
+    lazy(this, 'document', () => new Document(parent));
   }
 
   init(): Promise<Ui> {

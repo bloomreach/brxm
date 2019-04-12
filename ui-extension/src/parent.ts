@@ -28,7 +28,6 @@ import Emittery from 'emittery'; // tslint:disable-line:import-name
 import Penpal from 'penpal';     // tslint:disable-line:import-name
 import { UiExtensionError, UiExtensionErrorCode } from './api';
 
-type Callable<T = unknown, U extends unknown[] = unknown[]> = (...args: U) => T;
 type MethodOf<T> = keyof Pick<T, {
   [K in keyof T]: T[K] extends Callable ? K : never;
 }[keyof T]>;

@@ -137,10 +137,7 @@ describe('Ui.init()', () => {
 
   describe('ui.document.get()', () => {
     it('returns the current document properties', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve({
-        id: 'test',
-      }));
-
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve({ id: 'test' }));
       const documentProperties = await ui.document.get();
 
       expect(parentConnection.call).toHaveBeenCalledWith('getDocument');
@@ -149,6 +146,8 @@ describe('Ui.init()', () => {
   });
 
   describe('ui.document.field', () => {
+    beforeEach(() => { ui.document.field; });
+
     it('reacts on focus event', async () => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
 
@@ -166,7 +165,7 @@ describe('Ui.init()', () => {
 
   describe('ui.document.field.getValue()', () => {
     it('returns the current field value', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve('test'));
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve('test'));
 
       const value = await ui.document.field.getValue();
 
@@ -177,7 +176,7 @@ describe('Ui.init()', () => {
 
   describe('ui.document.field.getCompareValue()', () => {
     it('returns the previous field value', async () => {
-      parentConnection.call = jest.fn(() => Promise.resolve('test'));
+      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve('test'));
 
       const compareValue = await ui.document.field.getCompareValue();
 

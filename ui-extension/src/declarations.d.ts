@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+type Callable<T = unknown, U extends unknown[] = unknown[]> = (...args: U) => T;
+
 // jsdom does not support MutationObserver (https://github.com/jsdom/jsdom/issues/639) so declare it here
 declare module 'MutationObserver' {
   export default MutationObserver;
