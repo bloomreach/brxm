@@ -16,11 +16,11 @@
 
 class OpenUiStringPlugin {
 
-  MIN_HEIGHT_IN_PIXELS = 10;
-  MAX_HEIGHT_IN_PIXELS = 10000;
-  MAX_SIZE_IN_BYTES = 102400;
-
   constructor(parameters) {
+    this.MIN_HEIGHT_IN_PIXELS = 10;
+    this.MAX_HEIGHT_IN_PIXELS = 10000;
+    this.MAX_SIZE_IN_BYTES = 102400;
+
     this.parameters = parameters;
     this.hiddenValueElement = document.getElementById(parameters.hiddenValueId);
     this.scheduledSave = null;
