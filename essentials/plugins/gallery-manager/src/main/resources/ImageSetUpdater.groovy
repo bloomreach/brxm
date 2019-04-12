@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.jcr.Node
 import javax.jcr.NodeIterator
 import javax.jcr.RepositoryException
 import javax.jcr.Session
+import javax.jcr.Value
 import javax.jcr.query.Query
 import javax.jcr.query.QueryManager
 import javax.jcr.query.QueryResult
@@ -40,6 +41,11 @@ import javax.jcr.query.QueryResult
  *               "skipDefaultThumbnail" : true }
  */
 class ImageSetUpdater extends BaseNodeUpdateVisitor {
+
+    class ImageSet {
+        List<String> superTypes = new ArrayList<String>()
+        List<String> variants = new ArrayList<String>()
+    }
 
     private static final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService"
 
@@ -66,7 +72,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     }
 
     private final Map<String, ScalingParameters> imageVariantParameters = new HashMap<String, ScalingParameters>()
-    private final Map<String, List<String>> imageSetVariants = new HashMap<String, List<String>>()
+    private final Map<String, ImageSet> imageSets = new HashMap<String, ImageSet>()
 
     private boolean overwrite = true
     private boolean skipDefaultThumbnail = true
@@ -82,7 +88,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
             Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE)
             getImageVariantParametersFromProcessor(configNode)
-            getImageSetVariantsFromNamespace(session)
+            getImageSetsFromNamespace(session)
+            processImageSetInheritance()
         } catch (RepositoryException e) {
             log.error("Exception while retrieving image set variants configuration", e)
         }
@@ -107,8 +114,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
     private boolean processImageSet(Node node) throws RepositoryException {
 
-        final List<String> imageSetVariants = imageSetVariants.get(node.getPrimaryNodeType().getName())
-        if (imageSetVariants == null) {
+        final ImageSet imageSet = imageSets.get(node.getPrimaryNodeType().getName())
+        if (imageSet == null) {
             log.warn("Could not find image set {}, skipping processing node {}", node.getPrimaryNodeType().getName(), node.getPath())
             return false
         }
@@ -122,7 +129,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         }
 
         boolean processed = false
-        for (String variantName : imageSetVariants) {
+        for (String variantName : imageSet.variants) {
             processed = processed | processImageVariant(node, data, variantName)
         }
 
@@ -190,7 +197,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         return true
     }
 
-    private void getImageSetVariantsFromNamespace(Session session) throws RepositoryException {
+    private void getImageSetsFromNamespace(Session session) throws RepositoryException {
         QueryManager queryManager = session.getWorkspace().getQueryManager()
         Query query = queryManager.createQuery("hippo:namespaces//element(*, hippogallery:imageset)", "xpath")
         QueryResult queryResult = query.execute()
@@ -199,8 +206,9 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         // looking up fields of type hippogallery:image in the nodetype of a definition
         while (nodeIterator.hasNext()) {
             Node prototype = nodeIterator.nextNode()
+            String imageSetPrimaryType = prototype.getPrimaryNodeType().getName()
 
-            log.debug "Reading namespace configuration from prototype ${prototype.path}"
+            log.debug "Reading namespace configuration from prototype ${prototype.path} with primary type ${imageSetPrimaryType}"
 
             Node doctype = prototype.getParent().getParent()
             Node nodetype
@@ -209,14 +217,22 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
                 nodetype = doctype.getNode(relNodeTypePath)
             }
             else {
-                log.warn "- No node ${relNodeTypePath} found below node ${prototype.path}: will not process this image set"
+                log.warn "- No node ${relNodeTypePath} found below node ${doctype.path}: will not process image set ${imageSetPrimaryType}"
                 continue
             }
 
+            ImageSet imageSet = new ImageSet()
+
+            if (nodetype.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                Value[] values = nodetype.getProperty(HippoNodeType.HIPPO_SUPERTYPE).values
+                for (Value v : values) {
+                    if (!v.string.startsWith("hippogallery")) {
+                        imageSet.superTypes.add(v.string)
+                    }
+                }
+            }
+
             NodeIterator fields = nodetype.getNodes()
-
-            List<String> imageVariants = new ArrayList<String>()
-
             while (fields.hasNext()) {
                 Node field = fields.nextNode()
 
@@ -231,27 +247,47 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
                     // original not to be reconfigured/regenerated so skip it
                     if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL == variantName) {
-                        log.debug "- Skipping reading original variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
+                        log.debug "- Skipping reading original variant from '${imageSetPrimaryType}' namespace"
                         continue
                     }
 
                     // thumbnail can be reconfigured, then only regenerate by parameter
                     if ((HippoGalleryNodeType.IMAGE_SET_THUMBNAIL == variantName) && skipDefaultThumbnail) {
-                        log.debug "- Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
+                        log.debug "- Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant from '${imageSetPrimaryType}' namespace"
                         continue
                     }
 
-                    imageVariants.add(variantName)
+                    imageSet.variants.add(variantName)
                 }
             }
 
-            if (imageVariants.isEmpty()) {
-                log.info "- Will not process image set '${prototype.getPrimaryNodeType().getName()}': no fields/variants found"
+            if (imageSet.variants.isEmpty()) {
+                log.info "- Will not process image set '${imageSetPrimaryType}': no fields/variants found"
                 continue
             }
 
-            log.info "- Read image set '${prototype.getPrimaryNodeType().getName()}' from namespace with fields/variants '${imageVariants}'"
-            imageSetVariants.put(prototype.getPrimaryNodeType().getName(), imageVariants)
+            log.info "- Read image set '${imageSetPrimaryType}' from namespace with supertypes ${imageSet.superTypes} and fields/variants ${imageSet.variants}"
+            imageSets.put(imageSetPrimaryType, imageSet)
+        }
+    }
+
+    private void processImageSetInheritance() {
+
+        Iterator<String> primaryTypes = imageSets.keySet().iterator()
+        while (primaryTypes.hasNext()) {
+            String primaryType = primaryTypes.next()
+            ImageSet imageSet = imageSets.get(primaryType)
+
+            for (String superType : imageSet.superTypes) {
+                ImageSet superSet = imageSets.get(superType)
+
+                for (String superVariant : superSet.variants) {
+                    if (!imageSet.variants.contains(superVariant)) {
+                        log.debug "- Adding variant '${superVariant}' from supertype ${superType} to ${primaryType}"
+                        imageSet.variants.add(superVariant)
+                    }
+                }
+            }
         }
     }
 
