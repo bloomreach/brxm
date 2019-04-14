@@ -23,6 +23,7 @@
   <bean id="org.hippoecm.hst.content.beans.manager.ObjectConverter" class="org.hippoecm.hst.site.content.ObjectConverterFactoryBean">
     <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
     <property name="contentTypesProvider" ref="org.hippoecm.hst.site.content.ContentTypesProvider"/>
+    <property name="generateDynamicBean" value="${dynamic.bean.generation:true}"/>
   </bean>
 
   <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">

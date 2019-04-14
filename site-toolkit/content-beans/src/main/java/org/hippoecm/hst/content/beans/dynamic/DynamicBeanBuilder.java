@@ -55,6 +55,11 @@ public class DynamicBeanBuilder {
 
     private Builder<? extends HippoBean> builder;
     private final Class<? extends HippoBean> parentBean;
+    private boolean methodAdded = false;
+    
+    public boolean isMethodAdded() {
+        return methodAdded;
+    }
 
     public static class SingleDocbaseInterceptor {
 
@@ -66,7 +71,7 @@ public class DynamicBeanBuilder {
 
         public HippoBean getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) throws Throwable {
             final HippoBean superBean = (HippoBean) superObject;
-            final String item = (String) superBean.getProperty(propertyName);
+            final String item = superBean.getProperty(propertyName);
             if (item == null) {
                 return null;
             }
@@ -141,6 +146,7 @@ public class DynamicBeanBuilder {
                             .defineMethod(methodName, HippoBean.class, Modifier.PUBLIC)
                             .intercept(MethodDelegation.to(new SingleDocbaseInterceptor(propertyName)));
             }
+            methodAdded = true;
         } catch (IllegalArgumentException e) {
             log.error("Cant't define method {} : {}", methodName, e);
         }
@@ -219,6 +225,7 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
+            methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, hippoMethodName, returnType, e);
         }
@@ -234,6 +241,7 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName, genericsType)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
+            methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
         }
@@ -249,9 +257,14 @@ public class DynamicBeanBuilder {
                                 .onSuper()
                                 .with(propertyName, returnType)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
+            methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Cant't define method {} with deletage method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
         }
+    }
+    
+    public Class<? extends HippoBean> getParentBean(){
+        return parentBean;
     }
 
     public Class<? extends HippoBean> create() {

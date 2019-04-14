@@ -42,10 +42,12 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
     private static final String TEST_SUB_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicsubdocumentpage/dynamicsubdocumentpage";
 
     private static final String CUSTOM_COMPOUND_TYPE_METHOD_NAME_WITH_RETURN_LIST = "getDynamiccompoundmultiple";
+    private static final String SUB_CUSTOM_COMPOUND_TYPE_METHOD_NAME  = "getDynamicsubcompound";
 
     private static final String RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_SUB_DOCUMENT_CLASS = "getSubrichtexteditor";
 
     private static final String RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS = "getRichTextEditorCompoundType";
+    private static final String STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS = "getStringTypeField2";
 
 
     private ObjectConverter objectConverter;
@@ -130,4 +132,22 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
 
     }
 
+    @Test
+    public void testGetValuesOfStringTypeFieldInSubCustomCompoundTypeInSubDocumentTypeBeanClass() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        HippoCompound hippoCompound = callCustomCompoundTypeMethod(generatedBean, SUB_CUSTOM_COMPOUND_TYPE_METHOD_NAME, false);
+
+        assertNotNull("The method '" + SUB_CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoCompound);
+
+        if (hippoCompound != null) {
+            String value = callContentBeanMethod(hippoCompound, STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS, String.class);
+
+            assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS + "' didn't return any value", value);
+            assertEquals("subcompoundvalue", value);
+        }
+
+        assertNotNull(generatedBean);
+    }
 }

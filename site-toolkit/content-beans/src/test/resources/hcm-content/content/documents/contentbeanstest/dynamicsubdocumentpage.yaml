@@ -30,3 +30,7 @@
       /contentbeanstest:richTextEditorCompoundType:
         jcr:primaryType: hippostd:html
         hippostd:content: 'multipleListContent'
+    /contentbeanstest:dynamicsubcompound:
+      jcr:primaryType: contentbeanstest:dynamicsubcompound
+      contentbeanstest:stringTypeField2: 'subcompoundvalue'
+        

@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.content.beans;
 
-import org.hippoecm.hst.content.beans.dynamic.AutoEnhancedBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 
-@AutoEnhancedBean
 @Node(jcrType = "contentbeanstest:dynamicbeanpage")
 public class DynamicBeanPage extends HippoDocument {
 
@@ -26,6 +24,10 @@ public class DynamicBeanPage extends HippoDocument {
 
         Double doubleTypeFieldValue = (Double) getProperty("contentbeanstest:doubleTypeField");
         return doubleTypeFieldValue * 5;
+    }
+
+    public Long getLongTypeField2() {
+        return ((Long) getProperty("contentbeanstest:longTypeField2")) * 4;
     }
 
 }

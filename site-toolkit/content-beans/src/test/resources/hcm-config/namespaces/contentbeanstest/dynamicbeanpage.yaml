@@ -148,6 +148,14 @@ definitions:
             hipposysedit:path: contentbeanstest:resourceCompoundType
             hipposysedit:primary: false
             hipposysedit:type: hippo:resource
+          /longTypeField2:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:longTypeField2
+            hipposysedit:primary: false
+            hipposysedit:type: Long
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:
@@ -173,6 +181,7 @@ definitions:
           contentbeanstest:textTypeField: ''
           contentbeanstest:docbaseTypeField: ''
           contentbeanstest:dynamicdropdownTypeField: ''
+          contentbeanstest:longTypeField2: 0
           /contentbeanstest:richTextEditorCompoundType:
             jcr:primaryType: hippostd:html
             hippostd:content: ''

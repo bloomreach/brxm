@@ -19,6 +19,7 @@
     contentbeanstest:radioGroupTypeField: 'radiogroupvalue'
     contentbeanstest:stringTypeField: string Value
     contentbeanstest:textTypeField: textvalue
+    contentbeanstest:longTypeField2: 100  
     hippo:availability: []
     hippostd:state: draft
     hippostdpubwf:createdBy: admin

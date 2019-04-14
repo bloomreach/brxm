@@ -42,6 +42,15 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
     private String annotatedClassesInitParam = DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM;
     private String annotatedClassesResourcePath;
     private ContentTypesProvider contentTypesProvider;
+    private Boolean generateDynamicBean;
+
+    public Boolean getGenerateDynamicBean() {
+        return generateDynamicBean;
+    }
+
+    public void setGenerateDynamicBean(Boolean generateDynamicBean) {
+        this.generateDynamicBean = generateDynamicBean;
+    }
 
     public ClasspathResourceScanner getClasspathResourceScanner() {
         return classpathResourceScanner;
@@ -104,8 +113,11 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
                 throw new IllegalStateException(e);
             }
         }
-
-        return new VersionedObjectConverterProxy(annotatedClasses, contentTypesProvider);
+        if (generateDynamicBean == null || generateDynamicBean.booleanValue()) {
+            return new VersionedObjectConverterProxy(annotatedClasses, contentTypesProvider);
+        } else {
+            return ObjectConverterUtils.createObjectConverter(annotatedClasses);
+        }
     }
 
 }

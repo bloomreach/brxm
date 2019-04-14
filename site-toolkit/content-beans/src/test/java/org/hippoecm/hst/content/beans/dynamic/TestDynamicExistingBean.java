@@ -32,9 +32,10 @@ import org.junit.Test;
  * For this, {@link DynamicBeanPage} content bean is marked with {@link AutoEnhancedBean}.
  *
  */
-public class TestAutoEnhancedBean extends TestDynamicBeanService {
+public class TestDynamicExistingBean extends TestDynamicBeanService {
 
     private static final String CUSTOM_METHOD_NAME = "getDoubleTypeFieldMultipleByFive";
+    private static final String INTEGER_NUMBER_TYPE_METHOD_NAME = "getLongTypeField2";
 
     @Before
     public void setUp() throws Exception {
@@ -55,4 +56,16 @@ public class TestAutoEnhancedBean extends TestDynamicBeanService {
         assertNotNull("The method '" + CUSTOM_METHOD_NAME + "' didn't return any value", value);
         assertEquals(new Double(500), value);
     }
+
+    @Test
+    public void testGetValueOfIntegerNumberTypeFieldFromExistingMethodInBeanClass() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Long value = callContentBeanMethod(generatedBean, INTEGER_NUMBER_TYPE_METHOD_NAME, Long.class);
+
+        assertNotNull("The method '" + INTEGER_NUMBER_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals(new Long(400), value);
+    }
+    
 }

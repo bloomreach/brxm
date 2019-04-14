@@ -68,9 +68,12 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
         if (objectConverter != null) {
             return objectConverter;
         } else {
+            final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingClassPairs = ObjectConverterUtils
+                    .getAggregatedMapping(annotatedClasses, null, ignoreDuplicates);
             final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs =
                     ObjectConverterUtils.getAggregatedMapping(annotatedClasses, ignoreDuplicates);
-            final ObjectConverter converter = new DynamicObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes);
+            final ObjectConverter converter = new DynamicObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, jcrPrimaryNodeTypeExistingClassPairs,
+                    DEFAULT_FALLBACK_NODE_TYPES, contentTypes);
             instanceCache.put(contentTypes, converter);
             return converter;
         }
