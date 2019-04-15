@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -281,13 +281,6 @@
           },
           '->',
           {
-            id: 'nextButton',
-            cls: 'btn btn-default btn-sm',
-            text: this.resources['new-channel-next'],
-            handler: this.processNextStep,
-            scope: this
-          },
-          {
             id: 'cancelButton',
             cls: 'btn btn-default btn-sm',
             text: this.resources['new-channel-cancel'],
@@ -295,6 +288,13 @@
             handler: function () {
               this.hide();
             }
+          },
+          {
+            id: 'nextButton',
+            cls: 'btn btn-default btn-sm',
+            text: this.resources['new-channel-next'],
+            handler: this.processNextStep,
+            scope: this
           }
         ]
       };
