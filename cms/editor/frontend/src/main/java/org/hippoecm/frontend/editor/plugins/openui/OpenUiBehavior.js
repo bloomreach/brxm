@@ -79,11 +79,13 @@ OpenUi = new class {
 
   _connectToChild(parameters, methods) {
     const {
+      dialogOptions,
       extensionUrl,
       iframeParentId,
     } = parameters;
 
-    const iframeUrl = this._getIframeUrl(extensionUrl);
+
+    const iframeUrl = this._getIframeUrl(extensionUrl, dialogOptions && dialogOptions.url);
     const iframeParentElement = document.getElementById(iframeParentId);
 
     const iframe = document.createElement('iframe');
@@ -106,11 +108,32 @@ OpenUi = new class {
     });
   }
 
-  _getIframeUrl(url) {
-    const iframeUrl = new URL(url, this.cmsOrigin);
-    iframeUrl.searchParams.append('br.antiCache', this.antiCache);
-    iframeUrl.searchParams.append('br.parentOrigin', this.cmsOrigin);
-    return iframeUrl;
+  _getIframeUrl(extensionUrl, extensionDialogUrl) {
+    extensionUrl = this._getExtensionUrl(extensionUrl, this.cmsOrigin);
+    return extensionDialogUrl
+      ? this._getExtensionUrl(extensionDialogUrl, extensionUrl.href)
+      : extensionUrl;
+  }
+
+  _getExtensionUrl(url, base) {
+    return this._isAbsoluteUrl(url)
+      ? this._getAbsoluteUrl(url)
+      : this._getAbsoluteUrl(url, base)
+  }
+
+  _isAbsoluteUrl(url) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  _getAbsoluteUrl(url, base) {
+    const absUrl = new URL(url, base);
+    this._addQueryParameters(absUrl);
+    return absUrl;
+  }
+
+  _addQueryParameters(url) {
+    url.searchParams.append('br.antiCache', this.antiCache);
+    url.searchParams.append('br.parentOrigin', this.cmsOrigin);
   }
 
   _getProperties(parameters) {
