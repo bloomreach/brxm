@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.api.ChannelService;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
+import org.hippoecm.hst.platform.configuration.hosting.PageModelApiMount;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.onehippo.cms7.services.hst.Channel;
@@ -137,6 +138,14 @@ public class ChannelServiceImpl implements ChannelService {
 
                 if (mount.isPreview()) {
                     log.debug("Skipping explicit preview mounts");
+                    continue;
+                }
+
+                // below bit dirty check. Perhaps cleaner in the future to introduce something like
+                // 'Channel#isCanonical()' to indicate whether the Channel object is to be used in channel mgr or
+                // channels map or not
+                if (mount instanceof PageModelApiMount) {
+                    log.debug("Possible present PageModelApiMount channel is already represented by the parent mount");
                     continue;
                 }
 
