@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     @Test
     public void testLinksCMSRequestNoRenderingHost() throws Exception {
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
+            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
@@ -128,7 +128,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // NOW below, even when show contextpath is FALSE, the /site contextpath should be included because the links are
         // for cms host
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
+            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);

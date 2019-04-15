@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -75,19 +75,6 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     public void tearDown() throws Exception {
         requestContextSession.logout();
         super.tearDown();
-    }
-
-    @Test
-    public void testDefaultHost() {
-        try {
-            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-            assertTrue("Expected from the hst testcontents default hostname to be localhost. ", "localhost".equals(vhosts.getDefaultHostName()));
-
-        } catch (ContainerException e) {
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-
     }
 
     /*

@@ -107,8 +107,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private List<Mount> registeredMounts = new ArrayList<>();
 
-    private String defaultHostName;
-
     public static final String DEFAULT_HOMEPAGE_SITEMAP_ITEM = "root";
     /**
      * The homepage for this VirtualHosts.
@@ -285,10 +283,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
             log.info("Page caching for HST is set to : {} ", cacheable);
         }
 
-        defaultHostName  = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
-        if (defaultHostName != null) {
-            defaultHostName = defaultHostName.toLowerCase();
-        }
         if(scheme == null || "".equals(scheme)) {
             scheme = DEFAULT_SCHEME;
         }
@@ -606,18 +600,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         ResolvedVirtualHost host = findMatchingVirtualHost(portStrippedHostName, portNumber);
 
-        // no host found. Let's try the default host, if there is one configured:
-        if(host == null && getDefaultHostName() != null && !getDefaultHostName().equals(portStrippedHostName)) {
-            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, getDefaultHostName());
-            if (portNumber != 0) {
-                host = matchVirtualHost(getDefaultHostName()+":"+Integer.toString(portNumber));
-            }
-            else {
-                host = matchVirtualHost(getDefaultHostName());
-            }
-        }
         if(host == null) {
-           log.info("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , getDefaultHostName());
+           log.info("We cannot find a servername mapping for '{}'.  Return null", portStrippedHostName);
 
         }
         // store in the resolvedMap
@@ -728,8 +712,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return locale;
     }
 
+    @Deprecated
     public String getDefaultHostName() {
-        return defaultHostName;
+        return null;
     }
 
     public String getHomePage() {
