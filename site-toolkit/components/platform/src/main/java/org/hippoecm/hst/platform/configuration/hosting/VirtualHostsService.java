@@ -397,6 +397,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         continue;
                     }
 
+                    // below bit dirty check. Perhaps cleaner in the future to introduce something like
+                    // 'Channel#isCanonical()' to indicate whether the Channel object is to be used in channel mgr or
+                    // channels map or not
+                    if (mount instanceof PageModelApiMount) {
+                        log.debug("Channel of PageModelApiMount is already represented by the parent mount");
+                        continue;
+                    }
+
                     Channel channel = hstSite.getChannel();
 
                     if (hostGroupChannels.containsKey(channel.getId())) {
