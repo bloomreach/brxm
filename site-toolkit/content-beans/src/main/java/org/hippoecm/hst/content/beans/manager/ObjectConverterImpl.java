@@ -61,13 +61,12 @@ public class ObjectConverterImpl implements ObjectConverter {
     private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
 
     final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs = new ConcurrentHashMap<>();
-    final Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs = new ConcurrentHashMap<>();
     private List<String> fallBackJcrNodeTypes;
 
     public ObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes) {
 
         if (isNotEmpty(jcrPrimaryNodeTypeBeanPairs)) {
-            jcrPrimaryNodeTypeBeanPairs.forEach(this::addBeanDefinition);
+            this.jcrPrimaryNodeTypeBeanPairs.putAll(jcrPrimaryNodeTypeBeanPairs);
         }
 
         if (fallBackJcrNodeTypes != null) {
@@ -83,7 +82,6 @@ public class ObjectConverterImpl implements ObjectConverter {
      */
     protected void addBeanDefinition(@Nonnull final String documentType, @Nonnull final Class<? extends HippoBean> beanClass) {
         jcrPrimaryNodeTypeBeanPairs.put(documentType, beanClass);
-        jcrBeanPrimaryNodeTypePairs.put(beanClass, documentType);
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
@@ -425,6 +423,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public String getPrimaryNodeTypeNameFor(final Class<? extends HippoBean> hippoBean) {
-        return jcrBeanPrimaryNodeTypePairs.get(hippoBean);
+        return jcrPrimaryNodeTypeBeanPairs.entrySet().stream().filter(e -> e.getValue() == hippoBean)
+                .findFirst().map(Map.Entry::getKey).orElse(null);
     }
 }
