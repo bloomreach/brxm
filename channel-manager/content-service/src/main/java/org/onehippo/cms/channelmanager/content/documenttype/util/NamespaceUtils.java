@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,9 @@ public class NamespaceUtils {
 
         LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_ONE_COLUMN, new NodeOrderFieldSorter());
         LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_TWO_COLUMN, new TwoColumnFieldSorter());
+    }
+
+    private NamespaceUtils() {
     }
 
     /**
@@ -162,7 +165,7 @@ public class NamespaceUtils {
     private static <T> Optional<T> getConfigPropertyFromClusterOptions(final FieldTypeContext fieldContext,
                                                                         final String propertyName,
                                                                         final JcrPropertyReader<T> propertyReader) {
-        return fieldContext.getEditorConfigNode().flatMap((editorFieldConfigNode) ->
+        return fieldContext.getEditorConfigNode().flatMap(editorFieldConfigNode ->
                 getPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName, propertyReader)
         );
     }
@@ -172,7 +175,7 @@ public class NamespaceUtils {
                                                              final JcrPropertyReader<T> propertyReader) {
         final String fieldTypeId = fieldContext.getType();
         final Session session = fieldContext.getParentContext().getSession();
-        return getContentTypeRootNode(fieldTypeId, session).flatMap((contentTypeRootNode) ->
+        return getContentTypeRootNode(fieldTypeId, session).flatMap(contentTypeRootNode ->
                 getPropertyFromChildNode(contentTypeRootNode, EDITOR_CONFIG_PATH, propertyName, propertyReader));
     }
 

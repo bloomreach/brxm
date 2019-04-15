@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,6 @@ public class FieldValue {
         return Optional.ofNullable(fields);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public Map<String, List<FieldValue>> getFields() {
         return fields;
     }
@@ -110,7 +109,6 @@ public class FieldValue {
         return Optional.ofNullable(chosenId);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public String getChosenId() {
         return chosenId;
     }
@@ -123,7 +121,6 @@ public class FieldValue {
         return Optional.ofNullable(chosenValue);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public FieldValue getChosenValue() {
         return chosenValue;
     }

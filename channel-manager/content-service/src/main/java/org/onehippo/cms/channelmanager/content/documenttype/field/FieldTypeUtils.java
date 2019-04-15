@@ -141,6 +141,9 @@ public class FieldTypeUtils {
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
 
+    private FieldTypeUtils() {
+    }
+
     public static void checkPluginsWithoutFieldDefinition(final FieldsInformation fieldsInformation, final ContentTypeContext context) {
         final List<Node> editorConfigFieldNodes = NamespaceUtils.getEditorFieldConfigNodes(context.getContentTypeRoot());
         for (final Node editorConfigFieldNode : editorConfigFieldNodes) {
@@ -298,9 +301,8 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> determinePluginClass(final FieldTypeContext context) {
-        Optional<String> result = context.getEditorConfigNode()
+        return context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
-        return result;
     }
 
     /**
@@ -345,7 +347,7 @@ public class FieldTypeUtils {
         final long count = nodes.getSize();
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
-        if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
+        if (!values.isEmpty() && values.size() != count && count <= maxValues) {
             throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
         }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
     }
 
     // This is the same logic as defined in org.hippoecm.repository.standardworkflow.FolderWorkflowImpl
-    private String getDocumentTypeName(final Node typeNode) throws RepositoryException, InternalServerErrorException {
+    private String getDocumentTypeName(final Node typeNode) throws RepositoryException {
         final String name = typeNode.getName();
         if (name.equals(HippoNodeType.HIPPO_PROTOTYPE)) {
             final String documentType = typeNode.getPrimaryNodeType().getName();
