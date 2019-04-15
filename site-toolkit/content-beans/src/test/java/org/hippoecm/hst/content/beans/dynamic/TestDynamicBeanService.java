@@ -15,12 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -40,6 +34,12 @@ import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.joda.time.DateTimeComparator;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * 
@@ -81,13 +81,12 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
         super.setUp();
         
         if (annotatedClasses == null) {
-            annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+            annotatedClasses = new ArrayList<>();
             annotatedClasses.add(BaseDocument.class);
         }
         objectConverter = getObjectConverter(annotatedClasses);
 
         dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-
     }
 
     protected Object getContentBean() throws Exception {
@@ -210,15 +209,9 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
                 HippoGalleryImageSet.class);
 
         assertNotNull("The method '" + IMAGE_LINK_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoGalleryImageSet);
-
-        if (hippoGalleryImageSet != null) {
-            assertEquals("db02dde5-0098-4488-a72c-2a4fc6d51beb", hippoGalleryImageSet.getNode().getParent().getIdentifier());
-            
-            assertEquals("picture_original.jpeg",  hippoGalleryImageSet.getOriginal().getFilename());
-
-            assertEquals("picture_thumbnail.jpeg",  hippoGalleryImageSet.getThumbnail().getFilename());
-        }
-        
+        assertEquals("db02dde5-0098-4488-a72c-2a4fc6d51beb", hippoGalleryImageSet.getNode().getParent().getIdentifier());
+        assertEquals("picture_original.jpeg",  hippoGalleryImageSet.getOriginal().getFilename());
+        assertEquals("picture_thumbnail.jpeg",  hippoGalleryImageSet.getThumbnail().getFilename());
     }
 
     @Test
@@ -230,9 +223,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + RICH_TEXT_EDITOR_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoHtml);
 
-        if (hippoHtml != null) {
-            assertEquals("richtexteditorcontent", hippoHtml.getContent());
-        }
+        assertEquals("richtexteditorcontent", hippoHtml.getContent());
     }
 
     @Test
@@ -244,10 +235,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + DOCBASE_TYPE_METHOD_NAME + "' didn't return any value", hippoBean);
 
-        if (hippoBean != null) {
-            assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", hippoBean.getNode().getIdentifier());
-        }
-
+        assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", hippoBean.getNode().getIdentifier());
     }
 
     @Test
@@ -307,9 +295,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + LINK_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoBean);
 
-        if (hippoBean != null) {
-            assertEquals("64ab4648-0c20-40d2-9f18-d7a394f0334b", hippoBean.getNode().getParent().getIdentifier());
-        }
+        assertEquals("64ab4648-0c20-40d2-9f18-d7a394f0334b", hippoBean.getNode().getParent().getIdentifier());
     }
 
     @Test
@@ -321,9 +307,7 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + RESOURCE_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoResourceBean);
 
-        if (hippoResourceBean != null) {
-            assertEquals("picture_thumbnail.jpeg", hippoResourceBean.getFilename());
-        }
+        assertEquals("picture_thumbnail.jpeg", hippoResourceBean.getFilename());
     }
 
 }

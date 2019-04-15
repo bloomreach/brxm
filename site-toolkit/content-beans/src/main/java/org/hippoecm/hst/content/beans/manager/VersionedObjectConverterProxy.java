@@ -24,13 +24,14 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.hippoecm.hst.util.ObjectConverterUtils.DEFAULT_FALLBACK_NODE_TYPES;
+import static org.hippoecm.hst.util.ObjectConverterUtils.getAggregatedMapping;
 
 /**
  * A proxy, which keeps a cache of instantiated object converters per content types.
@@ -45,38 +46,27 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
     private final Cache<ContentTypes, ObjectConverter> instanceCache = CacheBuilder.newBuilder().weakKeys().build();
 
     private final ContentTypesProvider contentTypesProvider;
-    private final Collection<Class<? extends HippoBean>> annotatedClasses;
-    private final boolean ignoreDuplicates;
+    private final Map<String, Class<? extends HippoBean>> jcrNodeTypeExistingClassPairs;
+    private final Map<String, Class<? extends HippoBean>> jcrNodeTypeClassPairs;
 
     public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> annotatedClasses, final ContentTypesProvider contentTypesProvider) {
         this(annotatedClasses, contentTypesProvider, false);
     }
 
     public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> annotatedClasses, final ContentTypesProvider contentTypesProvider, final boolean ignoreDuplicates) {
-        this.annotatedClasses = annotatedClasses;
         this.contentTypesProvider = contentTypesProvider;
-        this.ignoreDuplicates = ignoreDuplicates;
+        this.jcrNodeTypeExistingClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses,
+                null, ignoreDuplicates));
+        this.jcrNodeTypeClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses, ignoreDuplicates));
     }
 
     /**
      * Create or get content type version specific instance of {@link ObjectConverter}
      */
     private ObjectConverter getOrCreateObjectConverter() {
-
         final ContentTypes contentTypes = contentTypesProvider.getContentTypes();
-        final ObjectConverter objectConverter = instanceCache.getIfPresent(contentTypes);
-        if (objectConverter != null) {
-            return objectConverter;
-        } else {
-            final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingClassPairs = ObjectConverterUtils
-                    .getAggregatedMapping(annotatedClasses, null, ignoreDuplicates);
-            final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs =
-                    ObjectConverterUtils.getAggregatedMapping(annotatedClasses, ignoreDuplicates);
-            final ObjectConverter converter = new DynamicObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, jcrPrimaryNodeTypeExistingClassPairs,
-                    DEFAULT_FALLBACK_NODE_TYPES, contentTypes);
-            instanceCache.put(contentTypes, converter);
-            return converter;
-        }
+        return instanceCache.asMap().computeIfAbsent(contentTypes, (k) -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
+                jcrNodeTypeExistingClassPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
     }
 
     @Override

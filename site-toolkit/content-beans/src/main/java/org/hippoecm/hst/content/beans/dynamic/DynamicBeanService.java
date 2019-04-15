@@ -31,6 +31,6 @@ public interface DynamicBeanService {
      * @param contentType of the document type which is read from contentTypeService
      * @return Class definition for a given {@link ContentType}
      */
-    Class<? extends HippoBean> createDynamicDocumentBeanDef(final Class<? extends HippoBean> parentBeanDef, final ContentType contentType);
+    Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> parentBeanDef, final ContentType contentType);
 
 }

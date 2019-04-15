@@ -44,11 +44,11 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
-    final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs = new ConcurrentHashMap<>();
+    private final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs = new ConcurrentHashMap<>();
 
-    public DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs,
-            final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs, final String[] fallBackJcrNodeTypes,
-            final ContentTypes contentTypes) {
+    DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs,
+                               final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs, final String[] fallBackJcrNodeTypes,
+                               final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
        
         if (jcrPrimaryNodeTypeExistingBeanPairs != null) {
@@ -80,17 +80,15 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
-            
-            if (delegateeClass != null && isDocumentType(useNode) && !jcrPrimaryNodeTypeExistingBeanPairs.isEmpty()) {
-                Class<? extends HippoBean> existingBeanClass = this.jcrPrimaryNodeTypeExistingBeanPairs.get(jcrPrimaryNodeType);
-                if (existingBeanClass != null) {
-                    // if the HippoEssentialsGenerated is not defined on class or allowModifications filed is true, then the bean will be generated  
-                    final HippoEssentialsGenerated hippoEssentialsGenerated = existingBeanClass.getDeclaredAnnotation(HippoEssentialsGenerated.class);
-                    if (hippoEssentialsGenerated == null || hippoEssentialsGenerated.allowModifications()) {
-                        delegateeClass = createDynamicBeanDefinition(useNode, existingBeanClass);
-                    }
-                    jcrPrimaryNodeTypeExistingBeanPairs.remove(jcrPrimaryNodeType);
+
+            final Class<? extends HippoBean> existingBeanClass = this.jcrPrimaryNodeTypeExistingBeanPairs.get(jcrPrimaryNodeType);
+            if (delegateeClass != null && isDocumentType(useNode) && existingBeanClass != null) {
+                // if the HippoEssentialsGenerated is not defined on class or allowModifications filed is true, then the bean will be generated
+                final HippoEssentialsGenerated hippoEssentialsGenerated = existingBeanClass.getDeclaredAnnotation(HippoEssentialsGenerated.class);
+                if (hippoEssentialsGenerated == null || hippoEssentialsGenerated.allowModifications()) {
+                    delegateeClass = createDynamicBeanDefinition(useNode, existingBeanClass);
                 }
+                jcrPrimaryNodeTypeExistingBeanPairs.remove(jcrPrimaryNodeType, existingBeanClass);
             }
 
             if (delegateeClass == null) {
@@ -143,13 +141,13 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             //The object has been already garbage collected, in practice, it should never happen
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
-        return dynamicBeanService.createDynamicDocumentBeanDef(parentBeanDef, contentTypes.getType(documentType));
+        return dynamicBeanService.createDocumentBeanDef(parentBeanDef, contentTypes.getType(documentType));
     }
     
     /**
      * Return content type of the given document type name
      */
-    public ContentType getContentType(String name) {
+    public ContentType getContentType(final String name) {
         final ContentTypes contentTypes = contentTypesRef.get();
         if (contentTypes == null) {
             return null;

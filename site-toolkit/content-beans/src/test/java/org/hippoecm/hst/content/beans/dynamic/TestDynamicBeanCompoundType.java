@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +27,11 @@ import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * 
@@ -66,7 +66,7 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
 
     }
 
-    protected Object getContentBean() throws Exception {
+    private Object getContentBean() throws Exception {
         Object generatedBean = objectConverter.getObject(session, TEST_DOCUMENT_TYPE_CONTENTS_PATH);
 
         assertNotNull("The content bean is not created for " + TEST_DOCUMENT_TYPE_CONTENTS_PATH, generatedBean);
@@ -76,7 +76,7 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T callContentBeanMethod(Object generatedBean, String methodName, Class<T> returnType) throws Exception {
+    private <T> T callContentBeanMethod(Object generatedBean, String methodName, Class<T> returnType) throws Exception {
         Method method = generatedBean.getClass().getMethod(methodName);
 
         assertNotNull("The method '" + methodName + "' is not found", method);
@@ -86,7 +86,7 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T callCustomCompoundTypeMethod(Object generatedBean, String methodName, boolean multiple) throws Exception {
+    private <T> T callCustomCompoundTypeMethod(Object generatedBean, String methodName, boolean multiple) throws Exception {
         Method method = generatedBean.getClass().getMethod(methodName);
 
         assertNotNull("The method '" + methodName + "' is not found", method);
@@ -107,15 +107,11 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoCompound);
 
-        if (hippoCompound != null) {
-            String result = callContentBeanMethod(hippoCompound, STRING_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, String.class);
+        String result = callContentBeanMethod(hippoCompound, STRING_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, String.class);
 
-            assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoCompound);
-            assertEquals("alexanderkade", result);
-        }
-
+        assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoCompound);
+        assertEquals("alexanderkade", result);
         assertNotNull(generatedBean);
-
     }
 
     @Test
@@ -127,15 +123,11 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoCompound);
 
-        if (hippoCompound != null) {
-            HippoHtml hippoHtml = callContentBeanMethod(hippoCompound, RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
+        HippoHtml hippoHtml = callContentBeanMethod(hippoCompound, RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
 
-            assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
-            assertEquals("contentOfHtmlFiledInCompoundTypeClass", hippoHtml.getContent());
-        }
-
+        assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
+        assertEquals("contentOfHtmlFiledInCompoundTypeClass", hippoHtml.getContent());
         assertNotNull(generatedBean);
-
     }
 
     @Test
@@ -147,15 +139,11 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + CUSTOM_COMPOUND_TYPE_METHOD_NAME_WITH_RETURN_LIST + "' didn't return any value", hippoCompounds);
 
-        if (hippoCompounds != null) {
-            HippoHtml hippoHtml = callContentBeanMethod(hippoCompounds.get(0), RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
+        HippoHtml hippoHtml = callContentBeanMethod(hippoCompounds.get(0), RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
 
-            assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
-            assertEquals("multipleListContent", hippoHtml.getContent());
-        }
-
+        assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
+        assertEquals("multipleListContent", hippoHtml.getContent());
         assertNotNull(generatedBean);
-
     }
 
     @Test
@@ -167,21 +155,14 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoCompound);
 
-        if (hippoCompound != null) {
+        HippoCompound insideCompound = callCustomCompoundTypeMethod(hippoCompound, INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME, false);
 
-            HippoCompound insideCompound = callCustomCompoundTypeMethod(hippoCompound, INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME, false);
+        assertNotNull("The method '" + INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", insideCompound);
 
-            assertNotNull("The method '" + INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", insideCompound);
+        String result = callContentBeanMethod(insideCompound, STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS, String.class);
 
-            if (insideCompound != null) {
-
-                String result = callContentBeanMethod(insideCompound, STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS, String.class);
-
-                assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS + "' didn't return any value", insideCompound);
-                assertEquals("http://test.com", result);
-            }
-        }
-
+        assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS + "' didn't return any value", insideCompound);
+        assertEquals("http://test.com", result);
         assertNotNull(generatedBean);
 
     }

@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +27,11 @@ import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * 
@@ -60,7 +60,7 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
         super.setUp();
 
         if (annotatedClasses == null) {
-            annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+            annotatedClasses = new ArrayList<>();
             annotatedClasses.add(BaseDocument.class);
         }
         objectConverter = getObjectConverter(annotatedClasses);
@@ -109,7 +109,6 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_SUB_DOCUMENT_CLASS + "' didn't return any value", hippoHtmls);
         assertEquals("richTextEditorInSubdocument", hippoHtmls.get(0).getContent());
-
     }
 
     @Test
@@ -121,15 +120,11 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + CUSTOM_COMPOUND_TYPE_METHOD_NAME_WITH_RETURN_LIST + "' didn't return any value", value);
 
-        if (value != null) {
-            HippoHtml hippoHtml = callContentBeanMethod(value.get(0), RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
+        HippoHtml hippoHtml = callContentBeanMethod(value.get(0), RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS, HippoHtml.class);
 
-            assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
-            assertEquals("multipleListContent", hippoHtml.getContent());
-        }
-
+        assertNotNull("The method '" + RICH_TEXT_EDITOR_TYPE_METHOD_NAME_IN_CUSTOM_COMPOUND_CLASS + "' didn't return any value", hippoHtml);
+        assertEquals("multipleListContent", hippoHtml.getContent());
         assertNotNull(generatedBean);
-
     }
 
     @Test
@@ -141,13 +136,10 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
 
         assertNotNull("The method '" + SUB_CUSTOM_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoCompound);
 
-        if (hippoCompound != null) {
-            String value = callContentBeanMethod(hippoCompound, STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS, String.class);
+        String value = callContentBeanMethod(hippoCompound, STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS, String.class);
 
-            assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS + "' didn't return any value", value);
-            assertEquals("subcompoundvalue", value);
-        }
-
+        assertNotNull("The method '" + STRING_TYPE_METHOD_NAME_IN_SUB_CUSTOM_COMPOUND_CLASS + "' didn't return any value", value);
+        assertEquals("subcompoundvalue", value);
         assertNotNull(generatedBean);
     }
 }

@@ -67,7 +67,7 @@ public abstract class AbstractBeanBuilderService {
      * Generates bean method by its properties
      * 
      * @param bean {@link HippoContentBean}
-     * @param builderParameters {@link BeanBuilderServiceParameters}
+     * @param builder {@link DynamicBeanBuilder}
      */
     protected void generateMethodsByProperties(HippoContentBean bean, DynamicBeanBuilder builder) {
         for (HippoContentProperty property : bean.getProperties()) {
@@ -126,14 +126,14 @@ public abstract class AbstractBeanBuilderService {
      * Generated bean methods by its child nodes
      * 
      * @param bean {@link HippoContentBean}
-     * @param builderParameters {@link BeanBuilderServiceParameters}
+     * @param builder {@link DynamicBeanBuilder}
      */
-    protected void generateMethodsByNodes(HippoContentBean bean, DynamicBeanBuilder builder) {
-        for (HippoContentChildNode child : bean.getChildren()) {
+    protected void generateMethodsByNodes(final HippoContentBean bean, final DynamicBeanBuilder builder) {
+        for (final HippoContentChildNode child : bean.getChildren()) {
             final String name = child.getName();
             final boolean multiple = child.isMultiple();
 
-            boolean hasChange = hasChange(name, multiple, builder);
+            final boolean hasChange = hasChange(name, multiple, builder);
             if (!hasChange) {
                 continue;
             }
@@ -146,7 +146,7 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            DocumentType documentType = DocumentType.getDocumentType(type);
+            final DocumentType documentType = DocumentType.getDocumentType(type);
 
             switch (documentType) {
             case HIPPO_HTML:

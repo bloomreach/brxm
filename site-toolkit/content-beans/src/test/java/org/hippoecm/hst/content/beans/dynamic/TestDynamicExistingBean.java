@@ -15,21 +15,20 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.ArrayList;
 
 import org.hippoecm.hst.content.beans.BaseDocument;
 import org.hippoecm.hst.content.beans.DynamicBeanPage;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * 
  * Tests the dynamic bean service for all primitive and compound fields with enhancing bean functionality.
- * For this, {@link DynamicBeanPage} content bean is marked with {@link AutoEnhancedBean}.
+ * For this, {@link DynamicBeanPage} content bean is marked with {@link org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated}.
  *
  */
 public class TestDynamicExistingBean extends TestDynamicBeanService {
@@ -39,7 +38,7 @@ public class TestDynamicExistingBean extends TestDynamicBeanService {
 
     @Before
     public void setUp() throws Exception {
-        annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+        annotatedClasses = new ArrayList<>();
         annotatedClasses.add(BaseDocument.class);
         annotatedClasses.add(DynamicBeanPage.class);
 

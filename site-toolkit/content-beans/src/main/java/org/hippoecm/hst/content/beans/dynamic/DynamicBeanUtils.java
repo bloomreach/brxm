@@ -17,6 +17,8 @@ package org.hippoecm.hst.content.beans.dynamic;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.CharMatcher;
@@ -57,10 +59,11 @@ public class DynamicBeanUtils {
         return StringUtils.capitalize(parts[1]);
     }
 
+    @Nonnull
     public static String createMethodName(final String name) {
         String myName = name;
         if (Strings.isNullOrEmpty(myName) || myName.trim().equals(":")) {
-            return null;
+            throw new IllegalArgumentException(String.format("Unable to construct method name from: %s", name));
         }
         myName = CharMatcher.whitespace().removeFrom(myName);
         // replace all whitespaces:
@@ -70,7 +73,7 @@ public class DynamicBeanUtils {
         }
         final String[] parts = NAMESPACE_PATTERN.split(myName);
         if (parts.length < 1) {
-            return null;
+            throw new IllegalArgumentException(String.format("Unable to construct method name from: %s", name));
         }
         return PREFIX_GET + StringUtils.capitalize(parts[1]);
     }
