@@ -79,6 +79,11 @@ class OpenUiBehavior extends Behavior {
         extension = loadUiExtension(extensionName, extensionPoint).orElse(null);
     }
 
+    public OpenUiBehavior(final OpenUiPlugin openUiPlugin, final UiExtension extension) {
+        this.openUiPlugin = openUiPlugin;
+        this.extension = extension;
+    }
+
     private static Optional<UiExtension> loadUiExtension(final String extensionName, final UiExtensionPoint extensionPoint) {
         if (StringUtils.isBlank(extensionName)) {
             return Optional.empty();
