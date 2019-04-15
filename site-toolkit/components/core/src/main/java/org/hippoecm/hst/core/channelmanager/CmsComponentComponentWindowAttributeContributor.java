@@ -21,7 +21,6 @@ import java.util.Map;
 import com.google.common.base.Strings;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
@@ -30,8 +29,6 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.cms7.services.hst.Channel;
-
-import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
@@ -57,11 +54,8 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         populatingAttributesMap.put("url", url.toString());
         populatingAttributesMap.put("refNS", window.getReferenceNamespace());
 
-        Mount mount = requestContext.getResolvedMount().getMount();
-        if (PAGE_MODEL_PIPELINE_NAME.equals(mount.getNamedPipeline()) && mount.getParent() != null) {
-            mount = mount.getParent();
-        }
-        final Channel channel = mount.getChannel();
+        final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
+
         if (channel != null && channel.isConfigurationLocked()) {
             populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, "system");
             populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "false");

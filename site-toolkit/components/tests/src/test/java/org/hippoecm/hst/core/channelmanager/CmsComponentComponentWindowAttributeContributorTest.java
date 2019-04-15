@@ -125,7 +125,8 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         final Mount apiMount = mock(Mount.class);
         expect(apiResolvedMount.getMount()).andStubReturn(apiMount);
         expect(apiMount.getNamedPipeline()).andStubReturn(PAGE_MODEL_PIPELINE_NAME);
-        expect(apiMount.getChannel()).andStubReturn(null);
+        // also return same channel object as parent mount
+        expect(apiMount.getChannel()).andStubReturn(channel);
         expect(apiMount.getParent()).andStubReturn(mount);
 
         expect(requestContext.getResolvedMount()).andStubReturn(apiResolvedMount);
