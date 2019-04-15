@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {EditorStyling, PageProperties, UiProperties} from '../api';
+import {PageProperties, UiProperties, UiStyling} from '../api';
 import {Parent} from '../parent';
 
 const uiProperties: UiProperties = {
@@ -23,7 +23,7 @@ const uiProperties: UiProperties = {
     config: 'testConfig',
   },
   locale: 'en',
-  styling: EditorStyling.Classic,
+  styling: UiStyling.Classic,
   timeZone: 'Europe/Amsterdam',
   user: {
     id: 'admin',

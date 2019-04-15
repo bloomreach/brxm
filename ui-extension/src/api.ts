@@ -81,10 +81,10 @@ export interface UiExtensionError {
 }
 
 /**
- * Defines the different possible styling themes of the surrounding editor.
+ * Defines the different possible styling themes of the surrounding user interface.
  * @since 13.2
  */
-export enum EditorStyling {
+export enum UiStyling {
   Classic = 'classic',
   Material = 'material',
 }
@@ -115,10 +115,10 @@ export interface UiProperties {
   locale: string;
 
   /**
-   * The styling of the editor in which the extension is included.
+   * The styling of the user interface in which the extension is shown.
    * @since 13.2
    */
-  styling: EditorStyling;
+  styling: UiStyling;
 
   /**
    * The time zone of the CMS user as selected on the login page. For example: "Europe/Amsterdam".

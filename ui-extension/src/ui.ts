@@ -35,7 +35,6 @@ import {
   DialogScope,
   DocumentProperties,
   DocumentScope,
-  EditorStyling,
   Emitter,
   EventHandler,
   FieldScope,
@@ -44,6 +43,7 @@ import {
   PageScopeEvents,
   UiProperties,
   UiScope,
+  UiStyling,
 } from './api';
 import { Parent, ParentConnection, ParentMethod } from './parent';
 
@@ -225,7 +225,7 @@ export class Ui extends Scope implements UiScope {
     lastName: string,
     displayName: string,
   };
-  styling: EditorStyling;
+  styling: UiStyling;
   version: string;
 
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
