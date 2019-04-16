@@ -23,6 +23,11 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
     linkToContentEditor: true,
   },
+  DOCUMENT_INVALID: {
+    titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
+    messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
+    linkToContentEditor: true,
+  },
   DOES_NOT_EXIST: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
@@ -94,6 +99,15 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_UNKNOWN_ERROR',
   },
 };
+
+class ErrorResponse {
+  constructor(reason, params) {
+    this.data = {
+      reason,
+      params,
+    };
+  }
+}
 
 class ContentEditorService {
   constructor($q, $translate, CmsService, ContentService, DialogService, FeedbackService, FieldService, WorkflowService) {
