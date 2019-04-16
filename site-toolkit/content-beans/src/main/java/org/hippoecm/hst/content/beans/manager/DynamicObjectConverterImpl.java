@@ -147,10 +147,12 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
     /**
      * Return content type of the given document type name
      */
+    @Nonnull
     public ContentType getContentType(final String name) {
         final ContentTypes contentTypes = contentTypesRef.get();
         if (contentTypes == null) {
-            return null;
+            //The object has been already garbage collected, in practice, it should never happen
+            throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
         return contentTypes.getType(name);
     }

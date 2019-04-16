@@ -52,13 +52,13 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             this.updated = updated;
         }
     }
-    
+
     public DynamicBeanDefinitionService(final DynamicObjectConverterImpl objectConverter) {
         this.objectConverter = objectConverter;
     }
 
     private BeanInfo createCompoundBeanDef(final ContentType contentType) {
-        if (contentType.getSuperTypes().stream().noneMatch(superType -> superType.equals(HippoNodeType.NT_COMPOUND))) {
+        if (contentType.getSuperTypes().stream().noneMatch(HippoNodeType.NT_COMPOUND::equals)) {
             return null;
         }
 
@@ -78,8 +78,16 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
         return generateBeanDefinition(parentBeanInfo, contentType);
     }
-    
-    
+
+    /**
+     * Searchs a parent bean definition in the contentTypes. If there is any matching parent
+     * bean definition, uses the definition. Otherwise, a pre-defined base bean will be used
+     * as a parent bean.
+     * 
+     * @param contentType type of the content from the ContentTypeService
+     * @param isCompound whether a contentType is a compound type or not
+     * @return
+     */
     private BeanInfo getOrCreateParentBeanDef(@Nonnull final ContentType contentType, final boolean isCompound) {
         final String documentType = contentType.getName();
         final String projectNamespace = documentType.substring(0, documentType.indexOf(':'));
@@ -97,12 +105,9 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         final Class<? extends HippoBean> parentDocumentBeanDef = objectConverter.getClassFor(parentDocumentType);
         if (parentDocumentBeanDef == null) {
             final ContentType parentDocumentContentType = objectConverter.getContentType(parentDocumentType);
-            if (parentDocumentContentType == null) {
-                // parent bean is not in content type service, the default parent bean will return.
-                return getDefaultParentBeanInfo(isCompound);
-            }
             final BeanInfo generatedBeanInfo = isCompound ? createCompoundBeanDef(parentDocumentContentType)
                     : createDocumentBeanDef(parentDocumentContentType, null);
+
             return generatedBeanInfo != null ? generatedBeanInfo : getDefaultParentBeanInfo(isCompound);
         } else {
             return new BeanInfo(parentDocumentBeanDef, false);
@@ -141,118 +146,78 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected boolean hasChange(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        return true;
+    protected boolean hasChange(final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        // creates the method if it doesn't exist on the parent bean 
+        return ClassUtils.getMethodIfAvailable(builder.getParentBeanClass(), methodName) == null;
     }
 
     @Override
-    protected void addBeanMethodString(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodString(methodName, name, multiple);
-        }
+    protected void addBeanMethodString(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodString(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodCalendar(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodCalendar(methodName, name, multiple);
-        }
+    protected void addBeanMethodCalendar(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodCalendar(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodBoolean(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodBoolean(methodName, name, multiple);
-        }
+    protected void addBeanMethodBoolean(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodBoolean(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodLong(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodLong(methodName, name, multiple);
-        }
+    protected void addBeanMethodLong(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodLong(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodDouble(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodDouble(methodName, name, multiple);
-        }
+    protected void addBeanMethodDouble(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodDouble(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodDocbase(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-       final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-           builder.addBeanMethodDocbase(methodName, name, multiple);
-        }
+    protected void addBeanMethodDocbase(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+       builder.addBeanMethodDocbase(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addCustomPropertyType(final String name, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
-        log.warn("Failed to create getter for property: {} of type: {}", name, type);
+    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
+        log.warn("Failed to create getter for property: {} of type: {}", propertyName, type);
     }
 
     @Override
-    protected void addBeanMethodHippoHtml(String name, boolean multiple, DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodHippoHtml(methodName, name, multiple);
-        }
+    protected void addBeanMethodHippoHtml(final String propertyName, final String methodName, boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodHippoHtml(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodImageLink(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodImageLink(methodName, name, multiple);
-        }        
+    protected void addBeanMethodImageLink(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodImageLink(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoMirror(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodHippoMirror(methodName, name, multiple);
-        }
+    protected void addBeanMethodHippoMirror(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodHippoMirror(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoImage(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodHippoImage(methodName, name, multiple);
-        }
+    protected void addBeanMethodHippoImage(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodHippoImage(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoResource(final String name, final boolean multiple, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        if (methodNotExists(builder.getParentBeanClass(), methodName)) {
-            builder.addBeanMethodHippoResource(methodName, name, multiple);
-        }
-    }
-
-    private boolean methodNotExists(@Nonnull final Class<?> clazz, @Nonnull final String methodName) {
-        return ClassUtils.getMethodIfAvailable(clazz, methodName) == null;
+    protected void addBeanMethodHippoResource(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodHippoResource(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addCustomNodeType(final String name, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
-        final String methodName = DynamicBeanUtils.createMethodName(name);
-        
+    protected void addCustomNodeType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
         Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
         BeanInfo generatedBeanInfo = null;
         if (generatedBeanDef == null) {
             final ContentType compoundContentType = objectConverter.getContentType(type);
-            if (compoundContentType == null) {
-                return;
-            }
+
             generatedBeanInfo = createCompoundBeanDef(compoundContentType);
             if (generatedBeanInfo == null) {
                 return;
@@ -260,9 +225,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             generatedBeanDef = generatedBeanInfo.getBeanClass();
         }
 
-        if (methodNotExists(builder.getParentBeanClass(), methodName)
-                || (generatedBeanInfo != null && generatedBeanInfo.isUpdated())) {
-            builder.addBeanMethodInternalType(generatedBeanDef, methodName, name, multiple);
-        }
+        builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
     }
 }

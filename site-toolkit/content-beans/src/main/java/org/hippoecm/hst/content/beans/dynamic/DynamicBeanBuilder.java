@@ -16,11 +16,12 @@
 package org.hippoecm.hst.content.beans.dynamic;
 
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
@@ -34,8 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
-import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.TargetType;
+import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -43,10 +44,15 @@ import net.bytebuddy.implementation.bind.annotation.Super;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
 /**
- * Creates runtime methods for dynamic beans
+ * Creates methods for dynamic beans on the fly.
  */
 public class DynamicBeanBuilder {
     private static final Logger log = LoggerFactory.getLogger(DynamicBeanBuilder.class);
+
+    /**
+     * The method names below belong to the HippoBean and are used to generate dynamic bean
+     * definitions by using byte buddy.
+     */
     private static final String METHOD_GET_PROPERTY = "getProperty";
     private static final String METHOD_GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
     private static final String METHOD_GET_HIPPO_HTML = "getHippoHtml";
@@ -58,11 +64,17 @@ public class DynamicBeanBuilder {
     private Builder<? extends HippoBean> builder;
     private final Class<? extends HippoBean> parentBean;
     private boolean methodAdded = false;
-    
+
     boolean isMethodAdded() {
         return methodAdded;
     }
 
+    /**
+     * Byte buddy doesn't support automated if else blocks, so an interceptor must
+     * be used to handle if else. The whole logic is copied from the essentials bean
+     * generation tool.
+     *
+     */
     public static class SingleDocbaseInterceptor {
 
         private final String propertyName;
@@ -71,16 +83,24 @@ public class DynamicBeanBuilder {
             this.propertyName = propertyName;
         }
 
-        public HippoBean getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) throws Throwable {
+        public HippoBean getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) {
             final HippoBean superBean = (HippoBean) superObject;
+
             final String item = superBean.getProperty(propertyName);
             if (item == null) {
                 return null;
             }
+
             return superBean.getBeanByUUID(item, HippoBean.class);
         }
     }
 
+    /**
+     * Byte buddy doesn't support automated if else blocks, so an interceptor must
+     * be used to handle if else. The whole logic is copied from the essentials bean
+     * generation tool. 
+     *
+     */
     public static class MultipleDocbaseInterceptor {
 
         private final String propertyName;
@@ -89,22 +109,28 @@ public class DynamicBeanBuilder {
             this.propertyName = propertyName;
         }
 
-        public List<HippoBean> getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject)
-                throws Throwable {
+        public List<HippoBean> getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) {
             final HippoBean superBean = (HippoBean) superObject;
-            final List<HippoBean> beans = new ArrayList<>();
+
             final String[] items = superBean.getProperty(propertyName);
             if (items == null) {
-                return beans;
+                return Collections.emptyList();
             }
-            Arrays.stream(items)
-                    .map(item -> superBean.getBeanByUUID(item, HippoBean.class))
-                    .filter(Objects::nonNull)
-                    .forEach(beans::add);
-            return beans;
+
+            return Arrays.stream(items)
+                         .map(item -> superBean.getBeanByUUID(item, HippoBean.class))
+                         .filter(Objects::nonNull)
+                         .collect(Collectors.toList());
         }
     }
 
+    /**
+     * Creates a class definition regarding of a given name and a parent bean. The created
+     * bean is extended from the parent bean.
+     * 
+     * @param className the name of the class (eg: NewsDocument)
+     * @param parentBean the parent bean (eg: BaseDocument)
+     */
     DynamicBeanBuilder(final String className, final Class<? extends HippoBean> parentBean) {
         builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
         this.parentBean = parentBean;
@@ -112,27 +138,27 @@ public class DynamicBeanBuilder {
 
     void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? String[].class : String.class;
-        addBeanMethodProperty(methodName, propertyName, returnType);
+        addBeanMethodPrimitive(methodName, returnType, propertyName);
     }
 
     void addBeanMethodCalendar(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Calendar[].class : Calendar.class;
-        addBeanMethodProperty(methodName, propertyName, returnType);
+        addBeanMethodPrimitive(methodName, returnType, propertyName);
     }
 
     void addBeanMethodBoolean(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Boolean[].class : Boolean.class;
-        addBeanMethodProperty(methodName, propertyName, returnType);
+        addBeanMethodPrimitive(methodName, returnType, propertyName);
     }
 
     void addBeanMethodLong(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Long[].class : Long.class;
-        addBeanMethodProperty(methodName, propertyName, returnType);
+        addBeanMethodPrimitive(methodName, returnType, propertyName);
     }
 
     void addBeanMethodDouble(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Double[].class : Double.class;
-        addBeanMethodProperty(methodName, propertyName, returnType);
+        addBeanMethodPrimitive(methodName, returnType, propertyName);
     }
 
     void addBeanMethodDocbase(final String methodName, final String propertyName, final boolean multiple) {
@@ -149,114 +175,127 @@ public class DynamicBeanBuilder {
 
     void addBeanMethodHippoHtml(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, HippoHtml.class, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoHtml.class, propertyName);
         } else {
-            addSimpleMethod(METHOD_GET_HIPPO_HTML, methodName, propertyName, HippoHtml.class);
+            addSimpleGetMethod(methodName, HippoHtml.class, METHOD_GET_HIPPO_HTML, propertyName);
         }
     }
 
     void addBeanMethodImageLink(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, HippoGalleryImageSet.class, METHOD_GET_LINKED_BEANS, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_LINKED_BEANS, HippoGalleryImageSet.class, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_LINKED_BEAN, HippoGalleryImageSet.class, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_LINKED_BEAN, HippoGalleryImageSet.class, propertyName);
         }
     }
 
-    public void addBeanMethodInternalImageSet(final Class<?> className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
+    void addBeanMethodInternalImageSet(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, className, METHOD_GET_LINKED_BEANS, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_LINKED_BEANS, returnType, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_LINKED_BEAN, className, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_LINKED_BEAN, returnType, propertyName);
         }
     }
 
     void addBeanMethodHippoMirror(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, HippoBean.class, METHOD_GET_LINKED_BEANS, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_LINKED_BEANS, HippoBean.class, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_LINKED_BEAN, HippoBean.class, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_LINKED_BEAN, HippoBean.class, propertyName);
         }
     }
 
     void addBeanMethodHippoImage(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, HippoGalleryImageBean.class, METHOD_GET_BEANS, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_BEANS, HippoGalleryImageBean.class, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_BEAN, HippoGalleryImageBean.class, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, HippoGalleryImageBean.class, propertyName);
         }
     }
 
     void addBeanMethodHippoResource(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, HippoResourceBean.class, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoResourceBean.class, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_BEAN, HippoResourceBean.class, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, HippoResourceBean.class, propertyName);
         }
     }
 
-    void addBeanMethodInternalType(final Class<?> returnType, final String methodName, final String propertyName, final boolean multiple) {
+    void addBeanMethodInternalType(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, List.class, returnType, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, returnType, propertyName);
         } else {
-            addTwoArgumentsMethod(METHOD_GET_BEAN, returnType, methodName, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, returnType, propertyName);
         }
     }
 
-    private void addBeanMethodProperty(final String methodName, final String propertyName, final Class<?> returnType) {
-        addSimpleMethod(METHOD_GET_PROPERTY, methodName, propertyName, returnType);
+    private void addBeanMethodPrimitive(final String methodName, final Class<?> returnType, final String propertyName) {
+        addSimpleGetMethod(methodName, returnType, METHOD_GET_PROPERTY, propertyName);
     }
 
-    private void addSimpleMethod(final String hippoMethodName, final String methodName, final String propertyName, final Class<?> returnType) {
+    /**
+     * Invokes the super method from the parent bean with the given property name as a parameter.
+     * 
+     * <pre>
+     * public returnType methodName() {  
+     *     return HippoBean.superMethodName(superMethodParameter);
+     * }
+     * </pre>
+     */
+    private void addSimpleGetMethod(final String methodName, final Class<?> returnType, final String superMethodName,
+            final String propertyName) {
         try {
-            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(hippoMethodName))
+            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(superMethodName))
                     ? (parentBean.isAssignableFrom(HippoCompound.class) ? HippoCompound.class : HippoDocument.class)
                     : HippoBean.class;
+
             builder = builder
                         .defineMethod(methodName, returnType, Modifier.PUBLIC)
                         .intercept(
                             MethodCall
-                                .invoke(delegateeClass.getDeclaredMethod(hippoMethodName, String.class))
+                                .invoke(delegateeClass.getDeclaredMethod(superMethodName, String.class))
                                 .onSuper()
                                 .with(propertyName)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
             methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
-            log.error("Cant't define method {} with delegate method {} with return type {} : {}", methodName, hippoMethodName, returnType, e);
+            log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, returnType, e);
         }
     }
 
-    private void addParameterizedMethod(final String methodName, final Class<?> returnType, final Class<?> genericsType,
-                                        final String returnMethodName, final String propertyName) {
+    private void addCollectionGetMethod(final String methodName, final String superMethodName,
+            final Class<?> superMethodReturnType, final String propertyName) {
+        addMultiParamGetMethod(methodName, List.class, superMethodName, superMethodReturnType, propertyName);
+    }
+
+    private void addHippoTypeGetMethod(final String methodName, final String superMethodName,
+            final Class<?> superMethodReturnType, final String propertyName) {
+        addMultiParamGetMethod(methodName, superMethodReturnType, superMethodName, superMethodReturnType, propertyName);
+    }
+
+    /**
+     * Invokes the super method from the parent bean with the given document type name as a parameter.
+     * 
+     * <pre>
+     * public returnType methodName() {  
+     *     return HippoBean.superMethodName(propertyName, superMethodReturnType);
+     * }
+     * </pre>
+     */
+    private void addMultiParamGetMethod(final String methodName, final Class<?> returnType,
+            final String superMethodName, final Class<?> superMethodReturnType, final String propertyName) {
         try {
             builder = builder
                         .defineMethod(methodName, returnType, Modifier.PUBLIC)
                         .intercept(
                             MethodCall
-                                .invoke(HippoBean.class.getDeclaredMethod(returnMethodName, String.class, Class.class))
+                                .invoke(HippoBean.class.getDeclaredMethod(superMethodName, String.class, Class.class))
                                 .onSuper()
-                                .with(propertyName, genericsType)
+                                .with(propertyName, superMethodReturnType)
                                 .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
             methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
-            log.error("Cant't define method {} with delegate method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
-        }
-    }
-
-    private void addTwoArgumentsMethod(final String returnMethodName, final Class<?> returnType,
-                                       final String methodName, final String propertyName) {
-        try {
-            builder = builder
-                        .defineMethod(methodName, returnType, Modifier.PUBLIC)
-                        .intercept(
-                            MethodCall
-                                .invoke(HippoBean.class.getDeclaredMethod(returnMethodName, String.class, Class.class))
-                                .onSuper()
-                                .with(propertyName, returnType)
-                                .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-            methodAdded = true;
-        } catch (NoSuchMethodException | IllegalArgumentException e) {
-            log.error("Cant't define method {} with delegate method {} with return type {} : {}", methodName, returnMethodName, returnType, e);
+            log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, superMethodReturnType, e);
         }
     }
     
