@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,6 +215,16 @@ describe('ContentEditorService', () => {
         });
       }
 
+      function expectUnknownError() {
+        expectError({
+          titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+          messageKey: 'FEEDBACK_UNKNOWN_ERROR',
+          messageParams: {
+            errorKey: 'unknown',
+          },
+        });
+      }
+
       it('opens a document without content', () => {
         const emptyDocument = {
           id: 'test',
@@ -410,7 +420,7 @@ describe('ContentEditorService', () => {
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
-        expectError(undefined);
+        expectUnknownError();
       });
 
       it('opens a document without a type', () => {
