@@ -37,6 +37,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanRadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
@@ -115,11 +116,15 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Boolean", new TypeDescriptor(BooleanFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Date", new TypeDescriptor(DateAndTimeFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("CalendarDate", new TypeDescriptor(DateOnlyFieldType.class, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("selection:RadioGroup", new TypeDescriptor(RadioGroupFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("selection:RadioGroup",
+                new TypeDescriptor(RadioGroupFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("selection:BooleanRadioGroup", new TypeDescriptor(BooleanRadioGroupFieldType.class,
+                PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
-        FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class,
+                NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(NodeLinkFieldType.class, NODE_FIELD_PLUGIN));
 
         STRUCTURE_PLUGIN_CLASSES = new HashSet<>();
@@ -128,6 +133,9 @@ public class FieldTypeUtils {
     }
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
+
+    private FieldTypeUtils() {
+    }
 
     public static void checkPluginsWithoutFieldDefinition(final FieldsInformation fieldsInformation, final ContentTypeContext context) {
         final List<Node> editorConfigFieldNodes = NamespaceUtils.getEditorFieldConfigNodes(context.getContentTypeRoot());
@@ -332,9 +340,8 @@ public class FieldTypeUtils {
     }
 
     private static Optional<String> determinePluginClass(final FieldTypeContext context) {
-        Optional<String> result = context.getEditorConfigNode()
+        return context.getEditorConfigNode()
                 .flatMap(NamespaceUtils::getPluginClassForField);
-        return result;
     }
 
     /**
@@ -379,7 +386,7 @@ public class FieldTypeUtils {
         final long count = nodes.getSize();
 
         // additional cardinality check to prevent creating new values or remove a subset of the old values
-        if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
+        if (!values.isEmpty() && values.size() != count && count <= maxValues) {
             throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
         }
 

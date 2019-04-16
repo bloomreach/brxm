@@ -225,7 +225,7 @@ public class ChoiceFieldTypeTest {
             try {
                 choice.readFrom(choiceNode1);
             } finally {
-                assertEquals(listener.messages().count(), 1L);
+                assertThat(listener.messages().count(), equalTo(1L));
             }
         }
 

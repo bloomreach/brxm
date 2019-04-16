@@ -21,6 +21,7 @@ import './radioGroup.scss';
 const radioGroupComponent = {
   bindings: {
     fieldType: '<',
+    falseLabel: '<',
     isRequired: '<',
     locale: '<',
     name: '<',
@@ -32,6 +33,7 @@ const radioGroupComponent = {
     sortBy: '<',
     sortComparator: '<',
     sortOrder: '<',
+    trueLabel: '<',
   },
   controller: RadioGroupFieldCtrl,
   template,

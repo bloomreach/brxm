@@ -155,6 +155,8 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
         // #readValue guarantees that value.getFields is not empty.
         // The "required" validator only applies to the cardinality, and has
         // therefore already been checked during the writeTo-validation (#checkCardinality).
-        return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());
+
+        // #writeValue guarantees that value.getFields is not empty
+        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
 class pageExtensionCtrl {
-  constructor($uiRouterGlobals, PageMetaDataService) {
+  constructor($uiRouterGlobals, ChannelService, PageMetaDataService) {
     'ngInject';
 
     this.$uiRouterGlobals = $uiRouterGlobals;
+    this.ChannelService = ChannelService;
     this.PageMetaDataService = PageMetaDataService;
   }
 
@@ -37,12 +38,17 @@ class pageExtensionCtrl {
     const id = this.PageMetaDataService.getPageId();
     const channelId = this.PageMetaDataService.getChannelId();
     const siteMapItemId = this.PageMetaDataService.getSiteMapItemId();
+    const path = this.PageMetaDataService.getPathInfo();
+    const channel = this.ChannelService.getChannel();
 
     this.pageContext = {
       id,
       url,
+      path,
       channel: {
+        contextPath: channel.contextPath,
         id: channelId,
+        mountPath: channel.mountPath,
       },
       siteMapItem: {
         id: siteMapItemId,

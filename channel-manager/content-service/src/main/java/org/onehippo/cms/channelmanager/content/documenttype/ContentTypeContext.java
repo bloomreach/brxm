@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,15 +72,15 @@ public class ContentTypeContext {
      *
      * @param id      identifies the requested content type, e.g. "myhippoproject:newsdocument"
      * @param session JCR session using the privileges of the requesting user
-     * @param Locale  locale of the current CMS session
+     * @param locale  locale of the current CMS session
      * @param docType {@link DocumentType} being assembled
      * @return        {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
     public static Optional<ContentTypeContext> createForDocumentType(final String id,
                                                                      final Session session,
-                                                                     final Locale Locale,
+                                                                     final Locale locale,
                                                                      final DocumentType docType) {
-        return create(id, session, Locale, docType, 0);
+        return create(id, session, locale, docType, 0);
     }
 
     /**

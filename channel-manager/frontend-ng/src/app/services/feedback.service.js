@@ -91,7 +91,7 @@ export default class FeedbackService {
     }
 
     let text;
-    if (responseParams && responseParams.userMessage) {
+    if (responseParams.userMessage) {
       const template = responseParams.userMessage;
       delete responseParams.userMessage;
       text = this.$interpolate(template)(responseParams);

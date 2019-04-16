@@ -19,6 +19,7 @@ import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 describe('OverlayService', () => {
   let $iframe;
   let $q;
+  let $rootScope;
   let iframeWindow;
   let ChannelService;
   let CmsService;
@@ -44,6 +45,7 @@ describe('OverlayService', () => {
 
     inject((
       _$q_,
+      _$rootScope_,
       _ChannelService_,
       _CmsService_,
       _CreateContentService_,
@@ -57,6 +59,7 @@ describe('OverlayService', () => {
       _SvgService_,
     ) => {
       $q = _$q_;
+      $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       CreateContentService = _CreateContentService_;
@@ -142,17 +145,20 @@ describe('OverlayService', () => {
   it('disconnects the MutationObserver on iframe unload', async () => {
     await loadIframeFixture();
     const disconnect = spyOn(OverlayService.observer, 'disconnect').and.callThrough();
-    await $(iframeWindow).trigger('unload');
+    await loadIframeFixture();
 
     expect(disconnect).toHaveBeenCalled();
   });
 
   it('deletes iframe referrence on iframe unload', async () => {
     await loadIframeFixture();
-    OverlayService.iframeWindow = {};
-    await $(iframeWindow).trigger('unload');
+    spyOn($rootScope, '$apply').and.callFake((callback) => {
+      callback();
 
-    expect(OverlayService.iframeWindow).toBeUndefined();
+      expect(OverlayService.iframeWindow).toBeUndefined();
+    });
+
+    await $(iframeWindow).trigger('unload');
   });
 
   it('syncs when the iframe DOM is changed', async () => {

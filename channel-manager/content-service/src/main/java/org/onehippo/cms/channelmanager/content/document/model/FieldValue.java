@@ -99,7 +99,6 @@ public class FieldValue {
         return Optional.ofNullable(fields);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public Map<String, List<FieldValue>> getFields() {
         return fields;
     }
@@ -112,7 +111,6 @@ public class FieldValue {
         return Optional.ofNullable(chosenId);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public String getChosenId() {
         return chosenId;
     }
@@ -125,7 +123,6 @@ public class FieldValue {
         return Optional.ofNullable(chosenValue);
     }
 
-    // use for serialization and testing only, to avoid NPE.
     public FieldValue getChosenValue() {
         return chosenValue;
     }

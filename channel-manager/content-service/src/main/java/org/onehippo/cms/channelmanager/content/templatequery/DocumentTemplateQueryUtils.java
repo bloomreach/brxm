@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 public class DocumentTemplateQueryUtils {
+
+    private DocumentTemplateQueryUtils() {
+    }
 
     static NodeIterator executeQuery(final Session session, final Node documentTemplateQueryNode) throws RepositoryException {
         final String statement = documentTemplateQueryNode.getProperty("jcr:statement").getString();

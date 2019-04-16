@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,20 @@ describe('pageExtension', () => {
       const PageMetaDataService = {
         getChannelId: () => 'testChannelId',
         getPageId: () => 'testPageId',
+        getPathInfo: () => '/page/subpage.html',
         getSiteMapItemId: () => 'testSitemapItemId',
+      };
+
+      const ChannelService = {
+        getChannel: () => ({
+          contextPath: '/site',
+          mountPath: '/subMount',
+        }),
       };
 
       $ctrl = $componentController('pageExtension', {
         $uiRouterGlobals,
+        ChannelService,
         PageMetaDataService,
       });
     });
@@ -51,9 +60,12 @@ describe('pageExtension', () => {
       expect($ctrl.pageContext).toEqual({
         channel: {
           id: 'testChannelId',
+          mountPath: '/subMount',
+          contextPath: '/site',
         },
         id: 'testPageId',
         url: 'testPageUrl',
+        path: '/page/subpage.html',
         siteMapItem: {
           id: 'testSitemapItemId',
         },
@@ -68,9 +80,12 @@ describe('pageExtension', () => {
         expect($ctrl.pageContext).toEqual({
           channel: {
             id: 'testChannelId',
+            mountPath: '/subMount',
+            contextPath: '/site',
           },
           id: 'testPageId',
           url: 'newPageUrl',
+          path: '/page/subpage.html',
           siteMapItem: {
             id: 'testSitemapItemId',
           },
@@ -82,9 +97,12 @@ describe('pageExtension', () => {
         expect($ctrl.pageContext).toEqual({
           channel: {
             id: 'testChannelId',
+            mountPath: '/subMount',
+            contextPath: '/site',
           },
           id: 'testPageId',
           url: 'testPageUrl',
+          path: '/page/subpage.html',
           siteMapItem: {
             id: 'testSitemapItemId',
           },

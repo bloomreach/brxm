@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ final class JsonUtil {
                 try {
                     return array.get(0).toString();
                 } catch (JSONException e) {
-                    log.info("Could not parse JSON string parameter '" + parameterName + "': {}'", e.getMessage());
+                    log.info("Could not parse JSON string parameter '{}': {}", parameterName, e.getMessage());
                 }
             }
         }
@@ -55,7 +55,7 @@ final class JsonUtil {
                 try {
                     return array.getJSONObject(0);
                 } catch (JSONException e) {
-                    log.info("Could not parse JSON object parameter '" + parameterName + "': {}", e.getMessage());
+                    log.info("Could not parse JSON object parameter '{}': {}", parameterName, e.getMessage());
                 }
             }
         }

@@ -95,6 +95,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
+    @Override
     protected List<FieldValue> readValues(final Node node) {
         try {
             final NodeIterator children = node.getNodes(getId());

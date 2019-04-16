@@ -41,6 +41,7 @@ public interface FieldType {
         DATE_AND_TIME,
         DATE_ONLY,
         RADIO_GROUP,
+        BOOLEAN_RADIO_GROUP,
         STATIC_DROPDOWN,
         HTML,
         CHOICE, // "content blocks"

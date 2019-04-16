@@ -1,5 +1,5 @@
-/**
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     @Override
     protected JSONObject getProperties() throws JSONException {
         final JSONObject properties = super.getProperties();
-        Map<String, String> baseParams = new HashMap<String, String>();
+        Map<String, String> baseParams = new HashMap<>();
         baseParams.put("xaction", "read");
         properties.put("baseParams", baseParams);
         return properties;
@@ -96,10 +96,8 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     /**
      * @return the {@link List} of blueprints for which the current user is authorized to use them to create a new channel
      */
-    public List<Blueprint> getBlueprints() {
+    List<Blueprint> getBlueprints() {
         return HippoServiceRegistry.getService(PlatformServices.class)
                 .getBlueprintService().getBlueprints(UserSession.get().getJcrSession());
     }
-
-
 }
