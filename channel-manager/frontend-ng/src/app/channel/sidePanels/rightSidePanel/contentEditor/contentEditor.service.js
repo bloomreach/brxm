@@ -153,7 +153,7 @@ class ContentEditorService {
   _loadDocument(id) {
     this._setDocumentId(id);
 
-    return this.CmsService.closeDocumentWhenValid(id)
+    return this._closeDocumentWhenValid(id)
       .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
           if (this._hasFields(document)) {
@@ -161,9 +161,13 @@ class ContentEditorService {
           }
 
           return this.$q.reject(new ErrorResponse('NO_CONTENT', { displayName: document.displayName }));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDocumentInvalid());
+        }))
+      .catch(response => this._onLoadFailure(response));
+  }
+
+  _closeDocumentWhenValid(id) {
+    return this.CmsService.closeDocumentWhenValid(id)
+      .catch(() => this.$q.reject(new ErrorResponse('DOCUMENT_INVALID')));
   }
 
   _setDocumentId(id) {
