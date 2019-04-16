@@ -107,10 +107,10 @@ public class ValueList extends ArrayList<ListItem> implements Serializable {
     }
 
     /**
-     * Looks up a listitem by matching the given key.
+     * Looks up a {@link ListItem} by matching the given key.
      *
-     * @param key the key of a listitem
-     * @return the listitem of which the key is equal to the given key
+     * @param key the key of a ListItem
+     * @return the ListItem of which the key is equal to the given key or null if not found.
      */
     public ListItem getListItemByKey(final String key) {
         for (ListItem valueListItem : this) {
