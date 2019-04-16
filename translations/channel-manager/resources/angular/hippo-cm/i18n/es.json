@@ -271,7 +271,6 @@
   "CREATE_DOCUMENT_LOCKED": "No es posible crear el documento (el componente está bloqueado)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publicación solicitada para '{{documentName}}'",
   "NOTIFICATION_DOCUMENT_SAVED": "Documento guardado",
-  "ERROR_UNKNOWN_VALIDATOR": "No se pudo guardar el documento, contiene un validador no compatible",
   "ERROR_WORKFLOW_ERROR": "No se pudo actualizar, otro usuario ha cambiado el estado de este documento",
   "ADD_TO_PROJECT": "Añadir al proyecto",
   "SHOW_CONTENT": "Mostrar contenido",

@@ -269,7 +269,6 @@
   "CREATE_DOCUMENT_LOCKED": "Impossible de créer le document (le composant est verrouillé)",
   "NOTIFICATION_PUBLICATION_REQUESTED": "Publication requise pour '{{documentName}}’",
   "NOTIFICATION_DOCUMENT_SAVED": "Document enregistré",
-  "ERROR_UNKNOWN_VALIDATOR": "Échec de l’enregistrement de document ; il contient un validateur non supporté",
   "ERROR_WORKFLOW_ERROR": "Échec de la mise à jour ; un autre utilisateur a modifié l’état de ce document",
   "ADD_TO_PROJECT": "Ajouter au projet",
   "SHOW_CONTENT": "Afficher le contenu",
