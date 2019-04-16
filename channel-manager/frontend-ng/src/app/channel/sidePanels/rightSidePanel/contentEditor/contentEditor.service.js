@@ -35,13 +35,13 @@ const ERROR_MAP = {
   },
   NOT_A_DOCUMENT: {
     titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_EDITABLE: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_EDITABLE_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_FOUND: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
@@ -159,7 +159,8 @@ class ContentEditorService {
           if (this._hasFields(document)) {
             return this.loadDocumentType(document);
           }
-          return this.$q.reject(this._noContentResponse(document));
+
+          return this.$q.reject(new ErrorResponse('NO_CONTENT', { displayName: document.displayName }));
         })
         .catch(response => this._onLoadFailure(response)))
       .catch(() => this._setErrorDocumentInvalid());

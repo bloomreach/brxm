@@ -420,7 +420,7 @@ describe('ContentEditorService', () => {
 
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
-        expectError(undefined);
+        expectUnknownError();
       });
 
       it('opens a document without a type', () => {
