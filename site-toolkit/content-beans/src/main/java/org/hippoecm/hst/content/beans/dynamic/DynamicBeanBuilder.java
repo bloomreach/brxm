@@ -27,7 +27,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.slf4j.Logger;
@@ -181,11 +180,11 @@ public class DynamicBeanBuilder {
         }
     }
 
-    void addBeanMethodImageLink(final String methodName, final String propertyName, final boolean multiple) {
+    void addBeanMethodImageLink(final String methodName, final String propertyName, final Class<? extends HippoBean> galleryImageSetType, final boolean multiple) {
         if (multiple) {
-            addCollectionGetMethod(methodName, METHOD_GET_LINKED_BEANS, HippoGalleryImageSet.class, propertyName);
+            addCollectionGetMethod(methodName, METHOD_GET_LINKED_BEANS, galleryImageSetType, propertyName);
         } else {
-            addHippoTypeGetMethod(methodName, METHOD_GET_LINKED_BEAN, HippoGalleryImageSet.class, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_LINKED_BEAN, galleryImageSetType, propertyName);
         }
     }
 

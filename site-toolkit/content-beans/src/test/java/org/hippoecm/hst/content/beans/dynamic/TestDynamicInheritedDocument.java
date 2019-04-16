@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.BaseDocument;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,6 +60,10 @@ public class TestDynamicInheritedDocument extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
+        mockHstRequestContext.setSession(session);
+        ModifiableRequestContextProvider.set(mockHstRequestContext);
 
         if (annotatedClasses == null) {
             annotatedClasses = new ArrayList<>();

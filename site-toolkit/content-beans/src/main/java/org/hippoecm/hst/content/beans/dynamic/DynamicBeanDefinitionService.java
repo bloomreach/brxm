@@ -15,15 +15,21 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_GALLERYTYPE;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
@@ -32,7 +38,8 @@ import org.springframework.util.ClassUtils;
 
 public class DynamicBeanDefinitionService extends AbstractBeanBuilderService implements DynamicBeanService {
     private static final Logger log = LoggerFactory.getLogger(DynamicBeanDefinitionService.class);
-
+    private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
+    
     private final DynamicObjectConverterImpl objectConverter;
 
     private class BeanInfo {
@@ -97,6 +104,10 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             .filter(superType -> superType.startsWith(projectNamespace))
             .findFirst()
             .orElse(null);
+
+        if (parentDocumentType == null && contentType.getSuperTypes().stream().anyMatch(superType -> superType.equals(GALLERY_IMAGESET_NODETYPE))) {
+            return new BeanInfo(HippoGalleryImageSet.class, true);
+        }
 
         if (parentDocumentType == null) {
             return getDefaultParentBeanInfo(isCompound);
@@ -191,9 +202,42 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         builder.addBeanMethodHippoHtml(methodName, propertyName, multiple);
     }
 
+    private Class<? extends HippoBean> getGalleryImageSetTypeClass() {
+        HippoBean gallery = null;
+        try {
+            gallery = (HippoBean) objectConverter.getObject(RequestContextProvider.get().getSession(), "/content/gallery");
+            if (gallery == null) {
+                log.warn("The 'content/gallery' node is not found, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
+                return HippoGalleryImageSet.class;
+            }
+        } catch (RepositoryException | ObjectBeanManagerException e) {
+            log.warn("Failed to get the gallery type(s), the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
+            return HippoGalleryImageSet.class;
+        }
+
+        final String[] galleryTypes = gallery.getProperty(HIPPOSTD_GALLERYTYPE);
+        if (galleryTypes == null || galleryTypes[0].equals(GALLERY_IMAGESET_NODETYPE) || galleryTypes.length > 1) {
+            if (galleryTypes != null && galleryTypes.length > 1) {
+                log.warn("More than one gallery type is defined, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
+            }
+            return HippoGalleryImageSet.class;
+        } else {
+            Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(galleryTypes[0]);
+            if (generatedBeanDef == null) {
+                final ContentType galleryContentType = objectConverter.getContentType(galleryTypes[0]);
+                if (galleryContentType == null) {
+                    return HippoGalleryImageSet.class;
+                }
+                final BeanInfo generatedBeanInfo = generateBeanDefinition(new BeanInfo(HippoGalleryImageSet.class, true), galleryContentType);
+                generatedBeanDef = generatedBeanInfo.getBeanClass();
+            }
+            return generatedBeanDef;
+        }
+    }
+
     @Override
     protected void addBeanMethodImageLink(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
-        builder.addBeanMethodImageLink(methodName, propertyName, multiple);
+        builder.addBeanMethodImageLink(methodName, propertyName, getGalleryImageSetTypeClass(), multiple);
     }
 
     @Override

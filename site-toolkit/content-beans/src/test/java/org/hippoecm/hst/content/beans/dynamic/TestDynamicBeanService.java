@@ -25,12 +25,15 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.BaseDocument;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.joda.time.DateTimeComparator;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,6 +82,10 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
+        mockHstRequestContext.setSession(session);
+        ModifiableRequestContextProvider.set(mockHstRequestContext);
         
         if (annotatedClasses == null) {
             annotatedClasses = new ArrayList<>();
