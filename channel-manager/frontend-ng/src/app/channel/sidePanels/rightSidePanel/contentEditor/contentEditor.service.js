@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,11 @@ import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.control
 import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
+  CREATE_WITH_UNKNOWN_VALIDATOR: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
+    linkToContentEditor: true,
+  },
   DOES_NOT_EXIST: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
@@ -30,13 +35,13 @@ const ERROR_MAP = {
   },
   NOT_A_DOCUMENT: {
     titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_EDITABLE: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
-    linkToContentEditor: true,
     messageKey: 'FEEDBACK_NOT_EDITABLE_MESSAGE',
+    linkToContentEditor: true,
   },
   NOT_FOUND: {
     titleKey: 'FEEDBACK_NOT_FOUND_TITLE',
@@ -83,6 +88,10 @@ const ERROR_MAP = {
   PROJECT_NOT_FOUND: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_PROJECT_NOT_FOUND',
+  },
+  UNKNOWN_ERROR: {
+    titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_UNKNOWN_ERROR',
   },
 };
 
@@ -144,16 +153,21 @@ class ContentEditorService {
   _loadDocument(id) {
     this._setDocumentId(id);
 
-    return this.CmsService.closeDocumentWhenValid(id)
+    return this._closeDocumentWhenValid(id)
       .then(() => this.ContentService.getEditableDocument(id)
         .then((document) => {
           if (this._hasFields(document)) {
             return this.loadDocumentType(document);
           }
-          return this.$q.reject(this._noContentResponse(document));
-        })
-        .catch(response => this._onLoadFailure(response)))
-      .catch(() => this._setErrorDocumentInvalid());
+
+          return this.$q.reject(new ErrorResponse('NO_CONTENT', { displayName: document.displayName }));
+        }))
+      .catch(response => this._onLoadFailure(response));
+  }
+
+  _closeDocumentWhenValid(id) {
+    return this.CmsService.closeDocumentWhenValid(id)
+      .catch(() => this.$q.reject(new ErrorResponse('DOCUMENT_INVALID')));
   }
 
   _setDocumentId(id) {
@@ -236,9 +250,14 @@ class ContentEditorService {
       errorKey = 'UNAVAILABLE';
     }
 
-    this.error = ERROR_MAP[errorKey];
-    if (params) {
-      this.error.messageParams = params;
+    if (!ERROR_MAP[errorKey]) {
+      this.error = ERROR_MAP.UNKNOWN_ERROR;
+      this.error.messageParams = { errorKey };
+    } else {
+      this.error = ERROR_MAP[errorKey];
+      if (params) {
+        this.error.messageParams = params;
+      }
     }
   }
 
