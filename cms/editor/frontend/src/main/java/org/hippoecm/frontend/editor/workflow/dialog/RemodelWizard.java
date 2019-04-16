@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,11 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The remodel workflow has not been available since several years. This wizard will be removed in the next major
+ * version.
+ */
+@Deprecated
 public class RemodelWizard extends Wizard {
     private static final long serialVersionUID = 1L;
 
