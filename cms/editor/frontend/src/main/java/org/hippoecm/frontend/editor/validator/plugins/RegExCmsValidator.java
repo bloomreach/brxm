@@ -26,11 +26,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms.services.validation.validator.RegExpValidator;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
  * 
- * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.RegExpValidator} instead.
+ * @deprecated Use the {@link RegExpValidator} instead.
  */
 @Deprecated
 public class RegExCmsValidator extends AbstractCmsValidator {
