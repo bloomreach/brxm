@@ -61,12 +61,12 @@ const FIELD_OVERFLOW_STYLE = Symbol('fieldOverflowStyle');
 const FIELD_HEIGHT = Symbol('fieldHeight');
 const KEY_ESCAPE = 27;
 
-function lazy<T extends object, K extends keyof T>(object: T, property: K, getter: Callable<T[K]>) {
+function defineLazyGetter<T extends object, K extends keyof T>(object: T, property: K, getter: Callable<T[K]>) {
   let value: T[K];
 
   Object.defineProperty(object, property, {
     get: () => {
-      if (undefined === value) {
+      if (value === undefined) {
         value = getter();
       }
 
@@ -143,7 +143,7 @@ class Channel extends ScopeEmitter<ChannelScopeEvents, ChannelParent> implements
   constructor(parent: ParentConnection, eventEmitter: Emittery, eventScope: string) {
     super(parent, eventEmitter, eventScope);
 
-    lazy(this, 'page', () => new Page(parent, eventEmitter, SCOPE_PAGE));
+    defineLazyGetter(this, 'page', () => new Page(parent, eventEmitter, SCOPE_PAGE));
   }
 
   refresh() {
@@ -157,7 +157,7 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
   constructor(parent: ParentConnection<DocumentParent>) {
     super(parent);
 
-    lazy(this, 'field', () => new Field(this[PARENT]));
+    defineLazyGetter(this, 'field', () => new Field(this[PARENT]));
   }
 
   get(): Promise<DocumentProperties> {
@@ -269,9 +269,9 @@ export class Ui extends Scope implements UiScope {
   constructor(parent: ParentConnection, eventEmitter: Emittery) {
     super(parent);
 
-    lazy(this, 'channel', () => new Channel(parent, eventEmitter, SCOPE_CHANNEL));
-    lazy(this, 'dialog', () => new Dialog(parent));
-    lazy(this, 'document', () => new Document(parent));
+    defineLazyGetter(this, 'channel', () => new Channel(parent, eventEmitter, SCOPE_CHANNEL));
+    defineLazyGetter(this, 'dialog', () => new Dialog(parent));
+    defineLazyGetter(this, 'document', () => new Document(parent));
   }
 
   init(): Promise<Ui> {
