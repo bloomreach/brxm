@@ -49,9 +49,9 @@
   </issueManagement>
 
   <properties>
-    <hippo.repository.version>5.6.0</hippo.repository.version>
-    <hippo.cms.version>5.6.0</hippo.cms.version>
-    <hippo.plugin.selections.version>5.6.0</hippo.plugin.selections.version>
+    <hippo.repository.version>5.6.3-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.6.3-SNAPSHOT</hippo.cms.version>
+    <hippo.plugin.selections.version>5.6.3-SNAPSHOT</hippo.plugin.selections.version>
 
     <testng.version>6.0.1</testng.version>
   </properties>
