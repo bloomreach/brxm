@@ -91,7 +91,7 @@ class OpenUiStringPlugin {
       Wicket.Ajax.post({
         u: this.parameters.dialogUrl,
         ep: options,
-        fh: (e) => reject(e),
+        fh: [(jqEvent, attributes) => reject(new Error(`Failed to open dialog. Server responded with status ${attributes.status}.`))],
       });
 
     });
