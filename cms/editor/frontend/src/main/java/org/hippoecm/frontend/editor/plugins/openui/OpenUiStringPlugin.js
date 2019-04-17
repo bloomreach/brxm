@@ -24,7 +24,6 @@ class OpenUiStringPlugin {
     this.parameters = parameters;
     this.hiddenValueElement = document.getElementById(parameters.hiddenValueId);
     this.scheduledSave = null;
-    this.dialog = {};
   }
 
   onConnect(connection) {
@@ -98,11 +97,21 @@ class OpenUiStringPlugin {
   }
 
   closeDialog(result) {
+    if (!this.dialog) {
+      return;
+    }
+
     this.dialog.resolve(result);
+    delete this.dialog;
   }
 
   cancelDialog() {
+    if (!this.dialog) {
+      return;
+    }
+
     this.dialog.reject({ code: 'DialogCanceled' });
+    delete this.dialog;
   }
 
   scheduleSave(data) {
