@@ -45,18 +45,17 @@ export default class OpenUiService {
     const emitter = new this.Emittery();
 
     try {
-      return Object.assign(
-        this.connect({
-          url: options.url || this.ExtensionService.getExtensionUrl(extension),
-          ...options,
-          methods: {
-            ...options.methods,
-            getProperties: this.getProperties.bind(this, extension),
-            emitEvent: emitter.emit.bind(emitter),
-          },
-        }),
-        { emitter },
-      );
+      const connection = this.connect({
+        url: options.url || this.ExtensionService.getExtensionUrl(extension),
+        ...options,
+        methods: {
+          ...options.methods,
+          getProperties: this.getProperties.bind(this, extension),
+          emitEvent: emitter.emit.bind(emitter),
+        },
+      });
+
+      return Object.assign(connection, { emitter });
     } catch (error) {
       this.$log.warn(`Extension '${extension.displayName}' failed to connect with the client library.`, error);
 
