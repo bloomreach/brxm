@@ -398,6 +398,7 @@
 - hst:showport (boolean)
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
+// deprecated : hst:defaulthostname is not used any more
 - hst:defaulthostname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple

@@ -70,7 +70,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private static final Set<String> skipProperties = new HashSet<>(Arrays.asList("jcr:baseVersion", "jcr:predecessors", "jcr:versionHistory"));
 
     private static final Set<String> deprecatedProperties = new HashSet<>(Arrays.asList("hst:contextpath",
-            "hst:defaultcontextpath", "hst:cmslocation"));
+            "hst:defaultcontextpath", "hst:cmslocation", "hst:defaulthostname"));
 
     /**
      * Creates a lazy loading jcr value provider instance without useStringPool and with protected jcr properties included

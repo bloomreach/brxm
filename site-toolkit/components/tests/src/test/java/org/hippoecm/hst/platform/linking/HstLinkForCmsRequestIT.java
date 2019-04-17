@@ -92,7 +92,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     @Test
     public void testLinksCMSRequestNoRenderingHost() throws Exception {
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
+            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
@@ -128,7 +128,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // NOW below, even when show contextpath is FALSE, the /site contextpath should be included because the links are
         // for cms host
         {
-            HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, null);
+            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);

@@ -86,7 +86,9 @@ public interface VirtualHosts {
 
     /**
      * @return the hostname that is configured as default, or <code>null</code> if none is configured as default.
+     * @deprecated since 13.2, it will always return {@code null}, already in 13.2
      */
+    @Deprecated
     String getDefaultHostName();
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_I
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_XTYPE;
 import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_END_MARKER;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -55,6 +56,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     private HstRequest request;
     private HstRequestContext requestContext;
     private Channel channel;
+    private Mount mount;
 
     private CmsComponentComponentWindowAttributeContributor contributor;
 
@@ -65,7 +67,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         request = mock(HstRequest.class);
 
         final ResolvedMount resolvedMount = mock(ResolvedMount.class);
-        final Mount mount = mock(Mount.class);
+        mount = mock(Mount.class);
         expect(resolvedMount.getMount()).andStubReturn(mount);
         channel = mock(Channel.class);
         expect(mount.getChannel()).andStubReturn(channel);
@@ -74,13 +76,13 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         requestContext= mock(HstRequestContext.class);
         expect(requestContext.getResolvedMount()).andStubReturn(resolvedMount);
         final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
-        expect(window.getComponentInfo()).andReturn(config);
-        expect(window.getReferenceNamespace()).andReturn("reference-namespace");
-        expect(config.getComponentType()).andReturn(CONTAINER_COMPONENT);
+        expect(window.getComponentInfo()).andStubReturn(config);
+        expect(window.getReferenceNamespace()).andStubReturn("reference-namespace");
+        expect(config.getComponentType()).andStubReturn(CONTAINER_COMPONENT);
 
-        expect(request.getRequestContext()).andReturn(requestContext);
+        expect(request.getRequestContext()).andStubReturn(requestContext);
         final HstURLFactory urlFactory = mock(HstURLFactory.class);
-        expect(requestContext.getURLFactory()).andReturn(urlFactory);
+        expect(requestContext.getURLFactory()).andStubReturn(urlFactory);
         final HstURL url = mock(HstURL.class);
         expect(urlFactory.createURL(isA(String.class), isA(String.class), eq(null), eq(requestContext))).andReturn(url);
     }
@@ -113,6 +115,41 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         assertEquals("Since hst channel configuration is locked we expect the preamble to " +
                 "indicate that 'system' has the lock",map.get("HST-LockedBy"), "system");
         assertEquals("false", map.get("HST-LockedBy-Current-User"));
+    }
+
+    @Test
+    public void testContributePreambleChannelLockedPageModelApi() {
+        reset(requestContext, channel);
+
+        final ResolvedMount apiResolvedMount = mock(ResolvedMount.class);
+        final Mount apiMount = mock(Mount.class);
+        expect(apiResolvedMount.getMount()).andStubReturn(apiMount);
+        expect(apiMount.getNamedPipeline()).andStubReturn(PAGE_MODEL_PIPELINE_NAME);
+        // also return same channel object as parent mount
+        expect(apiMount.getChannel()).andStubReturn(channel);
+        expect(apiMount.getParent()).andStubReturn(mount);
+
+        expect(requestContext.getResolvedMount()).andStubReturn(apiResolvedMount);
+
+        final HstURLFactory urlFactory = mock(HstURLFactory.class);
+        expect(requestContext.getURLFactory()).andReturn(urlFactory);
+        final HstURL url = mock(HstURL.class);
+        expect(urlFactory.createURL(isA(String.class), isA(String.class), eq(null), eq(requestContext))).andReturn(url);
+
+        expect(channel.isConfigurationLocked()).andStubReturn(true);
+
+        replay(mocks.toArray());
+
+        assertThat(requestContext.getResolvedMount(), is(apiResolvedMount));
+        final Map<String, String> map = new HashMap<>();
+
+
+        contributor.contributePreamble(window, request, map);
+
+        assertEquals("Since hst channel configuration is locked we expect the preamble to " +
+                "indicate that 'system' has the lock",map.get("HST-LockedBy"), "system");
+        assertEquals("false", map.get("HST-LockedBy-Current-User"));
+
     }
 
     @Test
