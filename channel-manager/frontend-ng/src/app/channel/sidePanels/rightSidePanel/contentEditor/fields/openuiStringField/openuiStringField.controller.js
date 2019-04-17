@@ -31,8 +31,6 @@ export default class OpenuiStringFieldController {
   }
 
   $onInit() {
-    this.$element.attr('tabindex', 0);
-
     if (this.mdInputContainer) {
       this.mdInputContainer.setHasValue(true);
     }

@@ -75,7 +75,6 @@ describe('OpenuiStringField', () => {
     it('initializes the component', () => {
       $ctrl.$onInit();
       expect(mdInputContainer.setHasValue).toHaveBeenCalledWith(true);
-      expect($element).toHaveAttr('tabindex');
     });
 
     it('ignores a missing inputContainer', () => {
