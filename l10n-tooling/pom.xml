@@ -35,7 +35,7 @@
     <commons-csv.version>1.4</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
     <apache-poi.version>3.16</apache-poi.version>
-    <hippo.configuration-management.version>1.6.0</hippo.configuration-management.version>
+    <hippo.configuration-management.version>1.6.3-SNAPSHOT</hippo.configuration-management.version>
     <junit.version>4.10</junit.version>
   </properties>
 
