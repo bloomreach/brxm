@@ -42,6 +42,7 @@
     <hippo.plugin.selections.version>13.2.0-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>13.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.validation.version>13.2.0-validation-SNAPSHOT</hippo.services.validation.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -181,6 +182,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-htmlprocessor</artifactId>
         <version>${hippo.services.htmlprocessor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-validation</artifactId>
+        <version>${hippo.services.validation.version}</version>
       </dependency>
 
       <!-- Test dependencies -->

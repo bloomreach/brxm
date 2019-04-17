@@ -66,11 +66,11 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationService;
+import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.validation.ValidationService;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

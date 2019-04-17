@@ -18,9 +18,9 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.Violation;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.Violation;
 
 public class NonEmptyTestValidator implements Validator {
 
