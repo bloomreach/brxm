@@ -40,11 +40,13 @@ export enum UiExtensionErrorCode {
 
   /**
    * A dialog was canceled.
+   * @since 13.2
    */
   DialogCanceled = 'DialogCanceled',
 
   /**
-   * A dialog was canceled.
+   * A dialog is already shown to the user.
+   * @since 13.2
    */
   DialogExists = 'DialogExists',
 
