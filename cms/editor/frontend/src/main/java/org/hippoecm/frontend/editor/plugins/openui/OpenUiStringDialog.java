@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins.openui;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -40,7 +41,7 @@ public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
     OpenUiStringDialog(final String instanceId, final UiExtension extension, final Map<String, String> parameters) {
         this.parameters = parameters;
 
-        setTitle(Model.of(parameters.getOrDefault("title", "OpenUi Dialog")));
+        setTitle(Model.of(parameters.getOrDefault("title", StringUtils.EMPTY)));
         setSize(parseSize(parameters));
         setCssClass("openui-dialog");
 
