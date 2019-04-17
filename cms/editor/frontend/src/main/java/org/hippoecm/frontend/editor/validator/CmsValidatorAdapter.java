@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import static org.onehippo.cms7.services.validation.util.ServiceUtils.getValidationService;
+import static org.onehippo.cms.services.validation.util.ServiceUtils.getValidationService;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
