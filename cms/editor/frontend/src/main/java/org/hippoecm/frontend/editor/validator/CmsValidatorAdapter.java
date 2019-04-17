@@ -27,10 +27,10 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms7.services.validation.ValidationService;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationService;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final String value = getString(valueModel);
         final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
         try {
-            final Optional<org.onehippo.cms7.services.validation.Violation> violation = validator.validate(context, value);
+            final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, value);
             return violation.isPresent()
                     ? getViolations(fieldValidator, valueModel, violation.get())
                     : Collections.emptySet();
@@ -106,7 +106,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
-                                                final org.onehippo.cms7.services.validation.Violation violation) throws ValidationException {
+                                                final org.onehippo.cms.services.validation.api.Violation violation) throws ValidationException {
         final Model<String> message = Model.of(violation.getMessage());
         return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD));
     }
