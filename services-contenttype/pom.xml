@@ -34,9 +34,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - contenttype</notice.project.name>
     
-    <hippo.services.version>4.6.0</hippo.services.version>
-    <hippo.repository.version>5.6.0</hippo.repository.version>
-    <hippo.cms.version>5.6.0</hippo.cms.version>
+    <hippo.services.version>4.6.3-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>5.6.3-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.6.3-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <scm>
