@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -254,7 +254,7 @@ public class HstLinkImpl implements HstLink {
 
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
             if (mount != null) {
                 explicitContextPath = mount.getContextPath();
             } else {
@@ -299,7 +299,7 @@ public class HstLinkImpl implements HstLink {
         String renderHost = null;
 
         if (mount != null) {
-            if (requestContext.isCmsRequest()) {
+            if (requestContext.isChannelManagerPreviewRequest()) {
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
                 // '/site' in cms preview context: It must there be '/site/'
@@ -312,8 +312,8 @@ public class HstLinkImpl implements HstLink {
                 if (!isHostSame(requestContext.getRenderHost(), mount.getVirtualHost().getHostName())) {
                     renderHost = mount.getVirtualHost().getHostName();
                 }
-            } else if (!requestContext.isCmsRequest()) {
-                // the above !requestContext.isCmsRequest() check is to avoid fully qualified links in CMS channel manager:
+            } else if (!requestContext.isChannelManagerPreviewRequest()) {
+                // the above !requestContext.isChannelManagerPreviewRequest() check is to avoid fully qualified links in CMS channel manager:
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
 
                 if (StringUtils.isNotBlank(mount.getVirtualHost().getCdnHost())) {

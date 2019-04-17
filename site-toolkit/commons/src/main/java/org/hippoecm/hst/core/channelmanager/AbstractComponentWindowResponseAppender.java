@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
 
 
     protected boolean isCmsRequest(HstRequest request) {
-        return request.getRequestContext().isCmsRequest();
+        return request.getRequestContext().isChannelManagerPreviewRequest();
     }
 
     protected boolean isTopHstResponse(final HstComponentWindow rootWindow,

@@ -60,7 +60,7 @@ import static org.junit.Assert.assertTrue;
  * <p/>
  * <p>
  *  When doing a request from the cms over, say some REST mount, then through the {@link
- *  org.hippoecm.hst.core.request.HstRequestContext#isCmsRequest()} you get <code>true</code>. This value
+ *  org.hippoecm.hst.core.request.HstRequestContext#isChannelManagerPreviewRequest()} you get <code>true</code>. This value
  *  <code>true</code> comes from the backing http servlet request by HttpServletRequest#setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS,
  *  Boolean.TRUE);
  * </p>
@@ -214,7 +214,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         // configured LIVE mounts, then when we request a link, we expect to get a link from a 'live mount to preview mount
         // decorated version' because we are in a cms request
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081");
-        assertTrue(requestContext.isCmsRequest());
+        assertTrue(requestContext.isChannelManagerPreviewRequest());
         // assert that the match Mount is localhost
         assertEquals("Matched mount should be the renderHost mount", "localhost",
                 requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
@@ -280,7 +280,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
             setRequestInfo(request, "/site", pathInfo);
             request.setQueryString(queryString);
 
-            requestContext.setCmsRequest(true);
+            requestContext.setChannelMngrPreviewRequest(true);
             if (renderingHost != null) {
                 request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,9 +47,6 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = context.getRequestContext();
-
-        // mark the request as a cms request since this is sometimes needed by downstream projects
-        ((HstMutableRequestContext) requestContext).setCmsRequest(true);
 
         final HttpSession cmsHttpSession = servletRequest.getSession(false);
 

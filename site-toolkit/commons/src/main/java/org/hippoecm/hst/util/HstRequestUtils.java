@@ -629,7 +629,7 @@ public class HstRequestUtils {
      * @return <code>true</code> if the request is a preview component rendering request from channel manager in cms
      */
     public static boolean isComponentRenderingPreviewRequest(final HstRequestContext requestContext) {
-        return requestContext.isCmsRequest()
+        return requestContext.isChannelManagerPreviewRequest()
                 && HTTP_METHOD_POST.equals(requestContext.getServletRequest().getMethod())
                 && requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null;
     }
