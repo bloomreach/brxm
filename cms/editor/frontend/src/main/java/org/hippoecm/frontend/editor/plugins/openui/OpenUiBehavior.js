@@ -32,11 +32,11 @@ OpenUi = new class {
     this.classes[className] = classDefinition;
   };
 
-  getInstance(id) {
-    if (!this.instances[id]) {
-      throw new Error(`Cannot retrieve instance '${id}' of OpenUI field. Has it been instantiated or has it already been destroyed?`);
+  getInstance(iframeParentId) {
+    if (!this.instances[iframeParentId]) {
+      throw new Error(`Cannot retrieve instance '${iframeParentId}' of OpenUI field. Has it been instantiated or has it already been destroyed?`);
     }
-    return this.instances[id];
+    return this.instances[iframeParentId];
   }
 
   _instantiateClass(className, parameters) {
