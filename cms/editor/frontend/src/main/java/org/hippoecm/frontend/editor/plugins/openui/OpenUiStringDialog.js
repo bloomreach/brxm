@@ -55,9 +55,10 @@ class OpenUiStringDialog {
           onSuccess(instance);
           resolve();
         }],
-        fh: [(e) => {
-          console.error('failed to close the dialog', e);
-          reject(e);
+        fh: [(jqEvent, attributes) => {
+          const errorMsg = `Failed to close dialog. Server responded with status ${attributes.status}.`;
+          console.error(errorMsg);
+          reject(new Error(errorMsg));
         }],
       });
     });
