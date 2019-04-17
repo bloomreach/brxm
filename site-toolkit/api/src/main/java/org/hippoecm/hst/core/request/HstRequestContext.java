@@ -232,7 +232,8 @@ public interface HstRequestContext extends ModelContributable {
 
     /**
      * @return {@link #isChannelManagerPreviewRequest()}
-     * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead
+     * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead. Do NOT
+     * remove this method before 15.0.0 since even customers their FTL's sometimes invoke #isCmsRequest
      */
     @Deprecated
     boolean isCmsRequest();
