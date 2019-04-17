@@ -49,6 +49,8 @@ import { Parent, ParentConnection, ParentMethod } from './parent';
 
 const SCOPE_CHANNEL = 'channel';
 const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
+const SCOPE_DOCUMENT = 'document';
+const SCOPE_FIELD = `${SCOPE_DOCUMENT}.field`;
 
 // Symbols are unique and not listed in object keys so we can hide private methods.
 const PARENT = Symbol('parent');
@@ -145,8 +147,8 @@ class Field extends Scope<DocumentParent> implements FieldScope {
   constructor(parent: ParentConnection) {
     super(parent);
 
-    window.addEventListener('focus', () => parent.call('emitEvent', 'focus'));
-    window.addEventListener('blur', () => parent.call('emitEvent', 'blur'));
+    window.addEventListener('focus', () => parent.call('emitEvent', `${SCOPE_FIELD}.focus`));
+    window.addEventListener('blur', () => parent.call('emitEvent', `${SCOPE_FIELD}.blur`));
   }
 
   getValue() {
