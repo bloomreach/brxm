@@ -81,15 +81,15 @@
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
-    <hippo.commons.version>4.6.0</hippo.commons.version>
-    <hippo.repository.version>5.6.2</hippo.repository.version>
-    <hippo.configuration-management.version>1.6.0</hippo.configuration-management.version>
-    <hippo.utilities.version>4.6.0</hippo.utilities.version>
-    <hippo.services.version>4.6.0</hippo.services.version>
-    <hippo.services.eventbus.version>4.6.0</hippo.services.eventbus.version>
+    <hippo.commons.version>4.6.3-SNAPSHOT</hippo.commons.version>
+    <hippo.repository.version>5.6.3-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>1.6.3-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.utilities.version>4.6.3-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>4.6.3-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>4.6.3-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.search.version>4.6.0</hippo.services.search.version>
-    <hippo.services.contenttype.version>4.6.0</hippo.services.contenttype.version>
-    <hippo.testutils.version>1.6.0</hippo.testutils.version>
+    <hippo.services.contenttype.version>4.6.3-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.testutils.version>1.6.3-SNAPSHOT</hippo.testutils.version>
 
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
