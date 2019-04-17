@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
 
     private final CloseDialogBehavior closeDialogBehavior;
-    private final OpenUiBehavior openUiBehavior;
     private final Map<String, String> parameters;
 
     OpenUiStringDialog(final String instanceId, final UiExtension extension, final Map<String, String> parameters) {
@@ -49,7 +48,7 @@ public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
                 "OpenUi.getInstance('%s').cancelDialog();", instanceId));
 
         final Panel openUiPanel = new EmptyPanel("dialog-body");
-        openUiPanel.add(openUiBehavior = new OpenUiBehavior(this, extension));
+        openUiPanel.add(new OpenUiBehavior(this, extension));
         add(openUiPanel);
 
         add(closeDialogBehavior = new CloseDialogBehavior());
@@ -72,7 +71,6 @@ public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
     @Override
     public ObjectNode getJavaScriptParameters() {
         final ObjectNode javascriptParameters = Json.object();
-        javascriptParameters.put("initialHeightInPixels", openUiBehavior.getUiExtension().getInitialHeightInPixels());
         javascriptParameters.put("parentExtensionId", parameters.get("parentExtensionId"));
         javascriptParameters.put("closeUrl", closeDialogBehavior.getCallbackUrl().toString());
 
