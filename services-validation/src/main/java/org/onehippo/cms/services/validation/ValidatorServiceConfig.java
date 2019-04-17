@@ -25,8 +25,8 @@ import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.validator.ValidatorConfigImpl;
 import org.onehippo.cms.services.validation.validator.ValidatorFactory;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

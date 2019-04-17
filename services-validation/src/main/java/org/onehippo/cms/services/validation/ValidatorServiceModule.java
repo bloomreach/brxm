@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.validation.ValidationService;
+import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;

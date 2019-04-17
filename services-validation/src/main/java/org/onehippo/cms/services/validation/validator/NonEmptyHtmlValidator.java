@@ -16,9 +16,9 @@
 package org.onehippo.cms.services.validation.validator;
 
 import org.onehippo.cms.services.validation.util.HtmlUtils;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

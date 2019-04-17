@@ -17,11 +17,11 @@ package org.onehippo.cms.services.validation.validator;
 
 import java.util.Optional;
 
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.Violation;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
 import org.onehippo.cms.services.validation.util.TranslationUtils;
 
 public abstract class AbstractFieldValidator implements Validator {

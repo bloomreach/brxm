@@ -17,8 +17,8 @@ package org.onehippo.cms.services.validation.validator;
 
 import java.util.regex.Pattern;
 
-import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.

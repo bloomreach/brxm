@@ -13,32 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.validator;
+package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.NonEmptyValidator;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-public class NonEmptyValidatorTest {
+public class NonEmptyHtmlValidatorTest {
 
     private ValidatorContext context;
-    private NonEmptyValidator validator;
+    private NonEmptyHtmlValidator validator;
 
     @Before
     public void setUp() {
         final ValidatorConfig config = createMock(ValidatorConfig.class);
         context = createMock(ValidatorContext.class);
-        validator = new NonEmptyValidator(config);
+        validator = new NonEmptyHtmlValidator(config);
     }
 
     @Test(expected = InvalidValidatorException.class)
@@ -52,56 +54,63 @@ public class NonEmptyValidatorTest {
     @Test
     public void initializesIfFieldIsOfTypeString() throws Exception {
         expect(context.getType()).andReturn("String");
+        expect(context.getName()).andReturn("CustomHtml");
         replayAll();
 
         validator.init(context);
+
         verifyAll();
     }
 
     @Test
-    public void validInputForHtml() {
-        expect(context.getName()).andReturn("Html").times(3);
+    public void warnsIfValidatorIsUsedWithHtmlField() throws Exception {
+        expect(context.getType()).andReturn("String");
+        expect(context.getName()).andReturn("Html");
         replayAll();
 
+        try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
+            try {
+                validator.init(context);
+            } finally {
+                assertEquals(1L, listener.messages().count());
+                verifyAll();
+            }
+        }
+    }
+
+    @Test
+    public void textIsValid() {
         assertTrue(validator.isValid(context, "text"));
+    }
+
+    @Test
+    public void paragraphWithTextIsValid() {
         assertTrue(validator.isValid(context, "<p>text</p>"));
+    }
+    @Test
+    public void imgIsValid() {
         assertTrue(validator.isValid(context, "<img src=\"empty.gif\">"));
-        verifyAll();
     }
 
     @Test
-    public void invalidInputForHtml() {
-        expect(context.getName()).andReturn("Html").times(4);
-        replayAll();
-
+    public void nullIsInvalid() {
         assertFalse(validator.isValid(context, null));
+    }
+
+    @Test
+    public void blankStringIsInvalid() {
         assertFalse(validator.isValid(context, ""));
         assertFalse(validator.isValid(context, " "));
+    }
+
+    @Test
+    public void emptyHtmlIsInvalid() {
         assertFalse(validator.isValid(context, "<html></html>"));
-        verifyAll();
     }
 
     @Test
-    public void validInputForText() {
-        expect(context.getName()).andReturn("not-html").times(3);
-        replayAll();
-
-        assertTrue(validator.isValid(context, "text"));
-        assertTrue(validator.isValid(context, "<p>text</p>"));
-        assertTrue(validator.isValid(context, "<html></html>"));
-        verifyAll();
-    }
-
-    @Test
-    public void invalidInputForText() {
-        expect(context.getName()).andReturn("not-html").times(4);
-        replayAll();
-
-        assertFalse(validator.isValid(context, null));
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
-        assertFalse(validator.isValid(context, "\n\r"));
-        verifyAll();
+    public void emptyParagraphInvalid() {
+        assertFalse(validator.isValid(context, "<p></p>"));
     }
 
 }

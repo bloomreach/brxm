@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.validator;
+package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.services.validation.validator.RegExpValidator;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.InvalidValidatorException;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;

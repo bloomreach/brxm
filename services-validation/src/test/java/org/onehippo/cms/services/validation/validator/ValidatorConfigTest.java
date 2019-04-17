@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.validator;
+package org.onehippo.cms.services.validation.validator;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
 import org.onehippo.cms.services.validation.validator.ValidatorConfigImpl;
-import org.onehippo.cms7.services.validation.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;

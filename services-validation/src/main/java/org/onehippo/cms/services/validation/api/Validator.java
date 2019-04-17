@@ -13,19 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms.services.validation.util;
+package org.onehippo.cms.services.validation.api;
 
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms.services.validation.api.ValidationService;
+import java.io.Serializable;
+import java.util.Optional;
 
-public class ServiceUtils {
+public interface Validator extends Serializable {
 
-    public static ValidationService getValidationService() {
-        final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
-        if (service == null) {
-            throw new IllegalStateException("Failed to retrieve ValidationService from HippoServiceRegistry");
-        }
-        return service;
-    }
+    String getName();
+
+    void init(ValidatorContext context) throws InvalidValidatorException;
+
+    Optional<Violation> validate(ValidatorContext context, String value);
 
 }
