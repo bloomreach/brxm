@@ -176,6 +176,12 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
         context.setChannelMngrPreviewRequest(channelMngrPreviewRequest);
     }
 
+    @Deprecated
+    @Override
+    public void setCmsRequest(final boolean cmsRequest) {
+        context.setCmsRequest(cmsRequest);
+    }
+
     @Override
     public void setContentBeansTool(final ContentBeansTool contentBeansTool) {
         context.setContentBeansTool(contentBeansTool);

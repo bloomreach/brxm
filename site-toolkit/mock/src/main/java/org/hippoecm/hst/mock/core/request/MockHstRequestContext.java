@@ -91,7 +91,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private List<HstComponentWindowFilter> filters;
     private boolean fullyQualifiedURLs;
     private String renderHost;
-    private boolean cmsRequest;
+    private boolean channelMngrPreviewRequest;
     private ContentBeansTool contentBeansTool;
     private boolean cachingObjectConverterEnabled;
     private HippoBean contentBean;
@@ -473,7 +473,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     @Override
     public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return cmsRequest;
+        return channelMngrPreviewRequest;
     }
 
     @Deprecated
@@ -509,7 +509,13 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     @Override
     public void setChannelMngrPreviewRequest(boolean channelMngrPreviewRequest) {
         checkStateValidity();
-        this.cmsRequest = channelMngrPreviewRequest;
+        this.channelMngrPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
+    public void setCmsRequest(final boolean cmsRequest) {
+        this.channelMngrPreviewRequest = cmsRequest;
     }
 
     @Override
