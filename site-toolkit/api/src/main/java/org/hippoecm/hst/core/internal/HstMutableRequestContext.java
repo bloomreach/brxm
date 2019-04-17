@@ -136,6 +136,11 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setChannelMngrPreviewRequest(boolean channelMngrPreviewRequest);
 
     /**
+     * @deprecated since 13.2.0, use {@link #setChannelMngrPreviewRequest(boolean)} instead
+     */
+    @Deprecated
+    public void setCmsRequest(boolean cmsRequest);
+    /**
      * Sets ContentBeansTool instance for this request context
      *
      * @param contentBeansTool
