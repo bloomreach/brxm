@@ -48,6 +48,10 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = context.getRequestContext();
 
+        // TODO we should get rid of setChannelManagerPreviewRequest(true); since this is a cms request and
+        // TODO not a channel manager preview request! See HSTTWO-4587
+        ((HstMutableRequestContext) requestContext).setChannelManagerPreviewRequest(true);
+
         final HttpSession cmsHttpSession = servletRequest.getSession(false);
 
         if (cmsHttpSession == null) {
