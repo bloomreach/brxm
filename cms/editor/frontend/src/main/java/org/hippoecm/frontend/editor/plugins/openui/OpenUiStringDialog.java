@@ -45,9 +45,6 @@ public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
         setSize(parseSize(parameters));
         setCssClass("openui-dialog");
 
-        setCloseAction((ScriptAction<String>) model -> String.format(
-                "OpenUi.getInstance('%s').closeDialog('%s');", instanceId, instanceId));
-
         setCancelAction((ScriptAction<String>) model -> String.format(
                 "OpenUi.getInstance('%s').cancelDialog();", instanceId));
 
