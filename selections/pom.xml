@@ -42,9 +42,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugins Selection</notice.project.name>
 
-    <hippo.cms.version>5.6.0</hippo.cms.version>
-    <hippo.repository.version>5.6.0</hippo.repository.version>
-    <hippo.hst.version>5.6.0</hippo.hst.version>
+    <hippo.cms.version>5.6.3-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.6.3-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.6.3-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.8.2</junit.version>
   </properties>
