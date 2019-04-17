@@ -17,6 +17,7 @@ package org.onehippo.cms7.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.services.validation.validator.NonEmptyValidator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;

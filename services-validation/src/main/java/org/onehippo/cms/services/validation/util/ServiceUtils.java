@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.util;
+package org.onehippo.cms.services.validation.util;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.validation.ValidationService;

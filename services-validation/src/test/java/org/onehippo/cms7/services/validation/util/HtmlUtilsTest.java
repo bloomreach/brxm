@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.validation.util;
 
 import org.junit.Test;
+import org.onehippo.cms.services.validation.util.HtmlUtils;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

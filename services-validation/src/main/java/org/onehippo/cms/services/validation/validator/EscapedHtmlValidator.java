@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.validator;
+package org.onehippo.cms.services.validation.validator;
 
 import java.util.regex.Pattern;
 

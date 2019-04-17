@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
+import org.onehippo.cms.services.validation.validator.ValidatorConfigImpl;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;

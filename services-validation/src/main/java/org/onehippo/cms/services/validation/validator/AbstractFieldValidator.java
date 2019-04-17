@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation.validator;
+package org.onehippo.cms.services.validation.validator;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;
 import org.onehippo.cms7.services.validation.Violation;
 import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
-import org.onehippo.cms7.services.validation.util.TranslationUtils;
+import org.onehippo.cms.services.validation.util.TranslationUtils;
 
 public abstract class AbstractFieldValidator implements Validator {
 

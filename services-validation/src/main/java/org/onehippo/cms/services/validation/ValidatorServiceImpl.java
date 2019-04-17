@@ -13,8 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation;
+package org.onehippo.cms.services.validation;
 
+import org.onehippo.cms7.services.validation.ValidationService;
+import org.onehippo.cms7.services.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

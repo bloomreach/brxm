@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.validation.validator;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.onehippo.cms.services.validation.validator.ValidatorFactory;
 import org.onehippo.cms7.services.validation.Validator;
 import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.onehippo.cms7.services.validation.ValidatorContext;

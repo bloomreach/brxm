@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.validation.util;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.services.validation.util.ServiceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.validation.ValidationService;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;

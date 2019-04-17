@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.services.validation;
+package org.onehippo.cms.services.validation;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -23,8 +23,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.services.validation.validator.ValidatorConfigImpl;
-import org.onehippo.cms7.services.validation.validator.ValidatorFactory;
+import org.onehippo.cms.services.validation.validator.ValidatorConfigImpl;
+import org.onehippo.cms.services.validation.validator.ValidatorFactory;
+import org.onehippo.cms7.services.validation.Validator;
+import org.onehippo.cms7.services.validation.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
