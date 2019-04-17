@@ -75,7 +75,7 @@
 </#if>
 
 
-<#if hstRequest.requestContext.cmsRequest>
+<#if hstRequest.requestContext.channelManagerPreviewRequest>
 <div>
   <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.svg" />"> Click to edit SEO parameters
   <#if title??>
