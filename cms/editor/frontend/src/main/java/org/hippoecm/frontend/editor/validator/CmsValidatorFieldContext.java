@@ -19,7 +19,7 @@ import java.util.Locale;
 
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IFieldValidator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidatorContext;
 
 public class CmsValidatorFieldContext implements ValidatorContext {
 
