@@ -339,11 +339,11 @@ public abstract class CommonComponent extends BaseHstComponent {
     }
 
     protected void setEditMode(final HstRequest request) {
-        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
+        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isChannelManagerPreviewRequest());
     }
 
     protected void setComponentId(final HstRequest request, final HstResponse response) {
-        if (RequestContextProvider.get().isCmsRequest()) {
+        if (RequestContextProvider.get().isChannelManagerPreviewRequest()) {
             request.setAttribute(REQUEST_ATTR_COMPONENT_ID, UUID.randomUUID().toString());
         } else {
             request.setAttribute(REQUEST_ATTR_COMPONENT_ID, response.getNamespace());
