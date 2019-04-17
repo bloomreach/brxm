@@ -512,9 +512,9 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
         try {
             // add the X-HST-VERSION as a response header if we are in preview:
-            boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest();
+            boolean isPreviewOrChannelManagerPreviewRequest = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest();
 
-            if (isPreviewOrCmsRequest) {
+            if (isPreviewOrChannelManagerPreviewRequest) {
                 final HttpServletResponse servletResponse = context.getServletResponse();
                 setNoCacheHeaders(servletResponse);
 

@@ -30,7 +30,15 @@ import org.w3c.dom.Comment;
 public abstract class AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
 
+    /**
+     * @deprecated since 13.2.0 : Use {@link #isChannelManagerPreviewRequest(HstRequest)}
+     */
+    @Deprecated
     protected boolean isCmsRequest(HstRequest request) {
+        return request.getRequestContext().isChannelManagerPreviewRequest();
+    }
+
+    protected boolean isChannelManagerPreviewRequest(HstRequest request) {
         return request.getRequestContext().isChannelManagerPreviewRequest();
     }
 

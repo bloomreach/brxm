@@ -567,7 +567,7 @@ public class SiteServiceIT extends AbstractTestConfigurations {
             MockHstRequestContext ctx = new MockHstRequestContext();
             Mount mount = hstManager.getVirtualHosts().getMountByIdentifier(mountNode.getIdentifier());
             ctx.setResolvedMount(new ResolvedMountImpl(mount, null, null, null, 0));
-            ctx.setChannelMngrPreviewRequest(true);
+            ctx.setChannelManagerPreviewRequest(true);
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
             ctx.setServletRequest(servletRequest);
 

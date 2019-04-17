@@ -507,7 +507,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public void setChannelMngrPreviewRequest(boolean channelMngrPreviewRequest) {
+    public void setChannelManagerPreviewRequest(boolean channelMngrPreviewRequest) {
         checkStateValidity();
         this.channelMngrPreviewRequest = channelMngrPreviewRequest;
     }

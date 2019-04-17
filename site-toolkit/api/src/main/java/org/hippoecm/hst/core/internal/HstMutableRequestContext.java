@@ -130,13 +130,13 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setRenderHost(String renderHost);
 
     /**
-     * @param channelMngrPreviewRequest when the request is a channelMngrPreviewRequest have this parameter equal to <code>true</code>
+     * @param channelManagerPreviewRequest when the request is a channelMngrPreviewRequest have this parameter equal to <code>true</code>
      * @see #isChannelManagerPreviewRequest()
      */
-    public void setChannelMngrPreviewRequest(boolean channelMngrPreviewRequest);
+    public void setChannelManagerPreviewRequest(boolean channelManagerPreviewRequest);
 
     /**
-     * @deprecated since 13.2.0, use {@link #setChannelMngrPreviewRequest(boolean)} instead
+     * @deprecated since 13.2.0, use {@link #setChannelManagerPreviewRequest(boolean)} instead
      */
     @Deprecated
     public void setCmsRequest(boolean cmsRequest);

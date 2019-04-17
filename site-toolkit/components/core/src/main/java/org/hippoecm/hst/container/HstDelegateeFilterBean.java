@@ -325,7 +325,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, renderingHost, req)) {
 
-                            requestContext.setChannelMngrPreviewRequest(true);
+                            requestContext.setChannelManagerPreviewRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
                                 if (!(undecoratedMount instanceof ContextualizableMount)) {

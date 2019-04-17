@@ -72,7 +72,7 @@ import static org.junit.Assert.assertTrue;
  *  the host that needs to be 'faked' to render the page.
  * </p>
  */
-public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
+public class HstLinkForChannelManagerPreviewRequestIT extends AbstractHstLinkRewritingIT {
 
     private HstManager hstManager;
     private HstURLFactory hstURLFactory;
@@ -90,7 +90,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     }
 
     @Test
-    public void testLinksCMSRequestNoRenderingHost() throws Exception {
+    public void testLinksChannelManagerPreviewRequestNoRenderingHost() throws Exception {
         {
             HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
@@ -161,7 +161,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
 
 
     @Test
-    public void testLinksCMSRequestWITHRenderingHost() throws Exception {
+    public void testLinksChannelManagerPreviewRequestWITHRenderingHost() throws Exception {
         // the rendering host is www.unit.test
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test");
         // assert that the match Mount is www.unit.test
@@ -208,7 +208,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
      * CONTEXT though, this just works because the CMS should use DECORATED PREVIEW MOUNTS (decorated from live)
      */
     @Test
-    public void testLinksCMSRequestWITHRenderingHostResolvesLinkToPreviewDecoratedMounts() throws Exception {
+    public void testLinksChannelManagerPreviewRequestWITHRenderingHostResolvesLinkToPreviewDecoratedMounts() throws Exception {
         // the rendering host is localhost:8081
         // We now do a request that is for the preview site (PORT 8081). Because for the 'unittestsubproject' we have only
         // configured LIVE mounts, then when we request a link, we expect to get a link from a 'live mount to preview mount
@@ -244,7 +244,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
         ModifiableRequestContextProvider.set(requestContext);
-        HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost);
+        HstContainerURL containerUrl = createContainerUrlForChannelManagerPreviewRequest(requestContext, hostAndPort, pathInfo, queryString, renderingHost);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
@@ -259,11 +259,11 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
         return requestContext;
     }
 
-    public HstContainerURL createContainerUrlForCmsRequest(final HstMutableRequestContext requestContext,
-                                                           final String hostAndPort,
-                                                           final String pathInfo,
-                                                           final String queryString,
-                                                           final String renderingHost) throws Exception {
+    public HstContainerURL createContainerUrlForChannelManagerPreviewRequest(final HstMutableRequestContext requestContext,
+                                                                             final String hostAndPort,
+                                                                             final String pathInfo,
+                                                                             final String queryString,
+                                                                             final String renderingHost) throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
         GenericHttpServletRequestWrapper containerRequest;
         {
@@ -280,7 +280,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
             setRequestInfo(request, "/site", pathInfo);
             request.setQueryString(queryString);
 
-            requestContext.setChannelMngrPreviewRequest(true);
+            requestContext.setChannelManagerPreviewRequest(true);
             if (renderingHost != null) {
                 request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
             }

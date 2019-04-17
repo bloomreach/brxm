@@ -128,7 +128,7 @@ public class HstManageContentTagTest {
     @Before
     public void setUp() {
         hstRequestContext = new MockHstRequestContext();
-        hstRequestContext.setChannelMngrPreviewRequest(true);
+        hstRequestContext.setChannelManagerPreviewRequest(true);
         ModifiableRequestContextProvider.set(hstRequestContext);
 
         final MockServletContext servletContext = new MockServletContext();
@@ -168,8 +168,8 @@ public class HstManageContentTagTest {
     }
 
     @Test
-    public void noCmsRequestOutputsNothingAndLogsDebug() throws Exception {
-        hstRequestContext.setChannelMngrPreviewRequest(false);
+    public void noChannelManagerPreviewRequestOutputsNothingAndLogsDebug() throws Exception {
+        hstRequestContext.setChannelManagerPreviewRequest(false);
 
         assertDebugged("Skipping manageContent tag because not in cms preview.", this::assertEmptyResponse);
     }

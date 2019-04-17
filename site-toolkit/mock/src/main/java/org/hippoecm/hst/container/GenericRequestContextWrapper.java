@@ -172,8 +172,8 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
-    public void setChannelMngrPreviewRequest(final boolean channelMngrPreviewRequest) {
-        context.setChannelMngrPreviewRequest(channelMngrPreviewRequest);
+    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+        context.setChannelManagerPreviewRequest(channelMngrPreviewRequest);
     }
 
     @Deprecated
