@@ -14,6 +14,47 @@
  * limitations under the License.
  */
 
+class Emitter {
+  constructor() {
+    this._events = new Map();
+  }
+
+  on(eventName, listener) {
+    this._assertEventName(eventName);
+    this._assertListener(listener);
+    this._getListeners(eventName).add(listener);
+  }
+
+  emit(eventName, eventData) {
+    this._assertEventName(eventName);
+    this._getListeners(eventName)
+      .forEach(listener => listener(eventData));
+  }
+
+  clearListeners() {
+    this._events.clear();
+  }
+
+  _getListeners(eventName) {
+    if (!this._events.has(eventName)) {
+      this._events.set(eventName, new Set());
+    }
+    return this._events.get(eventName);
+  }
+
+  _assertEventName(eventName) {
+    if (typeof eventName !== 'string') {
+      throw new TypeError('eventName must be a string');
+    }
+  }
+
+  _assertListener(listener) {
+    if (typeof listener !== 'function') {
+      throw new TypeError('listener must be a function');
+    }
+  }
+}
+
 OpenUi = new class {
 
   constructor() {
@@ -53,6 +94,7 @@ OpenUi = new class {
   _destroyConnectionWhenIframeDies(connection, openUiParent) {
     HippoAjax.registerDestroyFunction(connection.iframe, () => {
       try {
+        connection.emitter.clearListeners();
         connection.destroy();
       } catch (error) {
         if (error.code !== Penpal.ERR_CONNECTION_DESTROYED) {
@@ -84,16 +126,20 @@ OpenUi = new class {
     // - allow-top-navigation-by-user-activation
     iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
 
-    return Penpal.connectToChild({
+    const emitter = new Emitter();
+    const connection = Penpal.connectToChild({
       url: iframeUrl,
       iframe: iframe,
       appendTo: iframeParentElement,
       methods: {
+        emitEvent: emitter.emit.bind(emitter),
         getProperties: () => this._getProperties(parameters),
         openDialog: (options) => this.openDialog(options, parameters),
         ...methods,
       }
     });
+    Object.assign(connection, { emitter });
+    return connection;
   }
 
   _getIframeUrl(extensionUrl, extensionDialogUrl) {

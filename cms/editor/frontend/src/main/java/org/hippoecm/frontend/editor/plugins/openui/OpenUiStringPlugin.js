@@ -29,6 +29,13 @@ class OpenUiStringPlugin {
   onConnect(connection) {
     this.iframe = connection.iframe;
     this.setFieldHeight(this.parameters.initialHeightInPixels);
+
+    connection.emitter.on('document.field.focus', () => {
+      console.log('received event - document.field.focus');
+    });
+    connection.emitter.on('document.field.blur', () => {
+      console.log('received event - document.field.blur');
+    });
   }
 
   onDestroy() {
