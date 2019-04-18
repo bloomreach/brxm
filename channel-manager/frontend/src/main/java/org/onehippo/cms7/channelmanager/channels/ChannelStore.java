@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -344,10 +344,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         } catch (ChannelException ce) {
             final String channelId = (channel == null) ? "" : channel.getId();
             if (log.isDebugEnabled()) {
-                log.warn("Could not get localized value of field '" + fieldName + "' for channel with id '" + channelId + "'", ce);
+                log.warn("Could not get localized value of field '{}' for channel with id '{}'", fieldName, channelId, ce);
             } else {
-                log.warn("Could not get localized value of field '{}' for channel with id '{}' - {}"
-                        , new String[]{fieldName, channelId, ce.toString()});
+                log.warn("Could not get localized value of field '{}' for channel with id '{}' - {}", fieldName, channelId, ce);
 
             }
         }
@@ -563,7 +562,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), (Object[]) ce.getParameters()), cause);
             }
         }
-        log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
+        log.warn("Could not create new channel '{}': {}", newChannel.getName(), cause.getMessage());
         log.debug("Stacktrace:", cause);
         return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,14 +44,14 @@ public class FieldTypeConfig {
 
     public FieldTypeConfig booleans(final String... names) {
         for (final String propertyName : names) {
-            context.getBooleanConfig(prefix + propertyName).ifPresent((value) -> config.put(propertyName, value));
+            context.getBooleanConfig(prefix + propertyName).ifPresent(value -> config.put(propertyName, value));
         }
         return this;
     }
 
     public FieldTypeConfig strings(final String... names) {
         for (final String propertyName : names) {
-            context.getStringConfig(prefix + propertyName).ifPresent((value) -> config.put(propertyName, value));
+            context.getStringConfig(prefix + propertyName).ifPresent(value -> config.put(propertyName, value));
         }
         return this;
     }

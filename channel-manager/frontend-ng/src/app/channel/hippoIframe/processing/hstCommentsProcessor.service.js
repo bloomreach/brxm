@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,13 +73,6 @@ class HstCommentsProcessorService {
   }
 
   _getCommentData(element) {
-    if (element.length < 0) {
-      // Skip conditional comments in IE: reading their 'data' property throws an
-      // Error "Not enough storage space is available to complete this operation."
-      // Conditional comments can be recognized by a negative 'length' property.
-      return null;
-    }
-
     if (!element.data || element.data.length === 0) {
       // no data available
       return null;

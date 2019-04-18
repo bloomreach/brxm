@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,7 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
         // The "required: validator only applies to the cardinality of a compound field, and has
         // therefore already been checked during the writeTo-validation (#checkCardinality).
 
-        // #readValue guarantees that value.getFields is not empty
-        return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());
+        // #writeValue guarantees that value.getFields is not empty
+        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields());
     }
 }

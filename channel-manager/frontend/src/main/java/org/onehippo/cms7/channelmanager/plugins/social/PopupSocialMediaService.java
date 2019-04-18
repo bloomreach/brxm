@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class PopupSocialMediaService extends Plugin implements ISocialMediaServi
                     + "Please set the configuration property " + CONFIG_POPUP_SERVICE_ID);
         }
 
-        this.socialMedia = new LinkedList<ISocialMedium>();
+        this.socialMedia = new LinkedList<>();
         readSocialMedia(config, socialMedia);
 
         final String serviceId = config.getString("service.id", ISocialMediaService.DEFAULT_SERVICE_ID);

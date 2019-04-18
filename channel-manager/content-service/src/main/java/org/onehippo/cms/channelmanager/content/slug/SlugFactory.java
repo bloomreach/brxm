@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import org.hippoecm.repository.api.StringCodecService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public class SlugFactory {
+
+    private SlugFactory() {
+    }
 
     /**
      * Creates a slug for a piece of content (a document, a folder, etc) in a certain locale.

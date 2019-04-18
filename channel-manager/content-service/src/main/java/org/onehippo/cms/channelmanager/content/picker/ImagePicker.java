@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ public class ImagePicker {
     };
 
     private static final String PREFIX = "image.";
+
+    private ImagePicker() {
+    }
 
     public static ObjectNode build(final FieldTypeContext fieldContext) {
         return Picker.configure(fieldContext)

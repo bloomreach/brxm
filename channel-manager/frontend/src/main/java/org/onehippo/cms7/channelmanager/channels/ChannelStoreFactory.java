@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -51,7 +50,7 @@ public final class ChannelStoreFactory {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
-        List<ExtDataField> fieldList = new ArrayList<ExtDataField>();
+        List<ExtDataField> fieldList = new ArrayList<>();
         for (String storeFieldName : storeFieldNames) {
             fieldList.add(new ExtDataField(storeFieldName));
         }
@@ -94,7 +93,7 @@ public final class ChannelStoreFactory {
     }
 
     static Set<String> parseChannelFields(IPluginConfig config) {
-        Set<String> storeFieldNames = new HashSet<String>();
+        Set<String> storeFieldNames = new HashSet<>();
 
         // create an intermediate set of all unique field names to put in the ExtJS store: a union of all default
         // channel fields and the visible fields (since the latter may also include custom channel properties)
@@ -114,7 +113,7 @@ public final class ChannelStoreFactory {
 
 
     static String parseSortColumn(IPluginConfig config, Set<String> columnNames) {
-        if (config == null || columnNames.size() == 0) {
+        if (config == null || columnNames.isEmpty()) {
             return ChannelStore.ChannelField.name.name();
         }
 
