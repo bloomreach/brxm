@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -73,6 +73,18 @@ public interface IDialogService extends IClusterable {
          */
         IValueMap getProperties();
 
+        /**
+         * Invoked when the built-in close link (X) is clicked. In general, clicking the close link (X) is considered
+         * similar to cancelling a dialog. As such, to be able to invoke the correct {@link ScriptAction} in
+         * {@link org.hippoecm.frontend.dialog.Dialog#onClose} we have to inform the dialog that it is actually
+         * cancelled, before closing it.
+         * <p>
+         * A default implementation is provided to maintain backwards compatibility with custom dialogs that directly
+         * implement interface {@link Dialog} instead of extending class {@link org.hippoecm.frontend.dialog.Dialog}.
+         *
+         * @since 13.2
+         */
+        default void onCancelFromCloseLink() {}
     }
 
     /**
