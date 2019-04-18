@@ -402,7 +402,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
-                return new HistoryDialog(wdm, getEditorManager());
+                return new HistoryDialog(wdm, getEditorManager(), getBranchId());
             }
 
             @Override

@@ -38,52 +38,52 @@ public class RevisionHistoryTest {
         labels = new String[]{PRE_REINTEGRATE + DASH + MASTER + DASH + UNPUBLISHED + DASH + COUNTER,
                 MASTER + DASH + PUBLISHED,
                 MASTER + DASH + UNPUBLISHED};
-        Assert.assertTrue(isLatestRevisionOfBranch(labels));
+        Assert.assertTrue(isLatestRevisionOfBranch(labels,MASTER));
     }
 
 
     @Test
-    public void whenLabelsContainPublishedPreReintegrate() {
+    public void whenLabelsContainPublishedPreReintegrate()  {
         labels = new String[]{PRE_REINTEGRATE + DASH + MASTER + DASH + UNPUBLISHED + DASH + COUNTER,
                 MASTER + DASH + UNPUBLISHED};
-        Assert.assertTrue(isLatestRevisionOfBranch(labels));
+        Assert.assertTrue(isLatestRevisionOfBranch(labels, MASTER));
     }
 
     @Test
-    public void whenLabelsContainUnPublishedPreReintegrateNonMaster() {
+    public void whenLabelsContainUnPublishedPreReintegrateNonMaster()  {
         labels = new String[]{PRE_REINTEGRATE + DASH + "qwert-" + UNPUBLISHED + DASH + COUNTER,
                 MASTER + DASH + UNPUBLISHED};
-        Assert.assertTrue(isLatestRevisionOfBranch(labels));
+        Assert.assertTrue(isLatestRevisionOfBranch(labels, MASTER));
     }
 
     @Test
-    public void whenLabelsContainPublishedPreReintegrateNonMaster() {
+    public void whenLabelsContainPublishedPreReintegrateNonMaster()  {
         labels = new String[]{PRE_REINTEGRATE + DASH + BRANCH_ID + DASH + UNPUBLISHED + DASH + COUNTER,
                 MASTER + DASH + PUBLISHED};
-        Assert.assertFalse(isLatestRevisionOfBranch(labels));
+        Assert.assertFalse(isLatestRevisionOfBranch(labels, BRANCH_ID));
     }
 
     @Test
-    public void whenLabelsContainPreReintegrateNonMaster() {
+    public void whenLabelsContainPreReintegrateNonMaster()  {
         labels = new String[]{PRE_REINTEGRATE + DASH + BRANCH_ID + UNPUBLISHED + DASH + COUNTER};
-        Assert.assertFalse(isLatestRevisionOfBranch(labels));
+        Assert.assertFalse(isLatestRevisionOfBranch(labels, BRANCH_ID));
     }
 
     @Test
-    public void whenLabelsContainPublishedUnpublished() {
+    public void whenLabelsContainPublishedUnpublished()  {
         labels = new String[]{MASTER + DASH + PUBLISHED,
                 MASTER + DASH + UNPUBLISHED};
-        Assert.assertTrue(isLatestRevisionOfBranch(labels));
+        Assert.assertTrue(isLatestRevisionOfBranch(labels, MASTER));
     }
 
     @Test
     public void whenLabelsContainBranchUnpublished() {
         labels = new String[]{BRANCH_ID + DASH + UNPUBLISHED};
-        Assert.assertTrue(isLatestRevisionOfBranch(labels));
+        Assert.assertTrue(isLatestRevisionOfBranch(labels, BRANCH_ID));
     }
 
-    private boolean isLatestRevisionOfBranch(final String[] labels) {
-        RevisionHistory revisionHistory = new RevisionHistory(null);
+    private boolean isLatestRevisionOfBranch(final String[] labels, String branchId) {
+        RevisionHistory revisionHistory = new RevisionHistory(null, branchId);
         return revisionHistory.isLatestRevisionOfBranch(Stream.of(labels).collect(Collectors.toSet()));
     }
 }

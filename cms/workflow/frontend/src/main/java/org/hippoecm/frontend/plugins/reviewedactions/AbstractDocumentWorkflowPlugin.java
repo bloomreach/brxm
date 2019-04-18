@@ -37,9 +37,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
@@ -57,7 +55,9 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     @Override
     public void detachModels() {
         super.detachModels();
-        branchIdModel.detach();
+        if (branchIdModel!=null){
+            branchIdModel.detach();
+        }
     }
 
     public AbstractDocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -176,5 +176,10 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         log.debug("Get hints for branchId:{}", branchId);
         return getModel().getHints(branchId);
 
+    }
+
+    protected String getBranchId() {
+        BranchIdModel branchIdModel = getBranchIdModel();
+        return branchIdModel == null ? BranchConstants.MASTER_BRANCH_ID : branchIdModel.getBranchId();
     }
 }
