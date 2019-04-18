@@ -30,11 +30,11 @@ class OpenUiStringPlugin {
     this.iframe = connection.iframe;
     this.setFieldHeight(this.parameters.initialHeightInPixels);
 
-    connection.emitter.on('document.field.focus', () => {
-      console.log('received event - document.field.focus');
-    });
     connection.emitter.on('document.field.blur', () => {
-      console.log('received event - document.field.blur');
+      if (this.scheduledSave) {
+        this.clearScheduledSave();
+        this.save();
+      }
     });
   }
 
@@ -74,7 +74,7 @@ class OpenUiStringPlugin {
       throw new Error('Max value length of ' + this.MAX_SIZE_IN_BYTES + ' is reached.');
     }
     this.hiddenValueElement.value = value;
-    this.scheduleSave(value);
+    this.scheduleSave();
   }
 
   getFieldCompareValue() {
@@ -86,16 +86,24 @@ class OpenUiStringPlugin {
     this.iframe.style.height = height + 'px';
   }
 
-  scheduleSave(data) {
-    clearTimeout(this.scheduledSave);
-    this.scheduledSave = setTimeout(() => this.save(data), this.parameters.autoSaveDelay);
+  scheduleSave() {
+    this.clearScheduledSave();
+    this.scheduledSave = setTimeout(() => {
+      this.clearScheduledSave();
+      this.save();
+    }, this.parameters.autoSaveDelay);
   }
 
-  save(data) {
+  clearScheduledSave() {
+    clearTimeout(this.scheduledSave);
+    this.scheduledSave = null;
+  }
+
+  save() {
     Wicket.Ajax.post({
       u: this.parameters.autoSaveUrl,
       ep: {
-        data: data
+        data: this.hiddenValueElement.value
       }
     });
   }
