@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -41,7 +42,11 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+
+import org.onehippo.repository.util.JcrConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +181,14 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
     }
 
     protected boolean checkPermissions() {
-        return true;
+        final String destinationPath = getDestinationPath();
+        if (StringUtils.isNotBlank(destinationPath)) {
+            try {
+                return UserSession.get().getJcrSession().hasPermission(destinationPath, JcrConstants.JCR_WRITE);
+            } catch (RepositoryException ignore) {
+            }
+        }
+        return false;
     }
 
     /**
@@ -189,7 +201,8 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
 
     private String getDestinationPath() {
         try {
-            return destination.getChainedModel().getObject().getPath();
+            final Node node = (destination != null) ? destination.getChainedModel().getObject() : null;
+            return (node != null) ? node.getPath() : "";
         } catch (final RepositoryException e) {
             log.error("Failed to get path of the destination node", e);
             return "";
