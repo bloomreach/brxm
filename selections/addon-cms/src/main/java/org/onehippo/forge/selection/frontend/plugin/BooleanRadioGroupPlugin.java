@@ -26,8 +26,10 @@ import org.onehippo.forge.selection.frontend.model.ValueList;
  * Boolean Radio Group plugin. The radio group has two fixed items, namely true and false. The type of the underlying
  * property must be boolean.
  * <p>
- * The labels for the true and false values can be configured with the plugin configuration properties "trueLabel" and
- * "falseLabel". The labels can be internationalized by configuring a translator for this plugin.
+ * The labels for the true and false values can be populated by a ValueList, through the source property. This gives the
+ * option to display localized values.
+ * <p>
+ * Otherwise the labels can be configured with the plugin configuration properties "trueLabel" and "falseLabel".
  *
  * @author Dennis Dam
  */
@@ -61,22 +63,32 @@ public class BooleanRadioGroupPlugin extends RadioGroupPlugin {
     }
 
     /**
-     * Returns a valuelist with two items, one for 'true' and one for 'false'.
+     * Returns a value list with two items, one for 'true' and one for 'false'.
      *
      * @return value list
      */
     @Override
     protected ValueList getValueList() {
         if (valueList == null) {
-            final IPluginConfig config = getPluginConfig();
-            final String trueLabel = StringUtils.defaultIfBlank(config.getString(Config.TRUE_LABEL), "true");
-            final String falseLabel = StringUtils.defaultIfBlank(config.getString(Config.FALSE_LABEL), "false");
-
             valueList = new ValueList();
-            valueList.add(new ListItem("true", trueLabel));
-            valueList.add(new ListItem("false", falseLabel));
+            final IPluginConfig config = getPluginConfig();
+            final ValueList sourceList = super.getValueList();
+
+            valueList.add(listItem(sourceList, "true",
+                    StringUtils.defaultIfBlank(config.getString(Config.TRUE_LABEL), "true")));
+            valueList.add(listItem(sourceList, "false",
+                    StringUtils.defaultIfBlank(config.getString(Config.FALSE_LABEL), "false")));
         }
-        return valueList;
+
+        return this.valueList;
+    }
+
+    private ListItem listItem(final ValueList sourceList, final String key, final String defaultValue) {
+        final ListItem listItem = sourceList.getListItemByKey(key);
+        if (listItem != null) {
+            return listItem;
+        }
+        return new ListItem(key, defaultValue);
     }
 
     /**
