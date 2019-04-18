@@ -61,6 +61,25 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         dynamicBeanService = new DynamicBeanDefinitionService(this);
     }
 
+    public boolean shouldGenerateNewForExistingBean(final Class<? extends HippoBean> existingBeanClass) {
+        // if the HippoEssentialsGenerated is not defined on class or allowModifications filed is true, then the bean will be generated
+        if (existingBeanClass != null) {
+            final HippoEssentialsGenerated hippoEssentialsGenerated = existingBeanClass.getDeclaredAnnotation(HippoEssentialsGenerated.class);
+            if (hippoEssentialsGenerated == null || hippoEssentialsGenerated.allowModifications()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Class<? extends HippoBean> getExistingBeanClass(final String jcrPrimaryNodeType) {
+        return jcrPrimaryNodeTypeExistingBeanPairs.get(jcrPrimaryNodeType);
+    }
+
+    public void removeExistingBeanClass(final String jcrPrimaryNodeType) {
+        jcrPrimaryNodeTypeExistingBeanPairs.remove(jcrPrimaryNodeType);
+    }
+    
     @Override
     public Object getObject(final Node node) throws ObjectBeanManagerException {
         final String jcrPrimaryNodeType;
@@ -81,14 +100,15 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
 
-            final Class<? extends HippoBean> existingBeanClass = this.jcrPrimaryNodeTypeExistingBeanPairs.get(jcrPrimaryNodeType);
-            if (delegateeClass != null && isDocumentType(useNode) && existingBeanClass != null) {
-                // if the HippoEssentialsGenerated is not defined on class or allowModifications filed is true, then the bean will be generated
-                final HippoEssentialsGenerated hippoEssentialsGenerated = existingBeanClass.getDeclaredAnnotation(HippoEssentialsGenerated.class);
-                if (hippoEssentialsGenerated == null || hippoEssentialsGenerated.allowModifications()) {
-                    delegateeClass = createDynamicBeanDefinition(useNode, existingBeanClass);
+            if (delegateeClass != null && isDocumentType(useNode)) {
+                final Class<? extends HippoBean> existingBeanClass = getExistingBeanClass(jcrPrimaryNodeType);
+                if (existingBeanClass != null) {
+                    // A java class of the document type exists, check whether a new bean class is needed to be generated or not
+                    if (shouldGenerateNewForExistingBean(existingBeanClass)) {
+                        delegateeClass = createDynamicBeanDefinition(useNode, existingBeanClass);
+                    }
+                    removeExistingBeanClass(jcrPrimaryNodeType);
                 }
-                jcrPrimaryNodeTypeExistingBeanPairs.remove(jcrPrimaryNodeType, existingBeanClass);
             }
 
             if (delegateeClass == null) {

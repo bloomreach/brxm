@@ -260,13 +260,26 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
         BeanInfo generatedBeanInfo = null;
         if (generatedBeanDef == null) {
+            //generate the bean class of the compound type
             final ContentType compoundContentType = objectConverter.getContentType(type);
-
             generatedBeanInfo = createCompoundBeanDef(compoundContentType);
             if (generatedBeanInfo == null) {
                 return;
             }
             generatedBeanDef = generatedBeanInfo.getBeanClass();
+        } else {
+            final Class<? extends HippoBean> existingBeanClass = objectConverter.getExistingBeanClass(type);
+            if (existingBeanClass != null) {
+                // A java class of the compound type exists, check whether a new bean class is needed to be generated or not
+                if (objectConverter.shouldGenerateNewForExistingBean(existingBeanClass)) {
+                    final ContentType compoundContentType = objectConverter.getContentType(type);
+                    generatedBeanInfo = createCompoundBeanDef(compoundContentType);
+                    if (generatedBeanInfo != null) {
+                        generatedBeanDef = generatedBeanInfo.getBeanClass();
+                    }
+                }
+                objectConverter.removeExistingBeanClass(type);
+            }
         }
 
         builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
