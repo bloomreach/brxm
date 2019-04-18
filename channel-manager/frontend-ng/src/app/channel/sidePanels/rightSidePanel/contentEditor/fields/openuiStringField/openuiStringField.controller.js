@@ -42,8 +42,8 @@ export default class OpenuiStringFieldController {
       this.createConnection(extensionId);
       this.setInitialHeight(extensionId);
 
-      this.connection.emitter.on('focus', () => this.$element.triggerHandler('focus'));
-      this.connection.emitter.on('blur', () => this.$element.triggerHandler('blur'));
+      this.connection.emitter.on('document.field.focus', () => this.$element.triggerHandler('focus'));
+      this.connection.emitter.on('document.field.blur', () => this.$element.triggerHandler('blur'));
     }
   }
 
