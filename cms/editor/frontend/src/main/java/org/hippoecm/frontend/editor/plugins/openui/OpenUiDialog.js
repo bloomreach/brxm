@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class OpenUiStringDialog {
+class OpenUiDialog {
 
   constructor(parameters) {
     this.parameters = parameters;
@@ -35,15 +35,11 @@ class OpenUiStringDialog {
   }
 
   cancelDialog() {
-    return this._closeDialog((instance) => {
-      instance.cancelDialog();
-    });
+    return this._closeDialog(() => OpenUi.cancelDialog());
   }
 
   closeDialog(value) {
-    return this._closeDialog((instance) => {
-      instance.closeDialog(value);
-    });
+    return this._closeDialog(() => OpenUi.closeDialog(value));
   }
 
   _closeDialog(onSuccess) {
@@ -51,8 +47,7 @@ class OpenUiStringDialog {
       Wicket.Ajax.ajax({
         u: this.parameters.closeUrl,
         sh: [() => {
-          const instance = OpenUi.getInstance(this.parameters.parentExtensionId);
-          onSuccess(instance);
+          onSuccess();
           resolve();
         }],
         fh: [(jqEvent, attributes) => {
@@ -69,4 +64,4 @@ class OpenUiStringDialog {
   }
 }
 
-OpenUi.registerClass(OpenUiStringDialog);
+OpenUi.registerClass(OpenUiDialog);
