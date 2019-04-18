@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
-import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -32,9 +31,6 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
-import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogBehavior;
-import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.viewer.ComparePlugin;
 import org.hippoecm.frontend.model.IModelReference;
@@ -64,7 +60,6 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
     private final String compareValue;
     private final AutoSaveBehavior autoSaveBehavior;
     private final OpenUiBehavior openUiBehavior;
-    private final DialogBehavior dialogBehavior;
 
     public OpenUiStringPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -80,7 +75,7 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         hiddenValueId = value.getMarkupId();
 
         final String extensionName = config.getString(CONFIG_PROPERTY_UI_EXTENSION);
-        add(openUiBehavior = new OpenUiBehavior(this, extensionName, UiExtensionPoint.DOCUMENT_FIELD));
+        add(openUiBehavior = new OpenUiBehavior(this, extensionName, UiExtensionPoint.DOCUMENT_FIELD, context, config));
 
         final Label errorMessage = new Label("errorMessage",
                 new StringResourceModel("load-error", this).setParameters(extensionName));
@@ -89,8 +84,6 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
 
         documentEditorMode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         compareValue = getCompareValue(context, config).orElse(null);
-
-        add(dialogBehavior = new OpenUiStringDialogManager().getBehavior());
     }
 
     private Optional<String> getCompareValue(final IPluginContext context, final IPluginConfig config) {
@@ -110,7 +103,6 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
         parameters.put("autoSaveDelay", 2000);
         parameters.put("autoSaveUrl", autoSaveBehavior.getCallbackUrl().toString());
         parameters.put("compareValue", compareValue);
-        parameters.put("dialogUrl", dialogBehavior.getCallbackUrl().toString());
         parameters.put("documentEditorMode", documentEditorMode.toString());
         parameters.put("hiddenValueId", hiddenValueId);
         parameters.put("initialHeightInPixels", openUiBehavior.getUiExtension().getInitialHeightInPixels());
@@ -185,17 +177,4 @@ public class OpenUiStringPlugin extends RenderPlugin<String> implements OpenUiPl
 
     }
 
-    private class OpenUiStringDialogManager extends DialogManager<String> {
-
-        OpenUiStringDialogManager() {
-            super(getPluginContext(), getPluginConfig());
-        }
-
-        @Override
-        protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config, final Map<String, String> parameters) {
-            final String instanceId = OpenUiStringPlugin.this.getMarkupId();
-            parameters.put("parentExtensionId", instanceId);
-            return new OpenUiStringDialog(instanceId, openUiBehavior.getUiExtension(), parameters);
-        }
-    }
 }

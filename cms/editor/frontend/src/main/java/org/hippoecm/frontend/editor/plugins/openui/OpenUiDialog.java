@@ -32,20 +32,20 @@ import org.onehippo.cms7.openui.extensions.UiExtension;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
+public class OpenUiDialog extends Dialog<String> implements OpenUiPlugin {
 
     private final CloseDialogBehavior closeDialogBehavior;
     private final Map<String, String> parameters;
 
-    OpenUiStringDialog(final String instanceId, final UiExtension extension, final Map<String, String> parameters) {
+    OpenUiDialog(final UiExtension extension, final Map<String, String> parameters) {
         this.parameters = parameters;
 
         setTitle(Model.of(parameters.getOrDefault("title", StringUtils.EMPTY)));
         setSize(parseSize(parameters));
         setCssClass("openui-dialog");
 
-        setCancelAction((ScriptAction<String>) model -> String.format(
-                "OpenUi.getInstance('%s').cancelDialog();", instanceId));
+        // Invoked when the uses presses the (X)
+        setCancelAction((ScriptAction<String>) model -> "OpenUi.cancelDialog();");
 
         final Panel openUiPanel = new EmptyPanel("dialog-body");
         openUiPanel.add(new OpenUiBehavior(this, extension));
@@ -71,7 +71,6 @@ public class OpenUiStringDialog extends Dialog<String> implements OpenUiPlugin {
     @Override
     public ObjectNode getJavaScriptParameters() {
         final ObjectNode javascriptParameters = Json.object();
-        javascriptParameters.put("parentExtensionId", parameters.get("parentExtensionId"));
         javascriptParameters.put("closeUrl", closeDialogBehavior.getCallbackUrl().toString());
 
         final ObjectNode dialogOptions = Json.object();

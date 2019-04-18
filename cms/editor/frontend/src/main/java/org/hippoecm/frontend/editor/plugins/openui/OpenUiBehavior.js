@@ -21,7 +21,6 @@ OpenUi = new class {
     this.cmsBaseUrl = this.cmsOrigin + window.location.pathname;
     this.antiCache = window.Hippo.antiCache;
     this.classes = {};
-    this.instances = {};
   }
 
   registerClass(classDefinition) {
@@ -32,21 +31,12 @@ OpenUi = new class {
     this.classes[className] = classDefinition;
   };
 
-  getInstance(iframeParentId) {
-    if (!this.instances[iframeParentId]) {
-      throw new Error(`Cannot retrieve instance '${iframeParentId}' of OpenUI field. Has it been instantiated or has it already been destroyed?`);
-    }
-    return this.instances[iframeParentId];
-  }
-
   _instantiateClass(className, parameters) {
     if (!this.classes[className]) {
       throw new Error(`Cannot instantiate class '${className}'. Has it been registered with 'OpenUi.registerClass()'?`);
     }
 
-    const instance = new this.classes[className](parameters);
-    this.instances[parameters.iframeParentId] = instance;
-    return instance;
+    return new this.classes[className](parameters);
   }
 
   showExtension(className, parameters) {
@@ -62,9 +52,6 @@ OpenUi = new class {
 
   _destroyConnectionWhenIframeDies(connection, openUiParent) {
     HippoAjax.registerDestroyFunction(connection.iframe, () => {
-      const instanceId = openUiParent.parameters.iframeParentId;
-      delete this.instances[instanceId];
-
       try {
         connection.destroy();
       } catch (error) {
@@ -103,6 +90,7 @@ OpenUi = new class {
       appendTo: iframeParentElement,
       methods: {
         getProperties: () => this._getProperties(parameters),
+        openDialog: (options) => this.openDialog(options, parameters),
         ...methods,
       }
     });
@@ -163,5 +151,48 @@ OpenUi = new class {
       },
       version: cmsVersion,
     }
+  }
+
+  openDialog(options, parameters) {
+    if (!parameters.dialogUrl) {
+      return Promise.reject(new Error('Can not open dialog, parameter "dialogUrl" is not defined.'));
+    }
+
+    if (this.dialog) {
+      return Promise.reject(new Error('A dialog is already open.'));
+    }
+
+
+    return new Promise((resolve, reject) => {
+      this.dialog = {
+        resolve,
+        reject,
+      };
+
+      Wicket.Ajax.post({
+        u: parameters.dialogUrl,
+        ep: options,
+        fh: [(jqEvent, attributes) => reject(new Error(`Failed to open dialog. Server responded with status ${attributes.status}.`))],
+      });
+
+    });
+  }
+
+  closeDialog(result) {
+    if (!this.dialog) {
+      return;
+    }
+
+    this.dialog.resolve(result);
+    delete this.dialog;
+  }
+
+  cancelDialog() {
+    if (!this.dialog) {
+      return;
+    }
+
+    this.dialog.reject({ code: 'DialogCanceled' });
+    delete this.dialog;
   }
 };

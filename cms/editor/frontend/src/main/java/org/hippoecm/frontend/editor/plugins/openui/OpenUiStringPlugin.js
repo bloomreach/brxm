@@ -42,7 +42,6 @@ class OpenUiStringPlugin {
       setFieldValue: this.setFieldValue.bind(this),
       getFieldCompareValue: this.getFieldCompareValue.bind(this),
       setFieldHeight: this.setFieldHeight.bind(this),
-      openDialog: this.openDialog.bind(this),
     }
   }
 
@@ -78,40 +77,6 @@ class OpenUiStringPlugin {
   setFieldHeight(pixels) {
     const height = Math.max(this.MIN_HEIGHT_IN_PIXELS, Math.min(pixels, this.MAX_HEIGHT_IN_PIXELS));
     this.iframe.style.height = height + 'px';
-  }
-
-  openDialog(options) {
-    return new Promise((resolve, reject) => {
-      this.dialog = {
-        resolve,
-        reject,
-      };
-
-      Wicket.Ajax.post({
-        u: this.parameters.dialogUrl,
-        ep: options,
-        fh: [(jqEvent, attributes) => reject(new Error(`Failed to open dialog. Server responded with status ${attributes.status}.`))],
-      });
-
-    });
-  }
-
-  closeDialog(result) {
-    if (!this.dialog) {
-      return;
-    }
-
-    this.dialog.resolve(result);
-    delete this.dialog;
-  }
-
-  cancelDialog() {
-    if (!this.dialog) {
-      return;
-    }
-
-    this.dialog.reject({ code: 'DialogCanceled' });
-    delete this.dialog;
   }
 
   scheduleSave(data) {

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.RepositoryException;
@@ -27,7 +28,12 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogBehavior;
+import org.hippoecm.frontend.dialog.DialogManager;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.UserUtils;
@@ -72,16 +78,19 @@ class OpenUiBehavior extends Behavior {
 
     private final UiExtension extension;
     private final OpenUiPlugin openUiPlugin;
+    private final DialogBehavior dialogBehavior;
 
-    OpenUiBehavior(final OpenUiPlugin openUiPlugin, final String extensionName, final UiExtensionPoint extensionPoint) {
+    OpenUiBehavior(final OpenUiPlugin openUiPlugin, final String extensionName, final UiExtensionPoint extensionPoint,
+                   final IPluginContext context, final IPluginConfig config) {
         this.openUiPlugin = openUiPlugin;
-
-        extension = loadUiExtension(extensionName, extensionPoint).orElse(null);
+        this.extension = loadUiExtension(extensionName, extensionPoint).orElse(null);
+        dialogBehavior = new OpenUiDialogManager(context, config).getBehavior();
     }
 
-    public OpenUiBehavior(final OpenUiPlugin openUiPlugin, final UiExtension extension) {
+    OpenUiBehavior(final OpenUiPlugin openUiPlugin, final UiExtension extension) {
         this.openUiPlugin = openUiPlugin;
         this.extension = extension;
+        dialogBehavior = null;
     }
 
     private static Optional<UiExtension> loadUiExtension(final String extensionName, final UiExtensionPoint extensionPoint) {
@@ -103,6 +112,10 @@ class OpenUiBehavior extends Behavior {
     @Override
     public void bind(final Component component) {
         component.setOutputMarkupId(true);
+
+        if (dialogBehavior != null) {
+            component.add(dialogBehavior);
+        }
     }
 
     @Override
@@ -133,8 +146,11 @@ class OpenUiBehavior extends Behavior {
 
         parameters.put("iframeParentId", component.getMarkupId());
 
-        final UserSession userSession = UserSession.get();
+        if (dialogBehavior != null) {
+            parameters.put("dialogUrl", dialogBehavior.getCallbackUrl().toString());
+        }
 
+        final UserSession userSession = UserSession.get();
         addCmsVariables(parameters, userSession);
         addUserVariables(parameters, userSession);
 
@@ -166,4 +182,18 @@ class OpenUiBehavior extends Behavior {
         UserUtils.getUserName(userId, jcrSession)
                 .ifPresent(displayName -> parameters.put("userDisplayName", displayName));
     }
+
+    private class OpenUiDialogManager extends DialogManager<String> {
+
+        OpenUiDialogManager(final IPluginContext context, final IPluginConfig config) {
+            super(context, config);
+        }
+
+        @Override
+        protected Dialog<String> createDialog(final IPluginContext context, final IPluginConfig config,
+                                              final Map<String, String> parameters) {
+            return new OpenUiDialog(getUiExtension(), parameters);
+        }
+    }
+
 }
