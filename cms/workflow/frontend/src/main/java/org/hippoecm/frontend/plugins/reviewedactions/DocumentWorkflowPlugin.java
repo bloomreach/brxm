@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,15 +30,17 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
+
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-import org.hippoecm.frontend.model.BranchIdModel;
+
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -51,6 +53,7 @@ import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
+
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
@@ -60,7 +63,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -205,11 +207,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     }
 
                     @Override
-                    protected boolean checkPermissions() {
-                        return isWritePermissionGranted(destination.getChainedModel());
-                    }
-
-                    @Override
                     protected boolean checkFolderTypes() {
                         return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
                     }
@@ -275,11 +272,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         moveAction.invokeWorkflow();
-                    }
-
-                    @Override
-                    protected boolean checkPermissions() {
-                        return isWritePermissionGranted(destination.getChainedModel());
                     }
 
                     @Override
@@ -448,17 +440,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         return CodecUtils.getNodeNameCodec(getPluginContext(), locale);
     }
 
-    private static boolean isWritePermissionGranted(IModel<Node> model) {
-        Node node = model != null ? model.getObject() : null;
-        if (node != null) {
-            try {
-                return UserSession.get().getJcrSession().hasPermission(node.getPath(), JcrConstants.JCR_WRITE);
-            } catch (RepositoryException ignore) {
-            }
-        }
-        return false;
-    }
-
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
 
         try {
@@ -478,7 +459,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     }
 
                     log.debug("Document type {} {} allowed in folder {} by folderTypes {}",
-                            documentType, (allowedTypes.contains(documentType) ? "" : "NOT"),
+                            documentType, (allowedTypes.contains(documentType) ? "is" : "is NOT"),
                             destinationFolder.getObject().getPath(), allowedTypes);
                     return allowedTypes.contains(documentType);
                 }
