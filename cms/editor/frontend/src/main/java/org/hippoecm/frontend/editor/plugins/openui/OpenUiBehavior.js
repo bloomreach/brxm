@@ -142,6 +142,7 @@ OpenUi = new class {
         config: extensionConfig,
       },
       locale: cmsLocale,
+      styling: 'classic',
       timeZone: cmsTimeZone,
       user: {
         id: userId,
