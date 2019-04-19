@@ -51,9 +51,7 @@ class OpenUiDialog {
           resolve();
         }],
         fh: [(jqEvent, attributes) => {
-          const errorMsg = `Failed to close dialog. Server responded with status ${attributes.status}.`;
-          console.error(errorMsg);
-          reject(new Error(errorMsg));
+          reject(new Error(`Failed to close dialog. Server responded with status ${attributes.status}.`));
         }],
       });
     });
