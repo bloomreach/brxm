@@ -226,17 +226,4 @@ describe('iframeExtension', () => {
       });
     });
   });
-
-  describe('openDialog', () => {
-    it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
-      OpenUiService.openDialog.and.returnValue($q.resolve('test-value'));
-
-      $ctrl.openDialog().then((value) => {
-        expect(OpenUiService.openDialog).toHaveBeenCalled();
-        expect(value).toBe('test-value');
-        done();
-      });
-      $rootScope.$digest();
-    });
-  });
 });

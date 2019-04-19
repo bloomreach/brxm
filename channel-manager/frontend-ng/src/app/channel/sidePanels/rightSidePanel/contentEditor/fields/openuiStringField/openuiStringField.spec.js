@@ -18,8 +18,6 @@ describe('OpenuiStringField', () => {
   let $componentController;
   let $ctrl;
   let $element;
-  let $q;
-  let $rootScope;
   let mdInputContainer;
   let ngModel;
   let ContentEditor;
@@ -33,15 +31,11 @@ describe('OpenuiStringField', () => {
 
     inject((
       _$componentController_,
-      _$q_,
-      _$rootScope_,
       _ContentEditor_,
       _ExtensionService_,
       _OpenUiService_,
     ) => {
       $componentController = _$componentController_;
-      $q = _$q_;
-      $rootScope = _$rootScope_;
       ContentEditor = _ContentEditor_;
       ExtensionService = _ExtensionService_;
       OpenUiService = _OpenUiService_;
@@ -214,19 +208,6 @@ describe('OpenuiStringField', () => {
       it('is set to the id of the document variant', () => {
         expect($ctrl.getDocument().variant.id).toBe('variant-id');
       });
-    });
-  });
-
-  describe('openDialog', () => {
-    it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
-      spyOn(OpenUiService, 'openDialog').and.returnValue($q.resolve('test-value'));
-
-      $ctrl.openDialog().then((value) => {
-        expect(OpenUiService.openDialog).toHaveBeenCalled();
-        expect(value).toBe('test-value');
-        done();
-      });
-      $rootScope.$digest();
     });
   });
 });

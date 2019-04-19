@@ -52,6 +52,7 @@ export default class OpenUiService {
           ...options.methods,
           getProperties: this.getProperties.bind(this, extension),
           emitEvent: emitter.emit.bind(emitter),
+          openDialog: dialogOptions => this.openDialog(dialogOptions, extensionId),
         },
       });
 
@@ -86,7 +87,7 @@ export default class OpenUiService {
    * Opens a dialog.
    * Note that we cannot throw Errors because in that case Penpal does not transfer the code property correctly.
    */
-  async openDialog(locals) {
+  async openDialog(dialogOptions, extensionId) {
     if (this.isDialogOpen) {
       throw { code: 'DialogExists', message: 'A dialog already exists' }; // eslint-disable-line no-throw-literal
     }
@@ -95,7 +96,7 @@ export default class OpenUiService {
       this.isDialogOpen = true;
       return await this.DialogService.show(angular.extend({
         clickOutsideToClose: true,
-        locals,
+        locals: { dialogOptions, extensionId },
         template: dialogTemplate,
         controller: 'OpenuiDialogCtrl',
         controllerAs: '$ctrl',

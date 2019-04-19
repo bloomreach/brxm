@@ -65,7 +65,6 @@ export default class IframeExtensionCtrl {
       appendTo: this.$element[0],
       methods: {
         getPage: () => this.context,
-        openDialog: this.openDialog.bind(this),
         refreshChannel: () => this.ChannelService.reload(),
         refreshPage: () => this.HippoIframeService.reload(),
       },
@@ -85,9 +84,5 @@ export default class IframeExtensionCtrl {
         this.child.emitEvent('channel.page.navigate', this.context);
       }
     }
-  }
-
-  openDialog(options) {
-    return this.OpenUiService.openDialog({ dialogOptions: options, extensionId: this.extensionId });
   }
 }

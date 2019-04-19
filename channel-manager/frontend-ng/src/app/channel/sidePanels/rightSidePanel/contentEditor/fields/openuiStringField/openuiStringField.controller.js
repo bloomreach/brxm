@@ -60,7 +60,6 @@ export default class OpenuiStringFieldController {
         getFieldValue: this.getValue.bind(this),
         setFieldValue: this.setValue.bind(this),
         setFieldHeight: this.setHeight.bind(this),
-        openDialog: this.openDialog.bind(this),
       },
     });
     await this.connection.promise;
@@ -109,9 +108,5 @@ export default class OpenuiStringFieldController {
         id: document.variantId,
       },
     };
-  }
-
-  openDialog(options) {
-    return this.OpenUiService.openDialog({ dialogOptions: options, extensionId: this.extensionId });
   }
 }

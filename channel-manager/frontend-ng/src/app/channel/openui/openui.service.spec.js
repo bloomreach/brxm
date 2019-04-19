@@ -209,11 +209,23 @@ describe('OpenUiService', () => {
   });
 
   describe('openDialog', () => {
+    let dialogOptions;
+    let extensionId;
+
+    beforeEach(() => {
+      dialogOptions = {
+        title: 'Test',
+      };
+      extensionId = 'extensionId';
+    });
+
     it('opens a dialog and returns a value when the dialog is confirmed', (done) => {
       DialogService.show.and.returnValue($q.resolve('test-value'));
 
-      OpenUiService.openDialog().then((value) => {
-        expect(DialogService.show).toHaveBeenCalled();
+      OpenUiService.openDialog(dialogOptions, extensionId).then((value) => {
+        expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining({
+          locals: { dialogOptions, extensionId },
+        }));
         expect(value).toBe('test-value');
         expect(OpenUiService.isDialogOpen).toBe(false);
         done();
@@ -224,9 +236,11 @@ describe('OpenUiService', () => {
     it('rejects with DialogCanceled when the dialog is canceled', (done) => {
       DialogService.show.and.returnValue($q.reject());
 
-      OpenUiService.openDialog().catch((value) => {
+      OpenUiService.openDialog(dialogOptions, extensionId).catch((value) => {
         expect(value).toEqual({ code: 'DialogCanceled', message: 'The dialog is canceled' });
-        expect(DialogService.show).toHaveBeenCalled();
+        expect(DialogService.show).toHaveBeenCalledWith(jasmine.objectContaining({
+          locals: { dialogOptions, extensionId },
+        }));
         expect(OpenUiService.isDialogOpen).toBe(false);
         done();
       });
@@ -235,7 +249,7 @@ describe('OpenUiService', () => {
 
     it('rejects with DialogExists when another dialog is already open', (done) => {
       OpenUiService.isDialogOpen = true;
-      OpenUiService.openDialog({}).catch((error) => {
+      OpenUiService.openDialog(dialogOptions, extensionId).catch((error) => {
         expect(DialogService.show).not.toHaveBeenCalled();
         expect(error).toEqual({ code: 'DialogExists', message: 'A dialog already exists' });
         expect(OpenUiService.isDialogOpen).toBe(true);
