@@ -154,14 +154,16 @@ OpenUi = new class {
   }
 
   openDialog(options, parameters) {
-    if (!parameters.dialogUrl) {
-      return Promise.reject(new Error('Can not open dialog, parameter "dialogUrl" is not defined.'));
-    }
-
     if (this.dialog) {
-      return Promise.reject(new Error('A dialog is already open.'));
+      return Promise.reject({
+        code: 'DialogExists',
+        message: 'A dialog already exists'
+      });
     }
 
+    if (!parameters.dialogUrl) {
+      throw new Error('Cannot open dialog, parameter "dialogUrl" is not defined.');
+    }
 
     return new Promise((resolve, reject) => {
       this.dialog = {
@@ -192,7 +194,10 @@ OpenUi = new class {
       return;
     }
 
-    this.dialog.reject({ code: 'DialogCanceled' });
+    this.dialog.reject({
+      code: 'DialogCanceled',
+      message: 'The dialog is canceled',
+    });
     delete this.dialog;
   }
 };
