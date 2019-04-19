@@ -26,7 +26,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.dialog.ScriptAction;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 
@@ -45,7 +44,7 @@ public class OpenUiDialog extends Dialog<String> implements OpenUiPlugin {
         setCssClass("openui-dialog");
 
         // Invoked when the uses presses the (X)
-        setCancelAction((ScriptAction<String>) model -> "OpenUi.cancelDialog();");
+        setCancelAction(model -> "OpenUi.cancelDialog();");
 
         final Panel openUiPanel = new EmptyPanel("dialog-body");
         openUiPanel.add(new OpenUiBehavior(this, extension));
