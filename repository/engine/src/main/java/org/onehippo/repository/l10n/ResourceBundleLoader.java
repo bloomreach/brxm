@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.text.StringSubstitutor;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
@@ -201,6 +202,15 @@ class ResourceBundleLoader {
             return null;
         }
 
+        /**
+         * {@inheritDoc}
+         * For the replacement {@link org.apache.commons.text.StringSubstitutor} is used.
+         */
+        @Override
+        public <V> String getString(final String key, final Map<String, V> parameters) {
+            return new StringSubstitutor(parameters).replace(getString(key));
+        }
+        
         @Override
         public java.util.ResourceBundle toJavaResourceBundle() {
             return new ResourceBundleDecorator(this);

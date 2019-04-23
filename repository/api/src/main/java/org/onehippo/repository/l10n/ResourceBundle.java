@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.repository.l10n;
 
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A {@link ResourceBundle} is a set of Strings identified by keys
@@ -47,6 +48,19 @@ public interface ResourceBundle {
      * @return  the String identified by a {@code key}
      */
     String getString(String key);
+
+    /**
+     * Gets the {@link Locale}-specific translation identified by a given {@code key}. If a String is not defined in
+     * this bundle the call is forwarded to the parent bundle.
+     * <p/>
+     * Variables in the string can be replaced by supplying parameters. The default definition of a variable is
+     * <code>${variableName}</code>.
+     *
+     * @param key        a {@code key} identifying a String
+     * @param parameters a map of names and values to replace variables
+     * @return the String identified by a {@code key} with replaced variables
+     */
+    <V> String getString(String key, Map<String, V> parameters);
 
     default java.util.ResourceBundle toJavaResourceBundle() {
         return null;
