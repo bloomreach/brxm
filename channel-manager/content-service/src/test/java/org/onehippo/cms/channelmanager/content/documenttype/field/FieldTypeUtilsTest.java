@@ -49,7 +49,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Fie
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -59,10 +59,12 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -205,9 +207,9 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void getValidatorIgnoresBlankNames() {
-        assertNull(FieldTypeUtils.getValidator(null, null));
-        assertNull(FieldTypeUtils.getValidator("", null));
-        assertNull(FieldTypeUtils.getValidator(" ", null));
+        assertNull(FieldTypeUtils.getValidator(null));
+        assertNull(FieldTypeUtils.getValidator(""));
+        assertNull(FieldTypeUtils.getValidator(" "));
     }
 
     @Test
@@ -215,55 +217,50 @@ public class FieldTypeUtilsTest {
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(null);
         replayAll();
 
-        FieldTypeUtils.getValidator("test", null);
+        FieldTypeUtils.getValidator("test");
         verifyAll();
     }
 
     @Test
     public void getUnknownValidator() {
         ValidationService validationService = createMock(ValidationService.class);
-        FieldValidationContext validationContext = createMock(FieldValidationContext.class);
 
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         expect(validationService.getValidator("test")).andReturn(null);
 
         replayAll();
 
-        final Validator test = FieldTypeUtils.getValidator("test", validationContext);
+        final Validator test = FieldTypeUtils.getValidator("test");
         assertNull(test);
         verifyAll();
     }
 
     @Test
-    public void getKnownValidator() throws InvalidValidatorException {
+    public void getKnownValidator() throws ValidationContextException {
         ValidationService validationService = createMock(ValidationService.class);
         Validator validator = createMock(Validator.class);
-        FieldValidationContext validationContext = createMock(FieldValidationContext.class);
 
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         expect(validationService.getValidator("test")).andReturn(validator);
-        validator.init(eq(validationContext));
         expectLastCall();
         replayAll();
 
-        final Validator test = FieldTypeUtils.getValidator("test", validationContext);
+        final Validator test = FieldTypeUtils.getValidator("test");
         assertNotNull(test);
         verifyAll();
     }
 
     @Test
-    public void getMisconfiguredValidator() throws InvalidValidatorException {
+    public void getMisconfiguredValidator() throws ValidationContextException {
         ValidationService validationService = createMock(ValidationService.class);
         Validator validator = createMock(Validator.class);
-        FieldValidationContext validationContext = createMock(FieldValidationContext.class);
 
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         expect(validationService.getValidator("test")).andReturn(validator);
-        validator.init(eq(validationContext));
-        expectLastCall().andThrow(new InvalidValidatorException("Something's wrong"));
+        expectLastCall().andThrow(new ValidationContextException("Something's wrong"));
         replayAll();
 
-        final Validator test = FieldTypeUtils.getValidator("test", validationContext);
+        final Validator test = FieldTypeUtils.getValidator("test");
         assertNull(test);
         verifyAll();
     }

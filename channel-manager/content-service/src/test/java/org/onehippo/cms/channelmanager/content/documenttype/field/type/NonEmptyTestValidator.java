@@ -19,22 +19,13 @@ import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Violation;
 
 public class NonEmptyTestValidator implements Validator {
 
     @Override
-    public String getName() {
-        return "non-empty";
-    }
-
-    @Override
-    public void init(final ValidatorContext context) {
-    }
-
-    @Override
-    public Optional<Violation> validate(final ValidatorContext context, final String value) {
+    public Optional<Violation> validate(final ValidationContext context, final String value) {
         if (StringUtils.isEmpty(value)) {
             return Optional.of(() -> "Not empty: '" + value + "'");
         }

@@ -99,7 +99,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      * @return whether the validator deemed the value valid
      */
     private boolean validateValue(final FieldValue value, final String validatorName) {
-        final Validator validator = FieldTypeUtils.getValidator(validatorName, validationContext);
+        final Validator validator = FieldTypeUtils.getValidator(validatorName);
         if (validator == null) {
             log.warn("Failed to find validator '{}', ignoring it", validatorName);
             return true;

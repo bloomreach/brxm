@@ -66,7 +66,7 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -213,7 +213,7 @@ public class FieldTypeUtils {
         }
     }
 
-    public static Validator getValidator(final String validatorName, final FieldValidationContext validationContext) {
+    public static Validator getValidator(final String validatorName) {
         if (StringUtils.isBlank(validatorName)) {
             return null;
         }
@@ -225,17 +225,7 @@ public class FieldTypeUtils {
             return null;
         }
 
-        try {
-            final Validator validator = validationService.getValidator(validatorName);
-            if (validator != null) {
-                validator.init(validationContext);
-                return validator;
-            }
-        } catch (InvalidValidatorException e) {
-            log.warn("Ignoring invalid validator '{}': {}", validatorName, e.getMessage());
-        }
-
-        return null;
+        return validationService.getValidator(validatorName);
     }
 
     /**

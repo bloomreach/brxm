@@ -19,9 +19,11 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 import java.util.Locale;
 
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 
-public class FieldValidationContext implements ValidatorContext {
+public class FieldValidationContext implements ValidationContext {
 
     private final String name;
     private final String type;
@@ -48,4 +50,15 @@ public class FieldValidationContext implements ValidatorContext {
         return locale;
     }
 
+    @Override
+    public Violation createViolation(final Validator validator, final Object... parameters) {
+        // TODO implement creation of translated violations
+        return null;
+    }
+
+    @Override
+    public Violation createViolation(final Validator validator, final String key, final Object... parameters) {
+        // TODO implement creation of translated violations
+        return null;
+    }
 }
