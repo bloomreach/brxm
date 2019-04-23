@@ -27,10 +27,10 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +54,8 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     @Override
-    public void preValidation(final IFieldValidator fieldValidator) throws ValidationException {
-        final Validator validator = getValidator(name);
-        if (validator == null) {
-            return;
-        }
-
-        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
-        try {
-            validator.init(context);
-        } catch (final InvalidValidatorException e) {
-            throw new ValidationException(e);
-        }
+    public void preValidation(final IFieldValidator fieldValidator) {
+        // nothing to do, any pre-validation is done as part of the validate() call
     }
 
     private static Validator getValidator(final String name) {
@@ -88,7 +78,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
 
         final String value = getString(valueModel);
-        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
+        final ValidationContext context = new CmsValidationFieldContext(fieldValidator);
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, value);
             return violation.isPresent()

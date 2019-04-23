@@ -19,14 +19,16 @@ import java.util.Locale;
 
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IFieldValidator;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 
-public class CmsValidatorFieldContext implements ValidatorContext {
+public class CmsValidationFieldContext implements ValidationContext {
 
     private final String name;
     private final String type;
 
-    CmsValidatorFieldContext(final IFieldValidator fieldValidator) {
+    CmsValidationFieldContext(final IFieldValidator fieldValidator) {
         name = fieldValidator.getFieldType().getName();
         type = fieldValidator.getFieldType().getType();
     }
@@ -46,4 +48,15 @@ public class CmsValidatorFieldContext implements ValidatorContext {
         return UserSession.get().getLocale();
     }
 
+    @Override
+    public Violation createViolation(final Validator validator, final Object... parameters) {
+        // TODO implement creation of translated violations
+        return null;
+    }
+
+    @Override
+    public Violation createViolation(final Validator validator, final String key, final Object... parameters) {
+        // TODO implement creation of translated violations
+        return null;
+    }
 }
