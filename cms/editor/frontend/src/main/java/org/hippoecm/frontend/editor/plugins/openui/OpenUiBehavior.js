@@ -14,47 +14,6 @@
  * limitations under the License.
  */
 
-class Emitter {
-  constructor() {
-    this._events = new Map();
-  }
-
-  on(eventName, listener) {
-    this._assertEventName(eventName);
-    this._assertListener(listener);
-    this._getListeners(eventName).add(listener);
-  }
-
-  emit(eventName, eventData) {
-    this._assertEventName(eventName);
-    this._getListeners(eventName)
-      .forEach(listener => listener(eventData));
-  }
-
-  clearListeners() {
-    this._events.clear();
-  }
-
-  _getListeners(eventName) {
-    if (!this._events.has(eventName)) {
-      this._events.set(eventName, new Set());
-    }
-    return this._events.get(eventName);
-  }
-
-  _assertEventName(eventName) {
-    if (typeof eventName !== 'string') {
-      throw new TypeError('eventName must be a string');
-    }
-  }
-
-  _assertListener(listener) {
-    if (typeof listener !== 'function') {
-      throw new TypeError('listener must be a function');
-    }
-  }
-}
-
 OpenUi = new class {
 
   constructor() {
@@ -248,3 +207,44 @@ OpenUi = new class {
     delete this.dialog;
   }
 };
+
+class Emitter {
+  constructor() {
+    this._events = new Map();
+  }
+
+  on(eventName, listener) {
+    this._assertEventName(eventName);
+    this._assertListener(listener);
+    this._getListeners(eventName).add(listener);
+  }
+
+  emit(eventName, eventData) {
+    this._assertEventName(eventName);
+    this._getListeners(eventName)
+      .forEach(listener => listener(eventData));
+  }
+
+  clearListeners() {
+    this._events.clear();
+  }
+
+  _getListeners(eventName) {
+    if (!this._events.has(eventName)) {
+      this._events.set(eventName, new Set());
+    }
+    return this._events.get(eventName);
+  }
+
+  _assertEventName(eventName) {
+    if (typeof eventName !== 'string') {
+      throw new TypeError('eventName must be a string');
+    }
+  }
+
+  _assertListener(listener) {
+    if (typeof listener !== 'function') {
+      throw new TypeError('listener must be a function');
+    }
+  }
+}

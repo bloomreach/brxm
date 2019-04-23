@@ -14,63 +14,6 @@
  * limitations under the License.
  */
 
-class AutoSaveElement {
-
-  constructor(id, url, delay) {
-    this.element = document.getElementById(id);
-    this.url = url;
-    this.delay = delay;
-
-    this.savePending = false;
-    this.saveTimeout = null;
-  }
-
-  setValue(value) {
-    this.element.value = value;
-
-    if (this.savePending || this.saveTimeout) {
-      this.scheduleSave();
-    } else {
-      this.save();
-    }
-  }
-
-  getValue() {
-    return this.element.value;
-  }
-
-  save() {
-    this.savePending = true;
-    Wicket.Ajax.post({
-      u: this.url,
-      ep: {
-        data: this.element.value
-      },
-      coh: [() => this.savePending = false],
-    });
-  }
-
-  scheduleSave() {
-    this.clearScheduledSave();
-    this.saveTimeout = setTimeout(() => {
-      this.saveTimeout = null;
-      this.save();
-    }, this.delay);
-  }
-
-  clearScheduledSave() {
-    clearTimeout(this.saveTimeout);
-    this.saveTimeout = null;
-  }
-
-  blur() {
-    if (this.saveTimeout) {
-      this.clearScheduledSave();
-      this.save();
-    }
-  }
-}
-
 class OpenUiStringPlugin {
 
   constructor(parameters) {
@@ -138,3 +81,60 @@ class OpenUiStringPlugin {
 }
 
 OpenUi.registerClass(OpenUiStringPlugin);
+
+class AutoSaveElement {
+
+  constructor(id, url, delay) {
+    this.element = document.getElementById(id);
+    this.url = url;
+    this.delay = delay;
+
+    this.savePending = false;
+    this.saveTimeout = null;
+  }
+
+  setValue(value) {
+    this.element.value = value;
+
+    if (this.savePending || this.saveTimeout) {
+      this.scheduleSave();
+    } else {
+      this.save();
+    }
+  }
+
+  getValue() {
+    return this.element.value;
+  }
+
+  save() {
+    this.savePending = true;
+    Wicket.Ajax.post({
+      u: this.url,
+      ep: {
+        data: this.element.value
+      },
+      coh: [() => this.savePending = false],
+    });
+  }
+
+  scheduleSave() {
+    this.clearScheduledSave();
+    this.saveTimeout = setTimeout(() => {
+      this.saveTimeout = null;
+      this.save();
+    }, this.delay);
+  }
+
+  clearScheduledSave() {
+    clearTimeout(this.saveTimeout);
+    this.saveTimeout = null;
+  }
+
+  blur() {
+    if (this.saveTimeout) {
+      this.clearScheduledSave();
+      this.save();
+    }
+  }
+}
