@@ -17,57 +17,47 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.NodeReferenceValidator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.repository.util.JcrConstants;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertFalse;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 public class NodeReferenceValidatorTest {
 
-    private ValidatorContext context;
+    private ValidationContext context;
     private NodeReferenceValidator validator;
 
     @Before
     public void setUp() {
-        final ValidatorConfig config = createMock(ValidatorConfig.class);
-        context = createMock(ValidatorContext.class);
-        validator = new NodeReferenceValidator(config);
+        validator = new NodeReferenceValidator();
     }
 
-    @Test(expected = InvalidValidatorException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
-        expect(context.getType()).andReturn("not-a-string");
-        replayAll();
-
-        validator.init(context);
-    }
-
-    @Test
-    public void initializesIfFieldIsOfTypeString() throws Exception {
-        expect(context.getType()).andReturn("String");
-        replayAll();
-
-        validator.init(context);
-        verifyAll();
+    @Test(expected = ValidationContextException.class)
+    public void throwsExceptionIfFieldIsNotOfTypeString() {
+        context = new TestValidationContext("not-a-string", null);
+        validator.validate(context, null);
     }
 
     @Test
     public void blankStringIsInvalid() {
-        assertFalse(validator.isValid(context, null));
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
+        context = new TestValidationContext("String", null);
+
+        assertInvalid(validator.validate(context, null));
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
     }
 
     @Test
     public void jcrRootNodeIdentifierIsInvalid() {
-        assertFalse(validator.isValid(context, JcrConstants.ROOT_NODE_ID));
-    }
+        context = new TestValidationContext("String", null);
 
+        assertInvalid(validator.validate(context, JcrConstants.ROOT_NODE_ID));
+    }
 }

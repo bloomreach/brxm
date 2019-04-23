@@ -15,13 +15,18 @@
  */
 package org.onehippo.cms.services.validation.api;
 
-public class InvalidValidatorException extends Exception {
+import java.util.Locale;
 
-    public InvalidValidatorException(final String message) {
-        super(message);
-    }
+public interface ValidationContext {
 
-    public InvalidValidatorException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+    String getName();
+    
+    String getType();
+
+    Locale getLocale();
+
+    Violation createViolation(Validator validator, Object... parameters);
+
+    Violation createViolation(Validator validator, String key, Object... parameters);
+
 }

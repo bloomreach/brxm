@@ -15,14 +15,13 @@
  */
 package org.onehippo.cms.services.validation.api;
 
-import java.util.Locale;
+public class ValidationContextException extends RuntimeException {
 
-public interface ValidatorContext {
+    public ValidationContextException(final String message) {
+        super(message);
+    }
 
-    String getName();
-    
-    String getType();
-
-    Locale getLocale();
-
+    public ValidationContextException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

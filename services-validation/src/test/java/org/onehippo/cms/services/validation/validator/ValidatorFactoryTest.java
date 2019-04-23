@@ -18,12 +18,11 @@ package org.onehippo.cms.services.validation.validator;
 import java.util.Optional;
 
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.ValidatorFactory;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.expect;
@@ -78,26 +77,13 @@ public class ValidatorFactoryTest {
     }
 
     private static class BaseMockValidator implements Validator {
-
         @Override
-        public String getName() {
-            return null;
-        }
-
-        @Override
-        public void init(final ValidatorContext context) throws InvalidValidatorException {
-        }
-
-        @Override
-        public Optional<Violation> validate(final ValidatorContext context, final String value) {
+        public Optional<Violation> validate(final ValidationContext context, final String value) {
             return Optional.empty();
         }
-
     }
 
     private static class MockValidator extends BaseMockValidator {
-        public MockValidator(final ValidatorConfig config) {
-        }
     }
 
 }

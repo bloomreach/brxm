@@ -15,34 +15,33 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 
 /**
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
  * node.
  */
-public class NodeReferenceValidator extends AbstractFieldValidator {
+public class NodeReferenceValidator implements Validator {
 
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
-    public NodeReferenceValidator(final ValidatorConfig config) {
-        super(config);
-    }
-
     @Override
-    public void init(final ValidatorContext context) throws InvalidValidatorException {
+    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
         if (!"String".equals(context.getType())) {
-            throw new InvalidValidatorException("Invalid validation exception; cannot validate non-string field for " +
+            throw new ValidationContextException("Invalid validation exception; cannot validate non-string field for " +
                     "emptiness");
         }
-    }
 
-    @Override
-    public boolean isValid(final ValidatorContext context, final String value) {
-        return StringUtils.isNotBlank(value) && !value.equals(ROOT_NODE_UUID);
-    }
+        if (StringUtils.isBlank(value) || value.equals(ROOT_NODE_UUID)) {
+            return Optional.of(context.createViolation(this));
+        }
 
+        return Optional.empty();
+    }
 }

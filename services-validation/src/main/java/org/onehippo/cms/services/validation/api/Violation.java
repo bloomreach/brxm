@@ -18,4 +18,5 @@ package org.onehippo.cms.services.validation.api;
 public interface Violation {
 
     String getMessage();
+
 }

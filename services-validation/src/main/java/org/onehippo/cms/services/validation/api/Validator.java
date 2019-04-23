@@ -15,15 +15,10 @@
  */
 package org.onehippo.cms.services.validation.api;
 
-import java.io.Serializable;
 import java.util.Optional;
 
-public interface Validator extends Serializable {
+public interface Validator {
 
-    String getName();
-
-    void init(ValidatorContext context) throws InvalidValidatorException;
-
-    Optional<Violation> validate(ValidatorContext context, String value);
+    Optional<Violation> validate(ValidationContext context, String value) throws ValidationContextException;
 
 }

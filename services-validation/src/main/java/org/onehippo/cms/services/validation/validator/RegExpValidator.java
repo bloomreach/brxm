@@ -15,43 +15,45 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
  * <p>
  * Use property "regexp.pattern" to set the required expression.
  */
-public class RegExpValidator extends AbstractFieldValidator {
+public class RegExpValidator implements Validator {
 
     private final Pattern pattern;
 
     private final static String PATTERN_KEY = "regexp.pattern";
 
-    public RegExpValidator(final ValidatorConfig config) throws InvalidValidatorException {
-        super(config);
-
-        if (config.hasProperty(PATTERN_KEY)) {
-            pattern = Pattern.compile(config.getProperty(PATTERN_KEY));
+    public RegExpValidator(final Map<String, String> properties) throws ValidationContextException {
+        if (properties.containsKey(PATTERN_KEY)) {
+            pattern = Pattern.compile(properties.get(PATTERN_KEY));
         } else {
-            throw new InvalidValidatorException(
-                    "Missing required property 'regexp.pattern' on validator '" + config.getName() + "'");
+            throw new ValidationContextException(
+                    "Missing required property 'regexp.pattern'");
         }
     }
 
     @Override
-    public void init(final ValidatorContext context) throws InvalidValidatorException {
+    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
         if (!"string".equalsIgnoreCase(context.getType())) {
-            throw new InvalidValidatorException("Cannot validate non-string field with a regular expression");
+            throw new ValidationContextException("Cannot validate non-string field with a regular expression");
         }
-    }
 
-    @Override
-    public boolean isValid(final ValidatorContext context, final String value) {
-        return pattern.matcher(value).find();
+        if (pattern.matcher(value).find()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(context.createViolation(this));
     }
 }

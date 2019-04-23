@@ -17,100 +17,89 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 public class NonEmptyHtmlValidatorTest {
 
-    private ValidatorContext context;
+    private ValidationContext context;
     private NonEmptyHtmlValidator validator;
 
     @Before
     public void setUp() {
-        final ValidatorConfig config = createMock(ValidatorConfig.class);
-        context = createMock(ValidatorContext.class);
-        validator = new NonEmptyHtmlValidator(config);
+        context = new TestValidationContext("String", null);
+        validator = new NonEmptyHtmlValidator();
     }
 
-    @Test(expected = InvalidValidatorException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
-        expect(context.getType()).andReturn("not-a-string");
-        replayAll();
-
-        validator.init(context);
+    @Test(expected = ValidationContextException.class)
+    public void throwsExceptionIfFieldIsNotOfTypeString() {
+        context = new TestValidationContext("not-a-string", null);
+        validator.validate(context, null);
     }
 
     @Test
-    public void initializesIfFieldIsOfTypeString() throws Exception {
-        expect(context.getType()).andReturn("String");
-        expect(context.getName()).andReturn("CustomHtml");
-        replayAll();
-
-        validator.init(context);
-
-        verifyAll();
+    public void initializesIfFieldIsOfTypeString() {
+        context = new TestValidationContext("String", "CustomHtml");
+        validator.validate(context, null);
     }
 
     @Test
-    public void warnsIfValidatorIsUsedWithHtmlField() throws Exception {
-        expect(context.getType()).andReturn("String");
-        expect(context.getName()).andReturn("Html");
-        replayAll();
+    public void warnsIfValidatorIsUsedWithHtmlField() {
+        context = new TestValidationContext("String", "Html");
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
             try {
-                validator.init(context);
+                validator.validate(context, null);
             } finally {
                 assertEquals(1L, listener.messages().count());
-                verifyAll();
             }
         }
     }
 
     @Test
     public void textIsValid() {
-        assertTrue(validator.isValid(context, "text"));
+        assertValid(validator.validate(context, "text"));
     }
 
     @Test
     public void paragraphWithTextIsValid() {
-        assertTrue(validator.isValid(context, "<p>text</p>"));
+        assertValid(validator.validate(context, "<p>text</p>"));
     }
     @Test
     public void imgIsValid() {
-        assertTrue(validator.isValid(context, "<img src=\"empty.gif\">"));
+        assertValid(validator.validate(context, "<img src=\"empty.gif\">"));
     }
 
     @Test
     public void nullIsInvalid() {
-        assertFalse(validator.isValid(context, null));
+        assertInvalid(validator.validate(context, null));
     }
 
     @Test
     public void blankStringIsInvalid() {
-        assertFalse(validator.isValid(context, ""));
-        assertFalse(validator.isValid(context, " "));
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
     }
 
     @Test
     public void emptyHtmlIsInvalid() {
-        assertFalse(validator.isValid(context, "<html></html>"));
+        assertInvalid(validator.validate(context, "<html></html>"));
     }
 
     @Test
     public void emptyParagraphInvalid() {
-        assertFalse(validator.isValid(context, "<p></p>"));
+        assertInvalid(validator.validate(context, "<p></p>"));
     }
 
 }

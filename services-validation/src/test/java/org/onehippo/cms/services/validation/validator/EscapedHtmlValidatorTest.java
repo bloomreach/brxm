@@ -17,58 +17,54 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.EscapedHtmlValidator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
 
 public class EscapedHtmlValidatorTest {
 
-    private ValidatorContext context;
+    private ValidationContext context;
     private EscapedHtmlValidator validator;
 
     @Before
     public void setUp() {
-        final ValidatorConfig config = createMock(ValidatorConfig.class);
-        context = createMock(ValidatorContext.class);
-        validator = new EscapedHtmlValidator(config);
+        context = new TestValidationContext();
+        validator = new EscapedHtmlValidator();
     }
 
     @Test
     public void textContainingCommonCharactersIsValid() {
-        assertTrue(validator.isValid(context, "abcdefghijklmnopqrstuvwxyz"));
-        assertTrue(validator.isValid(context, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-        assertTrue(validator.isValid(context, "12345567890"));
-        assertTrue(validator.isValid(context, "\f\n\t\n"));
-        assertTrue(validator.isValid(context, "!@#$%^*()-_+=±§{}[]:;|\\,.?/~`"));
+        assertValid(validator.validate(context, "abcdefghijklmnopqrstuvwxyz"));
+        assertValid(validator.validate(context, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+        assertValid(validator.validate(context, "12345567890"));
+        assertValid(validator.validate(context, "\f\n\t\n"));
+        assertValid(validator.validate(context, "!@#$%^*()-_+=±§{}[]:;|\\,.?/~`"));
     }
 
     @Test
     public void textContainingLesserThanIsInvalid() {
-        assertFalse(validator.isValid(context, "<"));
+        assertInvalid(validator.validate(context, "<"));
     }
 
     @Test
     public void textContainingGreaterThanIsInvalid() {
-        assertFalse(validator.isValid(context, ">"));
+        assertInvalid(validator.validate(context, ">"));
     }
 
     @Test
     public void textContainingAmpersandIsInvalid() {
-        assertFalse(validator.isValid(context, "&"));
+        assertInvalid(validator.validate(context, "&"));
     }
 
     @Test
     public void textContainingSingleQuoteIsInvalid() {
-        assertFalse(validator.isValid(context, "'"));
+        assertInvalid(validator.validate(context, "'"));
     }
 
     @Test
     public void textContainingDoubleQuoteIsInvalid() {
-        assertFalse(validator.isValid(context, "\""));
+        assertInvalid(validator.validate(context, "\""));
     }
 
 }

@@ -15,72 +15,59 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.validator.RegExpValidator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
 
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
+import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
 
 public class RegExpValidatorTest {
 
-    private ValidatorContext context;
-    private RegExpValidator validator;
-    private ValidatorConfig config;
+    private ValidationContext context;
+    private Map<String, String> parameters;
 
     @Before
     public void setUp() {
-        config = createMock(ValidatorConfig.class);
-        context = createMock(ValidatorContext.class);
+        parameters = new HashMap<>();
+        parameters.put("regexp.pattern", "[abc]");
     }
 
-    @Test(expected = InvalidValidatorException.class)
-    public void throwsExceptionIfRegexpPatternPropertyIsMissing() throws Exception {
-        expect(config.hasProperty("regexp.pattern")).andReturn(false);
-        expect(config.getName()).andReturn("regexp");
-        replayAll();
-
-        validator = new RegExpValidator(config);
+    @Test(expected = ValidationContextException.class)
+    public void throwsExceptionIfRegexpPatternPropertyIsMissing() {
+        new RegExpValidator(Collections.emptyMap());
     }
 
-    @Test(expected = InvalidValidatorException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() throws Exception {
-        expect(config.hasProperty("regexp.pattern")).andReturn(true);
-        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
-        expect(context.getType()).andReturn("not-a-string");
-        replayAll();
+    @Test(expected = ValidationContextException.class)
+    public void throwsExceptionIfFieldIsNotOfTypeString() {
+        context = new TestValidationContext("not-a-string", null);
 
-        validator = new RegExpValidator(config);
-        validator.init(context);
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("regexp.pattern", "[abc]");
+
+        final Validator validator = new RegExpValidator(parameters);
+        validator.validate(context, null);
     }
 
     @Test
-    public void testValidInput() throws Exception {
-        expect(config.hasProperty("regexp.pattern")).andReturn(true);
-        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
-        replayAll();
+    public void testValidInput() {
+        context = new TestValidationContext("String", null);
 
-        validator = new RegExpValidator(config);
-        assertTrue(validator.isValid(context, "abc"));
-        verifyAll();
+        final Validator validator = new RegExpValidator(parameters);
+        assertValid(validator.validate(context, "abc"));
     }
 
     @Test
-    public void testInvalidInput() throws Exception {
-        expect(config.hasProperty("regexp.pattern")).andReturn(true);
-        expect(config.getProperty("regexp.pattern")).andReturn("[abc]");
-        replayAll();
+    public void testInvalidInput() {
+        context = new TestValidationContext("String", null);
 
-        validator = new RegExpValidator(config);
-        assertFalse(validator.isValid(context, "xyz"));
-        verifyAll();
+        final Validator validator = new RegExpValidator(parameters);
+        assertInvalid(validator.validate(context, "xyz"));
     }
-
 }

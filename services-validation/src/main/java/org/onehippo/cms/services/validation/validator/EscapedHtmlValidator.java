@@ -15,25 +15,27 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Violation;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
  */
-public class EscapedHtmlValidator extends AbstractFieldValidator {
+public class EscapedHtmlValidator implements Validator {
 
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 
-    public EscapedHtmlValidator(final ValidatorConfig config) {
-        super(config);
-    }
-
     @Override
-    public boolean isValid(final ValidatorContext context, final String value) {
-        return !INVALID_CHARS.matcher(value).matches();
+    public Optional<Violation> validate(final ValidationContext context, final String value) {
+        if (INVALID_CHARS.matcher(value).matches()) {
+            return Optional.of(context.createViolation(this));
+        }
+        return Optional.empty();
     }
-
 }

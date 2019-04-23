@@ -15,10 +15,13 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Optional;
+
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms.services.validation.util.HtmlUtils;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorContext;
-import org.onehippo.cms.services.validation.api.InvalidValidatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +32,14 @@ import org.slf4j.LoggerFactory;
  * The builtin "Html" type is checked by the {@link NonEmptyValidator} and does not require
  * special treatment.
  */
-public class NonEmptyHtmlValidator extends AbstractFieldValidator {
+public class NonEmptyHtmlValidator implements Validator {
 
     public static final Logger log = LoggerFactory.getLogger(NonEmptyHtmlValidator.class);
 
-    public NonEmptyHtmlValidator(final ValidatorConfig config) {
-        super(config);
-    }
-
     @Override
-    public void init(final ValidatorContext context) throws InvalidValidatorException {
+    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
         if (!"String".equals(context.getType())) {
-            throw new InvalidValidatorException("Invalid validation exception; " +
+            throw new ValidationContextException("Invalid validation exception; " +
                     "cannot validate non-string field for emptiness");
         }
 
@@ -48,11 +47,11 @@ public class NonEmptyHtmlValidator extends AbstractFieldValidator {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
                     "This is covered by the 'non-empty' validator.");
         }
-    }
 
-    @Override
-    public boolean isValid(final ValidatorContext context, final String value) {
-        return !HtmlUtils.isEmpty(value);
-    }
+        if (HtmlUtils.isEmpty(value)) {
+            return Optional.of(context.createViolation(this));
+        }
 
+        return Optional.empty();
+    }
 }
