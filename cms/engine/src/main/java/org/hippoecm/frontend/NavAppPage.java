@@ -17,6 +17,7 @@
 
 package org.hippoecm.frontend;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.InlineFrame;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
@@ -30,11 +31,12 @@ public class NavAppPage extends Home {
 
     private final InlineFrame cmsInlineFrame;
 
-    public NavAppPage(final IApplicationFactory appFactory) {
+    public NavAppPage(final IApplicationFactory ignored) {
         super();
         cmsInlineFrame = new InlineFrame("cms", PluginPage.class);
         add(cmsInlineFrame);
         cmsInlineFrame.setVisible(true);
+        add(new Label("pageTitle", getString("pageTitle")));
     }
 
     @Override
