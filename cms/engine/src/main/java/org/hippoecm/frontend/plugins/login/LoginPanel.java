@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -248,8 +248,8 @@ public class LoginPanel extends Panel {
             submitButton = new Button("submit", new ResourceModel("submit-label"));
             addLabelledComponent(submitButton);
 
-            // hide language selection for console app
-            if (consoleLogin) {
+            // hide language selection for console app and when there is only one choice
+            if (consoleLogin || locales.size() == 1) {
                 locale.setVisible(false);
             }
         }
