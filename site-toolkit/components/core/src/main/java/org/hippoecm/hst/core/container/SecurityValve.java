@@ -62,7 +62,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
 
         // If the request comes for CMS application (e.g, Channel Manager) and it's configured to skip authentication for those requests,
         // just bypass this security valve.
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
             if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped()) {
                 log.debug("Bypassing security valve because the request comes fo a CMS application and it's configured to skip authentication for those requests.");
                 context.invokeNext();

@@ -65,11 +65,6 @@ public class HstSiteFactory {
 
         final HstSite master = new HstSiteService(site, mount, mountSiteMapConfiguration, hstNodeLoadingCache, hstConfigurationLoadingCache, isPreviewSite);
 
-        if (master.getChannel() == null) {
-            log.debug("Branches can only exist for configurations that have a channel");
-            return master;
-        }
-
         final String masterConfigPath = master.getConfigurationPath();
         HstNode masterConfiguration = hstNodeLoadingCache.getNode(masterConfigPath);
         if (masterConfiguration.getValueProvider().hasProperty(BRANCH_PROPERTY_BRANCH_OF)) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -96,8 +96,7 @@ public class PageModelApiMount implements ContextualizableMount {
 
     @Override
     public boolean hasNoChannelInfo() {
-        // page model api never has a channel info : the channel info always belongs to the parent
-        return true;
+        return parent.hasNoChannelInfo();
     }
 
     @Override
@@ -301,25 +300,23 @@ public class PageModelApiMount implements ContextualizableMount {
     @Override
     public <T extends ChannelInfo> T getChannelInfo() {
         // no channel for page model api mount
-        // TODO should we return the channel of the parent mount instead, see HSTTWO-4548
-        return null;
+        return hstSite.getChannelInfo();
     }
 
     @Override
     public Channel getChannel() {
         // no channel for page model api mount
-        // TODO should we return the channel of the parent mount instead, see HSTTWO-4548
-        return null;
+        return hstSite.getChannel();
     }
 
     @Override
     public Channel getPreviewChannel() {
-        return null;
+        return previewHstSite.getChannel();
     }
 
     @Override
     public <T extends ChannelInfo> T getPreviewChannelInfo() {
-        return null;
+        return previewHstSite.getChannelInfo();
     }
 
     @Override

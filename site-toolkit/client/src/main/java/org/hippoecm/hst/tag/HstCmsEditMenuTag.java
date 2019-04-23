@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.slf4j.Logger;
@@ -76,7 +75,7 @@ public class HstCmsEditMenuTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            if (!requestContext.isCmsRequest()) {
+            if (!requestContext.isChannelManagerPreviewRequest()) {
                 log.debug("Skipping cms edit menu because not cms preview.");
                 return EVAL_PAGE;
             }

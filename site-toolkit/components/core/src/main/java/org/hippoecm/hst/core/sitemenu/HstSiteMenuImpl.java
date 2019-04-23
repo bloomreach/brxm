@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
     public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
-        final boolean menuVisibleRegardlessRoles = hstRequestContext.isCmsRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
+        final boolean menuVisibleRegardlessRoles = hstRequestContext.isChannelManagerPreviewRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
             if (hstSiteMenuItemConfiguration.getRoles() == null || menuVisibleRegardlessRoles) {
                 hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));

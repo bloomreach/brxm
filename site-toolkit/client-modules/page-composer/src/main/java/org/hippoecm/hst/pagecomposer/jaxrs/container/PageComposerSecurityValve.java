@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,8 +48,9 @@ public class PageComposerSecurityValve extends AbstractBaseOrderableValve {
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = context.getRequestContext();
 
-        // mark the request as a cms request since this is sometimes needed by downstream projects
-        ((HstMutableRequestContext) requestContext).setCmsRequest(true);
+        // TODO we should get rid of setChannelManagerPreviewRequest(true); since this is a cms request and
+        // TODO not a channel manager preview request! See HSTTWO-4587
+        ((HstMutableRequestContext) requestContext).setChannelManagerPreviewRequest(true);
 
         final HttpSession cmsHttpSession = servletRequest.getSession(false);
 

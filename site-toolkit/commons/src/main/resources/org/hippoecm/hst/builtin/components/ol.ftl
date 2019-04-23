@@ -1,5 +1,5 @@
 <#--
-  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 <#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]>
 
 <@hst.defineObjects/>
-<#if hstRequest.requestContext.cmsRequest>
+<#if hstRequest.requestContext.channelManagerPreviewRequest>
     <ol class="hst-container">
         <#list hstResponseChildContentNames as childContentName>
             <li class="hst-container-item">

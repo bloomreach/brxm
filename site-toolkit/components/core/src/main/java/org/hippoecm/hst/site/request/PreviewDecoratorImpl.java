@@ -598,8 +598,9 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
 
         @Override
+        @Deprecated
         public String getDefaultHostName() {
-            return delegatee.getDefaultHostName();
+            return null;
         }
 
         @Override
@@ -641,7 +642,7 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             final List<Mount> mountsByHostGroup = delegatee.getMountsByHostGroup(hostGroupName);
             List<Mount> previewMounts = new ArrayList<>();
             for (Mount mount : mountsByHostGroup) {
-                if (mount.isPreview() && RequestContextProvider.get().isCmsRequest()) {
+                if (mount.isPreview() && RequestContextProvider.get().isChannelManagerPreviewRequest()) {
                     log.debug("Skipping *explicit* preview mounts for cms requests since they cannot be used in channel " +
                             "manager.");
                     continue;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,6 +173,12 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+        context.setChannelManagerPreviewRequest(channelMngrPreviewRequest);
+    }
+
+    @Deprecated
+    @Override
     public void setCmsRequest(final boolean cmsRequest) {
         context.setCmsRequest(cmsRequest);
     }
@@ -338,8 +344,14 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public boolean isChannelManagerPreviewRequest() {
+        return context.isChannelManagerPreviewRequest();
+    }
+
+    @Deprecated
+    @Override
     public boolean isCmsRequest() {
-        return context.isCmsRequest();
+        return isChannelManagerPreviewRequest();
     }
 
     @Override

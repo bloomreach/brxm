@@ -149,7 +149,6 @@ public interface HstNodeTypes {
 
     String VIRTUALHOSTS_PROPERTY_PORT = "hst:port";
     String VIRTUALHOSTS_PROPERTY_SCHEME = "hst:scheme";
-    String VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME = "hst:defaulthostname";
     String VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";
     String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
     String VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX = "hst:cmspreviewprefix";

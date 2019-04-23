@@ -112,7 +112,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private ContentTypes contentTypes;
     // default a request is considered to be not from a cms. If cmsRequest is true, this means the
     // request is done from a cms context. This can influence for example how a link is created
-    protected boolean cmsRequest;
+    protected boolean channelManagerPreviewRequest;
 
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
@@ -719,15 +719,28 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isCmsRequest() {
+    public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return cmsRequest;
+        return channelManagerPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
+    public boolean isCmsRequest() {
+        return isChannelManagerPreviewRequest();
     }
 
     @Override
+    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+        checkStateValidity();
+        this.channelManagerPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
     public void setCmsRequest(final boolean cmsRequest) {
         checkStateValidity();
-        this.cmsRequest = cmsRequest;
+        this.channelManagerPreviewRequest = cmsRequest;
     }
 
     @Override

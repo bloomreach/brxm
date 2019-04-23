@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -167,7 +167,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         // check if it's requested to forward.
-        String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
+        final String forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
 
         // page error handling...
         PageErrors pageErrors = getPageErrors(sortedComponentWindows, true);
@@ -178,10 +178,6 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             // page error handler should be able to override redirect location or forward path info.
             if (rootWindow.getResponseState().getRedirectLocation() != null) {
                 redirectLocation = rootWindow.getResponseState().getRedirectLocation();
-            }
-
-            if (rootWindow.getResponseState().getForwardPathInfo() != null) {
-                forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
             }
 
             if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && redirectLocation == null && forwardPathInfo == null) {
@@ -516,9 +512,9 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
         try {
             // add the X-HST-VERSION as a response header if we are in preview:
-            boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
+            boolean isPreviewOrChannelManagerPreviewRequest = requestContext.isPreview() || requestContext.isChannelManagerPreviewRequest();
 
-            if (isPreviewOrCmsRequest) {
+            if (isPreviewOrChannelManagerPreviewRequest) {
                 final HttpServletResponse servletResponse = context.getServletResponse();
                 setNoCacheHeaders(servletResponse);
 
@@ -626,7 +622,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
      */
     private boolean isAsync(final HstComponentWindow window, final HstRequest request) {
         // in cms request context, we never load asynchronous
-        if (request.getRequestContext().isCmsRequest()) {
+        if (request.getRequestContext().isChannelManagerPreviewRequest()) {
             return false;
         }
         if (request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {

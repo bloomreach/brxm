@@ -1,7 +1,6 @@
 definitions:
   config:
     /hst:site2/hst:hosts:
-      hst:defaulthostname: localhost
       hst:homepage: home
       hst:pagenotfound: pagenotfound
       /dev-localhost:

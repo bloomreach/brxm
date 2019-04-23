@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -452,7 +452,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
             return false;
         }
 
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
             context.getPageCacheContext().markUncacheable("CMS requests are not cacheable");
             log.debug("'{}' is not cacheable because request is cms request", request);
             return false;

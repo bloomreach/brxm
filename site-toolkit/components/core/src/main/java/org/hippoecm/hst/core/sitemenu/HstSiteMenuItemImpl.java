@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             }
         }
 
-        final boolean menuVisibleRegardlessRoles = hstRequestContext.isCmsRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
+        final boolean menuVisibleRegardlessRoles = hstRequestContext.isChannelManagerPreviewRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
             if (childItemConfiguration.getRoles() == null || menuVisibleRegardlessRoles) {
                 hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
