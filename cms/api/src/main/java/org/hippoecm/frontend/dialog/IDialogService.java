@@ -62,7 +62,7 @@ public interface IDialogService extends IClusterable {
 
         /**
          * Invoked when the dialog is closed.  Since the dialog will be decorated
-         * with a close link (X), this method may be called even when the dialog
+         * with a close button (X), this method may be called even when the dialog
          * is not explicitly closed via {@link IDialogService#close()}.
          */
         void onClose();
@@ -74,7 +74,7 @@ public interface IDialogService extends IClusterable {
         IValueMap getProperties();
 
         /**
-         * Invoked when the built-in close link (X) is clicked. In general, clicking the close link (X) is considered
+         * Invoked when the built-in close button (X) is clicked. In general, clicking the close button (X) is considered
          * similar to cancelling a dialog. As such, to be able to invoke the correct {@link ScriptAction} in
          * {@link org.hippoecm.frontend.dialog.Dialog#onClose} we have to inform the dialog that it is actually
          * cancelled, before closing it.
@@ -84,7 +84,7 @@ public interface IDialogService extends IClusterable {
          *
          * @since 13.2
          */
-        default void onCancelFromCloseLink() {}
+        default void onCancelFromCloseButton() {}
     }
 
     /**

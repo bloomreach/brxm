@@ -197,7 +197,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         setContent(dialog.getComponent());
         setWindowClosedCallback(new Callback(dialog));
         setCloseButtonCallback(target -> {
-            dialog.onCancelFromCloseLink();
+            dialog.onCancelFromCloseButton();
             return true;
         });
 

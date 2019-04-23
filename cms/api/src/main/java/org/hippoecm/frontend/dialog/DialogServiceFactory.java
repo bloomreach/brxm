@@ -153,8 +153,8 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
         }
 
         @Override
-        public void onCancelFromCloseLink() {
-            dialog.onCancelFromCloseLink();
+        public void onCancelFromCloseButton() {
+            dialog.onCancelFromCloseButton();
         }
 
         @Override

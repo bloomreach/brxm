@@ -573,7 +573,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     @Override
-    public void onCancelFromCloseLink() {
+    public void onCancelFromCloseButton() {
         cancelled = true;
     }
 
