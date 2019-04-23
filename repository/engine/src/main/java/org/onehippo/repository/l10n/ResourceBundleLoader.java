@@ -210,6 +210,11 @@ class ResourceBundleLoader {
         public <V> String getString(final String key, final Map<String, V> parameters) {
             return new StringSubstitutor(parameters).replace(getString(key));
         }
+
+        public String getString(final String key, final String parameterName, final String parameterValue) {
+            return new StringSubstitutor(Collections.singletonMap(parameterName, parameterValue))
+                    .replace(getString(key));
+        }
         
         @Override
         public java.util.ResourceBundle toJavaResourceBundle() {

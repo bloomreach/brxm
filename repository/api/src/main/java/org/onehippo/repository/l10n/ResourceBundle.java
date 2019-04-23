@@ -53,8 +53,9 @@ public interface ResourceBundle {
      * Gets the {@link Locale}-specific translation identified by a given {@code key}. If a String is not defined in
      * this bundle the call is forwarded to the parent bundle.
      * <p/>
-     * Variables in the string can be replaced by supplying parameters. The default definition of a variable is
-     * <code>${variableName}</code>.
+     * Variables in the Strings can be replaced by supplying parameters. The default definition of a variable is
+     * <code>${variableName}</code>. If the label has only variable use {@link #getString(String, String,
+     * String)}.
      *
      * @param key        a {@code key} identifying a String
      * @param parameters a map of names and values to replace variables
@@ -62,6 +63,21 @@ public interface ResourceBundle {
      */
     <V> String getString(String key, Map<String, V> parameters);
 
+    /**
+     * Gets the {@link Locale}-specific translation identified by a given {@code key}. If a String is not defined in
+     * this bundle the call is forwarded to the parent bundle.
+     * <p/>
+     * One variable in the String can be replaced by the parameterName and parameterValue. The default definition of a
+     * variable is<code>${variableName}</code>. Convenience method for Strings with only one variable. If there are
+     * multiple variables use {@link #getString(String, Map)}.
+     *
+     * @param key            a {@code key} identifying a String
+     * @param parameterName  the name of the variable as defined in the String
+     * @param parameterValue the replacement value for the variable
+     * @return the String identified by a {@code key} with replaced variables
+     */
+    String getString(String key, String parameterName, String parameterValue);
+    
     default java.util.ResourceBundle toJavaResourceBundle() {
         return null;
     }

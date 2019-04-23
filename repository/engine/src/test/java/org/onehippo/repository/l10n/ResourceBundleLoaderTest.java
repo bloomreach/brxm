@@ -111,6 +111,14 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testParameterizedNullParameters() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+        
+        assertEquals(bundle.getString("key1", null), "value1 - ${variable1}");
+    }
+
+    @Test
     public void testParameterizedSingleParameter() throws Exception {
         final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
         final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
