@@ -212,6 +212,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean node and npm</id>
+          </execution>
+        </executions>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>node</directory>
+            </fileset>
+            <fileset>
+              <directory>node_modules</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
