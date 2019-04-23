@@ -15,18 +15,20 @@
 
 .openui-dialog {
   &-large {
-    height: 75%;
-    width: 80%;
+    height: 90%;
+    max-height: 90%;
+    max-width: 90%;
+    width: 90%;
   }
 
   &-medium {
     height: 75%;
-    width: 60%;
+    width: 75%;
   }
 
   &-small {
     height: 60%;
-    width: 50%;
+    width: 60%;
   }
 
   md-dialog-content {
