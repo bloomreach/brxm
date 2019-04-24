@@ -152,14 +152,14 @@ describe('Ui.init()', () => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
 
       window.dispatchEvent(new Event('focus'));
-      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'focus');
+      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'document.field.focus');
     });
 
     it('reacts on blur event', async () => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
 
       window.dispatchEvent(new Event('blur'));
-      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'blur');
+      expect(parentConnection.call).toHaveBeenCalledWith('emitEvent', 'document.field.blur');
     });
   });
 
