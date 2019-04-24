@@ -33,14 +33,13 @@ public class RegExpValidator implements Validator {
 
     private final Pattern pattern;
 
-    private final static String PATTERN_KEY = "regexp.pattern";
+    private static final String PATTERN_KEY = "regexp.pattern";
 
     public RegExpValidator(final Map<String, String> properties) throws ValidationContextException {
         if (properties.containsKey(PATTERN_KEY)) {
             pattern = Pattern.compile(properties.get(PATTERN_KEY));
         } else {
-            throw new ValidationContextException(
-                    "Missing required property 'regexp.pattern'");
+            throw new ValidationContextException("Missing required property '" + PATTERN_KEY + "'");
         }
     }
 
