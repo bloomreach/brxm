@@ -417,26 +417,11 @@ export interface FieldScope {
   /**
    * Set the height of the surrounding iframe.
    * @since 13.2
-   * @param pixels the number of pixels
+   * @param height the number of pixels or
+   *  'auto' for automatic height detection or
+   *  'initial' for initial height from the config
    */
-  setHeight(pixels: number): Promise<void>;
-
-  /**
-   * Set the height of the surrounding iframe to the value of `document.body.scrollHeight`,
-   * but only when the height differs from the previous time [[updateHeight]] was called.
-   * @since 13.2
-   */
-  updateHeight(): Promise<void>;
-
-  /**
-   * Starts monitoring the DOM below `document.body` for changes, and calls
-   * [[updateHeight]] for every change.
-   *
-   * @since 13.2
-   * @return a function that stops the DOM monitoring.
-   */
-  autoUpdateHeight(): StopAutoUpdateHeightFn;
-
+  setHeight(height: 'auto' | 'initial' | number): Promise<void>;
 }
 
 /**

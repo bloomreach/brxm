@@ -194,72 +194,64 @@ describe('Ui.init()', () => {
   });
 
   describe('ui.document.field.setHeight()', () => {
-    it('sets the field height', async () => {
+    beforeEach(() => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
+    });
+
+    it('sets fixed height', async () => {
       await ui.document.field.setHeight(100);
       expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 100);
     });
 
-    it('resets the cached height used by updateHeight()', async () => {
+    it('sets initial height', async () => {
+      await ui.document.field.setHeight('initial');
+      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 'initial');
+    });
+
+    it('stores pevious height value', async () => {
       parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
-      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
 
-      await ui.document.field.updateHeight();
-      await ui.document.field.setHeight(100);
-      await ui.document.field.updateHeight();
+      ui.document.field.setHeight(100);
+      ui.document.field.setHeight(100);
+      ui.document.field.setHeight(101);
 
-      expect(parentConnection.call).toHaveBeenNthCalledWith(1, 'setFieldHeight', 42);
-      expect(parentConnection.call).toHaveBeenNthCalledWith(2, 'setFieldHeight', 100);
-      expect(parentConnection.call).toHaveBeenNthCalledWith(3, 'setFieldHeight', 42);
-    });
-  });
-
-  describe('ui.document.field.updateHeight()', () => {
-    it('sets the field height to the value of document.body.scrollHeight', async () => {
-      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
-      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
-      await ui.document.field.updateHeight();
-      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
+      expect(parentConnection.call).toHaveBeenNthCalledWith(1, 'setFieldHeight', 100);
+      expect(parentConnection.call).toHaveBeenNthCalledWith(2, 'setFieldHeight', 101);
     });
 
-    it('does not set the field height if it has not changed', async () => {
-      parentConnection.call = jest.fn().mockReturnValue(Promise.resolve());
-      Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
-      await ui.document.field.updateHeight();
-      await ui.document.field.updateHeight();
-      expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
-      expect(parentConnection.call).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('ui.document.field.autoUpdateHeight()', () => {
-    it('starts a MutationObserver for document.body', async () => {
-      await ui.document.field.autoUpdateHeight();
-      expect(observe).toHaveBeenCalledWith(document.body, {
-        attributes: true,
-        characterData: true,
-        childList: true,
-        subtree: true,
-      });
-    });
-
-    it('hides vertical overflow on document.body to prevent vertical scrollbars', async () => {
-      await ui.document.field.autoUpdateHeight();
-      expect(document.body.style.overflowY).toBe('hidden');
-    });
-
-    describe('and the returned function', () => {
-      it('disconnects the MutationObserver', async () => {
-        const stopFn = await ui.document.field.autoUpdateHeight();
-        stopFn();
-        expect(disconnect).toHaveBeenCalled();
-      });
-
-      it('restores the original vertical overflow on document.body', async () => {
+    describe('auto', () => {
+      beforeEach(() => {
+        Object.defineProperty(document.body, 'scrollHeight', { value: 42 });
         document.body.style.overflowY = 'scroll';
-        const stopFn = await ui.document.field.autoUpdateHeight();
-        stopFn();
+
+        ui.document.field.setHeight('auto');
+      });
+
+      it('starts a MutationObserver for document.body', async () => {
+        expect(observe).toHaveBeenCalledWith(document.body, {
+          attributes: true,
+          characterData: true,
+          childList: true,
+          subtree: true,
+        });
+      });
+
+      it('hides vertical overflow on document.body to prevent vertical scrollbars', async () => {
+        expect(document.body.style.overflowY).toBe('hidden');
+      });
+
+      it('listens for load events', () => {
+        document.body.dispatchEvent(new Event('load'));
+
+        expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 42);
+      });
+
+      it('disables automatic height', () => {
+        ui.document.field.setHeight(43);
+
+        expect(disconnect).toHaveBeenCalled();
         expect(document.body.style.overflowY).toBe('scroll');
+        expect(parentConnection.call).toHaveBeenCalledWith('setFieldHeight', 43);
       });
     });
   });

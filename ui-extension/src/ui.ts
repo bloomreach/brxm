@@ -47,6 +47,8 @@ import {
 } from './api';
 import { Parent, ParentConnection, ParentMethod } from './parent';
 
+type Height = 'initial' | number;
+
 const SCOPE_CHANNEL = 'channel';
 const SCOPE_PAGE = `${SCOPE_CHANNEL}.page`;
 const SCOPE_DOCUMENT = 'document';
@@ -59,6 +61,8 @@ const EVENT_SCOPE = Symbol('eventScope');
 const FIELD_DOM_OBSERVER = Symbol('fieldDomObserver');
 const FIELD_OVERFLOW_STYLE = Symbol('fieldOverflowStyle');
 const FIELD_HEIGHT = Symbol('fieldHeight');
+const FIELD_HEIGHT_MODE = Symbol('fieldHeightMode');
+const FIELD_HEIGHT_LISTENER = Symbol('fieldHeightListener');
 const KEY_ESCAPE = 27;
 
 function defineLazyGetter<T extends object, K extends keyof T>(object: T, property: K, getter: Callable<T[K]>) {
@@ -117,7 +121,7 @@ interface DocumentParent extends UiParent {
   getFieldValue: ParentMethod<string>;
   getFieldCompareValue: ParentMethod<string>;
   setFieldValue: ParentMethod<void, [string]>;
-  setFieldHeight: ParentMethod<void, [number]>;
+  setFieldHeight: ParentMethod<void, [Height]>;
 }
 
 interface DialogParent extends UiParent {
@@ -165,9 +169,52 @@ class Document extends Scope<DocumentParent> implements DocumentScope {
   }
 }
 
+function enableAutoHeight(this: Field) {
+  if (this[FIELD_HEIGHT_MODE] === 'auto') {
+    return;
+  }
+
+  document.body.addEventListener('load', this[FIELD_HEIGHT_LISTENER], true);
+  this[FIELD_DOM_OBSERVER].observe(document.body, {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true,
+  });
+
+  this[FIELD_HEIGHT_MODE] = 'auto';
+  this[FIELD_OVERFLOW_STYLE] = document.body.style.overflowY;
+  document.body.style.overflowY = 'hidden';
+}
+
+function disableAutoHeight(this: Field) {
+  if (this[FIELD_HEIGHT_MODE] !== 'auto') {
+    return;
+  }
+
+  document.body.removeEventListener('load', this[FIELD_HEIGHT_LISTENER], true);
+  this[FIELD_DOM_OBSERVER].disconnect();
+
+  this[FIELD_HEIGHT_MODE] = 'manual';
+  document.body.style.overflowY = this[FIELD_OVERFLOW_STYLE];
+}
+
+function updateHeight(this: Field, height: Height) {
+  // cache the field height to avoid unnecessary method calls
+  if (this[FIELD_HEIGHT] === height) {
+    return;
+  }
+
+  this[FIELD_HEIGHT] = height;
+
+  return this[PARENT].call('setFieldHeight', height);
+}
+
 class Field extends Scope<DocumentParent> implements FieldScope {
-  private [FIELD_DOM_OBSERVER] = new MutationObserver(this.updateHeight.bind(this));
-  private [FIELD_HEIGHT]: number = null;
+  private [FIELD_HEIGHT]: Height;
+  private [FIELD_HEIGHT_MODE]: 'auto' | 'manual' = 'manual';
+  private [FIELD_HEIGHT_LISTENER] = () => updateHeight.call(this, document.body.scrollHeight);
+  private [FIELD_DOM_OBSERVER] = new MutationObserver(this[FIELD_HEIGHT_LISTENER]);
 
   constructor(parent: ParentConnection<DocumentParent>) {
     super(parent);
@@ -188,38 +235,14 @@ class Field extends Scope<DocumentParent> implements FieldScope {
     return this[PARENT].call('setFieldValue', value);
   }
 
-  setHeight(pixels: number) {
-    if (this[FIELD_HEIGHT] !== pixels) {
-      this[FIELD_HEIGHT] = null;
+  setHeight(height: 'auto' | Height): Promise<void> {
+    if (height === 'auto') {
+      return enableAutoHeight.call(this) || Promise.resolve();
     }
-    return this[PARENT].call('setFieldHeight', pixels);
-  }
 
-  updateHeight() {
-    const height = document.body.scrollHeight;
+    disableAutoHeight.call(this);
 
-    // cache the field height to avoid unnecessary method calls
-    if (this[FIELD_HEIGHT] !== height) {
-      this[FIELD_HEIGHT] = height;
-      return this.setHeight(height);
-    }
-  }
-
-  autoUpdateHeight() {
-    this[FIELD_DOM_OBSERVER].observe(document.body, {
-      attributes: true,
-      characterData: true,
-      childList: true,
-      subtree: true,
-    });
-
-    this[FIELD_OVERFLOW_STYLE] = document.body.style.overflowY;
-    document.body.style.overflowY = 'hidden';
-
-    return () => {
-      this[FIELD_DOM_OBSERVER].disconnect();
-      document.body.style.overflowY = this[FIELD_OVERFLOW_STYLE];
-    };
+    return updateHeight.call(this, height) || Promise.resolve();
   }
 }
 
