@@ -34,9 +34,12 @@ public interface ValidatorInstance extends ViolationFactory {
      * Executes the validator.
      * @param context the context in which the value is validated.
      * @param value the value to validate
-     * @return
-     * @throws ValidationContextException
+     *
+     * @return a violation that explains what to do with the invalid value,
+     * or an empty {@link Optional} when the value is valid.
+     *
+     * @throws ValidationContextException when this validator is used in a context that does not make sense.
      */
-    Optional<Violation> validate(ValidationContext context, String value) throws ValidationContextException;
+    Optional<Violation> validate(ValidationContext context, Object value) throws ValidationContextException;
 
 }

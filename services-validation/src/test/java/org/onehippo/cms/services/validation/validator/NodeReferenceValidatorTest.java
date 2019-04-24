@@ -17,17 +17,13 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.api.ValidationContext;
-import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.repository.util.JcrConstants;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
 
 public class NodeReferenceValidatorTest {
 
-    private ValidationContext context;
     private NodeReferenceValidator validator;
     private TestViolationFactory violationFactory;
 
@@ -37,27 +33,17 @@ public class NodeReferenceValidatorTest {
         violationFactory = new TestViolationFactory();
     }
 
-    @Test(expected = ValidationContextException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() {
-        context = new TestValidationContext(null, "not-a-string");
-        validator.validate(context, null, violationFactory);
-    }
-
     @Test
     public void blankStringIsInvalid() {
-        context = new TestValidationContext(null, "String");
-
-        assertInvalid(validator.validate(context, null, violationFactory));
-        assertInvalid(validator.validate(context, "", violationFactory));
-        assertInvalid(validator.validate(context, " ", violationFactory));
+        assertInvalid(validator.validate(null, null, violationFactory));
+        assertInvalid(validator.validate(null, "", violationFactory));
+        assertInvalid(validator.validate(null, " ", violationFactory));
         assertTrue(violationFactory.isCalled());
     }
 
     @Test
     public void jcrRootNodeIdentifierIsInvalid() {
-        context = new TestValidationContext(null, "String");
-
-        assertInvalid(validator.validate(context, JcrConstants.ROOT_NODE_ID, violationFactory));
+        assertInvalid(validator.validate(null, JcrConstants.ROOT_NODE_ID, violationFactory));
         assertTrue(violationFactory.isCalled());
     }
 }

@@ -27,7 +27,7 @@ import java.util.Optional;
  *
  * The system reuses a single instance of each validator, so implementations must be thread-safe.
  */
-public interface Validator {
+public interface Validator<V> {
 
     /**
      * Validates that a value adheres to certain constraints.
@@ -41,7 +41,7 @@ public interface Validator {
      *
      * @throws ValidationContextException when this validator is used in a context that does not make sense.
      */
-    Optional<Violation> validate(ValidationContext context, String value, ViolationFactory violationFactory)
+    Optional<Violation> validate(ValidationContext context, V value, ViolationFactory violationFactory)
             throws ValidationContextException;
 
 }

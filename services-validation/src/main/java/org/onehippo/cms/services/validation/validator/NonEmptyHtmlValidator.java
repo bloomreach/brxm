@@ -33,18 +33,13 @@ import org.slf4j.LoggerFactory;
  * The builtin "Html" type is checked by the {@link NonEmptyValidator} and does not require
  * special treatment.
  */
-public class NonEmptyHtmlValidator implements Validator {
+public class NonEmptyHtmlValidator implements Validator<String> {
 
     public static final Logger log = LoggerFactory.getLogger(NonEmptyHtmlValidator.class);
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value,
                                         final ViolationFactory violationFactory) throws ValidationContextException {
-        if (!"String".equals(context.getType())) {
-            throw new ValidationContextException("Invalid validation exception; " +
-                    "cannot validate non-string field for emptiness");
-        }
-
         if ("Html".equals(context.getName())) {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
                     "This is covered by the 'non-empty' validator.");

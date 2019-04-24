@@ -23,7 +23,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

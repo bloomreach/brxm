@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
@@ -43,13 +44,24 @@ class ValidatorInstanceImpl implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) {
+    public Optional<Violation> validate(final ValidationContext context, final Object value) {
         try {
             locale.set(context.getLocale());
-            return validator.validate(context, value, this);
+            return runValidator(context, value);
+        } catch (ClassCastException e) {
+            throw new ValidationContextException("Validator '" + config.getName() + "'"
+                    + " is used in field '" + context.getName() + "'"
+                    + " of type '" + context.getType() + "'."
+                    + " The value of that field is of type '" + value.getClass().getName() + "',"
+                    + " which is not compatible with the value type expected by the validator", e);
         } finally {
             locale.remove();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Optional<Violation> runValidator(final ValidationContext context, final Object value) {
+        return validator.validate(context, value, this);
     }
 
     @Override

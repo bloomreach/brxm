@@ -82,7 +82,7 @@ public class ValidatorInstanceImplTest {
         assertThat(translation.getLocale(), equalTo(locale));
     }
 
-    private static class TestValidator1 implements Validator {
+    private static class TestValidator1 implements Validator<String> {
 
         @Override
         public Optional<Violation> validate(final ValidationContext context, final String value, final ViolationFactory violationFactory) throws ValidationContextException {
@@ -90,7 +90,7 @@ public class ValidatorInstanceImplTest {
         }
     }
 
-    private static class TestValidator2 implements Validator {
+    private static class TestValidator2 implements Validator<String> {
 
         @Override
         public Optional<Violation> validate(final ValidationContext context, final String value, final ViolationFactory violationFactory) throws ValidationContextException {

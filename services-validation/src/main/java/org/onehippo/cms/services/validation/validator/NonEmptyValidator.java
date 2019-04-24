@@ -32,15 +32,11 @@ import org.onehippo.cms.services.validation.util.HtmlUtils;
  * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
  * therefore does not require the html validator to be declared separately.
  */
-public class NonEmptyValidator implements Validator {
+public class NonEmptyValidator implements Validator<String> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value,
-                                        final ViolationFactory violationFactory) throws ValidationContextException {
-        if (!"String".equals(context.getType())) {
-            throw new ValidationContextException("Cannot validate non-string field for emptiness");
-        }
-
+                                        final ViolationFactory violationFactory) {
         final boolean isEmpty = "Html".equals(context.getName())
                 ? HtmlUtils.isEmpty(value)
                 : StringUtils.isBlank(value);

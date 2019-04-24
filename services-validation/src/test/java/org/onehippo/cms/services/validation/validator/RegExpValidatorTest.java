@@ -49,22 +49,11 @@ public class RegExpValidatorTest {
         new RegExpValidator(Collections.emptyMap());
     }
 
-    @Test(expected = ValidationContextException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() {
-        context = new TestValidationContext(null, "not-a-string");
-
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put("regexp.pattern", "[abc]");
-
-        final Validator validator = new RegExpValidator(parameters);
-        validator.validate(context, null, violationFactory);
-    }
-
     @Test
     public void testValidInput() {
         context = new TestValidationContext(null, "String");
 
-        final Validator validator = new RegExpValidator(parameters);
+        final Validator<String> validator = new RegExpValidator(parameters);
         assertValid(validator.validate(context, "abc", violationFactory));
         assertFalse(violationFactory.isCalled());
     }
@@ -73,7 +62,7 @@ public class RegExpValidatorTest {
     public void testInvalidInput() {
         context = new TestValidationContext(null, "String");
 
-        final Validator validator = new RegExpValidator(parameters);
+        final Validator<String> validator = new RegExpValidator(parameters);
         assertInvalid(validator.validate(context, "xyz", violationFactory));
         assertTrue(violationFactory.isCalled());
     }

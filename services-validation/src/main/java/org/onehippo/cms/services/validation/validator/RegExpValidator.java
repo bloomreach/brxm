@@ -30,7 +30,7 @@ import org.onehippo.cms.services.validation.api.ViolationFactory;
  * <p>
  * Use property "regexp.pattern" to set the required expression.
  */
-public class RegExpValidator implements Validator {
+public class RegExpValidator implements Validator<String> {
 
     private final Pattern pattern;
 
@@ -46,11 +46,7 @@ public class RegExpValidator implements Validator {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value,
-                                        final ViolationFactory violationFactory) throws ValidationContextException {
-        if (!"string".equalsIgnoreCase(context.getType())) {
-            throw new ValidationContextException("Cannot validate non-string field with a regular expression");
-        }
-
+                                        final ViolationFactory violationFactory) {
         if (pattern.matcher(value).find()) {
             return Optional.empty();
         }

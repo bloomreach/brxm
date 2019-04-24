@@ -83,7 +83,7 @@ public class ValidatorFactoryTest {
     }
 
     // public so it exposes a default public constructor
-    public static class MockValidator implements Validator {
+    public static class MockValidator implements Validator<String> {
         @Override
         public Optional<Violation> validate(final ValidationContext context, final String value,
                                             final ViolationFactory violationFactory) {

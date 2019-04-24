@@ -26,7 +26,7 @@ import org.onehippo.cms.services.validation.api.ViolationFactory;
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
  */
-public class EscapedHtmlValidator implements Validator {
+public class EscapedHtmlValidator implements Validator<String> {
 
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 

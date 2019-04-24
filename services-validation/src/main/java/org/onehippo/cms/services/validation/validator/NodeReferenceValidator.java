@@ -28,18 +28,13 @@ import org.onehippo.cms.services.validation.api.ViolationFactory;
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
  * node.
  */
-public class NodeReferenceValidator implements Validator {
+public class NodeReferenceValidator implements Validator<String> {
 
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value,
                                         final ViolationFactory violationFactory) throws ValidationContextException {
-        if (!"String".equals(context.getType())) {
-            throw new ValidationContextException("Invalid validation exception; cannot validate non-string field for " +
-                    "emptiness");
-        }
-
         if (StringUtils.isBlank(value) || value.equals(ROOT_NODE_UUID)) {
             return Optional.of(violationFactory.createViolation());
         }

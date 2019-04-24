@@ -40,18 +40,6 @@ public class NonEmptyHtmlValidatorTest {
         violationFactory = new TestViolationFactory();
     }
 
-    @Test(expected = ValidationContextException.class)
-    public void throwsExceptionIfFieldIsNotOfTypeString() {
-        context = new TestValidationContext(null, "not-a-string");
-        validator.validate(context, null, violationFactory);
-    }
-
-    @Test
-    public void initializesIfFieldIsOfTypeString() {
-        context = new TestValidationContext("CustomHtml", "String");
-        validator.validate(context, null, violationFactory);
-    }
-
     @Test
     public void warnsIfValidatorIsUsedWithHtmlField() {
         context = new TestValidationContext("Html", "String");
