@@ -16,20 +16,23 @@
 package org.hippoecm.frontend.editor.validator;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms.services.validation.ValidationContextImpl;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationService;
-import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,12 +60,14 @@ public class CmsValidatorAdapter implements ICmsValidator {
         // nothing to do, any pre-validation is done as part of the validate() call
     }
 
-    private static Validator getValidator(final String name) {
+    private static ValidatorInstance getValidator(final String name) {
         final ValidationService validationService = getValidationService();
-        final Validator validator = validationService.getValidator(name);
+        final ValidatorInstance validator = validationService.getValidator(name);
+
         if (validator == null) {
-            log.warn("Failed to retrieve validator[{}] from validation module", name);
+            log.warn("Failed to retrieve validator '{}' from validation module", name);
         }
+
         return validator;
     }
 
@@ -71,13 +76,13 @@ public class CmsValidatorAdapter implements ICmsValidator {
                                    final JcrNodeModel parentModel,
                                    final IModel valueModel) throws ValidationException {
 
-        final Validator validator = getValidator(name);
+        final ValidatorInstance validator = getValidator(name);
         if (validator == null) {
             return Collections.emptySet();
         }
 
+        final ValidationContext context = createValidationContext(fieldValidator);
         final String value = getString(valueModel);
-        final ValidationContext context = new CmsValidationFieldContext(fieldValidator);
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, value);
             return violation.isPresent()
@@ -87,6 +92,13 @@ public class CmsValidatorAdapter implements ICmsValidator {
         } catch (final RuntimeException e) {
             throw new ValidationException("Error executing validator " + name, e);
         }
+    }
+
+    private static ValidationContext createValidationContext(final IFieldValidator fieldValidator) {
+        final String name = fieldValidator.getFieldType().getName();
+        final String type = fieldValidator.getFieldType().getType();
+        final Locale locale = UserSession.get().getLocale();
+        return new ValidationContextImpl(name, type, locale);
     }
 
     private static String getString(final IModel valueModel) {
