@@ -39,8 +39,10 @@ export default class OpenuiStringFieldController {
   $onChanges(changes) {
     if (changes.extensionId) {
       const extensionId = changes.extensionId.currentValue;
+      this.extension = this.ExtensionService.getExtension(extensionId);
+
       this.createConnection(extensionId);
-      this.setInitialHeight(extensionId);
+      this.setHeight('initial');
 
       this.connection.emitter.on('document.field.focus', () => this.$element.triggerHandler('focus'));
       this.connection.emitter.on('document.field.blur', () => this.$element.triggerHandler('blur'));
@@ -65,11 +67,6 @@ export default class OpenuiStringFieldController {
     await this.connection.promise;
   }
 
-  setInitialHeight(extensionId) {
-    const extension = this.ExtensionService.getExtension(extensionId);
-    this.setHeight(extension.initialHeightInPixels);
-  }
-
   destroyConnection() {
     if (this.connection) {
       this.connection.emitter.clearListeners();
@@ -91,8 +88,10 @@ export default class OpenuiStringFieldController {
     return this.value;
   }
 
-  setHeight(pixels) {
-    const height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(pixels, MAX_HEIGHT_IN_PIXELS));
+  setHeight(value) {
+    let height = value === 'initial' ? this.extension.initialHeightInPixels : value;
+    height = Math.max(MIN_HEIGHT_IN_PIXELS, Math.min(height, MAX_HEIGHT_IN_PIXELS));
+
     this.connection.iframe.style.height = `${height}px`;
   }
 
