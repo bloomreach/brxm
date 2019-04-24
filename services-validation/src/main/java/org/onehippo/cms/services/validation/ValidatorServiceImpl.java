@@ -20,7 +20,7 @@ import org.onehippo.cms.services.validation.api.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidatorServiceImpl implements ValidationService {
+class ValidatorServiceImpl implements ValidationService {
 
     public static final Logger log = LoggerFactory.getLogger(ValidatorServiceImpl.class);
 

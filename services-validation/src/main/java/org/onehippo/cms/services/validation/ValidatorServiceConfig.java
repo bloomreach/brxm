@@ -15,26 +15,23 @@
  */
 package org.onehippo.cms.services.validation;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms.services.validation.validator.ValidatorConfigImpl;
-import org.onehippo.cms.services.validation.validator.ValidatorFactory;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidatorServiceConfig implements Serializable {
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+
+class ValidatorServiceConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
 
-    private final Map<String, Validator> validators = new HashMap<>();
+    private final BiMap<String, Validator> validators = Maps.synchronizedBiMap(HashBiMap.create());
 
     ValidatorServiceConfig(final Node configNode) {
         reconfigure(configNode);
@@ -47,29 +44,30 @@ public class ValidatorServiceConfig implements Serializable {
             final NodeIterator iterator = config.getNodes();
             while (iterator.hasNext()) {
                 final Node configNode = iterator.nextNode();
-                final ValidatorConfig validatorConfig = new ValidatorConfigImpl(configNode);
-
-                if (!validators.containsKey(validatorConfig.getName())) {
-                    final Validator validator = ValidatorFactory.create(validatorConfig);
-                    if (validator == null) {
-                        log.error("Failed to create validator '" + validatorConfig.getName() + "'.");
-                    } else {
-                        validators.put(configNode.getName(), validator);
-                    }
-                }
-
+                final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
+                final String validatorName = validatorConfig.getName();
+                validators.computeIfAbsent(validatorName, name -> ValidatorFactory.createValidator(validatorConfig));
             }
         } catch (final RepositoryException e) {
-            log.error("Failed to create validator config.");
+            log.error("Failed to reconfigure validator service", e);
         }
     }
 
     /**
-     * Returns instance of {@link Validator} or null if the configuration cannot be found
+     * Returns an instance of a {@link Validator}, or null if the configuration cannot be found
      * @param name The validator name
      * @return Instance of a {@link Validator}
      */
     Validator getValidator(final String name) {
-        return validators.getOrDefault(name, null);
+        return validators.get(name);
+    }
+
+    /**
+     * Returns the name of a {@link Validator}, or null if the validator cannot be found
+     * @param validator The validator instance
+     * @return Name of the validator
+     */
+    String getValidatorName(final Validator validator) {
+        return validators.inverse().get(validator);
     }
 }

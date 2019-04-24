@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms.services.validation.validator;
+package org.onehippo.cms.services.validation;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,64 +24,60 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidatorConfigImpl implements ValidatorConfig {
+class JcrValidatorConfig implements ValidatorConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidatorConfigImpl.class);
+    static final String CLASS_NAME = "hipposys:className";
+    private static final Logger log = LoggerFactory.getLogger(JcrValidatorConfig.class);
 
     private String name;
     private String className;
-    private final Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties;
 
-    public ValidatorConfigImpl(final Node configNode) throws RepositoryException {
+    JcrValidatorConfig(final Node configNode) throws RepositoryException {
         reconfigure(configNode);
     }
 
-    @Override
-    public void reconfigure(final Node node) throws RepositoryException {
+    void reconfigure(final Node node) throws RepositoryException {
         if (!node.hasProperty(CLASS_NAME)) {
-            throw new IllegalStateException("Required property '"+ CLASS_NAME + "' is not found.");
+            throw new IllegalStateException("Node " + node.getPath() + " does not have required property '"+ CLASS_NAME + "'");
         }
 
         name = node.getName();
         className = node.getProperty(CLASS_NAME).getString();
+        properties = Collections.unmodifiableMap(readProperties(node));
+    }
 
-        properties.clear();
+    private static Map<String, String> readProperties(final Node node) throws RepositoryException {
+        final Map<String, String> properties = new HashMap<>();
+
         final PropertyIterator it = node.getProperties();
         while (it.hasNext()) {
             final Property property = it.nextProperty();
             final String propertyName = property.getName();
             if (!propertyName.contains(":")) {
                 if (property.isMultiple()) {
-                    log.warn("Property '"+ propertyName + " is multiple which is not supported in the validator configuration.");
+                    log.warn("Ignoring property '{}' of node '{}' because it is multiple", propertyName, node.getPath());
                 } else {
                     properties.put(propertyName, property.getString());
                 }
             }
         }
+
+        return properties;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getClassName() {
         return className;
     }
 
-    @Override
-    public boolean hasProperty(final String name) {
-        return properties.containsKey(name);
+    public Map<String, String> getProperties() {
+        return properties;
     }
-
-    @Override
-    public String getProperty(final String name) {
-        return properties.get(name);
-    }
-
 }
