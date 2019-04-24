@@ -82,9 +82,8 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
 
         final ValidationContext context = createValidationContext(fieldValidator);
-        final String value = getString(valueModel);
         try {
-            final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, value);
+            final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
                     ? getViolations(fieldValidator, valueModel, violation.get())
                     : Collections.emptySet();
@@ -99,11 +98,6 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final String type = fieldValidator.getFieldType().getType();
         final Locale locale = UserSession.get().getLocale();
         return new ValidationContextImpl(name, type, locale);
-    }
-
-    private static String getString(final IModel valueModel) {
-        final Object object = valueModel.getObject();
-        return object != null ? object.toString() : null;
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
