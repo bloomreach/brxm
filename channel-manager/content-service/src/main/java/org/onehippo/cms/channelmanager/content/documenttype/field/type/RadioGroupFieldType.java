@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.forge.selection.frontend.plugin.Config;
 
@@ -51,6 +52,11 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
     @Override
     protected String getDefault() {
         return StringUtils.EMPTY;
+    }
+
+    @Override
+    protected Object getValidatedValue(final FieldValue value) {
+        return value.getValue();
     }
 
     public String getSource() {

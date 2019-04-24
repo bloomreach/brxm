@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
@@ -74,6 +75,11 @@ public class StringFieldType extends PrimitiveFieldType {
     @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
+    }
+
+    @Override
+    protected Object getValidatedValue(final FieldValue value) {
+        return value.getValue();
     }
 
     @Override

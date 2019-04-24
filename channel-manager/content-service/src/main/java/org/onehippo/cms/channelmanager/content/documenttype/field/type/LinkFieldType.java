@@ -73,6 +73,12 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
     }
 
     @Override
+    protected Object getValidatedValue(final FieldValue value) {
+        // TODO MdB: pass the JCR node instead? How to obtain it?
+        return value.getValue();
+    }
+
+    @Override
     protected List<FieldValue> readValues(final Node node) {
         final String nodeName = getId();
 

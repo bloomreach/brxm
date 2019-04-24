@@ -60,4 +60,21 @@ public abstract class AbstractDateFieldType extends PrimitiveFieldType {
 
         return new FieldValue(value);
     }
+
+    @Override
+    protected Object getValidatedValue(final FieldValue fieldValue) {
+        final String value = fieldValue.getValue();
+
+        if (StringUtils.isBlank(value)) {
+            return PropertyValueProvider.EMPTY_DATE;
+        }
+
+        final Calendar calendar = ISO8601.parse(value);
+
+        if (calendar == null) {
+            return PropertyValueProvider.EMPTY_DATE;
+        }
+
+        return calendar.getTime();
+    }
 }

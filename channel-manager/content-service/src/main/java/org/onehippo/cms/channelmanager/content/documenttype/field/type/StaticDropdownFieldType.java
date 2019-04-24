@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 import javax.jcr.PropertyType;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 
 public class StaticDropdownFieldType extends PrimitiveFieldType {
@@ -69,5 +70,10 @@ public class StaticDropdownFieldType extends PrimitiveFieldType {
     @Override
     protected String getDefault() {
         return StringUtils.EMPTY;
+    }
+
+    @Override
+    protected Object getValidatedValue(final FieldValue value) {
+        return value.getValue();
     }
 }

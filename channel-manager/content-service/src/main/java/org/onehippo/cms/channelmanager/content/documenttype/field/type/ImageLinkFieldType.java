@@ -24,6 +24,7 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
 import org.onehippo.cms.json.Json;

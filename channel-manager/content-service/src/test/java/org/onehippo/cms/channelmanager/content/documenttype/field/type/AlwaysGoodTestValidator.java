@@ -31,7 +31,7 @@ public class AlwaysGoodTestValidator implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final Object value) throws ValidationContextException {
         // everything is OK
         return Optional.empty();
     }

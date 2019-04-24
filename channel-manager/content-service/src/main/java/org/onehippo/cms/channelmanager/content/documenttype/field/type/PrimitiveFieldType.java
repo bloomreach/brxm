@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -95,8 +96,16 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      */
     @Override
     public int validateValue(final FieldValue value) {
+        final Set<String> validatorNames = getValidatorNames();
+
+        if (validatorNames.isEmpty()) {
+            return 0;
+        }
+
+        final Object validatedValue = getValidatedValue(value);
+
         return getValidatorNames().stream()
-                .allMatch(validatorName -> validateValue(value, validatorName))
+                .allMatch(validatorName -> validateValue(value, validatorName, validatedValue))
                 ? 0 : 1;
     }
 
@@ -108,14 +117,14 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      *
      * @return whether the validator deemed the value valid
      */
-    private boolean validateValue(final FieldValue value, final String validatorName) {
+    private boolean validateValue(final FieldValue value, final String validatorName, final Object validatedValue) {
         final ValidatorInstance validator = FieldTypeUtils.getValidator(validatorName);
         if (validator == null) {
             log.warn("Failed to find validator '{}', ignoring it", validatorName);
             return true;
         }
 
-        final Optional<Violation> violation = validator.validate(validationContext, value.getValue());
+        final Optional<Violation> violation = validator.validate(validationContext, validatedValue);
 
         violation.ifPresent((error) -> {
             ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
@@ -124,6 +133,13 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
 
         return !violation.isPresent();
     }
+
+    /**
+     * Converts the value of this field to the Java object passed to the validators of this field.
+     * @param value the value of this field
+     * @return the value passed to the validators of this field.
+     */
+    protected abstract Object getValidatedValue(FieldValue value);
 
     @Override
     protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {

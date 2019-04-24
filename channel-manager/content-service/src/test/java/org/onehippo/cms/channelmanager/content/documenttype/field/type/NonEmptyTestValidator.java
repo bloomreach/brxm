@@ -17,8 +17,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
@@ -32,8 +30,8 @@ public class NonEmptyTestValidator implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) {
-        if (StringUtils.isEmpty(value)) {
+    public Optional<Violation> validate(final ValidationContext context, final Object value) {
+        if (value == null || value.toString().isEmpty()) {
             return Optional.of(() -> "Not empty: '" + value + "'");
         }
         return Optional.empty();

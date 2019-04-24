@@ -76,6 +76,11 @@ public class PrimitiveFieldTypeTest {
         fieldType = new PrimitiveFieldType() {
 
             @Override
+            protected Object getValidatedValue(final FieldValue value) {
+                return value.getValue();
+            }
+
+            @Override
             protected int getPropertyType() {
                 return PropertyType.STRING;
             }
