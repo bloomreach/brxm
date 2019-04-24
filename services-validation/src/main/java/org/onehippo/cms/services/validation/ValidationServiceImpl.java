@@ -20,13 +20,13 @@ import org.onehippo.cms.services.validation.api.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ValidatorServiceImpl implements ValidationService {
+class ValidationServiceImpl implements ValidationService {
 
-    public static final Logger log = LoggerFactory.getLogger(ValidatorServiceImpl.class);
+    public static final Logger log = LoggerFactory.getLogger(ValidationServiceImpl.class);
 
-    private final ValidatorServiceConfig config;
+    private final ValidationServiceConfig config;
 
-    ValidatorServiceImpl(final ValidatorServiceConfig config) {
+    ValidationServiceImpl(final ValidationServiceConfig config) {
         this.config = config;
     }
 

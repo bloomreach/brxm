@@ -16,28 +16,27 @@
 package org.onehippo.cms.services.validation;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms.services.validation.api.ValidationService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ProvidesService(types = {ValidationService.class})
-public class ValidatorServiceModule extends AbstractReconfigurableDaemonModule {
+public class ValidationServiceModule extends AbstractReconfigurableDaemonModule {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidatorServiceModule.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidationServiceModule.class);
 
-    private ValidatorServiceConfig config;
+    private ValidationServiceConfig config;
     private ValidationService service;
 
     @Override
-    protected void doConfigure(final Node node) throws RepositoryException {
+    protected void doConfigure(final Node node) {
         if (config == null) {
-            config = new ValidatorServiceConfig(node);
+            config = new ValidationServiceConfig(node);
         } else {
             config.reconfigure(node);
         }
@@ -45,8 +44,8 @@ public class ValidatorServiceModule extends AbstractReconfigurableDaemonModule {
     }
 
     @Override
-    protected void doInitialize(final Session session) throws RepositoryException {
-        service = new ValidatorServiceImpl(config);
+    protected void doInitialize(final Session session) {
+        service = new ValidationServiceImpl(config);
         HippoServiceRegistry.register(service, ValidationService.class);
     }
 

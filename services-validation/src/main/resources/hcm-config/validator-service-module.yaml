@@ -2,7 +2,7 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/validation:
       jcr:primaryType: hipposys:module
-      hipposys:className: org.onehippo.cms7.services.validation.ValidatorServiceModule
+      hipposys:className: org.onehippo.cms7.services.validation.ValidationServiceModule
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
         /escaped:

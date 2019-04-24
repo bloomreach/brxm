@@ -27,13 +27,13 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 
-class ValidatorServiceConfig {
+class ValidationServiceConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidatorServiceConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidationServiceConfig.class);
 
     private final BiMap<String, Validator> validators = Maps.synchronizedBiMap(HashBiMap.create());
 
-    ValidatorServiceConfig(final Node configNode) {
+    ValidationServiceConfig(final Node configNode) {
         reconfigure(configNode);
     }
 
