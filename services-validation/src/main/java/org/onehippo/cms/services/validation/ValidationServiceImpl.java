@@ -17,6 +17,7 @@ package org.onehippo.cms.services.validation;
 
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +32,8 @@ class ValidationServiceImpl implements ValidationService {
     }
 
     @Override
-    public Validator getValidator(final String name) {
-        return config.getValidator(name);
+    public ValidatorInstance getValidator(final String name) {
+        return config.getValidatorInstance(name);
     }
 
 }

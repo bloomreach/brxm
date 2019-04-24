@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation.validator;
+package org.onehippo.cms.services.validation.api;
 
-import org.onehippo.cms.services.validation.api.Violation;
+public interface ViolationFactory {
 
-public class TestViolation implements Violation {
+    /**
+     * Creates a translated violation, using the name of the current validator as the translation key.
+     * @return the violation
+     */
+    Violation createViolation();
 
-    @Override
-    public String getMessage() {
-        return null;
-    }
+    /**
+     * Creates a translated violation, using the name of the current validator
+     * plus the provided sub-key as the translation key.
+     * @param subKey the additional key for the violation.
+     * @return the violation
+     */
+    Violation createViolation(String subKey);
+
 }

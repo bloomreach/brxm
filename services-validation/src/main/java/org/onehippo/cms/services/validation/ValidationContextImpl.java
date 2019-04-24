@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation.validator;
+package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
 
-public class TestValidationContext implements ValidationContext {
+public class ValidationContextImpl implements ValidationContext {
 
-    private String name;
-    private String type;
-    private Locale locale;
+    private final String name;
+    private final String type;
+    private final Locale locale;
 
-    TestValidationContext() {
-        this(null, null);
-    }
-
-    TestValidationContext(String name, String type) {
-        this(name, type, null);
-    }
-
-    public TestValidationContext(String name, String type, Locale locale) {
+    public ValidationContextImpl(final String name, final String type, final Locale locale) {
         this.name = name;
         this.type = type;
         this.locale = locale;

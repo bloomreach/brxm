@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation.validator;
+package org.onehippo.cms.services.validation;
 
-import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 
-public class TestViolation implements Violation {
+class ValidatorInstanceFactory {
 
-    @Override
-    public String getMessage() {
-        return null;
+    private ValidatorInstanceFactory() {
+    }
+
+    static ValidatorInstance createValidatorInstance(final ValidatorConfig config) {
+        final Validator validator = ValidatorFactory.createValidator(config);
+
+        if (validator == null) {
+            return null;
+        }
+
+        return new ValidatorInstanceImpl(validator, config);
     }
 }

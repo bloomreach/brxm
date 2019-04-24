@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation.validator;
+package org.onehippo.cms.services.validation;
 
-import java.util.Locale;
+import java.util.Collections;
+import java.util.Map;
 
-import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
 
-public class TestValidationContext implements ValidationContext {
+public class TestValidatorConfig implements ValidatorConfig {
 
     private String name;
-    private String type;
-    private Locale locale;
+    private String className;
+    private Map<String, String> properties;
 
-    TestValidationContext() {
-        this(null, null);
+    TestValidatorConfig(final String name, final String className) {
+        this(name, className, Collections.emptyMap());
     }
 
-    TestValidationContext(String name, String type) {
-        this(name, type, null);
-    }
-
-    public TestValidationContext(String name, String type, Locale locale) {
+    TestValidatorConfig(final String name, final String className, final Map<String, String> properties) {
         this.name = name;
-        this.type = type;
-        this.locale = locale;
+        this.className = className;
+        this.properties = properties;
     }
 
     @Override
@@ -46,12 +43,13 @@ public class TestValidationContext implements ValidationContext {
     }
 
     @Override
-    public String getType() {
-        return type;
+    public String getClassName() {
+        return className;
     }
 
     @Override
-    public Locale getLocale() {
-        return locale;
+    public Map<String, String> getProperties() {
+        return properties;
     }
+
 }

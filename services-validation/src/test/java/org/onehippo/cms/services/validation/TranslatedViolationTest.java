@@ -13,14 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms.services.validation.util;
+package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.services.validation.util.TranslationUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
@@ -38,7 +37,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest(HippoServiceRegistry.class)
-public class TranslationUtilsTest {
+public class TranslatedViolationTest {
 
     @Before
     public void setUp() {
@@ -50,7 +49,8 @@ public class TranslationUtilsTest {
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(null);
         replayAll();
 
-        assertEquals("???my-key???", TranslationUtils.getTranslatedMessage("my-key", Locale.getDefault()));
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
 
@@ -61,7 +61,8 @@ public class TranslationUtilsTest {
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(null);
         replayAll();
 
-        assertEquals("???my-key???", TranslationUtils.getTranslatedMessage("my-key", Locale.getDefault()));
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
 
@@ -74,7 +75,8 @@ public class TranslationUtilsTest {
         expect(bundle.getString("my-key")).andReturn(null);
         replayAll();
 
-        assertEquals("???my-key???", TranslationUtils.getTranslatedMessage("my-key", Locale.getDefault()));
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
 
@@ -87,8 +89,8 @@ public class TranslationUtilsTest {
         expect(bundle.getString("my-key")).andReturn("my-message");
         replayAll();
 
-        assertEquals("my-message", TranslationUtils.getTranslatedMessage("my-key", Locale.getDefault()));
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        assertEquals("my-message", violation.getMessage());
         verifyAll();
     }
-
 }

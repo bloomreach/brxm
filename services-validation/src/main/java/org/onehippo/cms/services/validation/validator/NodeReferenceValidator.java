@@ -22,6 +22,7 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 
 /**
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
@@ -32,14 +33,15 @@ public class NodeReferenceValidator implements Validator {
     private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final String value,
+                                        final ViolationFactory violationFactory) throws ValidationContextException {
         if (!"String".equals(context.getType())) {
             throw new ValidationContextException("Invalid validation exception; cannot validate non-string field for " +
                     "emptiness");
         }
 
         if (StringUtils.isBlank(value) || value.equals(ROOT_NODE_UUID)) {
-            return Optional.of(context.createViolation(this));
+            return Optional.of(violationFactory.createViolation());
         }
 
         return Optional.empty();

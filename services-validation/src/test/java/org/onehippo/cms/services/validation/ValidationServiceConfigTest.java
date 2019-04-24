@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -43,14 +44,14 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest(ValidatorFactory.class)
+@PrepareForTest(ValidatorInstanceFactory.class)
 public class ValidationServiceConfigTest {
 
     private MockNode configNode;
 
     @Before
     public void setUp() throws Exception {
-        mockStaticPartial(ValidatorFactory.class, "createValidator");
+        mockStaticPartial(ValidatorInstanceFactory.class, "createValidatorInstance");
         configNode = MockNode.root().addNode("config", JcrConstants.NT_UNSTRUCTURED);
     }
 
@@ -70,51 +71,51 @@ public class ValidationServiceConfigTest {
     @Test
     public void returnsNullWhenNoValidatorsAreConfigured() throws Exception {
         final ValidationServiceConfig config = createConfig();
-        assertNull(config.getValidator("non-existing-validator"));
+        assertNull(config.getValidatorInstance("non-existing-validator"));
     }
 
     @Test
     public void returnsNullWhenValidatorIsNotFound() throws Exception {
         final ValidationServiceConfig config = createConfig("existing-validator");
-        assertNull(config.getValidator("non-existing-validator"));
+        assertNull(config.getValidatorInstance("non-existing-validator"));
     }
 
     @Test
     public void returnsNewValidatorFromConfig() throws Exception {
-        final Validator mockValidator = createMock(Validator.class);
-        expect(ValidatorFactory.createValidator(isA(JcrValidatorConfig.class))).andReturn(mockValidator);
+        final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
-        assertEquals(mockValidator, config.getValidator("mock-validator"));
+        assertEquals(mockInstance, config.getValidatorInstance("mock-validator"));
         verifyAll();
     }
 
     @Test
     public void returnsSameValidatorInstance() throws Exception {
-        final Validator mockValidator = createMock(Validator.class);
-        expect(ValidatorFactory.createValidator(isA(JcrValidatorConfig.class))).andReturn(mockValidator);
+        final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
-        assertEquals(config.getValidator("mock-validator"), config.getValidator("mock-validator"));
+        assertEquals(config.getValidatorInstance("mock-validator"), config.getValidatorInstance("mock-validator"));
     }
 
     @Test
     public void clearsValidatorInstancesOnReconfigure() throws Exception {
-        final Validator mockValidator = createMock(Validator.class);
-        expect(ValidatorFactory.createValidator(isA(JcrValidatorConfig.class))).andReturn(mockValidator);
-        final Validator mockValidator2 = createMock(Validator.class);
-        expect(ValidatorFactory.createValidator(isA(JcrValidatorConfig.class))).andReturn(mockValidator2);
+        final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        final ValidatorInstance mockInstance2 = createMock(ValidatorInstance.class);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance2);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
-        final Validator validator1 = config.getValidator("mock-validator");
+        final ValidatorInstance validator1 = config.getValidatorInstance("mock-validator");
         assertNotNull(validator1);
 
-        // Reconfigure should clear the existing validators and use the ValidatorFactory to createValidator new instances
+        // Reconfigure should clear the existing validators and use the ValidatorInstanceFactory to create new instances
         config.reconfigure(configNode);
-        final Validator validator2 = config.getValidator("mock-validator");
+        final ValidatorInstance validator2 = config.getValidatorInstance("mock-validator");
 
         assertNotNull(validator2);
         assertNotEquals(validator1, validator2);

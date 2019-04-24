@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
@@ -30,9 +31,10 @@ public class EscapedHtmlValidator implements Validator {
     private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) {
+    public Optional<Violation> validate(final ValidationContext context, final String value,
+                                        final ViolationFactory violationFactory) {
         if (INVALID_CHARS.matcher(value).matches()) {
-            return Optional.of(context.createViolation(this));
+            return Optional.of(violationFactory.createViolation());
         }
         return Optional.empty();
     }

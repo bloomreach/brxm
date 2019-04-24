@@ -21,6 +21,7 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 import org.onehippo.cms.services.validation.util.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,8 @@ public class NonEmptyHtmlValidator implements Validator {
     public static final Logger log = LoggerFactory.getLogger(NonEmptyHtmlValidator.class);
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final String value,
+                                        final ViolationFactory violationFactory) throws ValidationContextException {
         if (!"String".equals(context.getType())) {
             throw new ValidationContextException("Invalid validation exception; " +
                     "cannot validate non-string field for emptiness");
@@ -49,7 +51,7 @@ public class NonEmptyHtmlValidator implements Validator {
         }
 
         if (HtmlUtils.isEmpty(value)) {
-            return Optional.of(context.createViolation(this));
+            return Optional.of(violationFactory.createViolation());
         }
 
         return Optional.empty();

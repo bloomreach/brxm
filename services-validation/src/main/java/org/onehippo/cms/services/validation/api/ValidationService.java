@@ -15,8 +15,11 @@
  */
 package org.onehippo.cms.services.validation.api;
 
+/**
+ * Provides validator instances.
+ */
 public interface ValidationService {
 
-    Validator getValidator(String name);
+    ValidatorInstance getValidator(String name);
 
 }

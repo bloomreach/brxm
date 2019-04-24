@@ -16,42 +16,25 @@
 
 package org.onehippo.cms.services.validation.validator;
 
-import java.util.Locale;
+import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 
-import org.onehippo.cms.services.validation.api.ValidationContext;
+public class TestViolationFactory implements ViolationFactory {
 
-public class TestValidationContext implements ValidationContext {
+    private boolean called = false;
 
-    private String name;
-    private String type;
-    private Locale locale;
-
-    TestValidationContext() {
-        this(null, null);
-    }
-
-    TestValidationContext(String name, String type) {
-        this(name, type, null);
-    }
-
-    public TestValidationContext(String name, String type, Locale locale) {
-        this.name = name;
-        this.type = type;
-        this.locale = locale;
+    public boolean isCalled() {
+        return called;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Violation createViolation() {
+        called = true;
+        return new TestViolation();
     }
 
     @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
+    public Violation createViolation(final String subKey) {
+        return new TestViolation();
     }
 }

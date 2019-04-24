@@ -23,6 +23,7 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
@@ -44,7 +45,8 @@ public class RegExpValidator implements Validator {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final String value,
+                                        final ViolationFactory violationFactory) throws ValidationContextException {
         if (!"string".equalsIgnoreCase(context.getType())) {
             throw new ValidationContextException("Cannot validate non-string field with a regular expression");
         }
@@ -53,6 +55,6 @@ public class RegExpValidator implements Validator {
             return Optional.empty();
         }
 
-        return Optional.of(context.createViolation(this));
+        return Optional.of(violationFactory.createViolation());
     }
 }

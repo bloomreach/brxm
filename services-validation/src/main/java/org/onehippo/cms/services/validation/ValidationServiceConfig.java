@@ -15,30 +15,31 @@
  */
 package org.onehippo.cms.services.validation;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
 
 class ValidationServiceConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ValidationServiceConfig.class);
 
-    private final BiMap<String, Validator> validators = Maps.synchronizedBiMap(HashBiMap.create());
+    private final Map<String, ValidatorInstance> validatorInstances = new ConcurrentHashMap<>();
 
     ValidationServiceConfig(final Node configNode) {
         reconfigure(configNode);
     }
 
     void reconfigure(final Node config) {
-        validators.clear();
+        validatorInstances.clear();
 
         try {
             final NodeIterator iterator = config.getNodes();
@@ -46,7 +47,8 @@ class ValidationServiceConfig {
                 final Node configNode = iterator.nextNode();
                 final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
                 final String validatorName = validatorConfig.getName();
-                validators.computeIfAbsent(validatorName, name -> ValidatorFactory.createValidator(validatorConfig));
+                validatorInstances.computeIfAbsent(validatorName,
+                        name -> ValidatorInstanceFactory.createValidatorInstance(validatorConfig));
             }
         } catch (final RepositoryException e) {
             log.error("Failed to reconfigure validator service", e);
@@ -58,16 +60,7 @@ class ValidationServiceConfig {
      * @param name The validator name
      * @return Instance of a {@link Validator}
      */
-    Validator getValidator(final String name) {
-        return validators.get(name);
-    }
-
-    /**
-     * Returns the name of a {@link Validator}, or null if the validator cannot be found
-     * @param validator The validator instance
-     * @return Name of the validator
-     */
-    String getValidatorName(final Validator validator) {
-        return validators.inverse().get(validator);
+    ValidatorInstance getValidatorInstance(final String name) {
+        return validatorInstances.get(name);
     }
 }

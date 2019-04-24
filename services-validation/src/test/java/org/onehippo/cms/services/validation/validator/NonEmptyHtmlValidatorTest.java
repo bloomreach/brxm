@@ -22,6 +22,8 @@ import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
 
@@ -29,32 +31,34 @@ public class NonEmptyHtmlValidatorTest {
 
     private ValidationContext context;
     private NonEmptyHtmlValidator validator;
+    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
-        context = new TestValidationContext("String", null);
+        context = new TestValidationContext(null, "String");
         validator = new NonEmptyHtmlValidator();
+        violationFactory = new TestViolationFactory();
     }
 
     @Test(expected = ValidationContextException.class)
     public void throwsExceptionIfFieldIsNotOfTypeString() {
-        context = new TestValidationContext("not-a-string", null);
-        validator.validate(context, null);
+        context = new TestValidationContext(null, "not-a-string");
+        validator.validate(context, null, violationFactory);
     }
 
     @Test
     public void initializesIfFieldIsOfTypeString() {
-        context = new TestValidationContext("String", "CustomHtml");
-        validator.validate(context, null);
+        context = new TestValidationContext("CustomHtml", "String");
+        validator.validate(context, null, violationFactory);
     }
 
     @Test
     public void warnsIfValidatorIsUsedWithHtmlField() {
-        context = new TestValidationContext("String", "Html");
+        context = new TestValidationContext("Html", "String");
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
             try {
-                validator.validate(context, null);
+                validator.validate(context, null, violationFactory);
             } finally {
                 assertEquals(1L, listener.messages().count());
             }
@@ -63,37 +67,45 @@ public class NonEmptyHtmlValidatorTest {
 
     @Test
     public void textIsValid() {
-        assertValid(validator.validate(context, "text"));
+        assertValid(validator.validate(context, "text", violationFactory));
+        assertFalse(violationFactory.isCalled());
     }
 
     @Test
     public void paragraphWithTextIsValid() {
-        assertValid(validator.validate(context, "<p>text</p>"));
+        assertValid(validator.validate(context, "<p>text</p>", violationFactory));
+        assertFalse(violationFactory.isCalled());
     }
+
     @Test
     public void imgIsValid() {
-        assertValid(validator.validate(context, "<img src=\"empty.gif\">"));
+        assertValid(validator.validate(context, "<img src=\"empty.gif\">", violationFactory));
+        assertFalse(violationFactory.isCalled());
     }
 
     @Test
     public void nullIsInvalid() {
-        assertInvalid(validator.validate(context, null));
+        assertInvalid(validator.validate(context, null, violationFactory));
+        assertTrue(violationFactory.isCalled());
     }
 
     @Test
     public void blankStringIsInvalid() {
-        assertInvalid(validator.validate(context, ""));
-        assertInvalid(validator.validate(context, " "));
+        assertInvalid(validator.validate(context, "", violationFactory));
+        assertInvalid(validator.validate(context, " ", violationFactory));
+        assertTrue(violationFactory.isCalled());
     }
 
     @Test
     public void emptyHtmlIsInvalid() {
-        assertInvalid(validator.validate(context, "<html></html>"));
+        assertInvalid(validator.validate(context, "<html></html>", violationFactory));
+        assertTrue(violationFactory.isCalled());
     }
 
     @Test
     public void emptyParagraphInvalid() {
-        assertInvalid(validator.validate(context, "<p></p>"));
+        assertInvalid(validator.validate(context, "<p></p>", violationFactory));
+        assertTrue(violationFactory.isCalled());
     }
 
 }

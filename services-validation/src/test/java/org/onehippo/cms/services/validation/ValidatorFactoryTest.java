@@ -22,7 +22,9 @@ import java.util.Optional;
 import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.ViolationFactory;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -35,7 +37,7 @@ public class ValidatorFactoryTest {
 
     @Test
     public void createValidatorWithoutProperties() {
-        final MockValidatorConfig config = new MockValidatorConfig("mockValidator", MockValidator.class.getName());
+        final ValidatorConfig config = new TestValidatorConfig("mockValidator", MockValidator.class.getName());
 
         final Validator validator = ValidatorFactory.createValidator(config);
 
@@ -45,7 +47,7 @@ public class ValidatorFactoryTest {
     @Test
     public void createValidatorWithProperties() {
         final Map<String, String> properties = Collections.singletonMap("key", "value");
-        final MockValidatorConfig config = new MockValidatorConfig("parameterized",
+        final TestValidatorConfig config = new TestValidatorConfig("parameterized",
                 ParameterizedMockValidator.class.getName(), properties);
 
         final Validator validator = ValidatorFactory.createValidator(config);
@@ -55,23 +57,23 @@ public class ValidatorFactoryTest {
 
     @Test
     public void classNotFound() {
-        final MockValidatorConfig config = new MockValidatorConfig("none", "noSuchClass");
+        final ValidatorConfig config = new TestValidatorConfig("none", "noSuchClass");
         assertErrorAndNoValidator(config, "failed to locate class");
     }
 
     @Test
     public void incompatibleConstructor() {
-        final MockValidatorConfig config = new MockValidatorConfig("incompatible", IncompatibleMockValidator.class.getName());
+        final ValidatorConfig config = new TestValidatorConfig("incompatible", IncompatibleMockValidator.class.getName());
         assertErrorAndNoValidator(config, "does not have a public constructor");
     }
 
     @Test
     public void abstractClass() {
-        final MockValidatorConfig config = new MockValidatorConfig("abstract", AbstractValidator.class.getName());
+        final ValidatorConfig config = new TestValidatorConfig("abstract", AbstractValidator.class.getName());
         assertErrorAndNoValidator(config, "failed to instantiate class");
     }
 
-    private void assertErrorAndNoValidator(final MockValidatorConfig config, final String errorSnippet) {
+    private void assertErrorAndNoValidator(final ValidatorConfig config, final String errorSnippet) {
         try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidatorFactory.class).build()) {
             final Validator validator = ValidatorFactory.createValidator(config);
             assertThat(listener.messages().count(), equalTo(1L));
@@ -83,7 +85,8 @@ public class ValidatorFactoryTest {
     // public so it exposes a default public constructor
     public static class MockValidator implements Validator {
         @Override
-        public Optional<Violation> validate(final ValidationContext context, final String value) {
+        public Optional<Violation> validate(final ValidationContext context, final String value,
+                                            final ViolationFactory violationFactory) {
             return Optional.empty();
         }
     }
@@ -105,38 +108,6 @@ public class ValidatorFactoryTest {
 
     private static abstract class AbstractValidator implements Validator {
         public AbstractValidator() {
-        }
-    }
-
-    private static class MockValidatorConfig implements ValidatorConfig {
-
-        private String name;
-        private String className;
-        private Map<String, String> properties;
-
-        MockValidatorConfig(final String name, final String className) {
-            this(name, className, Collections.emptyMap());
-        }
-
-        MockValidatorConfig(final String name, final String className, final Map<String, String> properties) {
-            this.name = name;
-            this.className = className;
-            this.properties = properties;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getClassName() {
-            return className;
-        }
-
-        @Override
-        public Map<String, String> getProperties() {
-            return properties;
         }
     }
 }

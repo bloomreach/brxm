@@ -25,6 +25,8 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
 
@@ -32,11 +34,14 @@ public class RegExpValidatorTest {
 
     private ValidationContext context;
     private Map<String, String> parameters;
+    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
         parameters = new HashMap<>();
         parameters.put("regexp.pattern", "[abc]");
+
+        violationFactory = new TestViolationFactory();
     }
 
     @Test(expected = ValidationContextException.class)
@@ -46,28 +51,30 @@ public class RegExpValidatorTest {
 
     @Test(expected = ValidationContextException.class)
     public void throwsExceptionIfFieldIsNotOfTypeString() {
-        context = new TestValidationContext("not-a-string", null);
+        context = new TestValidationContext(null, "not-a-string");
 
         final Map<String, String> parameters = new HashMap<>();
         parameters.put("regexp.pattern", "[abc]");
 
         final Validator validator = new RegExpValidator(parameters);
-        validator.validate(context, null);
+        validator.validate(context, null, violationFactory);
     }
 
     @Test
     public void testValidInput() {
-        context = new TestValidationContext("String", null);
+        context = new TestValidationContext(null, "String");
 
         final Validator validator = new RegExpValidator(parameters);
-        assertValid(validator.validate(context, "abc"));
+        assertValid(validator.validate(context, "abc", violationFactory));
+        assertFalse(violationFactory.isCalled());
     }
 
     @Test
     public void testInvalidInput() {
-        context = new TestValidationContext("String", null);
+        context = new TestValidationContext(null, "String");
 
         final Validator validator = new RegExpValidator(parameters);
-        assertInvalid(validator.validate(context, "xyz"));
+        assertInvalid(validator.validate(context, "xyz", violationFactory));
+        assertTrue(violationFactory.isCalled());
     }
 }

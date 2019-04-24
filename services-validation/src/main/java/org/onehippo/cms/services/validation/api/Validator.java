@@ -15,10 +15,33 @@
  */
 package org.onehippo.cms.services.validation.api;
 
+import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Checks whether a value adheres to certain constraints.
+ *
+ * Implementations should either provide a public no-arguments constructor, or a public constructor that accepts
+ * a single argument of type {@link Map <String, String>}. The latter will get all custom configuration properties
+ * as key-value pairs.
+ *
+ * The system reuses a single instance of each validator, so implementations must be thread-safe.
+ */
 public interface Validator {
 
-    Optional<Violation> validate(ValidationContext context, String value) throws ValidationContextException;
+    /**
+     * Validates that a value adheres to certain constraints.
+     *
+     * @param context the context in which the value is validated
+     * @param value the value to validate
+     * @param violationFactory the factory for translated violations
+     *
+     * @return a violation that explains what to do with the invalid value,
+     * or an empty {@link Optional} when the value is valid.
+     *
+     * @throws ValidationContextException when this validator is used in a context that does not make sense.
+     */
+    Optional<Violation> validate(ValidationContext context, String value, ViolationFactory violationFactory)
+            throws ValidationContextException;
 
 }
