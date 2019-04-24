@@ -56,7 +56,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGrou
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
@@ -66,9 +65,8 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.ValidationService;
-import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
@@ -199,7 +197,7 @@ public class FieldTypeUtils {
             } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validatorName)) {
                 fieldType.setUnsupportedValidator(true);
             } else {
-                final Validator validator = validationService.getValidator(validatorName);
+                final ValidatorInstance validator = validationService.getValidator(validatorName);
                 if (validator != null) {
                     fieldType.addValidatorName(validatorName);
                 } else {
@@ -213,7 +211,7 @@ public class FieldTypeUtils {
         }
     }
 
-    public static Validator getValidator(final String validatorName) {
+    public static ValidatorInstance getValidator(final String validatorName) {
         if (StringUtils.isBlank(validatorName)) {
             return null;
         }

@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -33,12 +34,13 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.FieldValidationContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.ValidationContextImpl;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +60,20 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
 
     @JsonIgnore
-    protected FieldValidationContext validationContext;
+    protected ValidationContext validationContext;
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        validationContext = new FieldValidationContext(fieldContext, getValidationType());
+        validationContext = createValidationContext(fieldContext);
+
         return super.init(fieldContext);
+    }
+
+    private ValidationContext createValidationContext(final FieldTypeContext fieldContext) {
+        final String name = fieldContext.getName();
+        final String type = getValidationType();
+        final Locale locale = fieldContext.getParentContext().getLocale();
+        return new ValidationContextImpl(name, type, locale);
     }
 
     @Override
@@ -99,7 +109,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
      * @return whether the validator deemed the value valid
      */
     private boolean validateValue(final FieldValue value, final String validatorName) {
-        final Validator validator = FieldTypeUtils.getValidator(validatorName);
+        final ValidatorInstance validator = FieldTypeUtils.getValidator(validatorName);
         if (validator == null) {
             log.warn("Failed to find validator '{}', ignoring it", validatorName);
             return true;
