@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>29.9-SNAPSHOT</version>
+  <version>29.9</version>
 
   <name>Hippo CMS Project POM</name>
   <description>Hippo CMS Project POM</description>
