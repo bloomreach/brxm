@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend;
 
+import java.lang.StringBuilder;
 import java.util.TimeZone;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
@@ -24,7 +24,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.link.InlineFrame;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -70,7 +69,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     private final ObservableRegistry obRegistry;
     private final IPluginConfigService pluginConfigService;
     private final ContextMenuBehavior menuBehavior;
-    private final InlineFrame cmsInlineFrame;
 
     public PluginPage() {
         this(PluginUserSession.get().getApplicationFactory());
@@ -84,12 +82,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
                 pageInitTask = HDC.getCurrentTask().startSubtask(PluginPage.class.getSimpleName() + ".init");
             }
 
-            this.pageId = ((PluginUserSession) UserSession.get()).getPageId();
+            pageId = ((PluginUserSession) UserSession.get()).getPageId();
 
-            cmsInlineFrame = new InlineFrame("cms", this);
-            final EmptyPanel rootPanel = new EmptyPanel("root");
-            rootPanel.add(cmsInlineFrame);
-            add(rootPanel);
+            add(new EmptyPanel("root"));
 
             mgr = new PluginManager(this);
             context = new PluginContext(mgr, new JavaPluginConfig("home"));
@@ -127,10 +122,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
                 pageInitTask.stop();
             }
         }
-    }
-
-    protected void showCmsIFrame() {
-        cmsInlineFrame.setVisible(true);
     }
 
     private void registerGlobalBehaviorTracker() {
@@ -187,10 +178,10 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     private void publishSessionParameters(final IHeaderResponse response) {
-        final HttpSession httpSession = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
+        final HttpSession httpSession = ((ServletWebRequest)getRequest()).getContainerRequest().getSession();
         final CmsSessionContext sessionContext = CmsSessionContext.getContext(httpSession);
         if (sessionContext != null) {
-            final StringBuilder script = new StringBuilder();
+        	final StringBuilder script = new StringBuilder();
 
             final String locale = sessionContext.getLocale().getLanguage();
             final TimeZone timezone = UserSession.get().getClientInfo().getProperties().getTimeZone();

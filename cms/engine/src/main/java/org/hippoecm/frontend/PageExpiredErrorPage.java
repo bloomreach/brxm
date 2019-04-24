@@ -17,7 +17,7 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.model.StringResourceModel;
 
-public class PageExpiredErrorPage extends NavAppPage {
+public class PageExpiredErrorPage extends PluginPage {
 
     public PageExpiredErrorPage() {
         super();
