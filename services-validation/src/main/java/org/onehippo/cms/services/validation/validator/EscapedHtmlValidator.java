@@ -18,10 +18,8 @@ package org.onehippo.cms.services.validation.validator;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.onehippo.cms.services.validation.api.ValidationContextException;
-import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
 
 /**

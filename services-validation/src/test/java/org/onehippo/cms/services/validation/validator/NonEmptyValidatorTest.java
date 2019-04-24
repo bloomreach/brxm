@@ -19,15 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
-import org.onehippo.cms.services.validation.api.Violation;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.expect;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertInvalid;
 import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.assertValid;
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replayAll;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 public class NonEmptyValidatorTest {
 
@@ -74,7 +68,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void invalidInputForText() throws ValidationContextException {
+    public void invalidInputForText() {
         context = new TestValidationContext("String", "non-html");
 
         assertInvalid(validator.validate(context, null));
