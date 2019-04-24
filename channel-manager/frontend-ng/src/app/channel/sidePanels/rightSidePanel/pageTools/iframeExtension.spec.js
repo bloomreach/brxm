@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,30 @@ describe('iframeExtension', () => {
 
       expect(Penpal.connectToChild).toHaveBeenCalled();
       expect($log.warn).toHaveBeenCalledWith('Extension \'Test\' failed to connect with the client library.', error);
+    });
+
+    describe('channel events', () => {
+      beforeEach(() => {
+        $ctrl.$onInit();
+        $rootScope.$digest();
+      });
+
+      it('reacts on channel:changes:publish events', () => {
+        $rootScope.$emit('channel:changes:publish');
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.changes.publish');
+      });
+
+      it('reacts on channel:changes:discard events', () => {
+        $rootScope.$emit('channel:changes:discard');
+        expect(child.emitEvent).toHaveBeenCalledWith('channel.changes.discard');
+      });
+
+      it('unsubscribes from event', () => {
+        $ctrl.$onDestroy();
+        $rootScope.$emit('channel:changes:publish');
+        $rootScope.$emit('channel:changes:discard');
+        expect(child.emitEvent).not.toHaveBeenCalled();
+      });
     });
   });
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ class HstService {
 
   getChannel(id, contextPath, hostGroup) {
     if (!id) {
-      throw new Error('Channel id must be defined');
+      return q.reject('Channel id must be defined');
     }
 
     const currentContextPath = this.contextPath;
@@ -57,6 +57,8 @@ class HstService {
       this.contextPath = contextPath;
       this.hostGroup = hostGroup;
       return this.doGet(this.ConfigService.rootUuid, 'channels', id);
+    } catch (e) {
+      return q.reject(e);
     } finally {
       this.contextPath = currentContextPath;
       this.hostGroup = currentHostGroup;
@@ -115,13 +117,26 @@ class HstService {
     headers.contextPath = this.contextPath;
     headers.hostGroup = this.hostGroup;
 
-    return q((resolve, reject) => {
+    const canceller = q.defer();
+    const promise = q((resolve, reject) => {
       http({
-        method, url, headers, data,
+        method,
+        url,
+        headers,
+        data,
+        timeout: canceller.promise,
       })
         .then(response => resolve(response.data))
         .catch(error => reject(error.data));
     });
+
+    promise.cancel = () => {
+      canceller.resolve();
+
+      return promise;
+    };
+
+    return promise;
   }
 
   _createApiUrl(uuid, pathElements, params) {

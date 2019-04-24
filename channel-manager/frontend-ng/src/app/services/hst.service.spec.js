@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import 'angular-mocks';
 
 describe('HstService', () => {
   let $q;
+  let $timeout;
   let $httpBackend;
   let hstService;
   let ConfigServiceMock;
@@ -47,8 +48,9 @@ describe('HstService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$httpBackend_, _HstService_) => {
+    inject((_$q_, _$timeout_, _$httpBackend_, _HstService_) => {
       $q = _$q_;
+      $timeout = _$timeout_;
       $httpBackend = _$httpBackend_;
       hstService = _HstService_;
     });
@@ -138,9 +140,12 @@ describe('HstService', () => {
     expect(catchSpy).toHaveBeenCalledWith(channelA);
   });
 
-  it('throws exception when get a channel without id', () => {
-    expect(() => hstService.getChannel()).toThrowError('Channel id must be defined');
-    expect(() => hstService.getChannel('')).toThrowError('Channel id must be defined');
+  it('rejects promise when get a channel without id', (done) => {
+    hstService.getChannel('')
+      .then(() => done(new Error('Promise should not be resolved')))
+      .catch(() => done());
+
+    $timeout.flush();
   });
 
   it('rejects a promise when a channel load fails', () => {
@@ -152,6 +157,19 @@ describe('HstService', () => {
       .catch(catchSpy);
 
     $httpBackend.flush();
+    expect(catchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects a promise on a request cancel', () => {
+    const catchSpy = jasmine.createSpy('catchSpy');
+    const url = `${cmsContextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
+    $httpBackend.expectGET(url).respond(200);
+    hstService
+      .getChannel('test', contextPath, hostGroup)
+      .cancel()
+      .catch(catchSpy);
+
+    $timeout.flush();
     expect(catchSpy).toHaveBeenCalled();
   });
 

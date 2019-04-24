@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
     private static final JavaScriptResourceReference[] JAVASCRIPT_RESOURCE_REFERENCES;
 
     static {
-        List<JavaScriptResourceReference> references = new ArrayList<JavaScriptResourceReference>();
+        List<JavaScriptResourceReference> references = new ArrayList<>();
         references.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
         references.add(new JavaScriptResourceReference(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
         references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, BREADCRUMB_TOOLBAR));
@@ -59,7 +59,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
         references.add(new JavaScriptResourceReference(ChannelOverview.class, ChannelOverview.CHANNEL_OVERVIEW_PANEL_JS));
         references.add(new JavaScriptResourceReference(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
         references.add(new JavaScriptResourceReference(ChannelIconPanel.class, ChannelIconPanel.CHANNEL_ICON_PANEL_JS));
-        JAVASCRIPT_RESOURCE_REFERENCES = references.toArray(new JavaScriptResourceReference[references.size()]);
+        JAVASCRIPT_RESOURCE_REFERENCES = references.toArray(new JavaScriptResourceReference[0]);
     }
 
     private static final ChannelManagerHeaderItem INSTANCE = new ChannelManagerHeaderItem();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,17 @@
 
 import template from './nodes.template.html';
 
-const treeNodesComponent = {
+const treeNodesDirective = () => ({
+  restrict: 'E',
   require: {
     hippoTree: '^^hippoTree',
   },
-  bindings: {
+  bindToController: {
     items: '=',
   },
+  controller: angular.noop,
+  controllerAs: '$ctrl',
   template,
-};
+});
 
-export default treeNodesComponent;
+export default treeNodesDirective;

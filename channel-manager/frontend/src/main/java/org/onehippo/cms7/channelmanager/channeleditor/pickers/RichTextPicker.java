@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -95,18 +95,18 @@ public class RichTextPicker<T extends RichTextEditorLink> extends ChannelEditorP
     private void discardChangesInField() {
         final Node node = getFieldNode();
         if (node == null) {
-            log.warn("No node found with UUID %s, can not discard changes.", nodeId);
+            log.warn("No node found with UUID {}, can not discard changes.", nodeId);
             return;
         }
 
         try {
             node.refresh(false);
         } catch (RepositoryException e) {
-            log.warn("Failed to discard changes for node with UUID %s", nodeId, e);
+            log.warn("Failed to discard changes for node with UUID {}", nodeId, e);
         }
     }
 
-    private static abstract class NodeModel implements Model<Node> {
+    private abstract static class NodeModel implements Model<Node> {
 
         @Override
         public final void set(final Node node) {

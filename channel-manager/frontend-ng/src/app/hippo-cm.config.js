@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,24 @@ function config(
   $mdDateLocaleProvider,
   $mdIconProvider,
   $mdThemingProvider,
+  $provide,
   $qProvider,
   $stateProvider,
+  $translateSanitizationProvider,
   $translateProvider,
   $urlRouterProvider,
 ) {
   'ngInject';
+
+  $provide.decorator('$q', ($delegate) => {
+    'ngInject';
+
+    if (window.$Promise !== $delegate) {
+      window.$Promise = $delegate;
+    }
+
+    return $delegate;
+  });
 
   // FIXME This suppresses all uncaught promises
   $qProvider.errorOnUnhandledRejections(false);
@@ -79,7 +91,11 @@ function config(
       'zh_*': 'zh',
     });
   $translateProvider.fallbackLanguage(FALLBACK_LOCALE);
-  $translateProvider.useSanitizeValueStrategy('escaped');
+
+  // AngularJs sanitizes all 'external' values itself automatically, so don't
+  // let angular-translate sanitize values too to prevent double-escaping.
+  $translateSanitizationProvider.addStrategy('none', value => value);
+  $translateProvider.useSanitizeValueStrategy('none');
 
   $mdThemingProvider.definePalette('hippo-blue', {
     50: '#cfe7fc',

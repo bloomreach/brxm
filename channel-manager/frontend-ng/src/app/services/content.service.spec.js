@@ -80,6 +80,52 @@ describe('ContentService', () => {
     expect(result).toEqual(doc);
   });
 
+  it('can create a document', () => {
+    const doc = {
+      id: '123',
+      fields: {
+        test: 'value',
+      },
+    };
+    let result = null;
+
+    $httpBackend.expectPOST('/test/ws/content/documents').respond(200, doc);
+    ContentService.createDocument(doc).then((saved) => {
+      result = saved;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(doc);
+  });
+
+  it('can generate a document url', () => {
+    const name = 'docName';
+    const locale = 'en';
+    let result = null;
+
+    $httpBackend.expectPOST('/test/ws/content/slugs?locale=en').respond(200, name);
+    ContentService.generateDocumentUrl(name, locale).then((saved) => {
+      result = saved;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(name);
+  });
+
+  it('can set a document name url', () => {
+    const documentId = 'docId';
+    const name = 'test';
+    let result = null;
+
+    $httpBackend.expectPUT('/test/ws/content/documents/docId').respond(200, name);
+    ContentService.setDocumentNameUrl(documentId, name).then((saved) => {
+      result = saved;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(name);
+  });
+
   it('can discard changes in an editable document', () => {
     const successCallback = jasmine.createSpy('successCallback');
     const failureCallback = jasmine.createSpy('failureCallback');
@@ -117,6 +163,36 @@ describe('ContentService', () => {
     $httpBackend.flush();
 
     expect(result).toEqual(docType);
+  });
+
+  it('can get a document query template', () => {
+    const docQuery = {
+      id: 'test',
+    };
+    let result = null;
+
+    $httpBackend.expectGET('/test/ws/content/documenttemplatequery/test').respond(200, docQuery);
+    ContentService.getDocumentTemplateQuery('test').then((returned) => {
+      result = returned;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(docQuery);
+  });
+
+  it('can get folders', () => {
+    const folder = {
+      id: 'test',
+    };
+    let result = null;
+
+    $httpBackend.expectGET('/test/ws/content/folders/path/of/folder').respond(200, folder);
+    ContentService.getFolders('path/of/folder').then((returned) => {
+      result = returned;
+    });
+    $httpBackend.flush();
+
+    expect(result).toEqual(folder);
   });
 
   it('can get a value list', () => {

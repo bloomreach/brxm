@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -54,6 +54,9 @@
                ng-hide="$ctrl.value"
                ng-click="$ctrl.showPathPicker()"
                ng-disabled="::$ctrl.readOnly">
+        <div ng-messages="$ctrl.error">
+          <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
+        </div>
         <img ng-class="{ 'readonly': $ctrl.readOnly }"
              ng-if="$ctrl.value"
              ng-src="{{ $ctrl.getImageVariantPath() }}"
@@ -71,24 +74,26 @@
         <md-icon md-font-icon="mdi-magnify"></md-icon>
       </md-button>
     </div>
-    <div ng-messages="$ctrl.error">
-      <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
-    </div>
     <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{::$ctrl.qaClass}}">
     <label ng-class="::{ 'md-required': $ctrl.required }">{{ ::$ctrl.label }}</label>
     <div layout="row">
-      <input type="text"
-             name="{{::$ctrl.field}}"
-             readonly="readonly"
-             flex
-             ng-required="::$ctrl.required"
-             ng-disabled="::$ctrl.readOnly"
-             ng-model="$ctrl.getSetPath"
-             ng-model-options="{ getterSetter: true }"
-             ng-click="$ctrl.showPathPicker()">
+      <div flex>
+        <input type="text"
+               name="{{::$ctrl.field}}"
+               readonly="readonly"
+               flex
+               ng-required="::$ctrl.required"
+               ng-disabled="::$ctrl.readOnly"
+               ng-model="$ctrl.getSetPath"
+               ng-model-options="{ getterSetter: true }"
+               ng-click="$ctrl.showPathPicker()">
+        <div ng-messages="$ctrl.error">
+          <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
+        </div>
+      </div>
       <md-button class="md-icon-button"
                  ng-if="$ctrl.value"
                  ng-click="$ctrl.value = ''"
@@ -100,9 +105,6 @@
                  ng-disabled="::$ctrl.readOnly">
         <md-icon md-font-icon="mdi-magnify"></md-icon>
       </md-button>
-    </div>
-    <div ng-messages="$ctrl.error">
-      <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
     </div>
     <hint-icon text="{{ ::$ctrl.hint }}"></hint-icon>
   </md-input-container>

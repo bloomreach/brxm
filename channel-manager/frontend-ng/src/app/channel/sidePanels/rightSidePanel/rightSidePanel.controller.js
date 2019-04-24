@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,9 +53,9 @@ class RightSidePanelCtrl {
     this.sideNavElement = this.$element.find('.right-side-panel');
     this.sideNavElement.css('width', this.lastSavedWidth);
 
-    this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.**' }, () => this._openPanel());
+    this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
-    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*' }, () => this._focusPanel());
+    this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*.**' }, () => this._focusPanel());
     this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
   }
 

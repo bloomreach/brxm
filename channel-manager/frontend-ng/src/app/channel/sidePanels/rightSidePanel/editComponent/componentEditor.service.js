@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,10 +59,13 @@ class ComponentEditorService {
     channel, component, container, page,
   }) {
     this.close();
+    this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
-    return this.HstComponentService.getProperties(component.id, component.variant)
-      .then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
-      .catch(() => this._onLoadFailure());
+    this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
+      .catch(() => this._onLoadFailure())
+      .finally(() => { delete this.request; });
+
+    return this.request;
   }
 
   getPropertyGroups() {
@@ -91,8 +94,9 @@ class ComponentEditorService {
   isForeignPage() {
     const currentPage = this.PageMetaDataService.get();
 
-    return currentPage && this.page
-      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID];
+    return currentPage && this.page && this.component
+      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID]
+      && !this.PageStructureService.getComponentById(this.component.id);
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
@@ -121,6 +125,8 @@ class ComponentEditorService {
     if (!component) {
       return;
     }
+
+    this.page = this.PageMetaDataService.get();
 
     const changedContainer = {
       isDisabled: component.container.isDisabled(),
@@ -320,6 +326,10 @@ class ComponentEditorService {
   }
 
   close() {
+    if (this.request) {
+      this.request.cancel();
+    }
+
     this._clearData();
     this.OverlayService.deselectComponent();
     delete this.error;

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -42,10 +42,10 @@
                            class="md-icon-button"
                            ng-click="toggle(); hippoTree.toggle(item)"
                            ng-if="!hippoTree.isEmpty(item)"
-                           aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
+                           aria-label="{{ (item.collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
-                  <md-icon class="mdi-18" md-font-icon="{{ collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
+                  <md-icon class="mdi-18" md-font-icon="{{ item.collapsed ? 'mdi-plus' : 'mdi-minus' }}"></md-icon>
                 </md-button>
                 <div ng-class="{'empty-tree-item': hippoTree.isEmpty(item)}">{{ item.title }}</div>
               </div>

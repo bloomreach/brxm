@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ const DELAY_NOTIFICATION = 1000;
 const DELAY_ERROR = 3 * 1000;
 const DELAY_DISMISSIBLE = 30 * 1000;
 
-class FeedbackService {
+export default class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
     'ngInject';
 
@@ -67,6 +67,14 @@ class FeedbackService {
     });
   }
 
+  showDismissibleText(customText) {
+    this._showToast({
+      text: customText,
+      delay: DELAY_DISMISSIBLE,
+      dismissal: true,
+    });
+  }
+
   showErrorResponse(response, defaultKey, errorMap = {}, defaultParams = {}) {
     if (!response) {
       this.showError(defaultKey, defaultParams);
@@ -83,7 +91,7 @@ class FeedbackService {
     }
 
     let text;
-    if (responseParams && responseParams.userMessage) {
+    if (responseParams.userMessage) {
       const template = responseParams.userMessage;
       delete responseParams.userMessage;
       text = this.$interpolate(template)(responseParams);
@@ -92,9 +100,10 @@ class FeedbackService {
       text = this.$translate.instant(key, responseParams);
     }
 
-    this._showToast({ text, delay: DELAY_ERROR });
+    this.showDismissibleText(text);
+  }
+
+  hideAll() {
+    return this.$mdToast.hide();
   }
 }
-
-
-export default FeedbackService;

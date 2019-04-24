@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 class EditComponentService {
   constructor(
     $log,
@@ -25,7 +26,6 @@ class EditComponentService {
     ComponentEditor,
     ConfigService,
     MaskService,
-    OverlayService,
     PageMetaDataService,
     ProjectService,
     RightSidePanelService,
@@ -41,7 +41,6 @@ class EditComponentService {
     this.ComponentEditor = ComponentEditor;
     this.ConfigService = ConfigService;
     this.MaskService = MaskService;
-    this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
@@ -112,7 +111,6 @@ class EditComponentService {
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
-        this.OverlayService.sync();
       })
       .catch(() => this.stopEditing());
   }

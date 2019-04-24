@@ -14,32 +14,31 @@
  * limitations under the License.
  */
 
-import template from './radioGroup.html';
-import RadioGroupFieldCtrl from './radioGroup.controller';
-import './radioGroup.scss';
+const config = require('@bloomreach/frontend-build/lib/webpack.config');
 
-const radioGroupComponent = {
-  bindings: {
-    fieldType: '<',
-    falseLabel: '<',
-    isRequired: '<',
-    locale: '<',
-    name: '<',
-    ngModel: '<',
-    onFieldBlur: '&',
-    onFieldFocus: '&',
-    optionsSource: '<',
-    orientation: '<',
-    sortBy: '<',
-    sortComparator: '<',
-    sortOrder: '<',
-    trueLabel: '<',
-  },
-  controller: RadioGroupFieldCtrl,
-  template,
-  require: {
-    ngModelCtrl: 'ngModel',
+module.exports = {
+  ...config,
+  entry: {
+    angularjs: [
+      'angular',
+      'angular-animate',
+      'angular-aria',
+      'angular-local-storage',
+      'angular-material',
+      'angular-messages',
+      'angular-mocks',
+      'angular-translate',
+      'angular-translate-loader-static-files',
+      '@uirouter/angularjs',
+      'angular-ui-tree',
+      'ng-device-detector',
+      'ng-focus-if',
+    ],
+    vendor: [
+      '@bloomreach/dragula',
+      'jquery',
+      'mutation-summary',
+      'moment-timezone',
+    ],
   },
 };
-
-export default radioGroupComponent;

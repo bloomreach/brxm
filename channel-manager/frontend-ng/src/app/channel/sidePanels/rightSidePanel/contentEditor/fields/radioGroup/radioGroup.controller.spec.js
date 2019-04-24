@@ -53,7 +53,7 @@ describe('radioGroup', () => {
     });
   });
 
-  describe('load value list', () => {
+  describe('load options for radio group field', () => {
     it('loads button values correctly', () => {
       const valueList = [{ key: 's', label: 'Ship' }, { key: 'b', label: 'Boat' }];
       ContentService.getValueList.and.returnValue($q.resolve(valueList));
@@ -73,6 +73,29 @@ describe('radioGroup', () => {
 
       expect($ctrl.buttonDisplayValues(0)).toEqual('Ship');
       expect($ctrl.buttonDisplayValues(1)).toEqual('Boat');
+    });
+  });
+
+  describe('load options for boolean radio group field', () => {
+    beforeEach(() => {
+      $ctrl.fieldType = 'BOOLEAN_RADIO_GROUP';
+      $ctrl.falseLabel = 'Bad';
+      $ctrl.trueLabel = 'Good';
+    });
+
+    it('loads button values correctly', () => {
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonValues()).toEqual(['true', 'false']);
+    });
+
+    it('loads button display values correctly', () => {
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonDisplayValues(0)).toEqual('Good');
+      expect($ctrl.buttonDisplayValues(1)).toEqual('Bad');
     });
   });
 });

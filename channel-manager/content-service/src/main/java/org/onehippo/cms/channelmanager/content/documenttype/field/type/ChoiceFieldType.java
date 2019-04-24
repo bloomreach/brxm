@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,10 +203,10 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     @Override
     public boolean validateValue(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
-        // #readValues guarantees that the value has a valid chosenId, and a choiceValue
-        final String chosenId = value.findChosenId().get();
-        final NodeFieldType choice = findChoice(chosenId).get();
-        final FieldValue choiceValue = value.findChosenValue().get();
+        // #writeValue guarantees that the value has a valid chosenId, and a choiceValue
+        final String chosenId = value.getChosenId();
+        final NodeFieldType choice = choices.get(chosenId);
+        final FieldValue choiceValue = value.getChosenValue();
 
         return choice.validateValue(choiceValue);
     }
