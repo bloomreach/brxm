@@ -15,27 +15,8 @@
  */
 package org.onehippo.cms.services.validation.api;
 
-import java.util.Locale;
-
 /**
- * The context in which a value is validated.
+ * A validation context that can also create violations.
  */
-public interface ValidationContext {
-
-    /**
-     * @return the name of the context. For example, the JCR-level name of a document field ("myproject:title").
-     */
-    String getName();
-
-    /**
-     * @return the type of the context. For example, the JCR-level type name of a document field ("String",
-     * "hippostd:html", etc.)
-     */
-    String getType();
-
-    /**
-     * @return the locale of the current CMS user.
-     */
-    Locale getLocale();
-
+public interface ValidationContext extends BaseValidationContext, ViolationFactory {
 }

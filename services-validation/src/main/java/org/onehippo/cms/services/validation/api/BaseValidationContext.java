@@ -13,19 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms.services.validation.api;
 
+import java.util.Locale;
+
 /**
- * An instance of a {@link Validator}.
- *
- * Provides access to the configuration of a validator and to translated violations.
+ * The context in which a value is validated.
  */
-public interface ValidatorInstance extends AbstractValidator<BaseValidationContext, Object>, ValidationContext {
+public interface BaseValidationContext {
 
     /**
-     * @return the configuration of this validator instance.
+     * @return the name of the context. For example, the JCR-level name of a document field ("myproject:title").
      */
-    ValidatorConfig getConfig();
+    String getName();
+
+    /**
+     * @return the type of the context. For example, the JCR-level type name of a document field ("String",
+     * "hippostd:html", etc.)
+     */
+    String getType();
+
+    /**
+     * @return the locale of the current CMS user.
+     */
+    Locale getLocale();
 
 }

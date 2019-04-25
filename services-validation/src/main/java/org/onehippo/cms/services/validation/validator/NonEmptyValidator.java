@@ -20,10 +20,8 @@ import java.util.Optional;
 import org.apache.commons.lang.StringUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.onehippo.cms.services.validation.api.ValidationContext;
-import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.ViolationFactory;
 import org.onehippo.cms.services.validation.util.HtmlUtils;
 
 /**
@@ -35,14 +33,13 @@ import org.onehippo.cms.services.validation.util.HtmlUtils;
 public class NonEmptyValidator implements Validator<String> {
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value,
-                                        final ViolationFactory violationFactory) {
+    public Optional<Violation> validate(final ValidationContext context, final String value) {
         final boolean isEmpty = "Html".equals(context.getName())
                 ? HtmlUtils.isEmpty(value)
                 : StringUtils.isBlank(value);
 
         if (isEmpty) {
-            return Optional.of(violationFactory.createViolation());
+            return Optional.of(context.createViolation());
         }
 
         return Optional.empty();

@@ -19,7 +19,7 @@ package org.onehippo.cms.services.validation;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
@@ -30,12 +30,12 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     private final Validator validator;
     private final ValidatorConfig config;
-    private final ThreadLocal<Locale> locale;
+    private final ThreadLocal<BaseValidationContext> validatorContext;
 
     ValidatorInstanceImpl(final Validator validator, final ValidatorConfig config) {
         this.validator = validator;
         this.config = config;
-        locale = new ThreadLocal<>();
+        validatorContext = new ThreadLocal<>();
     }
 
     @Override
@@ -44,10 +44,10 @@ class ValidatorInstanceImpl implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final Object value) {
+    public Optional<Violation> validate(final BaseValidationContext context, final Object value) {
         try {
-            locale.set(context.getLocale());
-            return runValidator(context, value);
+            validatorContext.set(context);
+            return runValidator(value);
         } catch (ClassCastException e) {
             throw new ValidationContextException("Validator '" + config.getName() + "'"
                     + " is used in field '" + context.getName() + "'"
@@ -55,23 +55,38 @@ class ValidatorInstanceImpl implements ValidatorInstance {
                     + " The value of that field is of type '" + value.getClass().getName() + "',"
                     + " which is not compatible with the value type expected by the validator", e);
         } finally {
-            locale.remove();
+            validatorContext.remove();
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Optional<Violation> runValidator(final ValidationContext context, final Object value) {
-        return validator.validate(context, value, this);
+    private Optional<Violation> runValidator(final Object value) {
+        return validator.validate(this, value);
+    }
+
+    @Override
+    public String getName() {
+        return validatorContext.get().getName();
+    }
+
+    @Override
+    public String getType() {
+        return validatorContext.get().getType();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return validatorContext.get().getLocale();
     }
 
     @Override
     public Violation createViolation() {
-        return new TranslatedViolation(config.getName(), locale.get());
+        return new TranslatedViolation(config.getName(), getLocale());
     }
 
     @Override
     public Violation createViolation(final String subKey) {
         final String key = config.getName() + "#" + subKey;
-        return new TranslatedViolation(key, locale.get());
+        return new TranslatedViolation(key, getLocale());
     }
 }

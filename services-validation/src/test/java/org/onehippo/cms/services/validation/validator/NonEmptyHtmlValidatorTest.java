@@ -17,8 +17,6 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.api.ValidationContext;
-import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
@@ -29,15 +27,13 @@ import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.
 
 public class NonEmptyHtmlValidatorTest {
 
-    private ValidationContext context;
+    private TestValidationContext context;
     private NonEmptyHtmlValidator validator;
-    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
         context = new TestValidationContext(null, "String");
         validator = new NonEmptyHtmlValidator();
-        violationFactory = new TestViolationFactory();
     }
 
     @Test
@@ -46,7 +42,7 @@ public class NonEmptyHtmlValidatorTest {
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
             try {
-                validator.validate(context, null, violationFactory);
+                validator.validate(context, null);
             } finally {
                 assertEquals(1L, listener.messages().count());
             }
@@ -55,45 +51,45 @@ public class NonEmptyHtmlValidatorTest {
 
     @Test
     public void textIsValid() {
-        assertValid(validator.validate(context, "text", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "text"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
     public void paragraphWithTextIsValid() {
-        assertValid(validator.validate(context, "<p>text</p>", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "<p>text</p>"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
     public void imgIsValid() {
-        assertValid(validator.validate(context, "<img src=\"empty.gif\">", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "<img src=\"empty.gif\">"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
     public void nullIsInvalid() {
-        assertInvalid(validator.validate(context, null, violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, null));
+        assertTrue(context.isViolationCreated());
     }
 
     @Test
     public void blankStringIsInvalid() {
-        assertInvalid(validator.validate(context, "", violationFactory));
-        assertInvalid(validator.validate(context, " ", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
+        assertTrue(context.isViolationCreated());
     }
 
     @Test
     public void emptyHtmlIsInvalid() {
-        assertInvalid(validator.validate(context, "<html></html>", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, "<html></html>"));
+        assertTrue(context.isViolationCreated());
     }
 
     @Test
     public void emptyParagraphInvalid() {
-        assertInvalid(validator.validate(context, "<p></p>", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, "<p></p>"));
+        assertTrue(context.isViolationCreated());
     }
 
 }

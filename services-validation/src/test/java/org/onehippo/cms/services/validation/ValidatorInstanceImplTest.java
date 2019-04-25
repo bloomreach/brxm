@@ -19,14 +19,12 @@ package org.onehippo.cms.services.validation;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.ViolationFactory;
 import org.onehippo.cms.services.validation.validator.TestValidationContext;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -85,16 +83,16 @@ public class ValidatorInstanceImplTest {
     private static class TestValidator1 implements Validator<String> {
 
         @Override
-        public Optional<Violation> validate(final ValidationContext context, final String value, final ViolationFactory violationFactory) throws ValidationContextException {
-            return Optional.of(violationFactory.createViolation());
+        public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+            return Optional.of(context.createViolation());
         }
     }
 
     private static class TestValidator2 implements Validator<String> {
 
         @Override
-        public Optional<Violation> validate(final ValidationContext context, final String value, final ViolationFactory violationFactory) throws ValidationContextException {
-            return Optional.of(violationFactory.createViolation("subKey"));
+        public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
+            return Optional.of(context.createViolation("subKey"));
         }
     }
 

@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 
@@ -32,16 +31,13 @@ import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.
 
 public class RegExpValidatorTest {
 
-    private ValidationContext context;
+    private TestValidationContext context;
     private Map<String, String> parameters;
-    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
         parameters = new HashMap<>();
         parameters.put("regexp.pattern", "[abc]");
-
-        violationFactory = new TestViolationFactory();
     }
 
     @Test(expected = ValidationContextException.class)
@@ -54,8 +50,8 @@ public class RegExpValidatorTest {
         context = new TestValidationContext(null, "String");
 
         final Validator<String> validator = new RegExpValidator(parameters);
-        assertValid(validator.validate(context, "abc", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "abc"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
@@ -63,7 +59,7 @@ public class RegExpValidatorTest {
         context = new TestValidationContext(null, "String");
 
         final Validator<String> validator = new RegExpValidator(parameters);
-        assertInvalid(validator.validate(context, "xyz", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, "xyz"));
+        assertTrue(context.isViolationCreated());
     }
 }

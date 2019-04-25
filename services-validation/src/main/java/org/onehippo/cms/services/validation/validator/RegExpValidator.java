@@ -23,7 +23,6 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.ViolationFactory;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
@@ -45,12 +44,11 @@ public class RegExpValidator implements Validator<String> {
     }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value,
-                                        final ViolationFactory violationFactory) {
+    public Optional<Violation> validate(final ValidationContext context, final String value) {
         if (pattern.matcher(value).find()) {
             return Optional.empty();
         }
 
-        return Optional.of(violationFactory.createViolation());
+        return Optional.of(context.createViolation());
     }
 }

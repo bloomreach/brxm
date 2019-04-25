@@ -24,7 +24,6 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.ViolationFactory;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -85,8 +84,7 @@ public class ValidatorFactoryTest {
     // public so it exposes a default public constructor
     public static class MockValidator implements Validator<String> {
         @Override
-        public Optional<Violation> validate(final ValidationContext context, final String value,
-                                            final ViolationFactory violationFactory) {
+        public Optional<Violation> validate(final ValidationContext context, final String value) {
             return Optional.empty();
         }
     }

@@ -17,8 +17,6 @@ package org.onehippo.cms.services.validation.validator;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms.services.validation.api.ValidationContext;
-import org.onehippo.cms.services.validation.api.ValidationContextException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,55 +25,53 @@ import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.
 
 public class NonEmptyValidatorTest {
 
-    private ValidationContext context;
+    private TestValidationContext context;
     private NonEmptyValidator validator;
-    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
         validator = new NonEmptyValidator();
-        violationFactory = new TestViolationFactory();
     }
 
     @Test
     public void validInputForHtml() {
         context = new TestValidationContext("Html", "String");
 
-        assertValid(validator.validate(context, "text", violationFactory));
-        assertValid(validator.validate(context, "<p>text</p>", violationFactory));
-        assertValid(validator.validate(context, "<img src=\"empty.gif\">", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "text"));
+        assertValid(validator.validate(context, "<p>text</p>"));
+        assertValid(validator.validate(context, "<img src=\"empty.gif\">"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
     public void invalidInputForHtml() {
         context = new TestValidationContext("Html", "String");
 
-        assertInvalid(validator.validate(context, null, violationFactory));
-        assertInvalid(validator.validate(context, "", violationFactory));
-        assertInvalid(validator.validate(context, " ", violationFactory));
-        assertInvalid(validator.validate(context, "<html></html>", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, null));
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
+        assertInvalid(validator.validate(context, "<html></html>"));
+        assertTrue(context.isViolationCreated());
     }
 
     @Test
     public void validInputForText() {
         context = new TestValidationContext("non-html", "String");
 
-        assertValid(validator.validate(context, "text", violationFactory));
-        assertValid(validator.validate(context, "<p>text</p>", violationFactory));
-        assertValid(validator.validate(context, "<html></html>", violationFactory));
-        assertFalse(violationFactory.isCalled());
+        assertValid(validator.validate(context, "text"));
+        assertValid(validator.validate(context, "<p>text</p>"));
+        assertValid(validator.validate(context, "<html></html>"));
+        assertFalse(context.isViolationCreated());
     }
 
     @Test
     public void invalidInputForText() {
         context = new TestValidationContext("non-html", "String");
 
-        assertInvalid(validator.validate(context, null, violationFactory));
-        assertInvalid(validator.validate(context, "", violationFactory));
-        assertInvalid(validator.validate(context, " ", violationFactory));
-        assertInvalid(validator.validate(context, "\n\r", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, null));
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
+        assertInvalid(validator.validate(context, "\n\r"));
+        assertTrue(context.isViolationCreated());
     }
 }

@@ -24,26 +24,26 @@ import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.
 
 public class NodeReferenceValidatorTest {
 
+    private TestValidationContext context;
     private NodeReferenceValidator validator;
-    private TestViolationFactory violationFactory;
 
     @Before
     public void setUp() {
+        context = new TestValidationContext();
         validator = new NodeReferenceValidator();
-        violationFactory = new TestViolationFactory();
     }
 
     @Test
     public void blankStringIsInvalid() {
-        assertInvalid(validator.validate(null, null, violationFactory));
-        assertInvalid(validator.validate(null, "", violationFactory));
-        assertInvalid(validator.validate(null, " ", violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, null));
+        assertInvalid(validator.validate(context, ""));
+        assertInvalid(validator.validate(context, " "));
+        assertTrue(context.isViolationCreated());
     }
 
     @Test
     public void jcrRootNodeIdentifierIsInvalid() {
-        assertInvalid(validator.validate(null, JcrConstants.ROOT_NODE_ID, violationFactory));
-        assertTrue(violationFactory.isCalled());
+        assertInvalid(validator.validate(context, JcrConstants.ROOT_NODE_ID));
+        assertTrue(context.isViolationCreated());
     }
 }

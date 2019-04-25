@@ -18,15 +18,15 @@ package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
 
-import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.BaseValidationContext;
 
-public class ValidationContextImpl implements ValidationContext {
+public class BaseValidationContextImpl implements BaseValidationContext {
 
     private final String name;
     private final String type;
     private final Locale locale;
 
-    public ValidationContextImpl(final String name, final String type, final Locale locale) {
+    public BaseValidationContextImpl(final String name, final String type, final Locale locale) {
         this.name = name;
         this.type = type;
         this.locale = locale;

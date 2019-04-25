@@ -19,12 +19,14 @@ package org.onehippo.cms.services.validation.validator;
 import java.util.Locale;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Violation;
 
 public class TestValidationContext implements ValidationContext {
 
     private String name;
     private String type;
     private Locale locale;
+    private boolean isViolationCreated;
 
     TestValidationContext() {
         this(null, null);
@@ -53,5 +55,20 @@ public class TestValidationContext implements ValidationContext {
     @Override
     public Locale getLocale() {
         return locale;
+    }
+
+    @Override
+    public Violation createViolation() {
+        isViolationCreated = true;
+        return new TestViolation();
+    }
+
+    @Override
+    public Violation createViolation(final String subKey) {
+        return createViolation();
+    }
+
+    public boolean isViolationCreated() {
+        return isViolationCreated;
     }
 }
