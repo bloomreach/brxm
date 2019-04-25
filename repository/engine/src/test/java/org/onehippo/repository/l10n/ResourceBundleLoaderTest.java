@@ -138,4 +138,28 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
         parameters.put("variable2", "replaced too");
         assertEquals(bundle.getString("key2", parameters), "value2 - replaced - replaced too");
     }
+    
+    @Test
+    public void testParameterizedOneParameter() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", "variable1", "replaced"), "value1 - replaced");
+    }
+
+    @Test
+    public void testParameterizedOneParameterWithNullName() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", null, "replaced"), "value1 - ${variable1}");
+    }
+
+    @Test
+    public void testParameterizedOneParameterWithNullValue() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", "variable1", null), "value1 - ${variable1}");
+    }
 }
