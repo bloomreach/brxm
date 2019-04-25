@@ -19,11 +19,13 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
@@ -94,10 +96,13 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator) {
-        final String name = fieldValidator.getFieldType().getName();
-        final String type = fieldValidator.getFieldType().getType();
-        final Locale locale = UserSession.get().getLocale();
-        return new BaseValidationContextImpl(name, type, locale);
+        final ITypeDescriptor fieldType = fieldValidator.getFieldType();
+        final String name = fieldType.getName();
+        final String type = fieldType.getType();
+        final UserSession userSession = UserSession.get();
+        final Locale locale = userSession.getLocale();
+        final TimeZone timeZone = userSession.getTimeZone();
+        return new BaseValidationContextImpl(name, type, locale, timeZone);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
