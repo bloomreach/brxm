@@ -63,7 +63,7 @@
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>4.6.3</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>4.6.3-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-blocks.version>4.6.3</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>7.6.3</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>4.6.3</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>4.6.3</hippo.plugin.gallerypicker.version>
