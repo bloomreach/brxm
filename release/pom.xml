@@ -56,7 +56,7 @@
     <hippo.services.contenttype.version>4.6.3-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>4.6.3</hippo.services.eventbus.version>
     <hippo.services.webfiles.version>4.6.3</hippo.services.webfiles.version>
-    <hippo.services.htmlprocessor.version>1.6.3-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>1.6.3</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>4.6.3</hippo.utilities.version>
     <hippo.testutils.version>1.6.3</hippo.testutils.version>
     <hippo.l10n-tooling.version>2.6.3</hippo.l10n-tooling.version>
