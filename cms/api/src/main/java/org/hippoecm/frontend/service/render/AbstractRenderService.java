@@ -485,10 +485,12 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         return parent;
     }
 
-    protected final ResourceBundleModel getResourceBundleModel(final String key, Locale locale) {
+    protected final ResourceBundleModel getResourceBundleModel(final String key, final Locale locale) {
         final String bundleName = getBundleName();
         if (!StringUtils.isBlank(bundleName)) {
-            return new ResourceBundleModel(bundleName, key, locale);
+            return new ResourceBundleModel.Builder(bundleName, key)
+                    .locale(locale)
+                    .build();
         }
         return null;
     }

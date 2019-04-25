@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
@@ -149,7 +148,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
         }
         if (result.getAffectedFields() > 1) {
             final IModel<String> resourceBundleModel = getResourceBundleModel("summaryMultiple",
-                    Collections.singletonMap("numberOfErrors", Integer.toString(result.getAffectedFields())));
+                    Collections.singletonMap("numberOfErrors", result.getAffectedFields()));
             logger.error(resourceBundleModel, ValidationScope.DOCUMENT);
         }
     }
@@ -158,8 +157,10 @@ public class JcrValidationService implements IValidationService, IDetachable {
         return getResourceBundleModel("summarySingle", null);
     }
 
-    private IModel<String> getResourceBundleModel(final String key, final Map<String, String> parameters) {
-        return new ResourceBundleModel("hippo:cms.validators", key, Session.get().getLocale(), parameters);
+    private IModel<String> getResourceBundleModel(final String key, final Map<String, Object> parameters) {
+        return new ResourceBundleModel.Builder("hippo:cms.validators", key)
+                .parameters(parameters)
+                .build();
     }
 
     public IValidationResult getValidationResult() {
