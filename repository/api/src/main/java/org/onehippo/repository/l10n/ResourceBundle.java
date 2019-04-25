@@ -54,8 +54,8 @@ public interface ResourceBundle {
      * this bundle the call is forwarded to the parent bundle.
      * <p/>
      * Variables in the Strings can be replaced by supplying parameters. The default definition of a variable is
-     * <code>${variableName}</code>. If the label has only variable use {@link #getString(String, String,
-     * String)}.
+     * <code>${variableName}</code>. If the label has only one variable use {@link #getString(String, String,
+     * V)}.
      *
      * @param key        a {@code key} identifying a String
      * @param parameters a map of names and values to replace variables
@@ -68,7 +68,7 @@ public interface ResourceBundle {
      * this bundle the call is forwarded to the parent bundle.
      * <p/>
      * One variable in the String can be replaced by the parameterName and parameterValue. The default definition of a
-     * variable is<code>${variableName}</code>. Convenience method for Strings with only one variable. If there are
+     * variable is <code>${variableName}</code>. Convenience method for Strings with only one variable. If there are
      * multiple variables use {@link #getString(String, Map)}.
      *
      * @param key            a {@code key} identifying a String
