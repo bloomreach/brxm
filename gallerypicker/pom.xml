@@ -38,7 +38,7 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>13.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>13.2.0-validation-SNAPSHOT</hippo.cms.version>
     <hippo.services.validation.version>13.2.0-validation-SNAPSHOT</hippo.services.validation.version>
 
