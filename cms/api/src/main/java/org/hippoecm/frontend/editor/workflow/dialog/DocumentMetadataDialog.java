@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,9 +53,11 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
     static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
 
     private static final FormatStyle DATE_STYLE = FormatStyle.LONG;
+    private final Node node;
 
-    public DocumentMetadataDialog(WorkflowDescriptorModel model) {
+    public DocumentMetadataDialog(WorkflowDescriptorModel model, Node node) {
         super(model);
+        this.node = node;
 
         setTitleKey("document-info");
         setSize(DialogConstants.MEDIUM_AUTO);
@@ -86,15 +88,12 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         }
     }
 
-    private Node getNode() throws RepositoryException {
-        return ((WorkflowDescriptorModel) super.getModel()).getNode();
-    }
+
 
     private ListView getMetaDataListView() {
         List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
 
         try {
-            final Node node = getNode();
 
             // add translation names
             final Map<String, String> names = getNames(node);
@@ -140,7 +139,6 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
     private List<DocumentMetadataEntry> getPublicationMetaData() {
         List<DocumentMetadataEntry> publicationMetadata = new ArrayList<>();
         try {
-            final Node node = getNode();
             for (Node variant : new NodeIterable(node.getNodes(node.getName()))) {
                 String state = variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                 switch (state) {
