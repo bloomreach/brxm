@@ -74,7 +74,7 @@
     <hippo.plugin.selections.version>5.6.3</hippo.plugin.selections.version>
     <hippo.plugin.seo-support.version>4.6.3-SNAPSHOT</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>4.6.3-SNAPSHOT</hippo.plugin.sitemap.version>
-    <hippo.plugin.taxonomy.version>4.6.3-SNAPSHOT</hippo.plugin.taxonomy.version>
+    <hippo.plugin.taxonomy.version>4.6.3</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>2.6.4</hippo.addon-crisp.version>
 
     <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
