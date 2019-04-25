@@ -46,7 +46,7 @@
     <hippo.configuration-management.version>1.6.3-SNAPSHOT</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>5.6.3-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.6.3-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>4.6.3-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>4.6.3</hippo.commons.version>
     <hippo.cms.version>5.6.3-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.6.3-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>5.6.3-SNAPSHOT</hippo.packages.version>
