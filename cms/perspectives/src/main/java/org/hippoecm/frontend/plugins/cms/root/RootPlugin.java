@@ -37,6 +37,7 @@ import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.navigation.NavAppToAppHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -242,6 +243,8 @@ public class RootPlugin extends TabsPlugin {
         response.render(new MonitorExtUserActivityHeaderItem(userActivity));
 
         response.render(UsageStatisticsHeaderItem.get());
+
+        response.render(new NavAppToAppHeaderItem());
     }
 
     protected String getItemId() {
