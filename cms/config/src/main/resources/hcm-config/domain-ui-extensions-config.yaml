@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [webmaster]
+        hipposys:groups: [everybody]
         hipposys:role: readonly
       /frontend-ui-extensions:
         jcr:primaryType: hipposys:domainrule
