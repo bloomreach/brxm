@@ -27,7 +27,7 @@ class OpenUiStringPlugin {
 
   onConnect(connection) {
     this.iframe = connection.iframe;
-    this.setFieldHeight(this.parameters.initialHeightInPixels);
+    this.setFieldHeight('initial');
 
     connection.emitter.on('document.field.blur', () => this.element.blur());
   }
@@ -74,8 +74,10 @@ class OpenUiStringPlugin {
     return this.parameters.compareValue;
   }
 
-  setFieldHeight(pixels) {
-    const height = Math.max(this.MIN_HEIGHT_IN_PIXELS, Math.min(pixels, this.MAX_HEIGHT_IN_PIXELS));
+  setFieldHeight(value) {
+    let height = value === 'initial' ? this.parameters.initialHeightInPixels : value;
+    height = Math.max(this.MIN_HEIGHT_IN_PIXELS, Math.min(height, this.MAX_HEIGHT_IN_PIXELS));
+
     this.iframe.style.height = height + 'px';
   }
 }
