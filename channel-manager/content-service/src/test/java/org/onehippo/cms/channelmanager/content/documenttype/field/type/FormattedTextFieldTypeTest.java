@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,6 +63,9 @@ public class FormattedTextFieldTypeTest {
 
         final Locale locale = new Locale("nl");
         expect(parentContext.getLocale()).andReturn(locale).anyTimes();
+
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
+        expect(parentContext.getTimeZone()).andReturn(timeZone).anyTimes();
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));

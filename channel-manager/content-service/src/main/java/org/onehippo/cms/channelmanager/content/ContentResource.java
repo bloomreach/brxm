@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.function.Function;
 
 import javax.jcr.Session;
@@ -84,14 +85,14 @@ public class ContentResource {
     @Path("documents/{documentId}/branch")
     public Response branchDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.branchDocument(id, session, locale, getBranchId(servletRequest)));
+                (session, locale, timeZone) -> documentService.branchDocument(id, session, locale, timeZone, getBranchId(servletRequest)));
     }
 
     @POST
     @Path("documents/{documentId}/editable")
     public Response obtainEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.obtainEditableDocument(id, session, locale, getBranchId(servletRequest)));
+                (session, locale, timeZone) -> documentService.obtainEditableDocument(id, session, locale, timeZone, getBranchId(servletRequest)));
     }
 
     @PUT
@@ -100,7 +101,7 @@ public class ContentResource {
                                            final Document document,
                                            @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateEditableDocument(id, document, session, locale));
+                (session, locale, timeZone) -> documentService.updateEditableDocument(id, document, session, locale, timeZone));
     }
 
     @PUT
@@ -109,15 +110,15 @@ public class ContentResource {
                                         @PathParam("fieldPath") final String fieldPath,
                                         final List<FieldValue> fieldValues,
                                         @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.OK, (session, locale) ->
-            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, getBranchId(servletRequest))
+        return executeTask(servletRequest, Status.OK, (session, locale, timeZone) ->
+            documentService.updateEditableField(documentId, new FieldPath(fieldPath), fieldValues, session, locale, timeZone, getBranchId(servletRequest))
         );
     }
 
     @DELETE
     @Path("documents/{documentId}/editable")
     public Response discardEditableDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale, timeZone) -> {
             documentService.discardEditableDocument(id, session, locale, getBranchId(servletRequest));
             return null;
         });
@@ -130,7 +131,7 @@ public class ContentResource {
             @PathParam("branchId") final String branchId,
             @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.getDocument(id, branchId, session, locale)
+                (session, locale, timeZone) -> documentService.getDocument(id, branchId, session, locale, timeZone)
         );
     }
 
@@ -138,7 +139,7 @@ public class ContentResource {
     @Path("documenttypes/{documentId}")
     public Response getDocumentType(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
+                (session, locale, timeZone) -> DocumentTypesService.get().getDocumentType(id, session, locale, timeZone));
     }
 
     @POST
@@ -153,21 +154,21 @@ public class ContentResource {
     @Path("documenttemplatequery/{documentId}")
     public Response getDocumentTemplateQuery(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> DocumentTemplateQueryService.get().getDocumentTemplateQuery(id, session, locale));
+                (session, locale, timeZone) -> DocumentTemplateQueryService.get().getDocumentTemplateQuery(id, session, locale));
     }
 
     @GET
     @Path("folders/{path:.*}")
     public Response getFolders(@PathParam("path") final String path, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK, NO_CACHE,
-                (session, locale) -> FoldersService.get().getFolders(path, session));
+                (session, locale, timeZone) -> FoldersService.get().getFolders(path, session));
     }
 
     @POST
     @Path("documents")
     public Response createDocument(final NewDocumentInfo newDocumentInfo, @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.CREATED,
-                (session, locale) -> documentService.createDocument(newDocumentInfo, session, locale));
+                (session, locale, timeZone) -> documentService.createDocument(newDocumentInfo, session, locale, timeZone));
     }
 
     @PUT
@@ -175,13 +176,13 @@ public class ContentResource {
     public Response updateDocumentNames(@PathParam("documentId") final String id, final Document document,
                                         @Context final HttpServletRequest servletRequest) {
         return executeTask(servletRequest, Status.OK,
-                (session, locale) -> documentService.updateDocumentNames(id, document, session, getBranchId(servletRequest)));
+                (session, locale, timeZone) -> documentService.updateDocumentNames(id, document, session, getBranchId(servletRequest)));
     }
 
     @DELETE
     @Path("documents/{documentId}")
     public Response deleteDocument(@PathParam("documentId") final String id, @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale, timeZone) -> {
             documentService.deleteDocument(id, session, locale, getBranchId(servletRequest));
             return null;
         });
@@ -192,7 +193,7 @@ public class ContentResource {
     public Response executeDocumentWorkflowAction(@PathParam("documentId") final String documentId,
                                                   @PathParam("action") final String action,
                                                   @Context final HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale) -> {
+        return executeTask(servletRequest, Status.NO_CONTENT, (session, locale, timeZone) -> {
             workflowService.executeDocumentWorkflowAction(documentId, action, session, getBranchId(servletRequest));
             return null;
         });
@@ -220,8 +221,9 @@ public class ContentResource {
                                  final EndPointTask task) {
         final Session session = sessionRequestContextProvider.getJcrSession(servletRequest);
         final Locale locale = sessionRequestContextProvider.getLocale(servletRequest);
+        final TimeZone timeZone = sessionRequestContextProvider.getTimeZone(servletRequest);
         try {
-            final Object result = task.execute(session, locale);
+            final Object result = task.execute(session, locale, timeZone);
             return Response.status(successStatus).cacheControl(cacheControl).entity(result).build();
         } catch (final ErrorWithPayloadException e) {
             return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
@@ -234,6 +236,6 @@ public class ContentResource {
 
     @FunctionalInterface
     private interface EndPointTask {
-        Object execute(Session session, Locale locale) throws ErrorWithPayloadException;
+        Object execute(Session session, Locale locale, TimeZone timeZone) throws ErrorWithPayloadException;
     }
 }

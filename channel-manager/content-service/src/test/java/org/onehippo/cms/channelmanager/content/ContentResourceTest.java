@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -73,6 +74,7 @@ public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
     private Locale locale;
+    private TimeZone timeZone;
     private DocumentsService documentsService;
     private WorkflowService workflowService;
     private DocumentTypesService documentTypesService;
@@ -82,6 +84,7 @@ public class ContentResourceTest extends CXFTest {
     @Before
     public void setup() {
         locale = new Locale("en");
+        timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         userSession = createMock(Session.class);
         documentsService = createMock(DocumentsService.class);
         workflowService = createMock(WorkflowService.class);
@@ -92,6 +95,7 @@ public class ContentResourceTest extends CXFTest {
         final SessionRequestContextProvider sessionRequestContextProvider = createMock(SessionRequestContextProvider.class);
         expect(sessionRequestContextProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
         expect(sessionRequestContextProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
+//        expect(sessionRequestContextProvider.getTimeZone(anyObject())).andReturn(timeZone).anyTimes();
         replay(sessionRequestContextProvider);
 
         expect(contextPayloadService.apply(anyObject())).andStubReturn(emptyMap());
@@ -116,7 +120,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale)))
+        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale), eq(timeZone)))
                 .andReturn(testDocument);
         replay(documentsService);
 
@@ -137,7 +141,7 @@ public class ContentResourceTest extends CXFTest {
         final String branchId = "branchId";
         branchDocument.setBranchId(branchId);
 
-        expect(documentsService.getDocument(eq(requestedUuid), eq(branchId), eq(userSession), eq(locale)))
+        expect(documentsService.getDocument(eq(requestedUuid), eq(branchId), eq(userSession), eq(locale), eq(timeZone)))
                 .andReturn(branchDocument);
         replay(documentsService);
 
@@ -158,7 +162,7 @@ public class ContentResourceTest extends CXFTest {
     public void getPublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale)))
+        expect(documentsService.getDocument(eq(requestedUuid), eq("master"), eq(userSession), eq(locale), eq(timeZone)))
                 .andThrow(new NotFoundException());
         replay(documentsService);
 
@@ -174,7 +178,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andReturn(testDocument);
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, timeZone, "master")).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -190,7 +194,7 @@ public class ContentResourceTest extends CXFTest {
     public void obtainEditableDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andThrow(new ForbiddenException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, timeZone, "master")).andThrow(new ForbiddenException());
         replay(documentsService);
 
         when()
@@ -203,7 +207,7 @@ public class ContentResourceTest extends CXFTest {
     public void obtainEditableDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, "master")).andThrow(new NotFoundException());
+        expect(documentsService.obtainEditableDocument(requestedUuid, userSession, locale, timeZone, "master")).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -218,7 +222,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale))).andReturn(testDocument);
+        expect(documentsService.updateEditableDocument(eq(requestedUuid), isA(Document.class), eq(userSession), eq(locale), eq(timeZone))).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -298,7 +302,7 @@ public class ContentResourceTest extends CXFTest {
         final DocumentType docType = new DocumentType();
         docType.setId(returnedId);
 
-        expect(documentTypesService.getDocumentType(requestedId, userSession, locale)).andReturn(docType);
+        expect(documentTypesService.getDocumentType(requestedId, userSession, locale, timeZone)).andReturn(docType);
         replay(documentTypesService);
 
         final String expectedBody = normalizeJsonResource("/empty-documenttype.json");
@@ -315,7 +319,7 @@ public class ContentResourceTest extends CXFTest {
     public void documentTypeNotFound() throws Exception {
         final String requestedId = "ns:testdocument";
 
-        expect(documentTypesService.getDocumentType(requestedId, userSession, locale))
+        expect(documentTypesService.getDocumentType(requestedId, userSession, locale, timeZone))
                 .andThrow(new NotFoundException());
         replay(documentTypesService);
 

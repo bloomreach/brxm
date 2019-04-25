@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -74,7 +75,8 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         final String name = fieldContext.getName();
         final String type = getValidationType();
         final Locale locale = fieldContext.getParentContext().getLocale();
-        return new BaseValidationContextImpl(name, type, locale);
+        final TimeZone timeZone = fieldContext.getParentContext().getTimeZone();
+        return new BaseValidationContextImpl(name, type, locale, timeZone);
     }
 
     @Override

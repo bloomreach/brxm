@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
@@ -51,6 +52,11 @@ public class TestValidatorInstance implements ValidatorInstance {
 
     @Override
     public Locale getLocale() {
+        return null;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
         return null;
     }
 

@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
@@ -50,12 +51,12 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
+    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale, final TimeZone timeZone)
             throws ErrorWithPayloadException {
 
-        final String cacheKey = id + "-" + locale.toString();
+        final String cacheKey = id + "-" + locale.toString() + "-" + timeZone.getID();
         try {
-            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, userSession, locale));
+            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, userSession, locale, timeZone));
         } catch (final ExecutionException ignore) {
             throw new NotFoundException();
         }
@@ -66,9 +67,10 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         DOCUMENT_TYPES.invalidateAll();
     }
 
-    private DocumentType createDocumentType(final String id, final Session userSession, final Locale locale) throws NotFoundException {
+    private DocumentType createDocumentType(final String id, final Session userSession, final Locale locale,
+                                            final TimeZone timeZone) throws NotFoundException {
         final DocumentType docType = new DocumentType();
-        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, docType)
+        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, timeZone, docType)
                 .orElseThrow(NotFoundException::new);
 
         if (!context.getContentType().isDocumentType()) {

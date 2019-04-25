@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -100,6 +101,7 @@ public class ImageLinkFieldTypeTest {
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
         replayAll();
         final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);

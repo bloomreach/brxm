@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 
@@ -47,6 +48,7 @@ public class StaticDropdownFieldTypeTest {
     private FieldTypeContext getFieldTypeContext() {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
@@ -57,17 +59,17 @@ public class StaticDropdownFieldTypeTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-    
+
         return fieldContext;
     }
-    
+
     @Test
     public void populateDropdownWithEqualKeyValues() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
         expect(fieldTypeContext.getStringConfig("selectable.options")).andReturn(Optional.of("ca,us,mx"));
 
         replayAll();
-        
+
         final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
         fieldType.init(fieldTypeContext);
 
@@ -78,7 +80,7 @@ public class StaticDropdownFieldTypeTest {
         assertThat(fieldType.getOptionValues(), equalTo(expected));
         assertThat(fieldType.getOptionDisplayValues(), equalTo(expected));
     }
-    
+
     @Test
     public void populateDropdownWithDifferentKeyValues() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
@@ -86,7 +88,7 @@ public class StaticDropdownFieldTypeTest {
                 .andReturn(Optional.of("ca=Canada,us=United States,mx=Mexico"));
 
         replayAll();
-        
+
         final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
         fieldType.init(fieldTypeContext);
 
@@ -98,7 +100,7 @@ public class StaticDropdownFieldTypeTest {
         assertThat(fieldType.getOptionValues(), equalTo(expectedKeys));
         assertThat(fieldType.getOptionDisplayValues(), equalTo(expectedValues));
     }
-    
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();

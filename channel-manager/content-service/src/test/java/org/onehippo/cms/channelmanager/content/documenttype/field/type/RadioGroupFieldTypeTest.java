@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 
@@ -48,6 +49,7 @@ public class RadioGroupFieldTypeTest {
     private FieldTypeContext getFieldTypeContext() {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
@@ -58,10 +60,10 @@ public class RadioGroupFieldTypeTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-    
+
         return fieldContext;
     }
-    
+
     @Test
     public void testFieldConfig() {
         FieldTypeContext fieldTypeContext = getFieldTypeContext();
@@ -82,7 +84,7 @@ public class RadioGroupFieldTypeTest {
         assertThat(radioGroupFieldType.getSortOrder(), equalTo("descending"));
         assertThat(radioGroupFieldType.getOrientation(), equalTo("vertical"));
     }
-    
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Session;
 
@@ -78,15 +79,16 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentTypesService.getDocumentType(id, session, locale);
+            documentTypesService.getDocumentType(id, session, locale, timeZone);
             fail("No exception");
         } catch (NotFoundException e) {
             assertNull(e.getPayload());
@@ -100,11 +102,12 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.of(context));
 
         expect(context.getContentType()).andReturn(contentType);
@@ -113,7 +116,7 @@ public class DocumentTypesServiceImplTest {
         replayAll();
 
         try {
-            documentTypesService.getDocumentType(id, session, locale);
+            documentTypesService.getDocumentType(id, session, locale, timeZone);
             fail("No exception");
         } catch (NotFoundException e) {
             assertNull(e.getPayload());
@@ -127,13 +130,14 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
         docType.setId(id);
@@ -162,7 +166,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+        assertThat(documentTypesService.getDocumentType(id, session, locale, timeZone), equalTo(docType));
 
         verifyAll();
     }
@@ -172,6 +176,7 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
@@ -179,7 +184,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.of(resourceBundle)))
                 .andReturn(Optional.of("Document Display Name"));
@@ -212,7 +217,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+        assertThat(documentTypesService.getDocumentType(id, session, locale, timeZone), equalTo(docType));
 
         verifyAll();
     }
@@ -222,6 +227,7 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
@@ -231,7 +237,7 @@ public class DocumentTypesServiceImplTest {
         fieldsInfo.setCanCreateAllRequiredFields(true);
         fieldsInfo.addUnsupportedField("Test");
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
@@ -261,7 +267,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
+        assertThat(documentTypesService.getDocumentType(id, session, locale, timeZone), is(equalTo(docType)));
 
         verifyAll();
     }
@@ -271,12 +277,13 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
+        expect(ContentTypeContext.createForDocumentType(id, session, locale, timeZone, docType))
                 .andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
@@ -310,7 +317,7 @@ public class DocumentTypesServiceImplTest {
         replayAll();
 
         fieldsInfo.addUnsupportedField("Test", Collections.singletonList("required"));
-        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
+        assertThat(documentTypesService.getDocumentType(id, session, locale, timeZone), is(equalTo(docType)));
 
         verifyAll();
     }
@@ -320,16 +327,17 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType);
+        expectPrivate(docTypesServiceMock, method, id, session, locale, timeZone).andReturn(docType);
 
         replayAll();
 
-        final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, session, locale);
-        final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, session, locale);
+        final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, session, locale, timeZone);
+        final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, session, locale, timeZone);
         assertThat(documentType1, sameInstance(documentType2));
 
         verifyAll();
@@ -340,17 +348,18 @@ public class DocumentTypesServiceImplTest {
         final String id = "document:type";
         final Session session = createMock(Session.class);
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType).times(2);
+        expectPrivate(docTypesServiceMock, method, id, session, locale, timeZone).andReturn(docType).times(2);
 
         replayAll();
 
-        docTypesServiceMock.getDocumentType(id, session, locale);
+        docTypesServiceMock.getDocumentType(id, session, locale, timeZone);
         docTypesServiceMock.invalidateCache();
-        docTypesServiceMock.getDocumentType(id, session, locale);
+        docTypesServiceMock.getDocumentType(id, session, locale, timeZone);
         verifyAll();
     }
 }

@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -106,9 +107,10 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getDocument(final String uuid, final String branchId, final Session session, final Locale locale) throws ErrorWithPayloadException {
+    public Document getDocument(final String uuid, final String branchId, final Session session, final Locale locale,
+                                final TimeZone timeZone) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle, locale, timeZone);
 
         try {
             final BranchHandle branchHandle = new BranchHandleImpl(branchId, handle);
@@ -141,7 +143,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document branchDocument(final String uuid, final Session session, final Locale locale, final String branchId)
+    public Document branchDocument(final String uuid, final Session session, final Locale locale,
+                                   final TimeZone timeZone, final String branchId)
             throws ErrorWithPayloadException {
 
         final Node handle = getHandle(uuid, session);
@@ -156,7 +159,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw forbiddenException.get();
         }
 
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle, locale, timeZone);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(
                     withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR), handle)
@@ -193,7 +196,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document obtainEditableDocument(final String uuid, final Session session, final Locale locale, final String branchId)
+    public Document obtainEditableDocument(final String uuid, final Session session, final Locale locale,
+                                           final TimeZone timeZone, final String branchId)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -207,7 +211,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                     .orElseGet(() -> new ForbiddenException(new ErrorInfo(Reason.SERVER_ERROR)));
         }
 
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle, locale, timeZone);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(
                     withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR), handle)
@@ -240,7 +244,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document updateEditableDocument(final String uuid, final Document document, final Session session, final Locale locale)
+    public Document updateEditableDocument(final String uuid, final Document document, final Session session,
+                                           final Locale locale, final TimeZone timeZone)
             throws ErrorWithPayloadException {
         final String branchId = document.getBranchId();
         final Node handle = getHandle(uuid, session);
@@ -253,7 +258,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(document.getBranchId(), hints, session));
         }
 
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle, locale, timeZone);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
@@ -299,7 +304,9 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public List<FieldValue> updateEditableField(final String uuid, final FieldPath fieldPath, final List<FieldValue> fieldValues, final Session session, final Locale locale, final String branchId) throws ErrorWithPayloadException {
+    public List<FieldValue> updateEditableField(final String uuid, final FieldPath fieldPath,
+                                                final List<FieldValue> fieldValues, final Session session,
+                                                final Locale locale, final TimeZone timeZone, final String branchId) throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
@@ -310,7 +317,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ForbiddenException(errorInfoFromHintsOrNoHolder(branchId, hints, session));
         }
 
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle, locale, timeZone);
         if (docType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
         }
@@ -350,7 +357,8 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session, final Locale locale) throws ErrorWithPayloadException {
+    public Document createDocument(final NewDocumentInfo newDocumentInfo, final Session session, final Locale locale,
+                                   final TimeZone timeZone) throws ErrorWithPayloadException {
         final String name = checkNotBlank("name", newDocumentInfo.getName());
         final String slug = checkNotBlank("slug", newDocumentInfo.getSlug());
         final String documentTemplateQuery = checkNotBlank("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
@@ -375,7 +383,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
-        final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, session, locale);
+        final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, session, locale, timeZone);
         if (documentType.isReadOnlyDueToUnknownValidator()) {
             throw new ForbiddenException(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR));
         }
@@ -517,11 +525,11 @@ public class DocumentsServiceImpl implements DocumentsService {
         return propValue;
     }
 
-    private static DocumentType getDocumentType(final Node handle, final Locale locale) throws InternalServerErrorException {
+    private static DocumentType getDocumentType(final Node handle, final Locale locale, final TimeZone timeZone) throws InternalServerErrorException {
         final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         try {
-            return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
+            return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale, timeZone);
         } catch (final RepositoryException e) {
             log.warn("Failed to retrieve JCR session for node '{}'", getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));

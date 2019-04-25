@@ -17,11 +17,12 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.jcr.Session;
 
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
  * DocumentTypesService exposes an API for reading document types
@@ -42,7 +43,7 @@ public interface DocumentTypesService {
      * @throws ErrorWithPayloadException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(String id, Session userSession, Locale locale)
+    DocumentType getDocumentType(String id, Session userSession, Locale locale, TimeZone timeZone)
             throws ErrorWithPayloadException;
 
     /**

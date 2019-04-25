@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.jcr.Session;
 
@@ -43,7 +44,7 @@ public interface DocumentsService {
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If reading the document failed
      */
-    Document getDocument(String uuid, String branchId, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document getDocument(String uuid, String branchId, Session session, Locale locale, TimeZone timeZone) throws ErrorWithPayloadException;
 
     /**
      * Branches a document.
@@ -53,11 +54,12 @@ public interface DocumentsService {
      * @param uuid     UUID of the requested document (handle)
      * @param session  user-authenticated, invocation-scoped JCR session
      * @param locale   Locale of the CMS user
+     * @param timeZone TimeZone of the CMS user
      * @param branchId id of branch
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If branching the document failed
      */
-    Document branchDocument(String uuid, Session session, Locale locale, String branchId) throws ErrorWithPayloadException;
+    Document branchDocument(String uuid, Session session, Locale locale, TimeZone timeZone, String branchId) throws ErrorWithPayloadException;
 
 
     /**
@@ -68,11 +70,12 @@ public interface DocumentsService {
      * @param uuid     UUID of the requested document (handle)
      * @param session  user-authenticated, invocation-scoped JCR session
      * @param locale   Locale of the CMS user
+     * @param timeZone TimeZone of the CMS user
      * @param branchId id of branch
      * @return JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException If obtaining the editable instance failed
      */
-    Document obtainEditableDocument(String uuid, Session session, Locale locale, String branchId) throws ErrorWithPayloadException;
+    Document obtainEditableDocument(String uuid, Session session, Locale locale, TimeZone timeZone, String branchId) throws ErrorWithPayloadException;
 
     /**
      * Updates the editable version of a document, and keep it locked for further editing.
@@ -85,10 +88,12 @@ public interface DocumentsService {
      * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
      *                 pending.
      * @param locale   Locale of the CMS user
+     * @param timeZone TimeZone of the CMS user
      * @return JSON-serializable representation of the persisted document.
      * @throws ErrorWithPayloadException If updating the editable document failed
      */
-    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale,
+                                    final TimeZone timeZone) throws ErrorWithPayloadException;
 
     /**
      * Update a single field value in the editable version of a document.
@@ -102,13 +107,15 @@ public interface DocumentsService {
      * @param session     user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
      *                    pending.
      * @param locale      Locale of the CMS user
+     * @param timeZone TimeZone of the CMS user
      * @param branchId    id of branch
      *
      * @return the field values; the ones that were deemed invalid will be annotated with an errorInfo object.
      *
      * @throws ErrorWithPayloadException If updating the field failed
      */
-    List<FieldValue> updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues, Session session, Locale locale, final String branchId) throws ErrorWithPayloadException;
+    List<FieldValue> updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues,
+                                         Session session, Locale locale, final TimeZone timeZone, final String branchId) throws ErrorWithPayloadException;
 
     /**
      * Discard the editable version of a document, such that it is available for others to edit. The changes that were
@@ -126,13 +133,14 @@ public interface DocumentsService {
     /**
      * Creates a new document
      *
-     * @param newDocumentInfo the information about the new document to create
-     * @param session         user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
-     *                        be pending.
-     * @param locale          Locale of the CMS user
+     * @param newDocumentInfo   the information about the new document to create
+     * @param session           user-authenticated, invocation-scoped JCR session. In case of a bad request, changes
+     *                           may be pending.
+     * @param locale            Locale of the CMS user
+     * @param timeZone          TimeZone of the CMS user
      * @return the created document
      */
-    Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale) throws ErrorWithPayloadException;
+    Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale, TimeZone timeZone) throws ErrorWithPayloadException;
 
     /**
      * Updates the display name and URL name of a document.

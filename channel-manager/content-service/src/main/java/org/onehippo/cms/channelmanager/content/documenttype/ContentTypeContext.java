@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -46,6 +47,7 @@ public class ContentTypeContext {
     private final Session session;
     private final Node contentTypeRoot;
     private final Locale locale;
+    private final TimeZone timeZone;
     private final DocumentType documentType;
     private final int level;
     private final ResourceBundle resourceBundle;
@@ -73,14 +75,16 @@ public class ContentTypeContext {
      * @param id      identifies the requested content type, e.g. "myhippoproject:newsdocument"
      * @param session JCR session using the privileges of the requesting user
      * @param locale  locale of the current CMS session
+     * @param timeZone
      * @param docType {@link DocumentType} being assembled
      * @return        {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
     public static Optional<ContentTypeContext> createForDocumentType(final String id,
                                                                      final Session session,
                                                                      final Locale locale,
+                                                                     final TimeZone timeZone,
                                                                      final DocumentType docType) {
-        return create(id, session, locale, docType, 0);
+        return create(id, session, locale, timeZone, docType, 0);
     }
 
     /**
@@ -93,7 +97,7 @@ public class ContentTypeContext {
     public static Optional<ContentTypeContext> createFromParent(final String id, final ContentTypeContext parentContext) {
         final int level = parentContext.getLevel() + 1;
         if (level < MAX_NESTING_LEVEL) {
-            return create(id, parentContext.getSession(), parentContext.getLocale(), parentContext.getDocumentType(), level);
+            return create(id, parentContext.getSession(), parentContext.getLocale(), parentContext.getTimeZone(), parentContext.getDocumentType(), level);
         } else {
             log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
         }
@@ -107,12 +111,13 @@ public class ContentTypeContext {
     private static Optional<ContentTypeContext> create(final String id,
                                                        final Session session,
                                                        final Locale locale,
+                                                       final TimeZone timeZone,
                                                        final DocumentType docType,
                                                        final int level) {
         return getContentType(id)
                 .flatMap(contentType -> NamespaceUtils.getContentTypeRootNode(id, session)
                         .map(contentTypeRoot -> new ContentTypeContext(id, contentType, session, contentTypeRoot,
-                                                                       locale, docType, level)));
+                                                                       locale, timeZone, docType, level)));
     }
 
     private ContentTypeContext(final String id,
@@ -120,12 +125,14 @@ public class ContentTypeContext {
                                final Session session,
                                final Node documentTypeRoot,
                                final Locale locale,
+                               final TimeZone timeZone,
                                final DocumentType documentType,
                                final int level) {
         this.contentType = contentType;
         this.session = session;
         this.contentTypeRoot = documentTypeRoot;
         this.locale = locale;
+        this.timeZone = timeZone;
         this.documentType = documentType;
         this.level = level;
 
@@ -150,6 +157,11 @@ public class ContentTypeContext {
     public Locale getLocale() {
         return locale;
     }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
 
     public DocumentType getDocumentType() {
         return documentType;

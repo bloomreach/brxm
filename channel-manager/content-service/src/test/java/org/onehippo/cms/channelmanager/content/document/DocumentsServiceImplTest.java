@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -109,6 +110,7 @@ public class DocumentsServiceImplTest {
 
     private Session session;
     private Locale locale;
+    private TimeZone timeZone;
     private NewDocumentInfo info;
     private DocumentsServiceImpl documentsService;
     private HintsInspector hintsInspector;
@@ -118,6 +120,7 @@ public class DocumentsServiceImplTest {
     public void setup() {
         session = createMock(Session.class);
         locale = new Locale("en");
+        timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl();
         documentsService.setHintsInspector(hintsInspector);
@@ -150,7 +153,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -170,7 +173,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -190,7 +193,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -212,7 +215,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -240,7 +243,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -268,7 +271,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
@@ -294,7 +297,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -324,7 +327,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -350,12 +353,12 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
 
         expect(handle.getSession()).andReturn(session);
-        expect(documentTypesService.getDocumentType(variantType, session, locale)).andThrow(new NotFoundException());
+        expect(documentTypesService.getDocumentType(variantType, session, locale, timeZone)).andThrow(new NotFoundException());
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -382,7 +385,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -412,7 +415,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -463,7 +466,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -516,7 +519,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -573,7 +576,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -596,7 +599,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -619,7 +622,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -645,7 +648,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -674,7 +677,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -707,7 +710,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -736,7 +739,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -766,7 +769,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
@@ -801,7 +804,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -836,7 +839,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -872,7 +875,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e.getPayload(), equalTo(document));
@@ -912,7 +915,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale);
+            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -963,7 +966,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale);
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
 
         assertThat(persistedDocument, equalTo(document));
         assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
@@ -1011,7 +1014,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale);
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
 
         assertThat(persistedDocument.getId(), equalTo(document.getId()));
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
@@ -1033,7 +1036,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1057,7 +1060,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1084,7 +1087,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1113,7 +1116,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1146,7 +1149,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -1175,7 +1178,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1205,7 +1208,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
@@ -1239,7 +1242,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -1271,7 +1274,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("Expected a BadRequestException");
         } catch (BadRequestException expected) {
             ErrorInfo errorInfo = (ErrorInfo) expected.getPayload();
@@ -1305,7 +1308,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
 
         verifyAll();
     }
@@ -1336,7 +1339,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1464,31 +1467,31 @@ public class DocumentsServiceImplTest {
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutName() throws Exception {
         info.setName("");
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutSlug() throws Exception {
         info.setSlug("");
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutDocumentTemplateQuery() throws Exception {
         info.setDocumentTemplateQuery("");
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutDocumentTypeId() throws Exception {
         info.setDocumentTypeId("");
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutRootPath() throws Exception {
         info.setRootPath("");
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test
@@ -1506,7 +1509,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale);
+            documentsService.createDocument(info, session, locale, timeZone);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1535,7 +1538,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale);
+            documentsService.createDocument(info, session, locale, timeZone);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1573,7 +1576,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale);
+            documentsService.createDocument(info, session, locale, timeZone);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1612,7 +1615,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.createDocument(info, session, locale);
+        documentsService.createDocument(info, session, locale, timeZone);
     }
 
     @Test
@@ -1672,7 +1675,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(documentDraft);
 
-        final Document document = documentsService.createDocument(info, session, locale);
+        final Document document = documentsService.createDocument(info, session, locale, timeZone);
 
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
@@ -1748,7 +1751,7 @@ public class DocumentsServiceImplTest {
         replayAll(documentDraft);
 
 
-        final Document document = documentsService.createDocument(info, session, locale);
+        final Document document = documentsService.createDocument(info, session, locale, timeZone);
 
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
@@ -2271,7 +2274,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
         } catch (ForbiddenException e) {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
@@ -2290,7 +2293,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
-        expect(documentTypesService.getDocumentType(variantType, session, locale)).andReturn(docType).anyTimes();
+        expect(documentTypesService.getDocumentType(variantType, session, locale, timeZone)).andReturn(docType).anyTimes();
         expect(handle.getSession()).andReturn(session).anyTimes();
 
         return docType;
