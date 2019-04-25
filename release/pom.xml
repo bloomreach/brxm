@@ -66,7 +66,7 @@
     <hippo.plugin.content-blocks.version>4.6.3-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>7.6.3-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>4.6.3-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
-    <hippo.plugin.gallerypicker.version>4.6.3-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>4.6.3</hippo.plugin.gallerypicker.version>
     <hippo.plugin.poll.version>4.6.3-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>5.6.3-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.resourcebundle-editor.version>4.6.3-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
