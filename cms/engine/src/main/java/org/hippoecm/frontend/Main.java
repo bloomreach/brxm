@@ -247,8 +247,7 @@ public class Main extends PluginApplication {
                                 resources.add(resourceEnum.nextElement());
                             }
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            log.error("Failed loading resources for name {}", name, e);
                         }
                     }
                 }
@@ -303,7 +302,7 @@ public class Main extends PluginApplication {
                                 subSession.getRootNode(), path);
                         // YUCK: no exception!
                         if (node == null) {
-                            log.info("no binary found at " + path);
+                            log.info("no binary found at {}", path);
                         } else {
                             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                                 node = (Node) JcrHelper.getPrimaryItem(node);
@@ -311,7 +310,7 @@ public class Main extends PluginApplication {
                             return new JcrResourceRequestHandler(node);
                         }
                     } catch (PathNotFoundException e) {
-                        log.info("binary not found " + e.getMessage());
+                        log.info("binary not found: {}", e.getMessage());
                     } catch (javax.jcr.LoginException ex) {
                         log.warn(ex.getMessage());
                     } catch (RepositoryException ex) {
@@ -359,7 +358,7 @@ public class Main extends PluginApplication {
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
                     if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
-                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
+                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(NavAppPage.class, null), RedirectPolicy.AUTO_REDIRECT);
 
                         IRequestParameters requestParameters = request.getRequestParameters();
                         final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
