@@ -76,7 +76,7 @@ public interface ResourceBundle {
      * @param parameterValue the replacement value for the variable
      * @return the String identified by a {@code key} with replaced variables
      */
-    String getString(String key, String parameterName, String parameterValue);
+    <V> String getString(String key, String parameterName, V parameterValue);
     
     default java.util.ResourceBundle toJavaResourceBundle() {
         return null;

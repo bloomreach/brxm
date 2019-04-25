@@ -211,7 +211,7 @@ class ResourceBundleLoader {
             return new StringSubstitutor(parameters).replace(getString(key));
         }
 
-        public String getString(final String key, final String parameterName, final String parameterValue) {
+        public <V> String getString(final String key, final String parameterName, final V parameterValue) {
             return new StringSubstitutor(Collections.singletonMap(parameterName, parameterValue))
                     .replace(getString(key));
         }
