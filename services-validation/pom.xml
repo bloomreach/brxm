@@ -37,7 +37,7 @@
     <notice.project.name>Hippo CMS7 Services - validation</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>13.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
