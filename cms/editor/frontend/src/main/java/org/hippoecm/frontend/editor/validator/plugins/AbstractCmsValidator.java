@@ -66,7 +66,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
      * @return a model of the translation of the message
      */
     protected IModel<String> getTranslation() {
-        return getResourceBundleModel(getName(), Session.get().getLocale());
+        return getResourceBundleModel(getName());
     }
 
     /**
@@ -82,11 +82,11 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
      */
     protected IModel<String> getTranslation(final String alternateKey) {
         final String key = getName() + "#" + alternateKey;
-        return getResourceBundleModel(key, Session.get().getLocale());
+        return getResourceBundleModel(key);
     }
 
-    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
-        return new ResourceBundleModel("hippo:cms.validators", key, locale);
+    private IModel<String> getResourceBundleModel(final String key) {
+        return new ResourceBundleModel.Builder("hippo:cms.validators", key).build();
     }
 
 }

@@ -26,46 +26,108 @@ import org.onehippo.repository.l10n.ResourceBundle;
 
 public class ResourceBundleModel extends LoadableDetachableModel<String> {
 
-    private final String bundleName;
-    private final String key;
-    private final Locale locale;
-    private final String defaultValue;
+    // after removal of the deprecated constructors: add the final keyword again to these properties
+    private String bundleName;
+    private String key;
+    private Locale locale;
+    private String defaultValue;
     // keeps track of whether a defaultValue is set. This is needed because defaultValue parameter {@code null} results
     // in slightly different behavior than the constructor without defaultValue
-    private final boolean defaultValueSet;
-    private final Map<String, String> parameters;
+    private boolean defaultValueSet;
+    private Map<String, Object> parameters;
 
+    public static class Builder {
+        // required parameters
+        private final String bundleName;
+        private final String key;
+        
+        // optional parameters, set to default values
+        private Locale locale = null;
+        private String defaultValue = null;
+        private boolean defaultValueSet = false;
+        private Map<String, Object> parameters = null;
+        
+        public Builder(final String bundleName, final String key) {
+            this.bundleName = bundleName;
+            this.key = key;
+        }
+
+        /**
+         * To set a Locale. When not set by default {@link Session#getLocale()} is used.
+         * @param locale the bundle locale
+         */
+        public Builder locale(final Locale locale) {
+            this.locale = locale;
+            return this;
+        }
+
+        public Builder defaultValue(final String defaultValue) {
+            this.defaultValue = defaultValue;
+            this.defaultValueSet = true;
+            return this;
+        }
+
+        public Builder parameters(final Map<String, Object> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        public ResourceBundleModel build() {
+            return new ResourceBundleModel(this);
+        }
+    }
+    
+    private ResourceBundleModel(final Builder builder) {
+        this.bundleName = builder.bundleName;
+        this.key = builder.key;
+        this.locale = builder.locale;
+        this.defaultValue = builder.defaultValue;
+        this.defaultValueSet = builder.defaultValueSet;
+        this.parameters = builder.parameters;
+    }
+
+    /**
+     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
+     */
+    @Deprecated
     public ResourceBundleModel(final String bundleName, final String key) {
-        this(bundleName, key, null, false, null, null);
+        this(bundleName, key, null, false, null);
     }
 
+    /**
+     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
+     */
+    @Deprecated
     public ResourceBundleModel(final String bundleName, final String key, final String defaultValue) {
-        this(bundleName, key, defaultValue, true, null, null);
+        this(bundleName, key, defaultValue, true, null);
     }
 
+    /**
+     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
+     */
+    @Deprecated
     public ResourceBundleModel(final String bundleName, final String key, final Locale locale) {
-        this(bundleName, key, null, false, locale, null);
+        this(bundleName, key, null, false, locale);
     }
 
-    public ResourceBundleModel(final String bundleName, final String key, final Locale locale, final Map<String, String> parameters) {
-        this(bundleName, key, null, false, locale, parameters);
+    /**
+     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
+     */
+    @Deprecated
+    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue, 
+                               final Locale locale) {
+        this(bundleName, key, defaultValue, true, locale);
     }
 
-    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue, final Locale locale) {
-        this(bundleName, key, defaultValue, true, locale, null);
-    }
-
-    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue, final Locale locale, final Map<String, String> parameters) {
-        this(bundleName, key, defaultValue, true, locale, parameters);
-    }
-
-    private ResourceBundleModel(final String bundleName, final String key, final String defaultValue, final boolean defaultValueSet, final Locale locale, final Map<String, String> parameters) {
+    // can be removed when the deprecated constructors are removed
+    private ResourceBundleModel(final String bundleName, final String key, final String defaultValue, 
+                                final boolean defaultValueSet, final Locale locale) {
         this.bundleName = bundleName;
         this.key = key;
         this.defaultValue = defaultValue;
         this.defaultValueSet = defaultValueSet;
         this.locale = locale;
-        this.parameters = parameters;
+        this.parameters = null;
     }
 
     @Override
