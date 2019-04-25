@@ -18,6 +18,7 @@ package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
@@ -77,6 +78,11 @@ class ValidatorInstanceImpl implements ValidatorInstance {
     @Override
     public Locale getLocale() {
         return validatorContext.get().getLocale();
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return validatorContext.get().getTimeZone();
     }
 
     @Override

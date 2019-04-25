@@ -17,6 +17,7 @@
 package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.onehippo.cms.services.validation.api.BaseValidationContext;
 
@@ -25,11 +26,13 @@ public class BaseValidationContextImpl implements BaseValidationContext {
     private final String name;
     private final String type;
     private final Locale locale;
+    private final TimeZone timeZone;
 
-    public BaseValidationContextImpl(final String name, final String type, final Locale locale) {
+    public BaseValidationContextImpl(final String name, final String type, final Locale locale, final TimeZone timeZone) {
         this.name = name;
         this.type = type;
         this.locale = locale;
+        this.timeZone = timeZone;
     }
 
     @Override
@@ -45,5 +48,10 @@ public class BaseValidationContextImpl implements BaseValidationContext {
     @Override
     public Locale getLocale() {
         return locale;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 }

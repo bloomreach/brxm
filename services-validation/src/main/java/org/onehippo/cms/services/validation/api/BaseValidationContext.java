@@ -16,6 +16,7 @@
 package org.onehippo.cms.services.validation.api;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * The context in which a value is validated.
@@ -37,5 +38,10 @@ public interface BaseValidationContext {
      * @return the locale of the current CMS user.
      */
     Locale getLocale();
+
+    /**
+     * @return the timezone of the current CMS user.
+     */
+    TimeZone getTimeZone();
 
 }

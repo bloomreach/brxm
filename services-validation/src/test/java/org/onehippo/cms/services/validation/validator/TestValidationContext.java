@@ -17,6 +17,7 @@
 package org.onehippo.cms.services.validation.validator;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Violation;
@@ -26,6 +27,7 @@ public class TestValidationContext implements ValidationContext {
     private String name;
     private String type;
     private Locale locale;
+    private TimeZone timeZone;
     private boolean isViolationCreated;
 
     TestValidationContext() {
@@ -33,13 +35,18 @@ public class TestValidationContext implements ValidationContext {
     }
 
     TestValidationContext(String name, String type) {
-        this(name, type, null);
+        this(name, type, null, null);
     }
 
     public TestValidationContext(String name, String type, Locale locale) {
+        this(name, type, locale, null);
+    }
+
+    public TestValidationContext(String name, String type, Locale locale, TimeZone timeZone) {
         this.name = name;
         this.type = type;
         this.locale = locale;
+        this.timeZone = timeZone;
     }
 
     @Override
@@ -55,6 +62,11 @@ public class TestValidationContext implements ValidationContext {
     @Override
     public Locale getLocale() {
         return locale;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 
     @Override
