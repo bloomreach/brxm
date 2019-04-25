@@ -380,12 +380,6 @@ export interface DocumentProperties {
 }
 
 /**
- * Function to stop the auto-update of field height with.
- * @since 13.2
- */
-type StopAutoUpdateHeightFn = () => void;
-
-/**
  * API to access information about and communicate with the current document field.
  * @since 13.2
  */
