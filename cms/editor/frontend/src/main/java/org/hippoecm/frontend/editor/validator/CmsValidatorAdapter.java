@@ -29,8 +29,8 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.ValidationContextImpl;
-import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.BaseValidationContextImpl;
+import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
@@ -81,7 +81,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
             return Collections.emptySet();
         }
 
-        final ValidationContext context = createValidationContext(fieldValidator);
+        final BaseValidationContext context = createValidationContext(fieldValidator);
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
@@ -93,11 +93,11 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
-    private static ValidationContext createValidationContext(final IFieldValidator fieldValidator) {
+    private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator) {
         final String name = fieldValidator.getFieldType().getName();
         final String type = fieldValidator.getFieldType().getType();
         final Locale locale = UserSession.get().getLocale();
-        return new ValidationContextImpl(name, type, locale);
+        return new BaseValidationContextImpl(name, type, locale);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
