@@ -19,30 +19,14 @@ import java.util.Optional;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
 
-public class AlwaysGoodTestValidator implements ValidatorInstance {
-
-    @Override
-    public ValidatorConfig getConfig() {
-        return null;
-    }
+public class AlwaysGoodTestValidator implements Validator<Object> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final Object value) throws ValidationContextException {
         // everything is OK
         return Optional.empty();
-    }
-
-    @Override
-    public Violation createViolation() {
-        return null;
-    }
-
-    @Override
-    public Violation createViolation(final String subKey) {
-        return null;
     }
 }

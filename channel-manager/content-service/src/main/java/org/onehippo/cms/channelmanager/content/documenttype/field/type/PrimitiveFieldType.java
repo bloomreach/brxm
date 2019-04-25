@@ -39,8 +39,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.services.validation.ValidationContextImpl;
-import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.BaseValidationContextImpl;
+import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
 
     @JsonIgnore
-    protected ValidationContext validationContext;
+    protected BaseValidationContext validationContext;
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
@@ -70,11 +70,11 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         return super.init(fieldContext);
     }
 
-    private ValidationContext createValidationContext(final FieldTypeContext fieldContext) {
+    private BaseValidationContext createValidationContext(final FieldTypeContext fieldContext) {
         final String name = fieldContext.getName();
         final String type = getValidationType();
         final Locale locale = fieldContext.getParentContext().getLocale();
-        return new ValidationContextImpl(name, type, locale);
+        return new BaseValidationContextImpl(name, type, locale);
     }
 
     @Override

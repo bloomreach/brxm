@@ -19,29 +19,13 @@ import java.util.Optional;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
 
-public class AlwaysBadTestValidator implements ValidatorInstance {
-
-    @Override
-    public ValidatorConfig getConfig() {
-        return null;
-    }
+public class AlwaysBadTestValidator implements Validator<Object> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final Object value) throws ValidationContextException {
         return Optional.of(() -> "Always bad");
-    }
-
-    @Override
-    public Violation createViolation() {
-        return null;
-    }
-
-    @Override
-    public Violation createViolation(final String subKey) {
-        return null;
     }
 }

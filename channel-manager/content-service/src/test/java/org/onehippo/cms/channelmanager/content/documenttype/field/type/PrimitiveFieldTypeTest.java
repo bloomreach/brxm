@@ -519,13 +519,13 @@ public class PrimitiveFieldTypeTest {
     private static void mockValidators() {
         PowerMock.mockStaticPartial(FieldTypeUtils.class, "getValidator");
         expect(FieldTypeUtils.getValidator(eq("always-good")))
-                .andReturn(new AlwaysGoodTestValidator())
+                .andReturn(new TestValidatorInstance(new AlwaysGoodTestValidator()))
                 .anyTimes();
         expect(FieldTypeUtils.getValidator(eq("always-bad")))
-                .andReturn(new AlwaysBadTestValidator())
+                .andReturn(new TestValidatorInstance(new AlwaysBadTestValidator()))
                 .anyTimes();
         expect(FieldTypeUtils.getValidator(eq("non-empty")))
-                .andReturn(new NonEmptyTestValidator())
+                .andReturn(new TestValidatorInstance(new NonEmptyTestValidator()))
                 .anyTimes();
         expect(FieldTypeUtils.getValidator(eq("unknown")))
                 .andReturn(null)
