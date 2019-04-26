@@ -20,6 +20,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
+import javax.jcr.Node;
+
 import org.onehippo.cms.services.validation.api.BaseValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
@@ -57,6 +59,11 @@ public class TestValidatorInstance implements ValidatorInstance {
 
     @Override
     public TimeZone getTimeZone() {
+        return null;
+    }
+
+    @Override
+    public Node getParentNode() {
         return null;
     }
 
