@@ -34,10 +34,10 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.FieldContextImpl;
+import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
 import org.onehippo.cms.services.validation.api.FieldContext;
-import org.onehippo.cms.services.validation.api.ValidationService;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
