@@ -21,6 +21,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -83,7 +85,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
             return Collections.emptySet();
         }
 
-        final BaseValidationContext context = createValidationContext(fieldValidator);
+        final BaseValidationContext context = createValidationContext(fieldValidator, parentModel.getObject());
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
@@ -95,14 +97,14 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
-    private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator) {
+    private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
         final ITypeDescriptor fieldType = fieldValidator.getFieldType();
         final String name = fieldType.getName();
         final String type = fieldType.getType();
         final UserSession userSession = UserSession.get();
         final Locale locale = userSession.getLocale();
         final TimeZone timeZone = userSession.getTimeZone();
-        return new BaseValidationContextImpl(name, type, locale, timeZone);
+        return new BaseValidationContextImpl(name, type, locale, timeZone, parentNode);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
