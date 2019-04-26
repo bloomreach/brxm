@@ -261,7 +261,7 @@ public class ChoiceFieldUtilsTest {
         final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
         final ContentTypeChild choice = createMock(ContentTypeChild.class);
         final ContentType compound = createMock(ContentType.class);
-        final FieldTypeContext compoundContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
+        final FieldTypeContext context = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
         final CompoundFieldType compoundField = PowerMock.createMockAndExpectNew(CompoundFieldType.class);
         final FieldsInformation fieldsInfo = FieldsInformation.allSupported();
 
@@ -275,9 +275,9 @@ public class ChoiceFieldUtilsTest {
         expect(choice.getItemType()).andReturn("choiceType").anyTimes();
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
         expect(compound.isCompoundType()).andReturn(true);
-        compoundField.initProviderBasedChoice(compoundContext, "choiceType");
+        compoundField.initProviderBasedChoice(context, "choiceType");
         expectLastCall();
-        expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
+        expect(context.createContextForCompound()).andReturn(Optional.empty());
 
         replayAll();
 
@@ -299,7 +299,7 @@ public class ChoiceFieldUtilsTest {
         final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
         final ContentTypeChild choice = createMock(ContentTypeChild.class);
         final ContentType compound = createMock(ContentType.class);
-        final FieldTypeContext compoundContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
+        final FieldTypeContext context = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
         final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
         final FieldsInformation fieldsInfo = FieldsInformation.allSupported();
 
@@ -315,8 +315,8 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(true);
 
-        expect(richTextField.init(compoundContext)).andReturn(FieldsInformation.allSupported());
-        expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
+        expect(richTextField.init(context)).andReturn(FieldsInformation.allSupported());
+        expect(context.createContextForCompound()).andReturn(Optional.empty());
 
         replayAll();
 

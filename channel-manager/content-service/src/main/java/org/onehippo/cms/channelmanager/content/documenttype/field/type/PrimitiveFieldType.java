@@ -19,10 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -34,16 +31,10 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.services.validation.BaseValidationContextImpl;
-import org.onehippo.cms.services.validation.api.BaseValidationContext;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
-import org.onehippo.cms.services.validation.api.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,25 +52,6 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     @JsonIgnore
     private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
 
-    @JsonIgnore
-    protected BaseValidationContext validationContext;
-
-    @Override
-    public FieldsInformation init(final FieldTypeContext fieldContext) {
-        validationContext = createValidationContext(fieldContext);
-
-        return super.init(fieldContext);
-    }
-
-    private BaseValidationContext createValidationContext(final FieldTypeContext fieldContext) {
-        final String jcrName = fieldContext.getName();
-        final String jcrType = fieldContext.getParentContext().getContentType().getName();
-        final String type = getValidationType();
-        final Locale locale = fieldContext.getParentContext().getLocale();
-        final TimeZone timeZone = fieldContext.getParentContext().getTimeZone();
-        return new BaseValidationContextImpl(jcrName, jcrType, type, locale, timeZone, null);
-    }
-
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {
         final List<FieldValue> values = readValues(node);
@@ -91,58 +63,12 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    /**
-     * Validates the field value using all configured validators.
-     * The first validator that deems the value invalid sets the value's errorInfo.
-     *
-     * @return 1 if a validator deemed the value invalid, 0 otherwise
-     */
     @Override
-    public int validateValue(final FieldValue value) {
-        final Set<String> validatorNames = getValidatorNames();
-
-        if (validatorNames.isEmpty()) {
-            return 0;
-        }
-
-        final Object validatedValue = getValidatedValue(value);
-
-        return getValidatorNames().stream()
-                .allMatch(validatorName -> validateValue(value, validatorName, validatedValue))
-                ? 0 : 1;
+    public final int validate(final List<FieldValue> valueList, final CompoundContext context) {
+        return valueList.stream()
+                .mapToInt(value -> validateValue(value, context))
+                .sum();
     }
-
-    /**
-     * Validates the string value of a field with a validator.
-     *
-     * @param value the field value wrapper
-     * @param validatorName the name of the validator to use
-     *
-     * @return whether the validator deemed the value valid
-     */
-    private boolean validateValue(final FieldValue value, final String validatorName, final Object validatedValue) {
-        final ValidatorInstance validator = FieldTypeUtils.getValidator(validatorName);
-        if (validator == null) {
-            log.warn("Failed to find validator '{}', ignoring it", validatorName);
-            return true;
-        }
-
-        final Optional<Violation> violation = validator.validate(validationContext, validatedValue);
-
-        violation.ifPresent((error) -> {
-            ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
-            value.setErrorInfo(errorInfo);
-        });
-
-        return !violation.isPresent();
-    }
-
-    /**
-     * Converts the value of this field to the Java object passed to the validators of this field.
-     * @param value the value of this field
-     * @return the value passed to the validators of this field.
-     */
-    protected abstract Object getValidatedValue(FieldValue value);
 
     @Override
     protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
@@ -179,10 +105,11 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
                 }
 
                 try {
+                    final int jcrPropertyType = PropertyType.valueFromName(getJcrType());
                     if (isMultiple()) {
-                        node.setProperty(propertyName, convertToSpecificTypeArray(strings), getPropertyType());
+                        node.setProperty(propertyName, convertToSpecificTypeArray(strings), jcrPropertyType);
                     } else {
-                        node.setProperty(propertyName, convertToSpecificType(strings[0]), getPropertyType());
+                        node.setProperty(propertyName, convertToSpecificType(strings[0]), jcrPropertyType);
                     }
                 } catch (final IllegalArgumentException | ValueFormatException ignore) {
                 }
@@ -216,19 +143,15 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         // empty on purpose
     }
 
-    protected abstract int getPropertyType();
-
-    protected String getValidationType() {
-        return PropertyType.nameFromValue(getPropertyType());
-    }
-
     @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
+    public boolean writeField(final FieldPath fieldPath,
+                              final List<FieldValue> values,
+                              final CompoundContext context) throws ErrorWithPayloadException {
         if (!fieldPath.is(getId())) {
             return false;
         }
-        writeValues(node, Optional.of(values), false);
-        validate(values);
+        writeValues(context.getNode(), Optional.of(values), false);
+        validate(values, context);
         return true;
     }
 

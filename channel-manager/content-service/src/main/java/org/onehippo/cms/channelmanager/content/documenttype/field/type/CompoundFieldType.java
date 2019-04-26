@@ -34,7 +34,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +115,7 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     @Override
     protected void writeValues(final Node node,
                                final Optional<List<FieldValue>> optionalValues,
-                               final boolean validateValues) throws ErrorWithPayloadException {
+                               final boolean validateValues) {
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
         if (validateValues) {
@@ -124,7 +124,7 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
 
         final String nodeName = getId();
         try {
-            NodeIterator children = node.getNodes(nodeName);
+            final NodeIterator children = node.getNodes(nodeName);
             FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write compound value to node {}", nodeName, e);
@@ -133,30 +133,40 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
     }
 
     @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
+    public boolean writeField(final FieldPath fieldPath,
+                              final List<FieldValue> values,
+                              final CompoundContext context) {
+        return FieldTypeUtils.writeFieldNodeValue(fieldPath, values, this, context);
     }
 
     @Override
-    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        return FieldTypeUtils.writeFieldValue(fieldPath, values, fields, node);
+    public boolean writeFieldValue(final FieldPath fieldPath,
+                                   final List<FieldValue> values,
+                                   final CompoundContext context) {
+        return FieldTypeUtils.writeFieldValue(fieldPath, values, fields, context);
     }
 
     @Override
-    public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException {
+    public void writeValue(final Node node, final FieldValue fieldValue) {
         final Map<String, List<FieldValue>> valueMap = fieldValue.findFields().orElseThrow(INVALID_DATA);
 
         FieldTypeUtils.writeFieldValues(valueMap, getFields(), node);
     }
 
     @Override
-    public int validateValue(final FieldValue value) {
-        // Don't execute the validators, but validate all child fields instead.
-        // #readValue guarantees that value.getFields is not empty.
-        // The "required" validator only applies to the cardinality, and has
-        // therefore already been checked during the writeTo-validation (#checkCardinality).
+    public int validate(final List<FieldValue> values, final CompoundContext context) {
+        final String nodeName = getId();
+        try {
+            final NodeIterator children = context.getNode().getNodes(nodeName);
+            return FieldTypeUtils.validateNodeValues(children, values, this, context);
+        } catch (RepositoryException e) {
+            log.warn("Failed to write compound value to node {}", nodeName, e);
+            throw new InternalServerErrorException();
+        }
+    }
 
-        // #writeValue guarantees that value.getFields is not empty
-        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields());
+    @Override
+    public int validateValue(final FieldValue value, final CompoundContext context) {
+        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields(), context);
     }
 }

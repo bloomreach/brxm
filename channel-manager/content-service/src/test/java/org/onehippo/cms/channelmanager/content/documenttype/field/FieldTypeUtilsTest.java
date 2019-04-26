@@ -45,6 +45,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.Formatted
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -826,7 +827,7 @@ public class FieldTypeUtilsTest {
         final List<FieldType> fields = Collections.emptyList();
         final Node node = createMock(Node.class);
 
-        assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, node));
+        assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, null));
     }
 
     @Test
@@ -840,14 +841,14 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2, field3);
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
 
-        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
-        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(true);
+        expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
+        expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(true);
 
         replayAll();
 
-        assertTrue(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
-
+        assertTrue(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, nodeContext));
         verifyAll();
     }
 
@@ -861,13 +862,15 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2);
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
 
-        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
-        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(false);
+        expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
+        expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
 
         replayAll();
 
-        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
+        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, nodeContext));
 
         verifyAll();
     }
@@ -876,23 +879,24 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesNoFields() {
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
 
-        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList()), equalTo(0));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList(), null), equalTo(0));
     }
 
     @Test
     public void validateFieldValuesTwoValid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
         valueMap.put("field2", validValueList);
 
         expect(field1.getId()).andReturn("field1");
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(0);
+        expect(field2.validate(validValueList, validationContext)).andReturn(0);
         replayAll();
 
-        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(0));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(0));
         verifyAll();
     }
 
@@ -900,6 +904,7 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesFirstInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
@@ -907,12 +912,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", validValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(1);
+        expect(field1.validate(invalidValueList, validationContext)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(0);
+        expect(field2.validate(validValueList, validationContext)).andReturn(0);
         replayAll();
 
-        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(1));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(1));
         verifyAll();
     }
 
@@ -920,6 +925,7 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesSecondInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
@@ -927,12 +933,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(validValueList)).andReturn(0);
+        expect(field1.validate(validValueList, validationContext)).andReturn(0);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(1);
+        expect(field2.validate(invalidValueList, validationContext)).andReturn(1);
         replayAll();
 
-        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(1));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(1));
         verifyAll();
     }
 
@@ -940,18 +946,19 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesBothInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         valueMap.put("field1", invalidValueList);
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(1);
+        expect(field1.validate(invalidValueList, validationContext)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(1);
+        expect(field2.validate(invalidValueList, validationContext)).andReturn(1);
         replayAll();
 
-        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)), equalTo(2));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(2));
         verifyAll();
     }
 

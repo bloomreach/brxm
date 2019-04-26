@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -437,11 +438,12 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
         replay(node);
 
-        assertFalse(fieldType.writeField(node, fieldPath, fieldValues));
+        assertFalse(fieldType.writeField(fieldPath, fieldValues, nodeContext));
         verify(node);
     }
 
@@ -451,7 +453,7 @@ public class CompoundFieldTypeTest {
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         try {
-            fieldType.writeField(node, fieldPath, fieldValues);
+            fieldType.writeField(fieldPath, fieldValues, null);
             fail("Exception not thrown");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -461,6 +463,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
 
@@ -470,7 +473,7 @@ public class CompoundFieldTypeTest {
         replay(node);
 
         try {
-            fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue));
+            fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext);
             fail("Exception not thrown");
         } catch (InternalServerErrorException e) {
             verify(node);
@@ -484,8 +487,9 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
 
-        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(compound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
     }
 
@@ -500,8 +504,9 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/compound:field/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
 
-        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(nestedCompound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
     }
 
@@ -515,15 +520,16 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "[2]/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value for compound 2");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
 
-        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(fieldValue)));
+        assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(compound1.getProperty(STRING_PROPERTY_1).getString(), equalTo("Value in compound 1"));
         assertThat(compound2.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value for compound 2"));
     }
 
     @Test
     public void validateEmpty() {
-        assertZeroViolations(fieldType.validate(Collections.emptyList()));
+        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
     }
 
     @Test
@@ -531,7 +537,7 @@ public class CompoundFieldTypeTest {
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueMap = validCompound();
-        assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap))));
+        assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap)), null));
     }
 
     @Test
@@ -541,7 +547,7 @@ public class CompoundFieldTypeTest {
         Map<String, List<FieldValue>> valueMap = validCompound();
         valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // make non-empty field empty
 
-        assertViolation(fieldType.validate(listOf(valueOf(valueMap))));
+        assertViolation(fieldType.validate(listOf(valueOf(valueMap)), null));
         assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
     }
@@ -553,7 +559,7 @@ public class CompoundFieldTypeTest {
         Map<String, List<FieldValue>> valueA = validCompound();
         Map<String, List<FieldValue>> valueB = validCompound();
 
-        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), null));
     }
 
     @Test
@@ -565,7 +571,7 @@ public class CompoundFieldTypeTest {
 
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), null));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
@@ -581,7 +587,7 @@ public class CompoundFieldTypeTest {
 
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
+        assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), null));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
@@ -598,7 +604,7 @@ public class CompoundFieldTypeTest {
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))), 2);
+        assertViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), null), 2);
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());

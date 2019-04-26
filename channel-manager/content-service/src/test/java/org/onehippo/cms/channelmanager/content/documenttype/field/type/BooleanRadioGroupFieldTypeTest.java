@@ -104,7 +104,7 @@ public class BooleanRadioGroupFieldTypeTest {
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:booleanradiogroup").anyTimes();
+        expect(fieldContext.getJcrName()).andReturn("myproject:booleanradiogroup").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();

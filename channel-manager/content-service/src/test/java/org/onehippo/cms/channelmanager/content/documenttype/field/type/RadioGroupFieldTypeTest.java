@@ -54,7 +54,7 @@ public class RadioGroupFieldTypeTest {
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:radiogroup").anyTimes();
+        expect(fieldContext.getJcrName()).andReturn("myproject:radiogroup").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();

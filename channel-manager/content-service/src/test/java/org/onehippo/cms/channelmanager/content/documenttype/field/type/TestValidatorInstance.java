@@ -22,7 +22,7 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.api.BaseValidationContext;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
@@ -73,7 +73,7 @@ public class TestValidatorInstance implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final BaseValidationContext context, final Object value) throws ValidationContextException {
+    public Optional<Violation> validate(final FieldContext context, final Object value) throws ValidationContextException {
         return validator.validate(this, value);
     }
 

@@ -56,6 +56,7 @@ import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUti
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
@@ -857,13 +858,14 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(1);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList(), context)).andReturn(1);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
@@ -893,6 +895,7 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -904,7 +907,7 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.determineEditingFailure(MASTER_BRANCH_ID, emptyMap(), session)).andReturn(Optional.empty());
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList(), context)).andReturn(0);
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
@@ -936,6 +939,7 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -948,7 +952,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList(), context)).andReturn(0);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
@@ -985,6 +989,7 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -996,7 +1001,7 @@ public class DocumentsServiceImplTest {
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(0);
+        expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList(), context)).andReturn(0);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
@@ -1227,6 +1232,7 @@ public class DocumentsServiceImplTest {
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldType> fields = Collections.emptyList();
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
+        final CompoundContext context = createMock(CompoundContext.class);
         final BadRequestException badRequest = new BadRequestException();
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
@@ -1236,8 +1242,9 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
+        expect(context.getNode()).andReturn(draft);
 
-        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andThrow(badRequest);
+        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, context)).andThrow(badRequest);
 
         replayAll();
 
@@ -1261,6 +1268,7 @@ public class DocumentsServiceImplTest {
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
         final List<FieldType> fields = Collections.emptyList();
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -1269,7 +1277,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(false);
+        expect(context.getNode()).andReturn(draft);
+        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, context)).andReturn(false);
 
         replayAll();
 
@@ -1293,6 +1302,7 @@ public class DocumentsServiceImplTest {
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
         final List<FieldType> fields = Collections.emptyList();
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -1301,7 +1311,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
-        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
+        expect(context.getNode()).andReturn(draft);
+        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, context)).andReturn(true);
 
         session.save();
         expectLastCall();
@@ -1323,6 +1334,7 @@ public class DocumentsServiceImplTest {
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
         final List<FieldType> fields = Collections.emptyList();
+        final CompoundContext context = createMock(CompoundContext.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -1331,7 +1343,8 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
-        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, draft)).andReturn(true);
+        expect(context.getNode()).andReturn(draft);
+        expect(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, context)).andReturn(true);
 
         session.save();
         expectLastCall().andThrow(new RepositoryException());

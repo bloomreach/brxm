@@ -152,7 +152,7 @@ public class FieldTypeContextTest {
         replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
-        assertThat(ftc.getName(), equalTo("itemName"));
+        assertThat(ftc.getJcrName(), equalTo("itemName"));
         assertThat(ftc.getType(), equalTo("my:item"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
@@ -191,7 +191,7 @@ public class FieldTypeContextTest {
         replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
-        assertThat(ftc.getName(), equalTo("itemName"));
+        assertThat(ftc.getJcrName(), equalTo("itemName"));
         assertThat(ftc.getType(), equalTo("my:item"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
@@ -217,7 +217,7 @@ public class FieldTypeContextTest {
 
         final FieldTypeContext context = new FieldTypeContext(contentTypeItem, parentContext);
 
-        assertThat(context.getName(), equalTo("itemName"));
+        assertThat(context.getJcrName(), equalTo("itemName"));
         assertThat(context.getType(), equalTo("my:item"));
         assertThat(context.isProperty(), equalTo(true));
         assertThat(context.isMultiple(), equalTo(false));
@@ -249,7 +249,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getBooleanConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<Boolean> value = Optional.of(true);
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
@@ -261,7 +261,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getStringConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<String> value = Optional.of("value");
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
@@ -273,7 +273,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getMultipleStringConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);

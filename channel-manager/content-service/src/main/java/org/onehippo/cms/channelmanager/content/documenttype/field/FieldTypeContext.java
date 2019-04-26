@@ -36,8 +36,9 @@ import org.onehippo.cms7.services.contenttype.ContentTypeItem;
  */
 public class FieldTypeContext {
 
-    private final String name;
-    private final String type;
+    private final String jcrName; // e.g. "myproject:date"
+    private final String jcrType; // e.g. "Date"
+    private final String type;    // e.g. "CalendarDate"
     private final boolean isProperty;
     private final boolean isMultiple;
     private final List<String> validators;
@@ -90,22 +91,25 @@ public class FieldTypeContext {
     public FieldTypeContext(final ContentTypeItem contentTypeItem,
                             final ContentTypeContext parentContext,
                             final Node editorConfigNode) {
-        this(contentTypeItem.getName(), contentTypeItem.getItemType(), contentTypeItem.isProperty(),
-                contentTypeItem.isMultiple(), contentTypeItem.getValidators(), parentContext, editorConfigNode);
+        this(contentTypeItem.getName(), contentTypeItem.getEffectiveType(), contentTypeItem.getItemType(),
+                contentTypeItem.isProperty(), contentTypeItem.isMultiple(),
+                contentTypeItem.getValidators(), parentContext, editorConfigNode);
     }
 
     public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext) {
         this(contentTypeItem, parentContext, null);
     }
 
-    public FieldTypeContext(final String name,
+    public FieldTypeContext(final String jcrName,
+                            final String jcrType,
                             final String type,
                             final boolean isProperty,
                             final boolean isMultiple,
                             final List<String> validators,
                             final ContentTypeContext parentContext,
                             final Node editorConfigNode) {
-        this.name = name;
+        this.jcrName = jcrName;
+        this.jcrType = jcrType;
         this.type = type;
         this.isProperty = isProperty;
         this.isMultiple = isMultiple;
@@ -114,12 +118,16 @@ public class FieldTypeContext {
         this.editorConfigNode = editorConfigNode;
     }
 
-    public String getName() {
-        return name;
+    public String getJcrName() {
+        return jcrName;
     }
 
     public String getType() {
         return type;
+    }
+
+    public String getJcrType() {
+        return jcrType;
     }
 
     public boolean isProperty() {

@@ -55,6 +55,7 @@ import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
@@ -274,7 +275,8 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final int violationCount = FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields());
+        final CompoundContext documentContext = new CompoundContext(draftNode, locale, timeZone);
+        final int violationCount = FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields(), documentContext);
         if (violationCount > 0) {
             document.getInfo().setErrorCount(violationCount);
             throw new BadRequestException(document);
@@ -323,7 +325,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         // Write field value to draft node
-        if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), draftNode)) {
+        final CompoundContext documentContext = new CompoundContext(draftNode, locale, timeZone);
+        if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), documentContext)) {
             try {
                 session.save();
             } catch (final RepositoryException e) {

@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -115,7 +114,7 @@ public class NodeLinkFieldTypeTest {
         expect(parentContext.getLocale()).andReturn(new Locale("en"));
         expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
         replayAll();
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
 
         final JsonNode linkPickerConfig = linkFieldType.getConfig().get("linkpicker");
@@ -132,11 +131,6 @@ public class NodeLinkFieldTypeTest {
     @Test
     public void getDefault() {
         assertThat(linkFieldType.getDefault(), equalTo(""));
-    }
-
-    @Test
-    public void getPropertyType() {
-        assertThat(linkFieldType.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test

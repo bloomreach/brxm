@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,10 +21,8 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.apache.wicket.util.collections.MiniMap;
-import org.onehippo.addon.frontend.gallerypicker.GalleryPickerNodeType;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
-import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
 import org.onehippo.cms.json.Json;
@@ -57,11 +55,6 @@ public class ImageLinkFieldType extends LinkFieldType {
         config.set("imagepicker", ImagePicker.build(fieldContext));
 
         return super.init(fieldContext);
-    }
-
-    @Override
-    protected String getValidationType() {
-        return GalleryPickerNodeType.NT_IMAGE_LINK;
     }
 
     @Override

@@ -23,7 +23,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.junit.Before;
@@ -103,7 +102,7 @@ public class ImageLinkFieldTypeTest {
         expect(parentContext.getLocale()).andReturn(new Locale("en"));
         expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
         replayAll();
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);
 
         final JsonNode imagePickerConfig = imageLink.getConfig().get("imagepicker");
@@ -119,11 +118,6 @@ public class ImageLinkFieldTypeTest {
     @Test
     public void getDefault() {
         assertThat(imageLink.getDefault(), equalTo(""));
-    }
-
-    @Test
-    public void getPropertyType() {
-        assertThat(imageLink.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test

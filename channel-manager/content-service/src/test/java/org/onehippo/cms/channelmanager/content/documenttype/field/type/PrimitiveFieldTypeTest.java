@@ -34,6 +34,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -68,6 +69,7 @@ public class PrimitiveFieldTypeTest {
     private static final String PROPERTY = "test:id";
     private PrimitiveFieldType fieldType;
     private Node node;
+    private CompoundContext nodeContext;
 
     @Before
     public void setup() {
@@ -76,13 +78,8 @@ public class PrimitiveFieldTypeTest {
         fieldType = new PrimitiveFieldType() {
 
             @Override
-            protected Object getValidatedValue(final FieldValue value) {
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
                 return value.getValue();
-            }
-
-            @Override
-            protected int getPropertyType() {
-                return PropertyType.STRING;
             }
 
             @Override
@@ -92,6 +89,7 @@ public class PrimitiveFieldTypeTest {
         };
         fieldType.setType(Type.STRING);
         node = MockNode.root();
+        nodeContext = new CompoundContext(node, null, null);
     }
 
     @Test
@@ -428,14 +426,13 @@ public class PrimitiveFieldTypeTest {
 
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
-        final Node mockedNode = createMock(Node.class);
         fieldType.setId(PROPERTY);
 
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
         replayAll();
 
-        assertFalse(fieldType.writeField(mockedNode, fieldPath, fieldValues));
+        assertFalse(fieldType.writeField(fieldPath, fieldValues, null));
         verifyAll();
     }
 
@@ -446,7 +443,7 @@ public class PrimitiveFieldTypeTest {
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("value"));
 
-        assertTrue(fieldType.writeField(node, fieldPath, fieldValues));
+        assertTrue(fieldType.writeField(fieldPath, fieldValues, nodeContext));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("value"));
     }
 
@@ -458,16 +455,16 @@ public class PrimitiveFieldTypeTest {
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final FieldValue emptyValue = new FieldValue("");
 
-        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(emptyValue)));
+        assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(emptyValue), nodeContext));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
     }
 
     @Test
     public void validateGood() {
-        assertZeroViolations(fieldType.validate(Collections.emptyList()));
-        assertZeroViolations(fieldType.validate(listOf(valueOf(""))));
-        assertZeroViolations(fieldType.validate(listOf(valueOf("blabla"))));
-        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
+        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
+        assertZeroViolations(fieldType.validate(listOf(valueOf("")), null));
+        assertZeroViolations(fieldType.validate(listOf(valueOf("blabla")), null));
+        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two")), null));
     }
 
     @Test
@@ -477,7 +474,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        assertViolation(fieldType.validateValue(test));
+        assertViolation(fieldType.validateValue(test, null));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
 
@@ -489,7 +486,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        assertViolation(fieldType.validateValue(test));
+        assertViolation(fieldType.validateValue(test, null));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
 
@@ -501,7 +498,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue(""); // empty value should trigger non-empty validator
 
-        assertViolation(fieldType.validateValue(test));
+        assertViolation(fieldType.validateValue(test, null));
         assertThat(test.getErrorInfo().getValidation(), equalTo("non-empty")); // and not "always-bad"
     }
 
@@ -513,7 +510,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-good");
         final FieldValue test = new FieldValue("test");
 
-        assertZeroViolations(fieldType.validateValue(test));
+        assertZeroViolations(fieldType.validateValue(test, null));
     }
 
     private static void mockValidators() {

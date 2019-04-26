@@ -35,9 +35,11 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -66,12 +68,17 @@ public class AbstractFieldTypeTest {
         fieldType = new AbstractFieldType() {
             @Override
             public Optional<List<FieldValue>> readFrom(Node node) {
-                return null;
+                return Optional.empty();
             }
 
             @Override
-            public int validateValue(final FieldValue value) {
+            public int validateValue(final FieldValue value, final CompoundContext context) {
                 return 0;
+            }
+
+            @Override
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                return null;
             }
 
             @Override
@@ -79,8 +86,13 @@ public class AbstractFieldTypeTest {
             }
 
             @Override
-            public boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) {
+            public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
                 return false;
+            }
+
+            @Override
+            public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+                return 0;
             }
         };
     }
@@ -215,7 +227,7 @@ public class AbstractFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        assertZeroViolations(fieldType.validate(Collections.emptyList()));
+        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
     }
 
     @Test
@@ -225,11 +237,11 @@ public class AbstractFieldTypeTest {
         final FieldValue one = new FieldValue("one");
         final FieldValue two = new FieldValue("two");
 
-        expect(fieldType.validateValue(one)).andReturn(0);
-        expect(fieldType.validateValue(two)).andReturn(0);
+        expect(fieldType.validateValue(one, null)).andReturn(0);
+        expect(fieldType.validateValue(two, null)).andReturn(0);
         replayAll();
 
-        assertZeroViolations(fieldType.validate(Arrays.asList(one, two)));
+        assertZeroViolations(fieldType.validate(Arrays.asList(one, two), null));
         verifyAll();
     }
 
@@ -240,11 +252,11 @@ public class AbstractFieldTypeTest {
         final FieldValue one = new FieldValue("one");
         final FieldValue two = new FieldValue("two");
 
-        expect(fieldType.validateValue(one)).andReturn(1);
-        expect(fieldType.validateValue(two)).andReturn(0);
+        expect(fieldType.validateValue(one, null)).andReturn(1);
+        expect(fieldType.validateValue(two, null)).andReturn(0);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two)));
+        assertViolation(fieldType.validate(Arrays.asList(one, two), null));
         verifyAll();
     }
 
@@ -255,11 +267,11 @@ public class AbstractFieldTypeTest {
         final FieldValue one = new FieldValue("one");
         final FieldValue two = new FieldValue("two");
 
-        expect(fieldType.validateValue(one)).andReturn(0);
-        expect(fieldType.validateValue(two)).andReturn(1);
+        expect(fieldType.validateValue(one, null)).andReturn(0);
+        expect(fieldType.validateValue(two, null)).andReturn(1);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two)));
+        assertViolation(fieldType.validate(Arrays.asList(one, two), null));
         verifyAll();
     }
 
@@ -270,11 +282,11 @@ public class AbstractFieldTypeTest {
         final FieldValue one = new FieldValue("one");
         final FieldValue two = new FieldValue("two");
 
-        expect(fieldType.validateValue(one)).andReturn(1);
-        expect(fieldType.validateValue(two)).andReturn(1);
+        expect(fieldType.validateValue(one, null)).andReturn(1);
+        expect(fieldType.validateValue(two, null)).andReturn(1);
         replayAll();
 
-        assertViolations(fieldType.validate(Arrays.asList(one, two)), 2);
+        assertViolations(fieldType.validate(Arrays.asList(one, two), null), 2);
         verifyAll();
     }
 
@@ -295,7 +307,7 @@ public class AbstractFieldTypeTest {
         expectLastCall();
 
         expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getJcrName()).andReturn("field:id");
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
@@ -334,7 +346,7 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getJcrName()).andReturn("field:id");
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(true).anyTimes();
 
@@ -371,7 +383,7 @@ public class AbstractFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(fieldContext.getName()).andReturn("field:id");
+        expect(fieldContext.getJcrName()).andReturn("field:id");
         expect(fieldContext.getValidators()).andReturn(validators);
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
 

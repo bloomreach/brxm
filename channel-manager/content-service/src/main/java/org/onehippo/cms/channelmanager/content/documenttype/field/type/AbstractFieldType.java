@@ -32,13 +32,15 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.repository.l10n.ResourceBundle;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,6 +63,8 @@ public abstract class AbstractFieldType implements FieldType {
     private String hint;          // using the correct language/locale
     private boolean required;
     private boolean hasUnsupportedValidator;
+    private String jcrType;
+    private String effectiveType;
 
     @JsonIgnore
     private int minValues = 1;
@@ -173,6 +177,10 @@ public abstract class AbstractFieldType implements FieldType {
         this.hasUnsupportedValidator = hasUnsupportedValidator;
     }
 
+    public String getJcrType() {
+        return jcrType;
+    }
+
     public Set<String> getValidatorNames() {
         return validatorNames;
     }
@@ -180,7 +188,7 @@ public abstract class AbstractFieldType implements FieldType {
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
-        final String fieldId = fieldContext.getName();
+        final String fieldId = fieldContext.getJcrName();
 
         setId(fieldId);
 
@@ -207,6 +215,9 @@ public abstract class AbstractFieldType implements FieldType {
 
         setMultiple(fieldContext.isMultiple());
 
+        jcrType = fieldContext.getJcrType();
+        effectiveType = fieldContext.getType();
+
         return FieldsInformation.allSupported();
     }
 
@@ -215,22 +226,6 @@ public abstract class AbstractFieldType implements FieldType {
             throws ErrorWithPayloadException {
         writeValues(node, optionalValues, true);
     }
-
-    @Override
-    public final int validate(final List<FieldValue> valueList) {
-        return valueList.stream()
-                .mapToInt(this::validateValue)
-                .sum();
-    }
-
-    /**
-     * Validates a single value of this field. Will be called for every value of a multiple field.
-     * When the value is not valid, the errorInfo of the value should be set to indicate the problem.
-     *
-     * @param value value to validate
-     * @return the number of violations found
-     */
-    public abstract int validateValue(final FieldValue value);
 
     protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
 
@@ -281,4 +276,24 @@ public abstract class AbstractFieldType implements FieldType {
         LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
     }
 
+    /**
+     * Validates a single value of this field using all configured validators. Will be called for every value of a
+     * multiple field. When the value is not valid, the errorInfo of the value should be set to indicate the problem.
+     *
+     * @param value value to validate
+     * @param context the context of the field
+     * @return 1 if a validator deemed the value invalid, 0 otherwise
+     */
+    public int validateValue(final FieldValue value, final CompoundContext context) throws ErrorWithPayloadException {
+        if (validatorNames.isEmpty()) {
+            return 0;
+        }
+
+        final Object validatedValue = getValidatedValue(value, context);
+        final FieldContext fieldContext = context.getFieldContext(getId(), effectiveType, jcrType);
+
+        return getValidatorNames().stream()
+                .allMatch(validatorName -> ValidationUtil.validateValue(value, fieldContext, validatorName, validatedValue))
+                ? 0 : 1;
+    }
 }

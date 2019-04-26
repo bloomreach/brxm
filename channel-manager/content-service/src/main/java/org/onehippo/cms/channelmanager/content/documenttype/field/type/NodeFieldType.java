@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 /**
@@ -51,22 +52,23 @@ public interface NodeFieldType extends FieldType {
      * Writes a field value to the field specified by the field path. Can be this field or a child field in case of
      * compound or compound-like fields.
      *
-     * @param node the node to write to
      * @param fieldPath the path to the field
      * @param values the values to write
+     * @param context context of the field
      * @return true if the value has been written, false otherwise.
      * @throws ErrorWithPayloadException when the field path or field value is wrong
      * @throws RepositoryException when the write failed
      */
-    default boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        return FieldTypeUtils.writeChoiceFieldValue(node, fieldPath, values, this);
+    default boolean writeFieldValue(final FieldPath fieldPath,
+                                    final List<FieldValue> values,
+                                    final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
+        return FieldTypeUtils.writeChoiceFieldValue(fieldPath, values, this, context);
     }
 
     /**
-     * Validates the value.
-     * @param value value to validate
-     * @return the number of violations found
+     * Validators for node fields always get the node as the value to validate.
      */
-    int validateValue(final FieldValue value);
-
+    default Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return context.getNode();
+    }
 }

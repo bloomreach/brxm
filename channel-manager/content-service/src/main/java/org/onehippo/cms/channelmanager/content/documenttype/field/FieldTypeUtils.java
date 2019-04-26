@@ -56,6 +56,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGrou
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
@@ -388,36 +389,47 @@ public class FieldTypeUtils {
         }
     }
 
-    public static boolean writeFieldValue(final FieldPath fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
+    public static boolean writeFieldValue(final FieldPath fieldPath,
+                                          final List<FieldValue> fieldValues,
+                                          final List<FieldType> fields,
+                                          final CompoundContext context) throws ErrorWithPayloadException {
         if (fieldPath.isEmpty()) {
             return false;
         }
         for (final FieldType field : fields) {
-            if (field.writeField(node, fieldPath, fieldValues)) {
+            if (field.writeField(fieldPath, fieldValues, context)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean writeFieldNodeValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException {
+    public static boolean writeFieldNodeValue(final FieldPath fieldPath,
+                                              final List<FieldValue> values,
+                                              final NodeFieldType field,
+                                              final CompoundContext context) throws ErrorWithPayloadException {
         if (!fieldPath.startsWith(field.getId())) {
             return false;
         }
+        final Node parentNode = context.getNode();
         final String childName = fieldPath.getFirstSegment();
         try {
-            if (!node.hasNode(childName)) {
+            if (!parentNode.hasNode(childName)) {
                 throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
             }
-            final Node child = node.getNode(childName);
-            return field.writeFieldValue(child, fieldPath.getRemainingSegments(), values);
+            final Node child = parentNode.getNode(childName);
+            final CompoundContext childContext = context.getChildContext(child);
+            return field.writeFieldValue(fieldPath.getRemainingSegments(), values, childContext);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
+            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
 
-    public static boolean writeChoiceFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException, RepositoryException {
+    public static boolean writeChoiceFieldValue(final FieldPath fieldPath,
+                                                final List<FieldValue> values,
+                                                final NodeFieldType field,
+                                                final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
         if (!fieldPath.is(field.getId())) {
             return false;
         }
@@ -426,8 +438,8 @@ public class FieldTypeUtils {
         }
         // Choices can never be multiple, there is always only one value.
         final FieldValue choiceFieldValue = values.get(0);
-        field.writeValue(node, choiceFieldValue);
-        field.validateValue(choiceFieldValue);
+        field.writeValue(context.getNode(), choiceFieldValue);
+        field.validateValue(choiceFieldValue, context);
         return true;
     }
 
@@ -438,17 +450,40 @@ public class FieldTypeUtils {
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
+     * @param context  context of the fields
      * @return the number of violations found
      */
-    public static int validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
+    public static int validateFieldValues(final Map<String, List<FieldValue>> valueMap,
+                                          final List<FieldType> fields,
+                                          final CompoundContext context) throws ErrorWithPayloadException {
         int violationCount = 0;
 
         for (final FieldType fieldType : fields) {
             final String fieldId = fieldType.getId();
             if (valueMap.containsKey(fieldId)) {
                 final List<FieldValue> fieldValues = valueMap.get(fieldId);
-                violationCount += fieldType.validate(fieldValues);
+                violationCount += fieldType.validate(fieldValues, context);
             }
+        }
+
+        return violationCount;
+    }
+
+    public static int validateNodeValues(final NodeIterator nodes,
+                                       final List<FieldValue> values,
+                                       final NodeFieldType field,
+                                       final CompoundContext context) {
+        final long count = nodes.getSize();
+        if (values.size() != count) {
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+        }
+
+        int violationCount = 0;
+
+        for (final FieldValue value : values) {
+            final Node child = nodes.nextNode();
+            final CompoundContext childContext = context.getChildContext(child);
+            violationCount += field.validateValue(value, childContext);
         }
 
         return violationCount;
