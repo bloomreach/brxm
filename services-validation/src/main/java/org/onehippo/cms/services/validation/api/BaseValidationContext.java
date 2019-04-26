@@ -18,6 +18,8 @@ package org.onehippo.cms.services.validation.api;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.jcr.Node;
+
 /**
  * The context in which a value is validated.
  */
@@ -44,4 +46,8 @@ public interface BaseValidationContext {
      */
     TimeZone getTimeZone();
 
+    /**
+     * @return the parent node of the context.
+     */
+    Node getParentNode();
 }
