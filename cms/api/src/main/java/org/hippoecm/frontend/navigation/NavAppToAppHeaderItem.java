@@ -19,11 +19,15 @@ package org.hippoecm.frontend.navigation;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.HippoHeaderItem;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class NavAppToAppHeaderItem extends HippoHeaderItem {
 
     private static final String NAVIGATION_API_JS = "nav-app-to-app.js";
+    private static final String PARENT_ORIGIN = "parentOrigin";
 
     private static final Logger log = LoggerFactory.getLogger(NavAppToAppHeaderItem.class);
 
@@ -48,13 +53,17 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
 
     private String createScript() {
 
+        final Map<String, String> variables = new HashMap<>();
+        variables.put(PARENT_ORIGIN, RequestUtils.getFarthestUrlPrefix(RequestCycle.get().getRequest()));
+
         try (final PackageTextTemplate javaScript = new PackageTextTemplate(NavAppToAppHeaderItem.class, NAVIGATION_API_JS)) {
 
-            return javaScript.asString(Collections.emptyMap());
+            return javaScript.asString(variables);
 
         } catch (IOException e) {
             log.error("Failed to create script for resource {}, returning empty string instead.", NAVIGATION_API_JS, e);
             return "";
         }
     }
+
 }
