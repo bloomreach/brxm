@@ -40,6 +40,8 @@ import org.onehippo.repository.mock.MockBinary;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
 
+import com.google.common.collect.ImmutableSet;
+
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -56,7 +58,7 @@ import static org.junit.Assert.assertTrue;
 public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParametersInfoProcessor {
 
     protected MockNode layoutFileNode;
-
+    private static final ImmutableSet<String> FTL = ImmutableSet.of(".ftl");
     @Before
     @Override
     public void setup() throws RepositoryException {
@@ -155,7 +157,7 @@ public class ParametersInfoProcessorSwitchTemplateTest extends AbstractTestParam
                 new String[]{
                         "webfile:/ftl/main/layout.ftl",
                         "webfile:/ftl/main/layout/layout-variant1.ftl",
-                        "webfile:/ftl/main/layout/layout-variant2.ftl"});
+                        "webfile:/ftl/main/layout/layout-variant2.ftl"}, FTL);
 
         String[] expectedValues = sortedMap.values().toArray(new String[0]);
         String[] expectedDisplayValues = sortedMap.keySet().toArray(new String[0]);

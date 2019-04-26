@@ -124,7 +124,13 @@
   <bean id="pageComposerPropertyPresentationFactories" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory"/>
+        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.property.SwitchTemplatePropertyRepresentationFactory">
+          <property name="templateExtensions">
+            <set>
+              <value type="java.lang.String">.ftl</value>
+            </set>
+          </property>
+        </bean>
       </list>
     </property>
   </bean>
