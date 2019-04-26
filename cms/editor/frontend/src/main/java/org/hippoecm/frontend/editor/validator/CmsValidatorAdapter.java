@@ -34,16 +34,15 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
 import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
 import org.onehippo.cms.services.validation.api.internal.ValidationService;
 import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-
-import static org.onehippo.cms.services.validation.util.ServiceUtils.getValidationService;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
@@ -66,8 +65,13 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static ValidatorInstance getValidator(final String name) {
-        final ValidationService validationService = getValidationService();
-        final ValidatorInstance validator = validationService.getValidator(name);
+        final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
+
+        if (service == null) {
+            throw new IllegalStateException("Failed to retrieve ValidationService from HippoServiceRegistry");
+        }
+
+        final ValidatorInstance validator = service.getValidator(name);
 
         if (validator == null) {
             log.warn("Failed to retrieve validator '{}' from validation module", name);
