@@ -122,7 +122,7 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     }
 
     protected ObjectConverter getObjectConverter() {
-        return new VersionedObjectConverterProxy(getAnnotatedClasses(), new ContentTypesProvider() {
+        return new VersionedObjectConverterProxy(getAnnotatedClasses(), getAnnotatedClasses(), new ContentTypesProvider() {
             @Override
             public ContentTypes getContentTypes() {
                 try {

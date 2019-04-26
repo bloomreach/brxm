@@ -99,11 +99,13 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         final String documentType = contentType.getName();
         final String projectNamespace = documentType.substring(0, documentType.indexOf(':'));
 
-        final String parentDocumentType = contentType.getSuperTypes()
-            .stream()
-            .filter(superType -> superType.startsWith(projectNamespace))
-            .findFirst()
-            .orElse(null);
+        String parentDocumentType = contentType.getSuperTypes().stream()
+                .filter(superType -> superType.startsWith(projectNamespace) && !superType.endsWith(":basedocument")).findFirst().orElse(null);
+
+        if (parentDocumentType == null) {
+            parentDocumentType = contentType.getSuperTypes().stream().filter(superType -> superType.equals(projectNamespace + ":basedocument"))
+                    .findFirst().orElse(null);
+        }
 
         if (parentDocumentType == null && contentType.getSuperTypes().stream().anyMatch(superType -> superType.equals(GALLERY_IMAGESET_NODETYPE))) {
             return new BeanInfo(HippoGalleryImageSet.class, true);

@@ -49,15 +49,15 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
     private final Map<String, Class<? extends HippoBean>> jcrNodeTypeExistingClassPairs;
     private final Map<String, Class<? extends HippoBean>> jcrNodeTypeClassPairs;
 
-    public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> annotatedClasses, final ContentTypesProvider contentTypesProvider) {
-        this(annotatedClasses, contentTypesProvider, false);
+    public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> applicationAnnotatedClasses, Collection<Class<? extends HippoBean>> allAnnotatedClasses, final ContentTypesProvider contentTypesProvider) {
+        this(applicationAnnotatedClasses, allAnnotatedClasses, contentTypesProvider, false);
     }
 
-    public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> annotatedClasses, final ContentTypesProvider contentTypesProvider, final boolean ignoreDuplicates) {
+    public VersionedObjectConverterProxy(Collection<Class<? extends HippoBean>> applicationAnnotatedClasses, Collection<Class<? extends HippoBean>> allAnnotatedClasses, final ContentTypesProvider contentTypesProvider, final boolean ignoreDuplicates) {
         this.contentTypesProvider = contentTypesProvider;
-        this.jcrNodeTypeExistingClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses,
+        this.jcrNodeTypeExistingClassPairs = unmodifiableMap(getAggregatedMapping(applicationAnnotatedClasses,
                 null, ignoreDuplicates));
-        this.jcrNodeTypeClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses, ignoreDuplicates));
+        this.jcrNodeTypeClassPairs = unmodifiableMap(getAggregatedMapping(allAnnotatedClasses, ignoreDuplicates));
     }
 
     /**
