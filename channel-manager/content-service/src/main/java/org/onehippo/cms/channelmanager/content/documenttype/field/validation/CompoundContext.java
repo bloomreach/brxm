@@ -21,7 +21,7 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.FieldContextImpl;
+import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
 import org.onehippo.cms.services.validation.api.FieldContext;
 
 public class CompoundContext {

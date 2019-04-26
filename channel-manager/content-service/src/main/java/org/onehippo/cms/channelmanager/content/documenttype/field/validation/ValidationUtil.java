@@ -21,7 +21,7 @@ import java.util.Optional;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.services.validation.api.FieldContext;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
