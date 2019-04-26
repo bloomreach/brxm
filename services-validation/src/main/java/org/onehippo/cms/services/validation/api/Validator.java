@@ -20,6 +20,10 @@ import java.util.Map;
 /**
  * Checks whether a value adheres to certain constraints.
  *
+ * The value type {@link V} should match with the JCR type of the field for which the validator is used.
+ * For example, a field of type String will get a {@link String} value. Using a validator with an incompatible
+ * value type will result in a {@link ClassCastException} at runtime.
+ *
  * Implementations should either provide a public no-arguments constructor, or a public constructor that accepts
  * a single argument of type {@link Map <String, String>}. The latter will get all custom configuration properties
  * as key-value pairs.

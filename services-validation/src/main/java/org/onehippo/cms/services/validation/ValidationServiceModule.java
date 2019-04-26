@@ -18,7 +18,7 @@ package org.onehippo.cms.services.validation;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.onehippo.cms.services.validation.api.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.onehippo.repository.modules.ProvidesService;

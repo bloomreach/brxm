@@ -16,7 +16,7 @@
 package org.onehippo.cms.services.validation.util;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms.services.validation.api.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
 
 public class ServiceUtils {
 

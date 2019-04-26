@@ -19,7 +19,7 @@ package org.onehippo.cms.services.validation;
 import java.util.Collections;
 import java.util.Map;
 
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 
 public class TestValidatorConfig implements ValidatorConfig {
 

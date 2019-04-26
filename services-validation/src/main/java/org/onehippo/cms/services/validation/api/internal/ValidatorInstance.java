@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation.api;
+package org.onehippo.cms.services.validation.api.internal;
+
+import org.onehippo.cms.services.validation.api.AbstractValidator;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.FieldContext;
 
 /**
  * An instance of a {@link Validator}.

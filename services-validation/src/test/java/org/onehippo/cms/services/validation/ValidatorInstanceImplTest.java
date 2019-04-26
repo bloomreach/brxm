@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms.services.validation.validator.TestValidationContext;
 

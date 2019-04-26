@@ -15,9 +15,8 @@
  */
 package org.onehippo.cms.services.validation;
 
-import org.onehippo.cms.services.validation.api.ValidationService;
-import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

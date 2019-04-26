@@ -33,7 +33,6 @@ public interface AbstractValidator<C, V> {
      *
      * @throws ValidationContextException when this validator is used in a context that does not make sense.
      */
-    Optional<Violation> validate(C context, V value)
-            throws ValidationContextException;
+    Optional<Violation> validate(C context, V value) throws ValidationContextException;
 
 }

@@ -17,8 +17,8 @@
 package org.onehippo.cms.services.validation;
 
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
-import org.onehippo.cms.services.validation.api.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 
 class ValidatorInstanceFactory {
 

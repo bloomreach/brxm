@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.services.validation;
+package org.onehippo.cms.services.validation.api.internal;
 
 import java.util.Locale;
 import java.util.TimeZone;

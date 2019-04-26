@@ -20,7 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.ValidatorConfig;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
