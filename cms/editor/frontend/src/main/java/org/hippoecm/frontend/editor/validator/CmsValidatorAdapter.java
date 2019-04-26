@@ -34,8 +34,8 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.BaseValidationContextImpl;
-import org.onehippo.cms.services.validation.api.BaseValidationContext;
+import org.onehippo.cms.services.validation.FieldContextImpl;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.cms.services.validation.api.ValidationService;
 import org.onehippo.cms.services.validation.api.ValidatorInstance;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
             return Collections.emptySet();
         }
 
-        final BaseValidationContext context = createValidationContext(fieldValidator, parentModel.getObject());
+        final FieldContext context = createValidationContext(fieldValidator, parentModel.getObject());
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
@@ -98,7 +98,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
-    private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
+    private static FieldContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
         final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
         final String jcrName = fieldDescriptor.getPath();
 
@@ -110,7 +110,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final Locale locale = userSession.getLocale();
         final TimeZone timeZone = userSession.getTimeZone();
 
-        return new BaseValidationContextImpl(jcrName, jcrType, type, locale, timeZone, parentNode);
+        return new FieldContextImpl(jcrName, jcrType, type, parentNode, locale, timeZone);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
