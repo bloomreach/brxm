@@ -27,6 +27,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
@@ -98,13 +99,18 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static BaseValidationContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
+        final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+        final String jcrName = fieldDescriptor.getPath();
+
         final ITypeDescriptor fieldType = fieldValidator.getFieldType();
-        final String name = fieldType.getName();
+        final String jcrType = fieldType.getName();
         final String type = fieldType.getType();
+
         final UserSession userSession = UserSession.get();
         final Locale locale = userSession.getLocale();
         final TimeZone timeZone = userSession.getTimeZone();
-        return new BaseValidationContextImpl(name, type, locale, timeZone, parentNode);
+
+        return new BaseValidationContextImpl(jcrName, jcrType, type, locale, timeZone, parentNode);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
