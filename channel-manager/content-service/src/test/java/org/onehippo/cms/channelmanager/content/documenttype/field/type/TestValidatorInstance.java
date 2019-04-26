@@ -43,7 +43,12 @@ public class TestValidatorInstance implements ValidatorInstance {
     }
 
     @Override
-    public String getName() {
+    public String getJcrName() {
+        return null;
+    }
+
+    @Override
+    public String getJcrType() {
         return null;
     }
 

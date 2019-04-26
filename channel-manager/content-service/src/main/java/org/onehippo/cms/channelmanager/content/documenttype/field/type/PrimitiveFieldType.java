@@ -72,11 +72,12 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     private BaseValidationContext createValidationContext(final FieldTypeContext fieldContext) {
-        final String name = fieldContext.getName();
+        final String jcrName = fieldContext.getName();
+        final String jcrType = fieldContext.getParentContext().getContentType().getName();
         final String type = getValidationType();
         final Locale locale = fieldContext.getParentContext().getLocale();
         final TimeZone timeZone = fieldContext.getParentContext().getTimeZone();
-        return new BaseValidationContextImpl(name, type, locale, timeZone, null);
+        return new BaseValidationContextImpl(jcrName, jcrType, type, locale, timeZone, null);
     }
 
     @Override
