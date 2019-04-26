@@ -20,7 +20,7 @@ import java.util.Optional;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.util.HtmlUtils;
+import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

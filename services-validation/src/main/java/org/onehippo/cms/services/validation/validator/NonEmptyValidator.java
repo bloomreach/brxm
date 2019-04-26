@@ -22,7 +22,7 @@ import org.htmlcleaner.HtmlCleaner;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.util.HtmlUtils;
+import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 
 /**
  * Validator that validates that a String value is non-empty.
