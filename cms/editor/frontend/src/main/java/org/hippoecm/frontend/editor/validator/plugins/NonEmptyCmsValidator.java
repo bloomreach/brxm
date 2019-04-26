@@ -30,7 +30,7 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms.services.validation.validator.NonEmptyValidator;
-import org.onehippo.cms.services.validation.util.HtmlUtils;
+import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 
 /**
  * Validator that validates that a String value is non-empty.
