@@ -26,7 +26,8 @@ import org.onehippo.cms.services.validation.api.Violation;
 
 public class TestValidationContext implements ValidationContext {
 
-    private String name;
+    private String jcrName;
+    private String jcrType;
     private String type;
     private Locale locale;
     private TimeZone timeZone;
@@ -37,16 +38,17 @@ public class TestValidationContext implements ValidationContext {
         this(null, null);
     }
 
-    TestValidationContext(String name, String type) {
-        this(name, type, null, null, null);
+    TestValidationContext(String jcrName, String jcrType) {
+        this(jcrName, jcrType, null);
     }
 
-    public TestValidationContext(String name, String type, Locale locale) {
-        this(name, type, locale, null, null);
+    public TestValidationContext(String jcrName, String jcrType, Locale locale) {
+        this(jcrName, jcrType, jcrType, locale, null, null);
     }
 
-    public TestValidationContext(String name, String type, Locale locale, TimeZone timeZone, Node parentNode) {
-        this.name = name;
+    public TestValidationContext(String jcrName, String jcrType, String type, Locale locale, TimeZone timeZone, Node parentNode) {
+        this.jcrName = jcrName;
+        this.jcrType = jcrType;
         this.type = type;
         this.locale = locale;
         this.timeZone = timeZone;
@@ -54,8 +56,13 @@ public class TestValidationContext implements ValidationContext {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getJcrName() {
+        return jcrName;
+    }
+
+    @Override
+    public String getJcrType() {
+        return jcrType;
     }
 
     @Override

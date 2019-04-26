@@ -34,7 +34,7 @@ public class NonEmptyValidator implements Validator<String> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value) {
-        final boolean isEmpty = "Html".equals(context.getName())
+        final boolean isEmpty = "Html".equals(context.getType())
                 ? HtmlUtils.isEmpty(value)
                 : StringUtils.isBlank(value);
 

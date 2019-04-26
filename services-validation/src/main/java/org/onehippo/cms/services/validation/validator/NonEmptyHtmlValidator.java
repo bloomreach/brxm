@@ -37,7 +37,7 @@ public class NonEmptyHtmlValidator implements Validator<String> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value) {
-        if ("Html".equals(context.getName())) {
+        if ("Html".equals(context.getType())) {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
                     "This is covered by the 'non-empty' validator.");
         }

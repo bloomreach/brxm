@@ -26,13 +26,18 @@ import javax.jcr.Node;
 public interface BaseValidationContext {
 
     /**
-     * @return the name of the context. For example, the JCR-level name of a document field ("myproject:title").
+     * @return the JCR name of the validated item (e.g. "myproject:startDate").
      */
-    String getName();
+    String getJcrName();
 
     /**
-     * @return the type of the context. For example, the JCR-level type name of a document field ("String",
-     * "hippostd:html", etc.)
+     * @return the JCR type of the validated item (e.g. "Date")
+     */
+    String getJcrType();
+
+    /**
+     * @return the type of the validated item. Can be the same as {@link #getJcrType} (e.g. for "String"),
+     * but can also be different if the item is a pseudo-type (e.g. "CalendarDate", which has JCR type "Date").
      */
     String getType();
 

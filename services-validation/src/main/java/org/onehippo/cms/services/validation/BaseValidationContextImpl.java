@@ -25,15 +25,17 @@ import org.onehippo.cms.services.validation.api.BaseValidationContext;
 
 public class BaseValidationContextImpl implements BaseValidationContext {
 
-    private final String name;
+    private final String jcrName;
+    private final String jcrType;
     private final String type;
     private final Locale locale;
     private final TimeZone timeZone;
     private final Node parentNode;
 
-    public BaseValidationContextImpl(final String name, final String type, final Locale locale, final TimeZone timeZone,
-                                     final Node parentNode) {
-        this.name = name;
+    public BaseValidationContextImpl(final String jcrName, final String jcrType, final String type, final Locale locale,
+                                     final TimeZone timeZone, final Node parentNode) {
+        this.jcrName = jcrName;
+        this.jcrType = jcrType;
         this.type = type;
         this.locale = locale;
         this.timeZone = timeZone;
@@ -41,8 +43,13 @@ public class BaseValidationContextImpl implements BaseValidationContext {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getJcrName() {
+        return jcrName;
+    }
+
+    @Override
+    public String getJcrType() {
+        return jcrType;
     }
 
     @Override
