@@ -35,7 +35,7 @@ public class NonEmptyValidatorTest {
 
     @Test
     public void validInputForHtml() {
-        context = new TestValidationContext("Html", "String");
+        context = new TestValidationContext("myproject:html", "String", "Html");
 
         assertValid(validator.validate(context, "text"));
         assertValid(validator.validate(context, "<p>text</p>"));
@@ -45,7 +45,7 @@ public class NonEmptyValidatorTest {
 
     @Test
     public void invalidInputForHtml() {
-        context = new TestValidationContext("Html", "String");
+        context = new TestValidationContext("myproject:html", "String", "Html");
 
         assertInvalid(validator.validate(context, null));
         assertInvalid(validator.validate(context, ""));
@@ -56,7 +56,7 @@ public class NonEmptyValidatorTest {
 
     @Test
     public void validInputForText() {
-        context = new TestValidationContext("non-html", "String");
+        context = new TestValidationContext("myproject:text", "String", "Text");
 
         assertValid(validator.validate(context, "text"));
         assertValid(validator.validate(context, "<p>text</p>"));
@@ -66,7 +66,7 @@ public class NonEmptyValidatorTest {
 
     @Test
     public void invalidInputForText() {
-        context = new TestValidationContext("non-html", "String");
+        context = new TestValidationContext("myproject:text", "String", "Text");
 
         assertInvalid(validator.validate(context, null));
         assertInvalid(validator.validate(context, ""));

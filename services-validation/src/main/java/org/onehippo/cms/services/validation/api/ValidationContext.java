@@ -16,7 +16,7 @@
 package org.onehippo.cms.services.validation.api;
 
 /**
- * A validation context that can also create violations.
+ * A field context that can create violations.
  */
-public interface ValidationContext extends BaseValidationContext, ViolationFactory {
+public interface ValidationContext extends FieldContext, ViolationFactory {
 }

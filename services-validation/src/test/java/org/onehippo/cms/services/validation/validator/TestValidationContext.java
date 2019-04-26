@@ -39,7 +39,11 @@ public class TestValidationContext implements ValidationContext {
     }
 
     TestValidationContext(String jcrName, String jcrType) {
-        this(jcrName, jcrType, null);
+        this(jcrName, jcrType, null, null, null, null);
+    }
+
+    TestValidationContext(String jcrName, String jcrType, String type) {
+        this(jcrName, jcrType, type, null, null, null);
     }
 
     public TestValidationContext(String jcrName, String jcrType, Locale locale) {

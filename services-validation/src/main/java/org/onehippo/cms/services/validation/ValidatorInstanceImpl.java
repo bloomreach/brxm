@@ -22,7 +22,7 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.api.BaseValidationContext;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.ValidatorConfig;
@@ -33,7 +33,7 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     private final Validator validator;
     private final ValidatorConfig config;
-    private final ThreadLocal<BaseValidationContext> validatorContext;
+    private final ThreadLocal<FieldContext> validatorContext;
 
     ValidatorInstanceImpl(final Validator validator, final ValidatorConfig config) {
         this.validator = validator;
@@ -47,7 +47,7 @@ class ValidatorInstanceImpl implements ValidatorInstance {
     }
 
     @Override
-    public Optional<Violation> validate(final BaseValidationContext context, final Object value) {
+    public Optional<Violation> validate(final FieldContext context, final Object value) {
         try {
             validatorContext.set(context);
             return runValidator(value);

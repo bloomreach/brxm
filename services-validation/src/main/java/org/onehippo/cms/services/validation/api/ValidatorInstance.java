@@ -21,7 +21,7 @@ package org.onehippo.cms.services.validation.api;
  *
  * Provides access to the configuration of a validator and to translated violations.
  */
-public interface ValidatorInstance extends AbstractValidator<BaseValidationContext, Object>, ValidationContext {
+public interface ValidatorInstance extends AbstractValidator<FieldContext, Object>, ValidationContext {
 
     /**
      * @return the configuration of this validator instance.

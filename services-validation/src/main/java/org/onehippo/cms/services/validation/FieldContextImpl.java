@@ -21,9 +21,9 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.api.BaseValidationContext;
+import org.onehippo.cms.services.validation.api.FieldContext;
 
-public class BaseValidationContextImpl implements BaseValidationContext {
+public class FieldContextImpl implements FieldContext {
 
     private final String jcrName;
     private final String jcrType;
@@ -32,8 +32,8 @@ public class BaseValidationContextImpl implements BaseValidationContext {
     private final TimeZone timeZone;
     private final Node parentNode;
 
-    public BaseValidationContextImpl(final String jcrName, final String jcrType, final String type, final Locale locale,
-                                     final TimeZone timeZone, final Node parentNode) {
+    public FieldContextImpl(final String jcrName, final String jcrType, final String type,
+                            final Node parentNode, final Locale locale, final TimeZone timeZone) {
         this.jcrName = jcrName;
         this.jcrType = jcrType;
         this.type = type;

@@ -21,22 +21,22 @@ import java.util.TimeZone;
 import javax.jcr.Node;
 
 /**
- * The context in which a value is validated.
+ * The context in which a field is validated.
  */
-public interface BaseValidationContext {
+public interface FieldContext {
 
     /**
-     * @return the JCR name of the validated item (e.g. "myproject:startDate").
+     * @return the JCR name of the field (e.g. "myproject:startDate").
      */
     String getJcrName();
 
     /**
-     * @return the JCR type of the validated item (e.g. "Date")
+     * @return the JCR type of the field (e.g. "Date")
      */
     String getJcrType();
 
     /**
-     * @return the type of the validated item. Can be the same as {@link #getJcrType} (e.g. for "String"),
+     * @return the type of the field. Can be the same as {@link #getJcrType} (e.g. for "String"),
      * but can also be different if the item is a pseudo-type (e.g. "CalendarDate", which has JCR type "Date").
      */
     String getType();
@@ -52,7 +52,7 @@ public interface BaseValidationContext {
     TimeZone getTimeZone();
 
     /**
-     * @return the parent node of the context.
+     * @return the parent node of the field.
      */
     Node getParentNode();
 }

@@ -32,13 +32,13 @@ public class NonEmptyHtmlValidatorTest {
 
     @Before
     public void setUp() {
-        context = new TestValidationContext(null, "String");
+        context = new TestValidationContext("myproject:title", "String", "String");
         validator = new NonEmptyHtmlValidator();
     }
 
     @Test
     public void warnsIfValidatorIsUsedWithHtmlField() {
-        context = new TestValidationContext("Html", "String");
+        context = new TestValidationContext("myproject:formattedtext", "String", "Html");
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(NonEmptyHtmlValidator.class).build()) {
             try {
