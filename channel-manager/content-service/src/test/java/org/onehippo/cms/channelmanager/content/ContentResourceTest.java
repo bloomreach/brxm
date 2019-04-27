@@ -95,7 +95,7 @@ public class ContentResourceTest extends CXFTest {
         final SessionRequestContextProvider sessionRequestContextProvider = createMock(SessionRequestContextProvider.class);
         expect(sessionRequestContextProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
         expect(sessionRequestContextProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
-//        expect(sessionRequestContextProvider.getTimeZone(anyObject())).andReturn(timeZone).anyTimes();
+        expect(sessionRequestContextProvider.getTimeZone(anyObject())).andReturn(timeZone).anyTimes();
         replay(sessionRequestContextProvider);
 
         expect(contextPayloadService.apply(anyObject())).andStubReturn(emptyMap());

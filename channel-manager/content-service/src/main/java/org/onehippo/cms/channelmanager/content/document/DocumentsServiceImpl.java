@@ -246,8 +246,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Document updateEditableDocument(final String uuid, final Document document, final Session session,
-                                           final Locale locale, final TimeZone timeZone)
-            throws ErrorWithPayloadException {
+                                           final Locale locale, final TimeZone timeZone) {
         final String branchId = document.getBranchId();
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getEditableWorkflow(handle);
