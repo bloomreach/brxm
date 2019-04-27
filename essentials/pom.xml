@@ -37,8 +37,6 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
-    <hippo.essentials-components.version>13.2.0-SNAPSHOT</hippo.essentials-components.version>
-
     <jsp-api.version>2.2</jsp-api.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>
