@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials-plugins</artifactId>
-    <version>4.6.4-SNAPSHOT</version>
+    <version>12.6.4-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials Template Query Generator Plugin</name>
