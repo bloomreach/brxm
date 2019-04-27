@@ -88,6 +88,8 @@ public class RichTextFieldTypeTest {
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         expect(fieldContext.getJcrName()).andReturn(FIELD_NAME).anyTimes();
+        expect(fieldContext.getJcrType()).andReturn("hippostd:html").anyTimes();
+        expect(fieldContext.getType()).andReturn("hippostd:html").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
