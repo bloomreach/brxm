@@ -581,6 +581,7 @@ public class ChoiceFieldTypeTest {
         final FieldValue compoundValue2 = new FieldValue("value of compound 2");
         final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
         final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(new MockNode("mock-node"));
 
         expect(compound1.validateValue(compoundValue1, context)).andReturn(1);
         expect(compound2.validateValue(compoundValue2, context)).andReturn(0);

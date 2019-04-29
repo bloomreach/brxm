@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ public class BooleanFieldTypeTest {
         final Boolean newValue = Boolean.FALSE;
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_BOOLEAN);
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -101,6 +102,7 @@ public class BooleanFieldTypeTest {
         final String invalidValue = "foo";
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_BOOLEAN);
         node.setProperty(PROPERTY, oldValue);
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
@@ -113,6 +115,7 @@ public class BooleanFieldTypeTest {
         final PrimitiveFieldType fieldType = new BooleanFieldType();
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_BOOLEAN);
         fieldType.setMultiple(true);
         fieldType.setMaxValues(2);
 

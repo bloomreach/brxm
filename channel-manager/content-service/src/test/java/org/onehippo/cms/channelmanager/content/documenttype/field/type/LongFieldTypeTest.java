@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,10 +61,11 @@ public class LongFieldTypeTest {
     public void writeToSingleLong() throws Exception {
         final Node node = MockNode.root();
         final PrimitiveFieldType fieldType = new LongFieldType();
-        final Long oldValue = 1l;
-        final Long newValue = 16l;
+        final Long oldValue = 1L;
+        final Long newValue = 16L;
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_LONG);
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -101,6 +102,7 @@ public class LongFieldTypeTest {
         final String invalidValue = "foo";
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_LONG);
         node.setProperty(PROPERTY, oldValue);
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
@@ -113,6 +115,7 @@ public class LongFieldTypeTest {
         final PrimitiveFieldType fieldType = new LongFieldType();
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_LONG);
         fieldType.setMultiple(true);
         fieldType.setMaxValues(2);
 

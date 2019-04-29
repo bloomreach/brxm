@@ -181,6 +181,11 @@ public abstract class AbstractFieldType implements FieldType {
         return jcrType;
     }
 
+    public void setJcrType(final String jcrType) {
+        this.jcrType = jcrType;
+    }
+
+
     public Set<String> getValidatorNames() {
         return validatorNames;
     }

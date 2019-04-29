@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.ValueFormatException;
 
 import org.apache.jackrabbit.value.ValueFactoryImpl;
@@ -73,6 +74,7 @@ public class DateAndTimeFieldTypeTest {
         newValue.add(Calendar.DAY_OF_YEAR, 1); // just to be sure it differs from oldValue
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_DATE);
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -145,6 +147,7 @@ public class DateAndTimeFieldTypeTest {
         final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_DATE);
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
     }
 

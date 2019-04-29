@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -107,6 +108,7 @@ public class StringFieldTypeTest {
     @Test
     public void writeToSingleTooLong() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxLength("10");
         node.setProperty(PROPERTY, "Old Value");
 
@@ -125,6 +127,7 @@ public class StringFieldTypeTest {
     @Test
     public void writeToMultipleTooLong() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMinValues(0);
         fieldType.setMaxLength("10");

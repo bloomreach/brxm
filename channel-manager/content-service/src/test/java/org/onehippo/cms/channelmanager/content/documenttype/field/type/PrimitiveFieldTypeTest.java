@@ -181,6 +181,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToSingleField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, "Old Value");
 
         try {
@@ -212,6 +213,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToOptionalPresentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         node.setProperty(PROPERTY, "Old Value");
 
@@ -238,6 +240,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToOptionalAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
 
         fieldType.writeTo(node, Optional.empty());
@@ -261,6 +264,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultiplePresentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -290,6 +294,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultipleAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -311,6 +316,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultipleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -329,6 +335,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToSingleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, new String[]{"Old Value"}); // multiple property in spite of singular type
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
@@ -367,6 +374,7 @@ public class PrimitiveFieldTypeTest {
         final Node mockedNode = createMock(Node.class);
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         expect(mockedNode.hasProperty(PROPERTY)).andReturn(false);
         expect(mockedNode.setProperty(PROPERTY, "New Value", PropertyType.STRING)).andThrow(new RepositoryException());
         replayAll();
@@ -403,8 +411,9 @@ public class PrimitiveFieldTypeTest {
     public void writeSingleOnExistingMultipleProperty() throws Exception {
         final Property replacedProperty = node.setProperty(PROPERTY, new String[]{"Value1", "Value2"});
 
-        fieldType.setMultiple(false);
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
+        fieldType.setMultiple(false);
         fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
 
         assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
@@ -415,9 +424,10 @@ public class PrimitiveFieldTypeTest {
     public void writeMultipleOnExistingSingleProperty() throws Exception {
         final Property replacedProperty = node.setProperty(PROPERTY, "Value");
 
+        fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxValues(2);
         fieldType.setMultiple(true);
-        fieldType.setId(PROPERTY);
         fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value1"), valueOf("New Value2"))));
 
         assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
@@ -439,6 +449,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeFieldSuccess() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("value"));
@@ -450,6 +461,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setRequired(true);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
