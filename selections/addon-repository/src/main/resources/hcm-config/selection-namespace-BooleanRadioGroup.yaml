@@ -16,7 +16,7 @@ definitions:
         jcr:primaryType: editor:templateset
         /_default_:
           jcr:primaryType: frontend:plugincluster
-          frontend:properties: [mode, trueLabel, falseLabel]
+          frontend:properties: [mode, trueLabel, falseLabel, orientation, source]
           frontend:references: [wicket.model, engine, model.compareTo]
           frontend:services: [wicket.id]
           /root:
@@ -25,7 +25,9 @@ definitions:
             falseLabel: ${falseLabel}
             mode: ${mode}
             model.compareTo: ${model.compareTo}
+            orientation: ${orientation}
             plugin.class: org.onehippo.forge.selection.frontend.plugin.BooleanRadioGroupPlugin
             trueLabel: ${trueLabel}
+            source: ${source}
             wicket.id: ${wicket.id}
             wicket.model: ${wicket.model}
