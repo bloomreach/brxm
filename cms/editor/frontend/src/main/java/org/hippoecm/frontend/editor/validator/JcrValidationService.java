@@ -144,20 +144,16 @@ public class JcrValidationService implements IValidationService, IDetachable {
 
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
         if (result.getAffectedFields() == 1) {
-            logger.error(getSummarySingleModel(), ValidationScope.DOCUMENT);
+            logger.error(getResourceBundleModel("summarySingle", null), ValidationScope.DOCUMENT);
         }
         if (result.getAffectedFields() > 1) {
             final IModel<String> resourceBundleModel = getResourceBundleModel("summaryMultiple",
-                    Collections.singletonMap("numberOfErrors", result.getAffectedFields()));
+                    Collections.singletonMap("numberOfErrors", Integer.toString(result.getAffectedFields())));
             logger.error(resourceBundleModel, ValidationScope.DOCUMENT);
         }
     }
 
-    private IModel<String> getSummarySingleModel() {
-        return getResourceBundleModel("summarySingle", null);
-    }
-
-    private IModel<String> getResourceBundleModel(final String key, final Map<String, Object> parameters) {
+    private IModel<String> getResourceBundleModel(final String key, final Map<String, String> parameters) {
         return new ResourceBundleModel.Builder("hippo:cms.validators", key)
                 .parameters(parameters)
                 .build();
