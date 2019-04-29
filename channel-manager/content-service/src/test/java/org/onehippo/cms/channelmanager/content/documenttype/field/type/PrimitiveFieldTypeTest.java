@@ -486,7 +486,8 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        assertViolation(fieldType.validateValue(test, null));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
 
@@ -498,7 +499,8 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        assertViolation(fieldType.validateValue(test, null));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
 
@@ -510,7 +512,8 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue(""); // empty value should trigger non-empty validator
 
-        assertViolation(fieldType.validateValue(test, null));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("non-empty")); // and not "always-bad"
     }
 
@@ -522,7 +525,8 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-good");
         final FieldValue test = new FieldValue("test");
 
-        assertZeroViolations(fieldType.validateValue(test, null));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        assertZeroViolations(fieldType.validateValue(test, context));
     }
 
     private static void mockValidators() {
