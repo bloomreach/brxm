@@ -34,7 +34,7 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
     // keeps track of whether a defaultValue is set. This is needed because defaultValue parameter {@code null} results
     // in slightly different behavior than the constructor without defaultValue
     private boolean defaultValueSet;
-    private Map<String, Object> parameters;
+    private Map<String, String> parameters;
 
     public static class Builder {
         // required parameters
@@ -45,7 +45,7 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
         private Locale locale = null;
         private String defaultValue = null;
         private boolean defaultValueSet = false;
-        private Map<String, Object> parameters = null;
+        private Map<String, String> parameters = null;
         
         public Builder(final String bundleName, final String key) {
             this.bundleName = bundleName;
@@ -67,7 +67,7 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
             return this;
         }
 
-        public Builder parameters(final Map<String, Object> parameters) {
+        public Builder parameters(final Map<String, String> parameters) {
             this.parameters = parameters;
             return this;
         }
