@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -743,7 +743,7 @@ public class ContentBeanUtils {
             Session existingSession = requestContext.getSession(false);
 
             // TODO HSTTWO-4375 we really need to get rid of this logic in the ContentBeanUtils
-            if (requestContext.isCmsRequest() && existingSession instanceof HippoSession) {
+            if (requestContext.isChannelManagerPreviewRequest() && existingSession instanceof HippoSession) {
                 // this is an non-proxied jcr session : for this, we do not instantiate disposable session pools
                 // we need to get a fresh session to avoid reusing already built up virtual states
                 return getPreviewCmsQuerySession(requestContext, sessionIdentifier);

@@ -24,7 +24,9 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -41,10 +43,11 @@ import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -119,7 +122,16 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     }
 
     protected ObjectConverter getObjectConverter() {
-        return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);
+        return new VersionedObjectConverterProxy(getAnnotatedClasses(), new ContentTypesProvider() {
+            @Override
+            public ContentTypes getContentTypes() {
+                try {
+                    return HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
+                } catch (Exception e) {
+                    throw new IllegalStateException("ContentTypeService is unavailable!", e);
+                }
+            }
+        }, true);
     }
 
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {

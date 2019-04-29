@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public class HstManageContentTag extends TagSupport {
     private String rootPath;
     private String defaultPath;
 
-    private HstRequestContext cmsRequestContext;
+    private HstRequestContext channelManagerPreviewRequestContext;
     private JcrPath jcrPath;
     private SortedMap<String, String> result;
 
@@ -134,12 +134,12 @@ public class HstManageContentTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        if (!isCmsRequest(requestContext)) {
+        if (!isChannelManagerPreviewRequest(requestContext)) {
             return EVAL_PAGE;
         }
 
         try {
-            cmsRequestContext = requestContext;
+            channelManagerPreviewRequestContext = requestContext;
             jcrPath = getJcrPath();
             result = new TreeMap<>();
 
@@ -160,19 +160,19 @@ public class HstManageContentTag extends TagSupport {
         } catch (ManageContentTagException e) {
             log.warn(e.getMessage());
         } finally {
-            cmsRequestContext = null;
+            channelManagerPreviewRequestContext = null;
             jcrPath = null;
             result.clear();
         }
         return EVAL_PAGE;
     }
 
-    private static boolean isCmsRequest(final HstRequestContext requestContext) {
+    private static boolean isChannelManagerPreviewRequest(final HstRequestContext requestContext) {
         if (requestContext == null) {
             log.warn("Cannot create a manageContent button outside the hst request.");
             return false;
         }
-        if (!requestContext.isCmsRequest()) {
+        if (!requestContext.isChannelManagerPreviewRequest()) {
             log.debug("Skipping manageContent tag because not in cms preview.");
             return false;
         }
@@ -222,7 +222,7 @@ public class HstManageContentTag extends TagSupport {
         final String absoluteRootPath = getAbsoluteRootPath();
 
         try {
-            final Node rootPathNode = cmsRequestContext.getSession().getNode(absoluteRootPath);
+            final Node rootPathNode = channelManagerPreviewRequestContext.getSession().getNode(absoluteRootPath);
             if (!rootPathNode.isNodeType(HippoStdNodeType.NT_FOLDER) && !rootPathNode.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
                 log.warn("Rootpath '{}' is not a folder node. Parameters rootPath and defaultPath of manageContent tag"
                         + " in template '{}' are ignored.", rootPath, getComponentRenderPath());
@@ -324,7 +324,7 @@ public class HstManageContentTag extends TagSupport {
         if (StringUtils.startsWith(rootPath, "/")) {
             return rootPath;
         } else {
-            return "/" + cmsRequestContext.getSiteContentBasePath() + "/" + rootPath;
+            return "/" + channelManagerPreviewRequestContext.getSiteContentBasePath() + "/" + rootPath;
         }
     }
 
@@ -385,7 +385,7 @@ public class HstManageContentTag extends TagSupport {
     }
 
     private String getChannelRootPath() {
-        final ResolvedMount resolvedMount = cmsRequestContext.getResolvedMount();
+        final ResolvedMount resolvedMount = channelManagerPreviewRequestContext.getResolvedMount();
         return resolvedMount.getMount().getContentPath();
     }
 

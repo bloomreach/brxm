@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>hst</artifactId>
-    <version>13.1.2-SNAPSHOT</version>
+    <version>13.2.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Content Beans</name>
@@ -28,6 +28,11 @@
   <packaging>jar</packaging>
 
   <dependencies>
+
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -69,7 +74,7 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
@@ -122,6 +127,44 @@
       <artifactId>hippo-repository-config</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>test</scope>
+    </dependency>
+
+   	<dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-contenttype</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-package-cms-dependencies</artifactId>
+      <version>${hippo.packages.version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-selections-addon-repository</artifactId>
+      <version>${hippo.plugin.selections.version}</version>
+      <scope>test</scope>
+    </dependency>
+       
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-plugin-gallerypicker</artifactId>
+      <version>${hippo.plugin.gallerypicker.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>joor-java-8</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
     </dependency>
 
     <!-- Hst test dependencies -->

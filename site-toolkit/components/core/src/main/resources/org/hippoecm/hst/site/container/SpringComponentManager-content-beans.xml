@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
  <!--
-     Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+     Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
      
      Licensed under the Apache License, Version 2.0 (the  "License");
      you may not use this file except in compliance with the License.
@@ -18,8 +18,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+  <bean id="org.hippoecm.hst.site.content.ContentTypesProvider" class="org.hippoecm.hst.content.beans.ContentTypesProvider"/>
+
   <bean id="org.hippoecm.hst.content.beans.manager.ObjectConverter" class="org.hippoecm.hst.site.content.ObjectConverterFactoryBean">
     <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />
+    <property name="contentTypesProvider" ref="org.hippoecm.hst.site.content.ContentTypesProvider"/>
+    <property name="generateDynamicBean" value="${dynamic.bean.generation:true}"/>
   </bean>
 
   <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">

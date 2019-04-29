@@ -21,9 +21,12 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.*;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.junit.BeforeClass;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractBeanTestCase extends RepositoryTestCase {
@@ -37,9 +40,23 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
 
 
     protected ObjectConverter getObjectConverter() {
-        return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);
+        return getObjectConverter((List<Class<? extends HippoBean>>) getAnnotatedClasses());
     }
-    
+ 
+    protected ObjectConverter getObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
+        return new VersionedObjectConverterProxy(annotatedClasses, new ContentTypesProvider() {
+            @Override
+            public ContentTypes getContentTypes() {
+                try {
+                    final ContentTypes contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
+                    return contentTypes;
+                } catch (Exception e) {
+                    throw new IllegalStateException("ContentTypeService is unavailable!");
+                }
+            }
+        }, true);
+    }
+
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         annotatedClasses.add(PersistableTextPage.class);

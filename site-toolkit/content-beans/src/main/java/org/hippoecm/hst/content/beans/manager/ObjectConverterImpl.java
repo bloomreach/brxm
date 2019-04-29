@@ -15,12 +15,14 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -44,6 +46,7 @@ import org.onehippo.repository.branch.BranchConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
@@ -57,22 +60,28 @@ public class ObjectConverterImpl implements ObjectConverter {
 
     private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
 
-    protected Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs;
-    protected Map<Class<? extends HippoBean>, String> jcrBeanPrimaryNodeTypePairs;
-    protected String[] fallBackJcrNodeTypes;
+    final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs = new ConcurrentHashMap<>();
+    private List<String> fallBackJcrNodeTypes;
 
-    public ObjectConverterImpl(Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, String[] fallBackJcrNodeTypes) {
-        this.jcrPrimaryNodeTypeBeanPairs = jcrPrimaryNodeTypeBeanPairs;
-        this.jcrBeanPrimaryNodeTypePairs = new HashMap<>();
+    public ObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes) {
 
-        for (Entry<String, Class<? extends HippoBean>> entry : jcrPrimaryNodeTypeBeanPairs.entrySet()) {
-            jcrBeanPrimaryNodeTypePairs.put(entry.getValue(), entry.getKey());
+        if (isNotEmpty(jcrPrimaryNodeTypeBeanPairs)) {
+            this.jcrPrimaryNodeTypeBeanPairs.putAll(jcrPrimaryNodeTypeBeanPairs);
         }
 
         if (fallBackJcrNodeTypes != null) {
-            this.fallBackJcrNodeTypes = new String[fallBackJcrNodeTypes.length];
-            System.arraycopy(fallBackJcrNodeTypes, 0, this.fallBackJcrNodeTypes, 0, fallBackJcrNodeTypes.length);
+            this.fallBackJcrNodeTypes = Arrays.asList(fallBackJcrNodeTypes);
         }
+    }
+
+    /**
+     * Add bean class definition and its underlying node type to cache
+     *
+     * @param documentType name of the document type
+     * @param beanClass of {@link HippoBean}
+     */
+    protected void addBeanDefinition(@Nonnull final String documentType, @Nonnull final Class<? extends HippoBean> beanClass) {
+        jcrPrimaryNodeTypeBeanPairs.put(documentType, beanClass);
     }
 
     public Object getObject(Session session, String path) throws ObjectBeanManagerException {
@@ -80,7 +89,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
-        String relPath = path.substring(1);
+        final String relPath = path.substring(1);
         try {
             return getObject(session.getRootNode(), relPath);
         } catch (RepositoryException re) {
@@ -157,9 +166,8 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public Object getObject(final Node node) throws ObjectBeanManagerException {
-
-        String jcrPrimaryNodeType;
-        String path;
+        final String jcrPrimaryNodeType;
+        final String path;
         try {
 
             final Node useNode = getActualNode(node);
@@ -186,31 +194,11 @@ public class ObjectConverterImpl implements ObjectConverter {
                     return null;
                 }
                 // no exact match, try a fallback type
-                for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
-
-                    if (!useNode.isNodeType(fallBackJcrPrimaryNodeType)) {
-                        continue;
-                    }
-                    // take the first fallback type
-                    delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
-                    if(delegateeClass != null) {
-                    	log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, delegateeClass);
-                        break;
-                    }
-                }
+                delegateeClass = getFallbackClass(jcrPrimaryNodeType, useNode);
             }
-            
+
             if (delegateeClass != null) {
-				Object object = ServiceFactory.create(delegateeClass);
-				if (object != null) {
-					if (object instanceof NodeAware) {
-						((NodeAware) object).setNode(useNode);
-					}
-					if (object instanceof ObjectConverterAware) {
-						((ObjectConverterAware) object).setObjectConverter(this);
-					}
-				}
-                return object;
+                return instantiateObject(delegateeClass, useNode);
             }
             path = useNode.getPath();
         } catch (RepositoryException e) {
@@ -222,7 +210,51 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
-    protected Node getActualNode(final Node node) throws RepositoryException {
+    /**
+     * Instantiate given class, and if applicable attach node & converter instance to it.
+     * @param clazz HippoBean class to instantiate
+     * @param node Underlying JCR node
+     * @return Object instance
+     * @throws Exception
+     */
+    Object instantiateObject(final Class<? extends HippoBean> clazz, final Node node) throws Exception {
+        Object object = ServiceFactory.create(clazz);
+        if (object != null) {
+            if (object instanceof NodeAware) {
+                ((NodeAware) object).setNode(node);
+            }
+            if (object instanceof ObjectConverterAware) {
+                ((ObjectConverterAware) object).setObjectConverter(this);
+            }
+        }
+        return object;
+    }
+
+    Class<? extends HippoBean> getFallbackClass(final String jcrPrimaryNodeType, final Node node) throws RepositoryException {
+
+        Class<? extends HippoBean> clazz = null;
+
+        for (final String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
+
+            if (!node.isNodeType(fallBackJcrPrimaryNodeType)) {
+                continue;
+            }
+
+            // take the first fallback type
+            clazz = this.jcrPrimaryNodeTypeBeanPairs.get(fallBackJcrPrimaryNodeType);
+            if (clazz != null) {
+                log.debug("No bean found for {}, using fallback class  {} instead", jcrPrimaryNodeType, clazz);
+                break;
+            }
+        }
+        return clazz;
+    }
+
+    boolean isDocumentType(final Node node) throws RepositoryException {
+        return node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE);
+    }
+
+    Node getActualNode(final Node node) throws RepositoryException {
         if (node instanceof HippoBeanFrozenNode) {
             return node;
         }
@@ -328,7 +360,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         return Optional.empty();
     }
 
-    public String getPrimaryObjectType(Node node) throws ObjectBeanManagerException {
+    public String getPrimaryObjectType(final Node node) throws ObjectBeanManagerException {
         String jcrPrimaryNodeType;
         String path;
         try {
@@ -378,7 +410,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         return null;
     }
 
-    private void checkUUID(String uuid) throws ObjectBeanManagerException {
+    private void checkUUID(final String uuid) throws ObjectBeanManagerException {
         try {
             UUID.fromString(uuid);
         } catch (IllegalArgumentException e) {
@@ -386,11 +418,12 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
     }
 
-    public Class<? extends HippoBean> getAnnotatedClassFor(String jcrPrimaryNodeType) {
+    public Class<? extends HippoBean> getAnnotatedClassFor(final String jcrPrimaryNodeType) {
         return this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
     }
 
-    public String getPrimaryNodeTypeNameFor(Class<? extends HippoBean> hippoBean) {
-        return jcrBeanPrimaryNodeTypePairs.get(hippoBean);
+    public String getPrimaryNodeTypeNameFor(final Class<? extends HippoBean> hippoBean) {
+        return jcrPrimaryNodeTypeBeanPairs.entrySet().stream().filter(e -> e.getValue() == hippoBean)
+                .findFirst().map(Map.Entry::getKey).orElse(null);
     }
 }

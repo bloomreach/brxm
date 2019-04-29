@@ -1,0 +1,39 @@
+/content/documents/contentbeanstest/content/dynamicdocumentcontent:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
+  jcr:uuid: 6dcdf74f-ae57-4655-8f16-aca445954b09
+  hippo:name: Hospital_Sample_1
+  hippo:versionHistory: 982961ff-6403-4fb3-aca2-088e36153fb7
+  /dynamicdocumentcontent:
+    jcr:primaryType: contentbeanstest:dynamicdocument
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: c9cd51ea-27e5-4cbc-9e53-047c61e50f22
+    hippo:availability: []
+    hippostd:state: draft
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2019-04-04T20:52:02.260+02:00
+    hippostdpubwf:lastModificationDate: 2019-04-04T20:59:23.144+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippotranslation:id: aeb01da4-42ca-459a-b688-983e4e7ea5af
+    hippotranslation:locale: en
+    contentbeanstest:description: <p>MVN Hospital Istanbul</p>
+    contentbeanstest:title: MVN Hospital
+    /contentbeanstest:dynamiccompound:
+      jcr:primaryType: contentbeanstest:dynamiccompound
+      contentbeanstest:stringTypeField: alexanderkade
+      /contentbeanstest:dynamicinnercompound:
+        jcr:primaryType: contentbeanstest:dynamicinnercompound
+        contentbeanstest:stringTypeField: http://test.com
+      /contentbeanstest:richTextEditorCompoundType:
+        jcr:primaryType: hippostd:html
+        hippostd:content: contentOfHtmlFiledInCompoundTypeClass
+    /contentbeanstest:dynamiccompoundmultiple:
+      jcr:primaryType: contentbeanstest:dynamiccompound
+      contentbeanstest:stringTypeField: centralstation
+      /contentbeanstest:dynamicinnercompound:
+        jcr:primaryType: contentbeanstest:dynamicinnercompound
+        contentbeanstest:stringTypeField: http://stackoverfllow
+      /contentbeanstest:richTextEditorCompoundType:
+        jcr:primaryType: hippostd:html
+        hippostd:content: 'multipleListContent'
+        

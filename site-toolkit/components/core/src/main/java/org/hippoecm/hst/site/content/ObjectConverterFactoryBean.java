@@ -20,7 +20,9 @@ import java.util.List;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -39,6 +41,16 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
     private ClasspathResourceScanner classpathResourceScanner;
     private String annotatedClassesInitParam = DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM;
     private String annotatedClassesResourcePath;
+    private ContentTypesProvider contentTypesProvider;
+    private Boolean generateDynamicBean;
+
+    public Boolean getGenerateDynamicBean() {
+        return generateDynamicBean;
+    }
+
+    public void setGenerateDynamicBean(Boolean generateDynamicBean) {
+        this.generateDynamicBean = generateDynamicBean;
+    }
 
     public ClasspathResourceScanner getClasspathResourceScanner() {
         return classpathResourceScanner;
@@ -81,8 +93,12 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
         this.servletContext = servletContext;
     }
 
+    public void setContentTypesProvider(final ContentTypesProvider contentTypesProvider) {
+        this.contentTypesProvider = contentTypesProvider;
+    }
+
     @Override
-    protected ObjectConverter createInstance() throws Exception {
+    protected ObjectConverter createInstance() {
         List<Class<? extends HippoBean>> annotatedClasses = null;
 
         if (annotatedClassesResourcePath == null && servletContext != null) {
@@ -91,17 +107,17 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
 
         if (annotatedClassesResourcePath != null) {
             try {
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner,
+                        StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
-
-        if (annotatedClasses != null) {
+        if (generateDynamicBean == null || generateDynamicBean.booleanValue()) {
+            return new VersionedObjectConverterProxy(annotatedClasses, contentTypesProvider);
+        } else {
             return ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
-
-        return null;
     }
 
 }

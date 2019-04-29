@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 
 /**
@@ -130,11 +131,16 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void setRenderHost(String renderHost);
 
     /**
-     * @param cmsRequest when the request is a cmsRequest have this parameter equal to <code>true</code>
-     * @see #isCmsRequest()
+     * @param channelManagerPreviewRequest when the request is a channelMngrPreviewRequest have this parameter equal to <code>true</code>
+     * @see #isChannelManagerPreviewRequest()
      */
-    public void setCmsRequest(boolean cmsRequest);
+    public void setChannelManagerPreviewRequest(boolean channelManagerPreviewRequest);
 
+    /**
+     * @deprecated since 13.2.0, use {@link #setChannelManagerPreviewRequest(boolean)} instead
+     */
+    @Deprecated
+    public void setCmsRequest(boolean cmsRequest);
     /**
      * Sets ContentBeansTool instance for this request context
      *
@@ -158,4 +164,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
     public void matchingFinished();
 
     void setHstSiteMenusManager(HstSiteMenusManager siteMenusManager);
+
+    /**
+     * Store current version {@link ContentTypes} in current {@link HstRequestContext}
+     * @param contentTypes
+     */
+    void setContentTypes(ContentTypes contentTypes);
 }

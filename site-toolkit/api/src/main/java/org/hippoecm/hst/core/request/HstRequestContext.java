@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 /**
  * HstRequestContext provides repository content context
@@ -228,6 +229,14 @@ public interface HstRequestContext extends ModelContributable {
      * @return <code>true</code> when the request is from a cms context: This can be some REST call from the cms, or 
      * a channel preview request inside the cms or over the HOST of the cms
      */
+    boolean isChannelManagerPreviewRequest();
+
+    /**
+     * @return {@link #isChannelManagerPreviewRequest()}
+     * @deprecated since 13.2.0 do not use any more, use {@link #isChannelManagerPreviewRequest()} instead. Do NOT
+     * remove this method before 15.0.0 since even customers their FTL's sometimes invoke #isCmsRequest
+     */
+    @Deprecated
     boolean isCmsRequest();
     
     /**
@@ -398,7 +407,7 @@ public interface HstRequestContext extends ModelContributable {
      * {@link #getSession()}
      * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
      */
-    public ObjectBeanManager getObjectBeanManager() throws IllegalStateException;
+    ObjectBeanManager getObjectBeanManager() throws IllegalStateException;
 
     /**
      * @param session the {@link Session} to create this {@link ObjectBeanManager} with
@@ -406,14 +415,14 @@ public interface HstRequestContext extends ModelContributable {
      * <code>session</code>
      * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
      */
-    public ObjectBeanManager getObjectBeanManager(Session session) throws IllegalStateException;
+    ObjectBeanManager getObjectBeanManager(Session session) throws IllegalStateException;
 
     /**
      * @return the {@link org.hippoecm.hst.content.beans.query.HstQueryManager} backed by the
      * {@link #getSession()}
      * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
-    public HstQueryManager getQueryManager() throws IllegalStateException;
+    HstQueryManager getQueryManager() throws IllegalStateException;
 
     /**
      * @param session the {@link Session} to create this {@link ObjectBeanManager} with
@@ -421,26 +430,31 @@ public interface HstRequestContext extends ModelContributable {
      * <code>session</code>
      * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
-    public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
+    HstQueryManager getQueryManager(Session session) throws IllegalStateException;
 
     /**
      * Return a non-null unmodifiable map of {@link HeadContributable} objects keyed by their contributor names.
      * @return a non-null unmodifiable map of {@link HeadContributable} objects keyed by their contributor names
      */
-    public Map<String, HeadContributable> getHeadContributableMap();
+    Map<String, HeadContributable> getHeadContributableMap();
 
     /**
      * Return {@link HeadContributable} object by the {@code name} if found. null if not found.
      * @param name the name of the logical head contributor.
      * @return {@link HeadContributable} object by the {@code name} if found. null if not found
      */
-    public HeadContributable getHeadContributable(String name);
+    HeadContributable getHeadContributable(String name);
 
     /**
      * Set a {@link HeadContributable} object by the {@code name}.
      * @param name the name of the logical head contributor.
      * @param headContributable {@link HeadContributable} object
      */
-    public void setHeadContributable(String name, HeadContributable headContributable);
+    void setHeadContributable(String name, HeadContributable headContributable);
+
+    /**
+     * @return Return {@link ContentTypes} within current request
+     */
+    ContentTypes getContentTypes();
 
 }

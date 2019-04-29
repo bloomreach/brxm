@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class ObjectConverterUtils {
     
     private static Logger log = LoggerFactory.getLogger(ObjectConverterUtils.class);
     
-    private static final Class<?> [] DEFAULT_BUILT_IN_MAPPING_CLASSES = {
+    public static final Class<?> [] DEFAULT_BUILT_IN_MAPPING_CLASSES = {
         HippoDocument.class,
         HippoFolder.class,
         HippoMirror.class,
@@ -82,7 +83,7 @@ public class ObjectConverterUtils {
         HippoFacetResult.class
     };
     
-    private static final String [] DEFAULT_FALLBACK_NODE_TYPES = { 
+    public static final String [] DEFAULT_FALLBACK_NODE_TYPES = {
         "hippo:facetselect",
         "hippo:mirror",
         "hippostd:directory",
@@ -129,24 +130,48 @@ public class ObjectConverterUtils {
      * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
      * @return
      */
-    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses, final Class<? extends HippoBean> [] builtInMappingClasses, final String [] fallbackNodeTypes, boolean ignoreDuplicates) throws IllegalArgumentException {
+    public static ObjectConverter createObjectConverter(final Collection<Class<? extends HippoBean>> annotatedClasses,
+                                                        final Class<? extends HippoBean> [] builtInMappingClasses,
+                                                        final String [] fallbackNodeTypes, boolean ignoreDuplicates) throws IllegalArgumentException {
+
+        Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = getAggregatedMapping(annotatedClasses, builtInMappingClasses, ignoreDuplicates);
+        return new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallbackNodeTypes);
+    }
+
+    /**
+     * Creates an annotated class mapping against jcr primary node types, including default built-in class mappings
+     * @param annotatedClasses Annotated class mapping against jcr primary node types.
+     * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
+     */
+    public static Map<String, Class<? extends HippoBean>> getAggregatedMapping(final Collection<Class<? extends HippoBean>> annotatedClasses, final boolean ignoreDuplicates) {
+        return getAggregatedMapping(annotatedClasses, (Class<? extends HippoBean>[]) DEFAULT_BUILT_IN_MAPPING_CLASSES, ignoreDuplicates);
+    }
+
+    /**
+     * Creates an annotated class mapping against jcr primary node types
+     * @param annotatedClasses Annotated class mapping against jcr primary node types.
+     * @param builtInMappingClasses Built-in class mappings against the default built-in jcr primary node types.
+     * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
+     */
+    public static Map<String, Class<? extends HippoBean>> getAggregatedMapping(final Collection<Class<? extends HippoBean>> annotatedClasses,
+                                                                               final Class<? extends HippoBean>[] builtInMappingClasses, final boolean ignoreDuplicates) {
         Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeClassPairs = new HashMap<String, Class<? extends HippoBean>>();
-        
+
         if (annotatedClasses != null && !annotatedClasses.isEmpty()) {
             for (Class<? extends HippoBean> c : annotatedClasses) {
                 addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, c, false, ignoreDuplicates) ;
             }
         }
-        
+
         if (builtInMappingClasses != null) {
             for (Class<? extends HippoBean> clazz : builtInMappingClasses) {
                 addJcrPrimaryNodeTypeClassPair(jcrPrimaryNodeTypeClassPairs, clazz, true, ignoreDuplicates);
             }
         }
-        
-        return new ObjectConverterImpl(jcrPrimaryNodeTypeClassPairs, fallbackNodeTypes);
+
+        return Collections.unmodifiableMap(jcrPrimaryNodeTypeClassPairs);
     }
-    
+
     /**
      * Returns the default built-in fallback jcr primary node types
      * @return
@@ -176,7 +201,7 @@ public class ObjectConverterUtils {
         Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPatterns);
         
         if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
-            Class<?> clazz = null;
+            Class<?> clazz;
             
             for (String className : annotatedClassNames) {
                 try {
@@ -208,7 +233,7 @@ public class ObjectConverterUtils {
         String jcrPrimaryNodeType = null;
         
         if (clazz.isAnnotationPresent(Node.class)) {
-            Node anno = (Node) clazz.getAnnotation(Node.class);
+            Node anno = clazz.getAnnotation(Node.class);
             jcrPrimaryNodeType = anno.jcrType();
         }
         
@@ -235,5 +260,4 @@ public class ObjectConverterUtils {
         
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
     }
-    
 }

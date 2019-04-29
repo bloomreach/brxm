@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,9 +109,10 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private List<HstComponentWindowFilter> filters;
     protected boolean fullyQualifiedURLs;
     protected String renderHost;
+    private ContentTypes contentTypes;
     // default a request is considered to be not from a cms. If cmsRequest is true, this means the
     // request is done from a cms context. This can influence for example how a link is created
-    protected boolean cmsRequest;
+    protected boolean channelManagerPreviewRequest;
 
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
@@ -166,6 +168,17 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public HttpServletResponse getServletResponse() {
         checkStateValidity();
         return servletResponse;
+    }
+
+    @Override
+    public void setContentTypes(final ContentTypes contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+
+    @Override
+    public ContentTypes getContentTypes() {
+        checkStateValidity();
+        return contentTypes;
     }
 
     @Override
@@ -706,15 +719,28 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isCmsRequest() {
+    public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return cmsRequest;
+        return channelManagerPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
+    public boolean isCmsRequest() {
+        return isChannelManagerPreviewRequest();
     }
 
     @Override
+    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+        checkStateValidity();
+        this.channelManagerPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
     public void setCmsRequest(final boolean cmsRequest) {
         checkStateValidity();
-        this.cmsRequest = cmsRequest;
+        this.channelManagerPreviewRequest = cmsRequest;
     }
 
     @Override
@@ -905,6 +931,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         objectBeanManagers = null;
         hstQueryManagers = null;
         unmodifiableAttributes = null;
+        contentTypes = null;
 
         disposed = true;
     }

@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockServletContext;
 
+import static org.hippoecm.hst.content.tool.DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM;
 import static org.onehippo.cms7.services.context.HippoWebappContext.Type.SITE;
 
 /**
@@ -76,6 +77,9 @@ public abstract class AbstractJaxrsSpringTestCase
 
         servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
+
+        servletContext.addInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM,
+                "classpath*:org/hippoecm/hst/jaxrs/model/beans/**/*.class");
 
         List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
         if (!addonModuleDefinitions.isEmpty()) {

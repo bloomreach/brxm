@@ -1,0 +1,132 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/dynamicdocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      jcr:uuid: 1773eea9-298a-4fe3-9d50-fbf28ae58130
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: 092c0fdb-2e1f-4886-a27e-eade8ae44c55
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: 95d5809a-f121-40d7-be8e-dac078a20022
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:basedocument', 'hippostd:relaxed',
+            'hippotranslation:translated']
+          hipposysedit:uri: http://www.contentbeanstest.com/contentbeanstest/nt/1.0
+          /title:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:title
+            hipposysedit:primary: false
+            hipposysedit:type: Text
+          /description:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:description
+            hipposysedit:primary: false
+            hipposysedit:type: Html
+          /dynamiccompound:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dynamiccompound
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:dynamiccompound
+          /dynamiccompoundmultiple:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dynamiccompoundmultiple
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:dynamiccompound
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:dynamicdocument
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          jcr:mixinTypes: ['mix:referenceable']
+          contentbeanstest:title: ''
+          contentbeanstest:description: ''
+          jcr:uuid: 16455234-21c6-4cdc-9d1f-82bc58762ea9
+          hippostdpubwf:lastModificationDate: 2019-04-04T20:50:18.141+02:00
+          hippostdpubwf:creationDate: 2019-04-04T20:50:18.141+02:00
+          /contentbeanstest:dynamiccompound:
+            jcr:primaryType: contentbeanstest:dynamiccompound
+            contentbeanstest:begindate: 0001-01-01T13:00:00+01:00
+            contentbeanstest:street: ''
+            /contentbeanstest:dynamicinnercompound:
+              jcr:primaryType: contentbeanstest:dynamicinnercompound
+              contentbeanstest:link: ''
+            /contentbeanstest:detail:
+              jcr:primaryType: hippostd:html
+              hippostd:content: ''
+          /contentbeanstest:dynamiccompoundmultiple:
+            jcr:primaryType: contentbeanstest:dynamiccompound
+            contentbeanstest:begindate: 0001-01-01T13:00:00+01:00
+            contentbeanstest:street: ''
+            /contentbeanstest:dynamicinnercompound:
+              jcr:primaryType: contentbeanstest:dynamicinnercompound
+              contentbeanstest:link: ''
+            /contentbeanstest:detail:
+              jcr:primaryType: hippostd:html
+              hippostd:content: ''
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /title:
+            jcr:primaryType: frontend:plugin
+            caption: Title
+            field: title
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /description:
+            jcr:primaryType: frontend:plugin
+            caption: Description
+            field: description
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /dynamiccompound:
+            jcr:primaryType: frontend:plugin
+            caption: DynamicCompound
+            field: dynamiccompound
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            hint: ''
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /dynamiccompoundmultiple:
+            jcr:primaryType: frontend:plugin
+            caption: Mutiple  DynamicCompound
+            field: dynamiccompoundmultiple
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+              

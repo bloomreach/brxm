@@ -15,12 +15,32 @@
  */
 package org.hippoecm.hst.site.content;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.site.container.SpringMetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.site.content.beans.NewsArticleBean;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
+import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
+import org.onehippo.cms7.services.contenttype.EffectiveNodeTypes;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mock.web.MockServletContext;
 
@@ -46,13 +66,55 @@ public class ObjectConverterFactoryBeanTest {
 
     @Test
     public void testCreation() throws Exception {
+        ContentTypes contentType = new ContentTypes() {
+            @Override
+            public EffectiveNodeTypes getEffectiveNodeTypes() {
+                return null;
+            }
+
+            @Override
+            public long version() {
+                return 0;
+            }
+
+            @Override
+            public ContentType getType(final String name) {
+                return null;
+            }
+
+            @Override
+            public SortedMap<String, Set<ContentType>> getTypesByPrefix() {
+                return null;
+            }
+
+            @Override
+            public ContentType getContentTypeForNode(final Node node) throws RepositoryException {
+                return null;
+            }
+
+            @Override
+            public ContentType getContentTypeForNodeByUuid(final Session session, final String uuid) throws ItemNotFoundException, RepositoryException {
+                return null;
+            }
+
+            @Override
+            public ContentType getContentTypeForNodeByPath(final Session session, final String path) throws PathNotFoundException, RepositoryException {
+                return null;
+            }
+        };
         ObjectConverterFactoryBean factory = new ObjectConverterFactoryBean();
+        factory.setContentTypesProvider(new ContentTypesProvider() {
+            @Override
+            public ContentTypes getContentTypes() {
+                return contentType;
+            }
+        });
         factory.setClasspathResourceScanner(classpathResourceScanner);
         factory.setServletContext(servletContext);
         factory.afterPropertiesSet();
         ObjectConverter converter = factory.getObject();
         assertNotNull(converter);
-        assertEquals(NewsArticleBean.class, converter.getAnnotatedClassFor("testsite:newsarticle"));
+        assertEquals(NewsArticleBean.class, converter.getClassFor("testsite:newsarticle"));
         assertEquals("testsite:newsarticle", converter.getPrimaryNodeTypeNameFor(NewsArticleBean.class));
     }
 }

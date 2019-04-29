@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public class MockHstRequestContext implements HstMutableRequestContext {
 
@@ -91,7 +92,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private List<HstComponentWindowFilter> filters;
     private boolean fullyQualifiedURLs;
     private String renderHost;
-    private boolean cmsRequest;
+    private boolean channelMngrPreviewRequest;
     private ContentBeansTool contentBeansTool;
     private boolean cachingObjectConverterEnabled;
     private HippoBean contentBean;
@@ -108,6 +109,8 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private Map<String, Object> unmodifiableModelsMap = Collections.unmodifiableMap(modelsMap);
 
     private Map<String, HeadContributable> headContributablesMap;
+
+    private ContentTypes contentTypes;
 
     private boolean disposed;
 
@@ -471,9 +474,15 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isCmsRequest() {
+    public boolean isChannelManagerPreviewRequest() {
         checkStateValidity();
-        return cmsRequest;
+        return channelMngrPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
+    public boolean isCmsRequest() {
+        return false;
     }
 
     @Override
@@ -501,9 +510,15 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public void setCmsRequest(boolean cmsRequest) {
+    public void setChannelManagerPreviewRequest(boolean channelMngrPreviewRequest) {
         checkStateValidity();
-        this.cmsRequest = cmsRequest;
+        this.channelMngrPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Deprecated
+    @Override
+    public void setCmsRequest(final boolean cmsRequest) {
+        this.channelMngrPreviewRequest = cmsRequest;
     }
 
     @Override
@@ -656,6 +671,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         nonDefaultObjectBeanManagers = null;
         defaultHstQueryManager = null;
         nonDefaultHstQueryManagers = null;
+        contentTypes = null;
 
         disposed = true;
     }
@@ -689,6 +705,17 @@ public class MockHstRequestContext implements HstMutableRequestContext {
         }
 
         headContributablesMap.put(name, headContributable);
+    }
+
+    @Override
+    public void setContentTypes(final ContentTypes contentTypes) {
+        this.contentTypes = contentTypes;
+    }
+
+    @Override
+    public ContentTypes getContentTypes() {
+        checkStateValidity();
+        return contentTypes;
     }
 
     private void checkStateValidity() {

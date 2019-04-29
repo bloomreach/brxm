@@ -1,0 +1,209 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/dynamicbeanpage: 
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['mix:referenceable']
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:basedocument', 'hippostd:relaxed']
+          hipposysedit:uri: http://www.hippoecm.org/hst/nt/contentbeanstest/1.0
+          /stringTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:stringTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Text
+          /booleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:booleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /doubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:doubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /longTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:longTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /dateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /calendardateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:calendardateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: CalendarDate
+          /htmlTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:htmlTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Html
+          /richTextEditorCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:richTextEditorCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippostd:html
+          /booleanRadioGroupTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:booleanRadioGroupTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: selection:BooleanRadioGroup
+          /imagelinkCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:imagelinkCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippogallerypicker:imagelink
+          /docbaseTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:docbaseTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Docbase
+          /dynamicdropdownTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dynamicdropdownTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: DynamicDropdown
+          /radioGroupTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:radioGroupTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: selection:RadioGroup
+          /staticdropdownTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:staticdropdownTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: StaticDropdown
+          /textTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:textTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Text
+          /mirrorCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:mirrorCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:mirror
+          /resourceCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:resourceCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:resource
+          /longTypeField2:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:longTypeField2
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:dynamicbeanpage
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          jcr:mixinTypes: ['mix:referenceable']
+          contentbeanstest:stringTypeField: ''
+          contentbeanstest:booleanTypeField: false
+          contentbeanstest:doubleTypeField: 0.0
+          contentbeanstest:longTypeField: 0
+          contentbeanstest:dateTypeField: 0001-01-01T13:00:00+01:00
+          contentbeanstest:calendardateTypeField: 0001-01-01T13:00:00+01:00
+          contentbeanstest:htmlTypeField: ''
+          hippostdpubwf:lastModificationDate: 2019-03-25T13:53:32.511+01:00
+          hippostdpubwf:creationDate: 2019-03-25T13:53:32.511+01:00
+          contentbeanstest:radioGroupTypeField: ''
+          contentbeanstest:booleanRadioGroupTypeField: false
+          contentbeanstest:textTypeField: ''
+          contentbeanstest:docbaseTypeField: ''
+          contentbeanstest:dynamicdropdownTypeField: ''
+          contentbeanstest:longTypeField2: 0
+          /contentbeanstest:richTextEditorCompoundType:
+            jcr:primaryType: hippostd:html
+            hippostd:content: ''
+          /contentbeanstest:imagelinkCompoundType:
+            jcr:primaryType: hippogallerypicker:imagelink
+            hippo:docbase: db02dde5-0098-4488-a72c-2a4fc6d51beb
+            hippo:facets: []
+            hippo:modes: []
+            hippo:values: []
+          /contentbeanstest:mirrorCompoundType:
+            jcr:primaryType: hippo:mirror
+            hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b
+          /contentbeanstest:resourceCompoundType:
+            jcr:primaryType: hippo:resource
+            hippo:filename: ''
+            jcr:data:
+              type: binary
+              resource: /namespaces/contentbeanstest/contentsource/gallery/picture/picture_thumbnail.jpeg
+            jcr:encoding: UTF-8
+            jcr:lastModified: 2008-03-26T12:03:00+01:00
+            jcr:mimeType: application/vnd.hippo.blank
+          /contentbeanstest:listitemCompoundType:
+            jcr:primaryType: selection:listitem
+            selection:key: ''
+            selection:label: ''

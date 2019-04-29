@@ -1,0 +1,100 @@
+definitions:
+  config:
+    /hippo:namespaces/contentbeanstest/dynamicsubdocument:
+      jcr:primaryType: hipposysedit:templatetype
+      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      jcr:uuid: 5a90c434-f6d6-47b2-85ca-5f3f8760a670
+      /hipposysedit:nodetype:
+        jcr:primaryType: hippo:handle
+        jcr:mixinTypes: ['mix:referenceable']
+        jcr:uuid: b5f1748f-03dd-4a9e-bae7-dffeb5c33cd6
+        /hipposysedit:nodetype:
+          jcr:primaryType: hipposysedit:nodetype
+          jcr:mixinTypes: ['mix:referenceable', 'hipposysedit:remodel']
+          jcr:uuid: 731ac4d5-98b3-469b-95c0-9afa88db6be5
+          hipposysedit:node: true
+          hipposysedit:supertype: ['contentbeanstest:dynamicdocument', 'hippostd:relaxed', 'hippotranslation:translated']
+          hipposysedit:uri: http://www.contentbeanstest.com/contentbeanstest/nt/1.0
+          /subrichtexteditor:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:subrichtexteditor
+            hipposysedit:primary: false
+            hipposysedit:type: hippostd:html
+          /dynamicsubcompound:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:dynamicsubcompound
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:dynamicsubcompound
+      /hipposysedit:prototypes:
+        jcr:primaryType: hipposysedit:prototypeset
+        /hipposysedit:prototype:
+          jcr:primaryType: contentbeanstest:dynamicsubdocument
+          hippostd:holder: holder
+          hippostd:state: draft
+          hippostdpubwf:createdBy: ''
+          hippostdpubwf:lastModifiedBy: ''
+          hippotranslation:id: document-type-locale-id
+          hippotranslation:locale: document-type-locale
+          jcr:mixinTypes: ['mix:referenceable']
+          jcr:uuid: c965f0d3-bceb-49f6-aa5b-f73032d73ea7
+          hippostdpubwf:lastModificationDate: 2019-04-08T10:21:23.653+02:00
+          hippostdpubwf:creationDate: 2019-04-08T10:21:23.653+02:00
+          contentbeanstest:title: ''
+          /contentbeanstest:subrichtexteditor:
+            jcr:primaryType: hippostd:html
+            hippostd:content: <p>rich text editor in subdocument</p>
+          /contentbeanstest:dynamicsubcompound:
+            jcr:primaryType: contentbeanstest:dynamicsubcompound
+            contentbeanstest:stringTypeField2: ''
+      /editor:templates:
+        jcr:primaryType: editor:templateset
+        /_default_:
+          jcr:primaryType: frontend:plugincluster
+          frontend:properties: [mode]
+          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
+          frontend:services: [wicket.id, validator.id]
+          /root:
+            jcr:primaryType: frontend:plugin
+            item: ${cluster.id}.field
+            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
+          /subrichtexteditor:
+            jcr:primaryType: frontend:plugin
+            caption: html
+            field: subrichtexteditor
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /dynamicsubcompound:
+            jcr:primaryType: frontend:plugin
+            caption: DynamicSubCompound
+            field: dynamicsubcompound
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            hint: ''
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /dynamiccompoundmultiple:
+            jcr:primaryType: frontend:plugin
+            caption: Mutiple DynamicCompound
+            field: dynamiccompoundmultiple
+            hint: ''
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig
+          /title:
+            jcr:primaryType: frontend:plugin
+            caption: Title
+            field: title
+            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
+            wicket.id: ${cluster.id}.field
+            /cluster.options:
+              jcr:primaryType: frontend:pluginconfig

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.onehippo.cms7.services.contenttype.ContentTypes;
 
 public class GenericRequestContextWrapper implements  HstMutableRequestContext {
 
@@ -171,6 +172,12 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
         context.setRenderHost(renderHost);
     }
 
+    @Override
+    public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
+        context.setChannelManagerPreviewRequest(channelMngrPreviewRequest);
+    }
+
+    @Deprecated
     @Override
     public void setCmsRequest(final boolean cmsRequest) {
         context.setCmsRequest(cmsRequest);
@@ -337,8 +344,14 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
+    public boolean isChannelManagerPreviewRequest() {
+        return context.isChannelManagerPreviewRequest();
+    }
+
+    @Deprecated
+    @Override
     public boolean isCmsRequest() {
-        return context.isCmsRequest();
+        return isChannelManagerPreviewRequest();
     }
 
     @Override
@@ -469,5 +482,15 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public void setHeadContributable(String name, HeadContributable headContributable) {
         context.setHeadContributable(name, headContributable);
+    }
+
+    @Override
+    public void setContentTypes(final ContentTypes contentTypes) {
+        context.setContentTypes(contentTypes);
+    }
+
+    @Override
+    public ContentTypes getContentTypes() {
+        return context.getContentTypes();
     }
 }

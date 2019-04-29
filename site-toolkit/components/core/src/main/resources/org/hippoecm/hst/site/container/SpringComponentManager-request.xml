@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -25,13 +25,18 @@
     <constructor-arg ref="javax.jcr.Credentials.preview" />
     <constructor-arg ref="javax.jcr.Credentials.writable" />
   </bean>
-  
+
+  <bean id="org.onehippo.cms7.services.contenttype.ContentTypeService" class="org.onehippo.cms7.services.HippoServiceRegistry" factory-method="getService" lazy-init="true">
+    <constructor-arg value="org.onehippo.cms7.services.contenttype.ContentTypeService" type="java.lang.Class"/>
+  </bean>
+
   <!-- Commons configuration from collab.properties -->
-  <bean id="org.hippoecm.hst.core.internal.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl">
+  <bean id="org.hippoecm.hst.core.internal.HstRequestContextComponent" class="org.hippoecm.hst.site.request.HstRequestContextComponentImpl" lazy-init="true">
     <constructor-arg ref="javax.jcr.Repository" />
     <constructor-arg ref="org.hippoecm.hst.core.request.ContextCredentialsProvider" />
     <constructor-arg ref="containerConfiguration" />
     <constructor-arg ref="org.hippoecm.hst.platform.HstModelProvider"/>
+    <constructor-arg ref="org.onehippo.cms7.services.contenttype.ContentTypeService"/>
 
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />

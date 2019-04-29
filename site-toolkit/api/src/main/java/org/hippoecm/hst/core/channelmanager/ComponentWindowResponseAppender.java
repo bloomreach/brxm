@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 
 /**
- * When a request is in {@link org.hippoecm.hst.core.request.HstRequestContext#isCmsRequest()} mode, extra info, for
+ * When a request is in {@link org.hippoecm.hst.core.request.HstRequestContext#isChannelManagerPreviewRequest()} mode, extra info, for
  * example html comments or response headers, can be rendered per component window. The {@link #process}
  * gets invoked before the actual {@link HstComponentWindow} writes to the {@link javax.servlet.http.HttpServletResponse}
  */
