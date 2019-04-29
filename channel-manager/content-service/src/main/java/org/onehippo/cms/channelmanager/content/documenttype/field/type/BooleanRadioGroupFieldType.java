@@ -21,8 +21,10 @@ import org.onehippo.forge.selection.frontend.plugin.Config;
 
 public class BooleanRadioGroupFieldType extends BooleanFieldType {
 
-    private String trueLabel = "true";
     private String falseLabel = "false";
+    private String orientation = null;
+    private String source = null;
+    private String trueLabel = "true";
 
     public BooleanRadioGroupFieldType() {
         setType(Type.BOOLEAN_RADIO_GROUP);
@@ -30,20 +32,14 @@ public class BooleanRadioGroupFieldType extends BooleanFieldType {
     
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
-        fieldContext.getStringConfig(Config.TRUE_LABEL)
-                .ifPresent(value -> setTrueLabel(StringUtils.defaultIfBlank(value, trueLabel)));
         fieldContext.getStringConfig(Config.FALSE_LABEL)
                 .ifPresent(value -> setFalseLabel(StringUtils.defaultIfBlank(value, falseLabel)));
+        fieldContext.getStringConfig(Config.ORIENTATION).ifPresent(this::setOrientation);
+        fieldContext.getStringConfig(Config.SOURCE).ifPresent(this::setSource);
+        fieldContext.getStringConfig(Config.TRUE_LABEL)
+                .ifPresent(value -> setTrueLabel(StringUtils.defaultIfBlank(value, trueLabel)));
 
         return super.init(fieldContext);
-    }
-
-    public String getTrueLabel() {
-        return trueLabel;
-    }
-
-    public void setTrueLabel(final String trueLabel) {
-        this.trueLabel = trueLabel;
     }
 
     public String getFalseLabel() {
@@ -52,5 +48,28 @@ public class BooleanRadioGroupFieldType extends BooleanFieldType {
 
     public void setFalseLabel(final String falseLabel) {
         this.falseLabel = falseLabel;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(final String orientation) {
+        this.orientation = orientation;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+    public String getTrueLabel() {
+        return trueLabel;
+    }
+
+    public void setTrueLabel(final String trueLabel) {
+        this.trueLabel = trueLabel;
     }
 }
