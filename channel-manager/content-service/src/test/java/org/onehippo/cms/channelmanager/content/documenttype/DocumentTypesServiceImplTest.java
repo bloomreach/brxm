@@ -41,6 +41,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -48,6 +50,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.createPartialMock;
@@ -90,8 +93,10 @@ public class DocumentTypesServiceImplTest {
         try {
             documentTypesService.getDocumentType(id, session, locale, timeZone);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (UncheckedExecutionException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof NotFoundException);
+            assertNull(((NotFoundException)cause).getPayload());
         }
 
         verifyAll();
@@ -118,8 +123,10 @@ public class DocumentTypesServiceImplTest {
         try {
             documentTypesService.getDocumentType(id, session, locale, timeZone);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (UncheckedExecutionException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof NotFoundException);
+            assertNull(((NotFoundException)cause).getPayload());
         }
 
         verifyAll();
