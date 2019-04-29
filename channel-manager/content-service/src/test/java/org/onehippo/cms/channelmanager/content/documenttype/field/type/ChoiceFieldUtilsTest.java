@@ -231,6 +231,7 @@ public class ChoiceFieldUtilsTest {
         choiceMap.put("choice", choice);
         expect(choice.getName()).andReturn("choiceName");
         expect(choice.getItemType()).andReturn("choiceType").anyTimes();
+        expect(choice.getEffectiveType()).andReturn("String").anyTimes();
         expect(choice.isProperty()).andReturn(false);
         expect(choice.isMultiple()).andReturn(false);
         expect(choice.getValidators()).andReturn(Collections.emptyList());
@@ -503,7 +504,7 @@ public class ChoiceFieldUtilsTest {
         final ContentType compound = createMock(ContentType.class);
         final RichTextFieldType richTextField = PowerMock.createMockAndExpectNew(RichTextFieldType.class);
         final FieldTypeContext richTextFieldContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class,
-                "hippostd:html", "hippostd:html", false, false, Collections.emptyList(), childContext, null);
+                "hippostd:html", "hippostd:html", "hippostd:html", false, false, Collections.emptyList(), childContext, null);
         final FieldsInformation fieldsInfo = FieldsInformation.allSupported();
 
         PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
