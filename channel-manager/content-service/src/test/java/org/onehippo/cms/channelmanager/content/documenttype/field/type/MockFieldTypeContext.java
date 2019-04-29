@@ -116,14 +116,14 @@ public class MockFieldTypeContext {
             FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
             expectLastCall();
 
-            final Optional<ResourceBundle> optionalResourceBundle = asOptional(resourceBundle);
-            final Optional<Node> optionalEditorFieldNode = asOptional(editorFieldNode);
+            final Optional<ResourceBundle> optionalResourceBundle = Optional.ofNullable(resourceBundle);
+            final Optional<Node> optionalEditorFieldNode = Optional.ofNullable(editorFieldNode);
             PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
             expect(LocalizationUtils.determineFieldDisplayName(jcrName, optionalResourceBundle, optionalEditorFieldNode))
-                    .andReturn(asOptional(displayName));
+                    .andReturn(Optional.ofNullable(displayName));
 
             expect(LocalizationUtils.determineFieldHint(jcrName, optionalResourceBundle, optionalEditorFieldNode))
-                    .andReturn(asOptional(hint));
+                    .andReturn(Optional.ofNullable(hint));
 
             final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
             if (parentContextLocale != null) {
@@ -132,7 +132,7 @@ public class MockFieldTypeContext {
             expect(parentContext.getResourceBundle()).andReturn(optionalResourceBundle);
 
             expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-            expect(fieldContext.getEditorConfigNode()).andReturn(optionalEditorFieldNode);
+            expect(fieldContext.getEditorConfigNode()).andReturn(optionalEditorFieldNode).anyTimes();
             expect(fieldContext.getValidators()).andReturn(validators);
             expect(fieldContext.getJcrName()).andReturn(jcrName);
             expect(fieldContext.getJcrType()).andReturn(jcrType);
@@ -140,10 +140,6 @@ public class MockFieldTypeContext {
             expect(fieldContext.isMultiple()).andReturn(isMultiple).anyTimes();
 
             return fieldContext;
-        }
-
-        private static <T> Optional<T> asOptional(final T value) {
-            return value != null ? Optional.of(value) : Optional.empty();
         }
     }
 }
