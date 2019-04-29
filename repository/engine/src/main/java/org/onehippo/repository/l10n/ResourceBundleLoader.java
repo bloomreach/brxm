@@ -207,11 +207,11 @@ class ResourceBundleLoader {
          * For the replacement {@link org.apache.commons.text.StringSubstitutor} is used.
          */
         @Override
-        public <V> String getString(final String key, final Map<String, V> parameters) {
+        public String getString(final String key, final Map<String, String> parameters) {
             return new StringSubstitutor(parameters).replace(getString(key));
         }
 
-        public <V> String getString(final String key, final String parameterName, final V parameterValue) {
+        public String getString(final String key, final String parameterName, final String parameterValue) {
             return new StringSubstitutor(Collections.singletonMap(parameterName, parameterValue))
                     .replace(getString(key));
         }

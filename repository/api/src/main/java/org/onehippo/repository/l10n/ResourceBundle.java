@@ -55,13 +55,13 @@ public interface ResourceBundle {
      * <p/>
      * Variables in the Strings can be replaced by supplying parameters. The default definition of a variable is
      * <code>${variableName}</code>. If the label has only one variable use {@link #getString(String, String,
-     * V)}.
+     * String)}.
      *
      * @param key        a {@code key} identifying a String
      * @param parameters a map of names and values to replace variables
      * @return the String identified by a {@code key} with replaced variables
      */
-    <V> String getString(String key, Map<String, V> parameters);
+    String getString(String key, Map<String, String> parameters);
 
     /**
      * Gets the {@link Locale}-specific translation identified by a given {@code key}. If a String is not defined in
@@ -76,7 +76,7 @@ public interface ResourceBundle {
      * @param parameterValue the replacement value for the variable
      * @return the String identified by a {@code key} with replaced variables
      */
-    <V> String getString(String key, String parameterName, V parameterValue);
+    String getString(String key, String parameterName, String parameterValue);
     
     default java.util.ResourceBundle toJavaResourceBundle() {
         return null;
