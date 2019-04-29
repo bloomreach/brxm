@@ -149,7 +149,9 @@
                  ng-change="$ctrl.valueChanged()"
                  on-field-blur="$ctrl.blurPrimitive($event)"
                  on-field-focus="$ctrl.focusPrimitive($event)"
+                 options-source="::$ctrl.fieldType.source"
                  ng-model="fieldValue.value"
+                 orientation="::$ctrl.fieldType.orientation"
                  false-label="::$ctrl.fieldType.falseLabel"
                  true-label="::$ctrl.fieldType.trueLabel"
                  is-required="::$ctrl.fieldType.required">
