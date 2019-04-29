@@ -29,7 +29,9 @@ import org.onehippo.forge.selection.frontend.model.ValueList;
  * The labels for the true and false values can be populated by a ValueList, through the source property. This gives the
  * option to display localized values.
  * <p>
- * Otherwise the labels can be configured with the plugin configuration properties "trueLabel" and "falseLabel".
+ * Otherwise the labels can be configured with the plugin configuration properties "trueLabel" and "falseLabel". Note
+ * that this latter option is deprecated and will be removed in a future version. Use a value list to populate this
+ * field.
  *
  * @author Dennis Dam
  */
@@ -38,13 +40,14 @@ public class BooleanRadioGroupPlugin extends RadioGroupPlugin {
     /**
      * Name of configuration parameter holding the label of the 'true' radio item.
      *
-     * @deprecated Use {@link Config#TRUE_LABEL} instead.
+     * @deprecated Use {@link Config#TRUE_LABEL} instead. This configuration option will be removed in a future version.
      */
     @Deprecated
     public static final String TRUE_LABEL = "trueLabel";
 
     /**
-     * Name of configuration parameter holding the label of the 'false' radio item.
+     * Name of configuration parameter holding the label of the 'false' radio item.  This configuration option will be
+     * removed in a future version.
      *
      * @deprecated Use {@link Config#FALSE_LABEL} instead.
      */

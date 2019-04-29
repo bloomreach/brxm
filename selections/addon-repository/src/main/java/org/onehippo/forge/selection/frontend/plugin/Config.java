@@ -34,6 +34,14 @@ public class Config {
     public final static String OBSERVER_ID = "observerId";
     public final static String ORIENTATION = "orientation";
     public final static String SHOW_DEFAULT = "showDefault";
+    /**
+     * This configuration will be removed in a future version. 
+     */
+    @Deprecated
     public final static String TRUE_LABEL = "trueLabel";
+    /**
+     * This configuration will be removed in a future version. 
+     */
+    @Deprecated
     public final static String FALSE_LABEL = "falseLabel";
 }
