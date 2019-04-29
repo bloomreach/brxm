@@ -63,9 +63,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     private final static String SWITCH_TEMPLATE_I18N_KEY = "switch.template";
     private final static String CHOOSE_TEMPLATE_I18N_KEY = "choose.template";
     private final static String MISSING_TEMPLATE_I18N_KEY = "missing.template";
-    private static final String FTL_SUFFIX = ".ftl";
 
-
+    private static final String FTL_EXTENSION = ".ftl";
 
     private Set<String> templateExtensions;
     private enum TemplateParamWebFile {
@@ -164,35 +163,35 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                 }
                 final String renderPath = componentConfiguration.getRenderPath();
                 final int idx = renderPath.substring(renderPath.lastIndexOf('.')).length();
-                final String templateFreeMarkerPath = WebFileUtils.webFilePathToJcrPath(renderPath, bundleName);
+                final String templatePath = WebFileUtils.webFilePathToJcrPath(renderPath, bundleName);
 
                 final Session session = containerItemNode.getSession();
-                if (!session.nodeExists(templateFreeMarkerPath)) {
+                if (!session.nodeExists(templatePath)) {
                     String msg = String.format("Cannot find the default template '%s' for component '%s' hence" +
-                            " cannot populate variants.", templateFreeMarkerPath, containerItemPath);
+                            " cannot populate variants.", templatePath, containerItemPath);
                     throw new IllegalStateException(msg);
                 }
-                final String freeMarkerVariantsFolderPath = templateFreeMarkerPath.substring(0, templateFreeMarkerPath.length() - idx);
+                final String variantsFolderPath = templatePath.substring(0, templatePath.length() - idx);
 
                 final List<String> variantWebFilePaths = new ArrayList<>();
                 // add the main template
-                final String webFileTemplateFreeMarkerPath = WebFileUtils.jcrPathToWebFilePath(templateFreeMarkerPath, bundleName);
-                variantWebFilePaths.add(webFileTemplateFreeMarkerPath);
+                final String webFileTemplatePath = WebFileUtils.jcrPathToWebFilePath(templatePath, bundleName);
+                variantWebFilePaths.add(webFileTemplatePath);
 
-                if (session.nodeExists(freeMarkerVariantsFolderPath)) {
-                    log.debug("For freemarker '{}' there is a variants folder available. Checking variants.", templateFreeMarkerPath);
+                if (session.nodeExists(variantsFolderPath)) {
+                    log.debug("For template '{}' there is a variants folder available. Checking variants.", templatePath);
 
                     // check available variants
-                    final Node mainTemplateFolder = session.getNode(freeMarkerVariantsFolderPath);
+                    final Node mainTemplateFolder = session.getNode(variantsFolderPath);
                     for (Node variant : new NodeIterable(mainTemplateFolder.getNodes())) {
                         final String path = variant.getPath();
                         if (validExtension(path, getTemplateExtensions())) {
-                            log.debug("Found variant '{}' for '{}'", path, templateFreeMarkerPath);
+                            log.debug("Found variant '{}' for '{}'", path, templatePath);
                             final String variantWebFilePath = WebFileUtils.jcrPathToWebFilePath(path, bundleName);
                             variantWebFilePaths.add(variantWebFilePath);
                         } else {
-                            log.debug("Found node '{}' below '{}' but it does not end with .ftl and is thus not a variant",
-                                    path, freeMarkerVariantsFolderPath);
+                            log.debug("Found node '{}' below '{}' but it does not end with one of the configured extensions {} and is thus not a variant",
+                                    path, variantsFolderPath, getTemplateExtensions());
                         }
                     }
                 }
@@ -217,10 +216,10 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                 if (variantWebFilePaths.size() > 1 || templateParamWebFile == TemplateParamWebFile.CONFIGURED_BUT_NON_EXISTING) {
                     // add switch template property representation and populate the values
                     final ResourceBundle switchTemplateResourceBundle = loadSwitchTemplateResourceBundle(locale);
-                    final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, freeMarkerVariantsFolderPath, locale);
+                    final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, variantsFolderPath, locale);
                     final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty =
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
-                                    webFileTemplateFreeMarkerPath, variantWebFilePaths, variantsResourceBundle);
+                                    webFileTemplatePath, variantWebFilePaths, variantsResourceBundle);
                     switchTemplateComponentProperty.setValue(templateParamValue);
 
                     // the addMissingTemplateValueAndLabel is added *after* sorting since always most be on top
@@ -280,12 +279,12 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
     /**
      * @return {@link ResourceBundle} and <code>null</code> when there is no jcr node at
-     * <code>freeMarkerVariantsFolderPath + ".properties"</code>
+     * <code>variantsFolderPath + ".properties"</code>
      */
     private static ResourceBundle loadTemplateVariantsResourceBundle(final Session session,
-                                                                     final String freeMarkerVariantsFolderPath,
+                                                                     final String variantsFolderPath,
                                                                      final Locale locale) throws RepositoryException {
-        final String baseJcrAbsFilePath = freeMarkerVariantsFolderPath + ".properties";
+        final String baseJcrAbsFilePath = variantsFolderPath + ".properties";
         try {
             if (!session.nodeExists(baseJcrAbsFilePath)) {
                 log.debug("No i18n resource bundles present for '{}'. Return null.", baseJcrAbsFilePath);
@@ -421,7 +420,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
     public Set<String> getTemplateExtensions() {
         if (templateExtensions == null) {
             // add FTL as default
-            templateExtensions = ImmutableSet.of(FTL_SUFFIX);
+            templateExtensions = ImmutableSet.of(FTL_EXTENSION);
         }
         return templateExtensions;
     }
