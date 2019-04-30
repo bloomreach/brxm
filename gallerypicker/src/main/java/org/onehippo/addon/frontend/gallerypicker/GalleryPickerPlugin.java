@@ -72,7 +72,7 @@ public class GalleryPickerPlugin extends RenderPlugin<Node> {
     private static final String HIPPO_GALLERY_STD_GALLERYSET_NODETYPE_NAME = "hippogallery:stdgalleryset";
     private static final String SUPPORTED_PATHS_KEY = "supported.paths";
 
-    static final String GALLERY_ROOT_PATH = "/content/gallery/";
+    public static final String GALLERY_ROOT_PATH = "/content/gallery/";
 
     private final IModel<String> valueModel;
     private final JcrNodeModel currentNodeModel;

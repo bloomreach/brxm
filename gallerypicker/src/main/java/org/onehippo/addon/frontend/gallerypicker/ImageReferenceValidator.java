@@ -40,7 +40,10 @@ import org.slf4j.LoggerFactory;
  * <p>
  * It checks the link's reference (a node identifier) for not being set at all or being set to root node '/' or to node
  * '/content/gallery'.
+ *
+ * @deprecated Use {@link org.onehippo.addon.frontend.gallerypicker.validator.ImageReferenceValidator} instead.
  */
+@Deprecated
 public class ImageReferenceValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(ImageReferenceValidator.class);
