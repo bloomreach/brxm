@@ -1,0 +1,8 @@
+<!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
+
+<div><strong>{{ config.caption }}</strong></div>
+<ul>
+  <li *ngFor="let item of config.children">
+    <brna-menu-item [config]="item"></brna-menu-item>
+  </li>
+</ul>
