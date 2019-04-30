@@ -26,11 +26,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms.services.validation.validator.EscapedHtmlValidator;
 
 /**
  * Validator that validates if the value is properly HTML escaped using a regular expression.
  *
- * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.EscapedHtmlValidator} instead.
+ * @deprecated Use the {@link EscapedHtmlValidator} instead.
  */
 @Deprecated
 public class EscapedCmsValidator extends AbstractCmsValidator {

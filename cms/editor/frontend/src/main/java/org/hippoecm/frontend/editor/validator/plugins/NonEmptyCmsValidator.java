@@ -29,7 +29,8 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms7.services.validation.util.HtmlUtils;
+import org.onehippo.cms.services.validation.validator.NonEmptyValidator;
+import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 
 /**
  * Validator that validates that a String value is non-empty.
@@ -37,7 +38,7 @@ import org.onehippo.cms7.services.validation.util.HtmlUtils;
  * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
  * therefore does not require the html validator to be declared separately.
  * 
- * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.NonEmptyValidator} instead.
+ * @deprecated Use the {@link NonEmptyValidator} instead.
  */
 @Deprecated
 public class NonEmptyCmsValidator extends AbstractCmsValidator {

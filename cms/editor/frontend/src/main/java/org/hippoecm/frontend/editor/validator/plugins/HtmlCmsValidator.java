@@ -27,7 +27,8 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms7.services.validation.util.HtmlUtils;
+import org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator;
+import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * {@link NonEmptyCmsValidator} and does not require special treatment.
  * 
  * 
- * @deprecated Use the {@link org.onehippo.cms7.services.validation.validator.NonEmptyHtmlValidator} instead.
+ * @deprecated Use the {@link NonEmptyHtmlValidator} instead.
  */
 @Deprecated
 public class HtmlCmsValidator extends AbstractCmsValidator {

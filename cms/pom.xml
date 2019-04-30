@@ -91,7 +91,7 @@
     <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>13.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>13.2.0-validation-SNAPSHOT</hippo.services.validation.version>
-    <hippo.repository.version>13.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>13.2.0-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
