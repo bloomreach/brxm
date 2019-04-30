@@ -31,6 +31,7 @@ public class TestValidationContext implements ValidationContext {
     private String type;
     private Locale locale;
     private TimeZone timeZone;
+    private Node documentNode;
     private Node parentNode;
     private boolean isViolationCreated;
 
@@ -57,6 +58,7 @@ public class TestValidationContext implements ValidationContext {
         this.locale = locale;
         this.timeZone = timeZone;
         this.parentNode = parentNode;
+        this.documentNode = documentNode;
     }
 
     @Override
@@ -87,6 +89,11 @@ public class TestValidationContext implements ValidationContext {
     @Override
     public Node getParentNode() {
         return parentNode;
+    }
+
+    @Override
+    public Node getDocumentNode() {
+        return documentNode;
     }
 
     @Override

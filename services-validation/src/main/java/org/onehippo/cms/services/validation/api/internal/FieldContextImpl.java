@@ -31,15 +31,17 @@ public class FieldContextImpl implements FieldContext {
     private final Locale locale;
     private final TimeZone timeZone;
     private final Node parentNode;
+    private final Node documentNode;
 
-    public FieldContextImpl(final String jcrName, final String jcrType, final String type,
+    public FieldContextImpl(final String jcrName, final String jcrType, final String type, final Node documentNode,
                             final Node parentNode, final Locale locale, final TimeZone timeZone) {
         this.jcrName = jcrName;
         this.jcrType = jcrType;
         this.type = type;
+        this.documentNode = documentNode;
+        this.parentNode = parentNode;
         this.locale = locale;
         this.timeZone = timeZone;
-        this.parentNode = parentNode;
     }
 
     @Override
@@ -58,6 +60,16 @@ public class FieldContextImpl implements FieldContext {
     }
 
     @Override
+    public Node getDocumentNode() {
+        return documentNode;
+    }
+
+    @Override
+    public Node getParentNode() {
+        return parentNode;
+    }
+
+    @Override
     public Locale getLocale() {
         return locale;
     }
@@ -65,10 +77,5 @@ public class FieldContextImpl implements FieldContext {
     @Override
     public TimeZone getTimeZone() {
         return timeZone;
-    }
-
-    @Override
-    public Node getParentNode() {
-        return parentNode;
     }
 }

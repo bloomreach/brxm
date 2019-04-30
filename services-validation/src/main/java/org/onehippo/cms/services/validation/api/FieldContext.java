@@ -55,4 +55,9 @@ public interface FieldContext {
      * @return the parent node of the field.
      */
     Node getParentNode();
+
+    /**
+     * @return the document node (variant)
+     */
+    Node getDocumentNode();
 }

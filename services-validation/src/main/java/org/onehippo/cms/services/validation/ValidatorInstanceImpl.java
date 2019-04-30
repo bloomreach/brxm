@@ -98,6 +98,11 @@ class ValidatorInstanceImpl implements ValidatorInstance {
     }
 
     @Override
+    public Node getDocumentNode() {
+        return validatorContext.get().getDocumentNode();
+    }
+
+    @Override
     public Violation createViolation() {
         return new TranslatedViolation(config.getName(), getLocale());
     }
