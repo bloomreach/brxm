@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -35,15 +34,17 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.powermock.api.easymock.PowerMock;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,48 +52,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class})
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtil.class})
 public class AbstractFieldTypeTest {
 
     private AbstractFieldType fieldType;
 
     @Before
     public void setup() {
-        fieldType = new AbstractFieldType() {
-            @Override
-            public Optional<List<FieldValue>> readFrom(Node node) {
-                return Optional.empty();
-            }
-
-            @Override
-            public int validateValue(final FieldValue value, final CompoundContext context) {
-                return 0;
-            }
-
-            @Override
-            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
-                return null;
-            }
-
-            @Override
-            protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
-            }
-
-            @Override
-            public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
-                return false;
-            }
-
-            @Override
-            public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
-                return 0;
-            }
-        };
+        fieldType = new TestAbstractFieldType();
     }
 
     @Test
@@ -224,71 +198,85 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void alwaysValidWhenValidatorNamesIsEmpty() {
+        fieldType = new TestAbstractFieldType() {
+            @Override
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                fail("Should not be called");
+                return null;
+            }
+        };
+
+        assertZeroViolations(fieldType.validateValue(null, null));
+    }
+
+    @Test
     public void validateEmpty() {
         assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
     }
 
-//    TODO: move to three main types (primite, compound, choice)?
-//    @Test
-    public void validateBothGood() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    @Test
+    public void validateValueGood() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(true);
 
-        expect(fieldType.validateValue(one, null)).andReturn(0);
-        expect(fieldType.validateValue(two, null)).andReturn(0);
         replayAll();
 
-        assertZeroViolations(fieldType.validate(Arrays.asList(one, two), null));
+        assertZeroViolations(fieldType.validateValue(one, context));
+
         verifyAll();
     }
 
-//    TODO: move to three main types (primite, compound, choice)?
-//    @Test
-    public void validateFirstBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    @Test
+    public void validatorValueFirstBad() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(false);
 
-        expect(fieldType.validateValue(one, null)).andReturn(1);
-        expect(fieldType.validateValue(two, null)).andReturn(0);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two), null));
+        assertViolation(fieldType.validateValue(one, context));
+
         verifyAll();
     }
 
-//    TODO: move to three main types (primite, compound, choice)?
-//    @Test
-    public void validateSecondBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    @Test
+    public void validatorValueSecondBad() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(false);
 
-        expect(fieldType.validateValue(one, null)).andReturn(0);
-        expect(fieldType.validateValue(two, null)).andReturn(1);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two), null));
-        verifyAll();
-    }
+        assertViolation(fieldType.validateValue(one, context));
 
-//    TODO: move to three main types (primite, compound, choice)?
-//    @Test
-    public void validateBothBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
-
-        final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
-
-        expect(fieldType.validateValue(one, null)).andReturn(1);
-        expect(fieldType.validateValue(two, null)).andReturn(1);
-        replayAll();
-
-        assertViolations(fieldType.validate(Arrays.asList(one, two), null), 2);
         verifyAll();
     }
 
@@ -386,4 +374,44 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getMinValues(), equalTo(min));
         assertThat(fieldType.getMaxValues(), equalTo(max));
     }
+
+    private static class TestAbstractFieldType extends AbstractFieldType {
+
+        @Override
+        public Optional<List<FieldValue>> readFrom(Node node) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+            return null;
+        }
+
+        @Override
+        protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
+        }
+
+        @Override
+        public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
+            return false;
+        }
+
+        @Override
+        public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+            return 0;
+        }
+    }
+
+    private static AbstractFieldType createFieldType(final String id, final String jcrType) {
+        final AbstractFieldType fieldType = new TestAbstractFieldType() {
+            @Override
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                return value.getValue();
+            }
+        };
+        fieldType.setId(id);
+        fieldType.setJcrType(jcrType);
+        return fieldType;
+    }
+
 }

@@ -472,8 +472,12 @@ public class PrimitiveFieldTypeTest {
     }
 
     @Test
-    public void validateGood() {
+    public void validateEmpty() {
         assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
+    }
+
+    @Test
+    public void validateGood() {
         assertZeroViolations(fieldType.validate(listOf(valueOf("")), null));
         assertZeroViolations(fieldType.validate(listOf(valueOf("blabla")), null));
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two")), null));
