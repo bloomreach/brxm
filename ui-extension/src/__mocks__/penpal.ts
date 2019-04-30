@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PageProperties, UiProperties } from '../api';
-import { Parent } from '../parent';
+import {PageProperties, UiProperties, UiStyling} from '../api';
+import {Parent} from '../parent';
 
 const uiProperties: UiProperties = {
   baseUrl: 'https://cms.example.com',
@@ -23,6 +23,7 @@ const uiProperties: UiProperties = {
     config: 'testConfig',
   },
   locale: 'en',
+  styling: UiStyling.Classic,
   timeZone: 'Europe/Amsterdam',
   user: {
     id: 'admin',
@@ -48,8 +49,10 @@ const testPage: PageProperties = {
 };
 
 export const parent: Parent = {
+  emitEvent: () => Promise.resolve(),
   getProperties: () => Promise.resolve(uiProperties),
   getPage: () => Promise.resolve(testPage),
+  openDialog: () => Promise.resolve(),
   refreshChannel: () => Promise.resolve(),
   refreshPage: () => Promise.resolve(),
 };

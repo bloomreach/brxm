@@ -34,25 +34,37 @@ type UnsubscribeFn = () => void;
  */
 export enum UiExtensionErrorCode {
   /**
-   * The UI extension is not running in an iframe.
+   * The connection with the CMS has been destroyed.
    */
-  'NotInIframe' = 'NotInIframe',
+  ConnectionDestroyed = 'ConnectionDestroyed',
+
+  /**
+   * A dialog was canceled.
+   * @since 13.2
+   */
+  DialogCanceled = 'DialogCanceled',
+
+  /**
+   * A dialog is already shown to the user.
+   * @since 13.2
+   */
+  DialogExists = 'DialogExists',
 
   /**
    * The version of the CMS in which the UI extension is loaded is not compatible with the version of the
    * ui-extension library used by the UI extension.
    */
-  'IncompatibleParent' = 'IncompatibleParent',
-
-  /**
-   * The connection with the CMS has been destroyed.
-   */
-  'ConnectionDestroyed' = 'ConnectionDestroyed',
+  IncompatibleParent = 'IncompatibleParent',
 
   /**
    * An internal error occurred.
    */
-  'InternalError' = 'InternalError',
+  InternalError = 'InternalError',
+
+  /**
+   * The UI extension is not running in an iframe.
+   */
+  NotInIframe = 'NotInIframe',
 }
 
 /**
@@ -68,6 +80,15 @@ export interface UiExtensionError {
    * Explains the error to humans.
    */
   message: string;
+}
+
+/**
+ * Defines the different possible styling themes of the surrounding user interface.
+ * @since 13.2
+ */
+export enum UiStyling {
+  Classic = 'classic',
+  Material = 'material',
 }
 
 /**
@@ -94,6 +115,12 @@ export interface UiProperties {
    * The locale of the CMS user as selected in the login page. For example: "en".
    */
   locale: string;
+
+  /**
+   * The styling of the user interface in which the extension is shown.
+   * @since 13.2
+   */
+  styling: UiStyling;
 
   /**
    * The time zone of the CMS user as selected on the login page. For example: "Europe/Amsterdam".
@@ -140,6 +167,16 @@ export interface UiScope extends UiProperties {
    * API for the current channel.
    */
   channel: ChannelScope;
+
+  /**
+   * API for the current document.
+   */
+  document: DocumentScope;
+
+  /**
+   * API for dialogs.
+   */
+  dialog: DialogScope;
 }
 
 /**
@@ -180,14 +217,14 @@ export interface ChannelScopeEvents {
  */
 export interface PageScope extends Emitter<PageScopeEvents> {
   /**
-   * @returns a Promise that resolves with [[PageProperties]] of the current page.
+   * @returns A Promise that resolves with [[PageProperties]] of the current page.
    */
-  get: () => Promise<PageProperties>;
+  get(): Promise<PageProperties>;
 
   /**
    * Refreshes the page currently shown in the Channel Manager.
    */
-  refresh: () => Promise<void>;
+  refresh(): Promise<void>;
 }
 
 /**
@@ -201,9 +238,9 @@ export interface Emitter<Events> {
    * @param eventName the name of the emitted event.
    * @param handler the function to call with the emitted value.
    *
-   * @returns a function to unsubscribe the handler again.
+   * @returns A function to unsubscribe the handler again.
    */
-  on: (eventName: keyof Events, handler: EventHandler<Events>) => UnsubscribeFn;
+  on(eventName: keyof Events, handler: EventHandler<Events>): UnsubscribeFn;
 }
 
 /**
@@ -266,6 +303,192 @@ export interface PageProperties {
 
   /**
    * The public URL of the page.
+   */
+  url: string;
+}
+
+/**
+ * API to access information about and communicate with the current document.
+ * @since 13.2
+ */
+export interface DocumentScope {
+  /**
+   * @since 13.2
+   * @returns A Promise that resolves with [[DocumentProperties]] of the current document.
+   */
+  get(): Promise<DocumentProperties>;
+
+  /**
+   * API for the current field of the current document.
+   * @since 13.2
+   */
+  field: FieldScope;
+}
+
+/**
+ * Defines the different possible modes of a document editor.
+ * @since 13.2
+ */
+export enum DocumentEditorMode {
+  View = 'view',
+  Compare = 'compare',
+  Edit = 'edit',
+}
+
+/**
+ * Properties of a document.
+ * @since 13.2
+ */
+export interface DocumentProperties {
+  /**
+   * The UUID of the handle node.
+   * @since 13.2
+   */
+  id: string;
+
+  /**
+   * Display name of the document.
+   * @since 13.2
+   */
+  displayName: string;
+
+  /**
+   * Locale of the document, e.g. "sv". Is undefined when the document does not have a locale.
+   * @since 13.2
+   */
+  locale: string;
+
+  /**
+   * The mode of the document editor.
+   * @since 13.2
+   */
+  mode: DocumentEditorMode;
+
+  /**
+   * The URL name of the document.
+   * @since 13.2
+   */
+  urlName: string;
+
+  /**
+   * UUID of the currently shown variant, typically 'draft' or 'preview'.
+   * @since 13.2
+   */
+  variant: {
+    id: string;
+  };
+}
+
+/**
+ * API to access information about and communicate with the current document field.
+ * @since 13.2
+ */
+export interface FieldScope {
+  /**
+   * Gets the current field value.
+   * @since 13.2
+   * @return A promise that resolves with the current field value.
+   */
+  getValue(): Promise<string>;
+
+  /**
+   * Gets the field value to compare the current value to.
+   * Only valid when the document editor mode is [[DocumentEditorMode.Compare]].
+   *
+   * @since 13.2
+   * @return A promise that resolves with the compare value, or null when the
+   * document editor mode is not [[DocumentEditorMode.Compare]].
+   */
+  getCompareValue(): Promise<string>;
+
+  /**
+   * Updates current field value.
+   * @since 13.2
+   * @param value the new field value
+   */
+  setValue(value: string): Promise<void>;
+
+  /**
+   * Set the height of the surrounding iframe.
+   * @since 13.2
+   * @param height the number of pixels or
+   *  'auto' for automatic height detection or
+   *  'initial' for initial height from the config
+   */
+  setHeight(height: 'auto' | 'initial' | number): Promise<void>;
+}
+
+/**
+ * API to open, close and communicate with dialogs.
+ * @since 13.2
+ */
+export interface DialogScope {
+
+  /**
+   * Closes an open dialog, rejecting the promise returned by [[open]].
+   * @since 13.2
+   */
+  cancel(): Promise<void>;
+
+  /**
+   * Closes an open dialog, resolving the promise returned by [[open]] with a value.
+   * @param value The value selected in the dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   * @since 13.2
+   */
+  close(value: any): Promise<void>;
+
+  /**
+   * Opens a dialog.
+   * @since 13.2
+   */
+  open(options: DialogProperties): Promise<void>;
+
+  /**
+   * @since 13.2
+   * @returns A Promise that resolves with [[DialogProperties]] of the current dialog.
+   */
+  options(): Promise<DialogProperties>;
+}
+
+/**
+ * Defines the different possible modes of a document editor.
+ * @since 13.2
+ */
+export enum DialogSize {
+  Large = 'large',
+  Medium = 'medium',
+  Small = 'small',
+}
+
+/**
+ * Properties of a dialog.
+ * @since 13.2
+ */
+export interface DialogProperties {
+  /**
+   * A value to pass to the dialog. For example the current field value, that can be used to preselect an item in the
+   * dialog. The value should be compatible with [the structured clone
+   * algorithm](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm).
+   * @since 13.2
+   */
+  value?: any;
+
+  /**
+   * The size of the dialog. Defaults to [[Medium]].
+   * @since 13.2
+   */
+  size?: DialogSize;
+
+  /**
+   * Title of the dialog.
+   * @since 13.2
+   */
+  title: string;
+
+  /**
+   * The URL to load the dialog contents from. Can be absolute or relative to the url of the UI extension.
+   * @since 13.2
    */
   url: string;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,19 @@
  */
 import Emittery from 'emittery'; // tslint:disable-line:import-name
 import Penpal from 'penpal';     // tslint:disable-line:import-name
-import { PageProperties, UiExtensionError, UiExtensionErrorCode, UiProperties } from './api';
+import { UiExtensionError, UiExtensionErrorCode } from './api';
 
-type ParentMethod = keyof Parent;
-type ParentMethodPromisedValue<M extends ParentMethod> = ReturnType<Parent[M]> extends Promise<infer U> ? U : never;
+type MethodOf<T> = keyof Pick<T, {
+  [K in keyof T]: T[K] extends Callable ? K : never;
+}[keyof T]>;
+type PromisedOf<T extends Callable> = T extends Callable<Promise<infer U>> ? U : never;
+type ArgumentsOf<T extends Callable> = T extends Callable<any, infer U> ? U : never;
 
 type PenpalError = Error & { code?: string };
 
+export type ParentMethod<T = void, U extends unknown[] = []> = Callable<Promise<T>, U>;
 export interface Parent {
-  getPage: () => Promise<PageProperties>;
-  getProperties: () => Promise<UiProperties>;
-  refreshChannel: () => Promise<void>;
-  refreshPage: () => Promise<void>;
+  [K: string]: ParentMethod<any, any[]>;
 }
 
 class ParentError extends Error implements UiExtensionError {
@@ -63,22 +64,25 @@ class ParentError extends Error implements UiExtensionError {
         return UiExtensionErrorCode.NotInIframe;
       case Penpal.ERR_CONNECTION_DESTROYED:
         return UiExtensionErrorCode.ConnectionDestroyed;
+      case 'DialogCanceled':
+        return UiExtensionErrorCode.DialogCanceled;
+      case 'DialogExists':
+        return UiExtensionErrorCode.DialogExists;
       default:
         return UiExtensionErrorCode.InternalError;
     }
   }
 }
 
-export class ParentConnection {
-  constructor(private _parent: Parent) {
-  }
+export class ParentConnection<T extends Parent = any> {
+  constructor(private _parent: T) {}
 
-  call<M extends ParentMethod>(method: M): Promise<ParentMethodPromisedValue<M>> {
+  call<M extends MethodOf<T>>(method: M, ...args: ArgumentsOf<T[M]>): Promise<PromisedOf<T[M]>> {
     if (!this._parent[method]) {
       return new ParentError(UiExtensionErrorCode.IncompatibleParent, `missing ${method}()`).toPromise();
     }
     try {
-      return this._parent[method]()
+      return this._parent[method](...args)
         .catch(ParentConnection.convertPenpalError);
     } catch (error) {
       return ParentConnection.convertPenpalError(error);
@@ -90,14 +94,17 @@ export class ParentConnection {
   }
 }
 
-export function connect(parentOrigin: string, eventEmitter: Emittery): Promise<ParentConnection> {
+export function connect<T extends Parent = any>(
+  parentOrigin: string,
+  eventEmitter: Emittery,
+): Promise<ParentConnection<T>> {
   try {
     return Penpal.connectToParent({
       parentOrigin,
       methods: {
         emitEvent: eventEmitter.emit.bind(eventEmitter),
       },
-    }).promise.then((parent: Parent) => new ParentConnection(parent));
+    }).promise.then((parent: T) => new ParentConnection(parent));
   } catch (penpalError) {
     return ParentError.fromPenpal(penpalError).toPromise();
   }
