@@ -16,27 +16,33 @@
 package org.hippoecm.frontend.editor.validator;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
+
+import javax.jcr.Node;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.types.IFieldDescriptor;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms7.services.validation.ValidationService;
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.exception.InvalidValidatorException;
+import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
-
-import static org.onehippo.cms7.services.validation.util.ServiceUtils.getValidationService;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
@@ -54,26 +60,23 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     @Override
-    public void preValidation(final IFieldValidator fieldValidator) throws ValidationException {
-        final Validator validator = getValidator(name);
-        if (validator == null) {
-            return;
-        }
-
-        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
-        try {
-            validator.init(context);
-        } catch (final InvalidValidatorException e) {
-            throw new ValidationException(e);
-        }
+    public void preValidation(final IFieldValidator fieldValidator) {
+        // nothing to do, any pre-validation is done as part of the validate() call
     }
 
-    private static Validator getValidator(final String name) {
-        final ValidationService validationService = getValidationService();
-        final Validator validator = validationService.getValidator(name);
-        if (validator == null) {
-            log.warn("Failed to retrieve validator[{}] from validation module", name);
+    private static ValidatorInstance getValidator(final String name) {
+        final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
+
+        if (service == null) {
+            throw new IllegalStateException("Failed to retrieve ValidationService from HippoServiceRegistry");
         }
+
+        final ValidatorInstance validator = service.getValidator(name);
+
+        if (validator == null) {
+            log.warn("Failed to retrieve validator '{}' from validation module", name);
+        }
+
         return validator;
     }
 
@@ -82,15 +85,14 @@ public class CmsValidatorAdapter implements ICmsValidator {
                                    final JcrNodeModel parentModel,
                                    final IModel valueModel) throws ValidationException {
 
-        final Validator validator = getValidator(name);
+        final ValidatorInstance validator = getValidator(name);
         if (validator == null) {
             return Collections.emptySet();
         }
 
-        final String value = getString(valueModel);
-        final ValidatorContext context = new CmsValidatorFieldContext(fieldValidator);
+        final FieldContext context = createValidationContext(fieldValidator, parentModel.getObject());
         try {
-            final Optional<org.onehippo.cms7.services.validation.Violation> violation = validator.validate(context, value);
+            final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
                     ? getViolations(fieldValidator, valueModel, violation.get())
                     : Collections.emptySet();
@@ -100,13 +102,23 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
-    private static String getString(final IModel valueModel) {
-        final Object object = valueModel.getObject();
-        return object != null ? object.toString() : null;
+    private static FieldContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
+        final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+        final String jcrName = fieldDescriptor.getPath();
+
+        final ITypeDescriptor fieldType = fieldValidator.getFieldType();
+        final String jcrType = fieldType.getName();
+        final String type = fieldType.getType();
+
+        final UserSession userSession = UserSession.get();
+        final Locale locale = userSession.getLocale();
+        final TimeZone timeZone = userSession.getTimeZone();
+
+        return new FieldContextImpl(jcrName, jcrType, type, parentNode, locale, timeZone);
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
-                                                final org.onehippo.cms7.services.validation.Violation violation) throws ValidationException {
+                                                final org.onehippo.cms.services.validation.api.Violation violation) throws ValidationException {
         final Model<String> message = Model.of(violation.getMessage());
         return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD));
     }
