@@ -27,13 +27,15 @@ import org.onehippo.cms.services.validation.api.FieldContext;
 public class CompoundContext {
 
     private final Node node;
+    private final Node document;
     private final Locale locale;
     private final TimeZone timeZone;
 
-    public CompoundContext(final Node node, final Locale locale, final TimeZone timeZone) {
+    public CompoundContext(final Node node, final Node document, final Locale locale, final TimeZone timeZone) {
+        this.node = node;
+        this.document = document;
         this.locale = locale;
         this.timeZone = timeZone;
-        this.node = node;
     }
 
     public Node getNode() {
@@ -49,10 +51,10 @@ public class CompoundContext {
     }
 
     public CompoundContext getChildContext(final Node child) {
-        return new CompoundContext(child, locale, timeZone);
+        return new CompoundContext(child, document, locale, timeZone);
     }
 
     public FieldContext getFieldContext(final String jcrName, final String jcrType, final String type) {
-        return new FieldContextImpl(jcrName, jcrType, type, node, locale, timeZone);
+        return new FieldContextImpl(jcrName, jcrType, type, document, node, locale, timeZone);
     }
 }

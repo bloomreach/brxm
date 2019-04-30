@@ -89,7 +89,7 @@ public class PrimitiveFieldTypeTest {
         };
         fieldType.setType(Type.STRING);
         node = MockNode.root();
-        nodeContext = new CompoundContext(node, null, null);
+        nodeContext = new CompoundContext(node, null, null, null);
     }
 
     @Test
@@ -490,7 +490,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
         assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
@@ -503,7 +503,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue("test");
 
-        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
         assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
     }
@@ -516,7 +516,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-bad");
         final FieldValue test = new FieldValue(""); // empty value should trigger non-empty validator
 
-        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
         assertViolation(fieldType.validateValue(test, context));
         assertThat(test.getErrorInfo().getValidation(), equalTo("non-empty")); // and not "always-bad"
     }
@@ -529,7 +529,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.addValidatorName("always-good");
         final FieldValue test = new FieldValue("test");
 
-        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
         assertZeroViolations(fieldType.validateValue(test, context));
     }
 

@@ -73,6 +73,11 @@ public class TestValidatorInstance implements ValidatorInstance {
     }
 
     @Override
+    public Node getDocumentNode() {
+        return null;
+    }
+
+    @Override
     public Optional<Violation> validate(final FieldContext context, final Object value) throws ValidationContextException {
         return validator.validate(this, value);
     }

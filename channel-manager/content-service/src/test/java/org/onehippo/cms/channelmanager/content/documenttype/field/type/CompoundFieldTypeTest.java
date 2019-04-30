@@ -442,7 +442,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
         final Node node = createMock(Node.class);
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
         replay(node);
@@ -455,7 +455,7 @@ public class CompoundFieldTypeTest {
     public void writeFieldUnknownChildNode() throws ErrorWithPayloadException {
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/unknown:child");
         final List<FieldValue> fieldValues = Collections.emptyList();
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
         try {
             fieldType.writeField(fieldPath, fieldValues, nodeContext);
@@ -468,7 +468,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
         final Node node = createMock(Node.class);
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
 
@@ -492,7 +492,7 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
         assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(compound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
@@ -509,7 +509,7 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "/compound:field/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
         assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(nestedCompound.getProperty(STRING_PROPERTY_1).getString(), equalTo("New value"));
@@ -525,7 +525,7 @@ public class CompoundFieldTypeTest {
 
         final FieldPath fieldPath = new FieldPath(NODE_NAME + "[2]/" + STRING_PROPERTY_1);
         final FieldValue fieldValue = new FieldValue("New value for compound 2");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
         assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(fieldValue), nodeContext));
         assertThat(compound1.getProperty(STRING_PROPERTY_1).getString(), equalTo("Value in compound 1"));
@@ -534,14 +534,14 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         assertZeroViolations(fieldType.validate(Collections.emptyList(), nodeContext));
     }
 
     @Test
     public void validateSingleGood() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueMap = validCompound();
@@ -551,7 +551,7 @@ public class CompoundFieldTypeTest {
     @Test
     public void validateSingleBad() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueMap = validCompound();
@@ -566,7 +566,7 @@ public class CompoundFieldTypeTest {
     public void validateMultipleAllGood() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueA = validCompound();
@@ -579,7 +579,7 @@ public class CompoundFieldTypeTest {
     public void validateMultipleFirstBad() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueA = validCompound();
@@ -598,7 +598,7 @@ public class CompoundFieldTypeTest {
     public void validateMultipleSecondBad() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueA = validCompound();
@@ -617,7 +617,7 @@ public class CompoundFieldTypeTest {
     public void validateMultipleAllBad() throws Exception {
         node.addNode(NODE_NAME, "compound:type");
         node.addNode(NODE_NAME, "compound:type");
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueA = validCompound();
@@ -635,13 +635,13 @@ public class CompoundFieldTypeTest {
 
     @Test(expected = BadRequestException.class)
     public void validateNodeValueCountMismatch() {
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
         Map<String, List<FieldValue>> valueMap = validCompound();
         fieldType.validate(listOf(valueOf(valueMap)), nodeContext);
     }
-    
+
     private Map<String, List<FieldValue>> validCompound() {
         Map<String, List<FieldValue>> map = new HashMap<>();
         map.put(STRING_PROPERTY_1, listOf(valueOf("New Value for String property 1")));

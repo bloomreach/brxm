@@ -841,7 +841,7 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2, field3);
         final Node node = createMock(Node.class);
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
         expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
         expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(true);
@@ -862,7 +862,7 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2);
         final Node node = createMock(Node.class);
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         final CompoundContext validationContext = createMock(CompoundContext.class);
 
         expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);

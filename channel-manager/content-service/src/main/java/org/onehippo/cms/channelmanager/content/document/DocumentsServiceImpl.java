@@ -267,7 +267,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final CompoundContext documentContext = new CompoundContext(draftNode, userContext.getLocale(), userContext.getTimeZone());
+        final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(), userContext.getTimeZone());
         final int violationCount = FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields(), documentContext);
         if (violationCount > 0) {
             document.getInfo().setErrorCount(violationCount);
@@ -319,7 +319,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         // Write field value to draft node
-        final CompoundContext documentContext = new CompoundContext(draftNode, userContext.getLocale(), userContext.getTimeZone());
+        final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(), userContext.getTimeZone());
         if (FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, docType.getFields(), documentContext)) {
             try {
                 session.save();

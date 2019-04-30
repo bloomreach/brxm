@@ -453,7 +453,7 @@ public class ChoiceFieldTypeTest {
         final FieldPath fieldPath = new FieldPath("choice/unknown:child");
         final List<FieldValue> fieldValues = Collections.emptyList();
         final Node node = createMock(Node.class);
-        final CompoundContext context = new CompoundContext(node, null, null);
+        final CompoundContext context = new CompoundContext(node, null, null, null);
         try {
             choice.writeField(fieldPath, fieldValues, context);
             fail("Exception not thrown");
@@ -465,7 +465,7 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
         final Node node = createMock(Node.class);
-        final CompoundContext context = new CompoundContext(node, null, null);
+        final CompoundContext context = new CompoundContext(node, null, null, null);
         final FieldPath fieldPath = new FieldPath("choice/child");
 
         expect(node.hasNode("choice")).andReturn(true);
@@ -488,7 +488,7 @@ public class ChoiceFieldTypeTest {
         expect(context.getNode()).andReturn(node);
 
         final Node choiceNode = node.addNode("choice", "compound1");
-        final CompoundContext choiceContext = new CompoundContext(choiceNode, null, null);
+        final CompoundContext choiceContext = new CompoundContext(choiceNode, null, null, null);
         expect(context.getChildContext(choiceNode)).andReturn(choiceContext);
 
         final FieldPath fieldPath = new FieldPath("choice/somefield");
@@ -509,7 +509,7 @@ public class ChoiceFieldTypeTest {
         expect(nodeContext.getNode()).andReturn(node);
 
         final Node choiceNode = node.addNode("choice", "compound1");
-        final CompoundContext choiceNodeContext = new CompoundContext(choiceNode, null, null);
+        final CompoundContext choiceNodeContext = new CompoundContext(choiceNode, null, null, null);
         expect(nodeContext.getChildContext(choiceNode)).andReturn(choiceNodeContext);
 
         node.addNode("choice", "compound2");
@@ -533,7 +533,7 @@ public class ChoiceFieldTypeTest {
 
         node.addNode("choice", "compound1");
         final Node choiceNode2 = node.addNode("choice", "compound2");
-        final CompoundContext choiceNode2Context = new CompoundContext(choiceNode2, null, null);
+        final CompoundContext choiceNode2Context = new CompoundContext(choiceNode2, null, null, null);
         expect(nodeContext.getChildContext(choiceNode2)).andReturn(choiceNode2Context);
 
         final FieldPath fieldPath = new FieldPath("choice[2]/somefield");
@@ -550,7 +550,7 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldUnknownChoice() throws ErrorWithPayloadException, RepositoryException {
         final Node node = MockNode.root();
-        final CompoundContext nodeContext = new CompoundContext(node, null, null);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         node.addNode("choice", "unknown:compound");
 
         final FieldPath fieldPath = new FieldPath("choice/somefield");
@@ -566,7 +566,7 @@ public class ChoiceFieldTypeTest {
 
     @Test
     public void validateNone() {
-        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
         assertZeroViolations(choice.validate(Collections.emptyList(), context));
     }
 
@@ -681,7 +681,7 @@ public class ChoiceFieldTypeTest {
     private static FieldValue mockChoiceValue(final CompoundFieldType fieldType, final String id, final int nrOfErrors, final MockNode fieldNode, final CompoundContext parentContext) throws RepositoryException {
         final FieldValue compoundValue = new FieldValue("value of " + id);
         final FieldValue choiceValue = new FieldValue(id, compoundValue);
-        final CompoundContext childContext = new CompoundContext(fieldNode, null, null);
+        final CompoundContext childContext = new CompoundContext(fieldNode, null, null, null);
         expect(parentContext.getChildContext(fieldNode)).andReturn(childContext);
         expect(fieldType.validateValue(compoundValue, childContext)).andReturn(nrOfErrors);
         return choiceValue;
