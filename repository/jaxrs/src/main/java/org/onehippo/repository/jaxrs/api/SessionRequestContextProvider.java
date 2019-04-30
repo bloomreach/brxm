@@ -16,6 +16,7 @@
 package org.onehippo.repository.jaxrs.api;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,14 @@ public interface SessionRequestContextProvider {
     Session getSystemSession(HttpServletRequest servletRequest);
 
     Locale getLocale(HttpServletRequest servletRequest);
+
+    /**
+     * Returns the user {@link TimeZone} for the current request
+     *
+     * @param servletRequest the current jaxrs request
+     * @return the {@link TimeZone} for the current user
+     */
+    TimeZone getTimeZone(HttpServletRequest servletRequest);
 
     /**
      * @param servletRequest

@@ -77,7 +77,7 @@
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.configuration-management.version>13.2.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.commons.version>13.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>13.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>13.2.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.utilities.version>13.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>

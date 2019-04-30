@@ -16,6 +16,8 @@
 package org.onehippo.repository.jaxrs.api;
 
 import java.util.Locale;
+import java.util.TimeZone;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -45,7 +47,8 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
     private static final String ATTRIBUTE_USER_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_SYSTEM_SESSION = ManagedUserSessionInvoker.class.getName() + ".SystemSession";
     private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
-    static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";;
+    private static final String ATTRIBUTE_TIME_ZONE = ManagedUserSessionInvoker.class.getName() + ".TimeZone";
+    static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
 
     private final Session systemSession;
@@ -83,6 +86,11 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
         return (Locale)servletRequest.getAttribute(ATTRIBUTE_LOCALE);
     }
 
+    @Override
+    public TimeZone getTimeZone(final HttpServletRequest servletRequest) {
+        return (TimeZone)servletRequest.getAttribute(ATTRIBUTE_TIME_ZONE);
+    }
+
     public String getFarthestRequestHost(final HttpServletRequest servletRequest) {
         return (String)servletRequest.getAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST);
     }
@@ -115,6 +123,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
                 try {
                     servletRequest.setAttribute(ATTRIBUTE_USER_SESSION, userSession);
                     servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
+                    servletRequest.setAttribute(ATTRIBUTE_TIME_ZONE, getTimeZone(cmsSessionContext));
                     servletRequest.setAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST, getFarthestRequestHostInternal(servletRequest));
                     return invokeSuper(exchange, requestParams);
                 } finally {
@@ -148,6 +157,13 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
             locale = new Locale("en");
         }
         return locale;
+    }
+
+    protected TimeZone getTimeZone(final CmsSessionContext context) {
+        final TimeZone timeZone = context.getTimeZone();
+        return timeZone == null
+            ? TimeZone.getDefault()
+            : timeZone;
     }
 
     /**
