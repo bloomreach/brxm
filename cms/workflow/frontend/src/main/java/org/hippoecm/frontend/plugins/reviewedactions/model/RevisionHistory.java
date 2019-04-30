@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,12 @@ import java.util.SortedMap;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +50,14 @@ public class RevisionHistory implements IDetachable {
     static final String UNPUBLISHED = "unpublished";
     static final String DASH = "-";
     private final WorkflowDescriptorModel wdm;
+    private final String branchId;
 
     private transient List<Revision> list;
 
-    public RevisionHistory(WorkflowDescriptorModel nodeModel) {
+    public RevisionHistory(WorkflowDescriptorModel nodeModel, String branchId) {
         this.wdm = nodeModel;
+        Validate.notNull(branchId, "The branchId should not be null, the default is %s", BranchConstants.MASTER_BRANCH_ID);
+        this.branchId = branchId;
     }
 
     public List<Revision> getRevisions() {
@@ -89,9 +94,7 @@ public class RevisionHistory implements IDetachable {
                     int index = versions.size();
                     for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
                         final Set<String> labels = entry.getValue();
-                        if (!isLatestRevisionOfBranch(labels)) {
-                            list.add(new Revision(this, entry.getKey(), labels, --index, new JcrNodeModel(wdm.getNode())));
-                        }
+                        list.add(new Revision(this, entry.getKey(), labels, --index, new JcrNodeModel(wdm.getNode()),!isLatestRevisionOfBranch(labels)));
                     }
                 }
                 Collections.reverse(list);
@@ -101,9 +104,10 @@ public class RevisionHistory implements IDetachable {
         }
     }
 
-    boolean isLatestRevisionOfBranch(final Set<String> labels) {
-        return labels.stream().anyMatch(label -> label.endsWith(DASH + UNPUBLISHED));
+    boolean isLatestRevisionOfBranch(Set<String> labels) {
+        return labels.contains(branchId + DASH + UNPUBLISHED);
     }
+
 
     public DocumentWorkflow getWorkflow() {
         return wdm.getWorkflow();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,23 +46,26 @@ public class Revision implements IDetachable {
     Calendar date;
     Set<String> labels;
     int index;
+    private final boolean enabled;
 
-    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel handleModel) {
+    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel handleModel, final boolean enabled) {
         this.history = history;
         this.date = date;
         this.labels = labels;
         this.index = index;
         this.handleModel = handleModel;
+        this.enabled = enabled;
     }
 
     public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel,
-                    JcrNodeModel handleModel) {
+                    JcrNodeModel handleModel, final boolean enabled) {
         this.history = history;
         this.date = date;
         this.labels = labels;
         this.index = index;
         this.versionModel = versionModel;
         this.handleModel = handleModel;
+        this.enabled = enabled;
     }
 
     /**
@@ -127,6 +130,10 @@ public class Revision implements IDetachable {
 
     public Revision getPredecessor() {
         return history.getRevision(index - 1);
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
