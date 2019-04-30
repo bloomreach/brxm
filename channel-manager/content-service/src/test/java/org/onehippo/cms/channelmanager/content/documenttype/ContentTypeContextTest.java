@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.SortedSet;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
@@ -50,6 +51,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms.channelmanager.content.TestUserContext.TEST_LOCALE;
+import static org.onehippo.cms.channelmanager.content.TestUserContext.TEST_TIME_ZONE;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -129,7 +132,6 @@ public class ContentTypeContextTest {
         final ContentTypeService contentTypeService = createMock(ContentTypeService.class);
         final String id = "namespaced:type";
         final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
         final DocumentType docType = new DocumentType();
 
         expect(HippoServiceRegistry.getService(ContentTypeService.class)).andReturn(contentTypeService);
@@ -139,7 +141,7 @@ public class ContentTypeContextTest {
         PowerMock.replayAll();
         replay(contentTypeService);
 
-        assertFalse(ContentTypeContext.createForDocumentType(id, session, locale, docType).isPresent());
+        assertFalse(ContentTypeContext.createForDocumentType(id, session, TEST_LOCALE, TEST_TIME_ZONE, docType).isPresent());
 
         verify(contentTypeService);
         PowerMock.verifyAll();
@@ -149,7 +151,6 @@ public class ContentTypeContextTest {
     public void createForDocumentTypeWithoutContentTypeRootNode() throws Exception {
         final String id = "namespaced:type";
         final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
         final DocumentType docType = new DocumentType();
 
         expect(NamespaceUtils.getContentTypeRootNode(id, session)).andReturn(Optional.empty());
@@ -157,7 +158,7 @@ public class ContentTypeContextTest {
 
         PowerMock.replayAll();
 
-        assertFalse(ContentTypeContext.createForDocumentType(id, session, locale, docType).isPresent());
+        assertFalse(ContentTypeContext.createForDocumentType(id, session, TEST_LOCALE, TEST_TIME_ZONE, docType).isPresent());
 
         PowerMock.verifyAll();
     }
@@ -166,7 +167,8 @@ public class ContentTypeContextTest {
     public void createForDocumentType() throws Exception {
         final String id = "namespaced:type";
         final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final Locale locale = TEST_LOCALE;
+        final TimeZone timeZone= TEST_TIME_ZONE;
         final DocumentType docType = new DocumentType();
         final ContentType contentType = provideContentType(id);
         final Node contentTypeRootNode = createMock(Node.class);
@@ -181,11 +183,13 @@ public class ContentTypeContextTest {
         PowerMock.replayAll();
         replay(contentType);
 
-        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, session, locale, docType).get();
+        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, session, locale, timeZone,
+                docType).get();
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getSession(), equalTo(session));
         assertThat(context.getContentTypeRoot(), equalTo(contentTypeRootNode));
         assertThat(context.getLocale(), equalTo(locale));
+        assertThat(context.getTimeZone(), equalTo(timeZone));
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(0));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
@@ -199,7 +203,8 @@ public class ContentTypeContextTest {
     public void createForDocumentTypeWithSupertypesAndNoResourceBundle() throws Exception {
         final String id = "namespaced:type";
         final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final Locale locale = TEST_LOCALE;
+        final TimeZone timeZone= TEST_TIME_ZONE;
         final DocumentType docType = new DocumentType();
         final ContentType contentType = createMock(ContentType.class);
         final ContentType superType2 = createMock(ContentType.class);
@@ -243,11 +248,13 @@ public class ContentTypeContextTest {
         PowerMock.replayAll();
         replay(contentType);
 
-        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, session, locale, docType).get();
+        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, session, locale, timeZone,
+                docType).get();
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getSession(), equalTo(session));
         assertThat(context.getContentTypeRoot(), equalTo(contentTypeRootNode));
         assertThat(context.getLocale(), equalTo(locale));
+        assertThat(context.getTimeZone(), equalTo(timeZone));
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(0));
         assertFalse(context.getResourceBundle().isPresent());
@@ -279,7 +286,8 @@ public class ContentTypeContextTest {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final String id = "namespaced:type";
         final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final Locale locale = TEST_LOCALE;
+        final TimeZone timeZone= TEST_TIME_ZONE;
         final DocumentType docType = new DocumentType();
         final ContentType contentType = createMock(ContentType.class);
         final Node contentTypeRootNode = createMock(Node.class);
@@ -295,6 +303,7 @@ public class ContentTypeContextTest {
         expect(parentContext.getLevel()).andReturn(4);
         expect(parentContext.getSession()).andReturn(session);
         expect(parentContext.getLocale()).andReturn(locale);
+        expect(parentContext.getTimeZone()).andReturn(timeZone);
         expect(parentContext.getDocumentType()).andReturn(docType);
         expect(contentType.getSuperTypes()).andReturn(Collections.emptySortedSet());
 
@@ -306,6 +315,7 @@ public class ContentTypeContextTest {
         assertThat(context.getSession(), equalTo(session));
         assertThat(context.getContentTypeRoot(), equalTo(contentTypeRootNode));
         assertThat(context.getLocale(), equalTo(locale));
+        assertThat(context.getTimeZone(), equalTo(timeZone));
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(5));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));

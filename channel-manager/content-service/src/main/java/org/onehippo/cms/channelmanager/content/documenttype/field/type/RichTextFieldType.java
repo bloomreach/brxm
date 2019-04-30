@@ -115,11 +115,6 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    protected String getValidationType() {
-        return HippoStdNodeType.NT_HTML;
-    }
-
-    @Override
     public FieldValue readValue(final Node node) {
         final FieldValue value = new FieldValue();
         try {

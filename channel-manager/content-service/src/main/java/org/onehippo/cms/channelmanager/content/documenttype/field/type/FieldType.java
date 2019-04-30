@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
@@ -129,27 +130,46 @@ public interface FieldType {
      * Write value(s) to the field indicated by the field path. Can be this field, or a child field in case of
      * compound or compound-like types.
      *
-     * @param node the node for this field in the document field hierarchy
      * @param fieldPath the path to the field to write
      * @param values the values to write
+     * @param context the context to use during validation
      * @return true if the values have been written, false otherwise.
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided values ran into an unrecoverable error
      */
-    boolean writeField(final Node node, FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException;
+    boolean writeField(final FieldPath fieldPath,
+                       final List<FieldValue> values,
+                       final CompoundContext context) throws ErrorWithPayloadException;
 
     /**
      * Validates the current value of this field (possible multiple) against all applicable (and supported) validators.
      * A field value with a violation will get its error info set.
      *
      * Note that the "required" validator is implemented as a sanity check in
-     * {@link #writeField(Node, FieldPath, List<FieldValue>)} since that is
+     * {@link #writeField(FieldPath, List, CompoundContext) <FieldValue>)} since that is
      * supposed to be checked by the front-end.
      *
      * @param valueList list of field value(s) to validate
+     * @param context context of this field
      * @return          the number of violations found
      */
-    int validate(final List<FieldValue> valueList);
+    int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException;
+
+    /**
+     * Validates a single value.
+     * @param value value to validate
+     * @param context context of the field
+     * @return the number of violations found
+     */
+    int validateValue(final FieldValue value, final CompoundContext context) throws ErrorWithPayloadException;
+
+    /**
+     * Converts the value of this field to the Java object passed to the validators of this field.
+     * @param value the value of this field
+     * @param context
+     * @return the value passed to the validators of this field.
+     */
+    Object getValidatedValue(FieldValue value, final CompoundContext context);
 
     /**
      * Add the name of a validator for this field.

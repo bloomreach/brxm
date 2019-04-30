@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,58 +30,43 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.powermock.api.easymock.PowerMock;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class})
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtil.class})
 public class AbstractFieldTypeTest {
 
     private AbstractFieldType fieldType;
 
     @Before
     public void setup() {
-        fieldType = new AbstractFieldType() {
-            @Override
-            public Optional<List<FieldValue>> readFrom(Node node) {
-                return null;
-            }
-
-            @Override
-            public int validateValue(final FieldValue value) {
-                return 0;
-            }
-
-            @Override
-            protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
-            }
-
-            @Override
-            public boolean writeField(Node node, FieldPath fieldPath, List<FieldValue> value) {
-                return false;
-            }
-        };
+        fieldType = new TestAbstractFieldType();
     }
 
     @Test
@@ -214,176 +198,141 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void alwaysValidWhenValidatorNamesIsEmpty() {
+        fieldType = new TestAbstractFieldType() {
+            @Override
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                fail("Should not be called");
+                return null;
+            }
+        };
+
+        assertZeroViolations(fieldType.validateValue(null, null));
+    }
+
+    @Test
     public void validateEmpty() {
-        assertZeroViolations(fieldType.validate(Collections.emptyList()));
+        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
     }
 
     @Test
-    public void validateBothGood() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    public void validateValueGood() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(true);
 
-        expect(fieldType.validateValue(one)).andReturn(0);
-        expect(fieldType.validateValue(two)).andReturn(0);
         replayAll();
 
-        assertZeroViolations(fieldType.validate(Arrays.asList(one, two)));
+        assertZeroViolations(fieldType.validateValue(one, context));
+
         verifyAll();
     }
 
     @Test
-    public void validateFirstBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    public void validatorValueFirstBad() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(false);
 
-        expect(fieldType.validateValue(one)).andReturn(1);
-        expect(fieldType.validateValue(two)).andReturn(0);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two)));
+        assertViolation(fieldType.validateValue(one, context));
+
         verifyAll();
     }
 
     @Test
-    public void validateSecondBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
+    public void validatorValueSecondBad() {
+        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType.addValidatorName("validator1");
+        fieldType.addValidatorName("validator2");
+
+        final CompoundContext context = createMock(CompoundContext.class);
+        final FieldContext fieldContext = createMock(FieldContext.class);
+        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
+        mockStaticPartial(ValidationUtil.class, "validateValue");
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
+        expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(false);
 
-        expect(fieldType.validateValue(one)).andReturn(0);
-        expect(fieldType.validateValue(two)).andReturn(1);
         replayAll();
 
-        assertViolation(fieldType.validate(Arrays.asList(one, two)));
-        verifyAll();
-    }
+        assertViolation(fieldType.validateValue(one, context));
 
-    @Test
-    public void validateBothBad() {
-        fieldType = PowerMock.createMock(AbstractFieldType.class);
-
-        final FieldValue one = new FieldValue("one");
-        final FieldValue two = new FieldValue("two");
-
-        expect(fieldType.validateValue(one)).andReturn(1);
-        expect(fieldType.validateValue(two)).andReturn(1);
-        replayAll();
-
-        assertViolations(fieldType.validate(Arrays.asList(one, two)), 2);
         verifyAll();
     }
 
     @Test
     public void initOptionalNoLocalization() {
-        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
-        final List<String> validators = Collections.singletonList(FieldValidators.OPTIONAL);
-
-        PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
-
-        expect(LocalizationUtils.determineFieldDisplayName("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.empty());
-        expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
-        expectLastCall();
-
-        expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getName()).andReturn("field:id");
-        expect(fieldContext.getValidators()).andReturn(validators);
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .validators(Collections.singletonList(FieldValidators.OPTIONAL))
+                .build();
 
         replayAll();
 
-        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
+        final FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
-        assertThat(fieldType.getId(), equalTo("field:id"));
-        assertNull(fieldType.getDisplayName());
-        assertNull(fieldType.getHint());
-        assertThat(fieldType.getMinValues(), equalTo(0));
-        assertThat(fieldType.getMaxValues(), equalTo(1));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
+        assertFieldType(fieldType,
+                MockFieldTypeContext.DEFAULT_JCR_NAME,
+                MockFieldTypeContext.DEFAULT_JCR_TYPE,
+                null, null,
+                0, 1);
 
         verifyAll();
     }
 
     @Test
     public void initMultipleWithLocalization() {
-        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
-        final List<String> validators = Collections.emptyList();
-
-        PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
-
-        expect(LocalizationUtils.determineFieldDisplayName("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.of("Field Display Name"));
-        expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.of("Hint"));
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
-        expectLastCall();
-
-        expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(fieldContext.getName()).andReturn("field:id");
-        expect(fieldContext.getValidators()).andReturn(validators);
-        expect(fieldContext.isMultiple()).andReturn(true).anyTimes();
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .displayName("Field Display Name")
+                .hint("Hint")
+                .multiple(true)
+                .build();
 
         replayAll();
 
-        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
+        final FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
-        assertThat(fieldType.getId(), equalTo("field:id"));
-        assertThat(fieldType.getDisplayName(), equalTo("Field Display Name"));
-        assertThat(fieldType.getHint(), equalTo("Hint"));
-        assertThat(fieldType.getMinValues(), equalTo(0));
-        assertThat(fieldType.getMaxValues(), equalTo(Integer.MAX_VALUE));
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
+        assertFieldType(fieldType,
+                MockFieldTypeContext.DEFAULT_JCR_NAME,
+                MockFieldTypeContext.DEFAULT_JCR_TYPE,
+                "Field Display Name",
+                "Hint",
+                0,
+                Integer.MAX_VALUE);
 
         verifyAll();
     }
 
     @Test
     public void initSingularNoLocalization() {
-        final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
-        final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
-        final List<String> validators = Collections.emptyList();
-
-        PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
-
-        expect(LocalizationUtils.determineFieldDisplayName("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.empty());
-        expect(LocalizationUtils.determineFieldHint("field:id", Optional.empty(), Optional.empty()))
-                .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
-        expectLastCall();
-
-        expect(fieldContext.getParentContext()).andReturn(parentContext);
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-        expect(fieldContext.getName()).andReturn("field:id");
-        expect(fieldContext.getValidators()).andReturn(validators);
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType).build();
 
         replayAll();
 
-        FieldsInformation fieldsInfo = fieldType.init(fieldContext);
+        final FieldsInformation fieldsInfo = fieldType.init(fieldContext);
 
-        assertThat(fieldType.getId(), equalTo("field:id"));
-        assertNull(fieldType.getDisplayName());
-        assertNull(fieldType.getHint());
-        assertThat(fieldType.getMinValues(), equalTo(1));
-        assertThat(fieldType.getMaxValues(), equalTo(1));
+        assertFieldType(fieldType, "field:id", "String", null, null, 1, 1);
         assertThat(fieldsInfo, equalTo(FieldsInformation.allSupported()));
 
         verifyAll();
@@ -407,4 +356,62 @@ public class AbstractFieldTypeTest {
     static void assertViolations(int actualViolationCount, int expectedViolationCount) {
         assertThat("Number of violations", actualViolationCount, equalTo(expectedViolationCount));
     }
+
+    private static void assertFieldType(final AbstractFieldType fieldType,
+                                        final String id,
+                                        final String jcrType,
+                                        final String displayName,
+                                        final String hint,
+                                        final int min,
+                                        final int max) {
+
+        assertThat(fieldType.getId(), equalTo(id));
+        // TODO make it return effective-type
+//        assertThat(fieldType.getType(), equalTo("Text"));
+        assertThat(fieldType.getJcrType(), equalTo(jcrType));
+        assertThat(fieldType.getDisplayName(), equalTo(displayName));
+        assertThat(fieldType.getHint(), equalTo(hint));
+        assertThat(fieldType.getMinValues(), equalTo(min));
+        assertThat(fieldType.getMaxValues(), equalTo(max));
+    }
+
+    private static class TestAbstractFieldType extends AbstractFieldType {
+
+        @Override
+        public Optional<List<FieldValue>> readFrom(Node node) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+            return null;
+        }
+
+        @Override
+        protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
+        }
+
+        @Override
+        public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
+            return false;
+        }
+
+        @Override
+        public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+            return 0;
+        }
+    }
+
+    private static AbstractFieldType createFieldType(final String id, final String jcrType) {
+        final AbstractFieldType fieldType = new TestAbstractFieldType() {
+            @Override
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                return value.getValue();
+            }
+        };
+        fieldType.setId(id);
+        fieldType.setJcrType(jcrType);
+        return fieldType;
+    }
+
 }

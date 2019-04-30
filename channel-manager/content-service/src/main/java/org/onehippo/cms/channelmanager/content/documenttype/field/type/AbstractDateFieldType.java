@@ -17,21 +17,15 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Calendar;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
 public abstract class AbstractDateFieldType extends PrimitiveFieldType {
 
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.DATE;
-    }
 
     @Override
     protected String getDefault() {
@@ -59,5 +53,22 @@ public abstract class AbstractDateFieldType extends PrimitiveFieldType {
         }
 
         return new FieldValue(value);
+    }
+
+    @Override
+    public Object getValidatedValue(final FieldValue fieldValue, final CompoundContext context) {
+        final String value = fieldValue.getValue();
+
+        if (StringUtils.isBlank(value)) {
+            return PropertyValueProvider.EMPTY_DATE;
+        }
+
+        final Calendar calendar = ISO8601.parse(value);
+
+        if (calendar == null) {
+            return PropertyValueProvider.EMPTY_DATE;
+        }
+
+        return calendar.getTime();
     }
 }

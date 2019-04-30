@@ -273,7 +273,7 @@ public class NamespaceUtilsTest {
         final Node editorFieldConfigNode = MockNode.root();
         final Node clusterOptionsNode = editorFieldConfigNode.addNode(NamespaceUtils.CLUSTER_OPTIONS, null);
         clusterOptionsNode.setProperty("maxlength", "256");
-        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, false, false, null, null, editorFieldConfigNode);
+        final FieldTypeContext fieldContext = new FieldTypeContext(null, null, null, false, false, null, null, editorFieldConfigNode);
 
         assertThat(NamespaceUtils.getConfigProperty(fieldContext, "maxlength", JcrStringReader.get()).get(), equalTo("256"));
     }
@@ -288,8 +288,8 @@ public class NamespaceUtilsTest {
         final Node contentTypeEditorConfigNode = createMock(Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", true, false,
-                Collections.emptyList(), parentContext, editorFieldConfigNode);
+        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", "hippo:fieldtype",
+                true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
         expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
@@ -321,8 +321,8 @@ public class NamespaceUtilsTest {
         final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", true, false,
-                Collections.emptyList(), parentContext, editorFieldConfigNode);
+        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", "hippo:fieldtype",
+                true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
 
@@ -352,8 +352,8 @@ public class NamespaceUtilsTest {
         final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
-        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", true, false,
-                Collections.emptyList(), parentContext, editorFieldConfigNode);
+        final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", "hippo:fieldtype",
+                true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
 
         expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(false);
 

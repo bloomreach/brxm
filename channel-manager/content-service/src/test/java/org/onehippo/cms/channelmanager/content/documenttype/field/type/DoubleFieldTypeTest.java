@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ public class DoubleFieldTypeTest {
         final Double newValue = 14.65;
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_DOUBLE);
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -101,6 +102,7 @@ public class DoubleFieldTypeTest {
         final String invalidValue = "foo";
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_DOUBLE);
         node.setProperty(PROPERTY, oldValue);
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
@@ -113,6 +115,7 @@ public class DoubleFieldTypeTest {
         final PrimitiveFieldType fieldType = new DoubleFieldType();
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_DOUBLE);
         fieldType.setMultiple(true);
         fieldType.setMaxValues(2);
 

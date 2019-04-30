@@ -32,6 +32,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -52,13 +53,12 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolations;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -95,9 +95,9 @@ public class ChoiceFieldTypeTest {
     @Test
     public void initWithoutNode() {
         final ChoiceFieldType choice = new ChoiceFieldType();
-        final FieldTypeContext context = prepareFieldTypeContextForInit(choice, null, null);
+        final FieldTypeContext context = prepareFieldTypeContextForInit(choice, null);
 
-        FieldsInformation fieldsInfo = choice.init(context);
+        final FieldsInformation fieldsInfo = choice.init(context);
 
         verifyAll();
 
@@ -110,8 +110,8 @@ public class ChoiceFieldTypeTest {
     public void initWithNode() {
         final ChoiceFieldType choice = new ChoiceFieldType();
         final Node node = MockNode.root();
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final FieldTypeContext context = prepareFieldTypeContextForInit(choice, node, parentContext);
+        final FieldTypeContext context = prepareFieldTypeContextForInit(choice, node);
+        final ContentTypeContext parentContext = context.getParentContext();
 
         PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "populateProviderBasedChoices", "populateListBasedChoices");
 
@@ -122,7 +122,7 @@ public class ChoiceFieldTypeTest {
 
         replayAll();
 
-        FieldsInformation fieldsInfo = choice.init(context);
+        final FieldsInformation fieldsInfo = choice.init(context);
 
         verifyAll();
 
@@ -441,22 +441,21 @@ public class ChoiceFieldTypeTest {
 
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
-        final Node node = createMock(Node.class);
         final FieldPath fieldPath = new FieldPath("other:id");
         replayAll();
 
-        assertFalse(choice.writeField(node, fieldPath, Collections.emptyList()));
+        assertFalse(choice.writeField(fieldPath, Collections.emptyList(), null));
         verifyAll();
     }
 
     @Test
     public void writeFieldUnknownChildNode() throws ErrorWithPayloadException {
-        final Node node = MockNode.root();
         final FieldPath fieldPath = new FieldPath("choice/unknown:child");
         final List<FieldValue> fieldValues = Collections.emptyList();
-
+        final Node node = createMock(Node.class);
+        final CompoundContext context = new CompoundContext(node, null, null);
         try {
-            choice.writeField(node, fieldPath, fieldValues);
+            choice.writeField(fieldPath, fieldValues, context);
             fail("Exception not thrown");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -466,6 +465,7 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldGetChildFails() throws ErrorWithPayloadException, RepositoryException {
         final Node node = createMock(Node.class);
+        final CompoundContext context = new CompoundContext(node, null, null);
         final FieldPath fieldPath = new FieldPath("choice/child");
 
         expect(node.hasNode("choice")).andReturn(true);
@@ -474,7 +474,7 @@ public class ChoiceFieldTypeTest {
         replayAll();
 
         try {
-            choice.writeField(node, fieldPath, Collections.emptyList());
+            choice.writeField(fieldPath, Collections.emptyList(), context);
             fail("Exception not thrown");
         } catch (InternalServerErrorException e) {
             verifyAll();
@@ -484,15 +484,20 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldOnlyChoice() throws ErrorWithPayloadException, RepositoryException {
         final Node node = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(node);
+
         final Node choiceNode = node.addNode("choice", "compound1");
+        final CompoundContext choiceContext = new CompoundContext(choiceNode, null, null);
+        expect(context.getChildContext(choiceNode)).andReturn(choiceContext);
 
         final FieldPath fieldPath = new FieldPath("choice/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
-        expect(compound1.writeFieldValue(choiceNode, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        expect(compound1.writeFieldValue(new FieldPath("somefield"), fieldValues, choiceContext)).andReturn(true);
         replayAll();
 
-        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+        assertTrue(choice.writeField(fieldPath, fieldValues, context));
 
         verifyAll();
     }
@@ -500,16 +505,22 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldFirstChoice() throws ErrorWithPayloadException, RepositoryException {
         final Node node = MockNode.root();
-        final Node choiceNode1 = node.addNode("choice", "compound1");
+        final CompoundContext nodeContext = createMock(CompoundContext.class);
+        expect(nodeContext.getNode()).andReturn(node);
+
+        final Node choiceNode = node.addNode("choice", "compound1");
+        final CompoundContext choiceNodeContext = new CompoundContext(choiceNode, null, null);
+        expect(nodeContext.getChildContext(choiceNode)).andReturn(choiceNodeContext);
+
         node.addNode("choice", "compound2");
 
         final FieldPath fieldPath = new FieldPath("choice/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
-        expect(compound1.writeFieldValue(choiceNode1, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        expect(compound1.writeFieldValue(new FieldPath("somefield"), fieldValues, choiceNodeContext)).andReturn(true);
         replayAll();
 
-        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+        assertTrue(choice.writeField(fieldPath, fieldValues, nodeContext));
 
         verifyAll();
     }
@@ -517,16 +528,21 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldSecondChoice() throws ErrorWithPayloadException, RepositoryException {
         final Node node = MockNode.root();
+        final CompoundContext nodeContext = createMock(CompoundContext.class);
+        expect(nodeContext.getNode()).andReturn(node);
+
         node.addNode("choice", "compound1");
         final Node choiceNode2 = node.addNode("choice", "compound2");
+        final CompoundContext choiceNode2Context = new CompoundContext(choiceNode2, null, null);
+        expect(nodeContext.getChildContext(choiceNode2)).andReturn(choiceNode2Context);
 
         final FieldPath fieldPath = new FieldPath("choice[2]/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
-        expect(compound2.writeFieldValue(choiceNode2, new FieldPath("somefield"), fieldValues)).andReturn(true);
+        expect(compound2.writeFieldValue(new FieldPath("somefield"), fieldValues, choiceNode2Context)).andReturn(true);
         replayAll();
 
-        assertTrue(choice.writeField(node, fieldPath, fieldValues));
+        assertTrue(choice.writeField(fieldPath, fieldValues, nodeContext));
 
         verifyAll();
     }
@@ -534,13 +550,14 @@ public class ChoiceFieldTypeTest {
     @Test
     public void writeFieldUnknownChoice() throws ErrorWithPayloadException, RepositoryException {
         final Node node = MockNode.root();
+        final CompoundContext nodeContext = new CompoundContext(node, null, null);
         node.addNode("choice", "unknown:compound");
 
         final FieldPath fieldPath = new FieldPath("choice/somefield");
         final List<FieldValue> fieldValues = Collections.emptyList();
 
         try {
-            choice.writeField(node, fieldPath, fieldValues);
+            choice.writeField(fieldPath, fieldValues, nodeContext);
             fail("Exception not thrown");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -549,89 +566,134 @@ public class ChoiceFieldTypeTest {
 
     @Test
     public void validateNone() {
-        assertZeroViolations(choice.validate(Collections.emptyList()));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null);
+        assertZeroViolations(choice.validate(Collections.emptyList(), context));
     }
 
     @Test
-    public void validateAllGood() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue1 = new FieldValue("compound2", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
+    public void validateAllGood() throws RepositoryException {
+        choice.setMaxValues(2);
 
-        expect(compound2.validateValue(compoundValue1)).andReturn(0);
-        expect(compound1.validateValue(compoundValue2)).andReturn(0);
+        final MockNode root = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(root);
+
+        final MockNode choiceNode1 = root.addNode("choice", "compound1");
+        final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
+
+        final MockNode choiceNode2 = root.addNode("choice", "compound2");
+        final FieldValue choiceValue2 = mockChoiceValue(compound2, "compound2", 0, choiceNode2, context);
+
         replayAll();
 
-        assertZeroViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)));
+        assertZeroViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2), context));
         verifyAll();
     }
 
     @Test
-    public void validateFirstBad() {
+    public void validateFirstBad() throws RepositoryException {
+        choice.setMaxValues(2);
+
+        final MockNode root = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(root);
+
+        final MockNode choiceNode1 = root.addNode("choice", "compound1");
+        final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
+
+        final MockNode choiceNode2 = root.addNode("choice", "compound2");
+        final FieldValue choiceValue2 = mockChoiceValue(compound2, "compound2", 0, choiceNode2, context);
+
+        replayAll();
+
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2), context), 1);
+        verifyAll();
+    }
+
+    @Test
+    public void validateLastBad() throws RepositoryException {
+        choice.setMaxValues(2);
+
+        final MockNode root = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(root);
+
+        final MockNode choiceNode1 = root.addNode("choice", "compound1");
+        final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
+
+        final MockNode choiceNode2 = root.addNode("choice", "compound2");
+        final FieldValue choiceValue2 = mockChoiceValue(compound2, "compound2", 1, choiceNode2, context);
+
+        replayAll();
+
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2), context), 1);
+        verifyAll();
+    }
+
+    @Test
+    public void validateAllBad() throws RepositoryException {
+        choice.setMaxValues(2);
+
+        final MockNode root = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(root);
+
+        final MockNode choiceNode1 = root.addNode("choice", "compound1");
+        final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
+
+        final MockNode choiceNode2 = root.addNode("choice", "compound2");
+        final FieldValue choiceValue2 = mockChoiceValue(compound2, "compound2", 1, choiceNode2, context);
+
+        replayAll();
+
+        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2), context), 2);
+        verifyAll();
+    }
+
+    @Test
+    public void validateTooManyValues() throws RepositoryException {
+        choice.setMaxValues(1);
+
+        final MockNode root = MockNode.root();
+        final CompoundContext context = createMock(CompoundContext.class);
+        expect(context.getNode()).andReturn(root);
+
         final FieldValue compoundValue1 = new FieldValue("value of compound 1");
         final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
+        root.addNode("choice", "compound1");
+
         final FieldValue compoundValue2 = new FieldValue("value of compound 2");
         final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
+        root.addNode("choice", "compound2");
 
-        expect(compound1.validateValue(compoundValue1)).andReturn(1);
-        expect(compound2.validateValue(compoundValue2)).andReturn(0);
         replayAll();
 
-        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 1);
+        try {
+            choice.validate(Arrays.asList(choiceValue1, choiceValue2), context);
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+
         verifyAll();
     }
 
-    @Test
-    public void validateLastBad() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
-
-        expect(compound1.validateValue(compoundValue1)).andReturn(0);
-        expect(compound2.validateValue(compoundValue2)).andReturn(1);
-        replayAll();
-
-        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 1);
-        verifyAll();
+    private static FieldValue mockChoiceValue(final CompoundFieldType fieldType, final String id, final int nrOfErrors, final MockNode fieldNode, final CompoundContext parentContext) throws RepositoryException {
+        final FieldValue compoundValue = new FieldValue("value of " + id);
+        final FieldValue choiceValue = new FieldValue(id, compoundValue);
+        final CompoundContext childContext = new CompoundContext(fieldNode, null, null);
+        expect(parentContext.getChildContext(fieldNode)).andReturn(childContext);
+        expect(fieldType.validateValue(compoundValue, childContext)).andReturn(nrOfErrors);
+        return choiceValue;
     }
 
-    @Test
-    public void validateAllBad() {
-        final FieldValue compoundValue1 = new FieldValue("value of compound 1");
-        final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
-        final FieldValue compoundValue2 = new FieldValue("value of compound 2");
-        final FieldValue choiceValue2 = new FieldValue("compound2", compoundValue2);
 
-        expect(compound1.validateValue(compoundValue1)).andReturn(1);
-        expect(compound2.validateValue(compoundValue2)).andReturn(1);
-        replayAll();
-
-        assertViolations(choice.validate(Arrays.asList(choiceValue1, choiceValue2)), 2);
-        verifyAll();
-    }
-
-    private FieldTypeContext prepareFieldTypeContextForInit(final ChoiceFieldType choice, final Node node,
-                                                            final ContentTypeContext parentContext) {
-        final FieldTypeContext context = createMock(FieldTypeContext.class);
-        final ContentTypeContext pc = parentContext != null ? parentContext : createMock(ContentTypeContext.class);
-
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
-        PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");
-
-        expect(context.getParentContext()).andReturn(pc).anyTimes();
-        expect(context.getEditorConfigNode()).andReturn(Optional.ofNullable(node)).anyTimes();
-        expect(pc.getResourceBundle()).andReturn(Optional.empty());
-        expect(context.getName()).andReturn("choiceId");
-        expect(context.getValidators()).andReturn(Collections.emptyList()).anyTimes();
-        expect(context.isMultiple()).andReturn(true).anyTimes();
-        expect(LocalizationUtils.determineFieldDisplayName("choiceId", Optional.empty(), Optional.ofNullable(node)))
-                .andReturn(Optional.empty());
-        expect(LocalizationUtils.determineFieldHint("choiceId", Optional.empty(), Optional.ofNullable(node)))
-                .andReturn(Optional.empty());
-        FieldTypeUtils.determineValidators(choice, context, Collections.emptyList());
-        expectLastCall();
+    private FieldTypeContext prepareFieldTypeContextForInit(final ChoiceFieldType choice, final Node node) {
+        final FieldTypeContext context = new MockFieldTypeContext.Builder(choice)
+                .jcrName("choiceId")
+                .editorFieldNode(node)
+                .multiple(true)
+                .build();
 
         replayAll();
 

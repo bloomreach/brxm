@@ -23,7 +23,6 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -65,11 +64,6 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
             log.warn("Failed to write {} field '{}'", getType(), valueName, e);
             throw new InternalServerErrorException();
         }
-    }
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
     }
 
     @Override

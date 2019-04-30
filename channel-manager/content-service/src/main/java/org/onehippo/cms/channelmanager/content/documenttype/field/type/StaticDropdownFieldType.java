@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
 public class StaticDropdownFieldType extends PrimitiveFieldType {
     
@@ -62,12 +62,12 @@ public class StaticDropdownFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
+    protected String getDefault() {
+        return StringUtils.EMPTY;
     }
 
     @Override
-    protected String getDefault() {
-        return StringUtils.EMPTY;
+    public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return value.getValue();
     }
 }

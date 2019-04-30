@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,10 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.slug.SlugFactory;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.mock.MockSession;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -50,24 +51,24 @@ public class FoldersServiceTest {
     private final FoldersService fs = FoldersService.get();
 
     private MockNode root;
-    private MockSession session;
+    private UserContext userContext;
 
     @Before
     public void setup() throws RepositoryException {
         PowerMock.mockStatic(SlugFactory.class);
         root = MockNode.root();
-        session = root.getSession();
+        userContext = new TestUserContext(root.getSession());
     }
 
     @Test
     public void emptyPathReturnsEmptyList() throws Exception {
-        assertTrue(fs.getFolders(null, session).isEmpty());
-        assertTrue(fs.getFolders("", session).isEmpty());
+        assertTrue(fs.getFolders(null, userContext).isEmpty());
+        assertTrue(fs.getFolders("", userContext).isEmpty());
     }
 
     @Test
     public void rootPathReturnsEmptyList() throws Exception {
-        assertTrue(fs.getFolders("/", session).isEmpty());
+        assertTrue(fs.getFolders("/", userContext).isEmpty());
     }
 
     @Test
@@ -76,7 +77,7 @@ public class FoldersServiceTest {
         expect(SlugFactory.createSlug("neptune", null)).andReturn("neptune");
         replayAll();
 
-        final List<Folder> folders = fs.getFolders("/planets/neptune", session);
+        final List<Folder> folders = fs.getFolders("/planets/neptune", userContext);
         assertThat(folders.size(), is(2));
         assertFolder(folders.get(0), "planets", "planets", "/planets", null, false);
         assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null, false);
@@ -92,7 +93,7 @@ public class FoldersServiceTest {
         neptuneNode.setProperty(HippoTranslationNodeType.LOCALE, "en");
 
 
-        final List<Folder> folders = fs.getFolders("/planets/neptune", session);
+        final List<Folder> folders = fs.getFolders("/planets/neptune", userContext);
         assertThat(folders.size(), is(2));
         assertFolder(folders.get(0), "planets", "planets", "/planets", null, true);
         assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", "en", true);
@@ -104,7 +105,7 @@ public class FoldersServiceTest {
         expect(SlugFactory.createSlug("neptune", null)).andReturn("neptune");
         replayAll();
 
-        final List<Folder> folders = fs.getFolders("/planets/neptune", session);
+        final List<Folder> folders = fs.getFolders("/planets/neptune", userContext);
         assertThat(folders.size(), is(2));
         assertFolder(folders.get(0), "planets", "planets", "/planets", null, true);
         assertFolder(folders.get(1), "neptune", "neptune", "/planets/neptune", null, false);
@@ -120,7 +121,7 @@ public class FoldersServiceTest {
         planetsNode.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         planetsNode.setProperty(HippoTranslationNodeType.LOCALE, "de");
 
-        final List<Folder> folders = fs.getFolders("/planets/The planet Neptune", session);
+        final List<Folder> folders = fs.getFolders("/planets/The planet Neptune", userContext);
         assertThat(folders.size(), is(2));
         assertFolder(folders.get(1), "the-planet-neptune", "The planet Neptune", "/planets/the-planet-neptune", "de", false);
         verifyAll();
@@ -132,7 +133,7 @@ public class FoldersServiceTest {
         final Node neptuneNode = planetsNode.addNode("neptune", HippoStdNodeType.NT_FOLDER);
         neptuneNode.setProperty(HippoNodeType.HIPPO_NAME, "Neptune");
 
-        final List<Folder> folders = fs.getFolders("/planets/neptune", session);
+        final List<Folder> folders = fs.getFolders("/planets/neptune", userContext);
         assertThat(folders.get(1).getDisplayName(), is("Neptune"));
     }
 
@@ -144,7 +145,7 @@ public class FoldersServiceTest {
         neptuneNode.setProperty(HippoTranslationNodeType.LOCALE, "de");
         neptuneNode.addNode("laomedeia", HippoStdNodeType.NT_FOLDER);
 
-        final List<Folder> folders = fs.getFolders("/planets/neptune/laomedeia", session);
+        final List<Folder> folders = fs.getFolders("/planets/neptune/laomedeia", userContext);
         assertNull(folders.get(0).getLocale());
         assertThat(folders.get(1).getLocale(), is("de"));
         assertThat(folders.get(2).getLocale(), is("de"));

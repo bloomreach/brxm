@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -28,6 +27,7 @@ import javax.jcr.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -81,19 +81,21 @@ public class RichTextFieldTypeTest {
 
     private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn(FIELD_NAME).anyTimes();
+        expect(fieldContext.getJcrName()).andReturn(FIELD_NAME).anyTimes();
+        expect(fieldContext.getJcrType()).andReturn("hippostd:html").anyTimes();
+        expect(fieldContext.getType()).andReturn("hippostd:html").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
-        final Locale locale = new Locale("nl");
-        expect(parentContext.getLocale()).andReturn(locale);
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());

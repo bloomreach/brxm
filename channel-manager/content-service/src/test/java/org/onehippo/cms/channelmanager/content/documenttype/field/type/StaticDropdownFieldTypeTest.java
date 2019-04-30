@@ -19,56 +19,48 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.repository.mock.MockNode;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class})
 public class StaticDropdownFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
 
-    private FieldTypeContext getFieldTypeContext() {
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
-        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:staticdropdown").anyTimes();
-        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
-        expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
-        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-    
-        return fieldContext;
-    }
-    
     @Test
     public void populateDropdownWithEqualKeyValues() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName("myproject:staticdropdown")
+                .build();
         expect(fieldTypeContext.getStringConfig("selectable.options")).andReturn(Optional.of("ca,us,mx"));
 
         replayAll();
-        
-        final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
+
         fieldType.init(fieldTypeContext);
 
         assertThat(fieldType.getOptionDisplayValues().size(), equalTo(3));
@@ -77,17 +69,22 @@ public class StaticDropdownFieldTypeTest {
         final List<String> expected = Arrays.asList("ca", "us", "mx");
         assertThat(fieldType.getOptionValues(), equalTo(expected));
         assertThat(fieldType.getOptionDisplayValues(), equalTo(expected));
+
+        verifyAll();
     }
-    
+
     @Test
     public void populateDropdownWithDifferentKeyValues() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName("myproject:staticdropdown")
+                .build();
         expect(fieldTypeContext.getStringConfig("selectable.options"))
                 .andReturn(Optional.of("ca=Canada,us=United States,mx=Mexico"));
 
         replayAll();
-        
-        final StaticDropdownFieldType fieldType = new StaticDropdownFieldType();
+
+
         fieldType.init(fieldTypeContext);
 
         assertThat(fieldType.getOptionDisplayValues().size(), equalTo(3));
@@ -97,8 +94,10 @@ public class StaticDropdownFieldTypeTest {
         final List<String> expectedValues = Arrays.asList("Canada", "United States", "Mexico");
         assertThat(fieldType.getOptionValues(), equalTo(expectedKeys));
         assertThat(fieldType.getOptionDisplayValues(), equalTo(expectedValues));
+
+        verifyAll();
     }
-    
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
@@ -107,6 +106,7 @@ public class StaticDropdownFieldTypeTest {
         final String newValue = "two";
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -133,6 +133,8 @@ public class StaticDropdownFieldTypeTest {
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(newValue))));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(newValue));
+
+        verifyAll();
     }
 
     private static List<FieldValue> listOf(final FieldValue value) {

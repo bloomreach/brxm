@@ -35,6 +35,7 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -160,15 +161,19 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public boolean writeField(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException {
-        return FieldTypeUtils.writeFieldNodeValue(node, fieldPath, values, this);
+    public boolean writeField(final FieldPath fieldPath,
+                              final List<FieldValue> values,
+                              final CompoundContext context) throws ErrorWithPayloadException {
+        return FieldTypeUtils.writeFieldNodeValue(fieldPath, values, this, context);
     }
 
     @Override
-    public boolean writeFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values) throws ErrorWithPayloadException, RepositoryException {
-        final String chosenId = node.getPrimaryNodeType().getName();
+    public boolean writeFieldValue(final FieldPath fieldPath,
+                                   final List<FieldValue> values,
+                                   final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
+        final String chosenId = context.getNode().getPrimaryNodeType().getName();
         final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
-        return choice.writeFieldValue(node, fieldPath, values);
+        return choice.writeFieldValue(fieldPath, values, context);
     }
 
     @Override
@@ -196,14 +201,32 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public int validateValue(final FieldValue value) {
+    public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+        final Node node = context.getNode();
+        final List<FieldValue> values = mergeUnsupportedValues(node, valueList);
+
+        try {
+            final NodeIterator children = node.getNodes(getId());
+            return FieldTypeUtils.validateNodeValues(children, values, this, context);
+        } catch (RepositoryException e) {
+            log.warn("Failed to validate value for choice type '{}'", getId(), e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    @Override
+    public int validateValue(final FieldValue value, final CompoundContext context) {
+        if (value == UNSUPPORTED_FIELD_VALUE) {
+            return 0;
+        }
+
         // dispatch validation of the values to the corresponding compound fields
         // #writeValue guarantees that the value has a valid chosenId, and a choiceValue
         final String chosenId = value.getChosenId();
         final NodeFieldType choice = choices.get(chosenId);
         final FieldValue choiceValue = value.getChosenValue();
 
-        return choice.validateValue(choiceValue);
+        return choice.validateValue(choiceValue, context);
     }
 
     private Optional<NodeFieldType> findChoice(final String chosenId) {

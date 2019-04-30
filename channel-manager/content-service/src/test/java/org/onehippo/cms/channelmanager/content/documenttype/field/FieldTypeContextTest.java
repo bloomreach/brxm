@@ -138,13 +138,14 @@ public class FieldTypeContextTest {
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
-        expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName")).andReturn(Optional.of("itemName"));
+        expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName")).andReturn(Optional.of("myproject:date"));
 
         expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
-        expect(contentType.getItem("itemName")).andReturn(contentTypeItem);
+        expect(contentType.getItem("myproject:date")).andReturn(contentTypeItem);
 
-        expect(contentTypeItem.getName()).andReturn("itemName");
-        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.getName()).andReturn("myproject:date");
+        expect(contentTypeItem.getEffectiveType()).andReturn("Date");
+        expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
@@ -152,8 +153,9 @@ public class FieldTypeContextTest {
         replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
-        assertThat(ftc.getName(), equalTo("itemName"));
-        assertThat(ftc.getType(), equalTo("my:item"));
+        assertThat(ftc.getJcrName(), equalTo("myproject:date"));
+        assertThat(ftc.getJcrType(), equalTo("Date"));
+        assertThat(ftc.getType(), equalTo("CalendarDate"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
         assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
@@ -177,13 +179,14 @@ public class FieldTypeContextTest {
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode1, "fieldName")).andReturn(Optional.empty());
-        expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode2, "fieldName")).andReturn(Optional.of("itemName"));
+        expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode2, "fieldName")).andReturn(Optional.of("myproject:date"));
 
         expect(context.getFieldScanningContexts()).andReturn(Arrays.asList(type1, type2));
-        expect(contentType2.getItem("itemName")).andReturn(contentTypeItem);
+        expect(contentType2.getItem("myproject:date")).andReturn(contentTypeItem);
 
-        expect(contentTypeItem.getName()).andReturn("itemName");
-        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.getName()).andReturn("myproject:date");
+        expect(contentTypeItem.getEffectiveType()).andReturn("Date");
+        expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
@@ -191,8 +194,9 @@ public class FieldTypeContextTest {
         replayAll();
 
         final FieldTypeContext ftc = FieldTypeContext.create(editorFieldConfigNode, context).get();
-        assertThat(ftc.getName(), equalTo("itemName"));
-        assertThat(ftc.getType(), equalTo("my:item"));
+        assertThat(ftc.getJcrName(), equalTo("myproject:date"));
+        assertThat(ftc.getJcrType(), equalTo("Date"));
+        assertThat(ftc.getType(), equalTo("CalendarDate"));
         assertThat(ftc.isProperty(), equalTo(true));
         assertThat(ftc.isMultiple(), equalTo(false));
         assertThat(ftc.getValidators(), equalTo(Collections.emptyList()));
@@ -207,8 +211,9 @@ public class FieldTypeContextTest {
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
 
-        expect(contentTypeItem.getName()).andReturn("itemName");
-        expect(contentTypeItem.getItemType()).andReturn("my:item");
+        expect(contentTypeItem.getName()).andReturn("myproject:date");
+        expect(contentTypeItem.getEffectiveType()).andReturn("Date");
+        expect(contentTypeItem.getItemType()).andReturn("CalendarDate");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
         expect(contentTypeItem.getValidators()).andReturn(Collections.emptyList());
@@ -217,8 +222,9 @@ public class FieldTypeContextTest {
 
         final FieldTypeContext context = new FieldTypeContext(contentTypeItem, parentContext);
 
-        assertThat(context.getName(), equalTo("itemName"));
-        assertThat(context.getType(), equalTo("my:item"));
+        assertThat(context.getJcrName(), equalTo("myproject:date"));
+        assertThat(context.getJcrType(), equalTo("Date"));
+        assertThat(context.getType(), equalTo("CalendarDate"));
         assertThat(context.isProperty(), equalTo(true));
         assertThat(context.isMultiple(), equalTo(false));
         assertThat(context.getValidators(), equalTo(Collections.emptyList()));
@@ -233,6 +239,7 @@ public class FieldTypeContextTest {
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
 
         expect(contentTypeItem.getName()).andReturn("itemName");
+        expect(contentTypeItem.getEffectiveType()).andReturn("id");
         expect(contentTypeItem.getItemType()).andReturn("id");
         expect(contentTypeItem.isProperty()).andReturn(true);
         expect(contentTypeItem.isMultiple()).andReturn(false);
@@ -249,7 +256,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getBooleanConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<Boolean> value = Optional.of(true);
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrBooleanReader.get())).andReturn(value);
@@ -261,7 +268,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getStringConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<String> value = Optional.of("value");
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrStringReader.get())).andReturn(value);
@@ -273,7 +280,7 @@ public class FieldTypeContextTest {
 
     @Test
     public void getMultipleStringConfig() {
-        final FieldTypeContext context =  new FieldTypeContext(null, null, false, false, null, null, null);
+        final FieldTypeContext context =  new FieldTypeContext(null, null, null, false, false, null, null, null);
         final Optional<String[]> values = Optional.of(new String[]{"a", "b"});
 
         expect(NamespaceUtils.getConfigProperty(context, "test", JcrMultipleStringReader.get())).andReturn(values);

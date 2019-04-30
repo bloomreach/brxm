@@ -18,11 +18,9 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.junit.Before;
@@ -30,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -99,9 +98,10 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
         replayAll();
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);
 
         final JsonNode imagePickerConfig = imageLink.getConfig().get("imagepicker");
@@ -117,11 +117,6 @@ public class ImageLinkFieldTypeTest {
     @Test
     public void getDefault() {
         assertThat(imageLink.getDefault(), equalTo(""));
-    }
-
-    @Test
-    public void getPropertyType() {
-        assertThat(imageLink.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test

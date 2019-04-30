@@ -17,23 +17,15 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Optional;
 
-import org.onehippo.cms7.services.validation.Validator;
-import org.onehippo.cms7.services.validation.ValidatorContext;
-import org.onehippo.cms7.services.validation.Violation;
+import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 
-public class AlwaysBadTestValidator implements Validator {
-
-    @Override
-    public String getName() {
-        return "always-bad";
-    }
+public class AlwaysBadTestValidator implements Validator<Object> {
 
     @Override
-    public void init(final ValidatorContext context) {
-    }
-
-    @Override
-    public Optional<Violation> validate(final ValidatorContext context, final String value) {
+    public Optional<Violation> validate(final ValidationContext context, final Object value) throws ValidationContextException {
         return Optional.of(() -> "Always bad");
     }
 }

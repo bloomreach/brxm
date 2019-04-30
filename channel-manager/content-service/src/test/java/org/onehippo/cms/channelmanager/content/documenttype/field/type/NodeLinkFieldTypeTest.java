@@ -18,17 +18,16 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -111,9 +110,10 @@ public class NodeLinkFieldTypeTest {
         clusterOptions.setProperty("nodetypes", new String[0]);
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
         replayAll();
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, parentContext, editorConfigNode);
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
 
         final JsonNode linkPickerConfig = linkFieldType.getConfig().get("linkpicker");
@@ -130,11 +130,6 @@ public class NodeLinkFieldTypeTest {
     @Test
     public void getDefault() {
         assertThat(linkFieldType.getDefault(), equalTo(""));
-    }
-
-    @Test
-    public void getPropertyType() {
-        assertThat(linkFieldType.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test

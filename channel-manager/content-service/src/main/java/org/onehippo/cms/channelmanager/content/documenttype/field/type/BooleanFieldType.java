@@ -16,9 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.BooleanUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
 public class BooleanFieldType extends PrimitiveFieldType {
     private static final String DEFAULT_VALUE = "false";
@@ -28,13 +28,13 @@ public class BooleanFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected int getPropertyType() {
-        return PropertyType.BOOLEAN;
+    protected String getDefault() {
+        return DEFAULT_VALUE;
     }
 
     @Override
-    protected String getDefault() {
-        return DEFAULT_VALUE;
+    public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return Boolean.parseBoolean(value.getValue());
     }
 
     @Override
