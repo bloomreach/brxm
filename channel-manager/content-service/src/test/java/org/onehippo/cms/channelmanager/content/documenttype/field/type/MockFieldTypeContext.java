@@ -53,7 +53,7 @@ public class MockFieldTypeContext {
         private ResourceBundle resourceBundle;
         private Node editorFieldNode;
 
-        private String parentContextLocale;
+        private Locale parentContextLocale;
 
         public Builder(final AbstractFieldType fieldType) {
             this.fieldType = fieldType;
@@ -104,7 +104,7 @@ public class MockFieldTypeContext {
             return this;
         }
 
-        public Builder parentContextLocale(final String locale) {
+        public Builder parentContextLocale(final Locale locale) {
             this.parentContextLocale = locale;
             return this;
         }
@@ -127,7 +127,7 @@ public class MockFieldTypeContext {
 
             final ContentTypeContext parentContext = PowerMock.createMock(ContentTypeContext.class);
             if (parentContextLocale != null) {
-                expect(parentContext.getLocale()).andReturn(new Locale(parentContextLocale));
+                expect(parentContext.getLocale()).andReturn(parentContextLocale);
             }
             expect(parentContext.getResourceBundle()).andReturn(optionalResourceBundle);
 

@@ -19,9 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,6 +27,7 @@ import javax.jcr.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -82,7 +81,7 @@ public class RichTextFieldTypeTest {
 
     private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
@@ -95,8 +94,8 @@ public class RichTextFieldTypeTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
-        expect(parentContext.getLocale()).andReturn(new Locale("nl"));
-        expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());

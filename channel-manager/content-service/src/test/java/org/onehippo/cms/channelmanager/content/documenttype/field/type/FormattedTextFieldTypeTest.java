@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -52,7 +53,7 @@ public class FormattedTextFieldTypeTest {
         final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
         final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(field)
                 .jcrName("myproject:htmlfield")
-                .parentContextLocale("nl")
+                .parentContextLocale(new Locale("nl"))
                 .build();
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());

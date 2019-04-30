@@ -30,6 +30,7 @@ import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentTypeInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -60,8 +61,9 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
     private DocumentTemplateQueryServiceImpl() { }
 
     @Override
-    public DocumentTemplateQuery getDocumentTemplateQuery(final String id, final Session session,
-                                                          final Locale locale) throws ErrorWithPayloadException {
+    public DocumentTemplateQuery getDocumentTemplateQuery(final String id, final UserContext userContext) throws ErrorWithPayloadException {
+        final Session session = userContext.getSession();
+        final Locale locale = userContext.getLocale();
         final List<DocumentTypeInfo> documentTypes = new ArrayList<>();
         final String documentTemplateQueryPath = HIPPO_TEMPLATES_PATH + "/" + id;
         try {

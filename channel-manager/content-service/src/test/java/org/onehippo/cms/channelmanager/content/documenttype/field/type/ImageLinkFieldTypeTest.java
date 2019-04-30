@@ -18,9 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -99,8 +98,8 @@ public class ImageLinkFieldTypeTest {
         clusterOptions.setProperty("image.validator.id", "service.gallery.image.validation");
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getLocale()).andReturn(new Locale("en"));
-        expect(parentContext.getTimeZone()).andReturn(TimeZone.getTimeZone("Europe/Amsterdam"));
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
         replayAll();
         final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         imageLink.init(context);

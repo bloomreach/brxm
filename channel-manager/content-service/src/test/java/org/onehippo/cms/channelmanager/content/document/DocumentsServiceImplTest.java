@@ -21,10 +21,8 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,6 +39,8 @@ import org.hippoecm.repository.util.WorkflowUtils.Variant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
@@ -110,8 +110,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class DocumentsServiceImplTest {
 
     private Session session;
-    private Locale locale;
-    private TimeZone timeZone;
+    private UserContext userContext;
     private NewDocumentInfo info;
     private DocumentsServiceImpl documentsService;
     private HintsInspector hintsInspector;
@@ -119,9 +118,8 @@ public class DocumentsServiceImplTest {
 
     @Before
     public void setup() {
-        session = createMock(Session.class);
-        locale = new Locale("en");
-        timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
+        userContext = new TestUserContext();
+        session = userContext.getSession();
         hintsInspector = createMock(HintsInspector.class);
         documentsService = new DocumentsServiceImpl();
         documentsService.setHintsInspector(hintsInspector);
@@ -154,7 +152,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -174,7 +172,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -194,7 +192,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -216,7 +214,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -244,7 +242,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -272,7 +270,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), is(errorInfo));
@@ -298,40 +296,10 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
-        }
-
-        verifyAll();
-    }
-
-    @Test
-    public void obtainEditableDocumentNoSession() throws Exception {
-        final String uuid = "uuid";
-        final String variantType = "project:newsdocument";
-        final Node handle = createMock(Node.class);
-        final DocumentWorkflow workflow = createMock(DocumentWorkflow.class);
-        final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
-
-        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
-        expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(DocumentTypesService.get()).andReturn(documentTypesService);
-        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
-        expect(workflow.hints(anyString())).andReturn(emptyMap());
-        expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-
-        expect(handle.getSession()).andThrow(new RepositoryException());
-
-        replayAll();
-
-        try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
-            fail("No Exception");
-        } catch (final InternalServerErrorException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
         }
 
         verifyAll();
@@ -353,13 +321,12 @@ public class DocumentsServiceImplTest {
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
 
-        expect(handle.getSession()).andReturn(session);
-        expect(documentTypesService.getDocumentType(variantType, session, locale, timeZone)).andThrow(new NotFoundException());
+        expect(documentTypesService.getDocumentType(variantType, userContext)).andThrow(new NotFoundException());
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -386,7 +353,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -409,14 +376,14 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.empty());
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.empty());
 
         expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
 
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -438,7 +405,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
@@ -467,7 +434,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -495,7 +462,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap());
@@ -520,7 +487,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -549,7 +516,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "default", DocumentWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.NEW);
         expect(DocumentLocaleUtils.getDocumentLocale(draft)).andReturn("en");
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
@@ -577,7 +544,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
-        final Document document = documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+        final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
@@ -600,7 +567,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -623,7 +590,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -649,7 +616,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -678,7 +645,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -711,7 +678,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -740,7 +707,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -770,7 +737,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
@@ -805,7 +772,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -840,7 +807,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -877,7 +844,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e.getPayload(), equalTo(document));
@@ -917,7 +884,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+            documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -950,7 +917,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
@@ -969,7 +936,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, userContext);
 
         assertThat(persistedDocument, equalTo(document));
         assertThat(persistedDocument.getInfo().getPublicationState(), equalTo(PublicationState.CHANGED));
@@ -999,7 +966,7 @@ public class DocumentsServiceImplTest {
 
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
-        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, session)).andReturn(Optional.of(draft));
+        expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.of(draft));
         expect(PublicationStateUtils.getPublicationStateFromVariant(draft)).andReturn(PublicationState.CHANGED);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
@@ -1018,7 +985,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, session, locale, timeZone);
+        final Document persistedDocument = documentsService.updateEditableDocument(uuid, document, userContext);
 
         assertThat(persistedDocument.getId(), equalTo(document.getId()));
         assertThat(persistedDocument.getDisplayName(), equalTo(document.getDisplayName()));
@@ -1040,7 +1007,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1064,7 +1031,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1091,7 +1058,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1120,7 +1087,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1153,7 +1120,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(e.getPayload(), equalTo(errorInfo));
@@ -1182,7 +1149,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1212,7 +1179,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
@@ -1246,7 +1213,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final BadRequestException e) {
             assertThat(e, equalTo(badRequest));
@@ -1278,7 +1245,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("Expected a BadRequestException");
         } catch (BadRequestException expected) {
             ErrorInfo errorInfo = (ErrorInfo) expected.getPayload();
@@ -1312,7 +1279,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+        documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
 
         verifyAll();
     }
@@ -1343,7 +1310,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.updateEditableField(uuid, fieldPath, fieldValues, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1361,7 +1328,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final NotFoundException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.DOES_NOT_EXIST));
@@ -1383,7 +1350,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1409,7 +1376,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
@@ -1437,7 +1404,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final InternalServerErrorException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SERVER_ERROR));
@@ -1462,7 +1429,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.discardEditableDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        documentsService.discardEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
 
         verifyAll();
     }
@@ -1471,31 +1438,31 @@ public class DocumentsServiceImplTest {
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutName() throws Exception {
         info.setName("");
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutSlug() throws Exception {
         info.setSlug("");
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutDocumentTemplateQuery() throws Exception {
         info.setDocumentTemplateQuery("");
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutDocumentTypeId() throws Exception {
         info.setDocumentTypeId("");
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
     public void createDocumentWithoutRootPath() throws Exception {
         info.setRootPath("");
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test
@@ -1513,7 +1480,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale, timeZone);
+            documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1542,7 +1509,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale, timeZone);
+            documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1580,7 +1547,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.createDocument(info, session, locale, timeZone);
+            documentsService.createDocument(info, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -1619,7 +1586,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.createDocument(info, session, locale, timeZone);
+        documentsService.createDocument(info, userContext);
     }
 
     @Test
@@ -1679,7 +1646,7 @@ public class DocumentsServiceImplTest {
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(documentDraft);
 
-        final Document document = documentsService.createDocument(info, session, locale, timeZone);
+        final Document document = documentsService.createDocument(info, userContext);
 
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
@@ -1755,7 +1722,7 @@ public class DocumentsServiceImplTest {
         replayAll(documentDraft);
 
 
-        final Document document = documentsService.createDocument(info, session, locale, timeZone);
+        final Document document = documentsService.createDocument(info, userContext);
 
         assertThat(document.getId(), equalTo("uuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
@@ -1771,14 +1738,14 @@ public class DocumentsServiceImplTest {
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutDisplayName() throws Exception {
         final Document document = new Document();
-        documentsService.updateDocumentNames("uuid", document, session, MASTER_BRANCH_ID);
+        documentsService.updateDocumentNames("uuid", MASTER_BRANCH_ID, document, userContext);
     }
 
     @Test(expected = BadRequestException.class)
     public void updateDocumentNamesWithoutUrlName() throws Exception {
         final Document document = new Document();
         document.setDisplayName("Breaking News");
-        documentsService.updateDocumentNames("uuid", document, session, MASTER_BRANCH_ID);
+        documentsService.updateDocumentNames("uuid", MASTER_BRANCH_ID, document, userContext);
     }
 
     @Test(expected = BadRequestException.class)
@@ -1789,7 +1756,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
+        documentsService.updateDocumentNames(uuid, MASTER_BRANCH_ID, document, userContext);
     }
 
     @Test
@@ -1857,7 +1824,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
+        final Document result = documentsService.updateDocumentNames(uuid, MASTER_BRANCH_ID, document, userContext);
         assertThat(result.getDisplayName(), equalTo(displayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -1930,7 +1897,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
+        final Document result = documentsService.updateDocumentNames(uuid, MASTER_BRANCH_ID, document, userContext);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(urlName));
 
@@ -1978,7 +1945,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        final Document result = documentsService.updateDocumentNames(uuid, document, session, MASTER_BRANCH_ID);
+        final Document result = documentsService.updateDocumentNames(uuid, MASTER_BRANCH_ID, document, userContext);
         assertThat(result.getDisplayName(), equalTo(encodedDisplayName));
         assertThat(result.getUrlName(), equalTo(encodedUrlName));
 
@@ -2027,7 +1994,7 @@ public class DocumentsServiceImplTest {
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
     }
 
     @Test
@@ -2043,7 +2010,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2073,7 +2040,7 @@ public class DocumentsServiceImplTest {
 
         try {
             hints.put(DocumentWorkflowAction.delete().getAction(), true);
-            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
         } finally {
             verifyAll();
         }
@@ -2099,7 +2066,7 @@ public class DocumentsServiceImplTest {
 
         replayAll();
 
-        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
 
         verifyAll();
     }
@@ -2120,7 +2087,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(workflow);
 
-        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
 
         verifyAll();
     }
@@ -2146,7 +2113,7 @@ public class DocumentsServiceImplTest {
         replayAll(workflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
             fail("No Exception");
         } catch (final MethodNotAllowed e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
@@ -2180,7 +2147,7 @@ public class DocumentsServiceImplTest {
         replayAll(documentWorkflow, folderWorkflow);
 
         try {
-            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
         } finally {
             verifyAll();
         }
@@ -2215,7 +2182,7 @@ public class DocumentsServiceImplTest {
 
         try {
             hints.put(DocumentWorkflowAction.delete().getAction(), true);
-            documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+            documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
         } finally {
             verifyAll();
         }
@@ -2248,7 +2215,7 @@ public class DocumentsServiceImplTest {
 
         replayAll(documentWorkflow, handle, folderWorkflow);
 
-        documentsService.deleteDocument(uuid, session, locale, MASTER_BRANCH_ID);
+        documentsService.deleteDocument(uuid, MASTER_BRANCH_ID, userContext);
 
         verifyAll();
     }
@@ -2278,7 +2245,7 @@ public class DocumentsServiceImplTest {
         replayAll();
 
         try {
-            documentsService.obtainEditableDocument(uuid, session, locale, timeZone, MASTER_BRANCH_ID);
+            documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
         } catch (ForbiddenException e) {
             final ErrorInfo payload = (ErrorInfo) e.getPayload();
             assertThat(payload.getReason(), is(Reason.INVALID_DATA));
@@ -2297,7 +2264,7 @@ public class DocumentsServiceImplTest {
 
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
-        expect(documentTypesService.getDocumentType(variantType, session, locale, timeZone)).andReturn(docType).anyTimes();
+        expect(documentTypesService.getDocumentType(variantType, userContext)).andReturn(docType).anyTimes();
         expect(handle.getSession()).andReturn(session).anyTimes();
 
         return docType;
@@ -2305,7 +2272,7 @@ public class DocumentsServiceImplTest {
 
     private void assertUpdateDocumentNamesFails(final String uuid, final Document document, final Reason reason) throws ErrorWithPayloadException {
         try {
-            documentsService.updateDocumentNames(uuid, document, session, null);
+            documentsService.updateDocumentNames(uuid, null, document, userContext);
             fail("No Exception");
         } catch (final ConflictException e) {
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();

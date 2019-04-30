@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Session;
 
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -51,12 +52,15 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale, final TimeZone timeZone)
+    public DocumentType getDocumentType(final String id, final UserContext userContext)
             throws ErrorWithPayloadException {
 
+        final Session session = userContext.getSession();
+        final Locale locale = userContext.getLocale();
+        final TimeZone timeZone = userContext.getTimeZone();
         final String cacheKey = id + "-" + locale.toString() + "-" + timeZone.getID();
         try {
-            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, userSession, locale, timeZone));
+            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, session, locale, timeZone));
         } catch (final ExecutionException ignore) {
             throw new NotFoundException();
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,7 @@ package org.onehippo.cms.channelmanager.content.folder;
 
 import java.util.List;
 
-import javax.jcr.Session;
-
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 public interface FoldersService {
@@ -27,5 +26,5 @@ public interface FoldersService {
         return FoldersServiceImpl.getInstance();
     }
 
-    List<Folder> getFolders(String path, Session session) throws ErrorWithPayloadException;
+    List<Folder> getFolders(String path, UserContext userContext) throws ErrorWithPayloadException;
 }

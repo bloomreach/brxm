@@ -17,11 +17,8 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
-import javax.jcr.Session;
-
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.model.NewDocumentInfo;
@@ -37,29 +34,32 @@ public interface DocumentsService {
      * Gets a document for viewing by the current CMS user.
      * <p>
      *
-     * @param uuid     UUID of the requested document (handle)
-     * @param branchId id of the requested document branch
-     * @param session  user-authenticated, invocation-scoped JCR session
-     * @param locale   Locale of the CMS user
+     * @param uuid          UUID of the requested document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param userContext   Properties of the user that executes the request
+     *
      * @return JSON-serializable representation of the parts supported for exposing
+     *
      * @throws ErrorWithPayloadException If reading the document failed
      */
-    Document getDocument(String uuid, String branchId, Session session, Locale locale, TimeZone timeZone) throws ErrorWithPayloadException;
+    Document getDocument(final String uuid, final String branchId, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
      * Branches a document.
      * <p>
      * If all goes well, the document's content is returned.
      *
-     * @param uuid     UUID of the requested document (handle)
-     * @param session  user-authenticated, invocation-scoped JCR session
-     * @param locale   Locale of the CMS user
-     * @param timeZone TimeZone of the CMS user
-     * @param branchId id of branch
+     * @param uuid          UUID of the requested document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param userContext   Properties of the user that executes the request
+     *
      * @return JSON-serializable representation of the parts supported for exposing
+     *
      * @throws ErrorWithPayloadException If branching the document failed
      */
-    Document branchDocument(String uuid, Session session, Locale locale, TimeZone timeZone, String branchId) throws ErrorWithPayloadException;
+    Document branchDocument(final String uuid, final String branchId, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
 
     /**
@@ -67,101 +67,105 @@ public interface DocumentsService {
      * <p>
      * If all goes well, the document's content is returned.
      *
-     * @param uuid     UUID of the requested document (handle)
-     * @param session  user-authenticated, invocation-scoped JCR session
-     * @param locale   Locale of the CMS user
-     * @param timeZone TimeZone of the CMS user
-     * @param branchId id of branch
+     * @param uuid          UUID of the requested document (handle)
+     * @param branchId      Id of the requested document branch
+     * @param userContext   Properties of the user that executes the request
+     *
      * @return JSON-serializable representation of the parts supported for exposing
+     *
      * @throws ErrorWithPayloadException If obtaining the editable instance failed
      */
-    Document obtainEditableDocument(String uuid, Session session, Locale locale, TimeZone timeZone, String branchId) throws ErrorWithPayloadException;
+    Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
      * Updates the editable version of a document, and keep it locked for further editing.
      * <p>
      * The persisted document may differ from the posted one (e.g. when fields are subject to additional processing
      * before being persisted).
+     * <p>
+     * In case of a bad request, changes may be pending.
      *
-     * @param uuid     UUID of the document to be updated
-     * @param document Document containing the to-be-persisted content
-     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                 pending.
-     * @param locale   Locale of the CMS user
-     * @param timeZone TimeZone of the CMS user
+     * @param uuid          UUID of the document to be updated
+     * @param document      Document containing the to-be-persisted content
+     * @param userContext   Properties of the user that executes the request
+     *
      * @return JSON-serializable representation of the persisted document.
+     *
      * @throws ErrorWithPayloadException If updating the editable document failed
      */
-    Document updateEditableDocument(String uuid, Document document, Session session, Locale locale,
-                                    final TimeZone timeZone) throws ErrorWithPayloadException;
+    Document updateEditableDocument(final String uuid, final Document document, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
      * Update a single field value in the editable version of a document.
      * <p>
      * The persisted value may differ from the posted one (e.g. when fields are subject to additional processing before
      * being persisted).
+     * <p>
+     * In case of a bad request, changes may be pending.
      *
-     * @param uuid        UUID of the document
-     * @param fieldPath   Path to the field in the document
-     * @param fieldValues Field values containing the to-be-persisted content
-     * @param session     user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may be
-     *                    pending.
-     * @param locale      Locale of the CMS user
-     * @param timeZone TimeZone of the CMS user
-     * @param branchId    id of branch
+     * @param uuid          UUID of the document
+     * @param branchId      Id of the requested document branch
+     * @param fieldPath     Path to the field in the document
+     * @param fieldValues   Field values containing the to-be-persisted content
+     * @param userContext   Properties of the user that executes the request
      *
      * @return the field values; the ones that were deemed invalid will be annotated with an errorInfo object.
      *
      * @throws ErrorWithPayloadException If updating the field failed
      */
-    List<FieldValue> updateEditableField(String uuid, FieldPath fieldPath, List<FieldValue> fieldValues,
-                                         Session session, Locale locale, final TimeZone timeZone, final String branchId) throws ErrorWithPayloadException;
+    List<FieldValue> updateEditableField(final String uuid, final String branchId, final FieldPath fieldPath,
+                                         final List<FieldValue> fieldValues, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
      * Discard the editable version of a document, such that it is available for others to edit. The changes that were
      * saved in fields after obtaining the editable version of the document are discarded.
      * <p/>
      *
-     * @param uuid     UUID of the document to be released
-     * @param session  user-authenticated, invocation-scoped JCR session
-     * @param locale   Locale of the CMS user
-     * @param branchId id of branch
+     * @param uuid          UUID of the document to be released
+     * @param branchId      Id of the requested document branch
+     * @param userContext   Properties of the user that executes the request
+     *
      * @throws ErrorWithPayloadException If releasing the editable instance failed
      */
-    void discardEditableDocument(String uuid, Session session, Locale locale, final String branchId) throws ErrorWithPayloadException;
+    void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
-     * Creates a new document
+     * Creates a new document. In case of a bad request, changes may be pending.
      *
-     * @param newDocumentInfo   the information about the new document to create
-     * @param session           user-authenticated, invocation-scoped JCR session. In case of a bad request, changes
-     *                           may be pending.
-     * @param locale            Locale of the CMS user
-     * @param timeZone          TimeZone of the CMS user
+     * @param newDocumentInfo   The information about the new document to create
+     * @param userContext       Properties of the user that executes the request
+     *
      * @return the created document
      */
-    Document createDocument(NewDocumentInfo newDocumentInfo, Session session, Locale locale, TimeZone timeZone) throws ErrorWithPayloadException;
+    Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
-     * Updates the display name and URL name of a document.
+     * Updates the display name and URL name of a document. In case of a bad request, changes may be pending.
      *
-     * @param uuid     UUID of the document (handle)
-     * @param document Document containing the to-be-persisted display name and URL name. Other fields are ignored.
-     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
-     *                 be pending.
+     * @param uuid          UUID of the document (handle)
+     * @param document      Document containing the to-be-persisted display name and URL name. Other fields are ignored.
+     * @param userContext   Properties of the user that executes the request
+     *
      * @throws ErrorWithPayloadException if the display name and/or URL name already exists, or changing the names fails.
      */
-    Document updateDocumentNames(String uuid, Document document, Session session, String branchId) throws ErrorWithPayloadException;
+    Document updateDocumentNames(final String uuid, final String branchId, final Document document,
+                                 final UserContext userContext)
+            throws ErrorWithPayloadException;
 
     /**
-     * Deletes a document
+     * Deletes a document. In case of a bad request, changes may be pending.
      *
-     * @param uuid     UUID of the document (handle) to delete
-     * @param session  user-authenticated, invocation-scoped JCR session. In case of a bad request, changes may
-     *                 be pending.
-     * @param locale   Locale of the CMS user
-     * @param branchId id of branch
+     * @param uuid          UUID of the document (handle) to delete
+     * @param branchId      Id of the requested document branch
+     * @param userContext   Properties of the user that executes the request
+     *
      * @throws ErrorWithPayloadException If deleting the document failed
      */
-    void deleteDocument(String uuid, Session session, Locale locale, String branchId) throws ErrorWithPayloadException;
+    void deleteDocument(final String uuid, final String branchId, final UserContext userContext)
+            throws ErrorWithPayloadException;
 }
