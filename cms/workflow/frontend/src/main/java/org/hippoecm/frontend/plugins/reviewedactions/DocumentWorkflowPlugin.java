@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -60,11 +59,13 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final String DEFAULT_FOLDERWORKFLOW_CATEGORY = "embedded";
+    public static final String DOCUMENT = "document";
+    public static final String UNAVAILABLE_TIP = "unavailable-tip";
+    public static final String DELETE = "delete";
 
     private StdWorkflow deleteAction;
     private StdWorkflow requestDeleteAction;
@@ -82,7 +83,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -95,7 +96,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this);
+                    return new StringResourceModel(UNAVAILABLE_TIP, this);
                 }
             }
 
@@ -103,7 +104,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 String locale = null;
                 try {
-                    final HippoNode node = getModelNode();
+                    final HippoNode node = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
                     renameDocumentArguments = new RenameDocumentArguments(
                             node.getDisplayName(),
@@ -120,9 +121,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         this.getModel());
             }
 
-            private HippoNode getModelNode() throws RepositoryException {
-                return (HippoNode) getModel().getNode();
-            }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
@@ -136,7 +134,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     throw new WorkflowException("No URL name given for document node");
                 }
 
-                final HippoNode node = getModelNode();
+                final HippoNode node = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                 String nodeName = getNodeNameCodec(node).encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
 
@@ -162,7 +160,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -172,16 +170,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {};
+                destination = new NodeModelWrapper<Node>(getFolder()) {
+                };
 
                 try {
-                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> {
-                        try {
-                            return getNodeNameCodec(getModelNode(), getFolder().getNode());
-                        } catch (RepositoryException e) {
-                            return getNodeNameCodec(getFolder().getNode());
-                        }
-                    });
+                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> getNodeNameCodec(getModelNode(), getFolder().getNode()));
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec, translate("copyof"));
                     final Node destinationNode = destination.getChainedModel().getObject();
@@ -202,11 +195,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         copyAction.invokeWorkflow();
-                    }
-
-                    @Override
-                    protected boolean checkPermissions() {
-                        return isWritePermissionGranted(destination.getChainedModel());
                     }
 
                     @Override
@@ -238,8 +226,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
 
-            private HippoNode getModelNode() throws RepositoryException {
-                return (HippoNode) getModel().getNode();
+            private HippoNode getModelNode() {
+                return getHandleOrUnpublishedVariant(getModel().getWorkflow());
             }
 
         });
@@ -249,7 +237,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -262,7 +250,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this);
+                    return new StringResourceModel(UNAVAILABLE_TIP, this);
                 }
             }
 
@@ -278,11 +266,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     }
 
                     @Override
-                    protected boolean checkPermissions() {
-                        return isWritePermissionGranted(destination.getChainedModel());
-                    }
-
-                    @Override
                     protected boolean checkFolderTypes() {
                         return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
                     }
@@ -291,7 +274,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node document = getModel().getNode();
+                Node document = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                 Node folder = destination != null ? destination.getChainedModel().getObject()
                         : new JcrNodeModel("/").getNode();
 
@@ -303,12 +286,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(deleteAction = new StdWorkflow("delete",
+        add(deleteAction = new StdWorkflow(DELETE,
                 new StringResourceModel("delete-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -346,7 +329,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -375,7 +358,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -399,7 +382,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -410,7 +393,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
-                return new HistoryDialog(wdm, getEditorManager());
+                return new HistoryDialog(wdm, getEditorManager(), getBranchId());
             }
 
             @Override
@@ -420,17 +403,57 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        if (!info.containsKey("delete")) {
+        if (!info.containsKey(DELETE)) {
             hideOrDisable(info, "requestDelete", requestDeleteAction);
         } else {
             requestDeleteAction.setVisible(false);
         }
-        hideOrDisable(info, "delete", deleteAction);
+        hideOrDisable(info, DELETE, deleteAction);
         hideOrDisable(info, "rename", renameAction);
         hideOrDisable(info, "move", moveAction);
 
         hideOrDisable(info, "copy", copyAction);
         hideOrDisable(info, "listVersions", historyAction);
+    }
+
+    private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
+
+        try {
+            final Node handle = getHandleOrUnpublishedVariant(documentModel.getWorkflow());
+            if (handle.hasNode(handle.getName())) {
+                final String documentType = handle.getNode(handle.getName()).getPrimaryNodeType().getName();
+
+                // get allowed folder types from hints() method on folder workflow
+                final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
+                if (workflow instanceof FolderWorkflow) {
+                    final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) workflow.hints().get("prototypes");
+
+                    // squash all configured values into one set
+                    final Set<String> allowedTypes = new HashSet<>();
+                    for (final String key : prototypes.keySet()) {
+                        allowedTypes.addAll(prototypes.get(key));
+                    }
+
+                    log.debug("Document type {} {} allowed in folder {} by folderTypes {}",
+                            documentType, (allowedTypes.contains(documentType) ? "is" : "is NOT"),
+                            destinationFolder.getObject().getPath(), allowedTypes);
+                    return allowedTypes.contains(documentType);
+                } else {
+                    log.info("Workflow by category {} on subject {} is not a FolderWorkflow but {}",
+                            DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject(),
+                            ((workflow == null) ? "null" : workflow.getClass().getName()));
+                }
+            } else {
+                log.error("(Supposed) document handle {} does not have same-name subnode", handle.getPath());
+            }
+        } catch (RepositoryException | RemoteException e) {
+            log.error(e.getClass().getName() + " during check for workflow allowed in folder: " + e.getMessage());
+        } catch (WorkflowException we) {
+            log.error(we.getClass().getName() + " during workflow execution", we);
+        }
+
+        // forbid workflow action if something's wrong
+        return false;
     }
 
     // Helper method for referencing translations from the DocumentWorkflowPlugin from nested anonymous classes
@@ -446,58 +469,5 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     private StringCodec getNodeNameCodec(final Node document, final Node destination) {
         String locale = CodecUtils.getLocaleFromDocumentOrFolder(document, destination);
         return CodecUtils.getNodeNameCodec(getPluginContext(), locale);
-    }
-
-    private static boolean isWritePermissionGranted(IModel<Node> model) {
-        Node node = model != null ? model.getObject() : null;
-        if (node != null) {
-            try {
-                return UserSession.get().getJcrSession().hasPermission(node.getPath(), JcrConstants.JCR_WRITE);
-            } catch (RepositoryException ignore) {
-            }
-        }
-        return false;
-    }
-
-    private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
-
-        try {
-            final Node handle = documentModel.getNode();
-            if (handle.hasNode(handle.getName())) {
-                final String documentType =  handle.getNode(handle.getName()).getPrimaryNodeType().getName();
-
-                // get allowed folder types from hints() method on folder workflow
-                final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
-                if (workflow instanceof FolderWorkflow) {
-                    final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) workflow.hints().get("prototypes");
-
-                    // squash all configured values into one set
-                    final Set<String> allowedTypes = new HashSet<>();
-                    for (final String key : prototypes.keySet()) {
-                        allowedTypes.addAll(prototypes.get(key));
-                    }
-
-                    log.debug("Document type {} {} allowed in folder {} by folderTypes {}",
-                            documentType, (allowedTypes.contains(documentType) ? "" : "NOT"),
-                            destinationFolder.getObject().getPath(), allowedTypes);
-                    return allowedTypes.contains(documentType);
-                }
-                else {
-                    log.info("Workflow by category {} on subject {} is not a FolderWorkflow but {}",
-                            DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject(),
-                            ((workflow == null) ? "null" : workflow.getClass().getName()));
-                }
-            }
-            else {
-                log.error("(Supposed) document handle {} does not have same-name subnode", handle.getPath());
-            }
-        } catch (RepositoryException | RemoteException e) {
-            log.error(e.getClass().getName() + " during check for workflow allowed in folder: " + e.getMessage());
-        } catch (WorkflowException we) {
-            log.error(we.getClass().getName() + " during workflow execution", we);
-        }
-
-        // forbid workflow action if something's wrong
-        return false;
     }
 }
