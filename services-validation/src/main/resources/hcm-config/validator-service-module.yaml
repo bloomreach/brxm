@@ -5,19 +5,21 @@ definitions:
       hipposys:className: org.onehippo.cms.services.validation.ValidationServiceModule
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
-        /escaped:
+        /validators:
           jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.EscapedHtmlValidator
-        /email:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.RegExpValidator
-          regexp.pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$'
-        /html:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator
-        /non-empty:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyValidator
-        /references:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.NodeReferenceValidator
+          /email:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RegExpValidator
+            regexp.pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$'
+          /escaped:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.EscapedHtmlValidator
+          /html:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator
+          /non-empty:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyValidator
+          /references:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.NodeReferenceValidator

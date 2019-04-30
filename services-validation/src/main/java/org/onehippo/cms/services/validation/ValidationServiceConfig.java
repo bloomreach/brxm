@@ -41,7 +41,8 @@ class ValidationServiceConfig {
         validatorInstances.clear();
 
         try {
-            final NodeIterator iterator = config.getNodes();
+            final Node validators = config.getNode("validators");
+            final NodeIterator iterator = validators.getNodes();
             while (iterator.hasNext()) {
                 final Node configNode = iterator.nextNode();
                 final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);

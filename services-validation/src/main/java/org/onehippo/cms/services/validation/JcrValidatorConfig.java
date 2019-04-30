@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 class JcrValidatorConfig implements ValidatorConfig {
 
-    static final String CLASS_NAME = "hipposys:className";
     private static final Logger log = LoggerFactory.getLogger(JcrValidatorConfig.class);
+    static final String CLASS_NAME = "hipposys:className";
 
     private String name;
     private String className;
