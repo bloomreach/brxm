@@ -15,18 +15,16 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
@@ -146,18 +144,19 @@ public class JcrValidationService implements IValidationService, IDetachable {
 
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
         if (result.getAffectedFields() == 1) {
-            final IModel<String> summary = getResourceBundleModel("summarySingle", Session.get().getLocale());
-            logger.error(summary, FeedbackScope.DOCUMENT);
+            logger.error(getResourceBundleModel("summarySingle", null), FeedbackScope.DOCUMENT);
         }
         if (result.getAffectedFields() > 1) {
-            final String summary = getResourceBundleModel("summaryMultiple", Session.get().getLocale()).getObject();
-            final String formatted = MessageFormat.format(summary, result.getAffectedFields());
-            logger.error(Model.of(formatted), FeedbackScope.DOCUMENT);
+            final IModel<String> resourceBundleModel = getResourceBundleModel("summaryMultiple",
+                    Collections.singletonMap("numberOfErrors", Integer.toString(result.getAffectedFields())));
+            logger.error(resourceBundleModel, FeedbackScope.DOCUMENT);
         }
     }
 
-    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
-        return new ResourceBundleModel("hippo:cms.validators", key, locale);
+    private IModel<String> getResourceBundleModel(final String key, final Map<String, String> parameters) {
+        return new ResourceBundleModel.Builder("hippo:cms.validators", key)
+                .parameters(parameters)
+                .build();
     }
 
     public IValidationResult getValidationResult() {
