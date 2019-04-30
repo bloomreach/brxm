@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -34,6 +35,7 @@ import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
 import org.onehippo.cms.services.validation.api.internal.ValidationService;
@@ -113,8 +115,24 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final UserSession userSession = UserSession.get();
         final Locale locale = userSession.getLocale();
         final TimeZone timeZone = userSession.getTimeZone();
+        final Node documentNode = findDocumentNode(parentNode);
 
-        return new FieldContextImpl(jcrName, jcrType, type, parentNode, locale, timeZone);
+        return new FieldContextImpl(jcrName, jcrType, type, documentNode, parentNode, locale, timeZone);
+    }
+
+    private static Node findDocumentNode(Node node) {
+        try {
+            while (node != null) {
+                final Node parent = node.getParent();
+                if (parent != null && parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return node;
+                }
+                node = parent;
+            }
+        } catch (RepositoryException e) {
+            log.error("Unable to find document variant node", e);
+        }
+        return null;
     }
 
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
