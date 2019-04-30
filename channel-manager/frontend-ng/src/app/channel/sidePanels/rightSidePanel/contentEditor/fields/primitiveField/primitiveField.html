@@ -210,6 +210,15 @@
                on-focus="$ctrl.focusPrimitive($event)"
                on-blur="$ctrl.blurPrimitive($event)">
     </node-link>
+    
+    <openui-string-field ng-switch-when="OPEN_UI"
+                         layout="row"
+                         extension-id="{{:: $ctrl.fieldType.uiExtension }}"
+                         ng-change="$ctrl.valueChanged()"
+                         ng-model="fieldValue.value"
+                         ng-focus="$ctrl.focusPrimitive($event)"
+                         ng-blur="$ctrl.blurPrimitive($event)">
+    </openui-string-field>
 
     <div ng-if="::$last"
          ng-messages="$ctrl.getFieldError()">

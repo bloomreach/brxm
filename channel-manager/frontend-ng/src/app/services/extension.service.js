@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-class ExtensionService {
-  constructor(ConfigService) {
+function isAbsoluteUrl(url) {
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
+export default class ExtensionService {
+  constructor($window, ConfigService, PathService) {
     'ngInject';
 
+    this.$window = $window;
     this.ConfigService = ConfigService;
+    this.PathService = PathService;
   }
 
   hasExtensions(extensionPoint) {
@@ -41,6 +47,38 @@ class ExtensionService {
     }
     return undefined;
   }
-}
 
-export default ExtensionService;
+  getExtensionUrl(extension) {
+    return isAbsoluteUrl(extension.url)
+      ? this._getAbsoluteUrl(extension.url)
+      : this._getUrlRelativeToCmsLocation(extension.url);
+  }
+
+  getExtensionRelativeUrl(extension, relativeUrl) {
+    const extensionUrl = this.getExtensionUrl(extension);
+    const newUrl = new URL(relativeUrl, extensionUrl);
+    this._addQueryParameters(newUrl);
+    return newUrl.href;
+  }
+
+  _addQueryParameters(url) {
+    url.searchParams.append('br.antiCache', this.ConfigService.antiCache);
+    url.searchParams.append('br.parentOrigin', this.$window.location.origin);
+  }
+
+  _getAbsoluteUrl(extensionUrl) {
+    const url = new URL(extensionUrl);
+    this._addQueryParameters(url);
+    return url.href;
+  }
+
+  _getUrlRelativeToCmsLocation(extensionUrl) {
+    const path = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), extensionUrl);
+    // The current location should be the default value for the second parameter of the URL() constructor,
+    // but Chrome needs it explicitly otherwise it will throw an error.
+    const url = new URL(path, this.$window.location.origin);
+    this._addQueryParameters(url);
+
+    return url.href;
+  }
+}

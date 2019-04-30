@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>13.2.0-SNAPSHOT</version>
+    <version>13.2.0-openuidam-SNAPSHOT</version>
   </parent>
 
 
@@ -93,6 +93,11 @@
       <artifactId>hippo-cms-api</artifactId>
       <version>${hippo.cms.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-openui</artifactId>
     </dependency>
 
     <dependency>
@@ -180,16 +185,6 @@
       <artifactId>powermock-api-easymock</artifactId>
     </dependency>
 
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-mockutils</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-testutils</artifactId>
-    </dependency>
   </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>

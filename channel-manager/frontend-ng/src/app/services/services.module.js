@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import Penpal from 'penpal';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './browser.service';
@@ -39,6 +41,7 @@ import WorkflowService from './workflow.service';
 
 const servicesModule = angular
   .module('hippo-cm.services', [])
+  .constant('Penpal', Penpal)
   .service('BrowserService', BrowserService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)

@@ -73,7 +73,7 @@
     "ng-device-detector": "4.0.3",
     "ng-focus-if": "1.0.7",
     "open-sans-fontface": "github:FontFaceKit/open-sans#59493162b016dae6ef0d06693ccf3c93c1e96091",
-    "penpal": "3.0.3",
+    "penpal": "^3.1.2",
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
