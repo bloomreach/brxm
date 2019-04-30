@@ -1,3 +1,7 @@
+/*
+ * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
+ */
+
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationApplicationComponent } from './navigation-application.component';
@@ -8,7 +12,7 @@ describe('NavigationApplicationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavigationApplicationComponent ]
+      declarations: [ NavigationApplicationComponent ],
     })
     .compileComponents();
   }));
