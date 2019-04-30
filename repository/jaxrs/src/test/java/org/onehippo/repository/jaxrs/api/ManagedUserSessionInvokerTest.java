@@ -18,6 +18,7 @@ package org.onehippo.repository.jaxrs.api;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -48,6 +49,7 @@ import static org.onehippo.repository.jaxrs.api.ManagedUserSessionInvoker.JCR_SE
 public class ManagedUserSessionInvokerTest {
     private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_LOCALE = ManagedUserSessionInvoker.class.getName() + ".Locale";
+    private static final String ATTRIBUTE_TIME_ZONE = ManagedUserSessionInvoker.class.getName() + ".TimeZone";
 
     private Session systemSession = EasyMock.createMock(Session.class);
     private ManagedUserSessionInvoker invoker = new ManagedUserSessionInvoker(systemSession) {
@@ -118,6 +120,7 @@ public class ManagedUserSessionInvokerTest {
     public void invokeJaxrs() throws Exception {
         final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final Exchange exchange = prepareExchange();
         final HttpSession httpSession = EasyMock.createMock(HttpSession.class);
         final CmsSessionContext context = EasyMock.createMock(CmsSessionContext.class);
@@ -134,12 +137,15 @@ public class ManagedUserSessionInvokerTest {
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         EasyMock.expect(context.getRepositoryCredentials()).andReturn(credentials);
         EasyMock.expect(context.getLocale()).andReturn(locale);
+        EasyMock.expect(context.getTimeZone()).andReturn(timeZone);
         EasyMock.expect(systemSession.getRepository()).andReturn(repository);
         EasyMock.expect(repository.login(credentials)).andReturn(userSession);
 
         servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
         EasyMock.expectLastCall();
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
+        EasyMock.expectLastCall();
+        servletRequest.setAttribute(ATTRIBUTE_TIME_ZONE, timeZone);
         EasyMock.expectLastCall();
 
         EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
@@ -204,6 +210,7 @@ public class ManagedUserSessionInvokerTest {
 
         final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
         final Locale locale = new Locale("en");
+        final TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
         final Exchange exchange = prepareExchange();
         final HttpSession httpSession = EasyMock.createMock(HttpSession.class);
         final CmsSessionContext context = EasyMock.createMock(CmsSessionContext.class);
@@ -221,12 +228,15 @@ public class ManagedUserSessionInvokerTest {
         EasyMock.expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         EasyMock.expect(context.getRepositoryCredentials()).andReturn(credentials);
         EasyMock.expect(context.getLocale()).andReturn(locale);
+        EasyMock.expect(context.getTimeZone()).andReturn(timeZone);
         EasyMock.expect(systemSession.getRepository()).andReturn(repository);
         EasyMock.expect(repository.login(credentials)).andReturn(userSession);
 
         servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
         EasyMock.expectLastCall();
         servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
+        EasyMock.expectLastCall();
+        servletRequest.setAttribute(ATTRIBUTE_TIME_ZONE, timeZone);
         EasyMock.expectLastCall();
         EasyMock.expect(userSession.hasPendingChanges()).andReturn(false);
         EasyMock.expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn("locahost");
