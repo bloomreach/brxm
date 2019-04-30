@@ -22,14 +22,16 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.repository.util.JcrConstants;
+import org.onehippo.cms.services.validation.api.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
+import static org.onehippo.addon.frontend.gallerypicker.GalleryPickerPlugin.GALLERY_ROOT_PATH;
+import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
 
 /**
  * Validator for checking mandatory links to images.
@@ -39,37 +41,45 @@ import org.slf4j.LoggerFactory;
  */
 public class ImageReferenceValidator implements Validator<Object>  {
 
-    private static final Logger log = LoggerFactory.getLogger(
-            ImageReferenceValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(ImageReferenceValidator.class);
 
     @Override
-    public Optional<org.onehippo.cms.services.validation.api.Violation> validate(final ValidationContext context,
-                                                                                 final Object value)
+    public Optional<Violation> validate(final ValidationContext context, final Object value)
             throws ValidationContextException {
 
         try {
-            final String docBase;
-            if (value instanceof Node && ((Node) value).hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
-                docBase = ((Node) value).getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-            } else if (value instanceof String) {
-                docBase = (String) value;
-            } else {
-                return Optional.empty();
+            if (value instanceof Node) {
+                return validateNode((Node) value, context);
             }
 
-            final Session session = context.getParentNode().getSession();
-            final String contentGalleryIdentifier = session.nodeExists(GalleryPickerPlugin.GALLERY_ROOT_PATH)
-                    ? session.getNode(GalleryPickerPlugin.GALLERY_ROOT_PATH).getIdentifier()
-                    : null;
-
-            if (StringUtils.isEmpty(docBase)
-                    || docBase.equals(JcrConstants.ROOT_NODE_ID)
-                    || docBase.equals(contentGalleryIdentifier)) {
-                return Optional.of(context.createViolation());
+            if (value instanceof String) {
+                return validateDocBase((String) value, context);
             }
         } catch (final RepositoryException repositoryException) {
             log.error("Error validating image reference field: {}", context.getJcrName(), repositoryException);
         }
         return Optional.empty();
+    }
+
+    private static Optional<Violation> validateNode(final Node value, final ValidationContext context) throws RepositoryException {
+        return value.hasProperty(HIPPO_DOCBASE)
+            ? validateDocBase(value.getProperty(HIPPO_DOCBASE).getString(), context)
+            : Optional.empty();
+    }
+
+    private static Optional<Violation> validateDocBase(final String docBase, final ValidationContext context) throws RepositoryException {
+        if (StringUtils.isEmpty(docBase)
+                || docBase.equals(ROOT_NODE_ID)
+                || docBase.equals(galleryRootPathIdentifier(context))) {
+            return Optional.of(context.createViolation());
+        }
+        return Optional.empty();
+    }
+
+    private static String galleryRootPathIdentifier(final ValidationContext context) throws RepositoryException {
+        final Session session = context.getParentNode().getSession();
+        return session.nodeExists(GALLERY_ROOT_PATH)
+            ? session.getNode(GALLERY_ROOT_PATH).getIdentifier()
+            : null;
     }
 }
