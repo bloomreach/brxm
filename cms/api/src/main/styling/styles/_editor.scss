@@ -155,6 +155,11 @@
     background-color: $editor-subfield-bg !important;
     border: 1px solid $editor-subfield-border !important;
   }
+
+  .hippo-editor-field-iframe iframe {
+    border: none;
+    width: 100%;
+  }
 }
 
 .hippo-editor-compound-field {
