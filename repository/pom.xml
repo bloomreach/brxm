@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -90,6 +90,7 @@
     <!-- Project Dependencies -->
     <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
+    <commons-text.version>1.6</commons-text.version>
     <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-collections.version>3.2.2</commons-collections.version>
@@ -532,7 +533,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>${commons-lang3.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-text</artifactId>
+        <version>${commons-text.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
