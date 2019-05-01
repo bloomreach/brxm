@@ -156,8 +156,9 @@
     border: 1px solid $editor-subfield-border !important;
   }
 
-  .hippo-editor-field-iframe iframe {
+  .openui-iframe {
     border: none;
+    display: block;
     width: 100%;
   }
 }

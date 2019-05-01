@@ -44,7 +44,7 @@ public class AutoSaveBehavior extends AbstractDefaultAjaxBehavior {
         final StringValue data = requestParameters.getParameterValue(POST_PARAM_DATA);
 
         if (data.isNull()) {
-            log.info("Cannot auto-save CKEditor contents because the request parameter '{}' is missing",
+            log.warn("Cannot auto-save CKEditor contents because the request parameter '{}' is missing",
                     POST_PARAM_DATA);
         } else {
             log.debug("Auto-saving CKEditor contents: '{}'", data);

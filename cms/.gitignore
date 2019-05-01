@@ -17,6 +17,8 @@ target/
 /automatic-export/repository/workspaces/
 /console/frontend/node/
 /console/frontend/node_modules/
+/editor/frontend/node/
+/editor/frontend/node_modules
 /editor/repository/workspaces/
 /engine/node
 /engine/node_modules

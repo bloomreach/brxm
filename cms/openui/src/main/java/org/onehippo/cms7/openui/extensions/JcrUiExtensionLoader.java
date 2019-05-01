@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_CONFIG;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DISPLAY_NAME;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_EXTENSION_POINT;
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_INITIAL_HEIGHT_IN_PIXELS;
 import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_URL;
 import static org.hippoecm.frontend.FrontendNodeType.UI_EXTENSIONS_CONFIG_PATH;
 
@@ -94,11 +95,12 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
 
         extension.setExtensionPoint(readExtensionPoint(extensionNode));
 
-        final String displayName = readProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
+        final String displayName = readStringProperty(extensionNode, FRONTEND_DISPLAY_NAME).orElse(extensionId);
         extension.setDisplayName(displayName);
 
-        readProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
-        readProperty(extensionNode, FRONTEND_CONFIG).ifPresent(extension::setConfig);
+        readStringProperty(extensionNode, FRONTEND_URL).ifPresent(extension::setUrl);
+        readStringProperty(extensionNode, FRONTEND_CONFIG).ifPresent(extension::setConfig);
+        readIntProperty(extensionNode, FRONTEND_INITIAL_HEIGHT_IN_PIXELS).ifPresent(extension::setInitialHeightInPixels);
 
         final UiExtensionValidator validator = new UiExtensionValidator();
         if (validator.validate(extension)) {
@@ -108,14 +110,22 @@ public class JcrUiExtensionLoader implements UiExtensionLoader {
     }
 
     private UiExtensionPoint readExtensionPoint(final Node extensionNode) throws RepositoryException {
-        return readProperty(extensionNode, FRONTEND_EXTENSION_POINT)
+        return readStringProperty(extensionNode, FRONTEND_EXTENSION_POINT)
                 .map(UiExtensionPoint::getByConfigValue)
                 .orElse(UiExtensionPoint.UNKNOWN);
     }
 
-    private Optional<String> readProperty(final Node extensionNode, final String propertyName) throws RepositoryException {
+    private Optional<String> readStringProperty(final Node extensionNode, final String propertyName) throws RepositoryException {
         if (extensionNode.hasProperty(propertyName)) {
             return Optional.of(extensionNode.getProperty(propertyName).getString());
+        }
+        return Optional.empty();
+    }
+
+    private Optional<Integer> readIntProperty(final Node extensionNode, final String propertyName) throws RepositoryException {
+        if (extensionNode.hasProperty(propertyName)) {
+            final long value = extensionNode.getProperty(propertyName).getLong();
+            return Optional.of((int) value);
         }
         return Optional.empty();
     }
