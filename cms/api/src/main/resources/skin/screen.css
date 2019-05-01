@@ -357,7 +357,9 @@ div.wicket-modal div.wicket-tree {
 .clear-16 {
   background-image: url("images/icons/edit-clear-16.png");
   margin-left: 10px;
-  text-decoration: none !important;
+}
+.clear-16:hover {
+  text-decoration: none;
 }
 
 .add-16 {
