@@ -15,10 +15,14 @@
  */
 package org.onehippo.cms7.openui.extensions;
 
+import java.io.Serializable;
+
 /**
  * A UI Extension of the CMS.
  */
-public interface UiExtension {
+public interface UiExtension extends Serializable {
+
+    int DEFAULT_INITIAL_HEIGHT_IN_PIXELS = 150;
 
     /**
      * @return identifier of the extension. Must be unique across all extensions.
@@ -39,6 +43,11 @@ public interface UiExtension {
      * @return the URL that loads the extension.
      */
     String getUrl();
+
+    /**
+     * @return the initial height in pixels. Only used by {@link UiExtensionPoint#DOCUMENT_FIELD} extensions.
+     */
+    int getInitialHeightInPixels();
 
     /**
      * @return the configuration to pass to the extension.

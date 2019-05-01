@@ -204,9 +204,9 @@ definitions:
           jcr:primaryType: editor:templateset
           /_default_:
             jcr:primaryType: frontend:plugincluster
-            frontend:properties: [mode, uiExtension]
+            frontend:properties: [mode, ui.extension]
             frontend:references: [wicket.model, engine, model.compareTo]
             frontend:services: [wicket.id]
             /root:
               jcr:primaryType: frontend:plugin
-              plugin.class: org.hippoecm.frontend.editor.plugins.OpenUiStringPlugin
+              plugin.class: org.hippoecm.frontend.editor.plugins.openui.OpenUiStringPlugin

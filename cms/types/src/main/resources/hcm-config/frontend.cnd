@@ -54,6 +54,7 @@
 - frontend:config (string)
 - frontend:displayName (string) mandatory
 - frontend:extensionPoint (string) = 'channel.page.tools' mandatory < 'channel.page.tools', 'document.field'
+- frontend:initialHeightInPixels (long)
 - frontend:url (string) mandatory
 
 [frontend:uiExtensions] orderable
