@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,18 +27,20 @@ import javax.servlet.http.HttpServletRequest;
 public interface SessionRequestContextProvider {
 
     /**
-     * returns the user {@link Session} for the current request. Every unique {@code servletRequest} returns a newly created user {@link Session}
-     * which gets closed automatically at the end of the jaxrs request. Any pending changes before closing the session
-     * are not saved.
+     * returns the user {@link Session} for the current request. Every unique {@code servletRequest} returns a newly
+     * created user {@link Session} which gets closed automatically at the end of the jaxrs request. Any pending changes
+     * before closing the session are not saved.
+     *
      * @param servletRequest the current jaxrs request
      * @return the {@link Session} for the current user
      */
     Session getJcrSession(HttpServletRequest servletRequest);
 
     /**
-     * returns a system {@link Session}. Every unique {@code servletRequest} returns a newly created system {@link Session}
-     * which gets closed automatically at the end of the jaxrs request. Any pending changes before closing the session
-     * are not saved . The system {@link Session} is lazily created on request basis.
+     * returns a system {@link Session}. Every unique {@code servletRequest} returns a newly created system {@link
+     * Session} which gets closed automatically at the end of the jaxrs request. Any pending changes before closing the
+     * session are not saved . The system {@link Session} is lazily created on request basis.
+     *
      * @param servletRequest the current jaxrs request
      * @return the system {@link Session} for the current request.
      */

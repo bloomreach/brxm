@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides and manages a JCR session authenticated for the current logged in user.
- * The name of the logged in user is read from the HTTP session attribute 'hippo:username'.
- * Returns a 403 forbidden error when invoked while no user is logged in.
+ * Provides and manages a JCR session authenticated for the current logged in user. The name of the logged in user is
+ * read from the HTTP session attribute 'hippo:username'. Returns a 403 forbidden error when invoked while no user is
+ * logged in.
  */
 public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRequestContextProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ManagedUserSessionInvoker.class);
 
-    static final String JCR_SESSION_HOLDER_ATTR_NAME = ManagedUserSessionInvoker.class.getName() +".session";
+    static final String JCR_SESSION_HOLDER_ATTR_NAME = ManagedUserSessionInvoker.class.getName() + ".session";
     private static final String ATTRIBUTE_USER_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
     private static final String ATTRIBUTE_SYSTEM_SESSION = ManagedUserSessionInvoker.class.getName() + ".SystemSession";
-    private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
+    private static final String ATTRIBUTE_LOCALE = ManagedUserSessionInvoker.class.getName() + ".Locale";
     private static final String ATTRIBUTE_TIME_ZONE = ManagedUserSessionInvoker.class.getName() + ".TimeZone";
     static final String ATTRIBUTE_FARTHEST_REQUEST_HOST = ManagedUserSessionInvoker.class.getName() + ".FarthesRequestHost";
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
@@ -83,16 +83,16 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
 
     @Override
     public Locale getLocale(final HttpServletRequest servletRequest) {
-        return (Locale)servletRequest.getAttribute(ATTRIBUTE_LOCALE);
+        return (Locale) servletRequest.getAttribute(ATTRIBUTE_LOCALE);
     }
 
     @Override
     public TimeZone getTimeZone(final HttpServletRequest servletRequest) {
-        return (TimeZone)servletRequest.getAttribute(ATTRIBUTE_TIME_ZONE);
+        return (TimeZone) servletRequest.getAttribute(ATTRIBUTE_TIME_ZONE);
     }
 
     public String getFarthestRequestHost(final HttpServletRequest servletRequest) {
-        return (String)servletRequest.getAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST);
+        return (String) servletRequest.getAttribute(ATTRIBUTE_FARTHEST_REQUEST_HOST);
     }
 
     @Override
@@ -162,12 +162,13 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
     protected TimeZone getTimeZone(final CmsSessionContext context) {
         final TimeZone timeZone = context.getTimeZone();
         return timeZone == null
-            ? TimeZone.getDefault()
-            : timeZone;
+                ? TimeZone.getDefault()
+                : timeZone;
     }
 
     /**
      * Returns the original host information requested by the client
+     *
      * @param request
      * @return the farthest request host
      */
@@ -175,7 +176,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionRe
         String host = request.getHeader("X-Forwarded-Host");
 
         if (host != null) {
-            String [] hosts = host.split(",");
+            String[] hosts = host.split(",");
             return hosts[0].trim();
         }
 
