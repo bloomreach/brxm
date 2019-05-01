@@ -24,80 +24,81 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.repository.mock.MockNode;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest({JcrUtils.class, NamespaceUtils.class, LocalizationUtils.class, FieldTypeUtils.class})
 public class OpenUiStringFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
 
-    private FieldTypeContext getFieldTypeContext() {
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getJcrName()).andReturn("myproject:openuistring");
-        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
-        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-    
-        return fieldContext;
-    }
-    
     @Test
     public void testFieldConfig() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
+        FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(openUiStringFieldType).build();
         expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.of("myExtension"));
-        expect(fieldTypeContext.getJcrType()).andReturn(PropertyType.TYPENAME_STRING);
-        expect(fieldTypeContext.getType()).andReturn("wat?");
 
         replayAll();
 
-        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
         openUiStringFieldType.init(fieldTypeContext);
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo("myExtension"));
+
+        verifyAll();
     }
 
     @Test
     public void testDefaultFieldConfig() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
+        FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(openUiStringFieldType).build();
         expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.empty());
-        expect(fieldTypeContext.getJcrType()).andReturn(PropertyType.TYPENAME_STRING);
-        expect(fieldTypeContext.getType()).andReturn("wat?");
 
         replayAll();
 
-        OpenUiStringFieldType openUiStringFieldType = new OpenUiStringFieldType();
         openUiStringFieldType.init(fieldTypeContext);
 
         assertThat(openUiStringFieldType.getUiExtension(), equalTo(null));
+        
+        verifyAll();
     }
 
     @Test
     public void writeToSingleDouble() throws Exception {
-        final Node node = MockNode.root();
         final PrimitiveFieldType fieldType = new OpenUiStringFieldType();
-        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName(PROPERTY).build();
+
+        expect(fieldTypeContext.getStringConfig("ui.extension")).andReturn(Optional.of("myExtension"));
+
+        replayAll();
+
+        fieldType.init(fieldTypeContext);
+
         final String oldValue = "one";
         final String newValue = "two";
 
-        fieldType.setId(PROPERTY);
+        final Node node = MockNode.root();
         node.setProperty(PROPERTY, oldValue);
 
         try {
