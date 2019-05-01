@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-editor-linkpicker-link {
-  display: block;
+.openui-dialog {
 
-  .dialog-link {
-    margin-bottom: 0;
+  .hippo-dialog-body {
+    height: 100%;
+    padding: 0;
   }
-}
 
-.hippo-editor-linkpicker-link:hover {
-  background-color: $lightest-shade;
-}
+  .hippo-dialog-bottom {
+    display: none;
+  }
 
-.hippo-editor-linkpicker-link .linefill {
-  display: block;
+  .openui-iframe {
+    border: none;
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
 }

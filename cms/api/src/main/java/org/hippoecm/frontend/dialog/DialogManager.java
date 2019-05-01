@@ -58,8 +58,12 @@ public class DialogManager<ModelType> implements IDetachable {
         final IPluginConfig mergedDialogConfig = config.getMerged(paramsDialogConfig);
         final Dialog<ModelType> dialog = createDialog(context, mergedDialogConfig, parameters);
 
-        dialog.setCancelAction(cancelAction);
-        dialog.setCloseAction(closeAction);
+        if (cancelAction != null) {
+            dialog.setCancelAction(cancelAction);
+        }
+        if (closeAction != null) {
+            dialog.setCloseAction(closeAction);
+        }
 
         getDialogService().show(dialog);
     }
