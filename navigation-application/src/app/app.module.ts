@@ -1,12 +1,10 @@
-/*!
- * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
- */
-
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NavigationApplicationModule } from 'navigation-application';
 
 import { AppRoutingModule } from './app-routing.module';
+import { LeftMenuModule } from './left-menu';
+import { NavigationConfigurationService } from './services';
+
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -16,9 +14,11 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NavigationApplicationModule,
+    LeftMenuModule,
   ],
-  providers: [],
+  providers: [
+    NavigationConfigurationService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

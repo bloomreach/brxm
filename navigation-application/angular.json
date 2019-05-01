@@ -4,45 +4,10 @@
   "newProjectRoot": "projects",
   "projects": {
     "navigation-application": {
-      "root": "projects/navigation-application",
-      "sourceRoot": "projects/navigation-application/src",
-      "projectType": "library",
-      "prefix": "brna",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
-          "options": {
-            "tsConfig": "projects/navigation-application/tsconfig.lib.json",
-            "project": "projects/navigation-application/ng-package.json"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/navigation-application/src/test.ts",
-            "tsConfig": "projects/navigation-application/tsconfig.spec.json",
-            "karmaConfig": "projects/navigation-application/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/navigation-application/tsconfig.lib.json",
-              "projects/navigation-application/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "na-demo": {
-      "root": "projects/na-demo/",
-      "sourceRoot": "projects/na-demo/src",
+      "root": "",
+      "sourceRoot": "src",
       "projectType": "application",
-      "prefix": "app",
+      "prefix": "brna",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
@@ -52,17 +17,17 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/na-demo",
-            "index": "projects/na-demo/src/index.html",
-            "main": "projects/na-demo/src/main.ts",
-            "polyfills": "projects/na-demo/src/polyfills.ts",
-            "tsConfig": "projects/na-demo/tsconfig.app.json",
+            "outputPath": "dist/navigation-application",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.app.json",
             "assets": [
-              "projects/na-demo/src/favicon.ico",
-              "projects/na-demo/src/assets"
+              "src/favicon.ico",
+              "src/assets"
             ],
             "styles": [
-              "projects/na-demo/src/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": [],
             "es5BrowserSupport": true
@@ -71,8 +36,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "projects/na-demo/src/environments/environment.ts",
-                  "with": "projects/na-demo/src/environments/environment.prod.ts"
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -97,34 +62,34 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "na-demo:build"
+            "browserTarget": "navigation-application:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "na-demo:build:production"
+              "browserTarget": "navigation-application:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "na-demo:build"
+            "browserTarget": "navigation-application:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/na-demo/src/test.ts",
-            "polyfills": "projects/na-demo/src/polyfills.ts",
-            "tsConfig": "projects/na-demo/tsconfig.spec.json",
-            "karmaConfig": "projects/na-demo/karma.conf.js",
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "projects/na-demo/src/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": [],
             "assets": [
-              "projects/na-demo/src/favicon.ico",
-              "projects/na-demo/src/assets"
+              "src/favicon.ico",
+              "src/assets"
             ]
           }
         },
@@ -132,8 +97,8 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/na-demo/tsconfig.app.json",
-              "projects/na-demo/tsconfig.spec.json"
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -142,27 +107,27 @@
         }
       }
     },
-    "na-demo-e2e": {
-      "root": "projects/na-demo-e2e/",
+    "navigation-application-e2e": {
+      "root": "e2e/",
       "projectType": "application",
       "prefix": "",
       "architect": {
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "projects/na-demo-e2e/protractor.conf.js",
-            "devServerTarget": "na-demo:serve"
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "navigation-application:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "na-demo:serve:production"
+              "devServerTarget": "navigation-application:serve:production"
             }
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": "projects/na-demo-e2e/tsconfig.e2e.json",
+            "tsConfig": "e2e/tsconfig.e2e.json",
             "exclude": [
               "**/node_modules/**"
             ]

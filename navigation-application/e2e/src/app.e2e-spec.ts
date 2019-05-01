@@ -1,7 +1,3 @@
-/*!
- * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
- */
-
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';
 
@@ -14,7 +10,7 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to na-demo!');
+    expect(page.getTitleText()).toEqual('Welcome to navigation-application!');
   });
 
   afterEach(async () => {

@@ -1,7 +1,3 @@
-/*!
- * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
- */
-
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.

@@ -1,7 +1,3 @@
-/*!
- * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
- */
-
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
