@@ -27,7 +27,7 @@
   <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
   <name>BloomReach Open UI SDK</name>
-  <version>13.2.0-openuidam-SNAPSHOT</version>
+  <version>13.2.0-SNAPSHOT</version>
 
   <inceptionYear>2018</inceptionYear>
 
