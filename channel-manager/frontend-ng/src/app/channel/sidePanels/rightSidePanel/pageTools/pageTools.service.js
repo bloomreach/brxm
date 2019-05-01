@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const PAGE_TOOLS = 'channel.page.tools';
+const PAGE_TOOLS = 'CHANNEL_PAGE_TOOL';
 
 /**
  * Determines which page tool extension is shown. Each page tool extension is registered as a separate UI router state

@@ -76,7 +76,7 @@ describe('radioGroup', () => {
     });
   });
 
-  describe('load options for boolean radio group field', () => {
+  describe('load options for boolean radio group field with configured labels', () => {
     beforeEach(() => {
       $ctrl.fieldType = 'BOOLEAN_RADIO_GROUP';
       $ctrl.falseLabel = 'Bad';
@@ -96,6 +96,67 @@ describe('radioGroup', () => {
 
       expect($ctrl.buttonDisplayValues(0)).toEqual('Good');
       expect($ctrl.buttonDisplayValues(1)).toEqual('Bad');
+    });
+  });
+
+  describe('load options for boolean radio group field with value list', () => {
+    beforeEach(() => {
+      $ctrl.fieldType = 'BOOLEAN_RADIO_GROUP';
+      $ctrl.falseLabel = 'Bad'; // should be ignored when list is configured
+      $ctrl.trueLabel = 'Good'; // should be ignored when list is configured
+      $ctrl.optionsSource = '/path/to/list/is/configured';
+    });
+
+    it('loads button values correctly even if the list is too long', () => {
+      const valueList = [
+        { key: 'true', label: 'True' },
+        { key: 'false', label: 'False' },
+        { key: 'true', label: 'True Again' },
+        { key: 'false', label: 'False Again' },
+      ];
+      ContentService.getValueList.and.returnValue($q.resolve(valueList));
+
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonValues()).toEqual(['true', 'false']);
+    });
+
+    it('loads button values correctly with empty list', () => {
+      const valueList = [];
+      ContentService.getValueList.and.returnValue($q.resolve(valueList));
+
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonValues()).toEqual(['true', 'false']);
+    });
+
+    it('loads button display values correctly even if the list is too long', () => {
+      const valueList = [
+        { key: 'true', label: 'True' },
+        { key: 'false', label: 'False' },
+        { key: 'true', label: 'True Again' },
+        { key: 'false', label: 'False Again' },
+      ];
+      ContentService.getValueList.and.returnValue($q.resolve(valueList));
+
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonDisplayValues(0)).toEqual('True');
+      expect($ctrl.buttonDisplayValues(1)).toEqual('False');
+    });
+
+    it('loads default button display values correctly with empty list', () => {
+      const valueList = [];
+      ContentService.getValueList.and.returnValue($q.resolve(valueList));
+
+      $ctrl.$onInit();
+      $scope.$apply();
+
+      expect($ctrl.buttonDisplayValues(0)).toEqual('true');
+      expect($ctrl.buttonDisplayValues(1)).toEqual('false');
     });
   });
 });

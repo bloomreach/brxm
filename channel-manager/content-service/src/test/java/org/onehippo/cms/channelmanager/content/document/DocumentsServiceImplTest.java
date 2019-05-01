@@ -428,14 +428,15 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
 
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
-        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getId(), equalTo(uuid));
+        assertThat(document.getVariantId(), equalTo("draftUuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
@@ -482,13 +483,14 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(true);
         expectLastCall();
 
-        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
-        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getId(), equalTo(uuid));
+        assertThat(document.getVariantId(), equalTo("draftUuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
@@ -539,13 +541,14 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        expect(draft.getIdentifier()).andReturn(uuid);
+        expect(draft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(draft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(draft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(draft);
 
         final Document document = documentsService.obtainEditableDocument(uuid, MASTER_BRANCH_ID, userContext);
-        assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getId(), equalTo(uuid));
+        assertThat(document.getVariantId(), equalTo("draftUuid"));
         assertThat(document.getUrlName(), equalTo("url-name"));
         assertThat(document.getDisplayName(), equalTo("Display Name"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/test/url-name"));
@@ -1641,7 +1644,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
         expectLastCall();
 
-        expect(documentDraft.getIdentifier()).andReturn("uuid");
+        expect(documentDraft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(documentDraft);
@@ -1649,6 +1652,7 @@ public class DocumentsServiceImplTest {
         final Document document = documentsService.createDocument(info, userContext);
 
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getVariantId(), equalTo("draftUuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));
@@ -1716,7 +1720,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.readFieldValues(eq(documentDraft), eq(fields), isA(Map.class));
         expectLastCall();
 
-        expect(documentDraft.getIdentifier()).andReturn("uuid");
+        expect(documentDraft.getIdentifier()).andReturn("draftUuid").anyTimes();
         expect(JcrUtils.getStringProperty(eq(documentDraft), anyString(), eq(null))).andReturn("draft");
         expect(JcrUtils.getStringProperty(eq(documentDraft), eq(HIPPO_PROPERTY_BRANCH_ID), eq(MASTER_BRANCH_ID))).andReturn(MASTER_BRANCH_ID);
         replayAll(documentDraft);
@@ -1725,6 +1729,7 @@ public class DocumentsServiceImplTest {
         final Document document = documentsService.createDocument(info, userContext);
 
         assertThat(document.getId(), equalTo("uuid"));
+        assertThat(document.getVariantId(), equalTo("draftUuid"));
         assertThat(document.getUrlName(), equalTo("breaking-news"));
         assertThat(document.getDisplayName(), equalTo("Breaking News (encoded)"));
         assertThat(document.getRepositoryPath(), equalTo("/content/documents/news/breaking-news"));

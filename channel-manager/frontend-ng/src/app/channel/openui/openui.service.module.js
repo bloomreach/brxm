@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.extensions;
 
-import java.util.Set;
+import openUiService from './openui.service';
+import OpenuiDialogCtrl from './openuiDialog/openuiDialog.controller';
+import './openuiDialog/openuiDialog.scss';
 
-/**
- * Loads UI extensions.
- */
-public interface UiExtensionLoader {
+const openUiModule = angular
+  .module('hippo-cm.channel.openui', [])
+  .controller('OpenuiDialogCtrl', OpenuiDialogCtrl)
+  .service('OpenUiService', openUiService);
 
-    /**
-     * @return all available UI extensions.
-     */
-    Set<UiExtension> loadUiExtensions();
-
-}
+export default openUiModule.name;

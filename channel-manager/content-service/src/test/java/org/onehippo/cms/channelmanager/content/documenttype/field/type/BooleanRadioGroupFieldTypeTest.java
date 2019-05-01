@@ -68,15 +68,19 @@ public class BooleanRadioGroupFieldTypeTest {
     public void testFieldConfig() {
         final BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(booleanRadioGroupFieldType).build();
-        expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.of("Happy"));
         expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of("Sad"));
+        expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
+        expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.of("Happy"));
 
         replayAll();
 
         booleanRadioGroupFieldType.init(fieldTypeContext);
 
-        assertThat(booleanRadioGroupFieldType.getTrueLabel(), equalTo("Happy"));
         assertThat(booleanRadioGroupFieldType.getFalseLabel(), equalTo("Sad"));
+        assertThat(booleanRadioGroupFieldType.getOrientation(), equalTo("vertical"));
+        assertThat(booleanRadioGroupFieldType.getSource(), equalTo("/source/path"));
+        assertThat(booleanRadioGroupFieldType.getTrueLabel(), equalTo("Happy"));
 
         verifyAll();
     }
@@ -86,7 +90,9 @@ public class BooleanRadioGroupFieldTypeTest {
         final BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(booleanRadioGroupFieldType).build();
         expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.empty());
         expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of(""));
+        expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.empty());
 
         replayAll();
 
@@ -106,6 +112,8 @@ public class BooleanRadioGroupFieldTypeTest {
 
         expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.empty());
         expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of(""));
+        expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
 
         replayAll();
 

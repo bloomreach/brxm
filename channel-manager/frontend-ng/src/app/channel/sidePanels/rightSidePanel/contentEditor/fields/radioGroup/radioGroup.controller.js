@@ -22,6 +22,8 @@ class RadioGroupFieldController {
   }
 
   $onInit() {
+    this.keys = [];
+    this.labels = [];
     if (this.fieldType === 'BOOLEAN_RADIO_GROUP') {
       this._setBooleanOptions();
     } else {
@@ -42,15 +44,7 @@ class RadioGroupFieldController {
   }
 
   async _loadOptionsList() {
-    this.keys = [];
-    this.labels = [];
-    const document = await this.ContentService.getValueList(
-      this.optionsSource,
-      this.locale,
-      this.sortComparator,
-      this.sortBy,
-      this.sortOrder,
-    );
+    const document = await this._getValueList();
 
     document.forEach((item) => {
       this.keys.push(item.key);
@@ -58,9 +52,36 @@ class RadioGroupFieldController {
     });
   }
 
-  _setBooleanOptions() {
+  _getValueList() {
+    return this.ContentService.getValueList(
+      this.optionsSource,
+      this.locale,
+      this.sortComparator,
+      this.sortBy,
+      this.sortOrder,
+    );
+  }
+
+  async _setBooleanOptions() {
+    if (this.optionsSource) {
+      const document = await this._getValueList();
+      this._setItem(document, 'true');
+      this._setItem(document, 'false');
+      return;
+    }
     this.keys = ['true', 'false'];
     this.labels = [this.trueLabel, this.falseLabel];
+  }
+
+  _setItem(document, itemKey) {
+    const foundItem = document.find(item => item.key === itemKey);
+    if (foundItem) {
+      this.keys.push(foundItem.key);
+      this.labels.push(foundItem.label);
+      return;
+    }
+    this.keys.push(itemKey);
+    this.labels.push(itemKey);
   }
 }
 

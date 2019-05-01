@@ -51,6 +51,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLink
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
@@ -125,6 +126,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class,
                 NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(NodeLinkFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("OpenUiString", new TypeDescriptor(OpenUiStringFieldType.class, PROPERTY_FIELD_PLUGIN));
 
         STRUCTURE_PLUGIN_CLASSES = new HashSet<>();
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,9 +106,9 @@ describe('PageToolsService', () => {
   });
 
   describe('hasExtensions', () => {
-    it('uses the ExtensionService to check for "channel.page.tools" extensions', () => {
+    it('uses the ExtensionService to check for "CHANNEL_PAGE_TOOL" extensions', () => {
       PageToolsService.hasExtensions();
-      expect(ExtensionService.hasExtensions).toHaveBeenCalledWith('channel.page.tools');
+      expect(ExtensionService.hasExtensions).toHaveBeenCalledWith('CHANNEL_PAGE_TOOL');
     });
 
     it('returns true if there are extensions', () => {
@@ -123,9 +123,9 @@ describe('PageToolsService', () => {
   });
 
   describe('getExtensions', () => {
-    it('returns "channel.page.tools" extensions', () => {
+    it('returns "CHANNEL_PAGE_TOOL" extensions', () => {
       expect(PageToolsService.getExtensions()).toEqual([extension1, extension2]);
-      expect(ExtensionService.getExtensions).toHaveBeenCalledWith('channel.page.tools');
+      expect(ExtensionService.getExtensions).toHaveBeenCalledWith('CHANNEL_PAGE_TOOL');
     });
   });
 

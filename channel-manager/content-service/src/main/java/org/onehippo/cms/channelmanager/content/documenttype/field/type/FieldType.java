@@ -48,7 +48,8 @@ public interface FieldType {
         CHOICE, // "content blocks"
         COMPOUND,
         IMAGE_LINK,
-        NODE_LINK
+        NODE_LINK,
+        OPEN_UI
     }
 
     String getId();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@
 package org.onehippo.cms7.channelmanager.channeleditor;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -52,12 +50,9 @@ import org.onehippo.cms7.channelmanager.channeleditor.pickers.ImagePicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.LinkPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextImageVariantPicker;
 import org.onehippo.cms7.channelmanager.channeleditor.pickers.RichTextLinkPicker;
-import org.onehippo.cms7.channelmanager.extensions.ChannelEditorUiExtensionValidator;
-import org.onehippo.cms7.channelmanager.extensions.JcrUiExtensionLoader;
-import org.onehippo.cms7.channelmanager.extensions.UiExtension;
-import org.onehippo.cms7.channelmanager.extensions.UiExtensionLoader;
-import org.onehippo.cms7.channelmanager.extensions.UiExtensionValidator;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
+import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
+import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,12 +257,7 @@ public class ChannelEditor extends ExtPanel {
 
     private JSONArray loadExtensions() {
         final UiExtensionLoader loader = new JcrUiExtensionLoader(UserSession.get().getJcrSession());
-        final UiExtensionValidator validator = new ChannelEditorUiExtensionValidator();
-        final List<UiExtension> extensions = loader.loadUiExtensions()
-                .stream()
-                .filter(validator::validate)
-                .collect(Collectors.toList());
-        return JSON_ORG_OBJECT_MAPPER.convertValue(extensions, JSONArray.class);
+        return JSON_ORG_OBJECT_MAPPER.convertValue(loader.loadUiExtensions(), JSONArray.class);
     }
 
     @Override
