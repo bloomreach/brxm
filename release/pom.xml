@@ -39,7 +39,7 @@
   </scm>
 
   <properties>
-    <hippo.release.version>13.2.0-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>13.2.0-validation-SNAPSHOT</hippo.release.version>
 
     <!-- The jackrabbit and cargo-extensions projects are not on the release train, so these versions
          should NOT be updated with product releases. -->
