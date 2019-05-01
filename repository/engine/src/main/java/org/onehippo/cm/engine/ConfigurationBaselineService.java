@@ -222,7 +222,15 @@ public class ConfigurationBaselineService {
     }
 
 
-    //TODO SS: Add javadocs
+    /**
+     * Store a baseline for a specific HCM site represented by the given modules.
+     *
+     * @param hcmSiteName the name of the site
+     * @param modules the modules to include in the baseline
+     * @param session the JCR session for processing the model
+     * @throws RepositoryException
+     * @throws IOException
+     */
     public void storeSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
             throws RepositoryException, IOException {
         configurationLockManager.lock();

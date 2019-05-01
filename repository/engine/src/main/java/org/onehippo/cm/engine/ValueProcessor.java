@@ -128,7 +128,7 @@ public abstract class ValueProcessor {
             return valueIsIdentical(modelValue, jcrValue);
         } catch (RuntimeException e) {
             final String msg = String.format(
-                    "Failed to process property '%s' defined in %s: unsupported value type '%s'.",
+                    "Failed to process property '%s' defined in %s: with value type '%s'.",
                     modelItem.getPath(), modelItem.getOrigin(), modelValue.getType());
             throw new RuntimeException(msg, e);
         }

@@ -251,8 +251,31 @@ public class ConfigurationConfigService {
     }
 
     /**
-     * Compute the difference between the baseline configuration and the update configuration, and apply it to the
-     * repository.
+     * Apply any new namespaces and node types to the repository.
+     *
+     * @param baseline baseline configuration for computing the delta
+     * @param update   updated configuration, potentially different from baseline
+     * @param session  JCR session to write to the repository. The caller has to take care of #save-ing any changes.
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    void applyNamespacesAndNodeTypes(final ConfigurationModel baseline,
+                                     final ConfigurationModel update,
+                                     final Session session) throws RepositoryException, IOException {
+
+        final Collection<? extends NamespaceDefinition> updateNsDefs =
+                removeDuplicateNamespaceDefinitions(update.getNamespaceDefinitions());
+
+        final Collection<? extends NamespaceDefinition> baselineNsDefs =
+                removeDuplicateNamespaceDefinitions(baseline.getNamespaceDefinitions());
+
+        applyNamespaces(updateNsDefs, session);
+        applyNodeTypes(baselineNsDefs, updateNsDefs, session);
+    }
+
+    /**
+     * Compute the difference in nodes and properties between the baseline configuration and the update configuration,
+     * and apply the changes to the repository.
      *
      * @param baseline baseline configuration for computing the delta
      * @param update   updated configuration, potentially different from baseline
@@ -265,20 +288,6 @@ public class ConfigurationConfigService {
                               final ConfigurationModel update,
                               final Session session,
                               final boolean forceApply) throws RepositoryException, IOException {
-
-        // Note: Namespaces, once they are in the repository, cannot be changed or removed.
-        //       Therefore, both the baseline configuration and the forceApply flag are immaterial
-        //       to the handling of namespaces. The same applies to node types, at least, as far as
-        //       BootstrapUtils#initializeNodetypes offers support.
-
-        final Collection<? extends NamespaceDefinition> updateNsDefs =
-                removeDuplicateNamespaceDefinitions(update.getNamespaceDefinitions());
-
-        final Collection<? extends NamespaceDefinition> baselineNsDefs =
-                removeDuplicateNamespaceDefinitions(baseline.getNamespaceDefinitions());
-
-        applyNamespaces(updateNsDefs, session);
-        applyNodeTypes(baselineNsDefs, updateNsDefs, session);
 
         final ConfigurationNode baselineRoot = baseline.getConfigurationRootNode();
         final Node targetNode = session.getNode(baselineRoot.getPath());
