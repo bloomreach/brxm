@@ -325,7 +325,7 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     private void buildModule(final ConfigurationTreeBuilder configurationTreeBuilder, final ModuleImpl module) {
-        log.info("Merging module {}", module.getFullName());
+        log.debug("Merging module {}", module.getFullName());
         addNamespaceDefinitions(module.getNamespaceDefinitions());
         addConfigDefinitions(module.getConfigDefinitions());
         addContentDefinitions(module.getContentDefinitions());
@@ -386,7 +386,32 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     /**
-     * Compile a manifest of contents. Format will be a YAML document as follows.
+     * Compare core and all sites of this model with the corresponding core and sites in another model,
+     * based on the algorithm described in {@link #getDigest(String)}. If this model has a site that the other
+     * does not, this method returns false. If the other model has additional sites not represented here, but
+     * core and all other sites match, this method returns true.
+     *
+     * @param other another model with which to compare this one
+     * @return true if there is a match of all sites here, and false if there is any explicit mismatch or missing
+     *              sites in other
+     */
+    public boolean currentSitesMatchByDigests(final ConfigurationModel other) {
+        if (!getDigest(null).equals(other.getDigest(null))) {
+            return false;
+        }
+
+        for (final String site : siteNames) {
+            if (!getDigest(site).equals(other.getDigest(site))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Compute a digest of contents of this model.
+     *
+     * The digest is internally based on a manifest of contents. The format will be a YAML document as follows.
      * <pre>
      * for each Module:
      * [group-name]/[project-name]/[module-name]:
