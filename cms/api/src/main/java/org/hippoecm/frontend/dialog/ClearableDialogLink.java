@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 abstract public class ClearableDialogLink extends Panel {
 
@@ -41,15 +39,6 @@ abstract public class ClearableDialogLink extends Panel {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 action.execute();
-            }
-
-            @Override
-            protected void onComponentTag(final ComponentTag tag) {
-                super.onComponentTag(tag);
-
-                if(!isClearVisible()) {
-                    tag.addBehavior(CssClass.append("linefill"));
-                }
             }
         };
         add(dialogLink);

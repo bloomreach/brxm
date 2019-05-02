@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -37,6 +38,9 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchConstants;
@@ -49,17 +53,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(AbstractDocumentWorkflowPlugin.class);
     private BranchIdModel branchIdModel;
 
-    /**
-     * Detaches all models
-     */
-    @Override
-    public void detachModels() {
-        super.detachModels();
-        if (branchIdModel!=null){
-            branchIdModel.detach();
-        }
-    }
-
     public AbstractDocumentWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         try {
@@ -69,10 +62,26 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    protected static HippoNode getHandleOrUnpublishedVariant(DocumentWorkflow workflow) {
+        return (HippoNode) workflow.getNode();
+    }
+
+    /**
+     * Detaches all models
+     */
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        if (branchIdModel != null) {
+            branchIdModel.detach();
+        }
+    }
+
     protected BranchIdModel getBranchIdModel() {
         return branchIdModel;
     }
 
+    @Override
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
@@ -82,10 +91,10 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         try {
             WorkflowDescriptorModel wdm = getModel();
             if (wdm != null) {
-                Node node = wdm.getNode();
-                if (node != null) {
-                    folderModel = new JcrNodeModel(node.getParent());
-                }
+                Node node = getHandleOrUnpublishedVariant(wdm.getWorkflow());
+                Validate.isTrue(node.isNodeType(HippoNodeType.NT_HANDLE));
+                folderModel = new JcrNodeModel(node.getParent());
+                Validate.isTrue(folderModel.getNode().isNodeType(HippoStdNodeType.NT_FOLDER));
             }
         } catch (RepositoryException ex) {
             log.warn("Could not determine folder path", ex);
@@ -95,7 +104,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
         final Optional<Node> optional = WorkflowUtils.getDocumentVariantNode(handle, variant);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             return optional.get();
         }
         throw new ItemNotFoundException("No " + variant + " variant found under path: " + handle.getPath());
@@ -170,7 +179,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     protected Map<String, Serializable> getHints() {
         String branchId = BranchConstants.MASTER_BRANCH_ID;
-        if (branchIdModel != null){
+        if (branchIdModel != null) {
             branchId = branchIdModel.getBranchId();
         }
         log.debug("Get hints for branchId:{}", branchId);
@@ -179,7 +188,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
     }
 
     protected String getBranchId() {
-        BranchIdModel branchIdModel = getBranchIdModel();
         return branchIdModel == null ? BranchConstants.MASTER_BRANCH_ID : branchIdModel.getBranchId();
     }
 }

@@ -67,6 +67,7 @@
 
     <module>builtin</module>
     <module>gallery</module>
+    <module>openui</module>
     <module>perspectives</module>
     <module>richtext</module>
     <module>translation</module>

@@ -30,17 +30,14 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.workflow.CopyNameHelper;
 import org.hippoecm.frontend.editor.workflow.dialog.DeleteDialog;
 import org.hippoecm.frontend.editor.workflow.dialog.WhereUsedDialog;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -53,7 +50,6 @@ import org.hippoecm.frontend.plugins.standardworkflow.RenameDocumentDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
-
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
@@ -67,6 +63,9 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     private static final String DEFAULT_FOLDERWORKFLOW_CATEGORY = "embedded";
+    public static final String DOCUMENT = "document";
+    public static final String UNAVAILABLE_TIP = "unavailable-tip";
+    public static final String DELETE = "delete";
 
     private StdWorkflow deleteAction;
     private StdWorkflow requestDeleteAction;
@@ -84,7 +83,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -97,7 +96,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this);
+                    return new StringResourceModel(UNAVAILABLE_TIP, this);
                 }
             }
 
@@ -105,7 +104,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 String locale = null;
                 try {
-                    final HippoNode node = getModelNode();
+                    final HippoNode node = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                     locale = CodecUtils.getLocaleFromNodeAndAncestors(node);
                     renameDocumentArguments = new RenameDocumentArguments(
                             node.getDisplayName(),
@@ -122,9 +121,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                         this.getModel());
             }
 
-            private HippoNode getModelNode() throws RepositoryException {
-                return (HippoNode) getModel().getNode();
-            }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
@@ -138,7 +134,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     throw new WorkflowException("No URL name given for document node");
                 }
 
-                final HippoNode node = getModelNode();
+                final HippoNode node = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                 String nodeName = getNodeNameCodec(node).encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
 
@@ -164,7 +160,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -174,16 +170,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                destination = new NodeModelWrapper<Node>(getFolder()) {};
+                destination = new NodeModelWrapper<Node>(getFolder()) {
+                };
 
                 try {
-                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> {
-                        try {
-                            return getNodeNameCodec(getModelNode(), getFolder().getNode());
-                        } catch (RepositoryException e) {
-                            return getNodeNameCodec(getFolder().getNode());
-                        }
-                    });
+                    IModel<StringCodec> codec = ReadOnlyModel.of(() -> getNodeNameCodec(getModelNode(), getFolder().getNode()));
 
                     final CopyNameHelper copyNameHelper = new CopyNameHelper(codec, translate("copyof"));
                     final Node destinationNode = destination.getChainedModel().getObject();
@@ -235,8 +226,8 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
 
-            private HippoNode getModelNode() throws RepositoryException {
-                return (HippoNode) getModel().getNode();
+            private HippoNode getModelNode() {
+                return getHandleOrUnpublishedVariant(getModel().getWorkflow());
             }
 
         });
@@ -246,7 +237,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -259,7 +250,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 if (isEnabled()) {
                     return super.getTooltip();
                 } else {
-                    return new StringResourceModel("unavailable-tip", this);
+                    return new StringResourceModel(UNAVAILABLE_TIP, this);
                 }
             }
 
@@ -283,7 +274,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node document = getModel().getNode();
+                Node document = getHandleOrUnpublishedVariant(getModel().getWorkflow());
                 Node folder = destination != null ? destination.getChainedModel().getObject()
                         : new JcrNodeModel("/").getNode();
 
@@ -295,12 +286,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(deleteAction = new StdWorkflow("delete",
+        add(deleteAction = new StdWorkflow(DELETE,
                 new StringResourceModel("delete-label", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -338,7 +329,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -367,7 +358,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -391,7 +382,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String getSubMenu() {
-                return "document";
+                return DOCUMENT;
             }
 
             @Override
@@ -412,12 +403,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        if (!info.containsKey("delete")) {
+        if (!info.containsKey(DELETE)) {
             hideOrDisable(info, "requestDelete", requestDeleteAction);
         } else {
             requestDeleteAction.setVisible(false);
         }
-        hideOrDisable(info, "delete", deleteAction);
+        hideOrDisable(info, DELETE, deleteAction);
         hideOrDisable(info, "rename", renameAction);
         hideOrDisable(info, "move", moveAction);
 
@@ -425,27 +416,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         hideOrDisable(info, "listVersions", historyAction);
     }
 
-    // Helper method for referencing translations from the DocumentWorkflowPlugin from nested anonymous classes
-    private String translate(final String key) {
-        return getString(key);
-    }
-
-    /**
-     * Helper method for fetching a StringCodec for a document. If document has a locale, use it to find a fitting
-     * {@link StringCodec}, otherwise search the destination tree for a locale and use that to find a fitting
-     * {@link StringCodec}.
-     */
-    private StringCodec getNodeNameCodec(final Node document, final Node destination) {
-        String locale = CodecUtils.getLocaleFromDocumentOrFolder(document, destination);
-        return CodecUtils.getNodeNameCodec(getPluginContext(), locale);
-    }
-
     private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
 
         try {
-            final Node handle = documentModel.getNode();
+            final Node handle = getHandleOrUnpublishedVariant(documentModel.getWorkflow());
             if (handle.hasNode(handle.getName())) {
-                final String documentType =  handle.getNode(handle.getName()).getPrimaryNodeType().getName();
+                final String documentType = handle.getNode(handle.getName()).getPrimaryNodeType().getName();
 
                 // get allowed folder types from hints() method on folder workflow
                 final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
@@ -462,14 +438,12 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                             documentType, (allowedTypes.contains(documentType) ? "is" : "is NOT"),
                             destinationFolder.getObject().getPath(), allowedTypes);
                     return allowedTypes.contains(documentType);
-                }
-                else {
+                } else {
                     log.info("Workflow by category {} on subject {} is not a FolderWorkflow but {}",
                             DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject(),
                             ((workflow == null) ? "null" : workflow.getClass().getName()));
                 }
-            }
-            else {
+            } else {
                 log.error("(Supposed) document handle {} does not have same-name subnode", handle.getPath());
             }
         } catch (RepositoryException | RemoteException e) {
@@ -480,5 +454,20 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
         // forbid workflow action if something's wrong
         return false;
+    }
+
+    // Helper method for referencing translations from the DocumentWorkflowPlugin from nested anonymous classes
+    private String translate(final String key) {
+        return getString(key);
+    }
+
+    /**
+     * Helper method for fetching a StringCodec for a document. If document has a locale, use it to find a fitting
+     * {@link StringCodec}, otherwise search the destination tree for a locale and use that to find a fitting
+     * {@link StringCodec}.
+     */
+    private StringCodec getNodeNameCodec(final Node document, final Node destination) {
+        String locale = CodecUtils.getLocaleFromDocumentOrFolder(document, destination);
+        return CodecUtils.getNodeNameCodec(getPluginContext(), locale);
     }
 }
