@@ -224,24 +224,25 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      */
     private void applySiteConfig(final SiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
 
+        final String siteName = record.siteName;
         if (!mustConfigure) {
-            log.debug("skip applySiteConfig because bootstrap is disabled, site: {}", record.siteName);
+            log.debug("skip applySiteConfig because bootstrap is disabled, site: {}", siteName);
             return;
         }
 
-        log.info("New HCM site detected: {}", record.siteName);
+        log.info("New HCM site detected: {}", siteName);
 
         // Load the site HCM modules from the classpath and append to the runtimeConfigurationModel
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
         // This variable may or may not contain a new model instance, so logic below should not assume, but code defensively
-        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(record.siteName, record.hstRoot,
+        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(siteName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
         // If auto-export is enabled and will be started, we also need to load modules from the local project
         if (startAutoExportService) {
             log.debug("loading source modules for auto-export during site bootstrap");
             final List<ModuleImpl> hcmSiteModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
-                    .stream().filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
+                    .stream().filter(m -> siteName.equals(m.getSiteName())).collect(toList());
             if (CollectionUtils.isNotEmpty(hcmSiteModulesFromSourceFiles)) {
                 // This is where the runtimeConfigurationModel could be replaced with a new instance
                 log.debug("merging source modules into runtime model for auto-export during site bootstrap");
@@ -254,15 +255,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         log.debug("loading existing baseline during site bootstrap for sites: {}", siteNames);
         final ConfigurationModelImpl newBaselineModel = loadBaselineModel(siteNames);
 
-        if (shouldSkipBecauseOfDigestMatch(newRuntimeConfigModel, newBaselineModel)) {
-            log.info("ConfigurationService: skipping site bootstrap because of matching bootstrap and baseline models: {}", record.siteName);
+        if (shouldSkipBecauseOfDigestMatch(newRuntimeConfigModel, newBaselineModel, siteName)) {
+            log.info("ConfigurationService: skipping site bootstrap because of matching bootstrap and baseline models: {}", siteName);
+            // Note: site continues using jar-backed model for runtime use
             runtimeConfigurationModel = newRuntimeConfigModel;
-
-            // TODO: replace site zip-based model with baseline? or not?
         }
         else {
             // Run pre site migrators for this site
-            log.debug("applying site pre-migrators for site: {}", record.siteName);
+            log.debug("applying site pre-migrators for site: {}", siteName);
             applyPreMigrators(newRuntimeConfigModel, singleton(record), ConfigurationSiteMigrator.class);
 
             // apply config, but skip applying namespaces, since they are not allowed in sites
@@ -278,37 +278,37 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                 //store only HCM Site modules
                 final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                        .filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
+                        .filter(m -> siteName.equals(m.getSiteName())).collect(toList());
 
-                log.debug("storing baseline for site: {}, modules: {}", record.siteName, modulesToSave);
-                baselineService.storeSite(record.siteName, modulesToSave, session);
+                log.debug("storing baseline for site: {}, modules: {}", siteName, modulesToSave);
+                baselineService.storeSite(siteName, modulesToSave, session);
                 if (startAutoExportService) {
-                    log.debug("reloading stored baseline during site init for site: {}, sites: {}", record.siteName, siteNames);
+                    log.debug("reloading stored baseline during site init for site: {}, sites: {}", siteName, siteNames);
                     this.baselineModel = loadBaselineModel(siteNames);
                 }
 
-                log.debug("processing webfiles for site: {}", record.siteName);
-                processHcmSiteWebFileBundles(record);
+                log.debug("processing webfiles for site: {}", siteName);
+                //process webfilebundle instructions from HCM Site which are not from the current site
+                final List<WebFileBundleDefinitionImpl> webfileBundleDefs = getWebFileBundleDefsForSite(runtimeConfigurationModel, siteName);
+                configService.writeWebfiles(webfileBundleDefs, baselineService, session);
 
                 // Run post site migrators for this site
-                log.debug("applying site post-migrators for site: {}", record.siteName);
+                log.debug("applying site post-migrators for site: {}", siteName);
                 applyPostMigrators(newRuntimeConfigModel, singleton(record),
                         (autoExportService != null && autoExportService.isRunning()),
                         ConfigurationSiteMigrator.class);
 
-                log.info("HCM Site Configuration '{}' was successfuly applied", record.siteName);
+                log.info("HCM Site Configuration '{}' was successfuly applied", siteName);
             } else {
-                log.error("HCM Site '{}' failed to be applied", record.siteName);
+                log.error("HCM Site '{}' failed to be applied", siteName);
             }
         }
     }
 
-    private void processHcmSiteWebFileBundles(final SiteRecord record) throws IOException, RepositoryException {
-        //process webfilebundle instructions from HCM Site which are not from the current site
-        final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream()
-                .filter(m -> record.siteName.equals(m.getSiteName()))
-                .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
-        configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+    private List<WebFileBundleDefinitionImpl> getWebFileBundleDefsForSite(final ConfigurationModelImpl model, final String siteName) {
+        return model.getModulesStream()
+                    .filter(m -> siteName.equals(m.getSiteName()))
+                    .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
@@ -362,7 +362,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     bootstrapModel = loadBootstrapModel();
 
                     // check the digest before doing real bootstrap work
-                    if (shouldSkipBecauseOfDigestMatch(bootstrapModel, baselineModel)) {
+                    if (shouldSkipBecauseOfDigestMatch(bootstrapModel, baselineModel, null)) {
                         log.info("ConfigurationService: skipping core bootstrap because of matching bootstrap and baseline models");
                         initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
                     }
@@ -505,7 +505,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private boolean shouldSkipBecauseOfDigestMatch(final ConfigurationModelImpl bootstrapModel, final ConfigurationModelImpl baselineModel) {
+    private boolean shouldSkipBecauseOfDigestMatch(final ConfigurationModelImpl bootstrapModel,
+                                                   final ConfigurationModelImpl baselineModel,
+                                                   final String siteName)
+            throws RepositoryException {
         // NOTE: This will not notice differences within content files, since these are not fully stored
         //       in the baseline. This will only notice added or removed content files, changed actions,
         //       or changed config files.
@@ -515,9 +518,22 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
-        // FIXME: we should check the webfiles bundle digests here, too!
-        final boolean skip = !fullConfigure && !startAutoExportService
+        boolean skip = !fullConfigure && !startAutoExportService
                 && bootstrapModel.currentSitesMatchByDigests(baselineModel);
+
+        // check the webfiles bundle digests here, too!
+        if (skip) {
+            try {
+                final List<WebFileBundleDefinitionImpl> webFileBundleDefs =
+                        (siteName != null)?
+                                getWebFileBundleDefsForSite(bootstrapModel, siteName):
+                                bootstrapModel.getWebFileBundleDefinitions();
+                skip = configService.shouldSkipWebfilesBecauseOfDigestMatch(webFileBundleDefs, baselineService, session);
+            }
+            catch (IOException e) {
+                throw new RepositoryException("Exception checking webfiles bundle digests during bootstrap", e);
+            }
+        }
 
         stopWatch.stop();
         log.debug("digest comparison in {}", stopWatch.toString());
