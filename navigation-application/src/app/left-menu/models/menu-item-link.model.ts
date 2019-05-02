@@ -3,8 +3,8 @@
  */
 
 export class MenuItemLink {
-  public iframe: HTMLIFrameElement ;
-  public appPath: string;
+  iframe: HTMLIFrameElement;
+  appPath: string;
 
   constructor(
     public id: string,

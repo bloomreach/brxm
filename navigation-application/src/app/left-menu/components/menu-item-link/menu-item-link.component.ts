@@ -17,6 +17,6 @@ export class MenuItemLinkComponent {
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    alert('Should navigate to: ' + this.config.appPath);
+    alert(`Should navigate to: ${this.config.appPath}`);
   }
 }
