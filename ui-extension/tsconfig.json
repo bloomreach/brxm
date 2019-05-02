@@ -30,7 +30,7 @@
     "**/*.spec.ts"
   ],
   "typedocOptions": {
-    "exclude": "!**/+(api|ui-extension).ts",
+    "exclude": "!**/+(api|ui-extension|declarations.d).ts",
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
