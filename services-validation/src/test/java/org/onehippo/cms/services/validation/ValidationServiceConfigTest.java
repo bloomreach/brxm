@@ -47,17 +47,19 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class ValidationServiceConfigTest {
 
     private MockNode configNode;
+    private MockNode validatorsNode;
 
     @Before
     public void setUp() throws Exception {
         mockStaticPartial(ValidatorInstanceFactory.class, "createValidatorInstance");
         configNode = MockNode.root().addNode("config", JcrConstants.NT_UNSTRUCTURED);
+        validatorsNode = configNode.addNode("validators", JcrConstants.NT_UNSTRUCTURED);
     }
 
     @Test
     public void logsErrorWhenRepositoryExceptionIsThrown() throws Exception {
         final Node configNode = createMock(Node.class);
-        expect(configNode.getNodes()).andThrow(new RepositoryException());
+        expect(configNode.getNode("validators")).andThrow(new RepositoryException());
         replayAll();
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidationServiceConfig.class).build()) {
@@ -124,7 +126,7 @@ public class ValidationServiceConfigTest {
 
     private ValidationServiceConfig createConfig(final String... validators) throws RepositoryException {
         for (final String validator : validators) {
-            final MockNode validatorConfigNode = configNode.addNode(validator, JcrConstants.NT_UNSTRUCTURED);
+            final MockNode validatorConfigNode = validatorsNode.addNode(validator, JcrConstants.NT_UNSTRUCTURED);
             validatorConfigNode.setProperty(JcrValidatorConfig.CLASS_NAME, validator + "-validator-classname");
         }
         return new ValidationServiceConfig(configNode);
