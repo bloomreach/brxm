@@ -75,6 +75,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         } else {
             clear();
             setWindowClosedCallback(null);
+            setCloseButtonCallback(null);
         }
     }
 
