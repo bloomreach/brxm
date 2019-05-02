@@ -1,6 +1,5 @@
 definitions:
   config:
-    /hippo:configuration/hippo:frontend/cms/cms-validators/image-references:
-      jcr:primaryType: frontend:plugin
-      plugin.class: org.onehippo.addon.frontend.gallerypicker.ImageReferenceValidator
-      scope: field
+    /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/validators/image-references:
+      jcr:primaryType: hipposys:moduleconfig
+      hipposys:className: org.onehippo.addon.frontend.gallerypicker.validator.ImageReferenceValidator
