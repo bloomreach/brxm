@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,13 +27,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -47,6 +55,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +123,77 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             log.warn("Could not find prototype", ex);
             return null;
         }
+    }
+
+    @Override
+    public void render(final PluginRequestTarget target) {
+        if (isActive() && IEditor.Mode.EDIT == mode) {
+            final Violation firstViolation = findFirstViolation();
+
+            if (target != null) {
+                String javascript = "";
+
+                // clear previous validation messages
+                javascript += String.format("$('.validation-message', '#%s').remove();", getMarkupId());
+
+                if (firstViolation == null) {
+                    javascript += String.format("$('#%s').removeClass('%s');", getMarkupId(), "invalid");
+                } else {
+                    javascript += String.format("$('#%s').addClass('%s');", getMarkupId(), "invalid");
+
+                    // print first violation
+                    final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
+                    final String msgCode = getMarkupId() + msg.hashCode();
+                    javascript += String.format("if ($('.%s').length === 0) { $('#%s').append('<span class=\"validation-message %s\">%s</span>'); }", msgCode, getMarkupId(), msgCode, msg);
+                }
+
+                target.appendJavaScript(javascript);
+            }
+        }
+        super.render(target);
+    }
+
+    private Violation findFirstViolation() {
+        final IFieldDescriptor field = getFieldHelper().getField();
+        if (field == null) {
+            return null;
+        }
+
+        final IModel<IValidationResult> validationModel = helper.getValidationModel();
+        if (validationModel == null) {
+            return null;
+        }
+
+        final IValidationResult validationResult = validationModel.getObject();
+        if (validationResult == null || validationResult.isValid()) {
+            return null;
+        }
+
+        final Set<Violation> violations = validationResult.getViolations();
+        if (violations == null || violations.isEmpty()) {
+            return null;
+        }
+
+        return violations.stream()
+                .filter(violation -> isNodeViolation(field, violation))
+                .reduce((first, second) -> second) // return last element
+                .orElse(null);
+    }
+
+    private static boolean isNodeViolation(final IFieldDescriptor field, final Violation violation) {
+        if (!violation.getFeedbackScope().equals(FeedbackScope.COMPOUND)) {
+            return false;
+        }
+        final Set<ModelPath> dependentPaths = violation.getDependentPaths();
+        for (final ModelPath path : dependentPaths) {
+            if (path.getElements().length > 0) {
+                final ModelPathElement first = path.getElements()[0];
+                if (first.getField().equals(field)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
