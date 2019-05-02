@@ -76,7 +76,7 @@
     "tslint": "^5.0",
     "tslint-config-airbnb": "^5.0",
     "tslint-loader": "^3.5",
-    "typedoc": "^0.14",
+    "typedoc": "github:TypeStrong/typedoc#7ba1a8c3e2ce9f6ed33a44adb50952ed2b571974",
     "typescript": "^3.0"
   },
   "dependencies": {
