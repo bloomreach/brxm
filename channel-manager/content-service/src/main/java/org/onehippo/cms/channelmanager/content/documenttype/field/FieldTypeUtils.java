@@ -103,7 +103,6 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
 
         UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.IMAGE_REFERENCES);
         UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
