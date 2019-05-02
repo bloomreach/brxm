@@ -40,23 +40,30 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     private static final ResourceReference MODAL_JS = new JavaScriptResourceReference(DialogWindow.class, "hippo-modal.js");
 
-    private class Callback implements ModalWindow.WindowClosedCallback {
+    private class CloseDialogCallback implements ModalWindow.WindowClosedCallback, ModalWindow.CloseButtonCallback {
 
-        Dialog dialog;
+        private final Dialog dialog;
 
-        Callback(Dialog dialog) {
+        CloseDialogCallback(final Dialog dialog) {
             this.dialog = dialog;
         }
 
-        public void onClose(AjaxRequestTarget target) {
+        @Override
+        public boolean onCloseButtonClicked(final AjaxRequestTarget target) {
+            dialog.onCancelFromCloseButton();
+            return true;
+        }
+
+        @Override
+        public void onClose(final AjaxRequestTarget target) {
             closeDialog(dialog);
         }
     }
 
     private Dialog dialog;
-    private List<Dialog> pending;
+    private final List<Dialog> pending;
 
-    public DialogWindow(String id) {
+    public DialogWindow(final String id) {
         super(id);
 
         pending = new LinkedList<>();
@@ -67,10 +74,10 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         showUnloadConfirmation(false);
     }
 
-    private void closeDialog(Dialog dialog) {
+    private void closeDialog(final Dialog dialog) {
         dialog.onClose();
         if (pending.size() > 0) {
-            Dialog removedDialog = pending.remove(0);
+            final Dialog removedDialog = pending.remove(0);
             internalShow(removedDialog);
         } else {
             clear();
@@ -104,8 +111,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
      */
     @Override
     protected AppendingStringBuffer postProcessSettings(final AppendingStringBuffer settings) {
-        String title = new StringWithoutLineBreaksModel(dialog.getTitle()).getObject();
-        String jsEscapedTitle = StringUtils.replace(title, "\"", "\\\"");
+        final String title = new StringWithoutLineBreaksModel(dialog.getTitle()).getObject();
+        final String jsEscapedTitle = StringUtils.replace(title, "\"", "\\\"");
 
         settings.append("settings.titleTooltip = \"");
         settings.append(jsEscapedTitle);
@@ -114,7 +121,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         return settings;
     }
 
-    public void show(Dialog dialog) {
+    public void show(final Dialog dialog) {
         if (isShown()) {
             pending.add(dialog);
         } else {
@@ -128,10 +135,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
      *
      * @param dialog The dialog to hide
      */
-    public void hide(Dialog dialog) {
-        if (pending.contains(dialog)) {
-            pending.remove(dialog);
-        }
+    public void hide(final Dialog dialog) {
+        pending.remove(dialog);
 
         if (dialog == this.dialog) {
             close();
@@ -146,12 +151,13 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     public void close() {
         if (isShown()) {
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 clear();
-                String contentMarkupId = getContent().getMarkupId();
-                target.appendJavaScript("var el = document.getElementById('" + contentMarkupId + "');"
-                        + "if (el) { el.parentNode.removeChild(el); }");
+                final String javascript = String.format(
+                        "var el = document.getElementById('%s'); if (el) { el.parentNode.removeChild(el); }",
+                        getContent().getMarkupId());
+                target.appendJavaScript(javascript);
                 target.add(this);
                 close(target);
             } else {
@@ -180,7 +186,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         return isShown();
     }
 
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         if (dialog != null) {
             dialog.render(target);
         }
@@ -191,19 +197,17 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         return dialog != null && super.isShown();
     }
 
-    private void internalShow(Dialog dialog) {
+    private void internalShow(final Dialog dialog) {
         this.dialog = dialog;
         dialog.setDialogService(this);
         setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
         setContent(dialog.getComponent());
-        setWindowClosedCallback(new Callback(dialog));
-        setCloseButtonCallback(target -> {
-            dialog.onCancelFromCloseButton();
-            return true;
-        });
 
+        final CloseDialogCallback closeCallback = new CloseDialogCallback(dialog);
+        setWindowClosedCallback(closeCallback);
+        setCloseButtonCallback(closeCallback);
 
-        IValueMap properties = dialog.getProperties();
+        final IValueMap properties = dialog.getProperties();
 
         if (properties.containsKey("height") && properties.getString("height").equals("auto")) {
             setUseInitialHeight(false);
@@ -226,7 +230,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
         setCssClassName(cssClasses);
 
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             show(target);
             focusContent(target);
