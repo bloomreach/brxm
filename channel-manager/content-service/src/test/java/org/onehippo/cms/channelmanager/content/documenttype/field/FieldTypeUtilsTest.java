@@ -187,7 +187,7 @@ public class FieldTypeUtilsTest {
 
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList(FieldValidators.IMAGE_REFERENCES));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList(FieldValidators.RESOURCE_REQUIRED));
         verifyAll();
     }
 
