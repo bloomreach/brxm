@@ -185,6 +185,13 @@ public abstract class AbstractFieldType implements FieldType {
         this.jcrType = jcrType;
     }
 
+    public String getEffectiveType() {
+        return effectiveType;
+    }
+
+    public void setEffectiveType(final String effectiveType) {
+        this.effectiveType = effectiveType;
+    }
 
     public Set<String> getValidatorNames() {
         return validatorNames;
@@ -295,10 +302,7 @@ public abstract class AbstractFieldType implements FieldType {
         }
 
         final Object validatedValue = getValidatedValue(value, context);
-        final FieldContext fieldContext = context.getFieldContext(getId(), effectiveType, jcrType);
-
-        return getValidatorNames().stream()
-                .allMatch(validatorName -> ValidationUtil.validateValue(value, fieldContext, validatorName, validatedValue))
-                ? 0 : 1;
+        final FieldContext fieldContext = context.getFieldContext(getId(), jcrType, effectiveType);
+        return ValidationUtil.validateValue(value, fieldContext, validatorNames, validatedValue);
     }
 }

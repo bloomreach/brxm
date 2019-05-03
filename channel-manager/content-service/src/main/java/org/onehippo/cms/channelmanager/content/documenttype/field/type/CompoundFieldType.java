@@ -35,7 +35,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.services.validation.api.FieldContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,6 +169,18 @@ public class CompoundFieldType extends AbstractFieldType implements NodeFieldTyp
 
     @Override
     public int validateValue(final FieldValue value, final CompoundContext context) {
-        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields(), context);
+        return validateCompound(value, context)
+                + FieldTypeUtils.validateFieldValues(value.getFields(), getFields(), context);
     }
+
+    private int validateCompound(final FieldValue value, final CompoundContext context) {
+        if (getValidatorNames().isEmpty()) {
+            return 0;
+        }
+
+        final Object validatedValue = context.getNode();
+        final FieldContext fieldContext = context.getFieldContext(getId(), getJcrType(), getEffectiveType());
+        return ValidationUtil.validateValue(value, fieldContext, getValidatorNames(), validatedValue);
+    }
+
 }

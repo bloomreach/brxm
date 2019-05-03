@@ -28,6 +28,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,8 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -60,6 +63,7 @@ import static org.onehippo.cms.channelmanager.content.documenttype.field.type.Ab
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -79,10 +83,6 @@ public class CompoundFieldTypeTest {
     @Before
     public void setup() {
         mockStaticPartial(FieldTypeUtils.class, "getValidator");
-        expect(FieldTypeUtils.getValidator(eq("non-empty")))
-                .andReturn(new TestValidatorInstance(new NonEmptyTestValidator()))
-                .anyTimes();
-        replayAll();
 
         stringField1 = new StringFieldType();
         stringField1.setId(STRING_PROPERTY_1);
@@ -533,6 +533,64 @@ public class CompoundFieldTypeTest {
     }
 
     @Test
+    public void validateCompoundGood() throws Exception {
+        node.addNode(NODE_NAME, "compound:type");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
+        fieldType.addValidatorName("compound-validator");
+
+        expectValidator("compound-validator", new AlwaysGoodTestValidator());
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueMap = validCompound();
+        assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap)), nodeContext));
+
+        verifyAll();
+    }
+
+    @Test
+    public void validateCompoundBad() throws Exception {
+        node.addNode(NODE_NAME, "compound:type");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
+        fieldType.addValidatorName("compound-validator");
+
+        expectValidator("compound-validator", new AlwaysBadTestValidator());
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueMap = validCompound();
+        final List<FieldValue> compoundValue = listOf(valueOf(valueMap));
+
+        assertViolation(fieldType.validate(compoundValue, nodeContext));
+        assertErrorFromValidator(compoundValue.get(0), "compound-validator");
+        assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertFalse(valueMap.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
+
+        verifyAll();
+    }
+
+    @Test
+    public void validateCompoundBadAndFieldBad() throws Exception {
+        node.addNode(NODE_NAME, "compound:type");
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
+        fieldType.addValidatorName("compound-validator");
+        stringField2.addValidatorName("field-validator");
+
+        expectValidator("compound-validator", new AlwaysBadTestValidator());
+        expectValidator("field-validator", new AlwaysBadTestValidator());
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueMap = validCompound();
+        final List<FieldValue> compoundValue = listOf(valueOf(valueMap));
+
+        assertViolations(fieldType.validate(compoundValue, nodeContext), 2);
+        assertErrorFromValidator(compoundValue.get(0), "compound-validator");
+
+        assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertErrorFromValidator(valueMap.get(STRING_PROPERTY_2).get(0), "field-validator");
+
+        verifyAll();
+    }
+
+    @Test
     public void validateEmpty() {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         assertZeroViolations(fieldType.validate(Collections.emptyList(), nodeContext));
@@ -544,7 +602,9 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueMap = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator());
+
+        final Map<String, List<FieldValue>> valueMap = validCompound();
         assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap)), nodeContext));
     }
 
@@ -554,12 +614,17 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueMap = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator());
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueMap = validCompound();
         valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // make non-empty field empty
 
         assertViolation(fieldType.validate(listOf(valueOf(valueMap)), nodeContext));
         assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+        assertErrorFromValidator(valueMap.get(STRING_PROPERTY_2).get(0), "non-empty");
+
+        verifyAll();
     }
 
     @Test
@@ -569,10 +634,15 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueA = validCompound();
-        Map<String, List<FieldValue>> valueB = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator()).times(2);
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueA = validCompound();
+        final Map<String, List<FieldValue>> valueB = validCompound();
 
         assertZeroViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext));
+
+        verifyAll();
     }
 
     @Test
@@ -582,16 +652,21 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueA = validCompound();
-        Map<String, List<FieldValue>> valueB = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator()).times(2);
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueA = validCompound();
+        final Map<String, List<FieldValue>> valueB = validCompound();
 
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
         assertViolation(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+        assertErrorFromValidator(valueA.get(STRING_PROPERTY_2).get(0), "non-empty");
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
+
+        verifyAll();
     }
 
     @Test
@@ -601,8 +676,11 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueA = validCompound();
-        Map<String, List<FieldValue>> valueB = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator()).times(2);
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueA = validCompound();
+        final Map<String, List<FieldValue>> valueB = validCompound();
 
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
@@ -610,7 +688,9 @@ public class CompoundFieldTypeTest {
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+        assertErrorFromValidator(valueB.get(STRING_PROPERTY_2).get(0), "non-empty");
+
+        verifyAll();
     }
 
     @Test
@@ -620,17 +700,22 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueA = validCompound();
-        Map<String, List<FieldValue>> valueB = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator()).times(2);
+        replayAll();
+
+        final Map<String, List<FieldValue>> valueA = validCompound();
+        final Map<String, List<FieldValue>> valueB = validCompound();
 
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
         assertViolations(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB)), nodeContext), 2);
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+        assertErrorFromValidator(valueA.get(STRING_PROPERTY_2).get(0), "non-empty");
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
-        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getValidation(), equalTo("non-empty"));
+        assertErrorFromValidator(valueB.get(STRING_PROPERTY_2).get(0), "non-empty");
+
+        verifyAll();
     }
 
     @Test(expected = BadRequestException.class)
@@ -638,31 +723,44 @@ public class CompoundFieldTypeTest {
         final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
         stringField2.addValidatorName("non-empty");
 
-        Map<String, List<FieldValue>> valueMap = validCompound();
+        expectValidator("non-empty", new NonEmptyTestValidator());
+        replayAll();
+        final Map<String, List<FieldValue>> valueMap = validCompound();
         fieldType.validate(listOf(valueOf(valueMap)), nodeContext);
     }
 
-    private Map<String, List<FieldValue>> validCompound() {
-        Map<String, List<FieldValue>> map = new HashMap<>();
+    private static Map<String, List<FieldValue>> validCompound() {
+        final Map<String, List<FieldValue>> map = new HashMap<>();
         map.put(STRING_PROPERTY_1, listOf(valueOf("New Value for String property 1")));
         map.put(STRING_PROPERTY_2, listOf(valueOf("New Value for String property 2")));
         return map;
     }
 
-    private boolean isWrittenSuccessfully(final Node node) throws Exception {
+    private static boolean isWrittenSuccessfully(final Node node) throws Exception {
         return node.getProperty(STRING_PROPERTY_1).getString().equals("New Value for String property 1")
             && node.getProperty(STRING_PROPERTY_2).getString().equals("New Value for String property 2");
     }
 
-    private FieldValue valueOf(final Map<String, List<FieldValue>> value) {
+    private static FieldValue valueOf(final Map<String, List<FieldValue>> value) {
         return new FieldValue(value);
     }
 
-    private FieldValue valueOf(final String value) {
+    private static FieldValue valueOf(final String value) {
         return new FieldValue(value);
     }
 
-    private List<FieldValue> listOf(final FieldValue value) {
+    private static List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);
     }
+
+    private static IExpectationSetters<ValidatorInstance> expectValidator(final String validatorName, final Validator<Object> validator) {
+        return expect(FieldTypeUtils.getValidator(eq(validatorName)))
+                .andReturn(new TestValidatorInstance(validator));
+    }
+
+    private static void assertErrorFromValidator(final FieldValue fieldValue, final String validatorName) {
+        assertTrue(fieldValue.hasErrorInfo());
+        assertThat(fieldValue.getErrorInfo().getValidation(), equalTo(validatorName));
+    }
+
 }

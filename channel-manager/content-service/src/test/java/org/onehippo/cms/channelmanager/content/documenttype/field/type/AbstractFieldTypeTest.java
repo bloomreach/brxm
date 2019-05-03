@@ -217,16 +217,18 @@ public class AbstractFieldTypeTest {
 
     @Test
     public void validateValueGood() {
-        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType = createFieldType("field:id", "field:jcr-type", "field:effective-type");
         fieldType.addValidatorName("validator1");
         fieldType.addValidatorName("validator2");
 
         final CompoundContext context = createMock(CompoundContext.class);
         final FieldContext fieldContext = createMock(FieldContext.class);
-        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
+        expect(context.getFieldContext(eq("field:id"), eq("field:jcr-type"), eq("field:effective-type")))
+                .andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue");
+        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, FieldContext.class, String.class,
+                Object.class);
         expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
         expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(true);
 
@@ -239,16 +241,18 @@ public class AbstractFieldTypeTest {
 
     @Test
     public void validatorValueFirstBad() {
-        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType = createFieldType("field:id", "field:jcr-type", "field:effective-type");
         fieldType.addValidatorName("validator1");
         fieldType.addValidatorName("validator2");
 
         final CompoundContext context = createMock(CompoundContext.class);
         final FieldContext fieldContext = createMock(FieldContext.class);
-        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
+        expect(context.getFieldContext(eq("field:id"), eq("field:jcr-type"), eq("field:effective-type")))
+                .andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue");
+        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, FieldContext.class, String.class,
+                Object.class);
         expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(false);
 
         replayAll();
@@ -260,16 +264,18 @@ public class AbstractFieldTypeTest {
 
     @Test
     public void validatorValueSecondBad() {
-        fieldType = createFieldType("field:id", "field:jcr-type");
+        fieldType = createFieldType("field:id", "field:jcr-type", "field:effective-type");
         fieldType.addValidatorName("validator1");
         fieldType.addValidatorName("validator2");
 
         final CompoundContext context = createMock(CompoundContext.class);
         final FieldContext fieldContext = createMock(FieldContext.class);
-        expect(context.getFieldContext(eq("field:id"), eq(null), eq("field:jcr-type"))).andReturn(fieldContext);
+        expect(context.getFieldContext(eq("field:id"), eq("field:jcr-type"), eq("field:effective-type")))
+                .andReturn(fieldContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue");
+        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, FieldContext.class, String.class,
+                Object.class);
         expect(ValidationUtil.validateValue(one, fieldContext, "validator1", one.getValue())).andReturn(true);
         expect(ValidationUtil.validateValue(one, fieldContext, "validator2", one.getValue())).andReturn(false);
 
@@ -402,7 +408,7 @@ public class AbstractFieldTypeTest {
         }
     }
 
-    private static AbstractFieldType createFieldType(final String id, final String jcrType) {
+    private static AbstractFieldType createFieldType(final String id, final String jcrType, final String effectiveType) {
         final AbstractFieldType fieldType = new TestAbstractFieldType() {
             @Override
             public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
@@ -411,6 +417,7 @@ public class AbstractFieldTypeTest {
         };
         fieldType.setId(id);
         fieldType.setJcrType(jcrType);
+        fieldType.setEffectiveType(effectiveType);
         return fieldType;
     }
 
