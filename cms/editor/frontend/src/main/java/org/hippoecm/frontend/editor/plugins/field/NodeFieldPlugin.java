@@ -17,7 +17,12 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,12 +41,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
-import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.validation.FeedbackScope;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -51,10 +50,16 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +85,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
-            
+
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(CssClass.append("hippo-node-field-name-" + name));
 
@@ -115,7 +120,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     protected AbstractProvider<Node, JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel<Node> nodeModel) {
+                                                               IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
             return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<>(nodeModel.getObject()));
@@ -127,73 +132,93 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     public void render(final PluginRequestTarget target) {
-        if (isActive() && IEditor.Mode.EDIT == mode) {
-            final Violation firstViolation = findFirstViolation();
+        if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
 
-            if (target != null) {
-                String javascript = "";
+            // clear previous validation messages and styling
+            target.appendJavaScript(String.format(
+                "$('.validation-message', '#%s').remove(); " +
+                "$('.compound-validation-border', '#%s').removeClass('compound-validation-border');",
+                getMarkupId(), getMarkupId())
+            );
 
-                // clear previous validation messages
-                javascript += String.format("$('.validation-message', '#%s').remove();", getMarkupId());
+            getViolationMessagePerCompound().forEach(violationMessage -> {
+                final CharSequence msg = JavaScriptUtils.escapeQuotes(violationMessage.getMessage());
+                final String msgHash = getMarkupId() + msg.hashCode() + violationMessage.getIndex();
 
-                if (firstViolation == null) {
-                    javascript += String.format("$('#%s').removeClass('%s');", getMarkupId(), "invalid");
-                } else {
-                    javascript += String.format("$('#%s').addClass('%s');", getMarkupId(), "invalid");
-
-                    // print first violation
-                    final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
-                    final String msgCode = getMarkupId() + msg.hashCode();
-                    javascript += String.format("if ($('.%s').length === 0) { $('#%s').append('<span class=\"validation-message %s\">%s</span>'); }", msgCode, getMarkupId(), msgCode, msg);
-                }
-
-                target.appendJavaScript(javascript);
-            }
+                target.appendJavaScript(String.format(
+                    "if ($('.%s').length) { return; }" +
+                    "const msg = '<div class=\"validation-message compound-validation-message %s\">%s</div>';" +
+                    "$('#%s > .hippo-editor-field > .hippo-editor-field-subfield').eq(%d).addClass('compound-validation-border').prepend(msg);",
+                    msgHash, msgHash, msg, getMarkupId(), violationMessage.getIndex())
+                );
+            });
         }
         super.render(target);
     }
 
-    private Violation findFirstViolation() {
+    private Stream<ViolationMessage> getViolationMessagePerCompound() {
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field == null) {
-            return null;
+            return Stream.empty();
         }
 
-        final IModel<IValidationResult> validationModel = helper.getValidationModel();
+        final IModel<IValidationResult> validationModel = getFieldHelper().getValidationModel();
         if (validationModel == null) {
-            return null;
+            return Stream.empty();
         }
 
         final IValidationResult validationResult = validationModel.getObject();
         if (validationResult == null || validationResult.isValid()) {
-            return null;
+            return Stream.empty();
         }
 
         final Set<Violation> violations = validationResult.getViolations();
         if (violations == null || violations.isEmpty()) {
-            return null;
+            return Stream.empty();
         }
 
         return violations.stream()
-                .filter(violation -> isNodeViolation(field, violation))
-                .reduce((first, second) -> second) // return last element
-                .orElse(null);
+                .filter(violation -> violation.getFeedbackScope().equals(FeedbackScope.COMPOUND))
+                .map(violation -> nodeViolation(field, violation))
+                .filter(Objects::nonNull)
+                .filter(distinctByKey(ViolationMessage::getIndex));
     }
 
-    private static boolean isNodeViolation(final IFieldDescriptor field, final Violation violation) {
-        if (!violation.getFeedbackScope().equals(FeedbackScope.COMPOUND)) {
-            return false;
-        }
+    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        final Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
+
+    private ViolationMessage nodeViolation(final IFieldDescriptor field, final Violation violation) {
         final Set<ModelPath> dependentPaths = violation.getDependentPaths();
         for (final ModelPath path : dependentPaths) {
             if (path.getElements().length > 0) {
                 final ModelPathElement first = path.getElements()[0];
                 if (first.getField().equals(field)) {
-                    return true;
+                    return new ViolationMessage(violation.getMessage().getObject(), first);
                 }
             }
         }
-        return false;
+        return null;
+    }
+
+    private static class ViolationMessage {
+
+        private final String message;
+        private final int index;
+
+        ViolationMessage(final String message, final ModelPathElement pathElement) {
+            this.message = message;
+            this.index = pathElement.getIndex();
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
     @Override
@@ -225,21 +250,21 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             Event event = jcrEvent.getEvent();
             try {
                 switch (event.getType()) {
-                case 0:
-                    modelChanged();
-                    return;
-                case Event.NODE_ADDED:
-                case Event.NODE_MOVED:
-                case Event.NODE_REMOVED:
-                    String path = event.getPath();
-                    String name = path.substring(path.lastIndexOf('/') + 1);
-                    if (name.indexOf('[') > 0) {
-                        name = name.substring(0, name.indexOf('['));
-                    }
-                    if (name.equals(field.getPath())) {
+                    case 0:
                         modelChanged();
                         return;
-                    }
+                    case Event.NODE_ADDED:
+                    case Event.NODE_MOVED:
+                    case Event.NODE_REMOVED:
+                        String path = event.getPath();
+                        String name = path.substring(path.lastIndexOf('/') + 1);
+                        if (name.indexOf('[') > 0) {
+                            name = name.substring(0, name.indexOf('['));
+                        }
+                        if (name.equals(field.getPath())) {
+                            modelChanged();
+                            return;
+                        }
                 }
             } catch (RepositoryException ex) {
                 log.error("Error filtering event", ex);
@@ -313,9 +338,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     /**
-     * If validation has already been done, trigger it again. This is useful when items in the form
-     * have moved to a different location or have been removed. After redrawing a possible error message
-     * is shown at the correct field.
+     * If validation has already been done, trigger it again. This is useful when items in the form have moved to a
+     * different location or have been removed. After redrawing a possible error message is shown at the correct field.
      */
     private void validateModelObjects() {
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);

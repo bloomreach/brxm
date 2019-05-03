@@ -143,7 +143,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                     && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
                         violations.add(newViolation(
                                 new ModelPathElement(field, field.getPath(), 0),
-                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT), 
+                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
                                 FeedbackScope.FIELD)
                         );
                 }
@@ -240,6 +240,14 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             index = valueModel.getIndex();
             if (index == -1) {
                 index = 0;
+            }
+        }
+        if (childModel instanceof JcrNodeModel) {
+            final JcrNodeModel nodeModel = (JcrNodeModel) childModel;
+            try {
+                index = nodeModel.getObject().getIndex() - 1;
+            } catch (RepositoryException e) {
+                throw new ValidationException("Could not resolve index for invalid value", e);
             }
         }
         return new ModelPathElement(field, name, index);
