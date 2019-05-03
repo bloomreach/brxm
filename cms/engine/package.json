@@ -1,0 +1,18 @@
+{
+  "name": "hippo-cms-engine",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "build": "node copy-files.js"
+  },
+  "engines": {
+    "node": "8",
+    "npm": "6"
+  },
+  "dependencies": {
+    "@bloomreach/navigation-communication": "^1.0.0-1"
+  },
+  "devDependencies": {
+    "file-system": "2.2.2"
+  }
+}

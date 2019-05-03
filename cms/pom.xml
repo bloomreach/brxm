@@ -510,6 +510,8 @@
                 <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>login/node_modules/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>engine/node_modules/**</exclude>
+                <exclude>engine/.npmrc</exclude>
               </excludes>
             </configuration>
           </plugin>
