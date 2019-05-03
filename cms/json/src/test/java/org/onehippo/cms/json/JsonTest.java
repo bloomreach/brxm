@@ -21,21 +21,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import static org.easymock.EasyMock.anyString;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -86,17 +80,17 @@ public class JsonTest {
     }
 
     @Test
-    public void prettyStringForEmptyObject() throws JsonProcessingException {
-        assertEquals("{ }", Json.prettyString(object));
+    public void writeValueAsStringForEmptyObject() throws JsonProcessingException {
+        assertEquals("{ }", Json.writeValueAsString(object));
     }
 
     @Test
-    public void prettyStringForNullThrowsException() throws JsonProcessingException {
-        assertEquals("null", Json.prettyString(null));
+    public void writeValueAsStringForNullThrowsException() throws JsonProcessingException {
+        assertEquals("null", Json.writeValueAsString(null));
     }
 
     @Test
-    public void prettyStringForObject() throws IOException {
+    public void writeValueAsStringForObject() throws IOException {
         assertEquals("{\n"
                         + "  value : 1,\n"
                         + "  child : {\n"
@@ -104,22 +98,8 @@ public class JsonTest {
                         + "    nestedValue2 : true\n"
                         + "  }\n"
                         + "}",
-                Json.prettyString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
+                Json.writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
         );
     }
 
-    @Test
-    @PrepareForTest({Json.class})
-    public void prettyStringFallsBackToUglyStringOnError() throws Exception {
-        final ObjectWriter prettyPrinter = createMock(ObjectWriter.class);
-
-        Whitebox.setInternalState(Json.class, "prettyPrinter", prettyPrinter);
-
-        expect(prettyPrinter.writeValueAsString(anyString())).andThrow(createMock(JsonProcessingException.class));
-        replayAll(prettyPrinter);
-
-        assertEquals("{}", Json.prettyString(Json.object()));
-
-        verify(prettyPrinter);
-    }
 }
