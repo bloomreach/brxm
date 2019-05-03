@@ -20,17 +20,28 @@ package org.hippoecm.frontend;
 import java.util.Collections;
 
 import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.session.PluginUserSession;
+import org.onehippo.cms.json.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Contains the javascript needed to start the Navigation Application
  */
 public class NavAppHeaderItem extends HippoHeaderItem {
 
+    private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
+
     private static final HippoHeaderItem INSTANCE = new NavAppHeaderItem();
+
+    private final transient NavAppSettingsFactory navAppSettingsFactory = new NavAppSettingsFactory();
 
     public static HeaderItem get() {
         return INSTANCE;
@@ -50,6 +61,8 @@ public class NavAppHeaderItem extends HippoHeaderItem {
         // For now we depend on js files pulled in via npm
         // Later we will use CDN provided resources instead
         getJsItem("bloomreach-navigation-communication.umd").render(response);
+
+        JavaScriptHeaderItem.forScript(createScript(), "hippo-nav-app-settings").render(response);
     }
 
     private JavaScriptReferenceHeaderItem getJsItem(String jsResourceName) {
@@ -65,4 +78,20 @@ public class NavAppHeaderItem extends HippoHeaderItem {
     private String getProdSuffix() {
         return isDevelopmentMode() ? "" : ".min";
     }
+
+
+    private String createScript() {
+        final NavAppSettings navAppSettings = navAppSettingsFactory.getNavAppSettings(PluginUserSession.get());
+        return String.format("HippoNavAppSettings = %s;", parse(navAppSettings));
+    }
+
+    private String parse(NavAppSettings navAppSettings) {
+        try {
+            return Json.writeValueAsString(navAppSettings);
+        } catch (JsonProcessingException e) {
+            log.error("Failed to parse {}, returning empty javascript object instead", navAppSettings, e);
+            return "{}";
+        }
+    }
+
 }
