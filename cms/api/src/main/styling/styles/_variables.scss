@@ -185,9 +185,9 @@ $editor-toolbar-active-color:        $darker-shade;
 $editor-toolbar-active-bgcolor:      $lightest-shade;
 
 // Editor validation
-$validation-title-color:             $danger;
-$validation-border:                  $danger;
-$validation-message-color:           $danger;
+$validation-title-color:             #d40022;
+$validation-border:                  #d40022;
+$validation-message-color:           #d40022;
 
 // CKEditor
 $ckeditor-toolbar-bgcolor:           $lightest-shade;
@@ -237,7 +237,7 @@ $button-focus-border:                $darker-shade;
 $button-focus-color:                 $white;
 
 // Feedback
-$feedback-error-color:               $danger-light;
+$feedback-error-color:               #fbe6e9;
 
 // Dashboard
 $dashboard-panel-bgcolor:            $white;
