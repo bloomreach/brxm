@@ -17,6 +17,7 @@
 
 package org.hippoecm.frontend;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.InlineFrame;
 import org.hippoecm.frontend.behaviors.IContextMenu;
@@ -62,4 +63,11 @@ public class NavAppPage extends Home {
     public void collapseAllContextMenus() {
 
     }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(NavAppHeaderItem.get());
+    }
+
 }
