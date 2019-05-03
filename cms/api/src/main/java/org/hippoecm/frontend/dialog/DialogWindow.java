@@ -17,8 +17,12 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,6 +43,16 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 public class DialogWindow extends ModalWindow implements IDialogService {
 
     private static final ResourceReference MODAL_JS = new JavaScriptResourceReference(DialogWindow.class, "hippo-modal.js");
+
+    private static Pair<Integer, String> parseSize(final String value) {
+        final Pattern pattern = Pattern.compile("^(\\d+)([^\\d]+)$");
+        final Matcher matcher = pattern.matcher(value);
+        if (!matcher.find()) {
+            return ImmutablePair.of(Integer.parseInt(value), "px");
+        }
+
+        return ImmutablePair.of(Integer.parseInt(matcher.group(1)), matcher.group(2));
+    }
 
     private class CloseDialogCallback implements ModalWindow.WindowClosedCallback, ModalWindow.CloseButtonCallback {
 
@@ -212,11 +226,16 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (properties.containsKey("height") && properties.getString("height").equals("auto")) {
             setUseInitialHeight(false);
         } else {
+            final Pair<Integer, String> height = parseSize(properties.getString("height", "250"));
             setUseInitialHeight(true);
-            setInitialHeight(properties.getInt("height", 455));
+            setInitialHeight(height.getLeft());
+            setHeightUnit(height.getRight());
         }
 
-        setInitialWidth(properties.getInt("width", 850));
+        final Pair<Integer, String> width = parseSize(properties.getString("width", "850"));
+        setInitialWidth(width.getLeft());
+        setWidthUnit(width.getRight());
+
         setResizable(properties.getAsBoolean("resizable", false));
 
         String cssClasses = "hippo-dialog";
