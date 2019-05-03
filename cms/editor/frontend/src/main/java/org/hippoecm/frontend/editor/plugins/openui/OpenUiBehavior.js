@@ -92,8 +92,8 @@ OpenUi = new class {
       appendTo: iframeParentElement,
       methods: {
         emitEvent: emitter.emit.bind(emitter),
-        getProperties: () => this._getProperties(parameters),
-        openDialog: (options) => this.openDialog(options, parameters),
+        getProperties: this._getProperties.bind(this, parameters),
+        openDialog: this.openDialog.bind(this, parameters),
         ...methods,
       }
     });
@@ -159,7 +159,7 @@ OpenUi = new class {
     }
   }
 
-  openDialog(options, parameters) {
+  openDialog(parameters, options) {
     if (this.dialog) {
       return Promise.reject({
         code: 'DialogExists',
