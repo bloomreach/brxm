@@ -5,6 +5,7 @@
 import { Component, Input } from '@angular/core';
 
 import { MenuItemLink } from '../../models';
+import { CommunicationsService } from '../../../communication/services';
 
 @Component({
   selector: 'brna-menu-item-link',
@@ -14,9 +15,11 @@ export class MenuItemLinkComponent {
   @Input()
   config: MenuItemLink;
 
+  constructor(private communicationsService: CommunicationsService) {}
+
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    alert('Should navigate to: ' + this.config.appPath);
+    this.communicationsService.navigate(this.config.appId, this.config.appPath);
   }
 }

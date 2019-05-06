@@ -11,7 +11,17 @@ import { NavItem } from '../models';
 
 @Injectable()
 export class NavigationConfigurationService {
-  fetchConfiguration(): Observable<Map<string, NavItem>> {
+  private configStream: Observable<Map<string, NavItem>>;
+
+  get navigationConfiguration$(): Observable<Map<string, NavItem>> {
+    if (!this.configStream) {
+      this.configStream = this.fetchConfiguration();
+    }
+
+    return this.configStream;
+  }
+
+  private fetchConfiguration(): Observable<Map<string, NavItem>> {
     return of(navigationConfiguration).pipe(
       map(config => config.reduce(
         (configMap, item) => configMap.set(item.id, item),

@@ -6,6 +6,8 @@ import { LeftMenuModule } from './left-menu';
 import { NavigationConfigurationService } from './services';
 
 import { AppComponent } from './app.component';
+import { ClientApplicationsManagerModule } from './client-applications-manager';
+import { CommunicationModule } from './communication';
 
 @NgModule({
   declarations: [
@@ -15,10 +17,12 @@ import { AppComponent } from './app.component';
     BrowserModule,
     AppRoutingModule,
     LeftMenuModule,
+    ClientApplicationsManagerModule,
+    CommunicationModule,
   ],
   providers: [
     NavigationConfigurationService,
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
