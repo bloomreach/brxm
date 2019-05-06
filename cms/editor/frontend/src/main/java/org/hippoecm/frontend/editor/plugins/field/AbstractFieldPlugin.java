@@ -244,7 +244,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         if (field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
             return null;
         }
-        
+
         final IModel<IValidationResult> validationModel = helper.getValidationModel();
         if (validationModel == null) {
             return null;
