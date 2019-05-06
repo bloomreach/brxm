@@ -20,7 +20,7 @@ export class MenuBuilderService {
   ) {}
 
   buildMenu(): Observable<MenuItem[]> {
-    return this.navConfigService.fetchConfiguration().pipe(
+    return this.navConfigService.navigationConfiguration$.pipe(
       map(config => {
         const menu = this.menuStructureService.getMenuStructure();
 
@@ -39,8 +39,9 @@ export class MenuBuilderService {
 
       if (navConfigMap.has(item.id)) {
         const config = navConfigMap.get(item.id);
-        // We have enough info to create iframes and assign DOM elements or wrappers here
-        // menuItemLink.iframe = config.appIframeUrl;
+
+        // One iframe per app is created so app's url can be used as an identifier
+        item.appId = config.appIframeUrl;
         item.appPath = config.appPath;
       }
     });

@@ -14,7 +14,7 @@ import { MenuStructureService } from './menu-structure.service';
 
 describe('MenuBuilderService', () => {
   const navConfigServiceMock: NavigationConfigurationService = {
-    fetchConfiguration: () => of(navigationConfigurationMapMock),
+    navigationConfiguration$: of(navigationConfigurationMapMock),
   } as any;
 
   const structureMock: MenuStructureService = {
@@ -34,12 +34,14 @@ describe('MenuBuilderService', () => {
         'subsubitem1',
         'Sub sub item 1',
       );
+      subsubitem1.appId = 'iframe1-url';
       subsubitem1.appPath = 'app-path-for-sub-sub-item1';
 
       const subitem2 = new MenuItemLink(
         'subitem2',
         'Sub item 2',
       );
+      subitem2.appId = 'iframe2-url';
       subitem2.appPath = 'app-path-for-sub-item2';
 
       return [

@@ -9,10 +9,10 @@ import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 @Injectable()
 export class MenuStructureService {
   getMenuStructure(): MenuItem[] {
-    return this.buildMenu();
+    return this.createMenuStructure();
   }
 
-  private buildMenu(): MenuItem[] {
+  private createMenuStructure(): MenuItem[] {
     const home = new MenuItemLink(
       'home',
       'Home',
