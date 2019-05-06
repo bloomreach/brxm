@@ -4,8 +4,8 @@
 
 import { Component, Input } from '@angular/core';
 
-import { MenuItemLink } from '../../models';
 import { CommunicationsService } from '../../../communication/services';
+import { MenuItemLink } from '../../models';
 
 @Component({
   selector: 'brna-menu-item-link',

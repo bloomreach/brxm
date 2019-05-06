@@ -3,11 +3,8 @@
  */
 
 export class MenuItemLink {
-  public appId: string;
-  public appPath: string;
+  appId: string;
+  appPath: string;
 
-  constructor(
-    public id: string,
-    public caption: string,
-  ) {}
+  constructor(id: string, caption: string) {}
 }

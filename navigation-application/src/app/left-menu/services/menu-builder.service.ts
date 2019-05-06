@@ -26,7 +26,7 @@ export class MenuBuilderService {
 
         this.applyNavigationConfiguration(menu, config);
         return this.filterOutNotConfiguredMenuItems(menu);
-      }),
+      })
     );
   }
 
