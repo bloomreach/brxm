@@ -20,6 +20,9 @@ package org.hippoecm.frontend;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * JavaBean representing the settings of the Navigation Application
+ */
 public class NavAppSettings {
 
     private UserSettings userSettings;
@@ -41,6 +44,9 @@ public class NavAppSettings {
         this.appSettings = appSettings;
     }
 
+    /**
+     * JavaBean containing the settings of a logged in user.
+     */
     public static class UserSettings {
 
         private String userName;
@@ -73,6 +79,10 @@ public class NavAppSettings {
     }
 
 
+    /**
+     * JavaBean containing the settings of the Navigation Application.
+     * These are the settings that the app needs to bootstrap itself.
+     */
     public static class AppSettings {
 
         private List<NavConfigResource> navConfigResources;
@@ -87,9 +97,17 @@ public class NavAppSettings {
     }
 
     public enum ResourceType {
-        REST, IFRAME
+        REST,
+        IFRAME,
     }
 
+    /**
+     * Represents a resource that can be called to get information about menu items.
+     * There are two types of resources:
+     * A REST resource which is accessible via an XHR call
+     * An IFRAME resource which is HTML + javascript that should be rendered in an
+     * iframe and once it's loaded and registered provides the menu API methods.
+     */
     public static class NavConfigResource {
         private String url;
         private ResourceType resourceType;
