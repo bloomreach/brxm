@@ -226,7 +226,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (properties.containsKey("height") && properties.getString("height").equals("auto")) {
             setUseInitialHeight(false);
         } else {
-            final Pair<Integer, String> height = parseSize(properties.getString("height", "250"));
+            final Pair<Integer, String> height = parseSize(properties.getString("height", "455"));
             setUseInitialHeight(true);
             setInitialHeight(height.getLeft());
             setHeightUnit(height.getRight());
