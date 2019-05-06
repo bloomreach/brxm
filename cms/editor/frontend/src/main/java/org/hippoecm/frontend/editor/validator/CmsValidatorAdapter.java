@@ -138,7 +138,14 @@ public class CmsValidatorAdapter implements ICmsValidator {
     private static Set<Violation> getViolations(final IFieldValidator fieldValidator, final IModel valueModel,
                                                 final org.onehippo.cms.services.validation.api.Violation violation) throws ValidationException {
         final Model<String> message = Model.of(violation.getMessage());
-        return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, FeedbackScope.FIELD));
+        return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, getScope(fieldValidator)));
+    }
+    
+    private static FeedbackScope getScope(final IFieldValidator fieldValidator) {
+        if (fieldValidator.getFieldDescriptor().getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
+            return FeedbackScope.COMPOUND;
+        }
+        return FeedbackScope.FIELD;
     }
 
 }

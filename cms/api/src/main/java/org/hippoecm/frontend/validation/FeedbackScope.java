@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.validation;
 
 public enum FeedbackScope {
+    COMPOUND,
     DOCUMENT,
     FIELD
 }
