@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/navigationtem-service:
+      jcr:primaryType: hipposys:module
+      hipposys:cmsonly: true
+      hipposys:className: org.hippoecm.frontend.navitems.NavigationItemServiceModule
+      /hippo:moduleconfig:
+        jcr:primaryType: hipposys:moduleconfig
+        jaxrs.endpoint.address: /navigationitems
