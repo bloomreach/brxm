@@ -64,12 +64,14 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         this.objectConverter = objectConverter;
     }
 
-    private BeanInfo createCompoundBeanDef(final ContentType contentType) {
+    private BeanInfo createCompoundBeanDef(@Nullable BeanInfo parentBeanInfo, final ContentType contentType) {
         if (contentType.getSuperTypes().stream().noneMatch(HippoNodeType.NT_COMPOUND::equals)) {
             return null;
         }
 
-        final BeanInfo parentBeanInfo = getOrCreateParentBeanDef(contentType, true);
+        if (parentBeanInfo == null) {
+            parentBeanInfo = getOrCreateParentBeanDef(contentType, true);
+        }
         return generateBeanDefinition(parentBeanInfo, contentType);
     }
 
@@ -118,7 +120,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         final Class<? extends HippoBean> parentDocumentBeanDef = objectConverter.getClassFor(parentDocumentType);
         if (parentDocumentBeanDef == null) {
             final ContentType parentDocumentContentType = objectConverter.getContentType(parentDocumentType);
-            final BeanInfo generatedBeanInfo = isCompound ? createCompoundBeanDef(parentDocumentContentType)
+            final BeanInfo generatedBeanInfo = isCompound ? createCompoundBeanDef(null, parentDocumentContentType)
                     : createDocumentBeanDef(parentDocumentContentType, null);
 
             return generatedBeanInfo != null ? generatedBeanInfo : getDefaultParentBeanInfo(isCompound);
@@ -264,7 +266,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         if (generatedBeanDef == null) {
             //generate the bean class of the compound type
             final ContentType compoundContentType = objectConverter.getContentType(type);
-            generatedBeanInfo = createCompoundBeanDef(compoundContentType);
+            generatedBeanInfo = createCompoundBeanDef(null, compoundContentType);
             if (generatedBeanInfo == null) {
                 return;
             }
@@ -275,7 +277,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                 // A java class of the compound type exists, check whether a new bean class is needed to be generated or not
                 if (objectConverter.shouldGenerateNewForExistingBean(existingBeanClass)) {
                     final ContentType compoundContentType = objectConverter.getContentType(type);
-                    generatedBeanInfo = createCompoundBeanDef(compoundContentType);
+                    final BeanInfo beanInfo = new BeanInfo(existingBeanClass, true);
+                    generatedBeanInfo = createCompoundBeanDef(beanInfo, compoundContentType);
                     if (generatedBeanInfo != null) {
                         generatedBeanDef = generatedBeanInfo.getBeanClass();
                     }

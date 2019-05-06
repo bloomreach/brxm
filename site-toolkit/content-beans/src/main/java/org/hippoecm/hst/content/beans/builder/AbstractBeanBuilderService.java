@@ -83,7 +83,7 @@ public abstract class AbstractBeanBuilderService {
             }
 
             String type = property.getType();
-            log.debug("Adding property {} to the bean {}.", property.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", property.getName(), bean.getName());
 
             if (type == null) {
                 log.error("Missing type for property, cannot create method {} on bean {}.", property.getName(), bean.getName());
@@ -142,7 +142,7 @@ public abstract class AbstractBeanBuilderService {
             }
 
             final String type = child.getType();
-            log.debug("Adding property {} to the bean {}.", child.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", child.getName(), bean.getName());
 
             if (type == null) {
                 log.error("Missing type for node, cannot create method {} on bean {}.", child.getName(), bean.getName());
