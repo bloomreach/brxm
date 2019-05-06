@@ -28,6 +28,16 @@
     "hippo:types.hipposys:CalendarDate/jcr:name" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "hippo:types.hipposys:OpenUiString/jcr:name" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
