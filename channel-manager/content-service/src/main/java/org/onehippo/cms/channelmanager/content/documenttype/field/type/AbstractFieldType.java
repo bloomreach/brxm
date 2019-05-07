@@ -21,7 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -36,9 +35,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.repository.l10n.ResourceBundle;
@@ -52,10 +48,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractFieldType implements FieldType {
-
-    protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
-            = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+public abstract class AbstractFieldType implements BaseFieldType {
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -230,27 +223,6 @@ public abstract class AbstractFieldType implements FieldType {
     public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
             throws ErrorWithPayloadException {
         writeValues(node, optionalValues, true);
-    }
-
-    protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
-
-    protected void trimToMaxValues(final List list) {
-        while (list.size() > maxValues) {
-            list.remove(list.size() - 1);
-        }
-    }
-
-    protected void checkCardinality(final List<FieldValue> values)
-            throws ErrorWithPayloadException {
-        if (values.size() < getMinValues()) {
-            throw INVALID_DATA.get();
-        }
-        if (values.size() > getMaxValues()) {
-            throw INVALID_DATA.get();
-        }
-        if (isRequired() && values.isEmpty()) {
-            throw INVALID_DATA.get();
-        }
     }
 
     /**

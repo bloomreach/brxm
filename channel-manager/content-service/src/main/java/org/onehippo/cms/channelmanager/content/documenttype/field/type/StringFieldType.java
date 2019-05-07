@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
@@ -79,7 +80,7 @@ public class StringFieldType extends PrimitiveFieldType {
     @Override
     protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
         if (maxLength != null && validatedField.length() > maxLength) {
-            throw INVALID_DATA.get();
+            throw FieldTypeUtils.INVALID_DATA.get();
         }
     }
 }

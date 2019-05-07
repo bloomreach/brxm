@@ -16,26 +16,21 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.picker.RichTextImagePicker;
 import org.onehippo.cms.channelmanager.content.picker.RichTextNodePicker;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
@@ -83,35 +78,12 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
 
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readValues(node);
-
-        trimToMaxValues(values);
-
-        if (values.size() < getMinValues()) {
-            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
-                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
-        }
-
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+        return NodeFieldType.super.readFrom(node);
     }
 
     @Override
-    protected List<FieldValue> readValues(final Node node) {
-        try {
-            final NodeIterator children = node.getNodes(getId());
-            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
-                if (value.hasValue()) {
-                    values.add(value);
-                }
-            }
-
-            return values;
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read rich text field '{}'", getId(), e);
-        }
-        return Collections.emptyList();
+    public List<FieldValue> readValues(final Node node) {
+        return NodeFieldType.super.readValues(node);
     }
 
     @Override
@@ -129,29 +101,19 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void writeValues(final Node node,
-                            final Optional<List<FieldValue>> optionalValues,
-                            final boolean validateValues) throws ErrorWithPayloadException {
-        final String valueName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(valueName);
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write rich text field '{}'", valueName, e);
-            throw new InternalServerErrorException();
-        }
+    public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
+        NodeFieldType.super.writeValues(node, optionalValues, checkCardinality);
     }
 
     @Override
     public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
         final String html = write(fieldValue.getValue(), node);
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
+    }
+
+    @Override
+    public int validate(final List<FieldValue> values, final CompoundContext context) {
+        return NodeFieldType.super.validate(values, context);
     }
 
     private String read(final String html, final Node node) {

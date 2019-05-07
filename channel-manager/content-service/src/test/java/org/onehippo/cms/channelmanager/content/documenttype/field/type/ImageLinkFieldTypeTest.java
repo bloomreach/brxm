@@ -115,11 +115,6 @@ public class ImageLinkFieldTypeTest {
     }
 
     @Test
-    public void getDefault() {
-        assertThat(imageLink.getDefault(), equalTo(""));
-    }
-
-    @Test
     public void readMissingValues() {
         imageLink.setId("my:imagelink");
         final MockNode documentNode = MockNode.root();

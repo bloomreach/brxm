@@ -15,76 +15,22 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFieldType {
+public abstract class LinkFieldType extends LeafFieldType implements NodeFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
-
-    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-
-    @Override
-    protected String getDefault() {
-        return DEFAULT_VALUE;
-    }
-
-    @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
-        final String valueName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(valueName);
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write {} field '{}'", getType(), valueName, e);
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Override
-    protected List<FieldValue> readValues(final Node node) {
-        final String nodeName = getId();
-
-        try {
-            final NodeIterator children = node.getNodes(nodeName);
-            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
-                if (value.hasValue()) {
-                    values.add(value);
-                }
-            }
-            return values;
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read nodes for {} type '{}'", getType(), getId(), e);
-        }
-        return Collections.emptyList();
-    }
 
     @Override
     public FieldValue readValue(final Node node) {

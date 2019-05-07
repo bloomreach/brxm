@@ -16,21 +16,67 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A field that stores its value(s) in a node.
  */
-public interface NodeFieldType extends FieldType {
+public interface NodeFieldType extends BaseFieldType {
+
+    Logger log = LoggerFactory.getLogger(NodeFieldType.class);
+
+    @Override
+    default Optional<List<FieldValue>> readFrom(Node node) {
+        List<FieldValue> values = readValues(node);
+
+        FieldTypeUtils.trimToMaxValues(values, getMaxValues());
+
+        if (values.size() < getMinValues()) {
+            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
+                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+        }
+
+        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+    }
+
+    default List<FieldValue> readValues(final Node node) {
+        final String nodeName = getId();
+
+        try {
+            final NodeIterator children = node.getNodes(nodeName);
+            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
+            for (final Node child : new NodeIterable(children)) {
+                final FieldValue value = readValue(child);
+                // Note: we add the valueMap to the values even if it is empty, because we need to
+                // maintain the 1-to-1 mapping between exposed values and internal nodes.
+                values.add(value);
+            }
+            return values;
+        } catch (final RepositoryException e) {
+            log.warn("Failed to read nodes for {} type '{}'", getType(), getId(), e);
+        }
+        return Collections.emptyList();
+    }
 
     /**
      * Reads a single field value from a node.
@@ -38,6 +84,39 @@ public interface NodeFieldType extends FieldType {
      * @return the value read
      */
     FieldValue readValue(final Node node);
+
+    default void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
+        final String valueName = getId();
+        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
+
+        if (checkCardinality) {
+            FieldTypeUtils.checkCardinality(this, values);
+        }
+
+        try {
+            final NodeIterator children = node.getNodes(valueName);
+            final long count = children.getSize();
+
+            // additional cardinality check to prevent creating new values or remove a subset of the old values
+            if (!values.isEmpty() && values.size() != count && count <= getMaxValues()) {
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            }
+
+            for (final FieldValue value : values) {
+                final Node child = children.nextNode();
+                writeValue(child, value);
+            }
+
+            // delete excess nodes to match field type
+            while (children.hasNext()) {
+                final Node child = children.nextNode();
+                child.remove();
+            }
+        } catch (final RepositoryException e) {
+            log.warn("Failed to write {} field '{}'", getType(), valueName, e);
+            throw new InternalServerErrorException();
+        }
+    }
 
     /**
      * Writes a single field value to a node.
@@ -63,6 +142,32 @@ public interface NodeFieldType extends FieldType {
                                     final List<FieldValue> values,
                                     final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
         return FieldTypeUtils.writeChoiceFieldValue(fieldPath, values, this, context);
+    }
+
+    default int validate(final List<FieldValue> values, final CompoundContext context) {
+        final String valueName = getId();
+
+        try {
+            final NodeIterator children = context.getNode().getNodes(valueName);
+
+            final long count = children.getSize();
+            if (values.size() != count) {
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+            }
+
+            int violationCount = 0;
+
+            for (final FieldValue value : values) {
+                final Node child = children.nextNode();
+                final CompoundContext childContext = context.getChildContext(child);
+                violationCount += validateValue(value, childContext);
+            }
+
+            return violationCount;
+        } catch (final RepositoryException e) {
+            log.warn("Failed to validate {} field '{}'", getType(), valueName, e);
+            throw new InternalServerErrorException();
+        }
     }
 
     /**

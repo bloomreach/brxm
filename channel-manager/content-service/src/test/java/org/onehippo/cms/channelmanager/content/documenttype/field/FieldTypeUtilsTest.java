@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.internal.ValidationService;
@@ -68,6 +71,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -750,6 +754,76 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
+    public void checkCardinalityMoreThanAllowed() throws Exception {
+        final List<FieldValue> list = new ArrayList<>();
+        list.add(new FieldValue("one"));
+        list.add(new FieldValue("two"));
+        list.add(new FieldValue("three"));
+
+        FieldType fieldType = new TestFieldType();
+        fieldType.setMaxValues(2);
+        checkCardinality(fieldType, list);
+    }
+
+    @Test
+    public void checkCardinalityLessThanRequired() throws Exception {
+        final List<FieldValue> list = new ArrayList<>();
+        list.add(new FieldValue("one"));
+        list.add(new FieldValue("two"));
+        list.add(new FieldValue("three"));
+
+        FieldType fieldType = new TestFieldType();
+        assertThat(fieldType.getMinValues(), CoreMatchers.equalTo(1));
+        fieldType.setMinValues(4);
+        checkCardinality(fieldType, list);
+    }
+
+    @Test
+    public void checkCardinalityNoneButRequired() throws Exception {
+        FieldType fieldType = new TestFieldType();
+        fieldType.setMinValues(0);
+        fieldType.setRequired(true);
+        checkCardinality(fieldType, Collections.emptyList());
+    }
+
+
+    private void checkCardinality(final FieldType fieldType, final List<FieldValue> list) {
+        try {
+            FieldTypeUtils.checkCardinality(fieldType, list);
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), CoreMatchers.equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+    }
+
+    @Test
+    public void checkCardinalitySuccess() {
+        FieldType fieldType = new TestFieldType();
+        FieldTypeUtils.checkCardinality(fieldType, Collections.singletonList(new FieldValue("one")));
+    }
+
+    @Test
+    public void trimToMaxValues() {
+        final List<String> list = new ArrayList<>();
+        list.add("one");
+        list.add("two");
+        list.add("three");
+
+        FieldTypeUtils.trimToMaxValues(list, 2);
+        assertThat(list.size(), CoreMatchers.equalTo(2));
+        assertThat(list.get(1), CoreMatchers.equalTo("two"));
+
+        FieldTypeUtils.trimToMaxValues(list, 5);
+        assertThat(list.size(), CoreMatchers.equalTo(2));
+        assertThat(list.get(1), CoreMatchers.equalTo("two"));
+
+        FieldTypeUtils.trimToMaxValues(list, 0);
+        assertThat(list.size(), CoreMatchers.equalTo(0));
+    }
+
+    @Test
     public void readFieldValues() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
@@ -1057,5 +1131,37 @@ public class FieldTypeUtilsTest {
 
         verifyAll();
 
+    }
+
+    private static class TestFieldType extends AbstractFieldType {
+
+        @Override
+        public Optional<List<FieldValue>> readFrom(Node node) {
+            return Optional.empty();
+        }
+
+        @Override
+        public List<FieldValue> readValues(final Node node) {
+            return null;
+        }
+
+        @Override
+        public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+            return null;
+        }
+
+        @Override
+        public void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean checkCardinality) {
+        }
+
+        @Override
+        public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
+            return false;
+        }
+
+        @Override
+        public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+            return 0;
+        }
     }
 }

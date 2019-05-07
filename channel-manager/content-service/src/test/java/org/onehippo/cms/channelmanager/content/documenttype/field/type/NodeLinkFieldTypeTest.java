@@ -128,11 +128,6 @@ public class NodeLinkFieldTypeTest {
     }
 
     @Test
-    public void getDefault() {
-        assertThat(linkFieldType.getDefault(), equalTo(""));
-    }
-
-    @Test
     public void readMissingValues() {
         linkFieldType.setId("my:documentlink");
 

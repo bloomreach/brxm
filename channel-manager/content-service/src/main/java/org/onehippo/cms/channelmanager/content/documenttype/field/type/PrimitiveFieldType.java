@@ -30,7 +30,7 @@ import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -43,11 +43,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Base class for all primitive field types of a {@link DocumentType}. Can be serialized into
- * JSON to expose it through a REST API.
+ * Base class for all primitive field types of a {@link DocumentType} (i.e. fields that store their
+ * value in a JCR property). Can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class PrimitiveFieldType extends AbstractFieldType {
+public abstract class PrimitiveFieldType extends LeafFieldType {
 
     @JsonIgnore
     private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
@@ -56,7 +56,7 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     public Optional<List<FieldValue>> readFrom(final Node node) {
         final List<FieldValue> values = readValues(node);
 
-        trimToMaxValues(values);
+        FieldTypeUtils.trimToMaxValues(values, getMaxValues());
         fillToMinValues(values);
         fillMissingRequiredValues(values);
 
@@ -64,18 +64,18 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
     }
 
     @Override
-    public final int validate(final List<FieldValue> valueList, final CompoundContext context) {
+    public int validate(final List<FieldValue> valueList, final CompoundContext context) {
         return valueList.stream()
                 .mapToInt(value -> validateValue(value, context))
                 .sum();
     }
 
     @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
+    public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) throws ErrorWithPayloadException {
         final List<FieldValue> processedValues = processValues(optionalValues);
 
-        if (validateValues) {
-            checkCardinality(processedValues);
+        if (checkCardinality) {
+            FieldTypeUtils.checkCardinality(this, processedValues);
         }
 
         final String propertyName = getId();
@@ -89,9 +89,9 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
                 for (int i = 0; i < strings.length; i++) {
                     final Optional<String> value = processedValues.get(i).findValue();
 
-                    strings[i] = validateValues ? value.orElseThrow(INVALID_DATA) : value.orElse(null);
+                    strings[i] = checkCardinality ? value.orElseThrow(FieldTypeUtils.INVALID_DATA) : value.orElse(null);
 
-                    if (validateValues) {
+                    if (checkCardinality) {
                         fieldSpecificValidations(strings[i]);
                     }
                 }
@@ -143,21 +143,10 @@ public abstract class PrimitiveFieldType extends AbstractFieldType {
         // empty on purpose
     }
 
-    @Override
-    public boolean writeField(final FieldPath fieldPath,
-                              final List<FieldValue> values,
-                              final CompoundContext context) throws ErrorWithPayloadException {
-        if (!fieldPath.is(getId())) {
-            return false;
-        }
-        writeValues(context.getNode(), Optional.of(values), false);
-        validate(values, context);
-        return true;
-    }
-
     protected abstract String getDefault();
 
-    protected List<FieldValue> readValues(final Node node) {
+    @Override
+    public List<FieldValue> readValues(final Node node) {
         final String propertyName = getId();
         final List<FieldValue> values = new ArrayList<>();
 

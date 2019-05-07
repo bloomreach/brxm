@@ -84,7 +84,7 @@ public class FormattedTextFieldType extends StringFieldType {
     }
 
     @Override
-    protected List<FieldValue> readValues(final Node node) {
+    public List<FieldValue> readValues(final Node node) {
         List<FieldValue> values = super.readValues(node);
         for (final FieldValue value : values) {
             value.setValue(read(value.getValue()));

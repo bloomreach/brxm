@@ -221,7 +221,7 @@ public class ChoiceFieldTypeTest {
 
         replayAll();
 
-        try (Log4jInterceptor listener = Log4jInterceptor.onError().trap(ChoiceFieldType.class).build()) {
+        try (Log4jInterceptor listener = Log4jInterceptor.onError().trap(NodeFieldType.class).build()) {
             try {
                 choice.readFrom(choiceNode1);
             } finally {
@@ -576,7 +576,7 @@ public class ChoiceFieldTypeTest {
 
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
-        expect(context.getNode()).andReturn(root);
+        expect(context.getNode()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
@@ -596,7 +596,7 @@ public class ChoiceFieldTypeTest {
 
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
-        expect(context.getNode()).andReturn(root);
+        expect(context.getNode()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
@@ -616,7 +616,7 @@ public class ChoiceFieldTypeTest {
 
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
-        expect(context.getNode()).andReturn(root);
+        expect(context.getNode()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 0, choiceNode1, context);
@@ -636,7 +636,7 @@ public class ChoiceFieldTypeTest {
 
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
-        expect(context.getNode()).andReturn(root);
+        expect(context.getNode()).andReturn(root).anyTimes();
 
         final MockNode choiceNode1 = root.addNode("choice", "compound1");
         final FieldValue choiceValue1 = mockChoiceValue(compound1, "compound1", 1, choiceNode1, context);
@@ -656,7 +656,7 @@ public class ChoiceFieldTypeTest {
 
         final MockNode root = MockNode.root();
         final CompoundContext context = createMock(CompoundContext.class);
-        expect(context.getNode()).andReturn(root);
+        expect(context.getNode()).andReturn(root).anyTimes();
 
         final FieldValue compoundValue1 = new FieldValue("value of compound 1");
         final FieldValue choiceValue1 = new FieldValue("compound1", compoundValue1);
