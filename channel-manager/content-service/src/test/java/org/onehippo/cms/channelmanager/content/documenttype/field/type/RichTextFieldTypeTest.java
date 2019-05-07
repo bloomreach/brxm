@@ -95,7 +95,6 @@ public class RichTextFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
         expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
-        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());

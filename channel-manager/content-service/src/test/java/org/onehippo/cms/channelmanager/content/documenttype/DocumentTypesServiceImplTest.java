@@ -19,13 +19,8 @@ package org.onehippo.cms.channelmanager.content.documenttype;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.TimeZone;
 
-import javax.jcr.Session;
-
-import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +80,7 @@ public class DocumentTypesServiceImplTest {
         final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.empty());
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.empty());
 
         replayAll();
 
@@ -109,7 +104,7 @@ public class DocumentTypesServiceImplTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(context.getContentType()).andReturn(contentType);
         expect(contentType.isDocumentType()).andReturn(false);
 
@@ -137,7 +132,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
         docType.setId(id);
         expectLastCall();
@@ -181,7 +176,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.of(resourceBundle)))
                 .andReturn(Optional.of("Document Display Name"));
         docType.setId(id);
@@ -231,7 +226,7 @@ public class DocumentTypesServiceImplTest {
         fieldsInfo.setCanCreateAllRequiredFields(true);
         fieldsInfo.addUnsupportedField("Test");
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
         docType.setId(id);
@@ -274,7 +269,7 @@ public class DocumentTypesServiceImplTest {
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
 
-        expectCreateDocumentType(id, docType, userContext).andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
         docType.setId(id);
@@ -316,14 +311,11 @@ public class DocumentTypesServiceImplTest {
     public void documentTypeIsCached() throws Exception {
         final String id = "document:type";
         final UserContext userContext = new TestUserContext();
-        final Session session = userContext.getSession();
-        final Locale locale = userContext.getLocale();
-        final TimeZone timeZone = userContext.getTimeZone();
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale, timeZone).andReturn(docType);
+        expectPrivate(docTypesServiceMock, method, id, userContext).andReturn(docType);
 
         replayAll();
 
@@ -338,14 +330,11 @@ public class DocumentTypesServiceImplTest {
     public void documentTypeCacheCanBeInvalidated() throws Exception {
         final String id = "document:type";
         final UserContext userContext = new TestUserContext();
-        final Session session = userContext.getSession();
-        final Locale locale = userContext.getLocale();
-        final TimeZone timeZone = userContext.getTimeZone();
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale, timeZone).andReturn(docType).times(2);
+        expectPrivate(docTypesServiceMock, method, id, userContext).andReturn(docType).times(2);
 
         replayAll();
 
@@ -353,12 +342,5 @@ public class DocumentTypesServiceImplTest {
         docTypesServiceMock.invalidateCache();
         docTypesServiceMock.getDocumentType(id, userContext);
         verifyAll();
-    }
-
-    private static IExpectationSetters<Optional<ContentTypeContext>> expectCreateDocumentType(final String id,
-                                                                                       final DocumentType documentType,
-                                                                                       final UserContext userContext) {
-        return expect(ContentTypeContext.createForDocumentType(
-                id, userContext.getSession(), userContext.getLocale(), userContext.getTimeZone(), documentType));
     }
 }
