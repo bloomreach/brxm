@@ -106,7 +106,7 @@ public class BooleanRadioGroupFieldTypeTest {
 
     @Test
     public void writeToSingleBoolean() throws Exception {
-        final PrimitiveFieldType fieldType = new BooleanRadioGroupFieldType();
+        final PropertyFieldType fieldType = new BooleanRadioGroupFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY).build();
 
@@ -154,7 +154,7 @@ public class BooleanRadioGroupFieldTypeTest {
 
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY).build();
 
@@ -176,7 +176,7 @@ public class BooleanRadioGroupFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
 
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY)
                 .multiple(true)

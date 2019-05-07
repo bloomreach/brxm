@@ -60,7 +60,7 @@ public class BooleanFieldTypeTest {
     @Test
     public void writeToSingleBoolean() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final Boolean oldValue = Boolean.TRUE;
         final Boolean newValue = Boolean.FALSE;
 
@@ -97,7 +97,7 @@ public class BooleanFieldTypeTest {
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final Boolean oldValue = Boolean.TRUE;
         final String invalidValue = "foo";
 
@@ -112,7 +112,7 @@ public class BooleanFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.setJcrType(PropertyType.TYPENAME_BOOLEAN);

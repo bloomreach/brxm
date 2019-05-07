@@ -60,7 +60,7 @@ public class LongFieldTypeTest {
     @Test
     public void writeToSingleLong() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new LongFieldType();
+        final PropertyFieldType fieldType = new LongFieldType();
         final Long oldValue = 1L;
         final Long newValue = 16L;
 
@@ -97,7 +97,7 @@ public class LongFieldTypeTest {
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new LongFieldType();
+        final PropertyFieldType fieldType = new LongFieldType();
         final Long oldValue = 1L;
         final String invalidValue = "foo";
 
@@ -112,7 +112,7 @@ public class LongFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new LongFieldType();
+        final PropertyFieldType fieldType = new LongFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.setJcrType(PropertyType.TYPENAME_LONG);

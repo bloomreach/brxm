@@ -23,7 +23,7 @@ import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
-public abstract class AbstractDateFieldType extends PrimitiveFieldType {
+public abstract class AbstractDateFieldType extends PropertyFieldType {
 
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
 

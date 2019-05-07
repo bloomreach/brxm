@@ -80,7 +80,7 @@ public class RadioGroupFieldTypeTest {
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new RadioGroupFieldType();
+        final PropertyFieldType fieldType = new RadioGroupFieldType();
         final String oldValue = "one";
         final String newValue = "two";
 

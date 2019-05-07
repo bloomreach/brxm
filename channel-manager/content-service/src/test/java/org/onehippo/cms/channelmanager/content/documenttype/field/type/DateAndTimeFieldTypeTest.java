@@ -67,7 +67,7 @@ public class DateAndTimeFieldTypeTest {
     @Test
     public void writeToSingleDate() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
         final Calendar oldValue = Calendar.getInstance();
         final String oldValueString = ValueFactoryImpl.getInstance().createValue(oldValue).getString();
         final Calendar newValue = Calendar.getInstance();
@@ -106,28 +106,28 @@ public class DateAndTimeFieldTypeTest {
 
     @Test
     public void testGetFieldValueForNullValue() {
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue(null);
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForBlankValue() {
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue(" ");
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForUnparsableValue() {
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue("doesnotparse");
         assertThat(fieldValue.getValue(), equalTo(""));
     }
 
     @Test
     public void testGetFieldValueForParsableValue() {
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
         final FieldValue fieldValue = fieldType.getFieldValue("2015-08-24T06:53:00.000Z");
         assertThat(fieldValue.getValue(), equalTo("2015-08-24T06:53:00.000Z"));
     }
@@ -144,36 +144,12 @@ public class DateAndTimeFieldTypeTest {
         expect(node.setProperty(eq("test:id"), eq(invalidValue), eq(5))).andThrow(new ValueFormatException());
         replayAll();
 
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
+        final PropertyFieldType fieldType = new DateAndTimeFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.setJcrType(PropertyType.TYPENAME_DATE);
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
     }
-
-/*
-    @Test
-    public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DateAndTimeFieldType();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setMultiple(true);
-        fieldType.setMaxValues(2);
-
-        final Double oldValue1 = 1.0;
-        final Double oldValue2 = 2.0;
-        node.setProperty(PROPERTY, new String[] {oldValue1 + "", oldValue2 + ""}, PropertyType.DATE_AND_TIME);
-
-        final String invalidValue1 = "foo";
-        final List<FieldValue> es = Arrays.asList(valueOf(invalidValue1), valueOf(oldValue2 + ""));
-        fieldType.writeTo(node, Optional.of(es));
-
-        final Value[] values = node.getProperty(PROPERTY).getValues();
-        assertThat(values[0].getDouble(), equalTo(oldValue1));
-        assertThat(values[1].getDouble(), equalTo(oldValue2));
-    }
-*/
 
     private static List<FieldValue> listOf(final FieldValue value) {
         return Collections.singletonList(value);

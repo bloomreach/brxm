@@ -101,7 +101,7 @@ public class StaticDropdownFieldTypeTest {
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new StaticDropdownFieldType();
+        final PropertyFieldType fieldType = new StaticDropdownFieldType();
         final String oldValue = "one";
         final String newValue = "two";
 

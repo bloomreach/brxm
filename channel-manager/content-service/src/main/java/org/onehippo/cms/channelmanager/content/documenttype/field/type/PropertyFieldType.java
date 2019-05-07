@@ -43,14 +43,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Base class for all primitive field types of a {@link DocumentType} (i.e. fields that store their
- * value in a JCR property). Can be serialized into JSON to expose it through a REST API.
+ * Base class for all field types of a {@link DocumentType} that store their value in a JCR property.
+ * Can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class PrimitiveFieldType extends LeafFieldType {
+public abstract class PropertyFieldType extends LeafFieldType {
 
     @JsonIgnore
-    private static final Logger log = LoggerFactory.getLogger(PrimitiveFieldType.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertyFieldType.class);
 
     @Override
     public Optional<List<FieldValue>> readFrom(final Node node) {

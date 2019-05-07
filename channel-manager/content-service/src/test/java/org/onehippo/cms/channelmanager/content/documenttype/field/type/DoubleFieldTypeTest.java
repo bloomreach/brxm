@@ -60,7 +60,7 @@ public class DoubleFieldTypeTest {
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DoubleFieldType();
+        final PropertyFieldType fieldType = new DoubleFieldType();
         final Double oldValue = 0.8;
         final Double newValue = 14.65;
 
@@ -97,7 +97,7 @@ public class DoubleFieldTypeTest {
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DoubleFieldType();
+        final PropertyFieldType fieldType = new DoubleFieldType();
         final Double oldValue = 1.0;
         final String invalidValue = "foo";
 
@@ -112,7 +112,7 @@ public class DoubleFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new DoubleFieldType();
+        final PropertyFieldType fieldType = new DoubleFieldType();
 
         fieldType.setId(PROPERTY);
         fieldType.setJcrType(PropertyType.TYPENAME_DOUBLE);
