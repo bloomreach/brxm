@@ -17,7 +17,7 @@ export class MenuBuilderService {
   constructor(
     private navConfigService: NavigationConfigurationService,
     private menuStructureService: MenuStructureService,
-  ) {}
+  ) { }
 
   buildMenu(): Observable<MenuItem[]> {
     return this.navConfigService.navigationConfiguration$.pipe(
@@ -26,7 +26,7 @@ export class MenuBuilderService {
 
         this.applyNavigationConfiguration(menu, config);
         return this.filterOutNotConfiguredMenuItems(menu);
-      })
+      }),
     );
   }
 
@@ -37,8 +37,8 @@ export class MenuBuilderService {
         return;
       }
 
-      if (navConfigMap.has(item.id)) {
-        const config = navConfigMap.get(item.id);
+      if (navConfigMap.has(item.appId)) {
+        const config = navConfigMap.get(item.appId);
 
         // One iframe per app is created so app's url can be used as an identifier
         item.appId = config.appIframeUrl;

@@ -16,6 +16,6 @@ export class MenuItemComponent {
   config: MenuItem;
 
   get isContainer(): boolean {
-    return this.config && !(this.config as MenuItemLink).id;
+    return this.config && !(this.config as MenuItemLink).appId;
   }
 }
