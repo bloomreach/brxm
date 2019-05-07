@@ -26,16 +26,16 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class OpenUiDialog extends Dialog<String> implements OpenUiPlugin {
-    final static IValueMap SMALL = new ValueMap("width=60%,height=" + DialogConstants.SMALL.getString("height")).makeImmutable();
-    final static IValueMap MEDIUM = new ValueMap("width=75%,height=" + DialogConstants.MEDIUM.getString("height")).makeImmutable();
-    final static IValueMap LARGE = new ValueMap("width=90%,height=" + DialogConstants.LARGE.getString("height")).makeImmutable();
+
+    private static final IValueMap SMALL = new ValueMap("width=60%,height=60%").makeImmutable();
+    private static final IValueMap MEDIUM = new ValueMap("width=75%,height=75%").makeImmutable();
+    private static final IValueMap LARGE = new ValueMap("width=90%,height=90%").makeImmutable();
 
     private final CloseDialogBehavior closeDialogBehavior;
     private final Map<String, String> parameters;
