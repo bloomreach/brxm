@@ -29,11 +29,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CompoundFieldType extends AbstractFieldType implements NodeFieldType {
-    private static final Logger log = LoggerFactory.getLogger(CompoundFieldType.class);
 
     private final List<FieldType> fields = new ArrayList<>();
 
