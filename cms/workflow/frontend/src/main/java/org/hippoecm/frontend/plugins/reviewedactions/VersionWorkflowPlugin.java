@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,8 +64,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
     public VersionWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final String restoreToBranchId = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchId());
-        final String restoreToBranchName = getBranchInfo(context, branchIdModel -> branchIdModel.getBranchName());
+        final String restoreToBranchId = getBranchInfo(context, BranchIdModel::getBranchId);
+        final String restoreToBranchName = getBranchInfo(context, BranchIdModel::getBranchName);
 
         final String revisionBranchName = getRevisionBranchName();
 
@@ -186,7 +186,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = getModel();
-                return new HistoryDialog(wdm, getEditorManager());
+                return new HistoryDialog(wdm, getEditorManager(), getBranchIdModel(context).getBranchId());
             }
 
             @Override
@@ -196,6 +196,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
     }
+
 
     private String getRevisionBranchName() {
         try {
@@ -208,17 +209,17 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
 
     private String getBranchInfo(final IPluginContext context, final Function<BranchIdModel, String> function) {
+        final BranchIdModel branchIdModel = getBranchIdModel(context);
+        return function.apply(branchIdModel);
+    }
 
+    private BranchIdModel getBranchIdModel(final IPluginContext context)  {
+        final DocumentWorkflow documentWorkflow = getDocumentWorkflow();
         try {
-            final DocumentWorkflow documentWorkflow = getDocumentWorkflow();
-            final BranchIdModel branchIdModel = new BranchIdModel(context, documentWorkflow.getNode().getIdentifier());
-            if (branchIdModel == null) {
-                throw new IllegalStateException("Expected a branchIdModel");
-            }
-            return function.apply(branchIdModel);
+            final String identifier = documentWorkflow.getNode().getIdentifier();
+            return new BranchIdModel(context, identifier);
         } catch (RepositoryException e) {
-            log.error("Could not get branch id or name", e);
-            throw new RuntimeException("Repository Exception happened", e);
+            throw new IllegalStateException(e.getMessage());
         }
     }
 

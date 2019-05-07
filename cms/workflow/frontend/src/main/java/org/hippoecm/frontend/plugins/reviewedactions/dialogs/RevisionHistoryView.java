@@ -33,6 +33,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -103,12 +104,18 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
             }
         };
 
-        final ListDataTable<Revision> dataTable = new ListDataTable<>("datatable", getTableDefinition(), provider, new TableSelectionListener<Revision>() {
+        final ListDataTable<Revision> dataTable = new ListDataTable<Revision>("datatable", getTableDefinition(), provider
+                , (TableSelectionListener<Revision>) this::onSelect, true, this){
             @Override
-            public void selectionChanged(IModel<Revision> model) {
-                onSelect(model);
+            protected Item newRowItem(final String id, final int index, final IModel model) {
+                Revision revision = (Revision) model.getObject();
+                final Item item = super.newRowItem(id, index, model);
+                if (!revision.isEnabled()){
+                    item.add(CssClass.append("disabled"));
+                }
+                return item;
             }
-        }, true, this);
+        };
         add(dataTable);
 
         add(CssClass.append(new LoadableDetachableModel<String>() {
@@ -208,7 +215,7 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         return getColumn("history-name", "name", revision -> {
                     final Node versionHistoryNode = revision.getVersionModel().getNode();
                     try {
-                        if (versionHistoryNode != null && versionHistoryNode instanceof Version) {
+                        if (versionHistoryNode instanceof Version) {
                             final Node frozenNode = ((Version) versionHistoryNode).getFrozenNode();
                             if (frozenNode != null && frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_NAME)) {
                                 return frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_NAME).getString();

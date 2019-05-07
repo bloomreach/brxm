@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,31 +40,36 @@ public class HistoryDialog extends Dialog<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
-    public HistoryDialog(WorkflowDescriptorModel model, final IEditorManager editorMgr) {
+    public HistoryDialog(WorkflowDescriptorModel model, final IEditorManager editorMgr, final String branchId) {
         super(model);
 
         setOkVisible(false);
         setCancelLabel(Model.of(getString("close")));
 
-        RevisionHistory history = new RevisionHistory(model);
+        RevisionHistory history = new RevisionHistory(model, branchId);
         add(new RevisionHistoryView("links", history) {
+
+
             @Override
             public void onSelect(IModel model) {
                 Revision revision = (Revision) model.getObject();
-                IModel<Node> docModel = revision.getDocument();
-                IEditor editor = editorMgr.getEditor(docModel);
-                if (editor == null) {
-                    try {
-                        editorMgr.openPreview(docModel);
-                    } catch (ServiceException ex) {
-                        log.error("Could not open editor for " + docModel, ex);
-                        error("Could not open editor");
-                        return;  // don't close dialog
+                if (revision.isEnabled()){
+                    IModel<Node> docModel = revision.getDocument();
+                    IEditor editor = editorMgr.getEditor(docModel);
+                    if (editor == null) {
+                        try {
+                            editorMgr.openPreview(docModel);
+                        } catch (ServiceException ex) {
+                            log.error("Could not open editor for " + docModel, ex);
+                            error("Could not open editor");
+                            return;  // don't close dialog
+                        }
+                    } else {
+                        editor.focus();
                     }
-                } else {
-                    editor.focus();
+                    closeDialog();
                 }
-                closeDialog();
+
             }
         });
 
