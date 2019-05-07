@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,11 +42,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
-import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
@@ -55,7 +55,9 @@ import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
+
 import org.onehippo.cms7.event.HippoEventConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,7 +189,6 @@ public class SetMembershipsPanel extends Panel {
             setModel(new PropertyModel<>(user, "localMembershipsAsListOfGroups"));
             setReuseItems(false);
             setOutputMarkupId(true);
-            DomainDataProvider.setDirty();
         }
 
         @Override
