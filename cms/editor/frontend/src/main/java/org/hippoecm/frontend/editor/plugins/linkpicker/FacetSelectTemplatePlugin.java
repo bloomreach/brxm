@@ -48,6 +48,10 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated This plugin is not used anymore and will be removed in a future release.
+ */
+@Deprecated
 public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
