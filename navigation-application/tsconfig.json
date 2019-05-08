@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@bloomreach/navapp-communication": [
+        "dist/navapp-communication"
+      ],
+      "@bloomreach/navapp-communication/*": [
+        "dist/navapp-communication/*"
+      ]
+    }
   }
 }

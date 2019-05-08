@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "beforeStart": "ng lint navapp-communication && ng test navapp-communication --watch=false --browsers ChromeHeadless",
+    "beforeStage": "ng build navapp-communication"
+  },
+  "git": {
+    "requireCleanWorkingDir": true,
+    "commitMessage": "TRIVIAL Publish navapp-communication ${version}",
+    "tag": false
+  },
+  "npm": {
+    "publishPath": "../../dist/navapp-communication/"
+  }
+}
