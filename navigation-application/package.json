@@ -6,6 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
+    "test:single-run": "npm run test -- --watch=false --browsers ChromeHeadless",
     "lint": "ng lint && npm run lint:styles",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "e2e": "ng e2e"
