@@ -436,8 +436,12 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String getDigest(final String hcmSiteName) {
+    public String getDigest(String hcmSiteName) {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
+        if (hcmSiteName == null) {
+            hcmSiteName = CORE_NAME;
+        }
+
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
             if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getSiteName())) {
