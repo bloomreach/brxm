@@ -28,7 +28,7 @@ public interface NavigationItemService {
      *
      * @param userSession  jcr session of the logged in user
      * @param appIframeUrl the url of the iframe that the navigation items must belong to.
-     * @return
+     * @return list of navigation items
      */
     List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl);
 }
