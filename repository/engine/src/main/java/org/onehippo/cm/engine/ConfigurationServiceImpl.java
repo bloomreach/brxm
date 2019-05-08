@@ -442,21 +442,20 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                             success = applyContent(bootstrapModel);
                         }
                         if (success) {
-                            // reload the baseline after storing, so we have a JCR-backed view of our modules
-                            // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
-                            log.debug("reloading stored baseline during init for sites: {}", knownHcmSites);
-                            baselineModel = loadBaselineModel(knownHcmSites);
-
                             // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
                             if (startAutoExportService) {
+                                // reload the baseline after storing, so we have a JCR-backed view of our modules
+                                log.debug("reloading stored baseline during init with sites: {}", knownHcmSites);
+                                baselineModel = loadBaselineModel(knownHcmSites);
+
                                 this.baselineModel = baselineModel;
                             }
 
-                            // use the baseline version of modules, since we want to close ZipFileSystems backing the
-                            // bootstrap module loaded from jars
-                            // also, we prefer using source modules over baseline modules
-                            log.debug("swap jar modules with baseline modules in runtime model");
-                            runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
+                            // Unfortunately, using the JCR-backed baseline model leaves us vulnerable to problems
+                            // if another cluster node stores a new baseline while we're holding onto this one.
+                            // We need to keep the jar-backed model, despite the memory cost.
+
+                            runtimeConfigurationModel = bootstrapModel;
                         }
 
                         log.info("ConfigurationService: start repository services");
@@ -486,14 +485,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         }
                     }
                 } finally {
-                    if (bootstrapModel != null) {
-                        try {
-                            // we need to close the bootstrap model because it's backed by ZipFileSystem(s)
-                            bootstrapModel.close();
-                        } catch (Exception e) {
-                            log.error("Error closing bootstrap configuration", e);
-                        }
-                    }
                 }
             }
         } finally {
@@ -620,6 +611,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 runtimeConfigurationModel.close();
             } catch (Exception e) {
                 log.error("Error closing runtime configuration", e);
+            }
+        }
+        if (baselineModel != null) {
+            try {
+                // Ensure baselineModel resources are cleaned up (if any)
+                baselineModel.close();
+            } catch (Exception e) {
+                log.error("Error closing baseline configuration", e);
             }
         }
         runtimeConfigurationModel = null;
@@ -1135,6 +1134,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         return;
                     }
                     final SiteRecord record = new SiteRecord(hcmSiteName, hstRoot, servletContext);
+
+                    // If no model is set yet, we are still processing the core in init(), so we should let the sites
+                    // get processed along with the core and not process them separately.
                     if (runtimeConfigurationModel != null) {
                         // already initialized: apply hcm site
                         applySiteConfig(record);
