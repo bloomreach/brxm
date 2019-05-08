@@ -23,3 +23,11 @@ definitions:
           /references:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.NodeReferenceValidator
+          /required:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredValidator
+        /requiredValidators:
+          jcr:primaryType: hipposys:moduleconfig
+          /String:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredStringValidator

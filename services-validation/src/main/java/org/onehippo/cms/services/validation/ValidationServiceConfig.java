@@ -24,6 +24,9 @@ import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,26 +35,37 @@ class ValidationServiceConfig {
     private static final Logger log = LoggerFactory.getLogger(ValidationServiceConfig.class);
 
     private final Map<String, ValidatorInstance> validatorInstances = new ConcurrentHashMap<>();
+    private final Map<String, ValidatorInstance> requiredValidatorInstances = new ConcurrentHashMap<>();
+    private final ContentTypeService contentTypeService;
 
     ValidationServiceConfig(final Node configNode) {
         reconfigure(configNode);
+
+        contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
     }
 
     void reconfigure(final Node config) {
-        validatorInstances.clear();
-
         try {
-            final Node validators = config.getNode("validators");
-            final NodeIterator iterator = validators.getNodes();
-            while (iterator.hasNext()) {
-                final Node configNode = iterator.nextNode();
-                final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-                final String validatorName = validatorConfig.getName();
-                validatorInstances.computeIfAbsent(validatorName,
-                        name -> ValidatorInstanceFactory.createValidatorInstance(validatorConfig));
-            }
+            createValidators(config, "validators", validatorInstances);
+            createValidators(config, "requiredValidators", requiredValidatorInstances);
         } catch (final RepositoryException e) {
             log.error("Failed to reconfigure validator service", e);
+        }
+    }
+
+    private static void createValidators(final Node config,
+                                         final String validatorsName,
+                                         final Map<String, ValidatorInstance> instances) throws RepositoryException {
+        instances.clear();
+
+        final Node validators = config.getNode(validatorsName);
+        final NodeIterator iterator = validators.getNodes();
+        while (iterator.hasNext()) {
+            final Node validatorConfigNode = iterator.nextNode();
+            final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(validatorConfigNode);
+            final String validatorName = validatorConfig.getName();
+            instances.computeIfAbsent(validatorName,
+                    name -> ValidatorInstanceFactory.createValidatorInstance(validatorConfig));
         }
     }
 
@@ -62,5 +76,38 @@ class ValidationServiceConfig {
      */
     ValidatorInstance getValidatorInstance(final String name) {
         return validatorInstances.get(name);
+    }
+
+    /**
+     * Returns an instance of a required {@link Validator}, or null if the configuration cannot be found.
+     * @param type The type of the field
+     * @return Instance of a {@link Validator}
+     */
+    ValidatorInstance getRequiredValidatorInstance(final String type) {
+        final ValidatorInstance requiredValidator = requiredValidatorInstances.get(type);
+
+        if (requiredValidator != null) {
+            return requiredValidator;
+        }
+
+        try {
+            return getRequiredValidatorForSuperType(type);
+        } catch (RepositoryException e) {
+            log.warn("Could not find required validator for type '{}'", type, e);
+            return null;
+        }
+    }
+
+    private ValidatorInstance getRequiredValidatorForSuperType(final String type) throws RepositoryException {
+        final EffectiveNodeType effectiveNodeType = contentTypeService.getEffectiveNodeTypes().getType(type);
+
+        for (String superType : effectiveNodeType.getSuperTypes()) {
+            final ValidatorInstance requiredValidator = getValidatorInstance(superType);
+            if (requiredValidator != null) {
+                return requiredValidator;
+            }
+        }
+
+        return null;
     }
 }
