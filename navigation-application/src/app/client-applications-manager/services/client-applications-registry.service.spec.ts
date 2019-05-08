@@ -2,8 +2,9 @@
  * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
  */
 
-import { ClientApplicationsRegistryService } from './client-applications-registry.service';
 import { ClientApplicationHandler } from '../models';
+
+import { ClientApplicationsRegistryService } from './client-applications-registry.service';
 
 describe('ClientApplicationsRegistryService', () => {
   let service: ClientApplicationsRegistryService;

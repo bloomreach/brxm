@@ -6,11 +6,11 @@ import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { NavItem } from '../../models';
 import { NavigationConfigurationService } from '../../services';
 import { ClientApplicationConfiguration, ClientApplicationHandler } from '../models';
 
 import { ClientApplicationsRegistryService } from './client-applications-registry.service';
-import { NavItem } from '../../models';
 
 @Injectable()
 export class ClientApplicationsManagerService {

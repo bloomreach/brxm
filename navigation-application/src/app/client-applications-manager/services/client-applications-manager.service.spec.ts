@@ -2,13 +2,15 @@
  * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
  */
 
-import { ClientApplicationsRegistryService } from './client-applications-registry.service';
-import { ClientApplicationsManagerService } from './client-applications-manager.service';
-import { NavigationConfigurationService } from '../../services';
-import { of } from 'rxjs';
-import { navigationConfigurationMapMock } from '../../test-mocks';
 import { Renderer2, RendererFactory2 } from '@angular/core';
+import { of } from 'rxjs';
+
+import { NavigationConfigurationService } from '../../services';
+import { navigationConfigurationMapMock } from '../../test-mocks';
 import { ClientApplicationHandler } from '../models';
+
+import { ClientApplicationsManagerService } from './client-applications-manager.service';
+import { ClientApplicationsRegistryService } from './client-applications-registry.service';
 
 describe('ClientApplicationsRegistryService', () => {
   const registryServiceMock: ClientApplicationsRegistryService = {

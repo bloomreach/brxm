@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
+
+import { ClientApplicationHandler } from '../../models';
+import { ClientApplicationsManagerService } from '../../services';
 
 import { IframesContainerComponent } from './iframes-container.component';
-import { Subject } from 'rxjs';
-import { ClientApplicationsManagerService } from '../../services';
-import { ClientApplicationHandler } from '../../models';
 
 describe('IframesContainerComponent', () => {
   let component: IframesContainerComponent;
