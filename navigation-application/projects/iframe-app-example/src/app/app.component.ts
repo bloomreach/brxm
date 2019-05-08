@@ -1,30 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { connectToParent } from '@bloomreach/navapp-communication';
 
 @Component({
   selector: 'app-root',
   template: `
-    <!--The content below is only a placeholder and can be replaced.-->
-    <div style="text-align:center">
-      <h1>
-        Welcome to {{ title }}!
-      </h1>
-    </div>
-    <h2>Here are some links to help you start: </h2>
-    <ul>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-      </li>
-      <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-      </li>
-    </ul>
-
+    <h1>Number of times navigated {{ navigateCount }}</h1>
   `,
-  styles: [],
 })
-export class AppComponent {
-  title = 'iframe-app-example';
+export class AppComponent implements OnInit {
+  navigateCount = 0;
+
+  ngOnInit(): void {
+    connectToParent({
+      parentOrigin: 'http://localhost:4200',
+      methods: {
+        navigate: () => {
+          this.navigateCount += 1;
+        },
+      },
+    }).then(() => {
+      console.log('connected to parent');
+    });
+  }
 }
