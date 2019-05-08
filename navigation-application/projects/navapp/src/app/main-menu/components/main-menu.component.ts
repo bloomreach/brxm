@@ -9,10 +9,10 @@ import { MenuItem } from '../models';
 import { MenuBuilderService } from '../services';
 
 @Component({
-  selector: 'brna-left-menu',
-  templateUrl: 'left-menu.component.html',
+  selector: 'brna-main-menu',
+  templateUrl: 'main-menu.component.html',
 })
-export class LeftMenuComponent {
+export class MainMenuComponent {
   constructor(private menuBuilderService: MenuBuilderService) {}
 
   get menu(): Observable<MenuItem[]> {

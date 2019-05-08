@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { CommunicationModule } from './communication';
-import { LeftMenuModule } from './left-menu';
+import { MainMenuModule } from './main-menu';
 import { NavigationConfigurationService } from './services';
 
 describe('AppComponent', () => {
@@ -17,7 +17,7 @@ describe('AppComponent', () => {
       imports: [
         RouterTestingModule,
         AppRoutingModule,
-        LeftMenuModule,
+        MainMenuModule,
         ClientApplicationsManagerModule,
         CommunicationModule,
       ],
