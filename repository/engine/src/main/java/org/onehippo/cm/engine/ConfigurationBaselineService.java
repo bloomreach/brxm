@@ -237,7 +237,11 @@ public class ConfigurationBaselineService {
         try {
 
             session.refresh(true);
-            final Node hcmSitesCatalogNode = session.getNode(HCM_BASELINE_PATH).getNode(HCM_SITES);
+            final Node baselineNode = session.getNode(HCM_BASELINE_PATH);
+            final Node hcmSitesCatalogNode = baselineNode.getNode(HCM_SITES);
+
+            // set lastupdated date to now
+            baselineNode.setProperty(HCM_LAST_UPDATED, Calendar.getInstance());
 
             if (hcmSitesCatalogNode.hasNode(hcmSiteName)) {
                 hcmSitesCatalogNode.getNode(hcmSiteName).remove();
