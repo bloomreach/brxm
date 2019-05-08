@@ -142,6 +142,7 @@ public class DateAndTimeFieldTypeTest {
         expect(node.getProperty(eq("test:id"))).andReturn(oldProperty);
         expect(oldProperty.isMultiple()).andReturn(false);
         expect(node.setProperty(eq("test:id"), eq(invalidValue), eq(5))).andThrow(new ValueFormatException());
+        expect(JcrUtils.getNodePathQuietly(node)).andReturn("/");
         replayAll();
 
         final PropertyFieldType fieldType = new DateAndTimeFieldType();

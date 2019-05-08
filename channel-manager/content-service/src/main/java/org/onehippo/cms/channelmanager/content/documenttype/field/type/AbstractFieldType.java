@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -220,16 +219,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
     @Override
     public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) {
         writeValues(node, optionalValues, true);
-    }
-
-    /**
-     * Hook for sub-classes to process values before writing them. The default implementation does nothing.
-     *
-     * @param optionalValues the values to process
-     * @return the processed values
-     */
-    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
-        return optionalValues.orElse(Collections.emptyList());
     }
 
     protected static boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {

@@ -29,7 +29,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
 public abstract class LeafFieldType extends AbstractFieldType {
 
     @Override
-    public boolean writeField(final FieldPath fieldPath, final List<FieldValue> values, final CompoundContext context) {
+    public final boolean writeField(final FieldPath fieldPath, final List<FieldValue> values, final CompoundContext context) {
         if (!fieldPath.is(getId())) {
             return false;
         }

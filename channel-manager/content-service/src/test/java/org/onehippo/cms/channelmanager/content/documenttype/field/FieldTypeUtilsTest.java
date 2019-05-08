@@ -78,7 +78,8 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({AbstractFieldType.class, NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class, ContentTypeContext.class, HippoServiceRegistry.class})
+@PrepareForTest({AbstractFieldType.class, NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class,
+        ContentTypeContext.class, HippoServiceRegistry.class, StringFieldType.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
@@ -754,7 +755,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void checkCardinalityMoreThanAllowed() throws Exception {
+    public void checkCardinalityMoreThanAllowed() {
         final List<FieldValue> list = new ArrayList<>();
         list.add(new FieldValue("one"));
         list.add(new FieldValue("two"));
@@ -766,7 +767,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void checkCardinalityLessThanRequired() throws Exception {
+    public void checkCardinalityLessThanRequired() {
         final List<FieldValue> list = new ArrayList<>();
         list.add(new FieldValue("one"));
         list.add(new FieldValue("two"));
@@ -779,7 +780,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void checkCardinalityNoneButRequired() throws Exception {
+    public void checkCardinalityNoneButRequired() {
         FieldType fieldType = new TestFieldType();
         fieldType.setMinValues(0);
         fieldType.setRequired(true);
