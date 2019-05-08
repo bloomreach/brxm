@@ -22,7 +22,7 @@
                   ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id] track by $index"
                   name="::$ctrl.getFieldName(fieldType, $index)"
                   field-type="::fieldType"
-                  field-values="fieldValue.fields"
+                  field-value="fieldValue"
                   ng-focus="$ctrl.onFieldFocus()"
                   ng-blur="$ctrl.onFieldBlur()">
   </compound-field>

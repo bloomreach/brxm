@@ -17,6 +17,42 @@
 export default class CompoundFieldCtrl {
   constructor($element, $scope) {
     'ngInject';
+
+    this.children = new Set();
+    this.$element = $element;
+    this.$scope = $scope;
+  }
+
+  $onInit() {
+    if (this.parent) {
+      this.parent.children.add(this);
+    }
+  }
+
+  $onDestroy() {
+    if (this.parent) {
+      this.parent.children.delete(this);
+    }
+  }
+
+  $onChanges(changes) {
+    if (changes.fieldValue) {
+      this.setError(!!changes.fieldValue.currentValue.errorInfo);
+    }
+  }
+
+  setError(value) {
+    this.hasError = value;
+
+    if (this.hasError) {
+      this.$scope.collapse.open();
+      this.$element.triggerHandler('focus');
+    }
+
+    if (this.parent) {
+      this.parent.setError([...this.parent.children]
+        .reduce((result, child) => result || child.hasError, false));
+    }
   }
 
   onFocus() {

@@ -21,12 +21,13 @@ const compoundFieldComponent = {
   bindings: {
     name: '<',
     fieldType: '<',
-    fieldValues: '<',
+    fieldValue: '<',
   },
   controller: CompoundFieldCtrl,
   template,
   require: {
     form: '^^form',
+    parent: '?^^compoundField',
   },
 };
 
