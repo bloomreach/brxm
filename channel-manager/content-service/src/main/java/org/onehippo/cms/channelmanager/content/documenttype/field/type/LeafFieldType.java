@@ -26,10 +26,10 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
 /**
  * A field that does not contain any nested fields.
  */
-public abstract class LeafFieldType extends AbstractFieldType {
+public interface LeafFieldType extends BaseFieldType {
 
     @Override
-    public final boolean writeField(final FieldPath fieldPath, final List<FieldValue> values, final CompoundContext context) {
+    default boolean writeField(final FieldPath fieldPath, final List<FieldValue> values, final CompoundContext context) {
         if (!fieldPath.is(getId())) {
             return false;
         }

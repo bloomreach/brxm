@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -36,7 +35,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * The ChoiceFieldType represents the Content Blocks functionality, which allows users to choose from a list of
  * compound types to create instances in a document.
  */
-public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType {
+public class ChoiceFieldType extends NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
     static final FieldValue UNSUPPORTED_FIELD_VALUE = new FieldValue();
@@ -108,12 +106,12 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     @Override
     public void writeValues(final Node node,
                                final Optional<List<FieldValue>> optionalValues,
-                               final boolean checkCardinality) throws ErrorWithPayloadException {
+                               final boolean checkCardinality) {
         final List<FieldValue> values = mergeUnsupportedValues(node, optionalValues.orElse(Collections.emptyList()));
-        NodeFieldType.super.writeValues(node, Optional.of(values), checkCardinality);
+        super.writeValues(node, Optional.of(values), checkCardinality);
     }
 
-    private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) throws ErrorWithPayloadException {
+    private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) {
         final List<FieldValue> values = new LinkedList<>();
 
         try {
@@ -140,21 +138,21 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     @Override
     public boolean writeField(final FieldPath fieldPath,
                               final List<FieldValue> values,
-                              final CompoundContext context) throws ErrorWithPayloadException {
+                              final CompoundContext context) {
         return FieldTypeUtils.writeFieldNodeValue(fieldPath, values, this, context);
     }
 
     @Override
     public boolean writeFieldValue(final FieldPath fieldPath,
                                    final List<FieldValue> values,
-                                   final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
+                                   final CompoundContext context) throws RepositoryException {
         final String chosenId = context.getNode().getPrimaryNodeType().getName();
         final NodeFieldType choice = findChoice(chosenId).orElseThrow(FieldTypeUtils.INVALID_DATA);
         return choice.writeFieldValue(fieldPath, values, context);
     }
 
     @Override
-    public void writeValue(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+    public void writeValue(final Node node, final FieldValue value) throws RepositoryException {
         if (value == UNSUPPORTED_FIELD_VALUE) {
             return;
         }
@@ -178,10 +176,10 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+    public int validate(final List<FieldValue> valueList, final CompoundContext context) {
         final Node node = context.getNode();
         final List<FieldValue> values = mergeUnsupportedValues(node, valueList);
-        return NodeFieldType.super.validate(values, context);
+        return super.validate(values, context);
     }
 
     @Override

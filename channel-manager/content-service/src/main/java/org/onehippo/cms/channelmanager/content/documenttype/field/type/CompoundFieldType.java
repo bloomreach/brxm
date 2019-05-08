@@ -30,7 +30,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
-public class CompoundFieldType extends AbstractFieldType implements NodeFieldType {
+public class CompoundFieldType extends NodeFieldType {
 
     private final List<FieldType> fields = new ArrayList<>();
 

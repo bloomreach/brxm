@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * A document field of type hippostd:html.
  */
-public class RichTextFieldType extends LeafFieldType implements NodeFieldType, HtmlField {
+public class RichTextFieldType extends NodeFieldType implements LeafFieldType, HtmlField {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 

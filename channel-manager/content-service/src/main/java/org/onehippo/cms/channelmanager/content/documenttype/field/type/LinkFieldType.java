@@ -28,7 +28,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class LinkFieldType extends LeafFieldType implements NodeFieldType {
+public abstract class LinkFieldType extends NodeFieldType implements LeafFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
 

@@ -41,12 +41,12 @@ import org.slf4j.LoggerFactory;
 /**
  * A field that stores its value(s) in a node.
  */
-public interface NodeFieldType extends BaseFieldType {
+public abstract class NodeFieldType extends AbstractFieldType implements BaseFieldType {
 
-    Logger log = LoggerFactory.getLogger(NodeFieldType.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeFieldType.class);
 
     @Override
-    default Optional<List<FieldValue>> readFrom(Node node) {
+    public final Optional<List<FieldValue>> readFrom(Node node) {
         List<FieldValue> values = readValues(node);
 
         FieldTypeUtils.trimToMaxValues(values, getMaxValues());
@@ -59,7 +59,8 @@ public interface NodeFieldType extends BaseFieldType {
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    default List<FieldValue> readValues(final Node node) {
+    @Override
+    public List<FieldValue> readValues(final Node node) {
         final String nodeName = getId();
 
         try {
@@ -83,9 +84,10 @@ public interface NodeFieldType extends BaseFieldType {
      * @param node the node to read from
      * @return the value read
      */
-    FieldValue readValue(final Node node);
+    protected abstract FieldValue readValue(final Node node);
 
-    default void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
+    @Override
+    public void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean checkCardinality) {
         final String valueName = getId();
         final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
 
@@ -125,11 +127,13 @@ public interface NodeFieldType extends BaseFieldType {
      * @throws ErrorWithPayloadException when the field value is wrong
      * @throws RepositoryException when the write failed
      */
-    void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException;
+    public abstract void writeValue(final Node node, final FieldValue fieldValue) throws RepositoryException;
 
     /**
      * Writes a field value to the field specified by the field path. Can be this field or a child field in case of
      * compound or compound-like fields.
+     *
+     * The default implementation writes this field as a choice field.
      *
      * @param fieldPath the path to the field
      * @param values the values to write
@@ -138,13 +142,14 @@ public interface NodeFieldType extends BaseFieldType {
      * @throws ErrorWithPayloadException when the field path or field value is wrong
      * @throws RepositoryException when the write failed
      */
-    default boolean writeFieldValue(final FieldPath fieldPath,
+    public boolean writeFieldValue(final FieldPath fieldPath,
                                     final List<FieldValue> values,
-                                    final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
+                                    final CompoundContext context) throws RepositoryException {
         return FieldTypeUtils.writeChoiceFieldValue(fieldPath, values, this, context);
     }
 
-    default int validate(final List<FieldValue> values, final CompoundContext context) {
+    @Override
+    public int validate(final List<FieldValue> values, final CompoundContext context) {
         final String valueName = getId();
 
         try {
@@ -173,7 +178,8 @@ public interface NodeFieldType extends BaseFieldType {
     /**
      * Validators for node fields always get the node as the value to validate.
      */
-    default Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+    @Override
+    public final Object getValidatedValue(final FieldValue value, final CompoundContext context) {
         return context.getNode();
     }
 }

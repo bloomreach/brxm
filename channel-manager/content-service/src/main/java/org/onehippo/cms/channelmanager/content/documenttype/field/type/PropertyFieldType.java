@@ -48,7 +48,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * Can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class PropertyFieldType extends LeafFieldType {
+public abstract class PropertyFieldType extends AbstractFieldType implements LeafFieldType {
 
     @JsonIgnore
     private static final Logger log = LoggerFactory.getLogger(PropertyFieldType.class);
