@@ -1,5 +1,5 @@
 {
-  "name": "navigation-application",
+  "name": "@bloomreach/navigation-application",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -10,7 +10,6 @@
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "e2e": "ng e2e"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "~7.2.0",
     "@angular/common": "~7.2.0",
