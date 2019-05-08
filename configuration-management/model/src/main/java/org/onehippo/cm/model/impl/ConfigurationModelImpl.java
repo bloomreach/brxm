@@ -310,10 +310,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // TODO: fix groupSorter to do this properly with lexical sort by HCM Site name, so getModulesStream() does this consistently
         // TODO: disallow dependencies that force an ordering that violates HCM Site isolation
         getModulesStream()
-                .filter(m -> Objects.isNull(m.getSiteName()))
+                .filter(m -> !m.isNotCore())
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
         getModulesStream()
-                .filter(m -> Objects.nonNull(m.getSiteName()))
+                .filter(ModuleImpl::isNotCore)
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
