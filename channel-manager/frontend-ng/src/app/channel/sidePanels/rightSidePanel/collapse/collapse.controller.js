@@ -31,8 +31,6 @@ class CollapseCtrl {
     } else {
       this.collapse();
     }
-
-    this.isCollapsed = !this.isCollapsed;
   }
 
   collapse() {
@@ -45,6 +43,8 @@ class CollapseCtrl {
     }).then(() => {
       this.toggleTrigger.addClass('closed');
     });
+
+    this.isCollapsed = true;
   }
 
   open() {
@@ -55,6 +55,8 @@ class CollapseCtrl {
     }).then(() => {
       this.toggledElement.height('');
     });
+
+    this.isCollapsed = false;
   }
 }
 
