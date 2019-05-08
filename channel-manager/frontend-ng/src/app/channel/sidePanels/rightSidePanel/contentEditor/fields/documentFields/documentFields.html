@@ -23,8 +23,8 @@
                   name="::$ctrl.getFieldName(fieldType, $index)"
                   field-type="::fieldType"
                   field-values="fieldValue.fields"
-                  on-field-focus="$ctrl.onFieldFocus()"
-                  on-field-blur="$ctrl.onFieldBlur()">
+                  ng-focus="$ctrl.onFieldFocus()"
+                  ng-blur="$ctrl.onFieldBlur()">
   </compound-field>
 
   <choice-field ng-switch-when="CHOICE"

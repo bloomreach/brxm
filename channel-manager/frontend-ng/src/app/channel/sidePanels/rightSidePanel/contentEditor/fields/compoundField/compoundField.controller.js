@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-class CompoundFieldCtrl {
-  constructor() {
+export default class CompoundFieldCtrl {
+  constructor($element, $scope) {
     'ngInject';
   }
 
-  focusCompound() {
+  onFocus() {
     this.hasFocus = true;
-    this.onFieldFocus();
+    this.$element.triggerHandler('focus');
   }
 
-  blurCompound() {
+  onBlur() {
     delete this.hasFocus;
-    this.onFieldBlur();
+    this.$element.triggerHandler('blur');
   }
 }
-
-export default CompoundFieldCtrl;
