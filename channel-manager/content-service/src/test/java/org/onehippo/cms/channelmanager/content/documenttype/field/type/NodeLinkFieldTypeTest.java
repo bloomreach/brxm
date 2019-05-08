@@ -111,7 +111,6 @@ public class NodeLinkFieldTypeTest {
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
-        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
         replayAll();
         final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
