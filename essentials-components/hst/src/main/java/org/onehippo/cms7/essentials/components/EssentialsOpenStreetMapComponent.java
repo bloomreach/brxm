@@ -34,6 +34,8 @@ public class EssentialsOpenStreetMapComponent extends CommonComponent {
 
         final EssentialsOpenStreetMapComponentInfo paramInfo = getComponentParametersInfo(request);
         request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
+        // 'cmsrequest' attribute deprecated since 13.2, use 'hstRequest.requestContext.channelManagerPreviewRequest' in
+        // templates instead
         request.setAttribute("cmsrequest", RequestContextProvider.get().isChannelManagerPreviewRequest());
     }
 
