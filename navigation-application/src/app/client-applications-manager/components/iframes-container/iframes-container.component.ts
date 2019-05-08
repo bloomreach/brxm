@@ -29,7 +29,6 @@ export class IframesContainerComponent implements OnInit, OnDestroy {
     this.clientAppsManager.applicationCreated$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(app => {
-      console.log(app);
       this.renderer.appendChild(this.elRef.nativeElement, app.iframeEl);
     });
   }

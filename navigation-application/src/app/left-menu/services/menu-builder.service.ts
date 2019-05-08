@@ -37,8 +37,8 @@ export class MenuBuilderService {
         return;
       }
 
-      if (navConfigMap.has(item.appId)) {
-        const config = navConfigMap.get(item.appId);
+      if (navConfigMap.has(item.id)) {
+        const config = navConfigMap.get(item.id);
 
         // One iframe per app is created so app's url can be used as an identifier
         item.appId = config.appIframeUrl;

@@ -6,5 +6,8 @@ export class MenuItemLink {
   appId: string;
   appPath: string;
 
-  constructor(id: string, caption: string) {}
+  constructor(
+    public id: string,
+    public caption: string,
+  ) {}
 }
