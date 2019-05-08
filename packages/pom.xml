@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@
     <hippo.hst.version>5.6.3</hippo.hst.version>
     <hippo.services.webfiles.version>4.6.3</hippo.services.webfiles.version>
     <hippo.services.contenttype.version>4.6.3</hippo.services.contenttype.version>
-    <hippo.services.htmlprocessor.version>1.6.4-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>12.6.4-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.essentials-components.version>4.6.3</hippo.essentials-components.version>
 
   </properties>
