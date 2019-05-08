@@ -1,0 +1,7 @@
+{
+  "git": {
+    "requireCleanWorkingDir": true,
+    "commitMessage": "TRIVIAL Publish navapp ${version}",
+    "tag": false
+  }
+}
