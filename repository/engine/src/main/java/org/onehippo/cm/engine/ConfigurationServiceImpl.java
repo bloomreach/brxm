@@ -277,11 +277,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 runtimeConfigurationModel = newRuntimeConfigModel;
 
                 //store only HCM Site modules
-                final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                        .filter(m -> siteName.equals(m.getSiteName())).collect(toList());
-
-                log.debug("storing baseline for site: {}, modules: {}", siteName, modulesToSave);
-                baselineService.storeSite(siteName, modulesToSave, session);
+                baselineService.storeSite(siteName, newRuntimeConfigModel, session);
                 if (startAutoExportService) {
                     log.debug("reloading stored baseline during site init for site: {}, sites: {}", siteName, siteNames);
                     this.baselineModel = loadBaselineModel(siteNames);
@@ -322,9 +318,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         // acquire a write lock for the hcm
         lockManager.lock();
         try {
-            log.debug("known sites at init: {}", knownHcmSites);
 
             HippoWebappContextRegistry.get().addTracker(this);
+
+            log.debug("known sites at init: {}", knownHcmSites);
             // Ensure/force cluster synchronization in case another instance just initialized before, which changes
             // then may not yet have been synchronized automatically!
             session.refresh(true);
@@ -503,8 +500,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         // NOTE: This will not notice differences within content files, since these are not fully stored
         //       in the baseline. This will only notice added or removed content files, changed actions,
         //       or changed config files.
-        // TODO: do this check based on the stored JCR property, before spending time loading the baseline,
-        //       once we actually store site digests in the JCR
+        // TODO v13.3: do this check based on the stored JCR property, before spending time loading the baseline,
+        //       once we include webfile bundle digests in the main model digest
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -1146,7 +1143,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     lockManager.unlock();
                 }
             } catch (IOException|ParserException|URISyntaxException|RepositoryException e) {
-                log.error("Failed to add hcm site: "+hcmSiteName+" for context path: "+servletContext.getContextPath(), e);
+                final String message = "Failed to add hcm site: " + hcmSiteName + " for context path: " + servletContext.getContextPath();
+                log.error(message, e);
+                throw new RuntimeException(message, e);
             }
         }
     }

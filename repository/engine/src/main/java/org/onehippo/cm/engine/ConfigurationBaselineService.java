@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -226,15 +226,20 @@ public class ConfigurationBaselineService {
      * Store a baseline for a specific HCM site represented by the given modules.
      *
      * @param hcmSiteName the name of the site
-     * @param modules the modules to include in the baseline
+     * @param model ConfigurationModel containing the site
      * @param session the JCR session for processing the model
      * @throws RepositoryException
      * @throws IOException
      */
-    public void storeSite(String hcmSiteName, final Collection<ModuleImpl> modules, final Session session)
+    public void storeSite(final String hcmSiteName, final ConfigurationModelImpl model, final Session session)
             throws RepositoryException, IOException {
         configurationLockManager.lock();
         try {
+
+            final List<ModuleImpl> siteModules = model.getModulesStream()
+                    .filter(m -> hcmSiteName.equals(m.getSiteName())).collect(toList());
+            log.debug("storing baseline for site: {}, modules: {}", hcmSiteName, siteModules);
+
 
             session.refresh(true);
             final Node baselineNode = session.getNode(HCM_BASELINE_PATH);
@@ -247,7 +252,7 @@ public class ConfigurationBaselineService {
                 hcmSitesCatalogNode.getNode(hcmSiteName).remove();
             }
 
-            for (ModuleImpl module: modules) {
+            for (ModuleImpl module: siteModules) {
                 storeSiteModule(module, hcmSitesCatalogNode, session);
             }
             session.save();
@@ -261,7 +266,7 @@ public class ConfigurationBaselineService {
     //TODO SS: Add javadocs
     private void storeSiteModule(final ModuleImpl module, final Node parentNode, final Session session)
             throws RepositoryException, IOException {
-        if (StringUtils.isEmpty(module.getSiteName())) {
+        if (!module.isNotCore()) {
             throw new ConfigurationRuntimeException(String.format("Module %s does not belong to an HCM site", module));
         }
         if (module.getHstRoot() == null) {
