@@ -128,6 +128,9 @@
           <property name="templateExtensions">
             <set>
               <value type="java.lang.String">.ftl</value>
+              <value type="java.lang.String">.html</value>
+              <value type="java.lang.String">.hbs</value>
+              <value type="java.lang.String">.peb</value>
             </set>
           </property>
         </bean>
