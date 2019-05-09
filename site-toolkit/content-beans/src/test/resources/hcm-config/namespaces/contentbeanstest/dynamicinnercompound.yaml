@@ -2,7 +2,7 @@ definitions:
   config:
     /hippo:namespaces/contentbeanstest/dynamicinnercompound:
       jcr:primaryType: hipposysedit:templatetype
-      jcr:mixinTypes: ['editor:editable', 'mix:referenceable']
+      jcr:mixinTypes: ['mix:referenceable']
       jcr:uuid: ef58a97a-c1a2-438f-b32a-9d429f46aaf7
       /hipposysedit:nodetype:
         jcr:primaryType: hippo:handle
@@ -29,22 +29,3 @@ definitions:
         /hipposysedit:prototype:
           jcr:primaryType: contentbeanstest:dynamicinnercompound
           contentbeanstest:stringTypeField: ''
-      /editor:templates:
-        jcr:primaryType: editor:templateset
-        /_default_:
-          jcr:primaryType: frontend:plugincluster
-          frontend:properties: [mode]
-          frontend:references: [wicket.model, model.compareTo, engine, validator.id]
-          frontend:services: [wicket.id, validator.id]
-          type: contentbeanstest:dynamicinnercompound
-          /root:
-            jcr:primaryType: frontend:plugin
-            item: ${cluster.id}.field
-            plugin.class: org.hippoecm.frontend.service.render.ListViewPlugin
-          /stringTypeField:
-            jcr:primaryType: frontend:plugin
-            field: stringTypeField
-            plugin.class: org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin
-            wicket.id: ${cluster.id}.field
-            /cluster.options:
-              jcr:primaryType: frontend:pluginconfig

@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 import org.hippoecm.hst.content.beans.BaseDocument;
 import org.hippoecm.hst.content.beans.DynamicBeanPage;
+import org.hippoecm.hst.content.beans.DynamicCompoundBean;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -31,18 +31,44 @@ import static org.junit.Assert.assertNotNull;
  * For this, {@link DynamicBeanPage} content bean is marked with {@link org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated}.
  *
  */
-public class TestDynamicExistingBean extends TestDynamicBeanService {
+public class TestDynamicExistingBean extends AbstractDynamicBeanServiceTest {
 
+    private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
+
+    private static final String GET_COMPOUND_TYPE_METHOD_NAME = "getStandardCompoundType";
     private static final String CUSTOM_METHOD_NAME = "getDoubleTypeFieldMultipleByFive";
     private static final String INTEGER_NUMBER_TYPE_METHOD_NAME = "getLongTypeField2";
+
+    public String getDocumentPath() {
+        return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
+    }
 
     @Before
     public void setUp() throws Exception {
         annotatedClasses = new ArrayList<>();
         annotatedClasses.add(BaseDocument.class);
         annotatedClasses.add(DynamicBeanPage.class);
+        annotatedClasses.add(DynamicCompoundBean.class);
 
         super.setUp();
+    }
+
+    @Test
+    public void testDynamicCompoundBeanExtendsExistingCompoundBean() throws Exception {
+
+        Object generatedBean = objectConverter.getObject(session, TEST_DOCUMENT_TYPE_CONTENTS_PATH);
+
+        Object dynamicCompoundBean = generatedBean.getClass().getMethod(GET_COMPOUND_TYPE_METHOD_NAME).invoke(generatedBean);
+
+        assertEquals(dynamicCompoundBean.getClass().getSuperclass(), DynamicCompoundBean.class);
+    }
+
+    @Test
+    public void testDynamicDocumentBeanExtendsExistingDocumentBean() throws Exception {
+
+        Object generatedBean = objectConverter.getObject(session, TEST_DOCUMENT_TYPE_CONTENTS_PATH);
+
+        assertEquals(generatedBean.getClass().getSuperclass(), DynamicBeanPage.class);
     }
 
     @Test

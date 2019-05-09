@@ -28,6 +28,15 @@
     hippostdpubwf:lastModifiedBy: admin
     hippotranslation:id: efb230e0-e336-43ef-b7c4-8d7c217ca7b5
     hippotranslation:locale: en
+    /contentbeanstest:standardCompoundType:
+      jcr:primaryType: contentbeanstest:dynamiccompound
+      contentbeanstest:stringTypeField: alexanderkade
+      /contentbeanstest:dynamicinnercompound:
+        jcr:primaryType: contentbeanstest:dynamicinnercompound
+        contentbeanstest:stringTypeField: http://test.com
+      /contentbeanstest:richTextEditorCompoundType:
+        jcr:primaryType: hippostd:html
+        hippostd:content: contentOfHtmlFiledInCompoundTypeClass
     /contentbeanstest:richTextEditorCompoundType:
       jcr:primaryType: hippostd:html
       hippostd:content: richtexteditorcontent

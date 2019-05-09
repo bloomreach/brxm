@@ -148,6 +148,14 @@ definitions:
             hipposysedit:path: contentbeanstest:resourceCompoundType
             hipposysedit:primary: false
             hipposysedit:type: hippo:resource
+          /standardCompoundType:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:standardCompoundType
+            hipposysedit:primary: false
+            hipposysedit:type: contentbeanstest:dynamiccompound
           /longTypeField2:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
@@ -182,6 +190,12 @@ definitions:
           contentbeanstest:docbaseTypeField: ''
           contentbeanstest:dynamicdropdownTypeField: ''
           contentbeanstest:longTypeField2: 0
+          /contentbeanstest:standardCompoundType:
+            jcr:primaryType: contentbeanstest:dynamiccompound
+            contentbeanstest:stringTypeField: alexanderkade
+            /contentbeanstest:dynamicinnercompound:
+              jcr:primaryType: contentbeanstest:dynamicinnercompound
+              contentbeanstest:stringTypeField: http://test.com
           /contentbeanstest:richTextEditorCompoundType:
             jcr:primaryType: hippostd:html
             hippostd:content: ''

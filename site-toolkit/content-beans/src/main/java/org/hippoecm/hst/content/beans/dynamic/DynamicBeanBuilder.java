@@ -245,7 +245,7 @@ public class DynamicBeanBuilder {
             final String propertyName) {
         try {
             final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(superMethodName))
-                    ? (parentBean.isAssignableFrom(HippoCompound.class) ? HippoCompound.class : HippoDocument.class)
+                    ? ((parentBean.isAssignableFrom(HippoCompound.class) || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) ? HippoCompound.class : HippoDocument.class)
                     : HippoBean.class;
 
             builder = builder
