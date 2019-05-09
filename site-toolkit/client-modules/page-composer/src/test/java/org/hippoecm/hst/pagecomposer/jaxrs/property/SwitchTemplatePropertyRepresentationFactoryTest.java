@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,20 +16,26 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.property;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.junit.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 import static org.junit.Assert.assertArrayEquals;
 
 public class SwitchTemplatePropertyRepresentationFactoryTest {
+
+    private static final ImmutableSet<String> FTL = ImmutableSet.of(".ftl");
+    private static final ImmutableSet<String> MULTIPLE_EXTENSIONS = ImmutableSet.of(".ftl", ".html", ".hbs", ".peb");
 
     @Test
     public void test_asKeySortedMap() {
         final String[] unSortedKeys = new String[]{"a", "z", "1"};
         final String[] values = new String[]{"12", "y", "x"};
-        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unSortedKeys, values);
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unSortedKeys, values, Collections.emptySet());
         final String[] sortedKeys = unSortedKeys.clone();
         Arrays.sort(sortedKeys);
         assertArrayEquals(sortedKeys, sortedMap.keySet().toArray(new String[0]));
@@ -55,9 +61,20 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
     public void test_asKeySortedMap_with_ftl_extensions() {
         final String[] unsortedKeys = new String[]{"layout-variant2.ftl", "layout-variant1.ftl", "layout.ftl"};
         final String[] values = new String[]{"12", "y", "x"};
-        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values);
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values, FTL);
 
         final String[] expectedArray = new String[]{"layout.ftl", "layout-variant1.ftl","layout-variant2.ftl"};
+
+        assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
+    }
+
+    @Test
+    public void test_asKeySortedMap_with_multiple_extensions() {
+        final String[] unsortedKeys = new String[]{"layout-variant3.html", "layout-variant2.hbs", "layout-variant1.ftl", "layout.peb"};
+        final String[] values = new String[]{"12", "y", "x", "z"};
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values, MULTIPLE_EXTENSIONS);
+
+        final String[] expectedArray = new String[]{"layout.peb", "layout-variant1.ftl", "layout-variant2.hbs", "layout-variant3.html"};
 
         assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
     }
@@ -66,10 +83,19 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
     public void test_asKeySortedMap_with_same_name_before_extension() {
         final String[] unsortedKeys = new String[]{"layout.ftl", "layout", "layout.properties"};
         final String[] values = new String[]{"12", "y", "x"};
-        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values);
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values, FTL);
 
         final String[] expectedArray = new String[]{"layout", "layout.ftl", "layout.properties"};
 
+        assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
+    }
+    
+    @Test
+    public void test_asKeySortedMap_with_same_name_before_multiple_extension() {
+        final String[] unsortedKeys = new String[]{"layout.html","layout.ftl", "layout", "layout.peb", "layout.properties", "layout.hbs"};
+        final String[] values = new String[]{"12", "y", "x", "z","a","b"};
+        final Map<String, String> sortedMap = SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(unsortedKeys, values, MULTIPLE_EXTENSIONS);
+        final String[] expectedArray = new String[]{"layout", "layout.ftl", "layout.hbs", "layout.html", "layout.peb", "layout.properties"};
         assertArrayEquals(expectedArray, sortedMap.keySet().toArray(new String[0]));
     }
 
@@ -77,7 +103,7 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
     public void test_asKeySortedMap_incorrect_length() {
         final String[] keys = new String[]{"a", "z", "1"};
         final String[] values = new String[]{"12", "y"};
-        SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(keys, values);
+        SwitchTemplatePropertyRepresentationFactory.asKeySortedMap(keys, values, Collections.emptySet());
     }
 
     //FREE_MARKER_DISPLAY_NAME_COMPARATOR
@@ -89,7 +115,7 @@ public class SwitchTemplatePropertyRepresentationFactoryTest {
         prop.setDropDownListValues(new String[] {"val3", "val1", "val2"});
         prop.setDropDownListDisplayValues(new String[] {"display3", "display1", "display2"});
 
-        SwitchTemplatePropertyRepresentationFactory.sortDropDownByDisplayValue(prop);
+        SwitchTemplatePropertyRepresentationFactory.sortDropDownByDisplayValue(prop, Collections.emptySet());
 
         final String[] sortedValues = prop.getDropDownListValues();
         assertArrayEquals(sortedValues, new String[]{"val1", "val2", "val3"});
