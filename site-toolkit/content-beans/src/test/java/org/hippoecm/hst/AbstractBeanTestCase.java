@@ -44,7 +44,7 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
     }
  
     protected ObjectConverter getObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
-        return new VersionedObjectConverterProxy(annotatedClasses, new ContentTypesProvider() {
+        return new VersionedObjectConverterProxy(annotatedClasses, annotatedClasses, new ContentTypesProvider() {
             @Override
             public ContentTypes getContentTypes() {
                 try {

@@ -78,7 +78,7 @@ public class ResourceBundleFamilyFactory {
             NodeIterator nodes = query.execute().getNodes();
 
             if (nodes.getSize() == 0) {
-                log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
+                log.info("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
                         "with this id found", basename);
             } else {
                 final Node node = nodes.nextNode();
