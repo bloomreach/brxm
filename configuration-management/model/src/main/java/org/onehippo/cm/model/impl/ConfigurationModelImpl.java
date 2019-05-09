@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -41,6 +40,7 @@ import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -326,6 +326,13 @@ public class ConfigurationModelImpl implements ConfigurationModel {
 
     private void buildModule(final ConfigurationTreeBuilder configurationTreeBuilder, final ModuleImpl module) {
         log.debug("Merging module {}", module.getFullName());
+        if (!module.getNamespaceDefinitions().isEmpty() && module.isNotCore()) {
+            final ParserException parserException = new ParserException(String.format("Namespace definition can not be a part of site module: %s",
+                    module.getFullName()));
+            parserException.setSource(module.getNamespaceDefinitions().get(0).getSource().toString());
+            throw parserException;
+        }
+
         addNamespaceDefinitions(module.getNamespaceDefinitions());
         addConfigDefinitions(module.getConfigDefinitions());
         addContentDefinitions(module.getContentDefinitions());
