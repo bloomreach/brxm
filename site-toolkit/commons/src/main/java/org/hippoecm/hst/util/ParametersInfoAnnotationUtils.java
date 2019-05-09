@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -211,8 +211,7 @@ public class ParametersInfoAnnotationUtils {
     public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz, final String parametersInfoClassName) {
         if (parametersInfoClassName != null && !parametersInfoClassName.isEmpty()) {
             try {
-                Class<?> paramsInfoType = Thread.currentThread().getContextClassLoader()
-                        .loadClass(parametersInfoClassName);
+                final Class<?> paramsInfoType = componentClazz.getClassLoader().loadClass(parametersInfoClassName);
                 return createDynamicParametersInfo(paramsInfoType);
             } catch (ClassNotFoundException e) {
                 log.warn("Cannot load parametersInfo class: {}", parametersInfoClassName, e);
