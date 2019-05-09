@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.property;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -49,8 +48,8 @@ import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
-
+import static java.util.Collections.singleton;
+import static java.util.Collections.unmodifiableSet;
 import static org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAM_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils.getEditingPreviewVirtualHosts;
 
@@ -66,7 +65,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
     private static final String FTL_EXTENSION = ".ftl";
 
-    private Set<String> templateExtensions;
+    private Set<String> templateExtensions = unmodifiableSet(singleton(FTL_EXTENSION));
     private enum TemplateParamWebFile {
         NOT_CONFIGURED,
         CONFIGURED_AND_EXISTS,
@@ -75,10 +74,6 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
     public static class TemplateDisplayNameComparator implements Comparator<String> {
         private Set<String> extensions;
-
-        public TemplateDisplayNameComparator() {
-            extensions = Collections.emptySet();
-        }
 
         public TemplateDisplayNameComparator(final Set<String> extensions) {
             this.extensions = extensions;
@@ -137,6 +132,14 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
             }
             return null;
         }
+    }
+
+    public Set<String> getTemplateExtensions() {
+        return templateExtensions;
+    }
+
+    public void setTemplateExtensions(final Set<String> templateExtensions) {
+        this.templateExtensions = unmodifiableSet(templateExtensions);
     }
 
     @Override
@@ -417,16 +420,5 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         return false;
     }
 
-    public Set<String> getTemplateExtensions() {
-        if (templateExtensions == null) {
-            // add FTL as default
-            templateExtensions = ImmutableSet.of(FTL_EXTENSION);
-        }
-        return templateExtensions;
-    }
-
-    public void setTemplateExtensions(final Set<String> templateExtensions) {
-        this.templateExtensions = templateExtensions;
-    }
 
 }
