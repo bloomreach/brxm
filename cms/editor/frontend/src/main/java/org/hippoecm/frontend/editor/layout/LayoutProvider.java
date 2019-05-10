@@ -41,25 +41,22 @@ import org.xml.sax.SAXException;
 
 public class LayoutProvider implements ILayoutProvider {
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(LayoutProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(LayoutProvider.class);
 
     private static class LayoutEntry implements Serializable {
-        private static final long serialVersionUID = 1L;
 
         String plugin;
         String variant;
 
-        LayoutEntry(String plugin, String variant) {
+        LayoutEntry(final String plugin, final String variant) {
             this.plugin = plugin;
             this.variant = variant;
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (obj instanceof LayoutEntry) {
-                LayoutEntry that = (LayoutEntry) obj;
+                final LayoutEntry that = (LayoutEntry) obj;
                 return new EqualsBuilder().append(plugin, that.plugin).append(variant, that.variant).isEquals();
             }
             return false;
@@ -74,13 +71,13 @@ public class LayoutProvider implements ILayoutProvider {
     private Map<String, LayoutEntry> layouts;
     private IModel<ClassLoader> classLoaderModel;
 
-    public LayoutProvider(IModel<ClassLoader> loaderModel) {
+    public LayoutProvider(final IModel<ClassLoader> loaderModel) {
         this.classLoaderModel = loaderModel;
 
         layouts = new LinkedHashMap<>();
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        dbf.setValidating(false);
+        final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setValidating(false);
 
         final ClassLoader loader = classLoaderModel.getObject();
         if (loader == null) {
@@ -90,49 +87,50 @@ public class LayoutProvider implements ILayoutProvider {
 
         try {
             for (Enumeration<URL> iter = loader.getResources("hippoecm-layouts.xml"); iter.hasMoreElements();) {
-                URL configurationURL = iter.nextElement();
-                InputStream stream = configurationURL.openStream();
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document document = db.parse(stream);
+                final URL configurationURL = iter.nextElement();
+                final InputStream stream = configurationURL.openStream();
+                final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                final Document document = documentBuilder.parse(stream);
 
-                Element element = document.getDocumentElement();
+                final Element element = document.getDocumentElement();
                 if (!"layouts".equals(element.getNodeName())) {
                     throw new RuntimeException("unable to parse layout: no layout node found");
                 }
 
-                NodeList nodes = element.getElementsByTagName("layout");
+               final NodeList nodes = element.getElementsByTagName("layout");
                 for (int i = 0; i < nodes.getLength(); i++) {
-                    Element padElement = (Element) nodes.item(i);
+                    final Element padElement = (Element) nodes.item(i);
 
-                    NodeList plugins = padElement.getElementsByTagName("plugin");
+                    final NodeList plugins = padElement.getElementsByTagName("plugin");
                     if (plugins.getLength() != 1) {
-                        throw new RuntimeException("Invalid layout, 0 or more than 1 plugin child nodes found at " + configurationURL);
+                        throw new RuntimeException("Invalid layout, 0 or more than 1 plugin child nodes found at " + 
+                                configurationURL);
                     }
 
-                    Element pluginElement = (Element) plugins.item(0);
-                    Node childNode = pluginElement.getFirstChild();
-                    String plugin = childNode.getNodeValue();
+                    final Element pluginElement = (Element) plugins.item(0);
+                    final Node childNode = pluginElement.getFirstChild();
+                    final String plugin = childNode.getNodeValue();
                     addLayoutEntry(plugin, null);
 
-                    NodeList variants = padElement.getElementsByTagName("variant");
+                    final NodeList variants = padElement.getElementsByTagName("variant");
                     for (int j = 0; j < variants.getLength(); j++) {
-                        Element variantElement = (Element) variants.item(j);
-                        Node variantNode = variantElement.getFirstChild();
-                        String variant = variantNode.getNodeValue();
+                        final Element variantElement = (Element) variants.item(j);
+                        final Node variantNode = variantElement.getFirstChild();
+                        final String variant = variantNode.getNodeValue();
                         addLayoutEntry(plugin, variant);
                     }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException("Error while reading layouts extension", e);
-        } catch (ParserConfigurationException ex) {
-            throw new RuntimeException("Parser configuration error:", ex);
-        } catch (SAXException ex) {
-            throw new RuntimeException("SAX error:", ex);
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException("Parser configuration error:", e);
+        } catch (SAXException e) {
+            throw new RuntimeException("SAX error:", e);
         }
     }
 
-    protected void addLayoutEntry(String plugin, String variant) {
+    protected void addLayoutEntry(final String plugin, final String variant) {
         String key;
         if (variant == null) {
             key = plugin;
@@ -144,11 +142,11 @@ public class LayoutProvider implements ILayoutProvider {
     }
     
     public List<String> getLayouts() {
-        return new ArrayList<String>(layouts.keySet());
+        return new ArrayList<>(layouts.keySet());
     }
 
-    public ILayoutDescriptor getDescriptor(String layout) {
-        LayoutEntry entry = layouts.get(layout);
+    public ILayoutDescriptor getDescriptor(final String layout) {
+        final LayoutEntry entry = layouts.get(layout);
         if (entry != null && entry.variant != null) {
             return new XmlLayoutDescriptor(classLoaderModel, entry.plugin, entry.variant);
         }
