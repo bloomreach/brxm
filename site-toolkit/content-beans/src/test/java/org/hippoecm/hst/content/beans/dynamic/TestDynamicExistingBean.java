@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * For this, {@link DynamicBeanPage} content bean is marked with {@link org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated}.
  *
  */
-public class TestDynamicExistingBean extends AbstractDynamicBeanServiceTest {
+public class TestDynamicExistingBean extends TestDynamicBeanService {
 
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
