@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -36,15 +37,17 @@ public class ValidationUtil {
     /**
      * Validates the value of a field with a validator.
      *
-     * @param value the field value wrapper
-     * @param validatorName the name of the validator to use
+     * @param value             the field value wrapper
+     * @param context           the field context
+     * @param validatorName     the name of the validator to use
+     * @param validatedValue    the actual validated value
      *
      * @return whether the validator deemed the value valid
      */
     public static boolean validateValue(final FieldValue value,
-                                         final FieldContext context,
-                                         final String validatorName,
-                                         final Object validatedValue) {
+                                        final FieldContext context,
+                                        final String validatorName,
+                                        final Object validatedValue) {
         final ValidatorInstance validator = FieldTypeUtils.getValidator(validatorName);
         if (validator == null) {
             log.warn("Failed to find validator '{}', ignoring it", validatorName);
@@ -54,10 +57,29 @@ public class ValidationUtil {
         final Optional<Violation> violation = validator.validate(context, validatedValue);
 
         violation.ifPresent((error) -> {
-            ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
+            final ValidationErrorInfo errorInfo = new ValidationErrorInfo(validatorName, error.getMessage());
             value.setErrorInfo(errorInfo);
         });
 
         return !violation.isPresent();
+    }
+
+    /**
+     * Validates the value of a field with all configured validators.
+     *
+     * @param value             the field value wrapper
+     * @param context           the field context
+     * @param validatorNames    the names of the validators to use
+     * @param validatedValue    the actual validated value
+     *
+     * @return 1 if a validator deemed the value invalid, 0 otherwise
+     */
+    public static int validateValue(final FieldValue value,
+                                    final FieldContext context,
+                                    final Set<String> validatorNames,
+                                    final Object validatedValue) {
+        return validatorNames.stream()
+                .allMatch(validatorName -> validateValue(value, context, validatorName, validatedValue))
+                ? 0 : 1;
     }
 }

@@ -29,6 +29,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
+import org.onehippo.cms.services.validation.api.FieldContext;
 
 public class CompoundFieldType extends NodeFieldType {
 
@@ -96,6 +98,18 @@ public class CompoundFieldType extends NodeFieldType {
 
     @Override
     public int validateValue(final FieldValue value, final CompoundContext context) {
-        return FieldTypeUtils.validateFieldValues(value.getFields(), getFields(), context);
+        return validateCompound(value, context)
+                + FieldTypeUtils.validateFieldValues(value.getFields(), getFields(), context);
     }
+
+    private int validateCompound(final FieldValue value, final CompoundContext context) {
+        if (getValidatorNames().isEmpty()) {
+            return 0;
+        }
+
+        final Object validatedValue = context.getNode();
+        final FieldContext fieldContext = context.getFieldContext(getId(), getJcrType(), getEffectiveType());
+        return ValidationUtil.validateValue(value, fieldContext, getValidatorNames(), validatedValue);
+    }
+
 }
