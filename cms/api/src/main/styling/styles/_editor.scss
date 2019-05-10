@@ -34,6 +34,12 @@
     float: right;
   }
 
+  .col20right {
+    padding-left: 0;
+    width: 20%;
+    float: right;
+  }
+
   .col30 {
     padding-left: 16px;
     width: 30%;
@@ -72,6 +78,7 @@
 
   
   .col20,
+  .col20right,
   .col30,
   .col30left,
   .col40,

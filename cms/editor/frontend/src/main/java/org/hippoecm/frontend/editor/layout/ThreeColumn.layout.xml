@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<layouts>
-  <layout>
-    <plugin>org.hippoecm.frontend.editor.layout.TwoColumn</plugin>
-  </layout>
-  <layout>
-    <plugin>org.hippoecm.frontend.editor.layout.TwoColumnMirrored</plugin>
-  </layout>
-  <layout>
-    <plugin>org.hippoecm.frontend.editor.layout.ThreeColumn</plugin>
-  </layout>
-</layouts>
+<layout>
+  <pad name="left" orientation="vertical" />
+  <pad name="middle" orientation="vertical" />
+  <pad name="right" orientation="vertical" />
+  <transition name="left-middle right" source="left" target="middle" />
+  <transition name="middle-left left" source="middle" target="left" />
+  <transition name="middle-right right" source="middle" target="right" />
+  <transition name="right-middle left" source="right" target="middle" />
+</layout>
