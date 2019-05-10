@@ -76,6 +76,7 @@ compound-field {
   &--focused {
     border-color: $blue-500;
   }
+
   &--invalid {
     border-color: $red-500;
   }
@@ -92,6 +93,7 @@ compound-field {
     &--focused &-icon {
       color: $blue-500;
     }
+
     &--invalid,
     &--invalid &-icon {
       color: $red-500;
