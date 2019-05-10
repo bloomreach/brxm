@@ -16,22 +16,22 @@ definitions:
           hipposysedit:supertype: ['contentbeanstest:basedocument', 'hippostd:relaxed',
             'hippotranslation:translated']
           hipposysedit:uri: http://www.contentbeanstest.com/contentbeanstest/nt/1.0
-          /title:
-            jcr:primaryType: hipposysedit:field
-            hipposysedit:mandatory: false
-            hipposysedit:multiple: false
-            hipposysedit:ordered: false
-            hipposysedit:path: contentbeanstest:title
-            hipposysedit:primary: false
-            hipposysedit:type: Text
-          /description:
-            jcr:primaryType: hipposysedit:field
-            hipposysedit:mandatory: false
-            hipposysedit:multiple: false
-            hipposysedit:ordered: false
-            hipposysedit:path: contentbeanstest:description
-            hipposysedit:primary: false
-            hipposysedit:type: Html
+#          /title:
+#            jcr:primaryType: hipposysedit:field
+#            hipposysedit:mandatory: false
+#            hipposysedit:multiple: false
+#            hipposysedit:ordered: false
+#            hipposysedit:path: contentbeanstest:title
+#            hipposysedit:primary: false
+#            hipposysedit:type: Text
+#          /description:
+#            jcr:primaryType: hipposysedit:field
+#            hipposysedit:mandatory: false
+#            hipposysedit:multiple: false
+#            hipposysedit:ordered: false
+#            hipposysedit:path: contentbeanstest:description
+#            hipposysedit:primary: false
+#            hipposysedit:type: Html
           /dynamiccompound:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
