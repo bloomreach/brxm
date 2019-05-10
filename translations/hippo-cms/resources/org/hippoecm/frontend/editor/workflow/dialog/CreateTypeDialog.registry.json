@@ -5,23 +5,11 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "type-detail-summary" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "name-caption" : {
       "status" : "CLEAN",
       "locales" : null
     },
-    "select-layout-summary" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "superType-caption" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "compound-type-detail-summary" : {
       "status" : "CLEAN",
       "locales" : null
     },

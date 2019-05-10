@@ -7,6 +7,8 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
       /en:
         jcr:primaryType: hipposys:resourcebundle
+        selection:label: Value
+        selection:key: Key
         jcr:name: Value list item
     /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
       /en:
@@ -20,6 +22,7 @@ definitions:
       /en:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Value list
+        selection:listitem: Values
     /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
       /en:
         jcr:primaryType: hipposys:resourcebundle
