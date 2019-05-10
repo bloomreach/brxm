@@ -17,10 +17,12 @@
 
 document-fields {
   display: block;
+  padding-right: $form-dense-distance;
+  padding-top: $form-dense-distance;
 
-  &:not(& &) {
-    padding-right: $form-dense-distance;
-    padding-top: $form-dense-distance;
+  & & {
+    padding-right: 0;
+    padding-top: 0;
   }
 
   label {
