@@ -1,4 +1,4 @@
-// Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,16 +37,5 @@ left-side-panel {
 
   &.sidepanel-lifted {
     z-index: $z-index-sidepanel-lifted;
-  }
-
-  // visually extend the bottom border of the tabs in the resize handle
-  resize-handle::before {
-    border-bottom: 1px solid $tabs-bottom-border-color;
-    content: "";
-    height: $tabs-header-height;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: $resize-handle-width-right;
   }
 }
