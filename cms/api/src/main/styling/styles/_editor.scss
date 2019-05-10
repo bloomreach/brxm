@@ -34,10 +34,22 @@
     float: right;
   }
 
+  .col20right {
+    padding-left: 0;
+    width: 20%;
+    float: right;
+  }
+
   .col30 {
     padding-left: 16px;
     width: 30%;
     float: right;
+  }
+  
+  .col30left {
+    padding-right: 16px;
+    width: 30%;
+    float: left;
   }
 
   .col40 {
@@ -52,16 +64,26 @@
     float: left;
   }
 
+  .col70right {
+    padding-left: 16px;
+    width: 70%;
+    float: right;
+  }
+
   .col80 {
     padding-right: 16px;
     width: 80%;
     float: left;
   }
 
+  
   .col20,
+  .col20right,
   .col30,
+  .col30left,
   .col40,
   .col70,
+  .col70right,
   .col80 {
     box-sizing: border-box;
     > .even:last-child,
