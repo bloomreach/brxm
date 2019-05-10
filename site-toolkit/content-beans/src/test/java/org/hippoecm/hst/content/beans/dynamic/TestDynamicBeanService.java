@@ -26,6 +26,7 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.joda.time.DateTimeComparator;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -67,7 +68,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfStringTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -78,7 +79,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("string Value", value);
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfTextTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -135,7 +136,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfCalendarDateTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -148,7 +149,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfHtmlTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -159,7 +160,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("htmltypecontent", value);
     }
 
-//    @Test
+    @Ignore
     public void testGetContentOfImageLinkCompoundTypeWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -185,7 +186,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("richtexteditorcontent", hippoHtml.getContent());
     }
 
-//    @Test
+    @Ignore
     public void testGetContentOfDocbaseTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -197,7 +198,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", hippoBean.getNode().getIdentifier());
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfDynamicdropdownTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -209,7 +210,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("dynamicvalue", value);
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfRadioGroupTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -221,7 +222,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("radiogroupvalue", value);
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfBooleanRadioGroupTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -233,7 +234,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertFalse(value);
     }
 
-//    @Test
+    @Ignore
     public void testGetValueOfStaticdropdownTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
