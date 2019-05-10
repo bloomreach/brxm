@@ -17,10 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
-
-import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -55,12 +52,10 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     public DocumentType getDocumentType(final String id, final UserContext userContext)
             throws ErrorWithPayloadException {
 
-        final Session session = userContext.getSession();
         final Locale locale = userContext.getLocale();
-        final TimeZone timeZone = userContext.getTimeZone();
-        final String cacheKey = id + "-" + locale.toString() + "-" + timeZone.getID();
+        final String cacheKey = id + "-" + locale.toString();
         try {
-            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, session, locale, timeZone));
+            return DOCUMENT_TYPES.get(cacheKey, () -> createDocumentType(id, userContext));
         } catch (final ExecutionException ignore) {
             throw new NotFoundException();
         }
@@ -71,10 +66,9 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         DOCUMENT_TYPES.invalidateAll();
     }
 
-    private DocumentType createDocumentType(final String id, final Session userSession, final Locale locale,
-                                            final TimeZone timeZone) throws NotFoundException {
+    private DocumentType createDocumentType(final String id, final UserContext userContext) throws NotFoundException {
         final DocumentType docType = new DocumentType();
-        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, timeZone, docType)
+        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userContext, docType)
                 .orElseThrow(NotFoundException::new);
 
         if (!context.getContentType().isDocumentType()) {

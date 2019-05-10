@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
@@ -36,7 +35,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * The ChoiceFieldType represents the Content Blocks functionality, which allows users to choose from a list of
  * compound types to create instances in a document.
  */
-public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType {
+public class ChoiceFieldType extends NodeFieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
     static final FieldValue UNSUPPORTED_FIELD_VALUE = new FieldValue();
@@ -80,20 +78,7 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    public Optional<List<FieldValue>> readFrom(Node node) {
-        List<FieldValue> values = readValues(node);
-
-        trimToMaxValues(values);
-
-        if (values.size() < getMinValues()) {
-            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
-                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
-        }
-
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
-    }
-
-    private List<FieldValue> readValues(final Node node) {
+    public List<FieldValue> readValues(final Node node) {
         final String nodeName = getId();
         final List<FieldValue> values = new ArrayList<>();
         try {
@@ -119,24 +104,14 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     }
 
     @Override
-    protected void writeValues(final Node node,
+    public void writeValues(final Node node,
                                final Optional<List<FieldValue>> optionalValues,
-                               final boolean validateValues) throws ErrorWithPayloadException {
+                               final boolean checkCardinality) {
         final List<FieldValue> values = mergeUnsupportedValues(node, optionalValues.orElse(Collections.emptyList()));
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(getId());
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (RepositoryException e) {
-            log.warn("Failed to write value for choice type '{}'", getId(), e);
-            throw new InternalServerErrorException();
-        }
+        super.writeValues(node, Optional.of(values), checkCardinality);
     }
 
-    private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) throws ErrorWithPayloadException {
+    private List<FieldValue> mergeUnsupportedValues(final Node node, final List<FieldValue> supportedValues) {
         final List<FieldValue> values = new LinkedList<>();
 
         try {
@@ -163,55 +138,48 @@ public class ChoiceFieldType extends AbstractFieldType implements NodeFieldType 
     @Override
     public boolean writeField(final FieldPath fieldPath,
                               final List<FieldValue> values,
-                              final CompoundContext context) throws ErrorWithPayloadException {
+                              final CompoundContext context) {
         return FieldTypeUtils.writeFieldNodeValue(fieldPath, values, this, context);
     }
 
     @Override
     public boolean writeFieldValue(final FieldPath fieldPath,
                                    final List<FieldValue> values,
-                                   final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
+                                   final CompoundContext context) throws RepositoryException {
         final String chosenId = context.getNode().getPrimaryNodeType().getName();
-        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(FieldTypeUtils.INVALID_DATA);
         return choice.writeFieldValue(fieldPath, values, context);
     }
 
     @Override
-    public void writeValue(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+    public void writeValue(final Node node, final FieldValue value) throws RepositoryException {
         if (value == UNSUPPORTED_FIELD_VALUE) {
             return;
         }
 
         // each value must specify a chosen ID
-        final String chosenId = value.findChosenId().orElseThrow(INVALID_DATA);
+        final String chosenId = value.findChosenId().orElseThrow(FieldTypeUtils.INVALID_DATA);
 
         final String choiceId = node.getPrimaryNodeType().getName();
         if (!choiceId.equals(chosenId)) {
             // existing node is of different type than requested value (reordering not supported)
-            throw INVALID_DATA.get();
+            throw FieldTypeUtils.INVALID_DATA.get();
         }
 
         // each chosenId must be a valid choice
-        final NodeFieldType choice = findChoice(chosenId).orElseThrow(INVALID_DATA);
+        final NodeFieldType choice = findChoice(chosenId).orElseThrow(FieldTypeUtils.INVALID_DATA);
 
         // each value must specify a choice value
-        final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
+        final FieldValue chosenValue = value.findChosenValue().orElseThrow(FieldTypeUtils.INVALID_DATA);
 
         choice.writeValue(node, chosenValue);
     }
 
     @Override
-    public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+    public int validate(final List<FieldValue> valueList, final CompoundContext context) {
         final Node node = context.getNode();
         final List<FieldValue> values = mergeUnsupportedValues(node, valueList);
-
-        try {
-            final NodeIterator children = node.getNodes(getId());
-            return FieldTypeUtils.validateNodeValues(children, values, this, context);
-        } catch (RepositoryException e) {
-            log.warn("Failed to validate value for choice type '{}'", getId(), e);
-            throw new InternalServerErrorException();
-        }
+        return super.validate(values, context);
     }
 
     @Override

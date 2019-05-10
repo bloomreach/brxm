@@ -26,7 +26,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class DoubleFieldType extends PrimitiveFieldType {
+public class DoubleFieldType extends PropertyFieldType {
 
     private static final String DEFAULT_VALUE = "0.0";
 

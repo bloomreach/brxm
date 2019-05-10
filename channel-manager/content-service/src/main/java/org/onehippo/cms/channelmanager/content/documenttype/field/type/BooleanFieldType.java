@@ -20,7 +20,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
-public class BooleanFieldType extends PrimitiveFieldType {
+public class BooleanFieldType extends PropertyFieldType {
     private static final String DEFAULT_VALUE = "false";
 
     public BooleanFieldType() {

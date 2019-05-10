@@ -44,6 +44,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -106,7 +107,7 @@ public class BooleanRadioGroupFieldTypeTest {
 
     @Test
     public void writeToSingleBoolean() throws Exception {
-        final PrimitiveFieldType fieldType = new BooleanRadioGroupFieldType();
+        final PropertyFieldType fieldType = new BooleanRadioGroupFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY).build();
 
@@ -154,10 +155,10 @@ public class BooleanRadioGroupFieldTypeTest {
 
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY).build();
-
+        expect(JcrUtils.getNodePathQuietly(anyObject(Node.class))).andReturn("/");
         replayAll();
 
         fieldType.init(fieldTypeContext);
@@ -176,12 +177,12 @@ public class BooleanRadioGroupFieldTypeTest {
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
 
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY)
                 .multiple(true)
                 .build();
-
+        expect(JcrUtils.getNodePathQuietly(anyObject(Node.class))).andReturn("/");
         replayAll();
 
         fieldType.init(fieldTypeContext);

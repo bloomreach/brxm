@@ -16,28 +16,21 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.ckeditor.CKEditorConfig;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.picker.RichTextImagePicker;
 import org.onehippo.cms.channelmanager.content.picker.RichTextNodePicker;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.onehippo.cms7.services.htmlprocessor.Tag;
 import org.onehippo.cms7.services.htmlprocessor.TagVisitor;
 import org.onehippo.cms7.services.htmlprocessor.model.HtmlProcessorModel;
@@ -55,7 +48,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 /**
  * A document field of type hippostd:html.
  */
-public class RichTextFieldType extends FormattedTextFieldType implements NodeFieldType {
+public class RichTextFieldType extends LeafNodeFieldType implements HtmlField {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
 
@@ -66,52 +59,52 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     // all internal images with a prefix as shown below.
     private static final TagVisitor RELATIVE_IMAGE_PATH_VISITOR = new RelativePathImageVisitor("../../");
 
+    private final String defaultJson;
+    private final String defaultHtmlProcessorId;
+
+    private ObjectNode config;
+    private HtmlProcessorFactory processorFactory;
+
     public RichTextFieldType() {
-        super(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
+        this(CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
+    }
+
+    RichTextFieldType(final String defaultJson, final String defaultHtmlProcessorId) {
+        setType(Type.HTML);
+        this.defaultJson = defaultJson;
+        this.defaultHtmlProcessorId = defaultHtmlProcessorId;
     }
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final FieldsInformation fieldsInfo = super.init(fieldContext);
 
-        final ObjectNode hippoPickerConfig = getConfig().with(HippoPicker.CONFIG_KEY);
-        hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, RichTextNodePicker.build(fieldContext));
-        hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, RichTextImagePicker.build(fieldContext));
+        initConfig(fieldContext);
+        initProcessorFactory(fieldContext);
 
         return fieldsInfo;
     }
 
-    @Override
-    public Optional<List<FieldValue>> readFrom(final Node node) {
-        final List<FieldValue> values = readValues(node);
+    private void initConfig(final FieldTypeContext fieldContext) {
+        try {
+            config = HtmlFieldConfig.readJson(fieldContext, defaultJson);
 
-        trimToMaxValues(values);
-
-        if (values.size() < getMinValues()) {
-            log.error("No values available for node of type '{}' of document at {}. This document type cannot be " +
-                    "used to create new documents in the Channel Manager.", getId(), JcrUtils.getNodePathQuietly(node));
+            final ObjectNode hippoPickerConfig = config.with(HippoPicker.CONFIG_KEY);
+            hippoPickerConfig.set(HippoPicker.InternalLink.CONFIG_KEY, RichTextNodePicker.build(fieldContext));
+            hippoPickerConfig.set(HippoPicker.Image.CONFIG_KEY, RichTextImagePicker.build(fieldContext));
+        } catch (IOException e) {
+            log.warn("Error while reading config of rich text field '{}'", getId(), e);
         }
+    }
 
-        return values.isEmpty() ? Optional.empty() : Optional.of(values);
+    private void initProcessorFactory(final FieldTypeContext fieldContext) {
+        final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
+        processorFactory = HtmlProcessorFactory.of(processorId);
     }
 
     @Override
-    protected List<FieldValue> readValues(final Node node) {
-        try {
-            final NodeIterator children = node.getNodes(getId());
-            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
-                if (value.hasValue()) {
-                    values.add(value);
-                }
-            }
-
-            return values;
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read rich text field '{}'", getId(), e);
-        }
-        return Collections.emptyList();
+    public ObjectNode getConfig() {
+        return config;
     }
 
     @Override
@@ -129,27 +122,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
     }
 
     @Override
-    public void writeValues(final Node node,
-                            final Optional<List<FieldValue>> optionalValues,
-                            final boolean validateValues) throws ErrorWithPayloadException {
-        final String valueName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(valueName);
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write rich text field '{}'", valueName, e);
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Override
-    public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException, RepositoryException {
+    public void writeValue(final Node node, final FieldValue fieldValue) throws RepositoryException {
         final String html = write(fieldValue.getValue(), node);
         node.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, html);
     }
@@ -183,7 +156,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         }
 
         @Override
-        public void onRead(final Tag parent, final Tag tag) throws RepositoryException {
+        public void onRead(final Tag parent, final Tag tag) {
             if (tag != null
                     && StringUtils.equalsIgnoreCase(RichTextImageTagProcessor.TAG_IMG, tag.getName())
                     && tag.hasAttribute(RichTextImageTagProcessor.ATTRIBUTE_SRC)
@@ -194,7 +167,7 @@ public class RichTextFieldType extends FormattedTextFieldType implements NodeFie
         }
 
         @Override
-        public void onWrite(final Tag parent, final Tag tag) throws RepositoryException {}
+        public void onWrite(final Tag parent, final Tag tag) {}
 
         @Override
         public void before() {}

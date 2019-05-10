@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
@@ -85,7 +84,7 @@ public class OpenUiStringFieldTypeTest {
 
     @Test
     public void writeToSingleDouble() throws Exception {
-        final PrimitiveFieldType fieldType = new OpenUiStringFieldType();
+        final PropertyFieldType fieldType = new OpenUiStringFieldType();
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
                 .jcrName(PROPERTY).build();
 

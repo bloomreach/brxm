@@ -90,14 +90,14 @@ public interface FieldType {
     void setRequired(boolean required);
 
     /**
-     * Check if an initialized field is supported, i.e. should be present in a document type.
+     * Checks if an initialized field is supported, i.e. should be present in a document type.
      *
      * @return true or false
      */
     boolean isSupported();
 
     /**
-     * Initialize a {@link FieldType}, given a field context.
+     * Initializes a {@link FieldType}, given a field context.
      *
      * @param fieldContext  information about the field (as part of a parent content type)
      * @return information about the initialized fields.
@@ -105,15 +105,15 @@ public interface FieldType {
     FieldsInformation init(final FieldTypeContext fieldContext);
 
     /**
-     * Read a document field instance from a document variant node
+     * Reads a field's value(s) from a JCR node
      *
-     * @param node JCR node to read the value from
-     * @return     Object representing the values, or nothing, wrapped in an Optional
+     * @param node JCR node to read the value(s) from
+     * @return     a list of at least one value, or nothing, wrapped in an Optional
      */
     Optional<List<FieldValue>> readFrom(final Node node);
 
     /**
-     * Write the optional value of this field to the provided JCR node.
+     * Writes the optional value(s) of this field to the provided JCR node.
      *
      * We purposefully pass in the value as an optional, because the validation of the cardinality constraint
      * happens during this call. If we would not do the call if the field has no value, then the validation
@@ -121,14 +121,14 @@ public interface FieldType {
      * take place.
      *
      * @param node          JCR node to store the value on
-     * @param optionalValue value to write, or nothing, wrapped in an Optional
+     * @param optionalValues value to write, or nothing, wrapped in an Optional
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    void writeTo(final Node node, final Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
+    void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException;
 
     /**
-     * Write value(s) to the field indicated by the field path. Can be this field, or a child field in case of
+     * Writes value(s) to the field indicated by the field path. Can be this field, or a child field in case of
      * compound or compound-like types.
      *
      * @param fieldPath the path to the field to write
@@ -157,23 +157,7 @@ public interface FieldType {
     int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException;
 
     /**
-     * Validates a single value.
-     * @param value value to validate
-     * @param context context of the field
-     * @return the number of violations found
-     */
-    int validateValue(final FieldValue value, final CompoundContext context) throws ErrorWithPayloadException;
-
-    /**
-     * Converts the value of this field to the Java object passed to the validators of this field.
-     * @param value the value of this field
-     * @param context
-     * @return the value passed to the validators of this field.
-     */
-    Object getValidatedValue(FieldValue value, final CompoundContext context);
-
-    /**
-     * Add the name of a validator for this field.
+     * Adds the name of a validator for this field.
      *
      * @param validatorName the name of the validator
      */

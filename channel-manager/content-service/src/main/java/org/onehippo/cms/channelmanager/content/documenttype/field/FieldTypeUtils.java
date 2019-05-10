@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -131,6 +132,9 @@ public class FieldTypeUtils {
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.service.render.ListViewPlugin");
     }
+
+    public static final Supplier<ErrorWithPayloadException> INVALID_DATA
+            = () -> new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
 
@@ -334,6 +338,24 @@ public class FieldTypeUtils {
                 .flatMap(NamespaceUtils::getPluginClassForField);
     }
 
+    public static void checkCardinality(final FieldType field, final List<FieldValue> values) {
+        if (values.size() < field.getMinValues()) {
+            throw INVALID_DATA.get();
+        }
+        if (values.size() > field.getMaxValues()) {
+            throw INVALID_DATA.get();
+        }
+        if (field.isRequired() && values.isEmpty()) {
+            throw INVALID_DATA.get();
+        }
+    }
+
+    public static void trimToMaxValues(final List list, final int maxValues) {
+        while (list.size() > maxValues) {
+            list.remove(list.size() - 1);
+        }
+    }
+
     /**
      * Try to read a list of fields from a node into a map of values.
      *
@@ -366,27 +388,6 @@ public class FieldTypeUtils {
             if (!fieldType.hasUnsupportedValidator()) {
                 fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
             }
-        }
-    }
-
-    public static void writeNodeValues(final NodeIterator nodes,
-                                       final List<FieldValue> values,
-                                       final int maxValues,
-                                       final NodeFieldType field) throws RepositoryException, ErrorWithPayloadException {
-        final long count = nodes.getSize();
-
-        // additional cardinality check to prevent creating new values or remove a subset of the old values
-        if (!values.isEmpty() && values.size() != count && count <= maxValues) {
-            throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
-        }
-
-        for (final FieldValue value : values) {
-            field.writeValue(nodes.nextNode(), value);
-        }
-
-        // delete excess nodes to match field type
-        while (nodes.hasNext()) {
-            nodes.nextNode().remove();
         }
     }
 

@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class StringFieldType extends PrimitiveFieldType {
+public class StringFieldType extends PropertyFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
@@ -79,7 +80,7 @@ public class StringFieldType extends PrimitiveFieldType {
     @Override
     protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
         if (maxLength != null && validatedField.length() > maxLength) {
-            throw INVALID_DATA.get();
+            throw FieldTypeUtils.INVALID_DATA.get();
         }
     }
 }

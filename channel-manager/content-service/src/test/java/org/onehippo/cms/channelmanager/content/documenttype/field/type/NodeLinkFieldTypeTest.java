@@ -111,7 +111,6 @@ public class NodeLinkFieldTypeTest {
 
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
-        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
         replayAll();
         final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
@@ -125,11 +124,6 @@ public class NodeLinkFieldTypeTest {
         assertThat(linkPickerConfig.get("last.visited.nodetypes").asText(), equalTo(""));
         assertThat(linkPickerConfig.get("language.context.aware").asBoolean(), equalTo(true));
         assertThat(linkPickerConfig.get("nodetypes").size(), equalTo(0));
-    }
-
-    @Test
-    public void getDefault() {
-        assertThat(linkFieldType.getDefault(), equalTo(""));
     }
 
     @Test

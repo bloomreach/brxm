@@ -26,7 +26,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
-public class StaticDropdownFieldType extends PrimitiveFieldType {
+public class StaticDropdownFieldType extends PropertyFieldType {
     
     private List<String> optionValues = new LinkedList<>();
     private List<String> optionDisplayValues = new LinkedList<>();

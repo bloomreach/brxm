@@ -16,12 +16,10 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -36,10 +34,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.repository.l10n.ResourceBundle;
 
@@ -52,10 +46,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * expose it through a REST API.
  */
 @JsonInclude(Include.NON_EMPTY)
-public abstract class AbstractFieldType implements FieldType {
-
-    protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
-            = () -> new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+public abstract class AbstractFieldType implements BaseFieldType {
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -79,86 +70,86 @@ public abstract class AbstractFieldType implements FieldType {
     private final Set<String> validatorNames = new LinkedHashSet<>();
 
     @Override
-    public String getId() {
+    public final String getId() {
         return id;
     }
 
     @Override
-    public void setId(final String id) {
+    public final void setId(final String id) {
         this.id = id;
     }
 
     @Override
-    public Type getType() {
+    public final Type getType() {
         return type;
     }
 
-    protected void setType(final Type type) {
+    protected final void setType(final Type type) {
         this.type = type;
     }
 
     @Override
-    public String getDisplayName() {
+    public final String getDisplayName() {
         return displayName;
     }
 
     @Override
-    public void setDisplayName(final String displayName) {
+    public final void setDisplayName(final String displayName) {
         this.displayName = displayName;
     }
 
     @Override
-    public String getHint() {
+    public final String getHint() {
         return hint;
     }
 
     @Override
-    public void setHint(final String hint) {
+    public final void setHint(final String hint) {
         this.hint = hint;
     }
 
     @Override
-    public int getMinValues() {
+    public final int getMinValues() {
         return minValues;
     }
 
     @Override
-    public void setMinValues(final int minValues) {
+    public final void setMinValues(final int minValues) {
         this.minValues = minValues;
     }
 
     @Override
-    public int getMaxValues() {
+    public final int getMaxValues() {
         return maxValues;
     }
 
     @Override
-    public void setMaxValues(final int maxValues) {
+    public final void setMaxValues(final int maxValues) {
         this.maxValues = maxValues;
     }
 
     @Override
-    public boolean isMultiple() {
+    public final boolean isMultiple() {
         return isMultiple;
     }
 
     @Override
-    public void setMultiple(final boolean isMultiple) {
+    public final void setMultiple(final boolean isMultiple) {
         this.isMultiple = isMultiple;
     }
 
     @Override
-    public void addValidatorName(final String validatorName) {
+    public final void addValidatorName(final String validatorName) {
         validatorNames.add(validatorName);
     }
 
     @Override
-    public boolean isRequired() {
+    public final boolean isRequired() {
         return required;
     }
 
     @Override
-    public void setRequired(final boolean required) {
+    public final void setRequired(final boolean required) {
         this.required = required;
     }
 
@@ -168,32 +159,32 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public boolean hasUnsupportedValidator() {
+    public final boolean hasUnsupportedValidator() {
         return hasUnsupportedValidator;
     }
 
     @Override
-    public void setUnsupportedValidator(final boolean hasUnsupportedValidator) {
+    public final void setUnsupportedValidator(final boolean hasUnsupportedValidator) {
         this.hasUnsupportedValidator = hasUnsupportedValidator;
     }
 
-    public String getJcrType() {
+    final String getJcrType() {
         return jcrType;
     }
 
-    public void setJcrType(final String jcrType) {
+    final void setJcrType(final String jcrType) {
         this.jcrType = jcrType;
     }
 
-    public String getEffectiveType() {
+    final String getEffectiveType() {
         return effectiveType;
     }
 
-    public void setEffectiveType(final String effectiveType) {
+    final void setEffectiveType(final String effectiveType) {
         this.effectiveType = effectiveType;
     }
 
-    public Set<String> getValidatorNames() {
+    final Set<String> getValidatorNames() {
         return validatorNames;
     }
 
@@ -234,40 +225,8 @@ public abstract class AbstractFieldType implements FieldType {
     }
 
     @Override
-    public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
-            throws ErrorWithPayloadException {
+    public final void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) {
         writeValues(node, optionalValues, true);
-    }
-
-    protected abstract void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, boolean validateValues) throws ErrorWithPayloadException;
-
-    protected void trimToMaxValues(final List list) {
-        while (list.size() > maxValues) {
-            list.remove(list.size() - 1);
-        }
-    }
-
-    protected void checkCardinality(final List<FieldValue> values)
-            throws ErrorWithPayloadException {
-        if (values.size() < getMinValues()) {
-            throw INVALID_DATA.get();
-        }
-        if (values.size() > getMaxValues()) {
-            throw INVALID_DATA.get();
-        }
-        if (isRequired() && values.isEmpty()) {
-            throw INVALID_DATA.get();
-        }
-    }
-
-    /**
-     * Hook for sub-classes to process values before writing them. The default implementation does nothing.
-     *
-     * @param optionalValues the values to process
-     * @return the processed values
-     */
-    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
-        return optionalValues.orElse(Collections.emptyList());
     }
 
     protected static boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
@@ -296,7 +255,8 @@ public abstract class AbstractFieldType implements FieldType {
      * @param context the context of the field
      * @return 1 if a validator deemed the value invalid, 0 otherwise
      */
-    public int validateValue(final FieldValue value, final CompoundContext context) throws ErrorWithPayloadException {
+    @Override
+    public int validateValue(final FieldValue value, final CompoundContext context) {
         if (validatorNames.isEmpty()) {
             return 0;
         }

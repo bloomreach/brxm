@@ -16,8 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -31,7 +29,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Com
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class OpenUiStringFieldType extends PrimitiveFieldType {
+public class OpenUiStringFieldType extends PropertyFieldType {
 
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
 

@@ -31,7 +31,6 @@ import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -40,19 +39,17 @@ import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorImpl;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
@@ -62,7 +59,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
+@PrepareForTest({HtmlProcessorFactory.class})
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
@@ -95,7 +92,6 @@ public class RichTextFieldTypeTest {
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
         expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
-        expect(parentContext.getTimeZone()).andReturn(TestUserContext.TEST_TIME_ZONE);
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());
@@ -155,8 +151,8 @@ public class RichTextFieldTypeTest {
         void run() throws Exception;
     }
 
-    private static void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
-        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(RichTextFieldType.class).build()) {
+    private static void assertWarningsLogged(final long count, final Class clazz, final Code code, final Code... verifications) throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(clazz).build()) {
             try {
                 code.run();
             } finally {
@@ -169,7 +165,7 @@ public class RichTextFieldTypeTest {
     }
 
     private static void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
-        assertWarningsLogged(0, code, verifications);
+        assertWarningsLogged(0, RichTextFieldType.class, code, verifications);
     }
 
     @Test
@@ -249,7 +245,7 @@ public class RichTextFieldTypeTest {
         final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
-        assertWarningsLogged(1, () -> assertFalse(field.readFrom(document).isPresent()));
+        assertWarningsLogged(1, RichTextFieldType.class, () -> assertFalse(field.readFrom(document).get().get(0).hasValue()));
     }
 
     @Test
@@ -338,15 +334,16 @@ public class RichTextFieldTypeTest {
     @Test(expected = InternalServerErrorException.class)
     public void exceptionWhileWriting() throws Exception {
         final RichTextFieldType field = initField();
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
-        FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
-        expectLastCall().andThrow(new RepositoryException());
-        replayAll();
+        final Node value = addValue("<p>value</p>");
 
-        addValue("<p>value</p>");
+        // checkin the node to make it throw an exception when writing to it
+        value.addMixin(JcrConstants.MIX_VERSIONABLE);
+        value.getSession().getWorkspace().getVersionManager().checkin(value.getPath());
+
         final FieldValue newValue = new FieldValue("<p>changed</p>");
 
         assertWarningsLogged(1,
+                NodeFieldType.class,
                 () -> field.writeTo(document, Optional.of(Collections.singletonList(newValue))),
                 () -> {
                     final List<FieldValue> fieldValues = field.readFrom(document)

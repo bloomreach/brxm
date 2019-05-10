@@ -18,11 +18,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-
-import javax.jcr.Node;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -33,26 +28,26 @@ import org.onehippo.cms7.services.htmlprocessor.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FormattedTextFieldType extends StringFieldType {
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+public class FormattedTextFieldType extends StringFieldType implements HtmlField {
 
     private static final Logger log = LoggerFactory.getLogger(FormattedTextFieldType.class);
 
-    private static final String CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
-    private static final String CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
     private static final String HTMLPROCESSOR_ID = "htmlprocessor.id";
     private static final String DEFAULT_HTMLPROCESSOR_ID = "formatted";
 
     private final String defaultJson;
-    private ObjectNode config;
     private final String defaultHtmlProcessorId;
 
-    protected HtmlProcessorFactory processorFactory;
+    private ObjectNode config;
+    private HtmlProcessorFactory processorFactory;
 
     public FormattedTextFieldType() {
         this(CKEditorConfig.DEFAULT_FORMATTED_TEXT_CONFIG, DEFAULT_HTMLPROCESSOR_ID);
     }
 
-    protected FormattedTextFieldType(final String defaultJson, final String defaultHtmlProcessorId) {
+    FormattedTextFieldType(final String defaultJson, final String defaultHtmlProcessorId) {
         setType(Type.HTML);
         this.defaultJson = defaultJson;
         this.defaultHtmlProcessorId = defaultHtmlProcessorId;
@@ -62,21 +57,23 @@ public class FormattedTextFieldType extends StringFieldType {
     public FieldsInformation init(final FieldTypeContext fieldContext) {
         final FieldsInformation fieldsInfo = super.init(fieldContext);
 
-        final String overlayedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_OVERLAYED_JSON).orElse("");
-        final String appendedJson = fieldContext.getStringConfig(CKEDITOR_CONFIG_APPENDED_JSON).orElse("");
-
-        try {
-            final ObjectNode combinedConfig = CKEditorConfig.combineConfig(defaultJson, overlayedJson, appendedJson);
-            final String language = fieldContext.getParentContext().getLocale().getLanguage();
-            config = CKEditorConfig.setDefaults(combinedConfig, language);
-        } catch (IOException e) {
-            log.warn("Error while reading config of HTML field '{}'", getId(), e);
-        }
-
-        final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
-        processorFactory = HtmlProcessorFactory.of(processorId);
+        initConfig(fieldContext);
+        initProcessorfactory(fieldContext);
 
         return fieldsInfo;
+    }
+
+    private void initConfig(final FieldTypeContext fieldContext) {
+        try {
+            config = HtmlFieldConfig.readJson(fieldContext, defaultJson);
+        } catch (IOException e) {
+            log.warn("Error while reading config of formatted text field '{}'", getId(), e);
+        }
+    }
+
+    private void initProcessorfactory(final FieldTypeContext fieldContext) {
+        final String processorId = fieldContext.getStringConfig(HTMLPROCESSOR_ID).orElse(defaultHtmlProcessorId);
+        processorFactory = HtmlProcessorFactory.of(processorId);
     }
 
     public ObjectNode getConfig() {
@@ -84,21 +81,17 @@ public class FormattedTextFieldType extends StringFieldType {
     }
 
     @Override
-    protected List<FieldValue> readValues(final Node node) {
-        List<FieldValue> values = super.readValues(node);
+    protected void afterReadValues(List<FieldValue> values) {
         for (final FieldValue value : values) {
             value.setValue(read(value.getValue()));
         }
-        return values;
     }
 
     @Override
-    protected List<FieldValue> processValues(final Optional<List<FieldValue>> optionalValues) {
-        List<FieldValue> values = super.processValues(optionalValues);
+    protected void beforeWriteValues(final List<FieldValue> values) {
         for (final FieldValue value : values) {
             value.setValue(write(value.getValue()));
         }
-        return values;
     }
 
     private String read(final String html) {

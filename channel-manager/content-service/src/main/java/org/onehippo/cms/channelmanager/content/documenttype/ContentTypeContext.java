@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -44,10 +44,8 @@ public class ContentTypeContext {
     private static final int MAX_NESTING_LEVEL = 10;
 
     private final ContentType contentType;
-    private final Session session;
     private final Node contentTypeRoot;
-    private final Locale locale;
-    private final TimeZone timeZone;
+    private final UserContext userContext;
     private final DocumentType documentType;
     private final int level;
     private final ResourceBundle resourceBundle;
@@ -72,19 +70,15 @@ public class ContentTypeContext {
     /**
      * Create a new {@link ContentTypeContext} for the identified content type and the current CMS session.
      *
-     * @param id      identifies the requested content type, e.g. "myhippoproject:newsdocument"
-     * @param session JCR session using the privileges of the requesting user
-     * @param locale  locale of the current CMS session
-     * @param timeZone
-     * @param docType {@link DocumentType} being assembled
+     * @param id            identifies the requested content type, e.g. "myhippoproject:newsdocument"
+     * @param userContext   Properties of the user that executes the request
+     * @param docType       {@link DocumentType} being assembled
      * @return        {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
     public static Optional<ContentTypeContext> createForDocumentType(final String id,
-                                                                     final Session session,
-                                                                     final Locale locale,
-                                                                     final TimeZone timeZone,
+                                                                     final UserContext userContext,
                                                                      final DocumentType docType) {
-        return create(id, session, locale, timeZone, docType, 0);
+        return create(id, userContext, docType, 0);
     }
 
     /**
@@ -97,7 +91,7 @@ public class ContentTypeContext {
     public static Optional<ContentTypeContext> createFromParent(final String id, final ContentTypeContext parentContext) {
         final int level = parentContext.getLevel() + 1;
         if (level < MAX_NESTING_LEVEL) {
-            return create(id, parentContext.getSession(), parentContext.getLocale(), parentContext.getTimeZone(), parentContext.getDocumentType(), level);
+            return create(id, parentContext.getUserContext(), parentContext.getDocumentType(), level);
         } else {
             log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
         }
@@ -109,37 +103,35 @@ public class ContentTypeContext {
      * create a new {@link ContentTypeContext} instance.
      */
     private static Optional<ContentTypeContext> create(final String id,
-                                                       final Session session,
-                                                       final Locale locale,
-                                                       final TimeZone timeZone,
+                                                       final UserContext userContext,
                                                        final DocumentType docType,
                                                        final int level) {
         return getContentType(id)
-                .flatMap(contentType -> NamespaceUtils.getContentTypeRootNode(id, session)
-                        .map(contentTypeRoot -> new ContentTypeContext(id, contentType, session, contentTypeRoot,
-                                                                       locale, timeZone, docType, level)));
+                .flatMap(contentType -> NamespaceUtils.getContentTypeRootNode(id, userContext.getSession())
+                .map(contentTypeRoot -> new ContentTypeContext(id, contentType, contentTypeRoot, userContext, docType,
+                        level)));
     }
 
     private ContentTypeContext(final String id,
                                final ContentType contentType,
-                               final Session session,
                                final Node documentTypeRoot,
-                               final Locale locale,
-                               final TimeZone timeZone,
+                               final UserContext userContext,
                                final DocumentType documentType,
                                final int level) {
         this.contentType = contentType;
-        this.session = session;
         this.contentTypeRoot = documentTypeRoot;
-        this.locale = locale;
-        this.timeZone = timeZone;
+        this.userContext = userContext;
         this.documentType = documentType;
         this.level = level;
 
-        this.resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale).orElse(null);
+        this.resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, userContext.getLocale()).orElse(null);
         this.fieldScanningContexts = new ArrayList<>();
 
         populateTypesForFields(id);
+    }
+
+    UserContext getUserContext() {
+        return userContext;
     }
 
     public ContentType getContentType() {
@@ -147,7 +139,7 @@ public class ContentTypeContext {
     }
 
     public Session getSession() {
-        return session;
+        return userContext.getSession();
     }
 
     public Node getContentTypeRoot() {
@@ -155,13 +147,8 @@ public class ContentTypeContext {
     }
 
     public Locale getLocale() {
-        return locale;
+        return userContext.getLocale();
     }
-
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
 
     public DocumentType getDocumentType() {
         return documentType;
@@ -197,7 +184,7 @@ public class ContentTypeContext {
     private Optional<FieldScanningContext> makeSlimContentTypeContext(final String id,
                                                                       final ContentType contentType,
                                                                       final boolean allowChildless) {
-        return NamespaceUtils.getContentTypeRootNode(id, session)
+        return NamespaceUtils.getContentTypeRootNode(id, getSession())
                 .flatMap(rootNode -> NamespaceUtils.getNodeTypeNode(rootNode, allowChildless)
                         .map(nodeTypeNode -> new FieldScanningContext(contentType, nodeTypeNode)));
     }

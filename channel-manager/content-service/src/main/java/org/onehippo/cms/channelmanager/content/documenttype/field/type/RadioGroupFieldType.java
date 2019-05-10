@@ -21,7 +21,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.forge.selection.frontend.plugin.Config;
 
-public class RadioGroupFieldType extends PrimitiveFieldType {
+public class RadioGroupFieldType extends PropertyFieldType {
 
     private String source = null;
     private String sortComparator = null;

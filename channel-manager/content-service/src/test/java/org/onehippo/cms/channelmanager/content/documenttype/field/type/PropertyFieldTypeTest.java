@@ -64,10 +64,10 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({JcrUtils.class, FieldTypeUtils.class, NamespaceUtils.class})
-public class PrimitiveFieldTypeTest {
+public class PropertyFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
-    private PrimitiveFieldType fieldType;
+    private PropertyFieldType fieldType;
     private Node node;
     private CompoundContext nodeContext;
 
@@ -75,7 +75,7 @@ public class PrimitiveFieldTypeTest {
     public void setup() {
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(NamespaceUtils.class);
-        fieldType = new PrimitiveFieldType() {
+        fieldType = new PropertyFieldType() {
 
             @Override
             public Object getValidatedValue(final FieldValue value, final CompoundContext context) {

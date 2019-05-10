@@ -51,8 +51,8 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({JcrUtils.class, ContentTypeContext.class, ChoiceFieldUtils.class, FieldTypeUtils.class,
-        LocalizationUtils.class})
+@PrepareForTest({AbstractFieldType.class, JcrUtils.class, ContentTypeContext.class, ChoiceFieldUtils.class,
+        FieldTypeUtils.class, LocalizationUtils.class})
 public class ChoiceFieldUtilsTest {
 
     @Test

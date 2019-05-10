@@ -98,26 +98,6 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
-    public void trimToMaxValues() {
-        final List<String> list = new ArrayList<>();
-        list.add("one");
-        list.add("two");
-        list.add("three");
-        assertThat(fieldType.getMaxValues(), equalTo(1));
-        fieldType.setMaxValues(2);
-        fieldType.trimToMaxValues(list);
-        assertThat(list.size(), equalTo(2));
-        assertThat(list.get(1), equalTo("two"));
-        fieldType.setMaxValues(5);
-        fieldType.trimToMaxValues(list);
-        assertThat(list.size(), equalTo(2));
-        assertThat(list.get(1), equalTo("two"));
-        fieldType.setMaxValues(0);
-        fieldType.trimToMaxValues(list);
-        assertThat(list.size(), equalTo(0));
-    }
-
-    @Test
     public void isMultiple() {
         assertFalse(fieldType.isMultiple());
         fieldType.setMultiple(true);
@@ -149,52 +129,6 @@ public class AbstractFieldTypeTest {
         final Iterator<String> names = validatorNames.iterator();
         assertThat(names.next(), equalTo("non-empty"));
         assertThat(names.next(), equalTo("email"));
-    }
-
-    @Test
-    public void checkCardinalityMoreThanAllowed() throws Exception {
-        final List<FieldValue> list = new ArrayList<>();
-        list.add(new FieldValue("one"));
-        list.add(new FieldValue("two"));
-        list.add(new FieldValue("three"));
-
-        fieldType.setMaxValues(2);
-        checkCardinality(list);
-    }
-
-    @Test
-    public void checkCardinalityLessThanRequired() throws Exception {
-        final List<FieldValue> list = new ArrayList<>();
-        list.add(new FieldValue("one"));
-        list.add(new FieldValue("two"));
-        list.add(new FieldValue("three"));
-
-        assertThat(fieldType.getMinValues(), equalTo(1));
-        fieldType.setMinValues(4);
-        checkCardinality(list);
-    }
-
-    @Test
-    public void checkCardinalityNoneButRequired() throws Exception {
-        fieldType.setMinValues(0);
-        fieldType.setRequired(true);
-        checkCardinality(Collections.emptyList());
-    }
-
-    private void checkCardinality(final List<FieldValue> list) throws Exception {
-        try {
-            fieldType.checkCardinality(list);
-            fail("No exception");
-        } catch (BadRequestException e) {
-            assertTrue(e.getPayload() instanceof ErrorInfo);
-            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
-        }
-    }
-
-    @Test
-    public void checkCardinalitySuccess() throws Exception {
-        fieldType.checkCardinality(Collections.singletonList(new FieldValue("one")));
     }
 
     @Test
@@ -389,12 +323,17 @@ public class AbstractFieldTypeTest {
         }
 
         @Override
+        public List<FieldValue> readValues(final Node node) {
+            return null;
+        }
+
+        @Override
         public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
             return null;
         }
 
         @Override
-        protected void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean validateValues) {
+        public void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean checkCardinality) {
         }
 
         @Override

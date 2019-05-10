@@ -32,8 +32,9 @@ public interface DocumentTypesService {
     /**
      * Read the supported part of a document type into a JSON-serializable representation
      *
-     * @param id      ID of the document type, e.g. "myhippoproject:newsdocument"
-     * @param userContext user-authenticated, invocation-scoped JCR session for read-only access
+     * @param id            ID of the document type, e.g. "myhippoproject:newsdocument"
+     * @param userContext   Properties of the user that executes the request
+     *
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                if assembling the document type specification failed in a non-recoverable manner
