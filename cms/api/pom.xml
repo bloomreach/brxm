@@ -229,6 +229,7 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.jpg</include>
+          <include>**/*.svg</include>
           <include>**/*.swf</include>
           <include>**/*.tpl</include>
         </includes>

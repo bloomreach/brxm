@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 60 45" width="60" height="45">
+  <defs>
+    <path d="M0.58 0.5L59.49 0.5L59.49 44.49L0.58 44.49L0.58 0.5Z" id="bBDsDj8s"></path>
+    <path d="M39.99 44.33L39.86 0.78" id="j94FbliJC"></path>
+  </defs>
+  <g>
+    <g>
+      <g>
+        <use xlink:href="#bBDsDj8s" opacity="1" fill="#000000" fill-opacity="0"></use>
+        <g>
+          <use xlink:href="#bBDsDj8s" opacity="1" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-opacity="1"></use>
+        </g>
+      </g>
+      <g>
+        <g>
+          <use xlink:href="#j94FbliJC" opacity="1" fill-opacity="0" stroke="#000000" stroke-width="1" stroke-opacity="1"></use>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
