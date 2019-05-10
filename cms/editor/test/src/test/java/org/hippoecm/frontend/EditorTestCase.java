@@ -29,7 +29,7 @@ public abstract class EditorTestCase extends PluginTest {
     public void setUp() throws Exception {
         super.setUp();
         if (session.getRootNode().hasNode("hippo:namespaces/test")) {
-            JcrUtils.copy(session, "/hippo:namespaces/test", "/hippo:namespaces/backup");
+            JcrUtils.copy(session, "/hippo:namespaces/test", "/namespace-test-backup");
             session.save();
         }
     }
@@ -37,9 +37,9 @@ public abstract class EditorTestCase extends PluginTest {
     @Override
     @After
     public void tearDown() throws Exception {
-        if (session != null && session.getRootNode().hasNode("hippo:namespaces/backup")) {
+        if (session != null && session.getRootNode().hasNode("namespace-test-backup")) {
             session.getRootNode().getNode("hippo:namespaces/test").remove();
-            session.move("/hippo:namespaces/backup", "/hippo:namespaces/test");
+            session.move("/namespace-test-backup", "/hippo:namespaces/test");
             session.save();
         }
         super.tearDown();
