@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -22,29 +23,24 @@ import javax.jcr.ImportUUIDBehavior;
 
 public abstract class EditorTestCase extends PluginTest {
 
-    // the tests will modify templates, so reinitialize for each test
+    // the tests will modify templates, so backup and restore
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         if (session.getRootNode().hasNode("hippo:namespaces/test")) {
-            session.getRootNode().getNode("hippo:namespaces/test").remove();
+            JcrUtils.copy(session, "/hippo:namespaces/test", "/hippo:namespaces/backup");
             session.save();
-            session.refresh(false);
         }
-        session.importXML("/hippo:namespaces", getClass().getClassLoader().getResourceAsStream("test-namespace.xml"),
-                ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
-        session.save();
-        session.refresh(false);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        if (session != null && session.getRootNode().hasNode("hippo:namespaces/test")) {
+        if (session != null && session.getRootNode().hasNode("hippo:namespaces/backup")) {
             session.getRootNode().getNode("hippo:namespaces/test").remove();
+            session.move("/hippo:namespaces/backup", "/hippo:namespaces/test");
             session.save();
-            session.refresh(false);
         }
         super.tearDown();
     }
