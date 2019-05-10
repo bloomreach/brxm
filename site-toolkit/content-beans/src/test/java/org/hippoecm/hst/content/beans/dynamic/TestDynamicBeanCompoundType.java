@@ -16,18 +16,10 @@
 package org.hippoecm.hst.content.beans.dynamic;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.hippoecm.hst.AbstractBeanTestCase;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.content.beans.BaseDocument;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -39,7 +31,7 @@ import static org.junit.Assert.assertThat;
  * 
  * Tests the dynamic bean service for custom compound types 
  */
-public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
+public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest {
 
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent";
 
@@ -52,43 +44,8 @@ public class TestDynamicBeanCompoundType extends AbstractBeanTestCase {
     private static final String INNER_CUSTOM_COMPOUND_TYPE_METHOD_NAME = "getDynamicinnercompound";
     private static final String STRING_TYPE_METHOD_NAME_IN_INNER_CUSTOM_COMPOUND_CLASS = "getStringTypeField";
 
-    private ObjectConverter objectConverter;
-
-    protected List<Class<? extends HippoBean>> annotatedClasses;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
-        mockHstRequestContext.setSession(session);
-        ModifiableRequestContextProvider.set(mockHstRequestContext);
-        
-        if (annotatedClasses == null) {
-            annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
-            annotatedClasses.add(BaseDocument.class);
-        }
-        objectConverter = getObjectConverter(annotatedClasses);
-
-    }
-
-    private Object getContentBean() throws Exception {
-        Object generatedBean = objectConverter.getObject(session, TEST_DOCUMENT_TYPE_CONTENTS_PATH);
-
-        assertNotNull("The content bean is not created for " + TEST_DOCUMENT_TYPE_CONTENTS_PATH, generatedBean);
-        assertThat(generatedBean, instanceOf(HippoBean.class));
-
-        return generatedBean;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T callContentBeanMethod(Object generatedBean, String methodName, Class<T> returnType) throws Exception {
-        Method method = generatedBean.getClass().getMethod(methodName);
-
-        assertNotNull("The method '" + methodName + "' is not found", method);
-        assertEquals(returnType, method.getReturnType());
-
-        return (T) method.invoke(generatedBean);
+    public String getDocumentPath() {
+        return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
     @SuppressWarnings("unchecked")

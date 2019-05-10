@@ -15,34 +15,22 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import org.hippoecm.hst.AbstractBeanTestCase;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
-import org.hippoecm.hst.content.beans.BaseDocument;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.joda.time.DateTimeComparator;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 /**
  * 
@@ -50,7 +38,7 @@ import static org.junit.Assert.assertThat;
  * The test for 'Value list item' compound field is not added because both BeanWriter 
  * tool and dynamic bean feature don't support this field. 
  */
-public class TestDynamicBeanService extends AbstractBeanTestCase {
+public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
 
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
@@ -73,46 +61,10 @@ public class TestDynamicBeanService extends AbstractBeanTestCase {
     private static final String RESOURCE_COMPOUND_TYPE_METHOD_NAME = "getResourceCompoundType";
     private static final String RICH_TEXT_EDITOR_COMPOUND_TYPE_METHOD_NAME = "getRichTextEditorCompoundType";
 
-    private ObjectConverter objectConverter;
+    private DateFormat dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
-    private DateFormat dateParser;
-
-    protected List<Class<? extends HippoBean>> annotatedClasses;
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
-        mockHstRequestContext.setSession(session);
-        ModifiableRequestContextProvider.set(mockHstRequestContext);
-        
-        if (annotatedClasses == null) {
-            annotatedClasses = new ArrayList<>();
-            annotatedClasses.add(BaseDocument.class);
-        }
-        objectConverter = getObjectConverter(annotatedClasses);
-
-        dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-    }
-
-    protected Object getContentBean() throws Exception {
-        Object generatedBean = objectConverter.getObject(session, TEST_DOCUMENT_TYPE_CONTENTS_PATH);
-
-        assertNotNull("The content bean is not created for " + TEST_DOCUMENT_TYPE_CONTENTS_PATH, generatedBean);
-        assertThat(generatedBean, instanceOf(HippoBean.class));
-
-        return generatedBean;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T callContentBeanMethod(Object generatedBean, String methodName, Class<T> returnType) throws Exception {
-        Method method = generatedBean.getClass().getMethod(methodName);
-
-        assertNotNull("The method '" + methodName + "' is not found", method);
-        assertEquals(returnType, method.getReturnType());
-
-        return (T) method.invoke(generatedBean);
+    public String getDocumentPath() {
+        return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
     @Test
