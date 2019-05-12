@@ -398,7 +398,7 @@
 - hst:showport (boolean)
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
-// deprecated : hst:defaulthostname is not used any more
+// deprecated : hst:defaulthostname usage will be dropped in 14.0.0
 - hst:defaulthostname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple

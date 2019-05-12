@@ -77,6 +77,24 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         super.tearDown();
     }
 
+
+    /**
+     * @deprecated since 13.2.0, in 14.0.0 this test can be removed since defaulthostname usage is deprecated
+     */
+    @Deprecated
+    @Test
+    public void testDefaultHost() {
+        try {
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            assertTrue("Expected from the hst testcontents default hostname to be localhost. ", "localhost".equals(vhosts.getDefaultHostName()));
+
+        } catch (ContainerException e) {
+            fail(e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
     /*
      * This test should match the sitemap item /news/* which has a relative content path /News/${1}
      * The HttpServletRequest does not have a context path

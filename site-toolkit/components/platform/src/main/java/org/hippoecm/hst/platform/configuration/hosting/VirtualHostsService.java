@@ -107,6 +107,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private List<Mount> registeredMounts = new ArrayList<>();
 
+    private String defaultHostName;
+
     public static final String DEFAULT_HOMEPAGE_SITEMAP_ITEM = "root";
     /**
      * The homepage for this VirtualHosts.
@@ -281,6 +283,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             cacheable = vHostConfValueProvider.getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
             log.info("Page caching for HST is set to : {} ", cacheable);
+        }
+
+        defaultHostName  = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        if (defaultHostName != null) {
+            log.warn("The property '{}' has been deprecated in 13.2.0 and its usage will be dropped in 14.0.0. There is " +
+                    "no replacement, instead use explicit configured hosts. Using the property '{}' can result in errors " +
+                            "when using hst branches", HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+            defaultHostName = defaultHostName.toLowerCase();
         }
 
         if(scheme == null || "".equals(scheme)) {
@@ -608,6 +618,16 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         ResolvedVirtualHost host = findMatchingVirtualHost(portStrippedHostName, portNumber);
 
+        // no host found. Let's try the default host, if there is one configured:
+        if(host == null && getDefaultHostName() != null && !getDefaultHostName().equals(portStrippedHostName)) {
+            log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, getDefaultHostName());
+            if (portNumber != 0) {
+                host = matchVirtualHost(getDefaultHostName()+":"+Integer.toString(portNumber));
+            }
+            else {
+                host = matchVirtualHost(getDefaultHostName());
+            }
+        }
         if(host == null) {
            log.info("We cannot find a servername mapping for '{}'.  Return null", portStrippedHostName);
 
@@ -722,7 +742,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     @Deprecated
     public String getDefaultHostName() {
-        return null;
+        return defaultHostName;
     }
 
     public String getHomePage() {

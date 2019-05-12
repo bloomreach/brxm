@@ -600,7 +600,7 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         @Deprecated
         public String getDefaultHostName() {
-            return null;
+            return delegatee.getDefaultHostName();
         }
 
         @Override
