@@ -76,7 +76,7 @@ public class RequiredValidator implements Validator<Object> {
                     + ", cannot validate required field '" + context.getJcrName() + "'");
         }
 
-        final RequiredValidationContext requiredValidationContext = new RequiredValidationContext(context, fieldType);
+        final RequiredValidationContext requiredValidationContext = new RequiredValidationContext(context);
         return runValidator(requiredValidator, requiredValidationContext, value);
     }
 

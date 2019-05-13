@@ -40,18 +40,19 @@ public class TestValidationContext implements ValidationContext {
     }
 
     TestValidationContext(String jcrName, String jcrType) {
-        this(jcrName, jcrType, null, null, null, null);
+        this(jcrName, jcrType, jcrType);
     }
 
     TestValidationContext(String jcrName, String jcrType, String type) {
-        this(jcrName, jcrType, type, null, null, null);
+        this(jcrName, jcrType, type, null, null, null, null);
     }
 
     public TestValidationContext(String jcrName, String jcrType, Locale locale) {
-        this(jcrName, jcrType, jcrType, locale, null, null);
+        this(jcrName, jcrType, jcrType, locale, null, null, null);
     }
 
-    public TestValidationContext(String jcrName, String jcrType, String type, Locale locale, TimeZone timeZone, Node parentNode) {
+    public TestValidationContext(String jcrName, String jcrType, String type, Locale locale, TimeZone timeZone,
+                                 Node parentNode, Node documentNode) {
         this.jcrName = jcrName;
         this.jcrType = jcrType;
         this.type = type;

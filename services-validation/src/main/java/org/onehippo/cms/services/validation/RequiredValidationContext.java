@@ -26,11 +26,9 @@ import org.onehippo.cms.services.validation.api.Violation;
 public class RequiredValidationContext implements ValidationContext {
 
     private final ValidationContext context;
-    private final String type;
 
-    public RequiredValidationContext(final ValidationContext context, final String type) {
+    public RequiredValidationContext(final ValidationContext context) {
         this.context = context;
-        this.type = type;
     }
 
     @Override
@@ -70,13 +68,13 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation() {
-        final String key = "required#" + type;
+        final String key = "required#" + context.getType();
         return new TranslatedViolation(key, getLocale());
     }
 
     @Override
     public Violation createViolation(final String subKey) {
-        final String key = "required#" + type + "#" + subKey;
+        final String key = "required#" + context.getType() + "#" + subKey;
         return new TranslatedViolation(key, getLocale());
     }
 
