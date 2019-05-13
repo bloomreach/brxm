@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { connectToParent } from '@bloomreach/navapp-communication';
 
+import { navigationConfiguration } from './mocks';
+
 @Component({
   selector: 'app-root',
   template: `
@@ -11,15 +13,18 @@ export class AppComponent implements OnInit {
   navigateCount = 0;
 
   ngOnInit(): void {
-    connectToParent({
-      parentOrigin: 'http://localhost:4200',
-      methods: {
-        navigate: () => {
-          this.navigateCount += 1;
+    if (window.parent !== window) {
+      connectToParent({
+        parentOrigin: 'http://localhost:4200',
+        methods: {
+          navigate: () => {
+            this.navigateCount += 1;
+          },
+          getNavItems: () => {
+            return navigationConfiguration;
+          },
         },
-      },
-    }).then(() => {
-      console.log('connected to parent');
-    });
+      });
+    }
   }
 }

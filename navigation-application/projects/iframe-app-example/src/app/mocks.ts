@@ -1,8 +1,4 @@
-/*
- * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
- */
-
-import { NavItem } from './models';
+import { NavItem } from '@bloomreach/navapp-communication';
 
 export const navigationConfiguration: NavItem[] = [
   {
