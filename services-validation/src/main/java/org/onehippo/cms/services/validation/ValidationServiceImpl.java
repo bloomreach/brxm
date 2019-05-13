@@ -35,9 +35,4 @@ class ValidationServiceImpl implements ValidationService {
         return config.getValidatorInstance(name);
     }
 
-    @Override
-    public ValidatorInstance getRequiredValidator(final String type) {
-        return config.getRequiredValidatorInstance(type);
-    }
-
 }

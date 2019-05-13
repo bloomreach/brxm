@@ -25,14 +25,14 @@ import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ValidatorFactory {
+public class ValidatorFactory {
 
     private static final Logger log = LoggerFactory.getLogger(ValidatorFactory.class);
 
     private ValidatorFactory() {
     }
 
-    static Validator createValidator(final ValidatorConfig config) {
+    public static Validator createValidator(final ValidatorConfig config) {
         Validator validator = null;
 
         final String className = config.getClassName();

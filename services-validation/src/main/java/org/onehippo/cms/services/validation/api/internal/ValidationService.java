@@ -22,6 +22,4 @@ public interface ValidationService {
 
     ValidatorInstance getValidator(String name);
 
-    ValidatorInstance getRequiredValidator(String type);
-
 }

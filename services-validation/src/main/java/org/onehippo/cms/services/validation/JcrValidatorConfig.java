@@ -20,7 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 
-class JcrValidatorConfig implements ValidatorConfig {
+public class JcrValidatorConfig implements ValidatorConfig {
 
     static final String CLASS_NAME = "hipposys:className";
 
@@ -28,7 +28,7 @@ class JcrValidatorConfig implements ValidatorConfig {
     private final String className;
     private final Node configNode;
 
-    JcrValidatorConfig(final Node node) throws RepositoryException {
+    public JcrValidatorConfig(final Node node) throws RepositoryException {
         if (!node.hasProperty(CLASS_NAME)) {
             throw new IllegalStateException("Node " + node.getPath() + " does not have required property '"+ CLASS_NAME + "'");
         }
