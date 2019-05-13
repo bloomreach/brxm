@@ -137,16 +137,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                         }
                     }
                 }
-
-                // validates that a required Date field is not set to the default "empty" value
-                if (required && field.getTypeDescriptor().isType("Date")
-                    && PropertyValueProvider.EMPTY_DATE.equals(childModel.getObject())) {
-                        violations.add(newViolation(
-                                new ModelPathElement(field, field.getPath(), 0),
-                                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                                FeedbackScope.FIELD)
-                        );
-                }
             }
         }
         return violations;
