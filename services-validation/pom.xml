@@ -38,6 +38,7 @@
 
     <!-- runtime dependencies -->
     <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
+    <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
     <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
@@ -74,6 +75,13 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-commons</artifactId>
+      <version>${hippo.jackrabbit.version}</version>
       <scope>provided</scope>
     </dependency>
 
