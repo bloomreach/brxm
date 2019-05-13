@@ -15,27 +15,18 @@
  */
 package org.onehippo.cms.services.validation;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class JcrValidatorConfig implements ValidatorConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrValidatorConfig.class);
     static final String CLASS_NAME = "hipposys:className";
 
-    private String name;
-    private String className;
-    private Map<String, String> properties;
+    private final String name;
+    private final String className;
+    private final Node configNode;
 
     JcrValidatorConfig(final Node node) throws RepositoryException {
         if (!node.hasProperty(CLASS_NAME)) {
@@ -44,26 +35,7 @@ class JcrValidatorConfig implements ValidatorConfig {
 
         name = node.getName();
         className = node.getProperty(CLASS_NAME).getString();
-        properties = Collections.unmodifiableMap(readProperties(node));
-    }
-
-    private static Map<String, String> readProperties(final Node node) throws RepositoryException {
-        final Map<String, String> properties = new HashMap<>();
-
-        final PropertyIterator it = node.getProperties();
-        while (it.hasNext()) {
-            final Property property = it.nextProperty();
-            final String propertyName = property.getName();
-            if (!propertyName.contains(":")) {
-                if (property.isMultiple()) {
-                    log.warn("Ignoring property '{}' of node '{}' because it is multiple", propertyName, node.getPath());
-                } else {
-                    properties.put(propertyName, property.getString());
-                }
-            }
-        }
-
-        return properties;
+        configNode = node;
     }
 
     @Override
@@ -77,7 +49,7 @@ class JcrValidatorConfig implements ValidatorConfig {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return properties;
+    public Node getNode() {
+        return configNode;
     }
 }

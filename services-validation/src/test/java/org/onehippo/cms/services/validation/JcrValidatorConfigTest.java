@@ -15,20 +15,14 @@
  */
 package org.onehippo.cms.services.validation;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.util.JcrConstants;
-import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 
 public class JcrValidatorConfigTest {
 
@@ -47,44 +41,11 @@ public class JcrValidatorConfigTest {
     }
 
     @Test
-    public void loadsCustomProperties() throws Exception {
-        final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
-        configNode.setProperty("custom-property", "property-value");
-        final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-
-        final Map<String, String> properties = validatorConfig.getProperties();
-        assertThat(properties.size(), equalTo(1));
-        assertThat(properties.get("custom-property"), equalTo("property-value"));
-    }
-
-    @Test
-    public void ignoresNamespacedCustomProperties() throws Exception {
-        final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
-        configNode.setProperty("namespaced:custom-property", "property-value");
-        final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-
-        assertFalse(validatorConfig.getProperties().containsKey("namespaced:custom-property"));
-    }
-
-    @Test
-    public void ignoresMultiplePropertiesAndLogsWarning() throws Exception {
-        final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
-        configNode.setProperty("custom-property", new String[] {"property-value"});
-
-        try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(JcrValidatorConfig.class).build()) {
-            final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-            assertEquals(1L, listener.messages().count());
-            assertFalse(validatorConfig.getProperties().containsKey("custom-property"));
-        }
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void customPropertiesCannotBeModified() throws Exception {
+    public void getNode() throws Exception {
         final MockNode configNode = createConfigNode("validator-name", "validator-class-name");
         final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
 
-        final Map<String, String> properties = validatorConfig.getProperties();
-        properties.put("key", "value");
+        assertEquals(configNode, validatorConfig.getNode());
     }
 
     private MockNode createConfigNode(final String name, final String className) throws RepositoryException {

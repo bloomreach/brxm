@@ -84,7 +84,8 @@ public class ValidationServiceConfigTest {
     @Test
     public void returnsNewValidatorFromConfig() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
@@ -95,7 +96,8 @@ public class ValidationServiceConfigTest {
     @Test
     public void returnsSameValidatorInstance() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
@@ -105,9 +107,11 @@ public class ValidationServiceConfigTest {
     @Test
     public void clearsValidatorInstancesOnReconfigure() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         final ValidatorInstance mockInstance2 = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance2);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance2);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");

@@ -15,9 +15,11 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
@@ -35,11 +37,11 @@ public class RegExpValidator implements Validator<String> {
 
     private static final String PATTERN_KEY = "regexp.pattern";
 
-    public RegExpValidator(final Map<String, String> properties) throws ValidationContextException {
-        if (properties.containsKey(PATTERN_KEY)) {
-            pattern = Pattern.compile(properties.get(PATTERN_KEY));
-        } else {
-            throw new ValidationContextException("Missing required property '" + PATTERN_KEY + "'");
+    public RegExpValidator(final Node config) throws ValidationContextException {
+        try {
+            pattern = Pattern.compile(config.getProperty(PATTERN_KEY).getString());
+        } catch (RepositoryException e) {
+            throw new ValidationContextException("Cannot read required property '" + PATTERN_KEY + "'", e);
         }
     }
 

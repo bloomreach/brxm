@@ -16,7 +16,7 @@
 
 package org.onehippo.cms.services.validation.api.internal;
 
-import java.util.Map;
+import javax.jcr.Node;
 
 /**
  * Wrapper around the configuration of a validator.
@@ -34,9 +34,7 @@ public interface ValidatorConfig {
     String getClassName();
 
     /**
-     * @return the custom configuration properties of a validator,
-     * or an empty map if no custom properties have been configured.
+     * @return the configuration node of a validator.
      */
-    Map<String, String> getProperties();
-
+    Node getNode();
 }

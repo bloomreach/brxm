@@ -17,7 +17,8 @@ package org.onehippo.cms.services.validation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
+
+import javax.jcr.Node;
 
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
@@ -37,10 +38,10 @@ class ValidatorFactory {
         final String className = config.getClassName();
 
         try {
-            validator = createValidatorWithProperties(className, config.getProperties());
+            validator = createValidatorWithNode(className, config.getNode());
 
             if (validator == null) {
-                validator = createValidatorWithoutProperties(className);
+                validator = createValidatorWithoutNode(className);
             }
 
             if (validator == null) {
@@ -57,19 +58,19 @@ class ValidatorFactory {
         return validator;
     }
 
-    private static Validator createValidatorWithProperties(final String className, final Map<String, String> properties)
+    private static Validator createValidatorWithNode(final String className, final Node configNode)
             throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
         try {
-            final Constructor<?> constructor = Class.forName(className).getConstructor(Map.class);
-            return (Validator) constructor.newInstance(properties);
+            final Constructor<?> constructor = Class.forName(className).getConstructor(Node.class);
+            return (Validator) constructor.newInstance(configNode);
         } catch (NoSuchMethodException e) {
-            log.info("Class '{}' does not have a public constructor with single argument Map<String, String>", className, e);
+            log.info("Class '{}' does not have a public constructor with single argument of type javax.jcr.Node", className, e);
         }
 
         return null;
     }
 
-    private static Validator createValidatorWithoutProperties(final String className)
+    private static Validator createValidatorWithoutNode(final String className)
             throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
         try {
             final Constructor<?> constructor = Class.forName(className).getConstructor();

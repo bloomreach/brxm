@@ -16,25 +16,24 @@
 
 package org.onehippo.cms.services.validation;
 
-import java.util.Collections;
-import java.util.Map;
+import javax.jcr.Node;
 
 import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 
 public class TestValidatorConfig implements ValidatorConfig {
 
-    private String name;
-    private String className;
-    private Map<String, String> properties;
+    private final String name;
+    private final String className;
+    private final Node node;
 
     TestValidatorConfig(final String name, final String className) {
-        this(name, className, Collections.emptyMap());
+        this(name, className, null);
     }
 
-    TestValidatorConfig(final String name, final String className, final Map<String, String> properties) {
+    TestValidatorConfig(final String name, final String className, final Node node) {
         this.name = name;
         this.className = className;
-        this.properties = properties;
+        this.node = node;
     }
 
     @Override
@@ -48,8 +47,7 @@ public class TestValidatorConfig implements ValidatorConfig {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-        return properties;
+    public Node getNode() {
+        return node;
     }
-
 }
