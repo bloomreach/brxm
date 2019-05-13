@@ -9,5 +9,6 @@ export class MenuItemLink {
   constructor(
     public id: string,
     public caption: string,
+    public icon?: string,
   ) {}
 }

@@ -1,0 +1,69 @@
+@import '../../../styles/variables';
+
+$bottom-menu-item-height: $menu-root-item-height - 5px;
+$bottom-menu-item-size: 20px;
+$menu-trigger-size: 12px;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  width: $menu-width;
+  background-color: $menu-bg;
+  transition: width 300ms ease-in-out;
+  font-size: 14px;
+
+  &.collapsed {
+    width: $menu-collapsed-width;
+  }
+}
+
+.top-elements,
+.bottom-elements {
+  padding: 10px 0;
+}
+
+.top-elements {
+  .menu-item {
+    height: $menu-root-item-height;
+  }
+}
+
+.bottom-elements {
+  .menu-item {
+    position: relative;
+    height: $bottom-menu-item-height;
+  }
+
+  .menu-item .mat-icon {
+    height: $bottom-menu-item-size;
+    width: $bottom-menu-item-size;
+    color: $menu-icon-color;
+  }
+
+  .mat-icon {
+    position: absolute;
+    top: 50%;
+    left: ($menu-collapsed-width - $bottom-menu-item-size) / 2;
+    transform: translateY(-50%);
+  }
+
+  .trigger .mat-icon {
+    height: $menu-trigger-size;
+    width: $menu-trigger-size;
+    left: ($menu-collapsed-width - $menu-trigger-size) / 2;
+    transform: translateY(-100%);
+    cursor: pointer;
+  }
+
+  .caption {
+    position: absolute;
+    top: 50%;
+    left: $menu-collapsed-width;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    line-height: $bottom-menu-item-height;
+    color: $menu-text-color;
+  }
+}

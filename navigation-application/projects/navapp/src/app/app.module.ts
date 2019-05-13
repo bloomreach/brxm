@@ -8,13 +8,12 @@ import { NavigationConfigurationService } from './services';
 import { AppComponent } from './app.component';
 import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { CommunicationModule } from './communication';
+import { MaterialModule } from './shared/material.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
   imports: [
     BrowserModule,
+    MaterialModule,
     AppRoutingModule,
     LeftMenuModule,
     ClientApplicationsManagerModule,
@@ -22,6 +21,9 @@ import { CommunicationModule } from './communication';
   ],
   providers: [
     NavigationConfigurationService,
+  ],
+  declarations: [
+    AppComponent,
   ],
   bootstrap: [AppComponent],
 })

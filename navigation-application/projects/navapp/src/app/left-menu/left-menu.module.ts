@@ -5,6 +5,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
+import { MaterialModule } from '../shared/material.module';
+
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { LeftMenuComponent } from './components/left-menu.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
@@ -15,6 +17,7 @@ import { MenuBuilderService, MenuStructureService } from './services';
 @NgModule({
   imports: [
     CommonModule,
+    MaterialModule,
   ],
   declarations: [
     LeftMenuComponent,

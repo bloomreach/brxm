@@ -1,3 +1,11 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
-<brna-menu-item [config]="config"></brna-menu-item>
+<div class="collapsed-menu-item">
+  <mat-icon svgIcon="{{ config.icon }}"></mat-icon>
+</div>
+
+<div class="expanded-menu-item">
+  <mat-icon svgIcon="{{ config.icon }}"></mat-icon>
+  <span class="caption">{{ config.caption }}</span>
+</div>
+<!-- <brna-menu-item [config]="config"></brna-menu-item> -->

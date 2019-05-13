@@ -1,0 +1,13 @@
+{
+  "dest": "src/",
+  "mode": {
+    "css": {
+      "dest": "sprites",
+      "render": {
+        "scss": {
+          "dest": "_sprite.scss"
+        }
+      }
+    }
+  }
+}

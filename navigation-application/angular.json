@@ -28,6 +28,7 @@
               "projects/navapp/src/assets"
             ],
             "styles": [
+              "node_modules/normalize.css/normalize.css",
               "projects/navapp/src/styles.scss"
             ],
             "scripts": [],

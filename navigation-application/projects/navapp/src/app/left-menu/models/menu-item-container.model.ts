@@ -8,5 +8,6 @@ export class MenuItemContainer {
   constructor(
     public caption: string,
     public children: MenuItem[],
+    public icon?: string,
   ) {}
 }

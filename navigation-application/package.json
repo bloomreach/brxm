@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "sprites": "svg-sprite --config sprite-config.json src/assets/menu-icons/*.svg",
     "build": "ng build",
     "build:navapp": "ng build navapp",
     "postbuild:navapp": "npx del ./dist/navapp/index.html ./dist/navapp/favicon.ico",
@@ -21,17 +22,20 @@
     "dist/navapp/"
   ],
   "dependencies": {
-    "@angular/animations": "~7.2.0",
+    "@angular/animations": "^7.2.15",
+    "@angular/cdk": "^7.3.7",
     "@angular/common": "~7.2.0",
     "@angular/compiler": "~7.2.0",
     "@angular/core": "~7.2.0",
     "@angular/forms": "~7.2.0",
+    "@angular/material": "^7.3.7",
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
     "@bloomreach/navapp-communication": "^1.0.0-0",
     "core-js": "^2.5.4",
     "penpal": "^4.0.0",
+    "normalize.css": "^8.0.1",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.26"
@@ -62,6 +66,7 @@
     "stylelint-config-standard": "^18.3.0",
     "stylelint-order": "^3.0.0",
     "stylelint-scss": "^3.6.1",
+    "svg-sprite": "^1.5.0",
     "ts-node": "~7.0.0",
     "tsickle": ">=0.34.0",
     "tslib": "^1.9.0",

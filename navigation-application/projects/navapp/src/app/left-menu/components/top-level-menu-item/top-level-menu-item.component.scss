@@ -1,0 +1,74 @@
+@import '../../../../styles/variables';
+
+$menu-icon-size: 24px;
+
+:host {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  height: $menu-root-item-height;
+  border-left: solid 1px $menu-bg;
+  text-align: left;
+
+  .expanded-menu-item {
+    display: block;
+  }
+
+  .collapsed-menu-item {
+    display: none;
+  }
+
+  &.collapsed {
+    .expanded-menu-item {
+      display: none;
+    }
+
+    .collapsed-menu-item {
+      display: block;
+    }
+  }
+
+  &:hover {
+    background-color: $menu-hover-bg;
+    width: $menu-width;
+
+    &.collapsed {
+      box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    }
+
+    .expanded-menu-item {
+      display: block;
+    }
+
+    .collapsed-menu-item {
+      display: none;
+    }
+
+    .mat-icon {
+      color: $menu-icon-active-color;
+    }
+
+    .caption {
+      color: $menu-hover-text-color;
+    }
+  }
+}
+
+.mat-icon {
+  position: absolute;
+  top: 50%;
+  left: ($menu-collapsed-width - $menu-icon-size) / 2;
+  transform: translateY(-50%);
+  color: $menu-icon-color;
+}
+
+.caption {
+  position: absolute;
+  top: 50%;
+  left: $menu-collapsed-width;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  line-height: $menu-root-item-height;
+  color: $menu-text-color;
+}
