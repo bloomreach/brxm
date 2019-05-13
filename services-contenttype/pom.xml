@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -89,29 +89,34 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- TODO Make sure HippoContentTypeServiceTest runs without these dependencies! this project is not allowed to
-         TODO depend on the CMS since HST depends on this service and CMS depends on HST-->
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-cms-test</artifactId>-->
-      <!--<version>${hippo.cms.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-cms-editor-repository</artifactId>-->
-      <!--<version>${hippo.cms.version}</version>-->
-      <!--<scope>test</scope>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-cms-editor-repository</artifactId>-->
-      <!--<version>${hippo.cms.version}</version>-->
-      <!--<type>jar</type>-->
-      <!--<classifier>tests</classifier>-->
-      <!--<scope>test</scope>-->
-      <!--<optional>true</optional>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-config</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-workflow</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testcontent</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -1,18 +1,18 @@
 {
   "aggregate" : true,
   "derivedType" : false,
-  "name" : "hippostd:relaxed,test:test",
+  "name" : "hippostd:relaxed,testnamespace:test",
   "prefix" : null,
   "superTypes" : [ "hippo:container", "hippostd:container", "nt:base" ],
-  "aggregatedTypes" : [ "hippostd:relaxed", "test:test" ],
+  "aggregatedTypes" : [ "hippostd:relaxed", "testnamespace:test" ],
   "documentType" : false,
   "compoundType" : false,
   "mixin" : false,
   "cascadeValidate" : true,
   "properties" : {
-    "test:title" : {
-      "definingType" : "test:test",
-      "name" : "test:title",
+    "testnamespace:title" : {
+      "definingType" : "testnamespace:test",
+      "name" : "testnamespace:title",
       "property" : true,
       "derivedItem" : false,
       "itemType" : "String",
@@ -27,8 +27,8 @@
       "validators" : [ ],
       "itemProperties" : { },
       "effectiveNodeTypeItem" : {
-        "name" : "test:title",
-        "definingType" : "test:test",
+        "name" : "testnamespace:title",
+        "definingType" : "testnamespace:test",
         "nodeType" : false,
         "residual" : false,
         "multiple" : false,
@@ -42,9 +42,9 @@
       },
       "protected" : false
     },
-    "test:extraField" : {
-      "definingType" : "test:test",
-      "name" : "test:extraField",
+    "testnamespace:extraField" : {
+      "definingType" : "testnamespace:test",
+      "name" : "testnamespace:extraField",
       "property" : true,
       "derivedItem" : false,
       "itemType" : "String",
@@ -140,9 +140,9 @@
     }
   },
   "children" : {
-    "test:child" : {
-      "definingType" : "test:test",
-      "name" : "test:child",
+    "testnamespace:child" : {
+      "definingType" : "testnamespace:test",
+      "name" : "testnamespace:child",
       "property" : false,
       "derivedItem" : false,
       "itemType" : "nt:unstructured",
@@ -157,8 +157,8 @@
       "validators" : [ ],
       "itemProperties" : { },
       "effectiveNodeTypeItem" : {
-        "name" : "test:child",
-        "definingType" : "test:test",
+        "name" : "testnamespace:child",
+        "definingType" : "testnamespace:test",
         "nodeType" : true,
         "residual" : false,
         "multiple" : false,
@@ -173,10 +173,10 @@
     }
   },
   "effectiveNodeType" : {
-    "name" : "hippostd:relaxed,test:test",
+    "name" : "hippostd:relaxed,testnamespace:test",
     "prefix" : null,
     "superTypes" : [ "hippo:container", "hippostd:container", "nt:base" ],
-    "aggregatedTypes" : [ "hippostd:relaxed", "test:test" ],
+    "aggregatedTypes" : [ "hippostd:relaxed", "testnamespace:test" ],
     "aggregate" : true,
     "mixin" : false,
     "ordered" : false,
@@ -279,9 +279,9 @@
         "requiredPrimaryTypes" : [ "hippostd:html" ],
         "protected" : false
       } ],
-      "test:child" : [ {
-        "name" : "test:child",
-        "definingType" : "test:test",
+      "testnamespace:child" : [ {
+        "name" : "testnamespace:child",
+        "definingType" : "testnamespace:test",
         "nodeType" : true,
         "residual" : false,
         "multiple" : false,
@@ -505,9 +505,9 @@
         "type" : "Name",
         "protected" : true
       } ],
-      "test:title" : [ {
-        "name" : "test:title",
-        "definingType" : "test:test",
+      "testnamespace:title" : [ {
+        "name" : "testnamespace:title",
+        "definingType" : "testnamespace:test",
         "nodeType" : false,
         "residual" : false,
         "multiple" : false,
