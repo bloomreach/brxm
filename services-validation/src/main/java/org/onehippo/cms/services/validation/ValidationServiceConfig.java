@@ -101,8 +101,8 @@ class ValidationServiceConfig {
     private ValidatorInstance getRequiredValidatorForSuperType(final String type) throws RepositoryException {
         final EffectiveNodeType effectiveNodeType = contentTypeService.getEffectiveNodeTypes().getType(type);
 
-        for (String superType : effectiveNodeType.getSuperTypes()) {
-            final ValidatorInstance requiredValidator = getValidatorInstance(superType);
+        for (final String superType : effectiveNodeType.getSuperTypes()) {
+            final ValidatorInstance requiredValidator = getRequiredValidatorInstance(superType);
             if (requiredValidator != null) {
                 return requiredValidator;
             }
