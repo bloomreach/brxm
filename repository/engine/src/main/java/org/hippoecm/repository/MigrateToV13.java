@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,10 +79,11 @@ public class MigrateToV13 {
     }
 
     public void migrateIfNeeded() throws RepositoryException {
-        if (!ntm.hasNodeType("hippo:initializeitem")) {
-            log.debug("No migration needed");
+        if (!ntm.hasNodeType("hippo:initializeitem") && ntm.hasNodeType("hipposys:ntd_v13")) {
+            log.info("No migration needed");
             return;
         }
+        log.info("Start MigrateToV13");
 
         final List<Node> extraNodes = new ArrayList<>();
         if (ntm.hasNodeType("targeting:dataflow") && session.nodeExists("/targeting:targeting/targeting:dataflow")) {
@@ -207,8 +208,8 @@ public class MigrateToV13 {
     }
 
     private void removeChildNodeFromType(final String nodeType, final String childNodeType) throws RepositoryException {
-        log.info("Removing ChildNodeType {} from NodeType {}", childNodeType, nodeType);
         if (!dryRun && ntm.hasNodeType(nodeType)) {
+            log.info("Removing ChildNodeType {} from NodeType {} (if needed)", childNodeType, nodeType);
             final NodeTypeTemplate ntt = ntm.createNodeTypeTemplate(ntm.getNodeType(nodeType));
             boolean found = false;
             for (Iterator<Object> iter = ntt.getNodeDefinitionTemplates().iterator(); iter.hasNext(); ) {
