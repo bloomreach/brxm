@@ -20,6 +20,10 @@ package org.onehippo.cms.services.validation.api.internal;
  */
 public interface ValidationService {
 
+    /**
+     * @param name the name of a validator
+     * @return the validator instance, or null if no validator with the given name exists.
+     */
     ValidatorInstance getValidator(String name);
 
 }
