@@ -13,7 +13,8 @@ export interface ParentApi {
 }
 
 export interface ChildApi {
-  navigate: (location: NavLocation) => void;
+  navigate?: (location: NavLocation) => void;
+  getNavItems?: () => NavItem[];
 }
 
 export interface NavItem {

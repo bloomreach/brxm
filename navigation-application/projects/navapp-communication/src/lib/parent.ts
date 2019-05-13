@@ -10,8 +10,10 @@ export function connectToParent({
     parentOrigin,
     methods: {
       navigate(location: NavLocation): any {
-        console.log('navigating to location', location);
         return methods.navigate(location);
+      },
+      getNavItems(): any {
+        return methods.getNavItems();
       },
     },
   };
