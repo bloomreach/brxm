@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
         parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
             fail("parsing should have failed on encountered node alias");
         } catch (ParserException e) {
-            assertTrue(e.getMessage().startsWith("Encounter node alias 'alias' which is not supported when parsing a document head only"));
+            assertTrue(e.getCause().getMessage().startsWith("Encounter node alias 'alias' which is not supported when parsing a document head only"));
         }
     }
 
@@ -104,7 +104,7 @@ public class ContentSourceHeadParserTest extends AbstractBaseTest {
             parser.composeYamlHead(IOUtils.toInputStream(yaml, "UTF-8"), "location");
             fail("parsing should have failed on encountered anchor");
         } catch (ParserException e) {
-            assertTrue(e.getMessage().startsWith("Encountered node anchor 'anchor' which is not supported when parsing a document head only"));
+            assertTrue(e.getCause().getMessage().startsWith("Encountered node anchor 'anchor' which is not supported when parsing a document head only"));
         }
     }
 

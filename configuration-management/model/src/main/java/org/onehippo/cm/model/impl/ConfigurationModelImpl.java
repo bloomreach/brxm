@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -41,6 +40,7 @@ import org.onehippo.cm.model.impl.definition.WebFileBundleDefinitionImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationPropertyImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationTreeBuilder;
+import org.onehippo.cm.model.parser.ParserException;
 import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPathSegment;
 import org.onehippo.cm.model.path.JcrPaths;
@@ -310,10 +310,10 @@ public class ConfigurationModelImpl implements ConfigurationModel {
         // TODO: fix groupSorter to do this properly with lexical sort by HCM Site name, so getModulesStream() does this consistently
         // TODO: disallow dependencies that force an ordering that violates HCM Site isolation
         getModulesStream()
-                .filter(m -> Objects.isNull(m.getSiteName()))
+                .filter(m -> !m.isNotCore())
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
         getModulesStream()
-                .filter(m -> Objects.nonNull(m.getSiteName()))
+                .filter(ModuleImpl::isNotCore)
                 .forEach(module -> buildModule(configurationTreeBuilder, module));
 
         setConfigurationRootNode(configurationTreeBuilder.build());
@@ -325,7 +325,14 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     private void buildModule(final ConfigurationTreeBuilder configurationTreeBuilder, final ModuleImpl module) {
-        log.info("Merging module {}", module.getFullName());
+        log.debug("Merging module {}", module.getFullName());
+        if (!module.getNamespaceDefinitions().isEmpty() && module.isNotCore()) {
+            final ParserException parserException = new ParserException(String.format("Namespace definition can not be a part of site module: %s",
+                    module.getFullName()));
+            parserException.setSource(module.getNamespaceDefinitions().get(0).getSource().toString());
+            throw parserException;
+        }
+
         addNamespaceDefinitions(module.getNamespaceDefinitions());
         addConfigDefinitions(module.getConfigDefinitions());
         addContentDefinitions(module.getContentDefinitions());
@@ -386,7 +393,32 @@ public class ConfigurationModelImpl implements ConfigurationModel {
     }
 
     /**
-     * Compile a manifest of contents. Format will be a YAML document as follows.
+     * Compare core and all sites of this model with the corresponding core and sites in another model,
+     * based on the algorithm described in {@link #getDigest(String)}. If this model has a site that the other
+     * does not, this method returns false. If the other model has additional sites not represented here, but
+     * core and all other sites match, this method returns true.
+     *
+     * @param other another model with which to compare this one
+     * @return true if there is a match of all sites here, and false if there is any explicit mismatch or missing
+     *              sites in other
+     */
+    public boolean currentSitesMatchByDigests(final ConfigurationModel other) {
+        if (!getDigest(null).equals(other.getDigest(null))) {
+            return false;
+        }
+
+        for (final String site : siteNames) {
+            if (!getDigest(site).equals(other.getDigest(site))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Compute a digest of contents of this model.
+     *
+     * The digest is internally based on a manifest of contents. The format will be a YAML document as follows.
      * <pre>
      * for each Module:
      * [group-name]/[project-name]/[module-name]:
@@ -411,8 +443,12 @@ public class ConfigurationModelImpl implements ConfigurationModel {
      * @return String representation of complete manifest of contents
      */
     @Override
-    public String getDigest(final String hcmSiteName) {
+    public String getDigest(String hcmSiteName) {
         TreeMap<ModuleImpl,TreeMap<String,String>> manifest = new TreeMap<>();
+        if (hcmSiteName == null) {
+            hcmSiteName = CORE_NAME;
+        }
+
         // for each module, accumulate manifest items
         for (ModuleImpl m : getModules()) {
             if (StringUtils.equalsIgnoreCase(hcmSiteName, m.getSiteName())) {

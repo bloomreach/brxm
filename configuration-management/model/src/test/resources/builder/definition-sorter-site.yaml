@@ -1,0 +1,18 @@
+definitions:
+  config:
+    /a:
+      jcr:primaryType: foo
+      property1: bla1
+      property2: bla2
+    /a/b/c:
+      jcr:primaryType: foo
+      property3: bla3
+    /a/b:
+      jcr:primaryType: foo
+      property4: bla4
+    /a/b/c/d:
+      jcr:primaryType: foo
+      property5: bla5
+    /a/b/a:
+      jcr:primaryType: foo
+      property6: bla6

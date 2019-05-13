@@ -59,7 +59,7 @@ public interface Module extends OrderableByName, Comparable<Module> {
     boolean isNotCore();
 
     /**
-     * @return HCM Site name of the Module or null if it is a core Module
+     * @return HCM Site name of the Module or {@link Site#CORE_NAME} if it is a core Module
      * @since 13.0
      */
     String getSiteName();

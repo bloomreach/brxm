@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -388,7 +388,7 @@ public class ConfigurationModelImplTest {
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
         final ModuleImpl m2 = c1.addProject("p2").addModule("m2");
 
-        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter-site.yaml", m1);
         ModelTestUtils.loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m2);
 
         ConfigurationModelImpl model = new ConfigurationModelImpl().addGroup(c1).addGroup(coreGroup).build();
