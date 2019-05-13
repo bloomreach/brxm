@@ -109,13 +109,6 @@
       <artifactId>easymock</artifactId>
     </dependency>
 
-    <!-- STAX2 API -->
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>stax2-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
 </project>

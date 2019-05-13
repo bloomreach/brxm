@@ -68,12 +68,6 @@
       <version>${hippo.services.version}</version>
     </dependency>
 
-    <!-- STAX2 API -->
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>stax2-api</artifactId>
-    </dependency>
-
     <!-- hst dependencies & initial structure -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
