@@ -52,8 +52,8 @@ class ValidatorInstanceImpl implements ValidatorInstance {
             validatorContext.set(context);
             return runValidator(value);
         } catch (ClassCastException e) {
-            throw new ValidationContextException("Validator '" + config.getName() + "'"
-                    + " is used in field '" + context.getJcrName() + "'"
+            throw new ValidationContextException("Validator '" + validator.getClass().getName() + "'"
+                    + " with name '" + config.getName() + "' is used in field '" + context.getJcrName() + "'"
                     + " of type '" + context.getJcrType() + "'."
                     + " The value of that field is of type '" + value.getClass().getName() + "',"
                     + " which is not compatible with the value type expected by the validator", e);
