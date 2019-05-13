@@ -1,20 +1,29 @@
 export interface ChildConnectConfig {
   iframe: HTMLElement;
-  methods: ParentApi;
+  methods?: ParentApi;
 }
 
 export interface ParentConnectConfig {
   parentOrigin: string;
-  methods: ChildApi;
+  methods?: ChildApi;
 }
 
 export interface ParentApi {
   navigate?: (location: NavLocation) => void;
 }
 
+export interface ParentPromisedApi {
+  navigate?: (location: NavLocation) => Promise<void>;
+}
+
 export interface ChildApi {
   navigate?: (location: NavLocation) => void;
   getNavItems?: () => NavItem[];
+}
+
+export interface ChildPromisedApi {
+  navigate?: (location: NavLocation) => Promise<void>;
+  getNavItems?: () => Promise<NavItem[]>;
 }
 
 export interface NavItem {

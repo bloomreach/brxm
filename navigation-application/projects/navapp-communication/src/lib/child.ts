@@ -1,11 +1,11 @@
 import penpal from 'penpal';
 
-import { ChildApi, ChildConnectConfig } from './api';
+import { ChildConnectConfig, ChildPromisedApi } from './api';
 
 export function connectToChild({
   iframe,
   methods,
-}: ChildConnectConfig): Promise<ChildApi> {
+}: ChildConnectConfig): Promise<ChildPromisedApi> {
   const proxyConfig: ChildConnectConfig = {
     iframe,
     methods,

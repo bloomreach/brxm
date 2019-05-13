@@ -1,18 +1,23 @@
 import penpal from 'penpal';
 
-import { NavLocation, ParentApi, ParentConnectConfig } from './api';
+import {
+  NavItem,
+  NavLocation,
+  ParentConnectConfig,
+  ParentPromisedApi,
+} from './api';
 
 export function connectToParent({
   parentOrigin,
   methods,
-}: ParentConnectConfig): Promise<ParentApi> {
+}: ParentConnectConfig): Promise<ParentPromisedApi> {
   const proxyConfig: ParentConnectConfig = {
     parentOrigin,
     methods: {
-      navigate(location: NavLocation): any {
+      navigate(location: NavLocation): void {
         return methods.navigate(location);
       },
-      getNavItems(): any {
+      getNavItems(): NavItem[] {
         return methods.getNavItems();
       },
     },

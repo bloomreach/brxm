@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { connectToParent } from '@bloomreach/navapp-communication';
+import { connectToParent, ParentConnectConfig } from '@bloomreach/navapp-communication';
 
 import { navigationConfiguration } from './mocks';
 
@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (window.parent !== window) {
-      connectToParent({
+      const config: ParentConnectConfig = {
         parentOrigin: 'http://localhost:4200',
         methods: {
           navigate: () => {
@@ -24,7 +24,9 @@ export class AppComponent implements OnInit {
             return navigationConfiguration;
           },
         },
-      });
+      };
+
+      connectToParent(config);
     }
   }
 }

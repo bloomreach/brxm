@@ -6,7 +6,10 @@ import {
   Renderer2,
   RendererFactory2,
 } from '@angular/core';
-import { connectToChild } from '@bloomreach/navapp-communication';
+import {
+  ChildConnectConfig,
+  connectToChild,
+} from '@bloomreach/navapp-communication';
 import { NavItem } from '@bloomreach/navapp-communication/lib/api';
 
 import { BrxGlobalService, NavigationConfigurationService } from './services';
@@ -35,7 +38,11 @@ export class AppComponent implements OnInit {
 
     Promise.all(resourcePromises)
       .then(navItemArrays => [].concat(...navItemArrays))
-      .then(navItems => this.navigationConfigurationService.setNavigationConfiguration(navItems));
+      .then(navItems =>
+        this.navigationConfigurationService.setNavigationConfiguration(
+          navItems,
+        ),
+      );
   }
 
   private getNavConfig(resource: NavConfigResource): Promise<NavItem[]> {
@@ -57,10 +64,11 @@ export class AppComponent implements OnInit {
     iframe.style.position = 'absolute';
     this.renderer.appendChild(this.elRef.nativeElement, iframe);
 
-    return connectToChild({
+    const config: ChildConnectConfig = {
       iframe,
-      methods: {},
-    })
+    };
+
+    return connectToChild(config)
       .then(child => child.getNavItems())
       .finally(() =>
         this.renderer.removeChild(this.elRef.nativeElement, iframe),
