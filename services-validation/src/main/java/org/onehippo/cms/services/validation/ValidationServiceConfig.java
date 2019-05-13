@@ -39,7 +39,7 @@ class ValidationServiceConfig {
 
     void reconfigure(final Node config) {
         try {
-            createValidators(config.getNode("validators"));
+            createValidators(config);
         } catch (final RepositoryException e) {
             log.error("Failed to reconfigure validator service", e);
         }
