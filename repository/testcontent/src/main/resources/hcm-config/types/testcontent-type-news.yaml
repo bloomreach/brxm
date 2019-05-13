@@ -26,7 +26,7 @@ definitions:
           /introduction:
             jcr:primaryType: hipposysedit:field
             hipposysedit:path: testcontent:introduction
-            hipposysedit:type: Html
+            hipposysedit:type: String
           /body:
             jcr:primaryType: hipposysedit:field
             hipposysedit:path: testcontent:body
