@@ -29,7 +29,6 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class JcrValidatorConfigTest {
 
@@ -77,24 +76,6 @@ public class JcrValidatorConfigTest {
             assertEquals(1L, listener.messages().count());
             assertFalse(validatorConfig.getProperties().containsKey("custom-property"));
         }
-    }
-
-    @Test
-    public void clearsValuesOnReconfigure() throws Exception {
-        final Node configNode = createConfigNode("validator-name", "validator-class-name");
-        configNode.setProperty("custom-property", "property-value");
-        final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-
-        final Node newConfigNode = createConfigNode("new-validator-name", "new-validator-class-name");
-        newConfigNode.setProperty("new-custom-property", "new-property-value");
-        validatorConfig.reconfigure(newConfigNode);
-
-        assertEquals("new-validator-class-name", validatorConfig.getClassName());
-
-        final Map<String, String> properties = validatorConfig.getProperties();
-        assertFalse(properties.containsKey("custom-property"));
-        assertTrue(properties.containsKey("new-custom-property"));
-        assertEquals("new-property-value", properties.get("new-custom-property"));
     }
 
     @Test(expected = UnsupportedOperationException.class)

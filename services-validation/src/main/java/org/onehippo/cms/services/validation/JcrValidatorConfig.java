@@ -37,11 +37,7 @@ class JcrValidatorConfig implements ValidatorConfig {
     private String className;
     private Map<String, String> properties;
 
-    JcrValidatorConfig(final Node configNode) throws RepositoryException {
-        reconfigure(configNode);
-    }
-
-    void reconfigure(final Node node) throws RepositoryException {
+    JcrValidatorConfig(final Node node) throws RepositoryException {
         if (!node.hasProperty(CLASS_NAME)) {
             throw new IllegalStateException("Node " + node.getPath() + " does not have required property '"+ CLASS_NAME + "'");
         }
@@ -70,14 +66,17 @@ class JcrValidatorConfig implements ValidatorConfig {
         return properties;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getClassName() {
         return className;
     }
 
+    @Override
     public Map<String, String> getProperties() {
         return properties;
     }
