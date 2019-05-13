@@ -42,20 +42,6 @@
       <artifactId>javax.ws.rs-api</artifactId>
     </dependency>
 
-    <!-- STAX2 API -->
-
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>stax2-api</artifactId>
-    </dependency>
-
-    <!-- STAX2 Implementation -->
-    
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>woodstox-core-asl</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
