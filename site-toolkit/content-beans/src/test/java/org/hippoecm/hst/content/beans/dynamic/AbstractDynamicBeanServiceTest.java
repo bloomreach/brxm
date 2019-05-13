@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +25,13 @@ import org.hippoecm.hst.content.beans.BaseDocument;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.junit.After;
 import org.junit.Before;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public abstract class AbstractDynamicBeanServiceTest extends AbstractBeanTestCase {
 
@@ -49,6 +52,12 @@ public abstract class AbstractDynamicBeanServiceTest extends AbstractBeanTestCas
         }
 
         objectConverter = getObjectConverter(annotatedClasses);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        ModifiableRequestContextProvider.clear();
     }
 
     protected Object getContentBean() throws Exception {
