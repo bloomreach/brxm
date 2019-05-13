@@ -108,6 +108,10 @@ public class RequiredValidator implements Validator<Object> {
     private Validator getRequiredValidatorForSuperType(final String type) throws RepositoryException {
         final EffectiveNodeType effectiveNodeType = contentTypeService.getEffectiveNodeTypes().getType(type);
 
+        if (effectiveNodeType == null) {
+            return null;
+        }
+
         for (final String superType : effectiveNodeType.getSuperTypes()) {
             final Validator requiredValidator = getRequiredValidator(superType);
             if (requiredValidator != null) {
