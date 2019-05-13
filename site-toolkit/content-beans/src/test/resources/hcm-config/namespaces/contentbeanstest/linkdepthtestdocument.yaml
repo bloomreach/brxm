@@ -56,14 +56,6 @@ definitions:
             hipposysedit:path: contentbeanstest:hippo_mirror_
             hipposysedit:primary: false
             hipposysedit:type: hippo:mirror
-          /docbase:
-            jcr:primaryType: hipposysedit:field
-            hipposysedit:mandatory: false
-            hipposysedit:multiple: false
-            hipposysedit:ordered: false
-            hipposysedit:path: hippo:docbase
-            hipposysedit:primary: false
-            hipposysedit:type: Docbase
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:

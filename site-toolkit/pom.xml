@@ -93,9 +93,10 @@
     <hippo.services.search.version>13.2.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>13.2.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.testutils.version>13.2.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.plugin.gallerypicker.version>13.2.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>13.2.0-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.packages.version>13.2.0-SNAPSHOT</hippo.packages.version>
+
+    <!--<hippo.plugin.gallerypicker.version>13.2.0-SNAPSHOT</hippo.plugin.gallerypicker.version>-->
+    <!--<hippo.plugin.selections.version>13.2.0-SNAPSHOT</hippo.plugin.selections.version>-->
+    <!--<hippo.packages.version>13.2.0-SNAPSHOT</hippo.packages.version>-->
     
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
@@ -214,6 +215,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-contenttype</artifactId>
         <version>${hippo.services.contenttype.version}</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -649,6 +651,27 @@
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
         <version>${bytebuddy.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testcontent</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
