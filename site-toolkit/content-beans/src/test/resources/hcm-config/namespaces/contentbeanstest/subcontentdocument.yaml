@@ -16,14 +16,6 @@ definitions:
           hipposysedit:supertype: ['contentbeanstest:contentdocument', 'hippostd:relaxed',
             'hippotranslation:translated']
           hipposysedit:uri: http://www.onehippo.org/contentbeanstest/nt/1.0
-          /actuallystilladocbase:
-            jcr:primaryType: hipposysedit:field
-            hipposysedit:mandatory: false
-            hipposysedit:multiple: false
-            hipposysedit:ordered: false
-            hipposysedit:path: contentbeanstest:actuallystilladocbase
-            hipposysedit:primary: false
-            hipposysedit:type: Docbase
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:

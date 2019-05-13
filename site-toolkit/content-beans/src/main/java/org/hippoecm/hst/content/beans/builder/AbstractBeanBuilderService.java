@@ -42,7 +42,6 @@ public abstract class AbstractBeanBuilderService {
         DOUBLE("Double"), //
         DOCBASE("Docbase"), //
         HIPPO_HTML("hippostd:html"), //
-        HIPPO_IMAGELINK("hippogallerypicker:imagelink"), //
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
         HIPPO_RESOURCE("hippo:resource"),
@@ -157,9 +156,6 @@ public abstract class AbstractBeanBuilderService {
             case HIPPO_HTML:
                 addBeanMethodHippoHtml(propertyName, methodName, multiple, builder);
                 break;
-            case HIPPO_IMAGELINK:
-                addBeanMethodImageLink(propertyName, methodName, multiple, builder);
-                break;
             case HIPPO_MIRROR:
                 addBeanMethodHippoMirror(propertyName, methodName, multiple, builder);
                 break;
@@ -195,7 +191,7 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Checks whether a property/node should be generated as a method for the bean or not
      * 
-     * @param name of the method
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      * @return true if the property/node has to be generated as method
@@ -205,8 +201,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link String} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -215,8 +211,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link java.util.Calendar} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -225,8 +221,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link Boolean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -235,8 +231,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link Long} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -245,8 +241,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link Double} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -255,8 +251,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -265,8 +261,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a custom implementation if there isn't any matching object type for the property
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param type of the document property
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
@@ -276,8 +272,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoHtmlBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -286,8 +282,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -296,8 +292,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -306,8 +302,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -316,8 +312,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoResourceBean} object type
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
@@ -326,8 +322,8 @@ public abstract class AbstractBeanBuilderService {
     /**
      * Adds a custom implementation if there isn't any matching object type for the child node
      * 
-     * @param name of the property type
-     * @param name of the method
+     * @param propertyName of the property type
+     * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param type of the node
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}

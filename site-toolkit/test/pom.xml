@@ -36,6 +36,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${hippo.repository.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>

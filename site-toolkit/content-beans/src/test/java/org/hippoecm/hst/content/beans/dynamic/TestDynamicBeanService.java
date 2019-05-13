@@ -45,20 +45,12 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
     private static final String BOOLEAN_TYPE_METHOD_NAME = "getBooleanTypeField";
-    private static final String BOOLEAN_RADIO_GROUP_TYPE_METHOD_NAME = "getBooleanRadioGroupTypeField";
-    private static final String CALENDER_DATE_TYPE_METHOD_NAME = "getCalendardateTypeField";
     private static final String DATE_TYPE_METHOD_NAME = "getDateTypeField";
     private static final String DECIMAL_NUMBER_TYPE_METHOD_NAME = "getDoubleTypeField";
-    private static final String DOCBASE_TYPE_METHOD_NAME = "getDocbaseTypeField";
-    private static final String DYNAMIC_DROPDOWN_TYPE_METHOD_NAME = "getDynamicdropdownTypeField";
     private static final String INTEGER_NUMBER_TYPE_METHOD_NAME = "getLongTypeField";
-    private static final String HTML_TYPE_METHOD_NAME = "getHtmlTypeField";
-    private static final String RADIO_GROUP_TYPE_METHOD_NAME = "getRadioGroupTypeField";
-    private static final String STATIC_DROPDOWN_TYPE_METHOD_NAME = "getStaticdropdownTypeField";
     private static final String STRING_TYPE_METHOD_NAME = "getStringTypeField";
     private static final String TEXT_TYPE_METHOD_NAME = "getTextTypeField";
 
-    private static final String IMAGE_LINK_COMPOUND_TYPE_METHOD_NAME = "getImagelinkCompoundType";
     private static final String LINK_COMPOUND_TYPE_METHOD_NAME = "getMirrorCompoundType";
     private static final String RESOURCE_COMPOUND_TYPE_METHOD_NAME = "getResourceCompoundType";
     private static final String RICH_TEXT_EDITOR_COMPOUND_TYPE_METHOD_NAME = "getRichTextEditorCompoundType";
@@ -69,7 +61,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
-    @Ignore
+    @Test
     public void testGetValueOfStringTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -80,7 +72,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("string Value", value);
     }
 
-    @Ignore
+    @Test
     public void testGetValueOfTextTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
@@ -138,44 +130,6 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertTrue(DateUtils.isSameDay(result, value.getTime()));
     }
 
-    @Ignore
-    public void testGetValueOfCalendarDateTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        Calendar value = callContentBeanMethod(generatedBean, CALENDER_DATE_TYPE_METHOD_NAME, Calendar.class);
-
-        assertNotNull("The method '" + CALENDER_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
-
-        Date result = dateParser.parse("25/03/2019");
-        assertTrue(DateUtils.isSameDay(result, value.getTime()));
-    }
-
-    @Ignore
-    public void testGetValueOfHtmlTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        String value = callContentBeanMethod(generatedBean, HTML_TYPE_METHOD_NAME, String.class);
-
-        assertNotNull("The method '" + HTML_TYPE_METHOD_NAME + "' didn't return any value", value);
-        assertEquals("htmltypecontent", value);
-    }
-
-    @Ignore
-    public void testGetContentOfImageLinkCompoundTypeWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        HippoGalleryImageSet hippoGalleryImageSet = callContentBeanMethod(generatedBean, IMAGE_LINK_COMPOUND_TYPE_METHOD_NAME,
-                HippoGalleryImageSet.class);
-
-        assertNotNull("The method '" + IMAGE_LINK_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoGalleryImageSet);
-        assertEquals("db02dde5-0098-4488-a72c-2a4fc6d51beb", hippoGalleryImageSet.getNode().getParent().getIdentifier());
-        assertEquals("picture_original.jpeg",  hippoGalleryImageSet.getOriginal().getFilename());
-        assertEquals("picture_thumbnail.jpeg",  hippoGalleryImageSet.getThumbnail().getFilename());
-    }
-
     @Test
     public void testGetContentOfRichTextEditorCompoundTypeWithoutContentBean() throws Exception {
 
@@ -188,65 +142,6 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("richtexteditorcontent", hippoHtml.getContent());
     }
 
-    @Ignore
-    public void testGetContentOfDocbaseTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        HippoBean hippoBean = callContentBeanMethod(generatedBean, DOCBASE_TYPE_METHOD_NAME, HippoBean.class);
-
-        assertNotNull("The method '" + DOCBASE_TYPE_METHOD_NAME + "' didn't return any value", hippoBean);
-
-        assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", hippoBean.getNode().getIdentifier());
-    }
-
-    @Ignore
-    public void testGetValueOfDynamicdropdownTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        String value = callContentBeanMethod(generatedBean, DYNAMIC_DROPDOWN_TYPE_METHOD_NAME, String.class);
-
-        assertNotNull("The method '" + DYNAMIC_DROPDOWN_TYPE_METHOD_NAME + "' didn't return any value", value);
-
-        assertEquals("dynamicvalue", value);
-    }
-
-    @Ignore
-    public void testGetValueOfRadioGroupTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        String value = callContentBeanMethod(generatedBean, RADIO_GROUP_TYPE_METHOD_NAME, String.class);
-
-        assertNotNull("The method '" + RADIO_GROUP_TYPE_METHOD_NAME + "' didn't return any value", value);
-
-        assertEquals("radiogroupvalue", value);
-    }
-
-    @Ignore
-    public void testGetValueOfBooleanRadioGroupTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        Boolean value = callContentBeanMethod(generatedBean, BOOLEAN_RADIO_GROUP_TYPE_METHOD_NAME, Boolean.class);
-
-        assertNotNull("The method '" + BOOLEAN_RADIO_GROUP_TYPE_METHOD_NAME + "' didn't return any value", value);
-
-        assertFalse(value);
-    }
-
-    @Ignore
-    public void testGetValueOfStaticdropdownTypeFieldWithoutContentBean() throws Exception {
-
-        Object generatedBean = getContentBean();
-
-        String value = callContentBeanMethod(generatedBean, STATIC_DROPDOWN_TYPE_METHOD_NAME, String.class);
-
-        assertNotNull("The method '" + STATIC_DROPDOWN_TYPE_METHOD_NAME + "' didn't return any value", value);
-
-        assertEquals("staticvalue", value);
-    }
 
     @Test
     public void testGetContentOfLinkCompoundTypeWithoutContentBean() throws Exception {

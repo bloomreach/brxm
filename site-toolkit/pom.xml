@@ -211,6 +211,7 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-contenttype</artifactId>
         <version>${hippo.services.contenttype.version}</version>
+        <scope>test</scope>
       </dependency>
 
       <dependency>
@@ -618,6 +619,27 @@
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
         <version>${bytebuddy.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testcontent</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>test</scope>
       </dependency>
 
     </dependencies>
