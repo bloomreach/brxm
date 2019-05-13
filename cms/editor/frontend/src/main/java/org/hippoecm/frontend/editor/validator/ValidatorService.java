@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
 
-import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
-
 public class ValidatorService extends Plugin {
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
@@ -57,7 +55,7 @@ public class ValidatorService extends Plugin {
             return null;
         }
 
-        if (!map.containsKey(name) && !REQUIRED_VALIDATOR.equals(name)) {
+        if (!map.containsKey(name)) {
             map.put(name, new CmsValidatorAdapter(name));
         }
 
