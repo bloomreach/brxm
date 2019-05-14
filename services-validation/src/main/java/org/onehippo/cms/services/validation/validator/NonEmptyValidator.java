@@ -18,27 +18,18 @@ package org.onehippo.cms.services.validation.validator;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
-import org.htmlcleaner.HtmlCleaner;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 
 /**
  * Validator that validates that a String value is non-empty.
- * <p>
- * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
- * therefore does not require the html validator to be declared separately.
  */
 public class NonEmptyValidator implements Validator<String> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value) {
-        final boolean isEmpty = "Html".equals(context.getType())
-                ? HtmlUtils.isEmpty(value)
-                : StringUtils.isBlank(value);
-
-        if (isEmpty) {
+        if (StringUtils.isBlank(value)) {
             return Optional.of(context.createViolation());
         }
 
