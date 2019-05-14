@@ -84,7 +84,6 @@ class CKEditorController {
         });
         this.editor.on('dialogHide', () => { this.SharedSpaceToolbarService.isToolbarPinned = false; });
       });
-      this._validate();
     });
   }
 
@@ -112,19 +111,6 @@ class CKEditorController {
     this.$scope.$apply(() => {
       this.ngModel.$setViewValue(this.editor.getData());
     });
-    this._validate();
-  }
-
-  _validate() {
-    this.fieldObject.$setValidity('required', true);
-
-    const rawValue = this._getRawValue();
-    // Validate 'required', field should have a value
-    if (this.isRequired) {
-      if (!rawValue.length) {
-        this.fieldObject.$setValidity('required', false);
-      }
-    }
   }
 
   onEditorFocus() {
@@ -144,7 +130,6 @@ class CKEditorController {
         hasBottomToolbar: this.config.hippo && this.config.hippo.hasBottomToolbar,
       });
     }
-    this._validate();
   }
 
   onEditorBlur($event) {
@@ -157,8 +142,6 @@ class CKEditorController {
       && this.SharedSpaceToolbarService.isToolbarPinned === false) {
       this.SharedSpaceToolbarService.hideToolbar();
     }
-
-    this._validate();
   }
 
   _openLinkPicker(selectedLink) {
