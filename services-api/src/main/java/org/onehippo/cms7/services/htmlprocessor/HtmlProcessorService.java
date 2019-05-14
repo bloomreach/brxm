@@ -26,4 +26,6 @@ public interface HtmlProcessorService {
      * @return Instance of HTML processor
      */
     HtmlProcessor getHtmlProcessor(final String id);
+
+    boolean isVisible(final String html);
 }
