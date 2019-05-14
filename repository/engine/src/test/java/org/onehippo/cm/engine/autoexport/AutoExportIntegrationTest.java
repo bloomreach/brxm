@@ -440,6 +440,7 @@ public class AutoExportIntegrationTest {
     }
 
     private Calendar suppressTestLastUpdated;
+    private String expectedDigest;
 
     // Test repo.bootstrap=true mode, which should suppress bootstrap processing if the same model is loaded repeatedly
     // Note that this isn't really a test of auto-export, but it's implemented here because the fixture is very similar
@@ -452,16 +453,13 @@ public class AutoExportIntegrationTest {
         // just use an arbitrary module def with some config in it...
         final ModuleInfo cycle1Module = new ModuleInfo("reapply_content", "cycle1", "in", "in");
         final ModuleInfo cycle2Module = new ModuleInfo("reapply_content", "cycle2", "in", "in");
-        final String expectedDigest = "$MD5$8325D68CFBA07EC582115595378E364D";
 
         final Validator validateBaselineAfterCycle1 = (session, configurationModel) -> {
             // baseline should be stored with a specific digest value
             final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
-            final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
-            assertEquals("Baseline digest should have a predictable value",
-                    expectedDigest, baselineDigest);
+            expectedDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
             assertEquals("Runtime and baseline digests should match",
-                    baselineDigest, configurationModel.getDigest(null));
+                    configurationModel.getDigest(null), expectedDigest);
 
             suppressTestLastUpdated = baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate();
         };
@@ -471,10 +469,10 @@ public class AutoExportIntegrationTest {
             // baseline should have the same lastUpdated stamp as the first run
             final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
             final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
-            assertEquals("Baseline digest should have a predictable value",
-                    expectedDigest, baselineDigest);
             assertEquals("Runtime and baseline digests should match",
-                    baselineDigest, configurationModel.getDigest(null));
+                    configurationModel.getDigest(null), baselineDigest);
+            assertEquals("Baseline digest should not have changed from first run",
+                    expectedDigest, baselineDigest);
             assertEquals("Baseline lastUpdated should not change after second bootstrap with identical data",
                     suppressTestLastUpdated, baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate());
         };
@@ -484,10 +482,10 @@ public class AutoExportIntegrationTest {
             // baseline should have a new lastUpdated stamp after bootstrapping new data
             final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
             final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
-            assertEquals("Baseline digest should have a predictable value",
-                    "$MD5$C279B231AF325F2A108D2ED2659FFE4A", baselineDigest);
             assertEquals("Runtime and baseline digests should match",
-                    baselineDigest, configurationModel.getDigest(null));
+                    configurationModel.getDigest(null), baselineDigest);
+            assertNotEquals("Baseline digest should change after a bootstrap with changed config",
+                    expectedDigest, baselineDigest);
             assertNotEquals("Baseline lastUpdated should change after third bootstrap with different data",
                     suppressTestLastUpdated, baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate());
         };
