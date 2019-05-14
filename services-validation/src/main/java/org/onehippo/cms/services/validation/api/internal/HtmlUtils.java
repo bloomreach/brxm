@@ -29,7 +29,7 @@ import com.google.common.base.CharMatcher;
 
 public class HtmlUtils implements Serializable {
 
-    private static final String[] VALID_ELEMENTS = new String[]{"applet", "embed", "form", "iframe", "img", "object"};
+    private static final String[] VISIBLE_ELEMENTS = new String[]{"applet", "embed", "form", "iframe", "img", "object", "table"};
 
     private HtmlUtils() {
     }
@@ -59,7 +59,7 @@ public class HtmlUtils implements Serializable {
         for (final BaseToken item : node.getAllChildren()) {
             if (item instanceof TagNode) {
                 final TagNode childNode = (TagNode) item;
-                if (Arrays.stream(VALID_ELEMENTS).anyMatch(e -> childNode.getName().equalsIgnoreCase(e))
+                if (Arrays.stream(VISIBLE_ELEMENTS).anyMatch(e -> childNode.getName().equalsIgnoreCase(e))
                         || CharMatcher.invisible().negate().matchesAnyOf(childNode.getText())
                         || !isEmpty(childNode)) {
                     return false;
