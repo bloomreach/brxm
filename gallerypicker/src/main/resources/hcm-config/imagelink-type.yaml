@@ -17,7 +17,6 @@ definitions:
             hipposysedit:mandatory: true
             hipposysedit:path: hippo:docbase
             hipposysedit:type: Docbase
-            hipposysedit:validators: [image-references]
       /editor:templates:
         jcr:primaryType: editor:templateset
         /_default_:
