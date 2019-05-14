@@ -6,7 +6,7 @@ import {
   ParentConnectConfig,
   ParentPromisedApi,
 } from './api';
-import { getProxiedMethods } from './utils';
+import { mergeIntersecting } from './utils';
 
 export function connectToParent({
   parentOrigin,
@@ -18,7 +18,7 @@ export function connectToParent({
       return methods.getNavItems();
     },
   };
-  const proxiedMethods = getProxiedMethods(methods, proxies);
+  const proxiedMethods = mergeIntersecting(methods, proxies);
 
   return penpal.connectToParent({ parentOrigin, methods: proxiedMethods })
     .promise;
