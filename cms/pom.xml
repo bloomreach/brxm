@@ -90,7 +90,7 @@
     <hippo.utilities.version>13.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.hst.version>13.2.0-SNAPSHOT</hippo.hst.version>
     <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
-    <hippo.services.htmlprocessor.version>13.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>13.2.0-validation-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>13.2.0-validation-SNAPSHOT</hippo.services.validation.version>
     <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>13.2.0-SNAPSHOT</hippo.configuration-management.version>
