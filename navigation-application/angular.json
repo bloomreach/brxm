@@ -212,23 +212,6 @@
             "browserTarget": "iframe-app-example:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/iframe-app-example/src/test.ts",
-            "polyfills": "projects/iframe-app-example/src/polyfills.ts",
-            "tsConfig": "projects/iframe-app-example/tsconfig.spec.json",
-            "karmaConfig": "projects/iframe-app-example/karma.conf.js",
-            "styles": [
-              "projects/iframe-app-example/src/styles.css"
-            ],
-            "scripts": [],
-            "assets": [
-              "projects/iframe-app-example/src/favicon.ico",
-              "projects/iframe-app-example/src/assets"
-            ]
-          }
-        },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
