@@ -118,14 +118,10 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
             while (iter.hasNext()) {
                 final IModel childModel = iter.next();
-                if (fieldType.isNode()) {
-                    // Legacy: don't check validation anymore below field marked with "hipposysedit:cascadevalidation = false",
-                    // unless it is required.
-                    if (required || field.getTypeDescriptor().isValidationCascaded()) {
-                        final Set<Violation> typeViolations = typeValidator.validate(childModel);
-                        if (typeViolations.size() > 0) {
-                            addTypeViolations(violations, childModel, typeViolations);
-                        }
+                if (fieldType.isNode() && field.getTypeDescriptor().isValidationCascaded()) {
+                    final Set<Violation> typeViolations = typeValidator.validate(childModel);
+                    if (typeViolations.size() > 0) {
+                        addTypeViolations(violations, childModel, typeViolations);
                     }
                 }
 
