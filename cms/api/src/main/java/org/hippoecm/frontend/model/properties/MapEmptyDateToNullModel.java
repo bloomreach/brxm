@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.hippoecm.frontend.model.properties;
 import java.util.Date;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.PropertyValueProvider;
+import org.onehippo.repository.util.DateConstants;
 
 public class MapEmptyDateToNullModel implements IModel<Date> {
 
@@ -31,7 +31,7 @@ public class MapEmptyDateToNullModel implements IModel<Date> {
     @Override
     public Date getObject() {
         final Date object = delegate.getObject();
-        if (object != null && object.equals(PropertyValueProvider.EMPTY_DATE)) {
+        if (object != null && object.equals(DateConstants.EMPTY_DATE)) {
             return null;
         }
         return object;
@@ -40,7 +40,7 @@ public class MapEmptyDateToNullModel implements IModel<Date> {
     @Override
     public void setObject(final Date date) {
         if (date == null) {
-            delegate.setObject(PropertyValueProvider.EMPTY_DATE);
+            delegate.setObject(DateConstants.EMPTY_DATE);
         } else {
             delegate.setObject(date);
         }

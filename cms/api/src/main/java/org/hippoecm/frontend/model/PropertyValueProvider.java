@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.onehippo.repository.util.DateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,15 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
 
     private static final Logger log = LoggerFactory.getLogger(PropertyValueProvider.class);
 
+    /**
+     * @deprecated use {@link DateConstants#EMPTY_DATE_VALUE} instead.
+     */
+    @Deprecated
     public static final String EMPTY_DATE_VALUE = "0001-01-01T12:00:00.000+00:00";
+    /**
+     * @deprecated use {@link DateConstants#EMPTY_DATE} instead.
+     */
+    @Deprecated
     public static final Date EMPTY_DATE = ISO8601.parse(EMPTY_DATE_VALUE).getTime();
 
     private boolean autocreate = false;
@@ -314,7 +323,7 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
             return factory.createValue(0.0);
         case PropertyType.DATE: {
             Calendar nullCal = Calendar.getInstance();
-            nullCal.setTime(EMPTY_DATE);
+            nullCal.setTime(DateConstants.EMPTY_DATE);
             return factory.createValue(nullCal);
         }
         case PropertyType.LONG:
