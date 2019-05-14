@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services.htmlprocessor.service;
 
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +26,7 @@ public class VisibleHtmlCheckerServiceTest {
     private static final String NORMAL_SPACE = Character.toString((char) 32);
     private static final String NON_BREAKING_SPACE = Character.toString((char) 160);
 
-    private final VisibleHtmlCheckerService service = new VisibleHtmlCheckerService();
+    private final VisibleHtmlCheckerService service = new VisibleHtmlCheckerService(MockNode.root());
 
     @Test
     public void nullIsInvisible() {

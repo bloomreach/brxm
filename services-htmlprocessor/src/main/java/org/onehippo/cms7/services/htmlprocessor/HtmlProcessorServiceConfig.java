@@ -52,7 +52,7 @@ public class HtmlProcessorServiceConfig implements Serializable {
             log.error("Failed to create Html processor config");
         }
 
-        visibleHtmlCheckerService = new VisibleHtmlCheckerService();
+        visibleHtmlCheckerService = new VisibleHtmlCheckerService(config);
     }
 
     /**

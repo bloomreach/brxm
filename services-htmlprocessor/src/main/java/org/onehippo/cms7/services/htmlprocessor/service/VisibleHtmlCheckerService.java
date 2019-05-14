@@ -17,6 +17,9 @@ package org.onehippo.cms7.services.htmlprocessor.service;
 
 import java.util.Arrays;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
 import org.htmlcleaner.BaseToken;
 import org.htmlcleaner.CleanerProperties;
@@ -26,15 +29,19 @@ import org.htmlcleaner.TagNode;
 
 import com.google.common.base.CharMatcher;
 
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+
 public class VisibleHtmlCheckerService {
 
-    private static final String[] DEFAULT_VISIBLE_ELEMENTS = {"applet", "embed", "form", "iframe", "img", "object", "table"};
+    private static final String[] DEFAULT_VISIBLE_ELEMENTS = {
+            "applet", "embed", "form", "iframe", "img", "object", "table"
+    };
 
     private final HtmlCleaner cleaner;
     private final String[] visibleElements;
 
-    public VisibleHtmlCheckerService() {
-        visibleElements = DEFAULT_VISIBLE_ELEMENTS;
+    public VisibleHtmlCheckerService(final Node config) {
+        visibleElements = getPropertyOrDefault(config, "visibleElements", DEFAULT_VISIBLE_ELEMENTS);
         cleaner = new HtmlCleaner();
 
         final CleanerProperties properties = cleaner.getProperties();
@@ -43,6 +50,14 @@ public class VisibleHtmlCheckerService {
         properties.setOmitComments(true);
         properties.setNamespacesAware(false);
         properties.setDeserializeEntities(true);
+    }
+
+    private static String[] getPropertyOrDefault(final Node node, final String propertyName, final String[] defaultValue) {
+        try {
+            return getMultipleStringProperty(node, propertyName, defaultValue);
+        } catch (RepositoryException ignore) {
+        }
+        return defaultValue;
     }
 
     public boolean isVisible(final String html) {
