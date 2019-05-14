@@ -23,11 +23,15 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.services.validation.api.ValidationContext;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
 import org.onehippo.cms.services.validation.validator.AbstractNodeValidator;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 
 public class RequiredRichTextValidator extends AbstractNodeValidator {
+
+    private HtmlProcessorService htmlProcessorService;
 
     @Override
     protected String getCheckedNodeType() {
@@ -35,13 +39,26 @@ public class RequiredRichTextValidator extends AbstractNodeValidator {
     }
 
     @Override
-    protected Optional<Violation> checkNode(final ValidationContext context, final Node node) throws RepositoryException {
+    protected Optional<Violation> checkNode(final ValidationContext context, final Node node)
+            throws RepositoryException {
 
         final Property property = node.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-        if (HtmlUtils.isEmpty(property.getString())) {
+        if (!isVisible(property.getString())) {
             return Optional.of(context.createViolation());
         }
 
         return Optional.empty();
+    }
+
+    private boolean isVisible(final String html) {
+        if (htmlProcessorService == null) {
+            htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+
+            if (htmlProcessorService == null) {
+                throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
+            }
+        }
+
+        return htmlProcessorService.isVisible(html);
     }
 }

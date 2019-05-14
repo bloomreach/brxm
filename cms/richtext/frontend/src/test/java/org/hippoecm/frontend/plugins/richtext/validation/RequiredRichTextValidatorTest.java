@@ -23,10 +23,17 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 import org.onehippo.repository.mock.MockNode;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertFalse;
@@ -35,13 +42,26 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest({HippoServiceRegistry.class})
 public class RequiredRichTextValidatorTest {
 
     private RequiredRichTextValidator validator;
 
     @Before
     public void setUp() {
+        PowerMock.mockStatic(HippoServiceRegistry.class);
         validator = new RequiredRichTextValidator();
+    }
+
+    @Test(expected = ValidationContextException.class)
+    public void throwsIfHtmlProcessorServiceIsNull() throws RepositoryException {
+        final ValidationContext context = createMock(ValidationContext.class);
+        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(null);
+        replayAll();
+
+        validator.validate(context, createContentNode("<html></html>"));
     }
 
     @Test(expected = ValidationContextException.class)
@@ -52,29 +72,41 @@ public class RequiredRichTextValidatorTest {
     }
 
     @Test
-    public void validInputForHtml() throws RepositoryException {
+    public void validInput() throws RepositoryException {
         final ValidationContext context = createMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
+        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
+        expect(htmlProcessorService.isVisible("<html></html>")).andReturn(true);
         replayAll();
 
-        assertValid(validator.validate(context, createContentNode("text")));
-        assertValid(validator.validate(context, createContentNode("<p>text</p>")));
-        assertValid(validator.validate(context, createContentNode("<img src=\"empty.gif\">")));
+        assertValid(validator.validate(context, createContentNode("<html></html>")));
 
         verifyAll();
     }
 
     @Test
-    public void invalidInputForHtml() throws RepositoryException {
+    public void invalidInput() throws RepositoryException {
+        final ValidationContext context = createMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
+        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
+        expect(htmlProcessorService.isVisible("<html></html>")).andReturn(false);
+        expect(context.createViolation()).andReturn(createMock(Violation.class));
+        replayAll();
+
+        assertInvalid(validator.validate(context, createContentNode("<html></html>")));
+
+        verifyAll();
+    }
+
+    @Test
+    public void nullIsInvalid() {
         final ValidationContext context = createMock(ValidationContext.class);
         final Violation violation = createMock(Violation.class);
 
-        expect(context.createViolation()).andReturn(violation).times(4);
+        expect(context.createViolation()).andReturn(violation);
         replayAll();
 
         assertInvalid(validator.validate(context, null));
-        assertInvalid(validator.validate(context, createContentNode("")));
-        assertInvalid(validator.validate(context, createContentNode(" ")));
-        assertInvalid(validator.validate(context, createContentNode("<html></html>")));
 
         verifyAll();
     }

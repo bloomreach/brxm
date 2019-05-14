@@ -21,17 +21,33 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 
 public class RequiredFormattedTextValidator implements Validator<String> {
 
+    private HtmlProcessorService htmlProcessorService;
+
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value) throws ValidationContextException {
-        if (HtmlUtils.isEmpty(value)) {
+    public Optional<Violation> validate(final ValidationContext context, final String value)
+            throws ValidationContextException {
+
+        if (!isVisible(value)) {
             return Optional.of(context.createViolation());
         }
 
         return Optional.empty();
+    }
 
+    private boolean isVisible(final String html) {
+        if (htmlProcessorService == null) {
+            htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+
+            if (htmlProcessorService == null) {
+                throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
+            }
+        }
+
+        return htmlProcessorService.isVisible(html);
     }
 }
