@@ -198,6 +198,7 @@ public class ConfigurationBaselineServiceTest extends BaseConfigurationConfigSer
                 makeMergedModel("test:module:name/encod[e]-", new String[]{baselineSource});
 
         final ConfigurationConfigService helper = new ConfigurationConfigService();
+        helper.applyNamespacesAndNodeTypes(baseline, defaultBaseline, session);
         helper.computeAndWriteDelta(baseline, defaultBaseline, session, false);
         session.save();
 

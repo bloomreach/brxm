@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -36,12 +37,16 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
@@ -409,8 +414,7 @@ public class AutoExportIntegrationTest {
             assertEquals(null, getOrderBefore(configurationModel, "/content-test/node1"));
             assertEquals("node1", getOrderBefore(configurationModel, "/content-test/node2"));
         };
-        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {
-        }, NOOP);
+        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {}, NOOP);
 
         final Validator validateBaselineAfterCycle2 = (session, configurationModel) -> {
             final Node baselineNode1 = session.getNode(moduleBaselineRoot + "/hcm-content/node1.yaml");
@@ -430,10 +434,66 @@ public class AutoExportIntegrationTest {
             assertEquals(META_ORDER_BEFORE_FIRST, getOrderBefore(configurationModel, "/content-test/node1"));
             assertEquals(null, getOrderBefore(configurationModel, "/content-test/node2"));
         };
-        final Run run2 = new Run(cycle2Module, validateBaselineAfterCycle2, (session) -> {
-        }, NOOP);
+        final Run run2 = new Run(cycle2Module, validateBaselineAfterCycle2, (session) -> {}, NOOP);
 
         new Fixture().run(run1, run2);
+    }
+
+    private Calendar suppressTestLastUpdated;
+
+    // Test repo.bootstrap=true mode, which should suppress bootstrap processing if the same model is loaded repeatedly
+    // Note that this isn't really a test of auto-export, but it's implemented here because the fixture is very similar
+    // to what was needed for testing auto-export.
+    // TODO: Refactor this into a separate test class
+    // TODO: Add more fine-grained tests including a webfiles bundle, resource file changes, and content actions
+    // TODO: Add unit tests for ConfigurationModel.getDigest()
+    @Test
+    public void suppress_identical_bootstrap() throws Exception {
+        // just use an arbitrary module def with some config in it...
+        final ModuleInfo cycle1Module = new ModuleInfo("reapply_content", "cycle1", "in", "in");
+        final ModuleInfo cycle2Module = new ModuleInfo("reapply_content", "cycle2", "in", "in");
+        final String expectedDigest = "$MD5$8325D68CFBA07EC582115595378E364D";
+
+        final Validator validateBaselineAfterCycle1 = (session, configurationModel) -> {
+            // baseline should be stored with a specific digest value
+            final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
+            final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
+            assertEquals("Baseline digest should have a predictable value",
+                    expectedDigest, baselineDigest);
+            assertEquals("Runtime and baseline digests should match",
+                    baselineDigest, configurationModel.getDigest(null));
+
+            suppressTestLastUpdated = baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate();
+        };
+        final Run run1 = new Run(cycle1Module, validateBaselineAfterCycle1, (session) -> {}, NOOP);
+
+        final Validator validateBaselineAfterCycle2 = (session, configurationModel) -> {
+            // baseline should have the same lastUpdated stamp as the first run
+            final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
+            final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
+            assertEquals("Baseline digest should have a predictable value",
+                    expectedDigest, baselineDigest);
+            assertEquals("Runtime and baseline digests should match",
+                    baselineDigest, configurationModel.getDigest(null));
+            assertEquals("Baseline lastUpdated should not change after second bootstrap with identical data",
+                    suppressTestLastUpdated, baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate());
+        };
+        final Run run2 = new Run(cycle1Module, validateBaselineAfterCycle2, (session) -> {}, NOOP);
+
+        final Validator validateBaselineAfterCycle3 = (session, configurationModel) -> {
+            // baseline should have a new lastUpdated stamp after bootstrapping new data
+            final Node baselineRoot = session.getNode(Constants.HCM_BASELINE_PATH);
+            final String baselineDigest = baselineRoot.getProperty(Constants.HCM_DIGEST).getString();
+            assertEquals("Baseline digest should have a predictable value",
+                    "$MD5$C279B231AF325F2A108D2ED2659FFE4A", baselineDigest);
+            assertEquals("Runtime and baseline digests should match",
+                    baselineDigest, configurationModel.getDigest(null));
+            assertNotEquals("Baseline lastUpdated should change after third bootstrap with different data",
+                    suppressTestLastUpdated, baselineRoot.getProperty(Constants.HCM_LAST_UPDATED).getDate());
+        };
+        final Run run3 = new Run(cycle2Module, validateBaselineAfterCycle3, (session) -> {}, NOOP);
+
+        new Fixture().run(false, run1, run2, run3);
     }
 
     /**
@@ -600,6 +660,10 @@ public class AutoExportIntegrationTest {
         }
 
         void run(final Run... runs) throws Exception {
+            run(true, runs);
+        }
+
+        void run(final boolean autoexport, final Run... runs) throws Exception {
             for (final Run run : runs) {
                 FileUtils.cleanDirectory(projectPath.toFile());
 
@@ -614,7 +678,7 @@ public class AutoExportIntegrationTest {
                 }
 
                 final IsolatedRepository repository =
-                        new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs);
+                        new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs, autoexport);
 
                 repository.startRepository();
                 final Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -626,14 +690,18 @@ public class AutoExportIntegrationTest {
 
                 run.getPreConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
 
-                // Run AutoExport to set its lastRevision ...
-                repository.runSingleAutoExportCycle();
+                if (autoexport) {
+                    // Run AutoExport to set its lastRevision ...
+                    repository.runSingleAutoExportCycle();
+                }
 
                 run.getJcrRunner().run(session);
                 session.save();
 
                 // ... and run it again to export the changes made by jcrRunner
-                repository.runSingleAutoExportCycle();
+                if (autoexport) {
+                    repository.runSingleAutoExportCycle();
+                }
 
                 session.refresh(false);
                 run.getPostConditionValidator().validate(session, repository.getRuntimeConfigurationModel());

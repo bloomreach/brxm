@@ -169,6 +169,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     private Map<String, SiteRecord> hcmSiteRecords = new ConcurrentHashMap<>();
     private boolean startAutoExportService;
 
+    private boolean verify;
+    private boolean fullConfigure;
+    private boolean first;
+    private boolean mustConfigure;
+
+
     /**
      * Note: this will typically be null, but will store a reference copy of the baseline when autoexport is allowed
      */
@@ -217,64 +223,88 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
      * @throws RepositoryException
      */
     private void applySiteConfig(final SiteRecord record) throws ParserException, IOException, URISyntaxException, RepositoryException {
-        log.info("New HCM site detected: {}", record.siteName);
+
+        final String siteName = record.siteName;
+        if (!mustConfigure) {
+            log.debug("skip applySiteConfig because bootstrap is disabled, site: {}", siteName);
+            return;
+        }
+
+        log.info("New HCM site detected: {}", siteName);
 
         // Load the site HCM modules from the classpath and append to the runtimeConfigurationModel
         final ClasspathConfigurationModelReader modelReader = new ClasspathConfigurationModelReader();
         // This variable may or may not contain a new model instance, so logic below should not assume, but code defensively
-        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(record.siteName, record.hstRoot,
+        ConfigurationModelImpl newRuntimeConfigModel = modelReader.readSite(siteName, record.hstRoot,
                 record.servletContext.getClassLoader(), runtimeConfigurationModel);
 
         // If auto-export is enabled and will be started, we also need to load modules from the local project
         if (startAutoExportService) {
+            log.debug("loading source modules for auto-export during site bootstrap");
             final List<ModuleImpl> hcmSiteModulesFromSourceFiles = readModulesFromSourceFiles(runtimeConfigurationModel)
-                    .stream().filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
+                    .stream().filter(m -> siteName.equals(m.getSiteName())).collect(toList());
             if (CollectionUtils.isNotEmpty(hcmSiteModulesFromSourceFiles)) {
                 // This is where the runtimeConfigurationModel could be replaced with a new instance
+                log.debug("merging source modules into runtime model for auto-export during site bootstrap");
                 newRuntimeConfigModel = mergeWithSourceModules(hcmSiteModulesFromSourceFiles, newRuntimeConfigModel);
             }
         }
 
-        // Run pre site migrators for this site
-        applyPreMigrators(newRuntimeConfigModel, singleton(record), ConfigurationSiteMigrator.class);
+        // Reload baseline for bootstrap 2+
+        final Set<String> siteNames = newRuntimeConfigModel.getSiteNames();
+        log.debug("loading existing baseline during site bootstrap for sites: {}", siteNames);
+        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(siteNames);
 
-        //Reload baseline for bootstrap 2+
-        final ConfigurationModelImpl newBaselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
-
-        boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, false, false, false);
-        if (success) {
-            success = applyContent(newRuntimeConfigModel);
-        }
-
-        if (success) {
+        if (shouldSkipBecauseOfDigestMatch(newRuntimeConfigModel, newBaselineModel, siteName)) {
+            log.info("ConfigurationService: skipping site bootstrap because of matching bootstrap and baseline models: {}", siteName);
+            // Note: site continues using jar-backed model for runtime use
             runtimeConfigurationModel = newRuntimeConfigModel;
-            //store only HCM Site modules
-            final List<ModuleImpl> modulesToSave = newRuntimeConfigModel.getModulesStream()
-                    .filter(m -> record.siteName.equals(m.getSiteName())).collect(toList());
-            baselineService.storeSite(record.siteName, modulesToSave, session);
-            if (startAutoExportService) {
-                this.baselineModel = loadBaselineModel(newRuntimeConfigModel.getSiteNames());
+        }
+        else {
+            // Run pre site migrators for this site
+            log.debug("applying site pre-migrators for site: {}", siteName);
+            applyPreMigrators(newRuntimeConfigModel, singleton(record), ConfigurationSiteMigrator.class);
+
+            // apply config, but skip applying namespaces, since they are not allowed in sites
+            log.debug("applying model config for sites: {}", siteNames);
+            boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, verify, fullConfigure, !first, false);
+            if (success) {
+                log.debug("applying model content for sites: {}", siteNames);
+                success = applyContent(newRuntimeConfigModel);
             }
 
-            processHcmSiteWebFileBundles(record);
+            if (success) {
+                runtimeConfigurationModel = newRuntimeConfigModel;
 
-            // Run post site migrators for this site
-            applyPostMigrators(newRuntimeConfigModel, singleton(record),
-                    (autoExportService != null && autoExportService.isRunning()),
-                    ConfigurationSiteMigrator.class);
+                //store only HCM Site modules
+                baselineService.storeSite(siteName, newRuntimeConfigModel, session);
+                if (startAutoExportService) {
+                    log.debug("reloading stored baseline during site init for site: {}, sites: {}", siteName, siteNames);
+                    this.baselineModel = loadBaselineModel(siteNames);
+                }
 
-            log.info("HCM Site Configuration '{}' was successfuly applied", record.siteName);
-        } else {
-            log.error("HCM Site '{}' failed to be applied", record.siteName);
+                log.debug("processing webfiles for site: {}", siteName);
+                //process webfilebundle instructions from HCM Site which are not from the current site
+                final List<WebFileBundleDefinitionImpl> webfileBundleDefs = getWebFileBundleDefsForSite(runtimeConfigurationModel, siteName);
+                configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+
+                // Run post site migrators for this site
+                log.debug("applying site post-migrators for site: {}", siteName);
+                applyPostMigrators(newRuntimeConfigModel, singleton(record),
+                        (autoExportService != null && autoExportService.isRunning()),
+                        ConfigurationSiteMigrator.class);
+
+                log.info("HCM Site Configuration '{}' was successfuly applied", siteName);
+            } else {
+                log.error("HCM Site '{}' failed to be applied", siteName);
+            }
         }
     }
 
-    private void processHcmSiteWebFileBundles(final SiteRecord record) throws IOException, RepositoryException {
-        //process webfilebundle instructions from HCM Site which are not from the current site
-        final List<WebFileBundleDefinitionImpl> webfileBundleDefs = runtimeConfigurationModel.getModulesStream()
-                .filter(m -> record.siteName.equals(m.getSiteName()))
-                .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
-        configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+    private List<WebFileBundleDefinitionImpl> getWebFileBundleDefsForSite(final ConfigurationModelImpl model, final String siteName) {
+        return model.getModulesStream()
+                    .filter(m -> siteName.equals(m.getSiteName()))
+                    .flatMap(m -> m.getWebFileBundleDefinitions().stream()).collect(toList());
     }
 
     private void init(final StartRepositoryServicesTask startRepositoryServicesTask) throws RepositoryException {
@@ -288,7 +318,10 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         // acquire a write lock for the hcm
         lockManager.lock();
         try {
+
             HippoWebappContextRegistry.get().addTracker(this);
+
+            log.debug("known sites at init: {}", knownHcmSites);
             // Ensure/force cluster synchronization in case another instance just initialized before, which changes
             // then may not yet have been synchronized automatically!
             session.refresh(true);
@@ -296,154 +329,160 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             ensureInitialized();
 
             // attempt to load a baseline, which may be empty -- we will need this if (mustConfigure == false)
+            log.debug("loading existing baseline during init with sites: {}", knownHcmSites);
             ConfigurationModelImpl baselineModel = loadBaselineModel(knownHcmSites);
 
             // check the appropriate params to determine our state and bootstrap mode
             // empty baseline means we've never applied the v12+ bootstrap model before, since we should have at
             // least the hippo-cms group defined
-            final boolean first = baselineModel.getSortedGroups().isEmpty();
-            final boolean fullConfigure =
+            first = baselineModel.getSortedGroups().isEmpty();
+            fullConfigure =
                     first || "full".equalsIgnoreCase(System.getProperty(SYSTEM_PARAMETER_REPO_BOOTSTRAP, "false"));
             final boolean configure = fullConfigure || Boolean.getBoolean(SYSTEM_PARAMETER_REPO_BOOTSTRAP);
-            final boolean mustConfigure = first || configure;
-            final boolean verify = Boolean.getBoolean("repo.bootstrap.verify");
+            mustConfigure = first || configure;
+            verify = Boolean.getBoolean("repo.bootstrap.verify");
 
             // also, check params for auto-export state
             final boolean isProjectBaseDirSet = StringUtils.isNotBlank(System.getProperty(PROJECT_BASEDIR_PROPERTY));
             startAutoExportService = configure && isProjectBaseDirSet && Boolean.getBoolean(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED);
+
             ConfigurationModelImpl bootstrapModel = null;
+
             boolean success;
-            if (mustConfigure) {
+            if (!mustConfigure) {
+                initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
+            }
+            else {
                 log.info("ConfigurationService: start configuring {}", first ? "(first time)" : fullConfigure ? "(full)" : "");
                 try {
                     log.info("ConfigurationService: load bootstrap model");
                     bootstrapModel = loadBootstrapModel();
 
-                    // now that we have the deployment-based bootstrap model, we want to find out if the auto-export
-                    // config indicates to us that we should load some modules from the filesystem
-                    if (startAutoExportService) {
-                        try {
-                            // load modules that are specified via auto-export config
-                            final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
-
-                            final List<ModuleImpl> bootstrapModules = bootstrapModel.getModulesStream().collect(toList());
-
-                            //Collect only modules which exist at boostrap model
-                            final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
-                                    .filter(bootstrapModules::contains)
-                                    .peek(m -> {
-                                        //Copy the module's hcm site name and hstRoot (if exist) from bootstrap module
-                                        ModuleImpl source = bootstrapModules.get(bootstrapModules.indexOf(m));
-                                        m.setHstRoot(source.getHstRoot());
-                                    })
-                                    .collect(toList());
-
-                            // add all of the filesystem modules to a new model as "replacements" that override later additions
-                            bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
-                        } catch (Exception e) {
-                            final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
-                            if (e instanceof ConfigurationRuntimeException) {
-                                // no stacktrace needed, the exception message should be informative enough
-                                log.error(errorMsg + "\n" + e.getMessage());
-                            } else {
-                                log.error(errorMsg, e);
-                            }
-                            startAutoExportService = false;
-                            log.error("autoexport service disallowed");
-                        }
+                    // check the digest before doing real bootstrap work
+                    if (shouldSkipBecauseOfDigestMatch(bootstrapModel, baselineModel, null)) {
+                        log.info("ConfigurationService: skipping core bootstrap because of matching bootstrap and baseline models");
+                        initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
                     }
                     else {
-                        // if starting auto-export was disallowed to begin with, notify devs via the log
-                        log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
-                    }
-
-                    applyPreMigrators(bootstrapModel, emptySet(), ConfigurationMigrator.class);
-
-                    if (!hcmSiteRecords.isEmpty()) {
-                        // if the registered site list is not empty then run pre site migrators for the site(s)
-                        applyPreMigrators(bootstrapModel, hcmSiteRecords.values(),
-                                ConfigurationSiteMigrator.class);
-                    }
-
-                    // If use.hcm.sites == true and no hst sites are available yet & boostrap model has /hst:hst then consider this
-                    // as error, since core bootstrap model should not contain any hst specific configuration
-                    if (USE_HCM_SITES_MODE && isEmpty(knownHcmSites)) {
-                        final ConfigurationNodeImpl hstRootNode = bootstrapModel.getConfigurationRootNode().getNode("hst:hst");
-                        if (hstRootNode != null && hstRootNode.getProperty("jcr:primaryType").getValue().getString().equals("hst:hst")) {
-                            throw new IllegalArgumentException("Core bootstrap model contains hst nodes");
-                        }
-                    }
-
-                    log.info("ConfigurationService: apply bootstrap config");
-                    success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first);
-
-                    if (success) {
-                        // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
-                        runtimeConfigurationModel = bootstrapModel;
-
-                        log.info("ConfigurationService: store bootstrap config");
-                        success = storeBaselineModel(bootstrapModel);
-                    }
-                    if (success) {
-                        log.info("ConfigurationService: apply bootstrap content");
-                        // use bootstrap modules, because that's the only place content sources really exist
-                        success = applyContent(bootstrapModel);
-                    }
-                    if (success) {
-                        // reload the baseline after storing, so we have a JCR-backed view of our modules
-                        // we want to avoid using bootstrap modules directly, because of awkward ZipFileSystems
-                        baselineModel = loadBaselineModel(knownHcmSites);
-
-                        // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
+                        // now that we have the deployment-based bootstrap model, we want to find out if the auto-export
+                        // config indicates to us that we should load some modules from the filesystem
                         if (startAutoExportService) {
-                            this.baselineModel = baselineModel;
+                            try {
+                                // load modules that are specified via auto-export config
+                                log.debug("loading source modules for auto-export");
+                                final List<ModuleImpl> modulesFromSourceFiles = readModulesFromSourceFiles(bootstrapModel);
+
+                                final List<ModuleImpl> bootstrapModules = bootstrapModel.getModulesStream().collect(toList());
+
+                                //Collect only modules which exist at boostrap model
+                                final List<ModuleImpl> eligibleModules = modulesFromSourceFiles.stream()
+                                        .filter(bootstrapModules::contains)
+                                        .peek(m -> {
+                                            //Copy the module's hcm site name and hstRoot (if exist) from bootstrap module
+                                            ModuleImpl source = bootstrapModules.get(bootstrapModules.indexOf(m));
+                                            m.setHstRoot(source.getHstRoot());
+                                        })
+                                        .collect(toList());
+
+                                // add all of the filesystem modules to a new model as "replacements" that override later additions
+                                log.debug("merging source modules for auto-export");
+                                bootstrapModel = mergeWithSourceModules(eligibleModules, bootstrapModel);
+                            } catch (Exception e) {
+                                final String errorMsg = "Failed to load modules from filesystem for autoexport: autoexport not available.";
+                                if (e instanceof ConfigurationRuntimeException) {
+                                    // no stacktrace needed, the exception message should be informative enough
+                                    log.error(errorMsg + "\n" + e.getMessage());
+                                } else {
+                                    log.error(errorMsg, e);
+                                }
+                                startAutoExportService = false;
+                                log.error("autoexport service disallowed");
+                            }
+                        } else {
+                            // if starting auto-export was disallowed to begin with, notify devs via the log
+                            log.info("Running autoexport service not allowed (requires appropriate system parameters to be set first)");
                         }
 
-                        // use the baseline version of modules, since we want to close ZipFileSystems backing the
-                        // bootstrap module loaded from jars
-                        // also, we prefer using source modules over baseline modules
-                        runtimeConfigurationModel = mergeWithSourceModules(bootstrapModel, baselineModel);
-                    }
-                    log.info("ConfigurationService: start repository services");
-                    startRepositoryServicesTask.execute();
-                    if (success) {
-                        log.info("ConfigurationService: start post-startup tasks");
-                        // we need the bootstrap model here, not the baseline, so we can access the jar content
-                        postStartupTasks(bootstrapModel);
-                    }
+                        // we have a real difference, we're in "full" bootstrap mode, or we are setting up for auto-export
+                        log.debug("applying core pre-migrators");
+                        applyPreMigrators(bootstrapModel, emptySet(), ConfigurationMigrator.class);
 
-                    boolean autoExportRunning = false;
-                    if (startAutoExportService) {
-                        log.info("ConfigurationService: start autoexport service");
-                        autoExportRunning = startAutoExportService();
+                        if (!hcmSiteRecords.isEmpty()) {
+                            // if the registered site list is not empty then run pre site migrators for the site(s)
+                            log.debug("applying site pre-migrators during init for sites: {}", knownHcmSites);
+                            applyPreMigrators(bootstrapModel, hcmSiteRecords.values(),
+                                    ConfigurationSiteMigrator.class);
+                        }
+
+                        // If use.hcm.sites == true and no hst sites are available yet & boostrap model has /hst:hst then consider this
+                        // as error, since core bootstrap model should not contain any hst specific configuration
+                        if (USE_HCM_SITES_MODE && isEmpty(knownHcmSites)) {
+                            final ConfigurationNodeImpl hstRootNode = bootstrapModel.getConfigurationRootNode().getNode("hst:hst");
+                            if (hstRootNode != null && hstRootNode.getProperty("jcr:primaryType").getValue().getString().equals("hst:hst")) {
+                                throw new IllegalArgumentException("Core bootstrap model contains hst nodes");
+                            }
+                        }
+
+                        log.info("ConfigurationService: apply bootstrap config");
+                        success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first, true);
+
+                        if (success) {
+                            // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
+                            runtimeConfigurationModel = bootstrapModel;
+
+                            log.info("ConfigurationService: store bootstrap config as baseline");
+                            success = storeBaselineModel(bootstrapModel);
+                        }
+                        if (success) {
+                            log.info("ConfigurationService: apply bootstrap content");
+                            // use bootstrap modules, because that's the only place content sources really exist
+                            success = applyContent(bootstrapModel);
+                        }
+                        if (success) {
+                            // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
+                            if (startAutoExportService) {
+                                // reload the baseline after storing, so we have a JCR-backed view of our modules
+                                log.debug("reloading stored baseline during init with sites: {}", knownHcmSites);
+                                baselineModel = loadBaselineModel(knownHcmSites);
+
+                                this.baselineModel = baselineModel;
+                            }
+
+                            // Unfortunately, using the JCR-backed baseline model leaves us vulnerable to problems
+                            // if another cluster node stores a new baseline while we're holding onto this one.
+                            // We need to keep the jar-backed model, despite the memory cost.
+
+                            runtimeConfigurationModel = bootstrapModel;
+                        }
+
+                        log.info("ConfigurationService: start repository services");
+                        startRepositoryServicesTask.execute();
+                        if (success) {
+                            log.info("ConfigurationService: start post-startup tasks");
+                            // we need the bootstrap model here, not the baseline, so we can access the jar content
+                            postStartupTasks(bootstrapModel);
+                        }
+
+                        boolean autoExportRunning = false;
+                        if (startAutoExportService) {
+                            log.info("ConfigurationService: start autoexport service");
+                            autoExportRunning = startAutoExportService();
+                        }
+
+                        // post migrators need to run after the auto export service has been started because the
+                        // changes of the migrators might have to be exported
+                        log.debug("applying core post-migrators");
+                        applyPostMigrators(bootstrapModel, emptySet(), autoExportRunning, ConfigurationMigrator.class);
+
+                        if (!hcmSiteRecords.isEmpty()) {
+                            // if the registered site list is not empty then run post site migrators for the site(s)
+                            log.debug("applying site post-migrators during init for sites: {}", knownHcmSites);
+                            applyPostMigrators(bootstrapModel, hcmSiteRecords.values(),
+                                    autoExportRunning, ConfigurationSiteMigrator.class);
+                        }
                     }
-
-                    // post migrators need to run after the auto export service has been started because the
-                    // changes of the migrators might have to be exported
-                    applyPostMigrators(bootstrapModel, emptySet(), autoExportRunning, ConfigurationMigrator.class);
-
-                    if (!hcmSiteRecords.isEmpty()) {
-                        // if the registered site list is not empty then run post site migrators for the site(s)
-                        applyPostMigrators(bootstrapModel, hcmSiteRecords.values(),
-                                autoExportRunning, ConfigurationSiteMigrator.class);
-                    }
-
                 } finally {
-                    if (bootstrapModel != null) {
-                        try {
-                            // we need to close the bootstrap model because it's backed by ZipFileSystem(s)
-                            bootstrapModel.close();
-                        } catch (Exception e) {
-                            log.error("Error closing bootstrap configuration", e);
-                        }
-                    }
                 }
-            } else {
-                // if we're not doing any bootstrap, use the baseline model as our runtime model
-                runtimeConfigurationModel = baselineModel;
-
-                log.info("ConfigurationService: start repository services");
-                startRepositoryServicesTask.execute();
             }
         } finally {
             try {
@@ -452,6 +491,57 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 log.error("Failed to release the configuration lock", e);
             }
         }
+    }
+
+    private boolean shouldSkipBecauseOfDigestMatch(final ConfigurationModelImpl bootstrapModel,
+                                                   final ConfigurationModelImpl baselineModel,
+                                                   final String siteName)
+            throws RepositoryException {
+        // NOTE: This will not notice differences within content files, since these are not fully stored
+        //       in the baseline. This will only notice added or removed content files, changed actions,
+        //       or changed config files.
+        // TODO v13.3: do this check based on the stored JCR property, before spending time loading the baseline,
+        //       once we include webfile bundle digests in the main model digest
+
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        boolean skip = !fullConfigure && !startAutoExportService
+                && bootstrapModel.currentSitesMatchByDigests(baselineModel);
+
+        // check the webfiles bundle digests here, too!
+        if (skip) {
+            try {
+                final List<WebFileBundleDefinitionImpl> webFileBundleDefs =
+                        (siteName != null)?
+                                getWebFileBundleDefsForSite(bootstrapModel, siteName):
+                                bootstrapModel.getWebFileBundleDefinitions();
+                skip = configService.shouldSkipWebfilesBecauseOfDigestMatch(webFileBundleDefs, baselineService, session);
+            }
+            catch (IOException e) {
+                throw new RepositoryException("Exception checking webfiles bundle digests during bootstrap", e);
+            }
+        }
+
+        stopWatch.stop();
+        log.debug("digest comparison in {}", stopWatch.toString());
+
+        return skip;
+    }
+
+    /**
+     * Helper method when we're short-circuiting main bootstrap. Used when repo.bootstrap = false or when
+     * repo.bootstrap = true and the baseline matches the incoming bootstrap model.
+     * @param startRepositoryServicesTask
+     * @param baselineModel
+     * @throws RepositoryException
+     */
+    private void initWithoutBootstrap(final StartRepositoryServicesTask startRepositoryServicesTask, final ConfigurationModelImpl baselineModel) throws RepositoryException {
+        // if we're not doing any bootstrap, use the baseline model as our runtime model
+        runtimeConfigurationModel = baselineModel;
+
+        log.info("ConfigurationService: start repository services");
+        startRepositoryServicesTask.execute();
     }
 
     private <T> void applyPreMigrators(final ConfigurationModelImpl bootstrapModel, final Collection<SiteRecord> siteRecords,
@@ -520,6 +610,14 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 log.error("Error closing runtime configuration", e);
             }
         }
+        if (baselineModel != null) {
+            try {
+                // Ensure baselineModel resources are cleaned up (if any)
+                baselineModel.close();
+            } catch (Exception e) {
+                log.error("Error closing baseline configuration", e);
+            }
+        }
         runtimeConfigurationModel = null;
         contentService = null;
         configService = null;
@@ -557,7 +655,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             log.info("ConfigurationService: verify config");
             // Ensure/force cluster synchronization in case another instance just modified the baseline
             session.refresh(true);
-            return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false);
+            return applyConfig(new ConfigurationModelImpl().build(), loadBootstrapModel(), true, false, true, false, true);
         } finally {
             lockManager.unlock();
         }
@@ -830,12 +928,15 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
     }
 
     private boolean applyConfig(final ConfigurationModel baseline, final ConfigurationModelImpl config, final boolean verifyOnly,
-                                final boolean verify, final boolean forceApply, final boolean mayFail)
+                                final boolean verify, final boolean forceApply, final boolean mayFail, final boolean applyNamespaces)
             throws RepositoryException {
         try {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
 
+            if (applyNamespaces) {
+                configService.applyNamespacesAndNodeTypes(baseline, config, session);
+            }
             configService.computeAndWriteDelta(baseline, config, session, forceApply);
             if (!verifyOnly) {
                 session.save();
@@ -1030,6 +1131,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         return;
                     }
                     final SiteRecord record = new SiteRecord(hcmSiteName, hstRoot, servletContext);
+
+                    // If no model is set yet, we are still processing the core in init(), so we should let the sites
+                    // get processed along with the core and not process them separately.
                     if (runtimeConfigurationModel != null) {
                         // already initialized: apply hcm site
                         applySiteConfig(record);
@@ -1039,7 +1143,9 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     lockManager.unlock();
                 }
             } catch (IOException|ParserException|URISyntaxException|RepositoryException e) {
-                log.error("Failed to add hcm site: "+hcmSiteName+" for context path: "+servletContext.getContextPath(), e);
+                final String message = "Failed to add hcm site: " + hcmSiteName + " for context path: " + servletContext.getContextPath();
+                log.error(message, e);
+                throw new RuntimeException(message, e);
             }
         }
     }

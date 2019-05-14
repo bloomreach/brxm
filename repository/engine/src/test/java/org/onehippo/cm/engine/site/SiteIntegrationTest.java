@@ -257,7 +257,7 @@ public class SiteIntegrationTest {
                     hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
                     fail("Namespace definitions from site modules are not supported");
                 } catch(Exception ex) {
-                    assertTrue(ex.getMessage().contains("Namespace definition can not be a part of site module"));
+                    assertTrue(ex.getCause().getMessage().contains("Namespace definition can not be a part of site module"));
                 }
             });
         } finally {

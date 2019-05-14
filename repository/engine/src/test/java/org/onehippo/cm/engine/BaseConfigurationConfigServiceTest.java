@@ -157,6 +157,7 @@ public abstract class BaseConfigurationConfigServiceTest extends RepositoryTestC
         final ConfigurationModelImpl configurationModel = makeMergedModel(sources);
 
         final ConfigurationConfigService helper = new ConfigurationConfigService();
+        helper.applyNamespacesAndNodeTypes(baseline, configurationModel, session);
         helper.computeAndWriteDelta(baseline, configurationModel, session, forceApply);
         session.save();
 
