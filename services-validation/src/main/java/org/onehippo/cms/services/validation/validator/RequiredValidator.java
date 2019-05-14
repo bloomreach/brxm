@@ -16,9 +16,11 @@
 
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -34,10 +36,12 @@ import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
-
-import static org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator.log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequiredValidator implements Validator<Object> {
+
+    private static final Logger log = LoggerFactory.getLogger(RequiredValidator.class);
 
     private final Map<String, Validator> validators;
     private final ContentTypeService contentTypeService;
@@ -68,12 +72,14 @@ public class RequiredValidator implements Validator<Object> {
 
     @Override
     public Optional<Violation> validate(final ValidationContext context, final Object value) {
-        final String fieldType = context.getType();
-        final Validator requiredValidator = getRequiredValidator(fieldType);
+        final String type = context.getType();
+        final String jcrType= context.getJcrType();
+        final Validator requiredValidator = getRequiredValidator(type, jcrType);
 
         if (requiredValidator == null) {
-            throw new ValidationContextException("No 'required' validator found for type '" + fieldType + "'"
-                    + ", cannot validate required field '" + context.getJcrName() + "'");
+            log.info("No 'required' validator found for field '{}' of type '{}', assuming all values are valid",
+                    context.getJcrName(), type);
+            return Optional.empty();
         }
 
         final RequiredValidationContext requiredValidationContext = new RequiredValidationContext(context);
@@ -90,36 +96,36 @@ public class RequiredValidator implements Validator<Object> {
      * @param type The type of the field
      * @return Instance of a {@link Validator}
      */
-    private Validator getRequiredValidator(final String type) {
-        final Validator requiredValidator = validators.get(type);
+    private Validator getRequiredValidator(final String type, final String jcrType) {
+        if (validators.containsKey(type)) {
+            return validators.get(type);
+        }
 
-        if (requiredValidator != null) {
-            return requiredValidator;
+        if (!type.equals(jcrType) && validators.containsKey(jcrType)) {
+            return validators.get(jcrType);
         }
 
         try {
-            return getRequiredValidatorForSuperType(type);
+            for (final String superType: getSuperTypes(type)) {
+                final Validator requiredValidator = getRequiredValidator(superType, jcrType);
+                if (requiredValidator != null) {
+                    return requiredValidator;
+                }
+            }
         } catch (RepositoryException e) {
             log.warn("Could not find required validator for type '{}'", type, e);
-            return null;
         }
+        return null;
     }
 
-    private Validator getRequiredValidatorForSuperType(final String type) throws RepositoryException {
+    private Set<String> getSuperTypes(final String type) throws RepositoryException {
         final EffectiveNodeType effectiveNodeType = contentTypeService.getEffectiveNodeTypes().getType(type);
 
         if (effectiveNodeType == null) {
-            return null;
+            return Collections.emptySet();
         }
 
-        for (final String superType : effectiveNodeType.getSuperTypes()) {
-            final Validator requiredValidator = getRequiredValidator(superType);
-            if (requiredValidator != null) {
-                return requiredValidator;
-            }
-        }
-
-        return null;
+        return effectiveNodeType.getSuperTypes();
     }
 
 }
