@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.editor.plugins.openui;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.CmsHeaderItem;
 
 class OpenUiBehaviorHeaderItem extends HeaderItem {
 
@@ -37,7 +39,7 @@ class OpenUiBehaviorHeaderItem extends HeaderItem {
 
     @Override
     public List<HeaderItem> getDependencies() {
-        return Collections.singletonList(new PenpalHeaderItem());
+        return Arrays.asList(CmsHeaderItem.get(), new PenpalHeaderItem());
     }
 
     @Override
