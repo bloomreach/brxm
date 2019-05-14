@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
-import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.repository.util.DateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -346,7 +346,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
         int propertyType = getType();
         propertyType  = (propertyType == PropertyType.UNDEFINED) ? PropertyType.STRING : propertyType;
-        String propertyValue = (propertyType == PropertyType.DATE) ? PropertyValueProvider.EMPTY_DATE_VALUE : StringUtils.EMPTY;
+        String propertyValue = (propertyType == PropertyType.DATE) ? DateConstants.EMPTY_DATE_VALUE : StringUtils.EMPTY;
         return factory.createValue(propertyValue, propertyType);
     }
 
