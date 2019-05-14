@@ -45,7 +45,7 @@
     <hippo.hst.version>13.2.0-SNAPSHOT</hippo.hst.version>
     <hippo.repository.version>13.2.0-SNAPSHOT</hippo.repository.version>
     <hippo.commons.version>13.2.0-SNAPSHOT</hippo.commons.version>
-    <junit.version>4.4</junit.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <dependencyManagement>
