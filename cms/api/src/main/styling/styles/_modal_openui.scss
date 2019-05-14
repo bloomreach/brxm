@@ -14,8 +14,12 @@
 
 .openui-dialog {
 
+  .hippo-dialog-center {
+    display: flex;
+  }
+
   .hippo-dialog-body {
-    height: 100%;
+    flex: auto;
     padding: 0;
   }
 
