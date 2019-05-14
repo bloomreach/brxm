@@ -12,7 +12,11 @@ import {
 } from '@bloomreach/navapp-communication';
 import { NavItem } from '@bloomreach/navapp-communication/lib/api';
 
-import { NavAppSettingsService, NavigationConfigurationService } from './services';
+import { NavConfigResource } from './models';
+import {
+  NavAppSettingsService,
+  NavigationConfigurationService,
+} from './services';
 
 @Component({
   selector: 'brna-root',

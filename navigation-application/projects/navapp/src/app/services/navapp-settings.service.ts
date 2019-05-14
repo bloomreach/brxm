@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { NavAppSettings, NavConfigResource } from '../models';
+
 @Injectable({
   providedIn: 'root',
 })

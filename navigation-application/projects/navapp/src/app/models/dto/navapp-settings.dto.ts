@@ -1,4 +1,6 @@
-interface NavAppSettings {
+import { NavConfigResource } from './nav-config-resource.dto';
+
+export interface NavAppSettings {
   userSettings: {
     userName: string;
     language: string;
