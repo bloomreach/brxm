@@ -603,9 +603,11 @@ public class CompoundFieldTypeTest {
         stringField2.addValidatorName("non-empty");
 
         expectValidator("non-empty", new NonEmptyTestValidator());
+        replayAll();
 
         final Map<String, List<FieldValue>> valueMap = validCompound();
         assertZeroViolations(fieldType.validate(listOf(valueOf(valueMap)), nodeContext));
+        verifyAll();
     }
 
     @Test

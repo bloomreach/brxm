@@ -348,7 +348,7 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints(anyString())).andReturn(emptyMap());
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(true);
 
         replayAll();
 
@@ -358,7 +358,7 @@ public class DocumentsServiceImplTest {
         } catch (final ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
             final ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR));
+            assertThat(errorInfo.getReason(), equalTo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR));
             assertThat(errorInfo.getParams().get("displayName"), equalTo("Display Name"));
         }
 
@@ -378,7 +378,7 @@ public class DocumentsServiceImplTest {
         expect(hintsInspector.canObtainEditableDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
         expect(EditingUtils.getEditableDocumentNode(workflow, MASTER_BRANCH_ID, userContext.getSession())).andReturn(Optional.empty());
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
 
         replayAll();
 
@@ -415,7 +415,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         expect(docType.getId()).andReturn("document:type");
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields).anyTimes();
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
@@ -472,7 +472,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         expect(docType.getId()).andReturn("document:type");
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields).anyTimes();
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
@@ -527,7 +527,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
 
         expect(docType.getId()).andReturn("document:type");
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
 
         expect(WorkflowUtils.getDocumentVariantNode(eq(handle), eq(Variant.UNPUBLISHED))).andReturn(Optional.of(unpublished));
@@ -735,7 +735,7 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(true);
 
         replayAll();
 
@@ -743,7 +743,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableDocument(uuid, document, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         verifyAll();
@@ -768,7 +768,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall().andThrow(badRequest);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
 
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
@@ -802,7 +802,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         session.save();
         expectLastCall().andThrow(new RepositoryException());
@@ -837,7 +837,7 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -878,7 +878,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -930,7 +930,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -979,7 +979,7 @@ public class DocumentsServiceImplTest {
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_PUBLISH)).andReturn(false);
         expect(EditingUtils.isHintActionTrue(emptyMap(), EditingUtils.HINT_REQUEST_PUBLICATION)).andReturn(false);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -1177,7 +1177,7 @@ public class DocumentsServiceImplTest {
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
 
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(true);
 
         replayAll();
 
@@ -1185,7 +1185,7 @@ public class DocumentsServiceImplTest {
             documentsService.updateEditableField(uuid, MASTER_BRANCH_ID, fieldPath, fieldValues, userContext);
             fail("No Exception");
         } catch (final ForbiddenException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), is(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         verifyAll();
@@ -1208,7 +1208,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andThrow(badRequest);
@@ -1241,7 +1241,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap());
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(false);
 
@@ -1273,7 +1273,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(fields);
         expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(true);
 
@@ -1303,7 +1303,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(workflow.hints(anyString())).andReturn(emptyMap()).atLeastOnce();
         expect(hintsInspector.canUpdateDocument(MASTER_BRANCH_ID, emptyMap())).andReturn(true);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         expect(FieldTypeUtils.writeFieldValue(eq(fieldPath), eq(fieldValues), eq(fields), anyObject(CompoundContext.class))).andReturn(true);
 
@@ -1541,7 +1541,7 @@ public class DocumentsServiceImplTest {
                 .andReturn(false);
 
         final DocumentType docType = provideDocumentType(documentHandle);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.empty());
         expect(DocumentUtils.getDisplayName(folderNode))
@@ -1580,7 +1580,7 @@ public class DocumentsServiceImplTest {
         expect(FolderUtils.nodeExists(eq(folderNode), eq("breaking-news")))
                 .andReturn(false);
         final DocumentType docType = provideDocumentType(documentHandle);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(WorkflowUtils.getWorkflow(eq(folderNode), eq("internal"), eq(FolderWorkflow.class)))
                 .andReturn(Optional.of(folderWorkflow));
         expect(folderWorkflow.add(eq("new-news-document"), eq("project:newsdocument"), eq("breaking-news")))
@@ -1628,7 +1628,7 @@ public class DocumentsServiceImplTest {
         expect(documentHandle.getIdentifier()).andReturn("uuid");
 
         final DocumentType docType = provideDocumentType(documentHandle);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");
@@ -1704,7 +1704,7 @@ public class DocumentsServiceImplTest {
         expect(documentHandle.getIdentifier()).andReturn("uuid");
 
         final DocumentType docType = provideDocumentType(documentHandle);
-        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
+        expect(docType.isReadOnlyDueToUnsupportedValidator()).andReturn(false);
         expect(docType.getId()).andReturn("project:newsdocument");
         expect(DocumentUtils.getDisplayName(documentHandle)).andReturn(Optional.of("Breaking News (encoded)"));
         expect(JcrUtils.getNodeNameQuietly(eq(documentHandle))).andReturn("breaking-news");

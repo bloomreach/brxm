@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -58,6 +59,7 @@ import static org.junit.Assert.fail;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
 import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
 import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
@@ -170,7 +172,7 @@ public class PropertyFieldTypeTest {
         node.setProperty(PROPERTY, "Value");
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
 
-        fieldType.setRequired(true);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
         node.getProperty(PROPERTY).remove();
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
 
@@ -459,16 +461,23 @@ public class PropertyFieldTypeTest {
     }
 
     @Test
-    public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
+    public void writeFieldValidates() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
         fieldType.setJcrType(PropertyType.TYPENAME_STRING);
-        fieldType.setRequired(true);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final FieldValue emptyValue = new FieldValue("");
 
-        assertTrue(fieldType.writeField(fieldPath, Collections.singletonList(emptyValue), nodeContext));
+        mockStaticPartial(FieldTypeUtils.class, "getValidator");
+        expect(FieldTypeUtils.getValidator(FieldValidators.REQUIRED)).andReturn(new TestValidatorInstance(new AlwaysGoodTestValidator()));
+        replayAll();
+
+        final boolean valueWritten = fieldType.writeField(fieldPath, Collections.singletonList(emptyValue), nodeContext);
+
+        assertTrue(valueWritten);
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
+        verifyAll();
     }
 
     @Test

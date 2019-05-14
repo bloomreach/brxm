@@ -52,7 +52,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
     private Type type;
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
-    private boolean required;
     private boolean hasUnsupportedValidator;
     private String jcrType;
     private String effectiveType;
@@ -145,12 +144,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
     @Override
     public final boolean isRequired() {
-        return required;
-    }
-
-    @Override
-    public final void setRequired(final boolean required) {
-        this.required = required;
+        return validatorNames.contains(FieldValidators.REQUIRED);
     }
 
     @Override
