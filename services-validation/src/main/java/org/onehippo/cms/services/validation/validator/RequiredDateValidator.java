@@ -19,22 +19,19 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.repository.util.DateConstants;
 
 /**
- * Validates that a Date value is not null and not the default {@link #EMPTY_DATE}.
+ * Validates that a Date value is not null and not the default {@link DateConstants#EMPTY_DATE}.
  */
 public class RequiredDateValidator implements Validator<Date> {
 
-    public static final String EMPTY_DATE_VALUE = "0001-01-01T12:00:00.000+00:00";
-    public static final Date EMPTY_DATE = ISO8601.parse(EMPTY_DATE_VALUE).getTime();
-
     @Override
     public Optional<Violation> validate(final ValidationContext context, final Date date) {
-        if (date == null || DateUtils.isSameInstant(date, EMPTY_DATE)) {
+        if (date == null || DateUtils.isSameInstant(date, DateConstants.EMPTY_DATE)) {
             return Optional.of(context.createViolation());
         }
         return Optional.empty();

@@ -35,6 +35,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypes;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.DateConstants;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -111,7 +112,7 @@ public class RequiredValidatorTest {
         final ValidationContext validationContext = new TestValidationContext("myproject:calendarDate", "CalendarDate");
         final RequiredValidator requiredValidator = new RequiredValidator(configNode);
 
-        final Optional<Violation> violation = requiredValidator.validate(validationContext, RequiredDateValidator.EMPTY_DATE);
+        final Optional<Violation> violation = requiredValidator.validate(validationContext, DateConstants.EMPTY_DATE);
         assertTrue(violation.isPresent());
     }
 
@@ -146,7 +147,7 @@ public class RequiredValidatorTest {
         final ValidationContext validationContext = new TestValidationContext("myproject:calendarDate", "CalendarDate");
         final RequiredValidator requiredValidator = new RequiredValidator(configNode);
 
-        requiredValidator.validate(validationContext, RequiredDateValidator.EMPTY_DATE);
+        requiredValidator.validate(validationContext, DateConstants.EMPTY_DATE);
     }
 
     @Test(expected = ValidationContextException.class)
@@ -160,7 +161,7 @@ public class RequiredValidatorTest {
         final ValidationContext validationContext = new TestValidationContext("myproject:date", "Date");
         final RequiredValidator requiredValidator = new RequiredValidator(configNode);
 
-        requiredValidator.validate(validationContext, RequiredDateValidator.EMPTY_DATE);
+        requiredValidator.validate(validationContext, DateConstants.EMPTY_DATE);
     }
 
     private void setUpSuperTypes(final String type, final Set<String> superTypes) throws RepositoryException {
