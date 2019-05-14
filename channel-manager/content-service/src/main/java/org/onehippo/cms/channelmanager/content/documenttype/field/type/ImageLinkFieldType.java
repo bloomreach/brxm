@@ -15,12 +15,12 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import org.apache.wicket.util.collections.MiniMap;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -59,9 +59,7 @@ public class ImageLinkFieldType extends LinkFieldType {
 
     @Override
     protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) {
-        final MiniMap<String, Object> map = new MiniMap<>(1);
-        map.put("url", getImageUrl(uuid, session));
-        return map;
+        return Collections.singletonMap("url", getImageUrl(uuid, session));
     }
 
     private String getImageUrl(final String uuid, final Session session) {
