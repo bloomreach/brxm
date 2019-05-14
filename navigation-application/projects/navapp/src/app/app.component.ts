@@ -12,7 +12,7 @@ import {
 } from '@bloomreach/navapp-communication';
 import { NavItem } from '@bloomreach/navapp-communication/lib/api';
 
-import { BrxGlobalService, NavigationConfigurationService } from './services';
+import { NavAppSettingsService, NavigationConfigurationService } from './services';
 
 @Component({
   selector: 'brna-root',
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   private renderer: Renderer2;
 
   constructor(
-    private brxGlobal: BrxGlobalService,
+    private navAppSettings: NavAppSettingsService,
     private navigationConfigurationService: NavigationConfigurationService,
     private http: HttpClient,
     private elRef: ElementRef,
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
 
-    const resourcePromises = this.brxGlobal.appSettings.navConfigResources.map(
+    const resourcePromises = this.navAppSettings.appSettings.navConfigResources.map(
       resource => this.getNavConfig(resource),
     );
 

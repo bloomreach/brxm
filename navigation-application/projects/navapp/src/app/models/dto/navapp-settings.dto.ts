@@ -1,4 +1,4 @@
-interface BrxGlobal {
+interface NavAppSettings {
   userSettings: {
     userName: string;
     language: string;

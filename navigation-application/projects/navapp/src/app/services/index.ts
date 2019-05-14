@@ -3,4 +3,4 @@
  */
 
 export * from './navigation-configuration.service';
-export * from './brx-global.service';
+export * from './navapp-settings.service';
