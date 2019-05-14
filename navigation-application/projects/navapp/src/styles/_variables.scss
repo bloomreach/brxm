@@ -16,13 +16,13 @@ $black:    #000 !default;
 //
 // Settings for the `<body>` element.
 
-$body-bg:                   $white !default;
-$body-color:                $gray-900 !default;
+$body-bg:                     $white !default;
+$body-color:                  $gray-900 !default;
 
 // Typography
 //
 // Font, line-height, and color for body text, headings, and more.
-$font-family-base:            "Open Sans", Roboto, "Helvetica Neue", sans-serif !default;
+$font-family-base:          'Roboto-Thin', 'Roboto Thin', 'Roboto', "Open Sans", "Helvetica Neue", sans-serif !default;
 
 $font-size-base:              1rem !default; // Assumes the browser default, typically `16px`
 $font-size-lg:                $font-size-base * 1.25 !default;
@@ -41,9 +41,14 @@ $line-height-base:            1.5 !default;
 
 $menu-collapsed-width:        56px;
 $menu-width:                  224px;
+$menu-drawer-width:           200px;
 $menu-root-item-height:       46px;
 
+$menu-sub-menu-font-size:     14px;
+$menu-sub-sub-menu-font-size: 12px;
+
 $menu-bg:                     rgb(48, 62, 84);
+$menu-drawer-bg:              rgb(31, 45, 65);
 $menu-sub-item-bg:            rgb(31, 45, 65);
 $menu-sub-sub-item-bg:        rgb(26, 37, 54);
 $menu-hover-bg:               #fff;

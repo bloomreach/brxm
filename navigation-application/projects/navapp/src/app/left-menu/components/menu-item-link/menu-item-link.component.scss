@@ -1,0 +1,11 @@
+@import '../../../../styles/variables';
+
+:host {
+  display: block;
+  font-size: $menu-sub-menu-font-size;
+}
+
+.menu-item-link {
+  color: $menu-text-color;
+  text-decoration: none;
+}

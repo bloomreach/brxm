@@ -2,10 +2,11 @@
  * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
  */
 
-import { Component, HostBinding } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { MenuItem } from '../models';
+import { CommunicationsService } from '../../communication/services';
+import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuBuilderService } from '../services';
 
 @Component({
@@ -13,13 +14,19 @@ import { MenuBuilderService } from '../services';
   templateUrl: 'left-menu.component.html',
   styleUrls: ['left-menu.component.scss'],
 })
-export class LeftMenuComponent {
+export class LeftMenuComponent implements OnInit {
   collapsed = true;
+  menu: Observable<MenuItem[]>;
 
-  constructor(private menuBuilderService: MenuBuilderService) {}
+  private activeMenuItem: MenuItem;
 
-  get menu(): Observable<MenuItem[]> {
-    return this.menuBuilderService.buildMenu();
+  constructor(
+    private menuBuilderService: MenuBuilderService,
+    private communicationsService: CommunicationsService,
+  ) {}
+
+  get isDrawerOpen(): boolean {
+    return this.activeMenuItem instanceof MenuItemContainer;
   }
 
   @HostBinding('class.collapsed')
@@ -27,7 +34,23 @@ export class LeftMenuComponent {
     return this.collapsed;
   }
 
+  ngOnInit(): void {
+    this.menu = this.menuBuilderService.buildMenu();
+  }
+
   toggle(): void {
     this.collapsed = !this.collapsed;
+  }
+
+  onMenuItemClick(item: MenuItem): void {
+    this.activeMenuItem = item;
+
+    if (item instanceof MenuItemLink) {
+      this.communicationsService.navigate(item.appId, item.appPath);
+    }
+  }
+
+  isMenuItemActive(item: MenuItem): boolean {
+    return item === this.activeMenuItem;
   }
 }

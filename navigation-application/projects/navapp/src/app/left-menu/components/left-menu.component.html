@@ -1,25 +1,30 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
-<div class="top-elements">
-  <brna-top-level-menu-item
-    *ngFor="let item of menu | async"
-    class="menu-item"
-    [config]="item"
-    [collapsed]="collapsed">
-  </brna-top-level-menu-item>
-</div>
+<div class="static-menu" [class.collapsed]="isCollapsed">
+  <div class="top-elements">
+    <brna-top-level-menu-item
+      *ngFor="let item of menu | async"
+      [config]="item"
+      [collapsed]="collapsed"
+      [active]="isMenuItemActive(item)"
+      (click)="onMenuItemClick(item)"
+      class="menu-item">
+    </brna-top-level-menu-item>
+  </div>
 
-<div class="bottom-elements">
-  <div class="menu-item">
-    <mat-icon svgIcon="help"></mat-icon>
-    <span *ngIf="!collapsed" class="caption">Help</span>
-  </div>
-  <div class="menu-item">
-    <mat-icon svgIcon="user"></mat-icon>
-    <span *ngIf="!collapsed" class="caption">User account</span>
-  </div>
-  <div class="menu-item trigger" (click)="toggle()">
-    <mat-icon *ngIf="collapsed" svgIcon="nav-expand"></mat-icon>
-    <mat-icon *ngIf="!collapsed" svgIcon="nav-collapse"></mat-icon>
+  <div class="bottom-elements">
+    <div class="menu-item">
+      <mat-icon svgIcon="help"></mat-icon>
+      <span *ngIf="!collapsed" class="caption">Help</span>
+    </div>
+    <div class="menu-item">
+      <mat-icon svgIcon="user"></mat-icon>
+      <span *ngIf="!collapsed" class="caption">User account</span>
+    </div>
+    <div class="menu-item trigger" (click)="toggle()">
+      <mat-icon *ngIf="collapsed" svgIcon="nav-expand"></mat-icon>
+      <mat-icon *ngIf="!collapsed" svgIcon="nav-collapse"></mat-icon>
+    </div>
   </div>
 </div>
+<brna-menu-drawer *ngIf="isDrawerOpen" [config]="activeMenuItem" class="drawer-menu"></brna-menu-drawer>

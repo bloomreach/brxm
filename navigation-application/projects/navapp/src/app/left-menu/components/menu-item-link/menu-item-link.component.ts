@@ -10,6 +10,7 @@ import { MenuItemLink } from '../../models';
 @Component({
   selector: 'brna-menu-item-link',
   templateUrl: 'menu-item-link.component.html',
+  styleUrls: ['menu-item-link.component.scss'],
 })
 export class MenuItemLinkComponent {
   @Input()

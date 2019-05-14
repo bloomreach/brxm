@@ -1,8 +1,6 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
-<div><strong>{{ config.caption }}</strong></div>
-<ul>
-  <li *ngFor="let item of config.children">
-    <brna-menu-item [config]="item"></brna-menu-item>
-  </li>
-</ul>
+<h2 class="header" (click)="toggle()">{{ config?.caption }}</h2>
+<div *ngIf="opened" [@slideInOut]="opened" class="items-wrapper">
+  <brna-menu-item-link *ngFor="let item of config.children" [config]="item" class="item"></brna-menu-item-link>
+</div>
