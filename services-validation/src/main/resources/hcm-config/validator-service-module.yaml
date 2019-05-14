@@ -24,6 +24,9 @@ definitions:
         /required:
           jcr:primaryType: hipposys:moduleconfig
           hipposys:className: org.onehippo.cms.services.validation.validator.RequiredValidator
+          /Date:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredDateValidator
           /String:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredStringValidator
