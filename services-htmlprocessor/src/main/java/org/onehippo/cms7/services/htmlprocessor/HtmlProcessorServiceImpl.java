@@ -27,4 +27,10 @@ public class HtmlProcessorServiceImpl implements HtmlProcessorService {
     public HtmlProcessor getHtmlProcessor(final String id) {
         return config.getProcessor(id);
     }
+
+    @Override
+    public boolean isVisible(final String html) {
+        return config.getVisibleHtmlCheckerService().isVisible(html);
+    }
+
 }

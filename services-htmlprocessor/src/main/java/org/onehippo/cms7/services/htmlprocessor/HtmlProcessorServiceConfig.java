@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.onehippo.cms7.services.htmlprocessor.service.VisibleHtmlCheckerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,8 @@ public class HtmlProcessorServiceConfig implements Serializable {
 
     private final Map<String, HtmlProcessorConfig> configs = new HashMap<>();
     private final Map<String, HtmlProcessor> processors = new HashMap<>();
+
+    private VisibleHtmlCheckerService visibleHtmlCheckerService;
 
     void reconfigure(final Node config) {
         configs.clear();
@@ -48,6 +51,8 @@ public class HtmlProcessorServiceConfig implements Serializable {
         } catch (final RepositoryException e) {
             log.error("Failed to create Html processor config");
         }
+
+        visibleHtmlCheckerService = new VisibleHtmlCheckerService();
     }
 
     /**
@@ -62,5 +67,9 @@ public class HtmlProcessorServiceConfig implements Serializable {
             }
         }
         return processors.get(id);
+    }
+
+    VisibleHtmlCheckerService getVisibleHtmlCheckerService() {
+        return visibleHtmlCheckerService;
     }
 }
