@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,8 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provider of {@link JcrPropertyValueModel}s, based on a {@link JcrItemModel} for a
- * {@link Property}.
+ * Provider of {@link JcrPropertyValueModel}s, based on a {@link JcrItemModel} for a {@link Property}.
  */
 public class PropertyValueProvider extends AbstractProvider<Property, JcrPropertyValueModel> {
 
@@ -317,28 +316,28 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
         ValueFactory factory = session.getValueFactory();
         int propertyType = PropertyType.valueFromName(type.getType());
         switch (propertyType) {
-        case PropertyType.BOOLEAN:
-            return factory.createValue(false);
-        case PropertyType.DOUBLE:
-            return factory.createValue(0.0);
-        case PropertyType.DATE: {
-            Calendar nullCal = Calendar.getInstance();
-            nullCal.setTime(DateConstants.EMPTY_DATE);
-            return factory.createValue(nullCal);
-        }
-        case PropertyType.LONG:
-            return factory.createValue(0L);
-        case PropertyType.NAME:
-            return factory.createValue("", PropertyType.NAME);
-        case PropertyType.PATH:
-            return factory.createValue("/", PropertyType.PATH);
-        case PropertyType.REFERENCE:
-            return factory.createValue(session.getRootNode().getUUID(), PropertyType.REFERENCE);
-        case PropertyType.STRING:
-        case PropertyType.UNDEFINED:
-            return factory.createValue("", PropertyType.STRING);
-        default:
-            return null;
+            case PropertyType.BOOLEAN:
+                return factory.createValue(false);
+            case PropertyType.DOUBLE:
+                return factory.createValue(0.0);
+            case PropertyType.DATE: {
+                Calendar nullCal = Calendar.getInstance();
+                nullCal.setTime(DateConstants.EMPTY_DATE);
+                return factory.createValue(nullCal);
+            }
+            case PropertyType.LONG:
+                return factory.createValue(0L);
+            case PropertyType.NAME:
+                return factory.createValue("", PropertyType.NAME);
+            case PropertyType.PATH:
+                return factory.createValue("/", PropertyType.PATH);
+            case PropertyType.REFERENCE:
+                return factory.createValue(session.getRootNode().getIdentifier(), PropertyType.REFERENCE);
+            case PropertyType.STRING:
+            case PropertyType.UNDEFINED:
+                return factory.createValue("", PropertyType.STRING);
+            default:
+                return null;
         }
     }
 
