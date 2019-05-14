@@ -1,20 +1,21 @@
 import penpal from 'penpal';
 
-import { connectToParent } from './parent';
+import { connectToParent, createProxies } from './parent';
 
 describe('connectToParent', () => {
   beforeEach(() => {
     spyOn(penpal, 'connectToParent').and.callThrough();
-    spyOn(console, 'log');
   });
 
   it('should pass config to penpal connectToParent', () => {
     const parentOrigin = 'about:blank';
+    const methods = {
+      logout: () => {},
+    };
+
     const config = {
       parentOrigin,
-      methods: {
-        navigate: () => {},
-      },
+      methods,
     };
 
     connectToParent(config);
@@ -34,18 +35,34 @@ describe('connectToParent', () => {
     });
   });
 
-  describe('proxied methods', () => {
-    describe('getNavItems', () => {
-      it('should log "Proxied method" on calling getNavItems', () => {
-        const parentOrigin = 'about:blank';
-        const config = {
-          parentOrigin,
-          methods: jasmine.createSpyObj(['getNavItems']),
-        };
+  it('should proxy methods', () => {
+    const methods = {
+      navigate: jasmine.createSpy('navigate'),
+      getNavItems: jasmine.createSpy('getNavItems'),
+    };
+    const proxies = createProxies(methods);
 
-        connectToParent(config);
-        expect(penpal.connectToParent).toHaveBeenCalled();
-      });
-    });
+    proxies.getNavItems();
+    proxies.navigate({ path: 'test' });
+
+    expect(proxies.navigate).not.toBe(methods.navigate);
+
+    expect(methods.navigate).toHaveBeenCalled();
+    expect(methods.getNavItems).toHaveBeenCalled();
+  });
+
+  it('should pass proxied methods if available', () => {
+    const parentOrigin = 'about:blank';
+    const methods = {
+      navigate: () => {},
+    };
+    const config = {
+      parentOrigin,
+      methods,
+    };
+
+    connectToParent(config);
+    expect(penpal.connectToParent).toHaveBeenCalled();
+    expect(penpal.connectToParent).not.toHaveBeenCalledWith(config); // So therefore the proxy is called.
   });
 });

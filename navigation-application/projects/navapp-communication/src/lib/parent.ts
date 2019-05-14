@@ -3,6 +3,7 @@ import penpal from 'penpal';
 import {
   ChildApi,
   NavItem,
+  NavLocation,
   ParentConnectConfig,
   ParentPromisedApi,
 } from './api';
@@ -11,8 +12,10 @@ import { mergeIntersecting } from './utils';
 export function createProxies(methods: ChildApi): ChildApi {
   return {
     getNavItems(): NavItem[] {
-      console.log('Proxied method');
       return methods.getNavItems();
+    },
+    navigate(location: NavLocation): void {
+      return methods.navigate(location);
     },
   };
 }

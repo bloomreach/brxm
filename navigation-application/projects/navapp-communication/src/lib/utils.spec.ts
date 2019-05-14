@@ -1,6 +1,6 @@
 import { mergeIntersecting } from './utils';
 
-describe('getProxiedMethods', () => {
+describe('mergeIntersecting', () => {
   it('creates a new object from 2 other objects', () => {
     const obj1 = {
       test1(): void {},
@@ -28,5 +28,6 @@ describe('getProxiedMethods', () => {
 
     expect((merged as any).test).toBe(test2);
     expect('myMethod' in merged).toBe(true);
+    expect('myOtherMethod' in merged).toBe(false);
   });
 });
