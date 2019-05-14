@@ -12,9 +12,6 @@ definitions:
         /escaped:
           jcr:primaryType: hipposys:moduleconfig
           hipposys:className: org.onehippo.cms.services.validation.validator.EscapedHtmlValidator
-        /html:
-          jcr:primaryType: hipposys:moduleconfig
-          hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator
         /non-empty:
           jcr:primaryType: hipposys:moduleconfig
           hipposys:className: org.onehippo.cms.services.validation.validator.NonEmptyValidator
