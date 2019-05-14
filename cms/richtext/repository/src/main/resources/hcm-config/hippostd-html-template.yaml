@@ -17,7 +17,6 @@ definitions:
             hipposysedit:path: hippostd:content
             hipposysedit:primary: true
             hipposysedit:type: String
-            hipposysedit:validators: [html]
           /links:
             jcr:primaryType: hipposysedit:field
             hipposysedit:path: '*'
