@@ -109,16 +109,6 @@ OpenUi = new class {
   }
 
   _getExtensionUrl(url, base) {
-    return this._isAbsoluteUrl(url)
-      ? this._getAbsoluteUrl(url)
-      : this._getAbsoluteUrl(url, base)
-  }
-
-  _isAbsoluteUrl(url) {
-    return url.startsWith('http://') || url.startsWith('https://');
-  }
-
-  _getAbsoluteUrl(url, base) {
     const absUrl = new URL(url, base);
     this._addQueryParameters(absUrl);
     return absUrl;
