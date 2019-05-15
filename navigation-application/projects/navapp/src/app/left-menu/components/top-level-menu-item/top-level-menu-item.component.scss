@@ -31,7 +31,6 @@ $menu-icon-size: 24px;
   height: $menu-root-item-height;
   overflow: hidden;
   position: relative;
-  text-align: left;
 
   &.pressed {
     background-color: $menu-sub-item-bg;

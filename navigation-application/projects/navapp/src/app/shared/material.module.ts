@@ -20,12 +20,15 @@ export class MaterialModule {
     donSanitizer: DomSanitizer,
   ) {
     const iconsList = [
+      'br-logo',
       'audiences',
       'audiences.active',
       'categories',
       'categories.active',
       'documents',
       'documents.active',
+      'document-search',
+      'document-search.active',
       'experience-manager',
       'experience-manager.active',
       'fast-travel',

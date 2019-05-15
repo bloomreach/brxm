@@ -13,7 +13,13 @@ import { MenuItem } from '../../models';
 })
 export class TopLevelMenuItemComponent {
   @Input()
-  config: MenuItem;
+  icon: string;
+
+  @Input()
+  activeIcon: string;
+
+  @Input()
+  caption = '';
 
   @Input()
   @HostBinding('class.collapsed')

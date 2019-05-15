@@ -1,5 +1,5 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
-<mat-icon [svgIcon]="config.icon" class="icon"></mat-icon>
-<mat-icon [svgIcon]="config.icon + '.active'" class="icon active"></mat-icon>
-<span class="caption">{{ config.caption }}</span>
+<mat-icon [svgIcon]="icon" class="icon"></mat-icon>
+<mat-icon *ngIf="activeIcon" [svgIcon]="activeIcon" class="icon active"></mat-icon>
+<span class="caption">{{ caption }}</span>

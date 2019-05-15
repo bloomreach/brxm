@@ -39,46 +39,32 @@ $menu-trigger-size: 12px;
   padding: 10px 0;
 }
 
-.top-elements {
-  .menu-item {
-    height: $menu-root-item-height;
+.menu-item {
+  height: $menu-root-item-height;
+
+  &.home {
+    margin-bottom: 5px;
+  }
+
+  /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+  &.home ::ng-deep .mat-icon {
+    color: white;
   }
 }
 
 .bottom-elements {
-  .menu-item {
-    height: $bottom-menu-item-height;
+  .trigger {
+    height: $menu-root-item-height;
     position: relative;
-  }
-
-  .menu-item .mat-icon {
-    color: $menu-icon-color;
-    height: $bottom-menu-item-size;
-    width: $bottom-menu-item-size;
-  }
-
-  .mat-icon {
-    left: ($menu-collapsed-width - $bottom-menu-item-size) / 2;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
   }
 
   .trigger .mat-icon {
     cursor: pointer;
     height: $menu-trigger-size;
     left: ($menu-collapsed-width - $menu-trigger-size) / 2;
-    transform: translateY(-100%);
-    width: $menu-trigger-size;
-  }
-
-  .caption {
-    color: $menu-text-color;
-    left: $menu-collapsed-width;
-    line-height: $bottom-menu-item-height;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap;
+    transform: translateY(-100%);
+    width: $menu-trigger-size;
   }
 }
