@@ -33,6 +33,8 @@ public class RequiredRichTextValidator extends AbstractNodeValidator {
 
     private final HtmlProcessorService htmlProcessorService;
 
+    // constructor must be public because class is instantiated via reflection
+    @SuppressWarnings("WeakerAccess")
     public RequiredRichTextValidator() {
         htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
 

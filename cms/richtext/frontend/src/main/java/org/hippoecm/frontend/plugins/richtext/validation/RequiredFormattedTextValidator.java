@@ -28,6 +28,8 @@ public class RequiredFormattedTextValidator implements Validator<String> {
 
     private final HtmlProcessorService htmlProcessorService;
 
+    // constructor must be public because class is instantiated via reflection
+    @SuppressWarnings("WeakerAccess")
     public RequiredFormattedTextValidator() {
         htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
 
