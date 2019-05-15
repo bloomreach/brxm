@@ -14,19 +14,21 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (window.parent !== window) {
-      const config: ParentConnectConfig = {
-        parentOrigin: 'http://localhost:4200',
-        methods: {
-          navigate: () => {
-            this.navigateCount += 1;
-          },
-          getNavItems: () => {
-            return navigationConfiguration;
-          },
-        },
-      };
-
-      connectToParent(config);
+      return;
     }
+
+    const config: ParentConnectConfig = {
+      parentOrigin: 'http://localhost:4200',
+      methods: {
+        navigate: () => {
+          this.navigateCount += 1;
+        },
+        getNavItems: () => {
+          return navigationConfiguration;
+        },
+      },
+    };
+
+    connectToParent(config);
   }
 }
