@@ -16,16 +16,24 @@
 package org.onehippo.cms7.services.htmlprocessor;
 
 /**
- * Looks up {@link HtmlProcessor} instances.
+ * Looks up {@link HtmlProcessor} instances and checks whether HTML is visible.
  */
 public interface HtmlProcessorService {
 
     /**
      * Returns instance of {@link HtmlProcessor} or null if the configuration cannot be found
+     *
      * @param id The HTML processor id
      * @return Instance of HTML processor
      */
     HtmlProcessor getHtmlProcessor(final String id);
 
+    /**
+     * Checks whether the provided HTML is visible. For example, "<p></p>" is not visible,
+     * while "<p>text</p>" is.
+     *
+     * @param html the HTML to check
+     * @return true if the HTML is visible, false otherwise
+     */
     boolean isVisible(final String html);
 }
