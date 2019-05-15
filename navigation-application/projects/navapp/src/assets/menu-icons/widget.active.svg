@@ -2,31 +2,15 @@
 <!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:url(#SVGID_1_);}
-	.st1{fill:#FFFFFF;}
-	.st2{fill:url(#SVGID_2_);}
-	.st3{fill:url(#SVGID_3_);}
-	.st4{fill:url(#SVGID_4_);}
-	.st5{fill:url(#SVGID_5_);}
-	.st6{fill:url(#SVGID_6_);}
-	.st7{fill:url(#SVGID_7_);}
-	.st8{fill:url(#SVGID_8_);}
-	.st9{fill:url(#SVGID_9_);}
-	.st10{fill:url(#SVGID_10_);}
-	.st11{fill:url(#SVGID_11_);}
-	.st12{fill:url(#SVGID_12_);}
-</style>
 <g>
-	
-		<rect x="23.8" y="18.8" transform="matrix(0.8944 -0.4472 0.4472 0.8944 -5.1744 17.8535)" class="st1" width="22.9" height="2.1"/>
-	<rect x="14.3" y="9" transform="matrix(0.4679 -0.8838 0.8838 0.4679 -9.4122 24.1397)" class="st1" width="2.1" height="21.9"/>
-	<rect x="24" y="25" class="st1" width="2.1" height="21.6"/>
-	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="52.7344" y1="-2.7344" x2="7.5339" y2="42.4661">
-		<stop  offset="0" style="stop-color:#00ACFB"/>
-		<stop  offset="0.3" style="stop-color:#00B5E2"/>
-		<stop  offset="1" style="stop-color:#F674F7"/>
+  <linearGradient id="widget-gradient" gradientUnits="userSpaceOnUse" x1="52.7344" y1="-2.7344" x2="7.5339" y2="42.4661">
+		<stop offset="0" style="stop-color:#00ACFB"/>
+    <stop offset="0.3" style="stop-color:#00B5E2"/>
+    <stop offset="1" style="stop-color:#F674F7"/>
 	</linearGradient>
-	<path class="st0" d="M25,4.9L43.6,16v18L25,45.1L6.4,34V16L25,4.9 M25,0L2.3,13.6v22.7L25,50l22.7-13.6V13.6L25,0L25,0z"/>
+	<rect style="fill:#FFFFFF;" x="23.8" y="18.8" transform="matrix(0.8944 -0.4472 0.4472 0.8944 -5.1744 17.8535)" width="22.9" height="2.1"/>
+	<rect style="fill:#FFFFFF;" x="14.3" y="9" transform="matrix(0.4679 -0.8838 0.8838 0.4679 -9.4122 24.1397)" width="2.1" height="21.9"/>
+	<rect style="fill:#FFFFFF;" x="24" y="25" width="2.1" height="21.6"/>
+	<path style="fill:url(#widget-gradient);" d="M25,4.9L43.6,16v18L25,45.1L6.4,34V16L25,4.9 M25,0L2.3,13.6v22.7L25,50l22.7-13.6V13.6L25,0L25,0z"/>
 </g>
 </svg>
