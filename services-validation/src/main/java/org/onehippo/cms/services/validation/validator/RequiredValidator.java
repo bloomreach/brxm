@@ -46,6 +46,8 @@ public class RequiredValidator implements Validator<Object> {
     private final Map<String, Validator> validators;
     private final ContentTypeService contentTypeService;
 
+    // constructor must be public because class is instantiated via reflection
+    @SuppressWarnings("WeakerAccess")
     public RequiredValidator(final Node node) {
         try {
             validators = createValidators(node);

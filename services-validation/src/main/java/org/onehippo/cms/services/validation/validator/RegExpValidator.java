@@ -37,7 +37,9 @@ public class RegExpValidator implements Validator<String> {
 
     private static final String PATTERN_KEY = "regexp.pattern";
 
-    public RegExpValidator(final Node config) throws ValidationContextException {
+    // constructor must be public because class is instantiated via reflection
+    @SuppressWarnings("WeakerAccess")
+    public RegExpValidator(final Node config) {
         try {
             pattern = Pattern.compile(config.getProperty(PATTERN_KEY).getString());
         } catch (RepositoryException e) {
