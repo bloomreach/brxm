@@ -1,9 +1,5 @@
 @import '../../../styles/variables';
 
-$bottom-menu-item-height: $menu-root-item-height - 5px;
-$bottom-menu-item-size: 20px;
-$menu-trigger-size: 12px;
-
 :host {
   display: block;
   height: 100%;
@@ -60,11 +56,9 @@ $menu-trigger-size: 12px;
 
   .trigger .mat-icon {
     cursor: pointer;
-    height: $menu-trigger-size;
-    left: ($menu-collapsed-width - $menu-trigger-size) / 2;
+    left: ($menu-collapsed-width - $menu-icon-size) / 2;
     position: absolute;
     top: 50%;
-    transform: translateY(-100%);
-    width: $menu-trigger-size;
+    transform: translateY(-50%);
   }
 }
