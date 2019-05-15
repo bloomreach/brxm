@@ -8,9 +8,11 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService implements OnDestroy {
-  private breadcrumbs: MenuItem[] = [];
   private menu$: Observable<MenuItem[]>;
   private currentMenu: MenuItem[];
+  private breadcrumbs: MenuItem[] = [];
+  // tslint:disable-next-line:variable-name
+  private _drawerMenuItem: MenuItemContainer;
   private unsubscribe = new Subject();
 
   constructor(
@@ -21,12 +23,20 @@ export class MenuStateService implements OnDestroy {
       takeUntil(this.unsubscribe),
     ).subscribe(menu => {
       this.currentMenu = menu;
-      // TODO: rebuild the breadcumbs if menu has been updated afte initialization
+      // TODO: rebuild the breadcumbs if menu has been updated after initialization
     });
   }
 
   get menu(): MenuItem[] {
     return this.currentMenu;
+  }
+
+  get isDrawerOpened(): boolean {
+    return !!this._drawerMenuItem;
+  }
+
+  get drawerMenuItem(): MenuItemContainer {
+    return this._drawerMenuItem;
   }
 
   ngOnDestroy(): void {
@@ -35,11 +45,20 @@ export class MenuStateService implements OnDestroy {
   }
 
   setActiveItem(item: MenuItemLink): void {
+    this.closeDrawer();
     this.breadcrumbs = this.buildBreadcrumbs(this.currentMenu, item);
   }
 
   isMenuItemActive(item: MenuItem): boolean {
     return this.breadcrumbs.some(breadcrumbItem => breadcrumbItem === item);
+  }
+
+  openDrawer(item: MenuItemContainer): void {
+    this._drawerMenuItem = item;
+  }
+
+  closeDrawer(): void {
+    this._drawerMenuItem = undefined;
   }
 
   private buildBreadcrumbs(menu: MenuItem[], activeItem: MenuItemLink): MenuItem[] {

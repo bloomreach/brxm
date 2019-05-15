@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input, Output } from '@angular/core';
+import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
 
 import { MenuItem, MenuItemContainer } from '../../models';
 import { MenuStateService } from '../../services';
@@ -29,6 +29,7 @@ export class MenuDrawerComponent {
 
   constructor(
     private menuStateService: MenuStateService,
+    private elRef: ElementRef,
   ) {}
 
   isContainer(item: MenuItem): boolean {
@@ -37,5 +38,14 @@ export class MenuDrawerComponent {
 
   isActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
+  }
+
+  @HostListener('document:click', ['$event'])
+  private onDocumentClick(event): void {
+    if (this.elRef.nativeElement.contains(event.target)) {
+      return;
+    }
+
+    this.menuStateService.closeDrawer();
   }
 }

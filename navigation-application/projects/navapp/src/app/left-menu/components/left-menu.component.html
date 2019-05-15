@@ -6,9 +6,9 @@
       *ngFor="let item of menu"
       [config]="item"
       [collapsed]="collapsed"
-      [clicked]="isMenuItemClicked(item)"
+      [pressed]="item === drawerMenuItem"
       [active]="isMenuItemActive(item)"
-      (click)="onMenuItemClick(item)"
+      (click)="onMenuItemClick($event, item)"
       class="menu-item">
     </brna-top-level-menu-item>
   </div>
@@ -28,4 +28,4 @@
     </div>
   </div>
 </div>
-<brna-menu-drawer *ngIf="isDrawerOpen" [config]="clickedMenuItem" class="drawer-menu"></brna-menu-drawer>
+<brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem" class="drawer-menu"></brna-menu-drawer>

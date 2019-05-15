@@ -2,8 +2,8 @@
  * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
  */
 
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import { MenuItem, MenuItemContainer } from '../../models';
 import { MenuStateService } from '../../services';
@@ -14,21 +14,18 @@ import { MenuStateService } from '../../services';
   styleUrls: ['expandable-menu-item.component.scss'],
   animations: [
     trigger('slideInOut', [
-      state('true', style({
-        marginTop: '10px',
-      })),
       transition(':enter', [
-        style({ height: '0', marginTop: '0' }),
-        animate('300ms ease', style({ height: '*', marginTop: '10px' })),
+        style({ height: '0' }),
+        animate('300ms ease', style({ height: '*' })),
       ]),
       transition(':leave', [
-        animate('300ms ease', style({ height: '0', marginTop: '0' })),
+        animate('300ms ease', style({ height: '0' })),
       ]),
     ]),
   ],
 })
-export class ExpandableMenuItemComponent {
-  opened = false;
+export class ExpandableMenuItemComponent implements OnChanges {
+  private isChildMenuOpened = false;
 
   @Input()
   config: MenuItemContainer;
@@ -41,11 +38,21 @@ export class ExpandableMenuItemComponent {
     private menuStateService: MenuStateService,
   ) {}
 
-  toggle(): void {
-    this.opened = !this.opened;
+  get isOpened(): boolean {
+    return this.isChildMenuOpened;
   }
 
-  isActive(item: MenuItem): boolean {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.active) {
+      this.isChildMenuOpened = true;
+    }
+  }
+
+  toggle(): void {
+    this.isChildMenuOpened = !this.isChildMenuOpened;
+  }
+
+  isChildMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
   }
 }

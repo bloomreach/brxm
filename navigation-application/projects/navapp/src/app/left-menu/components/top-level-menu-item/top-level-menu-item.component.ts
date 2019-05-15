@@ -24,6 +24,6 @@ export class TopLevelMenuItemComponent {
   active = false;
 
   @Input()
-  @HostBinding('class.clicked')
-  clicked = false;
+  @HostBinding('class.pressed')
+  pressed = false;
 }

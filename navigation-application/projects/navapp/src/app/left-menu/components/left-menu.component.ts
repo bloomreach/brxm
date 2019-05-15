@@ -3,11 +3,10 @@
  */
 
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { CommunicationsService } from '../../communication/services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
-import { MenuBuilderService, MenuStateService } from '../services';
+import { MenuStateService } from '../services';
 
 @Component({
   selector: 'brna-left-menu',
@@ -21,15 +20,17 @@ export class LeftMenuComponent implements OnInit {
   collapsed = true;
   menu: MenuItem[];
 
-  private clickedMenuItem: MenuItem;
-
   constructor(
     private menuStateService: MenuStateService,
     private communicationsService: CommunicationsService,
   ) {}
 
   get isDrawerOpen(): boolean {
-    return this.clickedMenuItem instanceof MenuItemContainer;
+    return this.menuStateService.isDrawerOpened;
+  }
+
+  get drawerMenuItem(): MenuItemContainer {
+    return this.menuStateService.drawerMenuItem;
   }
 
   @HostBinding('class.collapsed')
@@ -45,20 +46,21 @@ export class LeftMenuComponent implements OnInit {
     this.collapsed = !this.collapsed;
   }
 
-  onMenuItemClick(item: MenuItem): void {
-    this.clickedMenuItem = item;
+  onMenuItemClick(event: MouseEvent, item: MenuItem): void {
+    event.stopImmediatePropagation();
 
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
       this.communicationsService.navigate(item.appId, item.appPath);
+      return;
+    }
+
+    if (item instanceof MenuItemContainer) {
+      this.menuStateService.openDrawer(item);
     }
   }
 
   isMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
-  }
-
-  isMenuItemClicked(item: MenuItem): boolean {
-    return item === this.clickedMenuItem;
   }
 }

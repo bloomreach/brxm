@@ -1,10 +1,10 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
 <h2 class="header" (click)="toggle()">{{ config?.caption }}</h2>
-<div *ngIf="opened" [@slideInOut]="opened" class="items-wrapper">
+<div *ngIf="isOpened" [@slideInOut]="isOpened" class="items-wrapper">
   <brna-menu-item-link
     *ngFor="let item of config.children"
     [config]="item" class="item"
-    [active]="isActive(item)">
+    [active]="isChildMenuItemActive(item)">
   </brna-menu-item-link>
 </div>
