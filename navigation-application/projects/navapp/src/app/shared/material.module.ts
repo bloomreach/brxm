@@ -25,6 +25,8 @@ export class MaterialModule {
       'audiences.active',
       'categories',
       'categories.active',
+      'default',
+      'default.active',
       'documents',
       'documents.active',
       'document-search',
