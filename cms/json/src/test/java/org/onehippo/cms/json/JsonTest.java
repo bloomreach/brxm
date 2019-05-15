@@ -81,12 +81,12 @@ public class JsonTest {
 
     @Test
     public void writeValueAsStringForEmptyObject() throws JsonProcessingException {
-        assertEquals("{ }", Json.writeValueAsString(object));
+        assertEquals("{ }", Json.getMapper().writeValueAsString(object));
     }
 
     @Test
     public void writeValueAsStringForNullThrowsException() throws JsonProcessingException {
-        assertEquals("null", Json.writeValueAsString(null));
+        assertEquals("null", Json.getMapper().writeValueAsString(null));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class JsonTest {
                         + "    nestedValue2 : true\n"
                         + "  }\n"
                         + "}",
-                Json.writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
+                Json.getMapper().writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
         );
     }
 

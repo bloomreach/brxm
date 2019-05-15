@@ -17,14 +17,18 @@
 
 package org.hippoecm.frontend;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.StringHeaderItem;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
@@ -35,63 +39,64 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 /**
  * Contains the javascript needed to start the Navigation Application
  */
-public class NavAppHeaderItem extends HippoHeaderItem {
+public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
 
-    private static final HippoHeaderItem INSTANCE = new NavAppHeaderItem();
-
-    private final transient NavAppSettingsFactory navAppSettingsFactory = new NavAppSettingsFactory();
-
-    public static HeaderItem get() {
-        return INSTANCE;
-    }
-
-    private NavAppHeaderItem() {
-    }
-
     @Override
     public Iterable<?> getRenderTokens() {
-        return Collections.singleton("hippo-nav-app-header-item");
+        return Collections.singleton("nav-app-header-item");
     }
 
     @Override
     public void render(final Response response) {
-        // TODO (meggermont): this is a temporary solution
-        // For now we depend on js files pulled in via npm
-        // Later we will use CDN provided resources instead
-        getJsItem("bloomreach-navigation-communication.umd").render(response);
 
-        JavaScriptHeaderItem.forScript(createScript(), "hippo-nav-app-settings").render(response);
+        final String contextPath = WebApplication.get().getServletContext().getContextPath();
+        final PluginUserSession userSession = PluginUserSession.get();
+
+        StringHeaderItem.forString("<base href=" + contextPath + "/>").render(response);
+
+        final String javascript = String.format("NavAppSettings = %s;", parse(getSettings(contextPath, userSession)));
+
+        JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
+
+        Stream.of("runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js")
+                .forEach(resourceName -> {
+                    final JavaScriptResourceReference reference = new JavaScriptResourceReference(getClass(), resourceName);
+                    final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(reference);
+                    item.setDefer(true);
+                    item.render(response);
+                });
     }
 
-    private JavaScriptReferenceHeaderItem getJsItem(String jsResourceName) {
-        final String resourceName = getJsName(jsResourceName);
-        final ResourceReference resourceReference = new JavaScriptResourceReference(NavAppHeaderItem.class, resourceName);
-        return JavaScriptReferenceHeaderItem.forReference(resourceReference);
-    }
+    private NavAppSettings getSettings(final String contextPath, final PluginUserSession userSession) {
+        final NavAppSettings navAppSettings = new NavAppSettings();
 
-    private String getJsName(String jsResourceName) {
-        return String.format("js/%s%s.js", jsResourceName, getProdSuffix());
-    }
+        final NavAppSettings.UserSettings userSettings = new NavAppSettings.UserSettings();
+        userSettings.setLanguage(userSession.getLocale().getLanguage());
+        userSettings.setTimeZone(userSession.getTimeZone());
+        userSettings.setUserName(userSession.getUserName());
+        navAppSettings.setUserSettings(userSettings);
 
-    private String getProdSuffix() {
-        return isDevelopmentMode() ? "" : ".min";
-    }
+        final List<NavAppSettings.NavConfigResource> navConfigResources = new ArrayList<>();
+        final NavAppSettings.NavConfigResource brXmResource = new NavAppSettings.NavConfigResource();
+        brXmResource.setResourceType(NavAppSettings.ResourceType.REST);
+        final String endpointUrl = "navigationitems";
+        brXmResource.setUrl(String.format("%s/ws/%s", contextPath, endpointUrl));
+        navConfigResources.add(brXmResource);
 
-
-    private String createScript() {
-        final NavAppSettings navAppSettings = navAppSettingsFactory.getNavAppSettings(PluginUserSession.get());
-        return String.format("HippoNavAppSettings = %s;", parse(navAppSettings));
+        final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
+        appSettings.setNavConfigResources(navConfigResources);
+        navAppSettings.setAppSettings(appSettings);
+        return navAppSettings;
     }
 
     private String parse(NavAppSettings navAppSettings) {
         try {
-            return Json.writeValueAsString(navAppSettings);
+            return Json.getMapper().writeValueAsString(navAppSettings);
         } catch (JsonProcessingException e) {
             log.error("Failed to parse {}, returning empty javascript object instead", navAppSettings, e);
             return "{}";
         }
     }
-
 }
