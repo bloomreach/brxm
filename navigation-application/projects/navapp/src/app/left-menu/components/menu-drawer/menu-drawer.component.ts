@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, HostBinding, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Subject } from 'rxjs';
 
 import { MenuItem, MenuItemContainer } from '../../models';
 import { MenuStateService } from '../../services';
@@ -18,9 +19,17 @@ import { MenuStateService } from '../../services';
         animate('300ms ease-in-out', style({ transform: 'translateX(-100%)' })),
       ]),
     ]),
+    trigger('fadeIn', [
+      transition('* => *', [
+        style({ opacity: '0' }),
+        animate('300ms ease-in-out', style({ opacity: '1' })),
+      ]),
+    ]),
   ],
 })
-export class MenuDrawerComponent {
+export class MenuDrawerComponent implements OnChanges {
+  configChange$ = new Subject();
+
   @HostBinding('@slideInOut')
   animate = true;
 
@@ -31,6 +40,12 @@ export class MenuDrawerComponent {
     private menuStateService: MenuStateService,
     private elRef: ElementRef,
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('config' in changes) {
+      this.configChange$.next({});
+    }
+  }
 
   isContainer(item: MenuItem): boolean {
     return item instanceof MenuItemContainer;

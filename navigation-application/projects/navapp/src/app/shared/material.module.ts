@@ -5,11 +5,13 @@ import { NgModule } from '@angular/core';
 import {
   MatIconModule,
   MatIconRegistry,
+  MatRippleModule,
 } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
   exports: [
+    MatRippleModule,
     MatIconModule,
     HttpClientModule,
   ],

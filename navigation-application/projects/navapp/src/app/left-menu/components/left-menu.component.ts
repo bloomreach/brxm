@@ -46,6 +46,10 @@ export class LeftMenuComponent implements OnInit {
     this.menuStateService.toggle();
   }
 
+  isRippleDisabled(item: MenuItemContainer): boolean {
+    return item instanceof MenuItemContainer;
+  }
+
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
     event.stopImmediatePropagation();
 
