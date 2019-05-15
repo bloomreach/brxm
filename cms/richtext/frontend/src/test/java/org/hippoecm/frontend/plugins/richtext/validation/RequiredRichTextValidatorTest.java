@@ -47,12 +47,9 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PrepareForTest({HippoServiceRegistry.class})
 public class RequiredRichTextValidatorTest {
 
-    private RequiredRichTextValidator validator;
-
     @Before
     public void setUp() {
         PowerMock.mockStatic(HippoServiceRegistry.class);
-        validator = new RequiredRichTextValidator();
     }
 
     @Test(expected = ValidationContextException.class)
@@ -61,13 +58,19 @@ public class RequiredRichTextValidatorTest {
         expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(null);
         replayAll();
 
+        final RequiredRichTextValidator validator = new RequiredRichTextValidator();
         validator.validate(context, createContentNode("<html></html>"));
     }
 
     @Test(expected = ValidationContextException.class)
     public void validatesOnlyHippoStdHtml() throws Exception {
         final ValidationContext context = createMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
+        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
         final Node node = MockNode.root().addNode("not-hippo-std-html", "nt:unstructured");
+        replayAll();
+
+        final RequiredRichTextValidator validator = new RequiredRichTextValidator();
         validator.validate(context, node);
     }
 
@@ -79,6 +82,7 @@ public class RequiredRichTextValidatorTest {
         expect(htmlProcessorService.isVisible("<html></html>")).andReturn(true);
         replayAll();
 
+        final RequiredRichTextValidator validator = new RequiredRichTextValidator();
         assertValid(validator.validate(context, createContentNode("<html></html>")));
 
         verifyAll();
@@ -93,6 +97,7 @@ public class RequiredRichTextValidatorTest {
         expect(context.createViolation()).andReturn(createMock(Violation.class));
         replayAll();
 
+        final RequiredRichTextValidator validator = new RequiredRichTextValidator();
         assertInvalid(validator.validate(context, createContentNode("<html></html>")));
 
         verifyAll();
@@ -101,11 +106,13 @@ public class RequiredRichTextValidatorTest {
     @Test
     public void nullIsInvalid() {
         final ValidationContext context = createMock(ValidationContext.class);
+        final HtmlProcessorService htmlProcessorService = createMock(HtmlProcessorService.class);
+        expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(htmlProcessorService);
         final Violation violation = createMock(Violation.class);
-
         expect(context.createViolation()).andReturn(violation);
         replayAll();
 
+        final RequiredRichTextValidator validator = new RequiredRichTextValidator();
         assertInvalid(validator.validate(context, null));
 
         verifyAll();
@@ -124,6 +131,4 @@ public class RequiredRichTextValidatorTest {
         contentNode.setProperty(HippoStdNodeType.HIPPOSTD_CONTENT, value);
         return contentNode;
     }
-
 }
-

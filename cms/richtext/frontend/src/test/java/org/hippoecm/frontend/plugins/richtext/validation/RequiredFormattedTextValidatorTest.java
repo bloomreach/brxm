@@ -40,12 +40,9 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @PrepareForTest({HippoServiceRegistry.class})
 public class RequiredFormattedTextValidatorTest {
 
-    private RequiredFormattedTextValidator validator;
-
     @Before
     public void setUp() {
         PowerMock.mockStatic(HippoServiceRegistry.class);
-        validator = new RequiredFormattedTextValidator();
     }
 
     @Test(expected = ValidationContextException.class)
@@ -53,6 +50,7 @@ public class RequiredFormattedTextValidatorTest {
         expect(HippoServiceRegistry.getService(HtmlProcessorService.class)).andReturn(null);
         replayAll();
 
+        final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
         validator.validate(null, null);
     }
 
@@ -64,6 +62,7 @@ public class RequiredFormattedTextValidatorTest {
         expect(htmlProcessorService.isVisible("<html></html>")).andReturn(true);
         replayAll();
 
+        final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
         assertFalse(validator.validate(context, "<html></html>").isPresent());
         verifyAll();
     }
@@ -77,6 +76,7 @@ public class RequiredFormattedTextValidatorTest {
         expect(context.createViolation()).andReturn(createMock(Violation.class));
         replayAll();
 
+        final RequiredFormattedTextValidator validator = new RequiredFormattedTextValidator();
         assertTrue(validator.validate(context, "<html></html>").isPresent());
         verifyAll();
     }
