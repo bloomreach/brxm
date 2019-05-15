@@ -90,12 +90,11 @@ OpenUi = new class {
       url: iframeUrl,
       iframe: iframe,
       appendTo: iframeParentElement,
-      methods: {
+      methods: Object.assign({
         emitEvent: emitter.emit.bind(emitter),
         getProperties: this._getProperties.bind(this, parameters),
         openDialog: this.openDialog.bind(this, parameters),
-        ...methods,
-      }
+      }, methods)
     });
     Object.assign(connection, { emitter });
     return connection;
