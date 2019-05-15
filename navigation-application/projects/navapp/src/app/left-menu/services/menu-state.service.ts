@@ -23,7 +23,7 @@ export class MenuStateService implements OnDestroy {
       takeUntil(this.unsubscribe),
     ).subscribe(menu => {
       this.currentMenu = menu;
-      // TODO: rebuild the breadcumbs if menu has been updated after initialization
+      // TODO: rebuild the breadcumbs if the menu has been updated after initialization
     });
   }
 
