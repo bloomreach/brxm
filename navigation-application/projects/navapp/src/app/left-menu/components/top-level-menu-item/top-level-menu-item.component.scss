@@ -2,7 +2,29 @@
 
 $menu-icon-size: 24px;
 
+@mixin showStillIcon() {
+  .icon {
+    display: inline;
+  }
+
+  .icon.active {
+    display: none;
+  }
+}
+
+@mixin showActiveIcon() {
+  .icon {
+    display: none;
+  }
+
+  .icon.active {
+    display: inline;
+  }
+}
+
 :host {
+  @include showStillIcon;
+
   border-left: solid 1px $menu-bg;
   cursor: pointer;
   display: block;
@@ -11,29 +33,32 @@ $menu-icon-size: 24px;
   position: relative;
   text-align: left;
 
-  .expanded-menu-item {
-    display: block;
-  }
-
-  .collapsed-menu-item {
-    display: none;
-  }
-
-  &.collapsed {
-    .expanded-menu-item {
-      display: none;
-    }
-
-    .collapsed-menu-item {
-      display: block;
-    }
-  }
-
-  &.active {
+  &.clicked {
     background-color: $menu-sub-item-bg;
   }
 
+  &.active {
+    @include showActiveIcon;
+
+    &::before {
+      background-color: $menu-active-text-color;
+      content: '';
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 5px;
+    }
+
+    .mat-icon,
+    .caption {
+      color: $menu-active-text-color;
+    }
+  }
+
   &:hover {
+    @include showStillIcon;
+
     background-color: $menu-hover-bg;
     width: $menu-width;
 
@@ -41,18 +66,14 @@ $menu-icon-size: 24px;
       box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
     }
 
-    .expanded-menu-item {
-      display: block;
+    &.active {
+      .mat-icon,
+      .caption {
+        color: $menu-active-text-color;
+      }
     }
 
-    .collapsed-menu-item {
-      display: none;
-    }
-
-    .mat-icon {
-      color: $menu-icon-active-color;
-    }
-
+    .mat-icon,
     .caption {
       color: $menu-hover-text-color;
     }

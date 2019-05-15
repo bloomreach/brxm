@@ -3,9 +3,10 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 
-import { MenuItemContainer } from '../../models';
+import { MenuItem, MenuItemContainer } from '../../models';
+import { MenuStateService } from '../../services';
 
 @Component({
   selector: 'brna-expandable-menu-item',
@@ -32,7 +33,19 @@ export class ExpandableMenuItemComponent {
   @Input()
   config: MenuItemContainer;
 
+  @Input()
+  @HostBinding('class.active')
+  active = false;
+
+  constructor(
+    private menuStateService: MenuStateService,
+  ) {}
+
   toggle(): void {
     this.opened = !this.opened;
+  }
+
+  isActive(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemActive(item);
   }
 }

@@ -3,6 +3,10 @@
 :host {
   display: block;
   overflow: hidden;
+
+  &.active .header {
+    color: $menu-active-text-color;
+  }
 }
 
 .header {

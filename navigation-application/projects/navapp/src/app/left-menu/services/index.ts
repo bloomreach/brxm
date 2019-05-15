@@ -4,3 +4,4 @@
 
 export * from './menu-builder.service';
 export * from './menu-structure.service';
+export * from './menu-state.service';

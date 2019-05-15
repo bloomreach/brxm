@@ -3,9 +3,10 @@
 <div class="static-menu" [class.collapsed]="isCollapsed">
   <div class="top-elements">
     <brna-top-level-menu-item
-      *ngFor="let item of menu | async"
+      *ngFor="let item of menu"
       [config]="item"
       [collapsed]="collapsed"
+      [clicked]="isMenuItemClicked(item)"
       [active]="isMenuItemActive(item)"
       (click)="onMenuItemClick(item)"
       class="menu-item">
@@ -27,4 +28,4 @@
     </div>
   </div>
 </div>
-<brna-menu-drawer *ngIf="isDrawerOpen" [config]="activeMenuItem" class="drawer-menu"></brna-menu-drawer>
+<brna-menu-drawer *ngIf="isDrawerOpen" [config]="clickedMenuItem" class="drawer-menu"></brna-menu-drawer>

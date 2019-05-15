@@ -1,7 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, Output } from '@angular/core';
 
 import { MenuItem, MenuItemContainer } from '../../models';
+import { MenuStateService } from '../../services';
 
 @Component({
   selector: 'brna-menu-drawer',
@@ -26,7 +27,15 @@ export class MenuDrawerComponent {
   @Input()
   config: MenuItemContainer;
 
+  constructor(
+    private menuStateService: MenuStateService,
+  ) {}
+
   isContainer(item: MenuItem): boolean {
     return item instanceof MenuItemContainer;
+  }
+
+  isActive(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemActive(item);
   }
 }
