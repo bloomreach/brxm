@@ -31,7 +31,15 @@ import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 
 public class RequiredRichTextValidator extends AbstractNodeValidator {
 
-    private HtmlProcessorService htmlProcessorService;
+    private final HtmlProcessorService htmlProcessorService;
+
+    public RequiredRichTextValidator() {
+        htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+
+        if (htmlProcessorService == null) {
+            throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
+        }
+    }
 
     @Override
     protected String getCheckedNodeType() {
@@ -43,22 +51,10 @@ public class RequiredRichTextValidator extends AbstractNodeValidator {
             throws RepositoryException {
 
         final Property property = node.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-        if (!isVisible(property.getString())) {
+        if (!htmlProcessorService.isVisible(property.getString())) {
             return Optional.of(context.createViolation());
         }
 
         return Optional.empty();
-    }
-
-    private boolean isVisible(final String html) {
-        if (htmlProcessorService == null) {
-            htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
-
-            if (htmlProcessorService == null) {
-                throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
-            }
-        }
-
-        return htmlProcessorService.isVisible(html);
     }
 }

@@ -26,28 +26,23 @@ import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 
 public class RequiredFormattedTextValidator implements Validator<String> {
 
-    private HtmlProcessorService htmlProcessorService;
+    private final HtmlProcessorService htmlProcessorService;
+
+    public RequiredFormattedTextValidator() {
+        htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+
+        if (htmlProcessorService == null) {
+            throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
+        }
+    }
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final String value)
-            throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final String html) {
 
-        if (!isVisible(value)) {
+        if (!htmlProcessorService.isVisible(html)) {
             return Optional.of(context.createViolation());
         }
 
         return Optional.empty();
-    }
-
-    private boolean isVisible(final String html) {
-        if (htmlProcessorService == null) {
-            htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
-
-            if (htmlProcessorService == null) {
-                throw new ValidationContextException("Failed to get HtmlProcessorService, cannot check visibility of HTML input");
-            }
-        }
-
-        return htmlProcessorService.isVisible(html);
     }
 }
