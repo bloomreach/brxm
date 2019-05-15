@@ -19,7 +19,7 @@ export class MaterialModule {
     iconRegistry: MatIconRegistry,
     donSanitizer: DomSanitizer,
   ) {
-    const iconsList = [
+    const menuItemIconsList = [
       'br-logo',
       'audiences',
       'audiences.active',
@@ -50,11 +50,16 @@ export class MaterialModule {
       'extensions',
       'help',
       'user',
-      'nav-collapse',
-      'nav-expand',
     ];
 
-    iconsList.forEach(icon => iconRegistry.addSvgIcon(
+    const serviceIconsList = [
+      'nav-collapse',
+      'nav-expand',
+      'baseline-expand_less',
+      'baseline-expand_more',
+    ];
+
+    menuItemIconsList.concat(serviceIconsList).forEach(icon => iconRegistry.addSvgIcon(
       icon,
       donSanitizer.bypassSecurityTrustResourceUrl(`assets/menu-icons/${icon}.svg`)),
     );
