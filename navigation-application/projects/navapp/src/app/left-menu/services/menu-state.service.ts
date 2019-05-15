@@ -11,6 +11,7 @@ export class MenuStateService implements OnDestroy {
   private menu$: Observable<MenuItem[]>;
   private currentMenu: MenuItem[];
   private breadcrumbs: MenuItem[] = [];
+  private collapsed = true;
   // tslint:disable-next-line:variable-name
   private _drawerMenuItem: MenuItemContainer;
   private unsubscribe = new Subject();
@@ -29,6 +30,10 @@ export class MenuStateService implements OnDestroy {
 
   get menu(): MenuItem[] {
     return this.currentMenu;
+  }
+
+  get isMenuCollapsed(): boolean {
+    return this.collapsed;
   }
 
   get isDrawerOpened(): boolean {
@@ -51,6 +56,10 @@ export class MenuStateService implements OnDestroy {
 
   isMenuItemActive(item: MenuItem): boolean {
     return this.breadcrumbs.some(breadcrumbItem => breadcrumbItem === item);
+  }
+
+  toggle(): void {
+    this.collapsed = !this.collapsed;
   }
 
   openDrawer(item: MenuItemContainer): void {

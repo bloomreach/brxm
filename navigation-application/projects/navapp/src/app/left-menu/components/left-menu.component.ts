@@ -12,18 +12,18 @@ import { MenuStateService } from '../services';
   selector: 'brna-left-menu',
   templateUrl: 'left-menu.component.html',
   styleUrls: ['left-menu.component.scss'],
-  providers: [
-    MenuStateService,
-  ],
 })
 export class LeftMenuComponent implements OnInit {
-  collapsed = true;
   menu: MenuItem[];
 
   constructor(
     private menuStateService: MenuStateService,
     private communicationsService: CommunicationsService,
   ) {}
+
+  get collapsed(): boolean {
+    return this.menuStateService.isMenuCollapsed;
+  }
 
   get isDrawerOpen(): boolean {
     return this.menuStateService.isDrawerOpened;
@@ -43,7 +43,7 @@ export class LeftMenuComponent implements OnInit {
   }
 
   toggle(): void {
-    this.collapsed = !this.collapsed;
+    this.menuStateService.toggle();
   }
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {

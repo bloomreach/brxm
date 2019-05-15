@@ -15,4 +15,9 @@
 
 .main {
   margin-left: $menu-collapsed-width;
+  transition: margin-left 300ms ease-in-out;
+
+  &.provide-space-for-menu {
+    margin-left: $menu-width;
+  }
 }

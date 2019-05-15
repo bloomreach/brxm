@@ -13,7 +13,7 @@ import { LeftMenuComponent } from './components/left-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
-import { MenuBuilderService, MenuStructureService } from './services';
+import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
 
 @NgModule({
   imports: [
@@ -31,6 +31,7 @@ import { MenuBuilderService, MenuStructureService } from './services';
   providers: [
     MenuStructureService,
     MenuBuilderService,
+    MenuStateService,
   ],
   exports: [
     LeftMenuComponent,
