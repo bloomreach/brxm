@@ -29,6 +29,12 @@ import org.onehippo.cms.services.validation.api.Violation;
  */
 public class RequiredHippoMirrorValidator extends AbstractNodeValidator {
 
+    private final NodeReferenceValidator nodeReferenceValidator;
+
+    public RequiredHippoMirrorValidator() {
+        nodeReferenceValidator = new NodeReferenceValidator();
+    }
+
     @Override
     protected String getCheckedNodeType() {
         return HippoNodeType.NT_MIRROR;
@@ -39,6 +45,6 @@ public class RequiredHippoMirrorValidator extends AbstractNodeValidator {
             throws RepositoryException {
         
         final String docBase = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-        return new NodeReferenceValidator().validate(context, docBase);
+        return nodeReferenceValidator.validate(context, docBase);
     }
 }
