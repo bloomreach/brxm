@@ -34,20 +34,20 @@ public abstract class AbstractNodeValidator implements Validator<Node> {
     private static final String REPOSITORY_ERROR = "Cannot validate node type %s.";
 
     @Override
-    public Optional<Violation> validate(final ValidationContext context, final Node node)
-            throws ValidationContextException {
+    public Optional<Violation> validate(final ValidationContext context, final Node node) {
         
         if (node == null) {
             return Optional.of(context.createViolation());
         }
-        
+
+        final String checkedNodeType = getCheckedNodeType();
         try {
-            if (!node.isNodeType(getCheckedNodeType())) {
-                throw new ValidationContextException(String.format(TYPE_ERROR, node.getPath(), getCheckedNodeType()));
+            if (!node.isNodeType(checkedNodeType)) {
+                throw new ValidationContextException(String.format(TYPE_ERROR, node.getPath(), checkedNodeType));
             }
             return checkNode(context, node);
         } catch (RepositoryException e) {
-            log.warn(String.format(REPOSITORY_ERROR, getCheckedNodeType()), e);
+            log.warn(String.format(REPOSITORY_ERROR, checkedNodeType), e);
         }
         return Optional.empty();
     }
