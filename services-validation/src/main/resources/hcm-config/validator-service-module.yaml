@@ -24,6 +24,9 @@ definitions:
           /Date:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredDateValidator
+          /Docbase:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredNodeReferenceValidator
           /hippo:mirror:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredHippoMirrorValidator
