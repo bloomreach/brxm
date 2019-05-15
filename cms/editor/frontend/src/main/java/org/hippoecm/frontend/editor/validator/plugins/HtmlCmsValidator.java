@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
  * The builtin "Html" type is checked by the
  * {@link NonEmptyCmsValidator} and does not require special treatment.
  *
- *
- * @deprecated
+ * @deprecated not used anymore by the system, will be removed in a future version.
+ * Customized "Html" types should use their own "required" validator.
  */
 @Deprecated
 public class HtmlCmsValidator extends AbstractCmsValidator {
