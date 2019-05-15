@@ -24,6 +24,12 @@ definitions:
           /Date:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredDateValidator
+          /hippo:mirror:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredHippoMirrorValidator
+          /hippo:resource:
+            jcr:primaryType: hipposys:moduleconfig
+            hipposys:className: org.onehippo.cms.services.validation.validator.RequiredResourceValidator
           /String:
             jcr:primaryType: hipposys:moduleconfig
             hipposys:className: org.onehippo.cms.services.validation.validator.RequiredStringValidator
