@@ -22,7 +22,7 @@ describe('connectToChild', () => {
     expect(penpal.connectToChild).toHaveBeenCalledWith(config);
   });
 
-  it('should default config methods to an empty object', () => {
+  it('should default the config methods to an empty object', () => {
     const iframe = document.createElement('iframe');
     iframe.src = 'about:blank';
 

@@ -22,7 +22,7 @@ describe('connectToParent', () => {
     expect(penpal.connectToParent).toHaveBeenCalledWith(config);
   });
 
-  it('should default config methods to an empty object', () => {
+  it('should default the config methods to an empty object', () => {
     const parentOrigin = 'about:blank';
     const config = {
       parentOrigin,
