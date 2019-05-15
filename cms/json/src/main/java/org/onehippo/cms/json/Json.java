@@ -18,6 +18,8 @@ package org.onehippo.cms.json;
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,6 +34,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class Json {
 
+    private static final Logger log = LoggerFactory.getLogger(Json.class);
+
     private static final ObjectMapper mapper = new ObjectMapper();
 
     static {
@@ -43,6 +47,10 @@ public class Json {
     private static final ObjectWriter prettyPrinter = mapper.writerWithDefaultPrettyPrinter();
 
     private Json() {
+    }
+
+    public static ObjectMapper getMapper() {
+        return mapper;
     }
 
     public static ObjectNode object() {
@@ -58,7 +66,14 @@ public class Json {
         throw new IOException("Not a JSON object: " + toParse);
     }
 
-    public static String writeValueAsString(Object value) throws JsonProcessingException {
-        return prettyPrinter.writeValueAsString(value);
+    public static String prettyString(final JsonNode json) {
+        try {
+            return prettyPrinter.writeValueAsString(json);
+        } catch (JsonProcessingException e) {
+            final String uglyJson = json.toString();
+            log.info("Could not pretty print JSON: '" + uglyJson + "'. Using ugly version instead.", e);
+            return uglyJson;
+        }
     }
+
 }

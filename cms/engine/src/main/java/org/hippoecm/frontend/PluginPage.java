@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend;
 
-import java.lang.StringBuilder;
 import java.util.TimeZone;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
@@ -85,6 +85,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             pageId = ((PluginUserSession) UserSession.get()).getPageId();
 
             add(new EmptyPanel("root"));
+            add(new EmptyPanel("navapp"));
 
             mgr = new PluginManager(this);
             context = new PluginContext(mgr, new JavaPluginConfig("home"));
@@ -178,10 +179,10 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     private void publishSessionParameters(final IHeaderResponse response) {
-        final HttpSession httpSession = ((ServletWebRequest)getRequest()).getContainerRequest().getSession();
+        final HttpSession httpSession = ((ServletWebRequest) getRequest()).getContainerRequest().getSession();
         final CmsSessionContext sessionContext = CmsSessionContext.getContext(httpSession);
         if (sessionContext != null) {
-        	final StringBuilder script = new StringBuilder();
+            final StringBuilder script = new StringBuilder();
 
             final String locale = sessionContext.getLocale().getLanguage();
             final TimeZone timezone = UserSession.get().getClientInfo().getProperties().getTimeZone();
@@ -222,8 +223,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             // refresh session
             JcrObservationManager.getInstance().refreshSession();
-        }
-        finally {
+        } finally {
             if (refreshTask != null) {
                 refreshTask.stop();
             }
@@ -361,9 +361,15 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     public void addService(IRenderService service, String name) {
-        root = service;
-        root.bind(this, "root");
-        replace(root.getComponent());
+        if (PluginUserSession.get().getApplicationName().equals("cms") && !hasIFrameParameter()) {
+            final NavAppPanel navAppPanel = new NavAppPanel("root");
+            navAppPanel.setRenderBodyOnly(true);
+            replace(navAppPanel);
+        } else {
+            root = service;
+            root.bind(this, "root");
+            replace(root.getComponent());
+        }
     }
 
     public void removeService(IRenderService service, String name) {
@@ -408,5 +414,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     public void renderPage() {
         collapseAllContextMenus();
         super.renderPage();
+    }
+
+    private boolean hasIFrameParameter() {
+        return RequestCycle.get().getRequest().getQueryParameters().getParameterNames().contains("iframe");
     }
 }

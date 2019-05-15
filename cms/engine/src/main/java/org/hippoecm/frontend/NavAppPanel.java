@@ -15,24 +15,21 @@
  *
  */
 
-const fs = require('file-system');
+package org.hippoecm.frontend;
 
-const sourceDir = 'node_modules/@bloomreach';
-const targetDir = 'target/classes/org/hippoecm/frontend';
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.panel.Panel;
 
-fs.recurse(sourceDir, ['**/bundles/*.(js|map)', 'navapp/dist/navapp/*.(js|map)'], (filepath, relative, filename) => {
+public class NavAppPanel extends Panel {
 
-  if (filename) {
-    const destpath = `${targetDir}/${filename}`;
-    fs.copyFile(filepath, destpath,
-      {
-        done: (err) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(`[npm] copied ${filename} to ${destpath}`);
-          }
-        }
-      });
-  }
-});
+    public NavAppPanel(final String id) {
+        super(id);
+    }
+
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(new NavAppHeaderItem());
+    }
+}

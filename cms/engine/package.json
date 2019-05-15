@@ -5,14 +5,11 @@
   "scripts": {
     "build": "node copy-files.js"
   },
-  "engines": {
-    "node": "8",
-    "npm": "6"
-  },
   "dependencies": {
-    "@bloomreach/navigation-communication": "^1.0.0-1"
+    "@bloomreach/navapp": "^1.0.0-2",
+    "@bloomreach/navapp-communication": "^1.0.0-0"
   },
   "devDependencies": {
-    "file-system": "2.2.2"
+    "file-system": "^2.2.2"
   }
 }

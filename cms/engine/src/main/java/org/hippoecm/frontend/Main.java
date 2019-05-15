@@ -358,7 +358,7 @@ public class Main extends PluginApplication {
                 @Override
                 public IRequestHandler mapRequest(final Request request) {
                     if (urlStartsWith(request.getUrl(), AUTH_MOUNT)) {
-                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(NavAppPage.class, null), RedirectPolicy.AUTO_REDIRECT);
+                        IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
                         IRequestParameters requestParameters = request.getRequestParameters();
                         final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
