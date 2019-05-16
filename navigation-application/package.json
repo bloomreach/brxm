@@ -32,10 +32,10 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@bloomreach/navapp-communication": "^1.0.0-1",
+    "@bloomreach/navapp-communication": "^1.0.0-3",
     "core-js": "^2.5.4",
-    "penpal": "^4.0.0",
     "normalize.css": "~8.0.1",
+    "penpal": "^4.0.0",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.26"
