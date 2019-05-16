@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'mixins';
 
 $menu-icon-size: 24px;
 
@@ -86,21 +87,19 @@ $menu-icon-size: 24px;
 }
 
 .mat-icon {
+  @include alignVerticallyByAbsolutePositioning;
+
   color: $menu-icon-color;
   left: ($menu-collapsed-width - $menu-icon-size) / 2;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   transition: color 500ms;
 }
 
 .caption {
+  @include alignVerticallyByAbsolutePositioning;
+
   color: $menu-text-color;
   left: $menu-collapsed-width;
   line-height: $menu-root-item-height;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   transition: color 300ms;
   white-space: nowrap;
 }
