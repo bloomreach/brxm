@@ -81,7 +81,7 @@ public class JsonTest {
 
     @Test
     public void writeValueAsStringForEmptyObject() throws JsonProcessingException {
-        assertEquals("{ }", Json.getMapper().writeValueAsString(object));
+        assertEquals("{ }", Json.getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class JsonTest {
                         + "    nestedValue2 : true\n"
                         + "  }\n"
                         + "}",
-                Json.getMapper().writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
+                Json.getMapper().writerWithDefaultPrettyPrinter().writeValueAsString(Json.object("{ value: 1, child: { nestedValue1: 'text', nestedValue2: true } }"))
         );
     }
 
