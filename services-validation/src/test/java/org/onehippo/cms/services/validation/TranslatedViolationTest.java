@@ -81,6 +81,21 @@ public class TranslatedViolationTest {
     }
 
     @Test
+    public void returnsMissingValueWhenFallbackMessageIsNotFound() {
+        final LocalizationService localizationService = createMock(LocalizationService.class);
+        final ResourceBundle bundle = createMock(ResourceBundle.class);
+        expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
+        expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
+        expect(bundle.getString("my-key")).andReturn(null);
+        expect(bundle.getString("fallback-key")).andReturn(null);
+        replayAll();
+
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault(), "fallback-key");
+        assertEquals("???my-key???", violation.getMessage());
+        verifyAll();
+    }
+
+    @Test
     public void returnsTranslatedMessage() {
         final LocalizationService localizationService = createMock(LocalizationService.class);
         final ResourceBundle bundle = createMock(ResourceBundle.class);
@@ -91,6 +106,21 @@ public class TranslatedViolationTest {
 
         final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
         assertEquals("my-message", violation.getMessage());
+        verifyAll();
+    }
+
+    @Test
+    public void returnsTranslatedFallbackMessage() {
+        final LocalizationService localizationService = createMock(LocalizationService.class);
+        final ResourceBundle bundle = createMock(ResourceBundle.class);
+        expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
+        expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
+        expect(bundle.getString("my-key")).andReturn(null);
+        expect(bundle.getString("fallback-key")).andReturn("Fallback message");
+        replayAll();
+
+        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault(), "fallback-key");
+        assertEquals("Fallback message", violation.getMessage());
         verifyAll();
     }
 }

@@ -20,12 +20,14 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Violation;
 
 public class RequiredValidationContext implements ValidationContext {
 
     private final ValidationContext context;
+    private static final String REQUIRED_MESSAGE_PREFIX = "required";
 
     public RequiredValidationContext(final ValidationContext context) {
         this.context = context;
@@ -68,14 +70,22 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation() {
-        final String key = "required#" + context.getType();
-        return new TranslatedViolation(key, getLocale());
+        final String key = REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName(context.getType());
+        return new TranslatedViolation(key, getLocale(), REQUIRED_MESSAGE_PREFIX);
     }
 
     @Override
     public Violation createViolation(final String subKey) {
-        final String key = "required#" + context.getType() + "#" + subKey;
-        return new TranslatedViolation(key, getLocale());
+        final String key = REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName(context.getType()) + "#" + subKey;
+        return new TranslatedViolation(key, getLocale(), REQUIRED_MESSAGE_PREFIX);
     }
 
+    /**
+     * A resource bundle key must be a valid JCR property name. In "{@code resource#hippo:mirror}" the part before the
+     * colon would be used as a namespace prefix. Prefixes cannot contain characters like # or _. Replacing the colon
+     * with a dash avoids this problem.
+     */
+    private static String cleanTypeName(final String typeName) {
+        return StringUtils.replace(typeName, ":", "-");
+    }
 }

@@ -62,15 +62,26 @@ public class RequiredValidationContextTest {
 
     @Test
     public void createViolation() {
-        final TranslatedViolation violation = (TranslatedViolation)context.createViolation();
+        final TranslatedViolation violation = (TranslatedViolation) context.createViolation();
         assertThat(violation.getKey(), equalTo("required#type"));
         assertThat(violation.getLocale(), equalTo(locale));
     }
 
     @Test
     public void createViolationWithSubKey() {
-        final TranslatedViolation violation = (TranslatedViolation)context.createViolation("subKey");
+        final TranslatedViolation violation = (TranslatedViolation) context.createViolation("subKey");
         assertThat(violation.getKey(), equalTo("required#type#subKey"));
+        assertThat(violation.getLocale(), equalTo(locale));
+    }
+
+    @Test
+    public void createViolationWithNodeTypeName() {
+        final TestValidationContext delegate = new TestValidationContext("jcrName", "jcrType", "node:name",
+                locale, timeZone, parentNode, documentNode);
+        context = new RequiredValidationContext(delegate);
+
+        final TranslatedViolation violation = (TranslatedViolation) context.createViolation();
+        assertThat(violation.getKey(), equalTo("required#node-name"));
         assertThat(violation.getLocale(), equalTo(locale));
     }
 }

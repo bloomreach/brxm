@@ -16,7 +16,10 @@
 
 package org.onehippo.cms.services.validation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -27,24 +30,32 @@ class TranslatedViolation implements Violation {
 
     private static final String VALIDATORS_BUNDLE_NAME = "hippo:cms.validators";
 
-    private final String key;
+    private final List<String> keys = new ArrayList<>();
     private final Locale locale;
 
     TranslatedViolation(final String key, final Locale locale) {
-        this.key = key;
+        this(key, locale, null);
+    }
+
+    TranslatedViolation(final String key, final Locale locale, final String fallBackKey) {
+        keys.add(key);
         this.locale = locale;
+        if (fallBackKey != null) {
+            keys.add(fallBackKey);
+        }
     }
 
     String getKey() {
-        return key;
+        return keys.get(0);
     }
-
+    
     Locale getLocale() {
         return locale;
     }
 
     @Override
     public String getMessage() {
+        final String key = getKey();
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService == null) {
             return missingValue(key);
@@ -55,12 +66,7 @@ class TranslatedViolation implements Violation {
             return missingValue(key);
         }
 
-        final String value = bundle.getString(key);
-        if (value == null) {
-            return missingValue(key);
-        }
-        return value;
-
+        return keys.stream().map(bundle::getString).filter(Objects::nonNull).findFirst().orElse(missingValue(key));
     }
 
     private static String missingValue(final String key) {
