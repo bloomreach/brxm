@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/navapp",
-  "version": "1.0.0-2",
+  "version": "1.0.0-3",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -31,7 +31,7 @@
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
-    "@bloomreach/navapp-communication": "^1.0.0-0",
+    "@bloomreach/navapp-communication": "^1.0.0-1",
     "core-js": "^2.5.4",
     "penpal": "^4.0.0",
     "normalize.css": "~8.0.1",
