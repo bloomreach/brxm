@@ -199,7 +199,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "iframe-app-example:build"
+            "browserTarget": "iframe-app-example:build",
+            "port": 4201
           },
           "configurations": {
             "production": {
