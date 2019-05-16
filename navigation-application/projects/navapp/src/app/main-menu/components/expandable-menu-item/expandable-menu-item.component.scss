@@ -15,12 +15,13 @@
   font-size: $menu-sub-menu-font-size;
   margin: 0;
   overflow: hidden;
-  padding: 0 15px 5px 0;
+  padding: 0 35px 5px 0;
   position: relative;
 
   .icon {
     position: absolute;
     right: 10px;
+    top: 4px;
   }
 }
 

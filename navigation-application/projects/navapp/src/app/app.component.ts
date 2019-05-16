@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 
 import { NavigationConfigurationService } from './services';
 
@@ -10,6 +10,9 @@ import { MenuStateService } from './main-menu/services';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  @HostBinding('class.mat-typography')
+  typography = true;
+
   constructor(
     private menuStateService: MenuStateService,
     private navConfigService: NavigationConfigurationService,

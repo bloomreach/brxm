@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MaterialModule } from '../shared/material.module';
+import { MaterialModule } from '../shared/material/material.module';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { MainMenuComponent } from './components/main-menu.component';

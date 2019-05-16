@@ -13,10 +13,6 @@ body {
 
 body {
   background-color: $body-bg;
-  color: $body-color;
-  font-family: $font-family-base;
-  font-size: $font-size-base;
-  font-weight: $font-weight-base;
-  line-height: $line-height-base;
+  color: $body-text-color;
   text-align: left;
 }

@@ -8,7 +8,7 @@ import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { CommunicationModule } from './communication';
 import { MainMenuModule } from './main-menu';
 import { NavigationConfigurationService } from './services';
-import { MaterialModule } from './shared/material.module';
+import { MaterialModule } from './shared';
 
 @NgModule({
   imports: [
