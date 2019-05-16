@@ -13,7 +13,8 @@ export class AppComponent implements OnInit {
   navigateCount = 0;
 
   ngOnInit(): void {
-    if (window.parent !== window) {
+    if (window.parent === window) {
+      console.log('Iframe app was not loaded inside iframe');
       return;
     }
 
