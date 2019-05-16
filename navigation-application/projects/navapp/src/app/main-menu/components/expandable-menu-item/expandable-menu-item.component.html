@@ -2,8 +2,8 @@
 
 <h2 class="header" (click)="toggle()">
   {{ config?.caption }}
-  <mat-icon *ngIf="!isOpened" svgIcon="baseline-expand_more" class="icon"></mat-icon>
-  <mat-icon *ngIf="isOpened" svgIcon="baseline-expand_less" class="icon"></mat-icon>
+  <mat-icon svgIcon="baseline-expand_more" class="icon" [class.hidden]="isOpened"></mat-icon>
+  <mat-icon svgIcon="baseline-expand_less" class="icon" [class.hidden]="!isOpened"></mat-icon>
 </h2>
 <div *ngIf="isOpened" [@slideInOut]="isOpened" class="items-wrapper">
   <brna-menu-item-link
