@@ -51,6 +51,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -417,6 +418,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     private boolean hasIFrameParameter() {
-        return RequestCycle.get().getRequest().getQueryParameters().getParameterNames().contains("iframe");
+        return !RequestUtils.getQueryParameterValue("iframe").isNull();
     }
 }
