@@ -86,7 +86,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             pageId = ((PluginUserSession) UserSession.get()).getPageId();
 
             add(new EmptyPanel("root"));
-            add(new EmptyPanel("navapp"));
 
             mgr = new PluginManager(this);
             context = new PluginContext(mgr, new JavaPluginConfig("home"));
