@@ -3,30 +3,26 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { navigationConfiguration } from '../mocks';
 import { NavItem } from '../models';
 
 @Injectable()
 export class NavigationConfigurationService {
-  private configStream: Observable<Map<string, NavItem>>;
+  private navigationConfiguration = new BehaviorSubject<Map<string, NavItem>>(
+    new Map(),
+  );
 
   get navigationConfiguration$(): Observable<Map<string, NavItem>> {
-    if (!this.configStream) {
-      this.configStream = this.fetchConfiguration();
-    }
-
-    return this.configStream;
+    return this.navigationConfiguration.asObservable();
   }
 
-  private fetchConfiguration(): Observable<Map<string, NavItem>> {
-    return of(navigationConfiguration).pipe(
-      map(config => config.reduce(
-        (configMap, item) => configMap.set(item.id, item),
-        new Map<string, NavItem>(),
-      )),
+  setNavigationConfiguration(navItems: NavItem[]): void {
+    const navItemMap = navItems.reduce(
+      (configMap, item) => configMap.set(item.id, item),
+      new Map<string, NavItem>(),
     );
+
+    this.navigationConfiguration.next(navItemMap);
   }
 }

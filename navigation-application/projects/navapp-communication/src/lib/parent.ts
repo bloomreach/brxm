@@ -1,20 +1,32 @@
 import penpal from 'penpal';
 
-import { NavLocation, ParentApi, ParentConnectConfig } from './api';
+import {
+  ChildApi,
+  NavItem,
+  NavLocation,
+  ParentConnectConfig,
+  ParentPromisedApi,
+} from './api';
+import { mergeIntersecting } from './utils';
+
+export function createProxies(methods: ChildApi): ChildApi {
+  return {
+    getNavItems(): NavItem[] {
+      return methods.getNavItems();
+    },
+    navigate(location: NavLocation): void {
+      return methods.navigate(location);
+    },
+  };
+}
 
 export function connectToParent({
   parentOrigin,
-  methods,
-}: ParentConnectConfig): Promise<ParentApi> {
-  const proxyConfig: ParentConnectConfig = {
-    parentOrigin,
-    methods: {
-      navigate(location: NavLocation): any {
-        console.log('navigating to location', location);
-        return methods.navigate(location);
-      },
-    },
-  };
+  methods = {},
+}: ParentConnectConfig): Promise<ParentPromisedApi> {
+  const proxies: ChildApi = createProxies(methods);
+  const proxiedMethods = mergeIntersecting(methods, proxies);
 
-  return penpal.connectToParent(proxyConfig).promise;
+  return penpal.connectToParent({ parentOrigin, methods: proxiedMethods })
+    .promise;
 }

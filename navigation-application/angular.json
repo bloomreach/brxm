@@ -142,6 +142,88 @@
           }
         }
       }
+    },
+    "iframe-app-example": {
+      "root": "projects/iframe-app-example/",
+      "sourceRoot": "projects/iframe-app-example/src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/iframe-app-example",
+            "index": "projects/iframe-app-example/src/index.html",
+            "main": "projects/iframe-app-example/src/main.ts",
+            "polyfills": "projects/iframe-app-example/src/polyfills.ts",
+            "tsConfig": "projects/iframe-app-example/tsconfig.app.json",
+            "assets": [
+              "projects/iframe-app-example/src/favicon.ico",
+              "projects/iframe-app-example/src/assets"
+            ],
+            "styles": [
+              "projects/iframe-app-example/src/styles.css"
+            ],
+            "scripts": [],
+            "es5BrowserSupport": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/iframe-app-example/src/environments/environment.ts",
+                  "with": "projects/iframe-app-example/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "iframe-app-example:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "iframe-app-example:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "iframe-app-example:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/iframe-app-example/tsconfig.app.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   }
 }
