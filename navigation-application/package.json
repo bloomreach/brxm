@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:example-app": "npm run start iframe-app-example -- --port 4201",
     "sprites": "svg-sprite --config sprite-config.json src/assets/menu-icons/*.svg",
     "build": "ng build",
     "test": "ng test",
