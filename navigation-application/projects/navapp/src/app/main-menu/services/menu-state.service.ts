@@ -8,7 +8,8 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService implements OnDestroy {
-  private menu$: Observable<MenuItem[]>;
+  // tslint:disable-next-line:variable-name
+  private readonly _menu$: Observable<MenuItem[]>;
   private currentMenu: MenuItem[];
   private breadcrumbs: MenuItem[] = [];
   private collapsed = true;
@@ -19,17 +20,22 @@ export class MenuStateService implements OnDestroy {
   constructor(
     private menuBuilderService: MenuBuilderService,
   ) {
-    this.menu$ = this.menuBuilderService.buildMenu();
-    this.menu$.pipe(
+    this._menu$ = this.menuBuilderService.buildMenu();
+    this._menu$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(menu => {
+      if (this.currentMenu && this.currentMenu.length) {
+        throw new Error(
+          'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.'
+        );
+      }
+
       this.currentMenu = menu;
-      // TODO: rebuild the breadcumbs if the menu has been updated after initialization
     });
   }
 
-  get menu(): MenuItem[] {
-    return this.currentMenu;
+  get menu$(): Observable<MenuItem[]> {
+    return this._menu$;
   }
 
   get isMenuCollapsed(): boolean {

@@ -9,7 +9,7 @@
       class="menu-item home">
     </brna-top-level-menu-item>
     <brna-top-level-menu-item
-      *ngFor="let item of menu"
+      *ngFor="let item of menu$ | async"
       matRipple
       [matRippleDisabled]="isRippleDisabled(item)"
       [caption]="item.caption"

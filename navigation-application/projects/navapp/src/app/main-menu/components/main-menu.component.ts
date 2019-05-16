@@ -2,7 +2,8 @@
  * (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com)
  */
 
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { CommunicationsService } from '../../communication/services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
@@ -13,9 +14,7 @@ import { MenuStateService } from '../services';
   templateUrl: 'main-menu.component.html',
   styleUrls: ['main-menu.component.scss'],
 })
-export class MainMenuComponent implements OnInit {
-  menu: MenuItem[];
-
+export class MainMenuComponent {
   constructor(
     private menuStateService: MenuStateService,
     private communicationsService: CommunicationsService,
@@ -23,6 +22,10 @@ export class MainMenuComponent implements OnInit {
 
   get collapsed(): boolean {
     return this.menuStateService.isMenuCollapsed;
+  }
+
+  get menu$(): Observable<MenuItem[]> {
+    return this.menuStateService.menu$;
   }
 
   get isDrawerOpen(): boolean {
@@ -36,10 +39,6 @@ export class MainMenuComponent implements OnInit {
   @HostBinding('class.collapsed')
   get isCollapsed(): boolean {
     return this.collapsed;
-  }
-
-  ngOnInit(): void {
-    this.menu = this.menuStateService.menu;
   }
 
   toggle(): void {
