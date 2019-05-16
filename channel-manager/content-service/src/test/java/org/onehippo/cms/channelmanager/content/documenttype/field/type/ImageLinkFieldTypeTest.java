@@ -23,6 +23,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,11 +46,16 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOCBASE;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.util.JcrConstants.GALLERY_PATH;
+import static org.onehippo.repository.util.JcrConstants.NT_UNSTRUCTURED;
+import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 import static org.powermock.api.support.membermodification.MemberMatcher.methodsDeclaredIn;
 import static org.powermock.api.support.membermodification.MemberModifier.suppress;
 
@@ -127,7 +133,7 @@ public class ImageLinkFieldTypeTest {
 
         final MockNode documentNode = MockNode.root();
         final MockNode imageLinkNode = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
-        imageLinkNode.setProperty("hippo:docbase", "1234");
+        imageLinkNode.setProperty(HIPPO_DOCBASE, "1234");
 
         final List<FieldValue> fieldValues = imageLink.readValues(documentNode);
         assertThat(fieldValues.size(), equalTo(1));
@@ -142,9 +148,9 @@ public class ImageLinkFieldTypeTest {
 
         final MockNode documentNode = MockNode.root();
         final MockNode imageLinkNode1 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
-        imageLinkNode1.setProperty("hippo:docbase", "1");
+        imageLinkNode1.setProperty(HIPPO_DOCBASE, "1");
         final MockNode imageLinkNode2 = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
-        imageLinkNode2.setProperty("hippo:docbase", "2");
+        imageLinkNode2.setProperty(HIPPO_DOCBASE, "2");
 
         final List<FieldValue> fieldValues = imageLink.readValues(documentNode);
         assertThat(fieldValues.size(), equalTo(2));
@@ -159,17 +165,29 @@ public class ImageLinkFieldTypeTest {
     }
 
     @Test
-    public void readDefaultValue() throws Exception {
+    public void readRootNodeReturnsEmptyValue() throws Exception {
         imageLink.setId("my:imagelink");
         imageItemUrl =  "";
 
-        final MockNode documentNode = MockNode.root();
-        final MockNode imageLinkNode = documentNode.addNode("my:imagelink", "hippogallypicker:imagelink");
-        imageLinkNode.setProperty("hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe");
+        final MockNode imageLinkNode = MockNode.root();
+        imageLinkNode.setProperty(HIPPO_DOCBASE, ROOT_NODE_ID);
 
-        final List<FieldValue> fieldValues = imageLink.readValues(documentNode);
-        assertThat(fieldValues.size(), equalTo(1));
-        final FieldValue fieldValue = fieldValues.get(0);
+        final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
+        assertThat(fieldValue.getValue(), equalTo(""));
+        assertThat(fieldValue.getMetadata().get("url"), equalTo(imageItemUrl));
+    }
+
+    @Test
+    public void readGalleryRootNodeReturnsEmptyValue() throws Exception {
+        imageLink.setId("my:imagelink");
+        imageItemUrl =  "";
+
+        final MockNode root = MockNode.root();
+        final Node galleryRoot = JcrUtils.getOrCreateByPath(GALLERY_PATH, NT_UNSTRUCTURED, root.getSession());
+        final Node imageLinkNode = root.addNode("my:imagelink", "hippogallypicker:imagelink");
+        imageLinkNode.setProperty(HIPPO_DOCBASE, galleryRoot.getIdentifier());
+
+        final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
         assertThat(fieldValue.getValue(), equalTo(""));
         assertThat(fieldValue.getMetadata().get("url"), equalTo(imageItemUrl));
     }
@@ -191,7 +209,7 @@ public class ImageLinkFieldTypeTest {
         imageLink.setId("my:imagelink");
 
         final MockNode imageLinkNode = MockNode.root();
-        imageLinkNode.setProperty("hippo:docbase", "1234");
+        imageLinkNode.setProperty(HIPPO_DOCBASE, "1234");
 
         final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
         assertThat(fieldValue.getValue(), equalTo("1234"));
@@ -203,13 +221,15 @@ public class ImageLinkFieldTypeTest {
         imageLink.setId("my:imagelink");
 
         final Node imageLinkNode = createMock(Node.class);
-        expect(imageLinkNode.getProperty(anyString())).andThrow(new RepositoryException());
+        expect(imageLinkNode.getSession()).andThrow(new RepositoryException());
         expect(imageLinkNode.getPath()).andReturn("/my:imagelink");
         replayAll();
 
         final FieldValue fieldValue = imageLink.readValue(imageLinkNode);
         assertNull(fieldValue.getValue());
         assertNull(fieldValue.getMetadata());
+
+        verifyAll();
     }
 
     @Test(expected = BadRequestException.class)
@@ -236,7 +256,7 @@ public class ImageLinkFieldTypeTest {
 
         imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
 
-        assertThat(imageLinkNode.getProperty("hippo:docbase").getString(), equalTo("1234"));
+        assertThat(imageLinkNode.getProperty(HIPPO_DOCBASE).getString(), equalTo("1234"));
     }
 
     @Test
@@ -247,7 +267,7 @@ public class ImageLinkFieldTypeTest {
 
         imageLink.writeValues(documentNode, Optional.of(Collections.singletonList(new FieldValue(""))), true);
 
-        assertThat(imageLinkNode.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(imageLinkNode.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test
@@ -262,8 +282,8 @@ public class ImageLinkFieldTypeTest {
 
         imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue(""), new FieldValue(""))), true);
 
-        assertThat(imageLinkNode1.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
-        assertThat(imageLinkNode2.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(imageLinkNode1.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(imageLinkNode2.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test
@@ -278,8 +298,8 @@ public class ImageLinkFieldTypeTest {
 
         imageLink.writeValues(documentNode, Optional.of(Arrays.asList(new FieldValue("1234"), new FieldValue(""))), true);
 
-        assertThat(imageLinkNode1.getProperty("hippo:docbase").getString(), equalTo("1234"));
-        assertThat(imageLinkNode2.getProperty("hippo:docbase").getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertThat(imageLinkNode1.getProperty(HIPPO_DOCBASE).getString(), equalTo("1234"));
+        assertThat(imageLinkNode2.getProperty(HIPPO_DOCBASE).getString(), equalTo("cafebabe-cafe-babe-cafe-babecafebabe"));
     }
 
     @Test(expected = InternalServerErrorException.class)
