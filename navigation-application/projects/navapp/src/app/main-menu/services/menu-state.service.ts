@@ -8,20 +8,18 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService implements OnDestroy {
-  // tslint:disable-next-line:variable-name
-  private readonly _menu$: Observable<MenuItem[]>;
+  private readonly menusStream$: Observable<MenuItem[]>;
   private currentMenu: MenuItem[];
   private breadcrumbs: MenuItem[] = [];
   private collapsed = true;
-  // tslint:disable-next-line:variable-name
-  private _drawerMenuItem: MenuItemContainer;
+  private currentDrawerMenuItem: MenuItemContainer;
   private unsubscribe = new Subject();
 
   constructor(
     private menuBuilderService: MenuBuilderService,
   ) {
-    this._menu$ = this.menuBuilderService.buildMenu();
-    this._menu$.pipe(
+    this.menusStream$ = this.menuBuilderService.buildMenu();
+    this.menusStream$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(menu => {
       if (this.currentMenu && this.currentMenu.length) {
@@ -35,7 +33,7 @@ export class MenuStateService implements OnDestroy {
   }
 
   get menu$(): Observable<MenuItem[]> {
-    return this._menu$;
+    return this.menusStream$;
   }
 
   get isMenuCollapsed(): boolean {
@@ -43,11 +41,11 @@ export class MenuStateService implements OnDestroy {
   }
 
   get isDrawerOpened(): boolean {
-    return !!this._drawerMenuItem;
+    return !!this.currentDrawerMenuItem;
   }
 
   get drawerMenuItem(): MenuItemContainer {
-    return this._drawerMenuItem;
+    return this.currentDrawerMenuItem;
   }
 
   ngOnDestroy(): void {
@@ -69,11 +67,11 @@ export class MenuStateService implements OnDestroy {
   }
 
   openDrawer(item: MenuItemContainer): void {
-    this._drawerMenuItem = item;
+    this.currentDrawerMenuItem = item;
   }
 
   closeDrawer(): void {
-    this._drawerMenuItem = undefined;
+    this.currentDrawerMenuItem = undefined;
   }
 
   private buildBreadcrumbs(menu: MenuItem[], activeItem: MenuItemLink): MenuItem[] {
