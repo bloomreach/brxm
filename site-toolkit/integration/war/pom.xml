@@ -91,11 +91,6 @@
       <scope>runtime</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>stax2-api</artifactId>
-    </dependency>
-
   </dependencies>
 
   <build>
