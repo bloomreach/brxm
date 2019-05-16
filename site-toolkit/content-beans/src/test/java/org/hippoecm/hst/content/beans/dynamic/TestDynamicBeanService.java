@@ -21,17 +21,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
-import org.joda.time.DateTimeComparator;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 
@@ -133,7 +134,8 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-        assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
+
+        assertTrue(DateUtils.isSameDay(result, value.getTime()));
     }
 
     @Ignore
@@ -146,7 +148,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + CALENDER_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-        assertEquals(0, DateTimeComparator.getDateOnlyInstance().compare(result, value.getTime()));
+        assertTrue(DateUtils.isSameDay(result, value.getTime()));
     }
 
     @Ignore
