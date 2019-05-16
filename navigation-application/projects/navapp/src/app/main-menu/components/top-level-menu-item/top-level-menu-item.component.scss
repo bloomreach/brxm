@@ -1,0 +1,105 @@
+@import 'variables';
+@import 'mixins';
+
+$menu-icon-size: 24px;
+
+@mixin showStillIcon() {
+  .icon {
+    display: inline;
+  }
+
+  .icon.active {
+    display: none;
+  }
+}
+
+@mixin showActiveIcon() {
+  .icon {
+    display: none;
+  }
+
+  .icon.active {
+    display: inline;
+  }
+}
+
+:host {
+  @include showStillIcon;
+
+  border-left: solid 1px $menu-bg;
+  cursor: pointer;
+  display: block;
+  height: $menu-root-item-height;
+  overflow: hidden;
+  position: relative;
+
+  &.pressed {
+    background-color: $menu-sub-item-bg;
+  }
+
+  &::before {
+    background-color: $menu-active-text-color;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transition: opacity 300ms;
+    width: 5px;
+  }
+
+  &.active {
+    @include showActiveIcon;
+
+    &::before {
+      opacity: 1;
+    }
+
+    .mat-icon,
+    .caption {
+      color: $menu-active-text-color;
+    }
+  }
+
+  &:hover {
+    @include showStillIcon;
+
+    background-color: $menu-hover-bg;
+    width: $menu-width;
+
+    &.collapsed {
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+    }
+
+    &.active {
+      .mat-icon,
+      .caption {
+        color: $menu-active-text-color;
+      }
+    }
+
+    .mat-icon,
+    .caption {
+      color: $menu-hover-text-color;
+    }
+  }
+}
+
+.mat-icon {
+  @include alignVerticallyByAbsolutePositioning;
+
+  color: $menu-icon-color;
+  left: ($menu-collapsed-width - $menu-icon-size) / 2;
+  transition: color 500ms;
+}
+
+.caption {
+  @include alignVerticallyByAbsolutePositioning;
+
+  color: $menu-text-color;
+  left: $menu-collapsed-width;
+  line-height: $menu-root-item-height;
+  transition: color 300ms;
+  white-space: nowrap;
+}

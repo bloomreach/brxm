@@ -1,0 +1,18 @@
+@import 'variables';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: $body-bg;
+  color: $body-text-color;
+  text-align: left;
+}

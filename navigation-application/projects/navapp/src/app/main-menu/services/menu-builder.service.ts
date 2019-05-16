@@ -4,7 +4,7 @@
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { NavItem } from '../../models/dto';
 import { NavigationConfigurationService } from '../../services';
@@ -27,6 +27,7 @@ export class MenuBuilderService {
         this.applyNavigationConfiguration(menu, config);
         return this.filterOutNotConfiguredMenuItems(menu);
       }),
+      shareReplay(),
     );
   }
 

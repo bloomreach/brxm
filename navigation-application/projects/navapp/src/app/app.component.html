@@ -1,6 +1,6 @@
-<nav>
+<nav class="nav">
   <brna-main-menu></brna-main-menu>
 </nav>
-<main>
+<main class="main" [class.provide-space-for-menu]="!isMenuCollapsed">
   <brna-iframes-container></brna-iframes-container>
 </main>

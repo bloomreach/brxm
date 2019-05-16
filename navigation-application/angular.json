@@ -23,11 +23,17 @@
             "main": "projects/navapp/src/main.ts",
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.app.json",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/navapp/src/styles"
+              ]
+            },
             "assets": [
               "projects/navapp/src/favicon.ico",
               "projects/navapp/src/assets"
             ],
             "styles": [
+              "node_modules/normalize.css/normalize.css",
               "projects/navapp/src/styles.scss"
             ],
             "scripts": [],
@@ -84,6 +90,11 @@
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.spec.json",
             "karmaConfig": "projects/navapp/karma.conf.js",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "projects/navapp/src/styles"
+              ]
+            },
             "styles": [
               "projects/navapp/src/styles.scss"
             ],
@@ -198,7 +209,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "iframe-app-example:build"
+            "browserTarget": "iframe-app-example:build",
+            "port": 4201
           },
           "configurations": {
             "production": {

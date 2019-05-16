@@ -8,10 +8,12 @@ import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { CommunicationModule } from './communication';
 import { MainMenuModule } from './main-menu';
 import { NavigationConfigurationService } from './services';
+import { MaterialModule } from './shared';
 
 @NgModule({
-  declarations: [AppComponent],
   imports: [
+    BrowserModule,
+    MaterialModule,
     AppRoutingModule,
     BrowserModule,
     ClientApplicationsManagerModule,
@@ -20,6 +22,7 @@ import { NavigationConfigurationService } from './services';
     MainMenuModule,
   ],
   providers: [NavigationConfigurationService],
+  declarations: [AppComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

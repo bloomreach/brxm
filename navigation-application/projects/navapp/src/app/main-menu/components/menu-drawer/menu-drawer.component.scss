@@ -1,0 +1,13 @@
+@import 'variables';
+
+:host {
+  background-color: $menu-drawer-bg;
+  color: $menu-text-color;
+  padding-left: 16px;
+}
+
+.header {
+  font-size: 25px;
+  font-weight: 200;
+  margin: 16px 0;
+}

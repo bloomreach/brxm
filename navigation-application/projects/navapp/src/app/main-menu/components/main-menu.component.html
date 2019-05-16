@@ -1,5 +1,45 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
 
-<nav>
-  <brna-top-level-menu-item *ngFor="let item of menu | async" [config]="item"></brna-top-level-menu-item>
-</nav>
+<div class="static-menu" [class.collapsed]="isCollapsed">
+  <div class="top-elements">
+    <brna-top-level-menu-item
+      caption="Home"
+      icon="br-logo"
+      [collapsed]="collapsed"
+      class="menu-item home">
+    </brna-top-level-menu-item>
+    <brna-top-level-menu-item
+      *ngFor="let item of menu$ | async"
+      matRipple
+      [matRippleDisabled]="isRippleDisabled(item)"
+      [caption]="item.caption"
+      [icon]="item.icon"
+      [activeIcon]="item.icon  + '.active'"
+      [collapsed]="collapsed"
+      [pressed]="item === drawerMenuItem"
+      [active]="isMenuItemActive(item)"
+      (click)="onMenuItemClick($event, item)"
+      class="menu-item">
+    </brna-top-level-menu-item>
+  </div>
+
+  <div class="bottom-elements">
+    <brna-top-level-menu-item
+      caption="Help"
+      icon="help"
+      [collapsed]="collapsed"
+      class="menu-item">
+    </brna-top-level-menu-item>
+    <brna-top-level-menu-item
+      caption="User account"
+      icon="user"
+      [collapsed]="collapsed"
+      class="menu-item">
+    </brna-top-level-menu-item>
+    <div class="menu-item trigger" (click)="toggle()">
+      <mat-icon *ngIf="collapsed" svgIcon="nav-expand"></mat-icon>
+      <mat-icon *ngIf="!collapsed" svgIcon="nav-collapse"></mat-icon>
+    </div>
+  </div>
+</div>
+<brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem" class="drawer-menu"></brna-menu-drawer>

@@ -1,0 +1,43 @@
+@import 'variables';
+
+:host {
+  display: block;
+  overflow: hidden;
+  padding-top: 5px;
+
+  &.active .header {
+    color: $menu-active-text-color;
+  }
+}
+
+.header {
+  cursor: pointer;
+  font-size: $menu-sub-menu-font-size;
+  margin: 0;
+  overflow: hidden;
+  padding: 0 35px 5px 0;
+  position: relative;
+
+  .icon {
+    position: absolute;
+    right: 10px;
+    top: 4px;
+  }
+}
+
+.items-wrapper {
+  background-color: $menu-sub-sub-item-bg;
+  padding-left: 10px;
+
+  > .item {
+    font-size: $menu-sub-sub-menu-font-size;
+  }
+
+  .item:first-child {
+    padding-top: 10px;
+  }
+
+  .item:last-child {
+    padding-bottom: 10px;
+  }
+}

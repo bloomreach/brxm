@@ -1,0 +1,64 @@
+@import 'variables';
+@import 'mixins';
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.static-menu {
+  background-color: $menu-bg;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  justify-content: space-between;
+  min-height: 100%;
+  transition: width 300ms ease-in-out;
+  width: $menu-width;
+
+  &.collapsed {
+    width: $menu-collapsed-width;
+  }
+}
+
+.drawer-menu {
+  display: block;
+  height: 100%;
+  left: 100%;
+  position: absolute;
+  top: 0;
+  width: $menu-drawer-width;
+  z-index: -1;
+}
+
+.top-elements,
+.bottom-elements {
+  padding: 10px 0;
+}
+
+.menu-item {
+  height: $menu-root-item-height;
+
+  &.home {
+    margin-bottom: 5px;
+  }
+
+  /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+  &.home ::ng-deep .mat-icon {
+    color: white;
+  }
+}
+
+.bottom-elements {
+  .trigger {
+    height: $menu-root-item-height;
+    position: relative;
+  }
+
+  .trigger .mat-icon {
+    @include alignVerticallyByAbsolutePositioning;
+
+    cursor: pointer;
+    left: ($menu-collapsed-width - $menu-icon-size) / 2;
+  }
+}

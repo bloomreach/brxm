@@ -16,26 +16,31 @@ export class MenuStructureService {
     const home = new MenuItemLink(
       'home',
       'Home',
+      'home',
     );
 
     const experienceManager = new MenuItemLink(
       'experience-manager',
       'Experience Manager',
+      'experience-manager',
     );
 
     const projects = new MenuItemLink(
       'projects',
       'Projects',
+      'projects',
     );
 
     const content = new MenuItemLink(
       'content',
       'Content',
+      'documents',
     );
 
     const documentSearch = new MenuItemLink(
       'document-search',
       'Document Search',
+      'documents',
     );
 
     const categories = new MenuItemContainer(
@@ -62,6 +67,7 @@ export class MenuStructureService {
           'Category Banners',
         ),
       ],
+      'categories',
     );
 
     const insights = new MenuItemContainer(
@@ -122,6 +128,7 @@ export class MenuStructureService {
           'Product A/B testing',
         ),
       ],
+      'insights',
     );
 
     return [
