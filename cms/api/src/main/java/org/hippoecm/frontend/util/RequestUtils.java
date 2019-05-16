@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.util.string.StringValue;
 
 /**
  * Wicket {@link Request} related utilities.
@@ -36,7 +38,7 @@ public class RequestUtils {
     /**
      * Array of the default HTTP Forwarded-For header name(s). <code>{ "X-Forwarded-For" }</code> by default.
      */
-    private static final String[] DEFAULT_HTTP_FORWARDED_FOR_HEADERS = { DEFAULT_HTTP_FORWARDED_FOR_HEADER };
+    private static final String[] DEFAULT_HTTP_FORWARDED_FOR_HEADERS = {DEFAULT_HTTP_FORWARDED_FOR_HEADER};
 
     /**
      * Servlet context init parameter name for custom HTTP Forwarded-For header name(s).
@@ -54,11 +56,12 @@ public class RequestUtils {
 
     /**
      * Returns the remote client address or null if remote client address information is unavailable.
+     *
      * @param request wicket request
      * @return the remote client address or null if remote client address information is unavailable
      */
     public static String getFarthestRemoteAddr(final Request request) {
-        String [] remoteAddrs = getRemoteAddrs(request);
+        String[] remoteAddrs = getRemoteAddrs(request);
 
         if (ArrayUtils.isNotEmpty(remoteAddrs)) {
             return remoteAddrs[0];
@@ -73,10 +76,11 @@ public class RequestUtils {
      * then the proxy addresses are contained in the returned array.
      * The lowest indexed element is the farthest downstream client and
      * each successive proxy addresses are the next elements.
+     *
      * @param request wicket request
      * @return remote host addresses as non-null string array
      */
-    public static String [] getRemoteAddrs(final Request request) {
+    public static String[] getRemoteAddrs(final Request request) {
         if (request instanceof WebRequest) {
             WebRequest webRequest = (WebRequest) request;
 
@@ -86,7 +90,7 @@ public class RequestUtils {
                 String headerValue = webRequest.getHeader(headerName);
 
                 if (headerValue != null && headerValue.length() > 0) {
-                    String [] addrs = headerValue.split(",");
+                    String[] addrs = headerValue.split(",");
 
                     for (int i = 0; i < addrs.length; i++) {
                         addrs[i] = addrs[i].trim();
@@ -98,7 +102,7 @@ public class RequestUtils {
 
             if (webRequest.getContainerRequest() instanceof ServletRequest) {
                 final ServletRequest servletRequest = (ServletRequest) webRequest.getContainerRequest();
-                return new String [] { servletRequest.getRemoteAddr() };
+                return new String[]{servletRequest.getRemoteAddr()};
             }
         }
 
@@ -106,7 +110,7 @@ public class RequestUtils {
     }
 
     public static String getFarthestRequestScheme(HttpServletRequest request) {
-        String [] schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Proto");
+        String[] schemes = getCommaSeparatedMultipleHeaderValues(request, "X-Forwarded-Proto");
 
         if (schemes != null && schemes.length != 0) {
             return schemes[0].toLowerCase();
@@ -118,7 +122,7 @@ public class RequestUtils {
             return schemes[0].toLowerCase();
         }
 
-        String [] sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "X-SSL-Enabled");
+        String[] sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "X-SSL-Enabled");
 
         if (sslEnabledArray == null) {
             sslEnabledArray = getCommaSeparatedMultipleHeaderValues(request, "Front-End-Https");
@@ -136,22 +140,22 @@ public class RequestUtils {
     }
 
 
-
     /**
      * Parse comma separated multiple header value and return an array if the header exists.
      * If the header doesn't exist, it returns null.
+     *
      * @param request
      * @param headerName
      * @return null if the header doesn't exist or an array parsed from the comma separated string header value.
      */
-    private static String [] getCommaSeparatedMultipleHeaderValues(final HttpServletRequest request, final String headerName) {
+    private static String[] getCommaSeparatedMultipleHeaderValues(final HttpServletRequest request, final String headerName) {
         String value = request.getHeader(headerName);
 
         if (value == null) {
             return null;
         }
 
-        String [] tokens = value.split(",");
+        String[] tokens = value.split(",");
 
         for (int i = 0; i < tokens.length; i++) {
             tokens[i] = tokens[i].trim();
@@ -164,6 +168,7 @@ public class RequestUtils {
      * Return an array containing only <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent
      * HTTP header names if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other
      * comma separated custom HTTP header names instead.
+     *
      * @param request servlet request
      * @return an array containing <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent
      * HTTP header names
@@ -202,6 +207,7 @@ public class RequestUtils {
 
     /**
      * Returns the original host information requested by the client
+     *
      * @param request
      * @return the farthest request host
      */
@@ -209,7 +215,7 @@ public class RequestUtils {
         String host = request.getHeader("X-Forwarded-Host");
 
         if (host != null) {
-            String [] hosts = host.split(",");
+            String[] hosts = host.split(",");
             return hosts[0].trim();
         }
 
@@ -233,11 +239,25 @@ public class RequestUtils {
         return host;
     }
 
-    public static String getFarthestUrlPrefix(final Request  request) {
-        return getFarthestUrlPrefix(((ServletWebRequest)request).getContainerRequest());
+    public static String getFarthestUrlPrefix(final Request request) {
+        return getFarthestUrlPrefix(((ServletWebRequest) request).getContainerRequest());
     }
 
     public static String getFarthestUrlPrefix(final HttpServletRequest httpServletRequest) {
         return getFarthestRequestScheme(httpServletRequest) + "://" + getFarthestRequestHost(httpServletRequest);
+    }
+
+
+    /**
+     * Returns a query parameter {@link StringValue} from the request associated with the current thread. The object
+     * will contain the query parameter value if it exists, otherwise it's contents will be {@code null}.
+     * Returns {@code null} if there is no request associated with the current thread.
+     *
+     * @param name name of query parameter
+     * @return value representation of the query parameter or {@code null}
+     */
+    public static StringValue getQueryParameterValue(String name) {
+        final RequestCycle requestCycle = RequestCycle.get();
+        return requestCycle == null ? null : requestCycle.getRequest().getQueryParameters().getParameterValue(name);
     }
 }
