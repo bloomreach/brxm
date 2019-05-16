@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (window.parent === window) {
-      console.log('Did not open iframe app in iframe');
+      console.log('Iframe app was not loaded inside iframe');
       return;
     }
 
