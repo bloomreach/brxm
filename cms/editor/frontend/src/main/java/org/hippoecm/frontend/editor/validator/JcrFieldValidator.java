@@ -24,6 +24,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -34,12 +35,12 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -109,11 +110,11 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
             // A required field cannot have zero instances (property values or nodes)
             if (required && !iter.hasNext()) {
-                violations.add(newViolation(
-                        new ModelPathElement(field, field.getPath(), 0),
-                        getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                        FeedbackScope.FIELD)
-                );
+                final ICmsValidator validator = validatorService.getValidator(REQUIRED_VALIDATOR);
+                if (validator != null) {
+                    final Model nullModel = new Model<>(null);
+                    violations.addAll(validator.validate(this, nodeModel, nullModel));
+                }
             }
 
             while (iter.hasNext()) {
