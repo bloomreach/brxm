@@ -9,11 +9,11 @@ import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
 @Component({
-  selector: 'brna-left-menu',
-  templateUrl: 'left-menu.component.html',
-  styleUrls: ['left-menu.component.scss'],
+  selector: 'brna-main-menu',
+  templateUrl: 'main-menu.component.html',
+  styleUrls: ['main-menu.component.scss'],
 })
-export class LeftMenuComponent implements OnInit {
+export class MainMenuComponent implements OnInit {
   menu: MenuItem[];
 
   constructor(

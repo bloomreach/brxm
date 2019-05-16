@@ -9,32 +9,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
-import { LeftMenuComponent } from './components/left-menu.component';
+import { MainMenuComponent } from './components/main-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
 import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-  ],
+  imports: [CommonModule, BrowserAnimationsModule, MaterialModule],
   declarations: [
-    LeftMenuComponent,
+    MainMenuComponent,
     TopLevelMenuItemComponent,
     MenuDrawerComponent,
     ExpandableMenuItemComponent,
     MenuItemLinkComponent,
   ],
-  providers: [
-    MenuStructureService,
-    MenuBuilderService,
-    MenuStateService,
-  ],
-  exports: [
-    LeftMenuComponent,
-  ],
+  providers: [MenuStructureService, MenuBuilderService, MenuStateService],
+  exports: [MainMenuComponent],
 })
-export class LeftMenuModule {}
+export class MainMenuModule {}

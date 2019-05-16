@@ -1,13 +1,13 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
-import { LeftMenuModule } from './left-menu';
-import { NavigationConfigurationService } from './services';
-
 import { AppComponent } from './app.component';
 import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { CommunicationModule } from './communication';
+import { MainMenuModule } from './main-menu';
+import { NavigationConfigurationService } from './services';
 import { MaterialModule } from './shared/material.module';
 
 @NgModule({
@@ -15,16 +15,14 @@ import { MaterialModule } from './shared/material.module';
     BrowserModule,
     MaterialModule,
     AppRoutingModule,
-    LeftMenuModule,
+    BrowserModule,
     ClientApplicationsManagerModule,
     CommunicationModule,
+    HttpClientModule,
+    MainMenuModule,
   ],
-  providers: [
-    NavigationConfigurationService,
-  ],
-  declarations: [
-    AppComponent,
-  ],
+  providers: [NavigationConfigurationService],
+  declarations: [AppComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
