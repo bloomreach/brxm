@@ -14,6 +14,7 @@
 }
 
 .main {
+  height: 100%;
   margin-left: $menu-collapsed-width;
   transition: margin-left 300ms ease-in-out;
 
