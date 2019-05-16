@@ -24,7 +24,7 @@ export class MenuStateService implements OnDestroy {
     ).subscribe(menu => {
       if (this.currentMenu && this.currentMenu.length) {
         throw new Error(
-          'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.'
+          'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.',
         );
       }
 

@@ -112,6 +112,7 @@ $hippo-primary: mat-palette($hippo-blue);
 $hippo-accent: mat-palette($hippo-orange);
 $hippo-warn: mat-palette($hippo-red);
 $hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
+
 @include angular-material-theme($hippo-theme);
 
 // default body text color
