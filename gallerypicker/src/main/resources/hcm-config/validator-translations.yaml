@@ -3,3 +3,4 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /en:
         image-references: Select an image
+        required#hippogallerypicker-imagelink: Select an image
