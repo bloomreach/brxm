@@ -8,7 +8,6 @@ definitions:
         /hipposysedit:nodetype:
           jcr:primaryType: hipposysedit:nodetype
           jcr:mixinTypes: ['hipposysedit:remodel']
-          hipposysedit:cascadevalidation: false
           hipposysedit:node: true
           hipposysedit:supertype: ['hippo:facetselect']
           hipposysedit:uri: http://www.hippoecm.org/hippogallerypicker/nt/2.0
