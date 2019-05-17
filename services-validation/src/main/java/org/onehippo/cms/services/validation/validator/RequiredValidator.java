@@ -16,11 +16,9 @@
 
 package org.onehippo.cms.services.validation.validator;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -33,9 +31,6 @@ import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +39,6 @@ public class RequiredValidator implements Validator<Object> {
     private static final Logger log = LoggerFactory.getLogger(RequiredValidator.class);
 
     private final Map<String, Validator> validators;
-    private final ContentTypeService contentTypeService;
 
     // constructor must be public because class is instantiated via reflection
     @SuppressWarnings("WeakerAccess")
@@ -54,8 +48,6 @@ public class RequiredValidator implements Validator<Object> {
         } catch (final RepositoryException e) {
             throw new ValidationContextException("Failed to create required validator", e);
         }
-
-        contentTypeService = HippoServiceRegistry.getService(ContentTypeService.class);
     }
 
     private static Map<String, Validator> createValidators(final Node config) throws RepositoryException {
@@ -107,27 +99,6 @@ public class RequiredValidator implements Validator<Object> {
             return validators.get(jcrType);
         }
 
-        try {
-            for (final String superType: getSuperTypes(type)) {
-                final Validator requiredValidator = getRequiredValidator(superType, jcrType);
-                if (requiredValidator != null) {
-                    return requiredValidator;
-                }
-            }
-        } catch (RepositoryException e) {
-            log.warn("Could not find required validator for type '{}'", type, e);
-        }
         return null;
     }
-
-    private Set<String> getSuperTypes(final String type) throws RepositoryException {
-        final EffectiveNodeType effectiveNodeType = contentTypeService.getEffectiveNodeTypes().getType(type);
-
-        if (effectiveNodeType == null) {
-            return Collections.emptySet();
-        }
-
-        return effectiveNodeType.getSuperTypes();
-    }
-
 }
