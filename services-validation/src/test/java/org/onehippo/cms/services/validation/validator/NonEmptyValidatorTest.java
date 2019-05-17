@@ -34,28 +34,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void validInputForHtml() {
-        context = new TestValidationContext("myproject:html", "String", "Html");
-
-        assertValid(validator.validate(context, "text"));
-        assertValid(validator.validate(context, "<p>text</p>"));
-        assertValid(validator.validate(context, "<img src=\"empty.gif\">"));
-        assertFalse(context.isViolationCreated());
-    }
-
-    @Test
-    public void invalidInputForHtml() {
-        context = new TestValidationContext("myproject:html", "String", "Html");
-
-        assertInvalid(validator.validate(context, null));
-        assertInvalid(validator.validate(context, ""));
-        assertInvalid(validator.validate(context, " "));
-        assertInvalid(validator.validate(context, "<html></html>"));
-        assertTrue(context.isViolationCreated());
-    }
-
-    @Test
-    public void validInputForText() {
+    public void validInput() {
         context = new TestValidationContext("myproject:text", "String", "Text");
 
         assertValid(validator.validate(context, "text"));
@@ -65,7 +44,7 @@ public class NonEmptyValidatorTest {
     }
 
     @Test
-    public void invalidInputForText() {
+    public void invalidInput() {
         context = new TestValidationContext("myproject:text", "String", "Text");
 
         assertInvalid(validator.validate(context, null));
