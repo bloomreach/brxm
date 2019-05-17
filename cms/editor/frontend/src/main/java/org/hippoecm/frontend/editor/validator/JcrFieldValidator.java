@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -110,11 +111,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
             // A required field cannot have zero instances (property values or nodes)
             if (required && !iter.hasNext()) {
-                final ICmsValidator validator = validatorService.getValidator(REQUIRED_VALIDATOR);
-                if (validator != null) {
-                    final Model nullModel = new Model<>(null);
-                    violations.addAll(validator.validate(this, nodeModel, nullModel));
-                }
+                violations.addAll(missingRequiredFieldViolations(nodeModel));
             }
 
             while (iter.hasNext()) {
@@ -137,6 +134,23 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             }
         }
         return violations;
+    }
+
+    private Set<Violation> missingRequiredFieldViolations(final JcrNodeModel nodeModel) throws ValidationException {
+        if (validatorService != null) {
+            final ICmsValidator validator = validatorService.getValidator(REQUIRED_VALIDATOR);
+            if (validator != null) {
+                final Model nullModel = new Model<>(null);
+                final Set<Violation> requiredViolations = validator.validate(this, nodeModel, nullModel);
+                if (!requiredViolations.isEmpty()) {
+                    return requiredViolations;
+                }
+            }
+        }
+        final Violation defaultViolation = newViolation(new ModelPathElement(field, field.getPath(), 0),
+                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
+                FeedbackScope.FIELD);
+        return Collections.singleton(defaultViolation);
     }
 
     private boolean fieldNeedsValidation(final Set<String> validators) {
