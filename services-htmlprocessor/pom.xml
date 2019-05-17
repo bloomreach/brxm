@@ -35,8 +35,8 @@
     <notice.project.name>Hippo CMS7 Services - htmlprocessor</notice.project.name>
 
     <!-- runtime dependencies -->
-    <hippo.repository.version>13.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>13.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>13.2.0-validation-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>13.2.0-validation-SNAPSHOT</hippo.services.version>
     <commons-lang.version>2.6</commons-lang.version>
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
@@ -91,6 +91,12 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
     </dependency>
 
     <!-- test dependencies -->
