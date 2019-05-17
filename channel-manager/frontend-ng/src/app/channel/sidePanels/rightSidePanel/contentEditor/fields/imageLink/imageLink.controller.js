@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class ImageLinkController {
     // In case of multiple images, only the buttons of the first image should be
     // pushed by both the default thumbnail width and the optional label text width.
     // All other buttons will be pushed by the default thumbnail width only.
-    this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.isRequired ? ' *' : '') : '';
+    this.hiddenLabel = this.index === 0 ? this.ariaLabel + (this.ngRequired ? ' *' : '') : '';
 
     if (this.index === 0) {
       this.$scope.$on('primitive-field:focus', ($event, focusEvent) => this.onFocusFromParent(focusEvent));
@@ -60,19 +60,19 @@ class ImageLinkController {
   // of the image picker to flicker while tabbing; it *can* trigger a blur event, followed by
   // a immediate focus event, in which case the blue bottom border will be removed and added
   // again, resulting in annoying flickering of the UI.
-  onBlurButton($event) {
+  onBlur($event) {
     this.blurPromise = this.$timeout(() => {
       this.buttonHasFocus = false;
     }, 10);
-    this.onBlur($event);
+    this.$element.triggerHandler($event || 'blur');
   }
 
-  onFocusButton($event) {
+  onFocus($event) {
     if (this.blurPromise) {
       this.$timeout.cancel(this.blurPromise);
     }
     this.buttonHasFocus = true;
-    this.onFocus($event);
+    this.$element.triggerHandler($event || 'focus');
   }
 
   openImagePicker() {
@@ -88,6 +88,7 @@ class ImageLinkController {
     if (this.imagePicked) {
       this._focusClearButton();
     }
+
     this.imagePicked = true;
     this.url = image.url;
     this.ngModel.$setViewValue(image.uuid);

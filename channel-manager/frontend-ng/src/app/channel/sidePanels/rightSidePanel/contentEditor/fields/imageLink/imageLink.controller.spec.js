@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ describe('imageLinkController', () => {
   let PickerService;
   let ngModel;
   let config;
-  let onBlur;
-  let onFocus;
 
   const $element = angular.element('<div></div>');
 
@@ -56,9 +54,6 @@ describe('imageLinkController', () => {
       imagepicker: 'image-picker-config',
     };
 
-    onBlur = jasmine.createSpy('onBlur');
-    onFocus = jasmine.createSpy('onFocus');
-
     $ctrl = $componentController('imageLink', {
       $scope,
       $element,
@@ -69,8 +64,6 @@ describe('imageLinkController', () => {
       index: 0,
       name: 'TestField',
       ngModel,
-      onBlur,
-      onFocus,
       url: 'TestUrl',
     });
   });
@@ -95,7 +88,7 @@ describe('imageLinkController', () => {
     });
 
     it('adds an asterisk to the hiddenLabel for required image links', () => {
-      $ctrl.isRequired = true;
+      $ctrl.ngRequired = true;
       init();
 
       expect($ctrl.hiddenLabel).toEqual('TestAriaLabel *');
@@ -194,20 +187,22 @@ describe('imageLinkController', () => {
     });
 
     it('emits button focus event and set buttonHasFocus to true', () => {
+      spyOn($element, 'triggerHandler');
       const event = {};
-      $ctrl.onFocusButton(event);
+      $ctrl.onFocus(event);
 
       expect($ctrl.buttonHasFocus).toBe(true);
-      expect(onFocus).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
     });
 
     it('emits button blur event and set buttonHasFocus to false after timeout', () => {
+      spyOn($element, 'triggerHandler');
       $ctrl.buttonHasFocus = true;
       const event = {};
-      $ctrl.onBlurButton(event);
+      $ctrl.onBlur(event);
 
       expect($ctrl.buttonHasFocus).toBe(true);
-      expect(onBlur).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
 
       $timeout.flush();
       expect($ctrl.buttonHasFocus).toBe(false);
@@ -216,8 +211,8 @@ describe('imageLinkController', () => {
     it('cancels the timeout if a focus event is fired right after the blur event', () => {
       spyOn($timeout, 'cancel').and.callThrough();
       $ctrl.buttonHasFocus = true;
-      $ctrl.onBlurButton();
-      $ctrl.onFocusButton();
+      $ctrl.onBlur();
+      $ctrl.onFocus();
       $timeout.flush();
 
       expect($timeout.cancel).toHaveBeenCalled();
