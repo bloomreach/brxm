@@ -34,6 +34,8 @@ describe('PrimitiveField', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       FieldService = _FieldService_;
+
+      spyOn(FieldService, 'save').and.returnValue($q.resolve());
     });
 
     onFieldFocus = jasmine.createSpy('onFieldFocus');
@@ -228,23 +230,15 @@ describe('PrimitiveField', () => {
         $setValidity: () => {},
       };
       $ctrl.form = { 'test-name/field:type': field };
-
-      spyOn(FieldService, 'startSaveTimer');
     });
 
     it('starts a save timer when the value changed', () => {
       $ctrl.valueChanged();
-      expect(FieldService.startSaveTimer)
-        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
     });
 
     it('sets server errors when the auto-saved value contains errorInfo objects', () => {
-      spyOn(field, '$setValidity');
-      $ctrl.valueChanged();
-
-      expect(FieldService.startSaveTimer)
-        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
-
       const validatedValues = angular.copy(fieldValues);
       validatedValues[0].errorInfo = {
         message: 'First error',
@@ -252,32 +246,30 @@ describe('PrimitiveField', () => {
       validatedValues[2].errorInfo = {
         message: 'Second error',
       };
+      FieldService.save.and.returnValue($q.resolve(validatedValues));
+      spyOn(field, '$setValidity');
 
-      const afterSave = FieldService.startSaveTimer.calls.mostRecent().args[2];
-      afterSave(validatedValues);
+      $ctrl.valueChanged();
+      $rootScope.$digest();
 
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
       expect(field.$setValidity).toHaveBeenCalledWith('server', false);
       expect($ctrl.firstServerError).toBe('First error');
     });
 
     it('removes server errors when the auto-saved value does not contain errorInfo objects', () => {
-      spyOn(field, '$setValidity');
-      fieldValues[1].errorInfo = {
-        message: '"Error',
-      };
-      $ctrl.firstServerError = 'Error';
-
-      $ctrl.valueChanged();
-
-      expect(FieldService.startSaveTimer)
-        .toHaveBeenCalledWith('test-name/field:type', fieldValues, jasmine.any(Function));
-
       const validatedValues = angular.copy(fieldValues);
-      delete validatedValues[1].errorInfo;
+      FieldService.save.and.returnValue($q.resolve(validatedValues));
+      spyOn(field, '$setValidity');
 
-      const afterSave = FieldService.startSaveTimer.calls.mostRecent().args[2];
-      afterSave(validatedValues);
+      fieldValues[1].errorInfo = { message: '"Error' };
+      $ctrl.firstServerError = 'Error';
+      $ctrl.valueChanged();
+      $rootScope.$digest();
 
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
       expect(field.$setValidity).toHaveBeenCalledWith('server', true);
       expect($ctrl.firstServerError).toBeUndefined();
     });
@@ -285,7 +277,7 @@ describe('PrimitiveField', () => {
 
   it('saves the field on blur when the value has changed', () => {
     const validatedValues = angular.copy(fieldValues); // values without errorInfo objects
-    spyOn(FieldService, 'saveField').and.returnValue($q.resolve(validatedValues));
+    FieldService.save.and.returnValue($q.resolve(validatedValues));
 
     $ctrl.focusPrimitive();
 
@@ -295,17 +287,15 @@ describe('PrimitiveField', () => {
     $ctrl.blurPrimitive();
     $rootScope.$digest();
 
-    expect(FieldService.saveField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    expect(FieldService.save).toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues });
     expect($ctrl.fieldValues).toEqual(expectedFieldValues);
   });
 
   it('does not save the field on blur when the value has not changed', () => {
-    spyOn(FieldService, 'saveField');
-
     $ctrl.focusPrimitive();
     $ctrl.blurPrimitive();
 
-    expect(FieldService.saveField).not.toHaveBeenCalled();
+    expect(FieldService.save).not.toHaveBeenCalled();
   });
 
   it('broadcasts event "primitive-field:focus" when clicking on the field label', () => {
