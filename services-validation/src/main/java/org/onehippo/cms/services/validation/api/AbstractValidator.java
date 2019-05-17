@@ -26,13 +26,13 @@ public interface AbstractValidator<C, V> {
      * Validates that a value adheres to certain constraints.
      *
      * @param context the context in which the value is validated
-     * @param value the value to validate
+     * @param value the value to validate; can be null
      *
      * @return a violation that explains what to do with the invalid value,
      * or an empty {@link Optional} when the value is valid.
      *
      * @throws ValidationContextException when this validator is used in a context that does not make sense.
      */
-    Optional<Violation> validate(C context, V value) throws ValidationContextException;
+    Optional<Violation> validate(C context, V value);
 
 }

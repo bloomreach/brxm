@@ -15,6 +15,9 @@
  */
 package org.onehippo.cms.services.validation.api;
 
+/**
+ * Indicates validation does not make sense in the current context.
+ */
 public class ValidationContextException extends RuntimeException {
 
     public ValidationContextException(final String message) {
