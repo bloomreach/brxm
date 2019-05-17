@@ -145,7 +145,6 @@ definitions:
           /hipposysedit:nodetype:
             jcr:primaryType: hipposysedit:nodetype
             jcr:mixinTypes: ['hipposysedit:remodel']
-            hipposysedit:cascadevalidation: false
             hipposysedit:node: true
             hipposysedit:uri: http://www.onehippo.org/jcr/hippo/nt/2.0
             /docbase:
