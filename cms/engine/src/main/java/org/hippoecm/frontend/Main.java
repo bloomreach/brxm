@@ -48,6 +48,11 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
+import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
+import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
+import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
@@ -113,6 +118,8 @@ import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
+
 public class Main extends PluginApplication {
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
@@ -161,6 +168,8 @@ public class Main extends PluginApplication {
      * Wicket RequestCycleSettings timeout configuration parameter name in deployment mode.
      */
     public final static String DEPLOYMENT_REQUEST_TIMEOUT_PARAM = "wicket.deployment.request.timeout";
+
+    public static final String CMS_AS_IFRAME_QUERY_PARAMETER = "iframe";
 
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
@@ -527,6 +536,8 @@ public class Main extends PluginApplication {
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
         }
+
+        addHeaderResponseDecorator();
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
@@ -783,5 +794,44 @@ public class Main extends PluginApplication {
 
             return false;
         }
+
     }
+
+    private void addHeaderResponseDecorator() {
+
+        final AbstractHeaderResponseFilter navAppFilter = new AbstractHeaderResponseFilter(NavAppPanel.NAVAPP_HEADER_ITEM) {
+            @Override
+            public boolean accepts(final HeaderItem item) {
+                if (item instanceof FilteredHeaderItem) {
+                    return ((FilteredHeaderItem) item).getFilterName().equals(this.getName());
+                }
+                return false;
+            }
+        };
+
+        final FilteringHeaderResponse.IHeaderResponseFilter oppositeFilter = new OppositeHeaderResponseFilter(DEFAULT_HEADER_FILTER_NAME, navAppFilter);
+        final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
+
+        setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
+            final boolean navAppMode = PluginUserSession.get().getApplicationName().equals("cms") && !hasIFrameParameter();
+            @Override
+            public void render(final HeaderItem item) {
+                if (navAppMode) {
+                    if (item instanceof FilteredHeaderItem) {
+                        final FilteredHeaderItem filteredHeaderItem = (FilteredHeaderItem)item;
+                        if (filteredHeaderItem.getFilterName().equals(NavAppPanel.NAVAPP_HEADER_ITEM)) {
+                            super.render(item);
+                        }
+                    }
+                } else {
+                    super.render(item);
+                }
+            }
+        });
+    }
+
+    private boolean hasIFrameParameter() {
+        return !RequestUtils.getQueryParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
+    }
+
 }
