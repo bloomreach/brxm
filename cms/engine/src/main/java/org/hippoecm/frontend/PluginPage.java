@@ -19,6 +19,7 @@ import java.util.TimeZone;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.IClusterControl;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -47,11 +49,12 @@ import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IController;
+import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.NestedBrowserContextService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
@@ -95,6 +98,13 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
             context.registerService(pluginConfigService, IPluginConfigService.class.getName());
+
+            final String configurationParameter = PluginApplication.get()
+                    .getConfigurationParameter(Main.PLUGIN_APPLICATION_SHOW_PERSPECTIVE_MENU_PARAMETER
+                            , Boolean.FALSE.toString());
+            final boolean showPerspectiveMenu = Boolean.parseBoolean(configurationParameter);
+            context.registerService(new NestedBrowserContextService(!showPerspectiveMenu)
+                    , INestedBrowserContextService.class.getName());
 
             obRegistry = new ObservableRegistry(context, null);
             obRegistry.startObservation();
@@ -162,6 +172,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             publishAntiCacheHash(response);
             publishSessionParameters(response);
+            showPerspectiveMenu(response);
 
             if (WebApplicationHelper.isDevelopmentMode()) {
                 addDevelopmentModeCssClassToHtml(response);
@@ -176,6 +187,18 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     private void publishAntiCacheHash(final IHeaderResponse response) {
         final String script = "Hippo.antiCache = '" + WebApplicationHelper.APPLICATION_HASH + "';";
         response.render(JavaScriptHeaderItem.forScript(script, "hippo-anti-cache-hash"));
+    }
+
+    private void showPerspectiveMenu(final IHeaderResponse response) {
+        final INestedBrowserContextService nestedBrowserContextService =
+                context.getService(INestedBrowserContextService.class.getName(), INestedBrowserContextService.class);
+        final String message = String.format("%s should not be null, make sure it's registered on the %s"
+                , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
+        Validate.notNull(nestedBrowserContextService, message);
+        if (!nestedBrowserContextService.hidePerspectiveMenu()){
+            final String script = String.format("$(\"div#ft\").addClass(\"%s\")", "show-perspective-menu");
+            response.render(JavaScriptHeaderItem.forScript(script, "show-perspective-menu"));
+        }
     }
 
     private void publishSessionParameters(final IHeaderResponse response) {
@@ -361,7 +384,13 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     public void addService(IRenderService service, String name) {
-        if (PluginUserSession.get().getApplicationName().equals("cms") && !hasIFrameParameter()) {
+        final INestedBrowserContextService nestedBrowserContextService =
+                context.getService(INestedBrowserContextService.class.getName(), INestedBrowserContextService.class);
+        final String message = String.format("%s should not be null, make sure it's registered on the %s"
+                , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
+        Validate.notNull(nestedBrowserContextService, message);
+
+        if (nestedBrowserContextService.showNavigationApplication()) {
             final NavAppPanel navAppPanel = new NavAppPanel("root");
             navAppPanel.setRenderBodyOnly(true);
             replace(navAppPanel);
@@ -414,9 +443,5 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     public void renderPage() {
         collapseAllContextMenus();
         super.renderPage();
-    }
-
-    private boolean hasIFrameParameter() {
-        return !RequestUtils.getQueryParameterValue("iframe").isNull();
     }
 }
