@@ -95,7 +95,9 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testRequiredProperty() throws Exception {
         start(config);
-
+        start(validator);
+        start(registry);
+        
         Node content = root.getNode("test").addNode("content", "test:validator");
         validate(content);
 
@@ -106,6 +108,8 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testRequiredChildNode() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         validate(content);
@@ -136,6 +140,8 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testPathTranslation() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         content.addNode("test:single", "test:validator");
@@ -167,6 +173,8 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testCascading() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         Node uncascaded = content.addNode("test:uncascaded", "test:uncascaded");
@@ -176,18 +184,4 @@ public class ValidationPluginTest extends PluginTest {
         Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
     }
-
-    /*
-    @Test
-    public void testSetPathFailsWhenSubtypeHasSamePath() throws Exception {
-        JcrNodeModel nodeModel = new JcrNodeModel("/hippo:namespaces/test/test/hippo:nodetype/hippo:nodetype[2]");
-        JcrTypeDescriptor typeDescriptor = new JcrTypeDescriptor(nodeModel, new JcrTypeLocator());
-        typeDescriptor.getField("title").setPath("test:extra");
-
-        TemplateTypeValidator validator = new TemplateTypeValidator();
-        Set<Violation> violations = validator.validate(nodeModel);
-        assertEquals(1, violations.size());
-    }
-    */
-
 }
