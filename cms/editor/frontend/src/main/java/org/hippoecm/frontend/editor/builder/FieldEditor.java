@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,18 +28,15 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 
-import static org.hippoecm.frontend.validation.ValidatorUtils.NON_EMPTY_VALIDATOR;
 import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
-import static org.hippoecm.frontend.validation.ValidatorUtils.RESOURCE_REQUIRED_VALIDATOR;
 
 public class FieldEditor extends Panel {
 
@@ -114,20 +111,10 @@ public class FieldEditor extends Panel {
             @Override
             public void setObject(final Boolean isRequired) {
                 final IFieldDescriptor field = getDescriptor();
-                final ITypeDescriptor typeDescriptor = field.getTypeDescriptor();
-                final String validatorDescription = typeDescriptor.isType(HippoNodeType.NT_RESOURCE)
-                        ? RESOURCE_REQUIRED_VALIDATOR
-                        : REQUIRED_VALIDATOR;
                 if (isRequired) {
-                    field.addValidator(validatorDescription);
-                    if (typeDescriptor.isType("String")) {
-                        field.addValidator(NON_EMPTY_VALIDATOR);
-                    }
+                    field.addValidator(REQUIRED_VALIDATOR);
                 } else {
-                    if (typeDescriptor.isType("String")) {
-                        field.removeValidator(NON_EMPTY_VALIDATOR);
-                    }
-                    field.removeValidator(validatorDescription);
+                    field.removeValidator(REQUIRED_VALIDATOR);
                 }
             }
 
