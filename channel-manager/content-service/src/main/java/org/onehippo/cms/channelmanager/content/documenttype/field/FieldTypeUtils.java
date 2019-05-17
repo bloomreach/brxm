@@ -52,14 +52,13 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLink
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -89,9 +88,6 @@ public class FieldTypeUtils {
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
-    // Unsupported validators of which we know they have field-scope only
-    private static final Set<String> UNSUPPORTED_FIELD_VALIDATORS;
-
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
@@ -102,9 +98,6 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS = new HashSet<>();
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
-
-        UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -175,8 +168,8 @@ public class FieldTypeUtils {
 
     /**
      * Translate the set of validators specified at JCR level into a set of validators at the {@link FieldType} level.
-     * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
-     * unknown validator'.
+     * When the list of validators contains an unsupported validator (i.e. a Wicket-specific one), the document type is
+     * marked as 'readonly due to unsupported validator'.
      *
      * @param fieldType    Specification of a field type
      * @param fieldContext The context of the field
@@ -196,22 +189,18 @@ public class FieldTypeUtils {
         }
 
         for (final String validatorName : validatorNames) {
-            if (IGNORED_VALIDATORS.contains(validatorName)) {
-                // Do nothing
-            } else if (validatorName.equals(ValidationErrorInfo.REQUIRED)) {
-                fieldType.setRequired(true);
-            } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validatorName)) {
-                fieldType.setUnsupportedValidator(true);
-            } else {
+            if (!IGNORED_VALIDATORS.contains(validatorName)) {
                 final ValidatorInstance validator = validationService.getValidator(validatorName);
                 if (validator != null) {
                     fieldType.addValidatorName(validatorName);
                 } else {
+                    fieldType.setUnsupportedValidator(true);
+
                     final DocumentType docType = fieldContext.getParentContext().getDocumentType();
-                    log.info("Field '{}' in document type '{}' has unknown validator '{}', " +
+                    log.info("Field '{}' in document type '{}' has unsupported validator '{}', " +
                                     "documents of this type will be read only in the Channel Manager",
                             fieldType.getId(), docType.getId(), validatorName);
-                    docType.setReadOnlyDueToUnknownValidator(true);
+                    docType.setReadOnlyDueToUnsupportedValidator(true);
                 }
             }
         }

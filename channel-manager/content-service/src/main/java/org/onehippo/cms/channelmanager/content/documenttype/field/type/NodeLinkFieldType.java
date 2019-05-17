@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -22,7 +23,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.picker.NodePicker;
@@ -52,9 +52,7 @@ public class NodeLinkFieldType extends LinkFieldType {
 
     @Override
     protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) throws RepositoryException {
-        final MiniMap<String, Object> map = new MiniMap<>(1);
-        map.put("displayName", getDisplayName(uuid, session));
-        return map;
+        return Collections.singletonMap("displayName", getDisplayName(uuid, session));
     }
 
     private String getDisplayName(final String uuid, final Session session) throws RepositoryException {

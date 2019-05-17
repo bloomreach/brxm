@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ describe('CKEditor Component', () => {
   let editor;
   let $q;
   let ngModel;
-  let fieldObject;
   let SharedSpaceToolbarService;
   let CmsService;
 
@@ -82,21 +81,6 @@ describe('CKEditor Component', () => {
       ngModel.$viewValue = html;
     });
 
-    fieldObject = jasmine.createSpyObj('fieldObject', [
-      '$setValidity',
-      '$valid',
-      '$invalid',
-      '$error',
-    ]);
-    fieldObject.$error = {};
-
-
-    fieldObject.$setValidity.and.callFake((field, isValid) => {
-      fieldObject.$error[field] = isValid;
-      fieldObject.$valid = isValid;
-      fieldObject.$invalid = !isValid;
-    });
-
     spyOn(CKEditorService, 'loadCKEditor').and.returnValue($q.resolve(CKEditor));
 
     const onFocus = jasmine.createSpy('onFocus');
@@ -116,7 +100,6 @@ describe('CKEditor Component', () => {
     });
 
     ngModel.$viewValue = '<p>initial value</p>';
-    $ctrl.fieldObject = fieldObject;
   });
 
   function getEventListener(event) {
@@ -263,47 +246,6 @@ describe('CKEditor Component', () => {
     $ctrl.$onDestroy();
     expect(editor.destroy).toHaveBeenCalled();
     expect(SharedSpaceToolbarService.hideToolbar).toHaveBeenCalled();
-  });
-
-  describe('CKEditor field validation', () => {
-    beforeEach(() => {
-      init();
-      $ctrl.fieldObject.$valid = true;
-      $ctrl.fieldObject.$invalid = false;
-      $ctrl.fieldObject.$error = {};
-
-      spyOn($ctrl, '_getRawValue');
-    });
-
-    afterEach(() => {
-      $ctrl.fieldObject.$setValidity.calls.reset();
-    });
-
-    it('validates CKEditor when field is required and value is valid', () => {
-      $ctrl.isRequired = true;
-      $ctrl._getRawValue.and.returnValue('Valid value');
-
-      $ctrl._validate();
-      expect($ctrl.fieldObject.$valid).toEqual(true);
-    });
-
-    it('validates CKEditor when field is required and value is completely empty', () => {
-      $ctrl.isRequired = true;
-      $ctrl._getRawValue.and.returnValue('');
-
-      $ctrl._validate();
-      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
-      expect($ctrl.fieldObject.$invalid).toEqual(true);
-    });
-
-    it('validates CKEditor when field is required and value is pure whitespaces', () => {
-      $ctrl.isRequired = true;
-      $ctrl._getRawValue.and.returnValue($('    \n\n   \n\r\t ').text().trim());
-
-      $ctrl._validate();
-      expect($ctrl.fieldObject.$setValidity).toHaveBeenCalledWith('required', false);
-      expect($ctrl.fieldObject.$invalid).toEqual(true);
-    });
   });
 
   describe('link picker', () => {

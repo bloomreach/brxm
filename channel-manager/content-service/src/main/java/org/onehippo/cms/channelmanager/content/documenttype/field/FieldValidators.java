@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,12 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * Constants for the names of known field validators.
+ * Constants for the names of some known, special field validators.
  */
 public interface FieldValidators {
 
-    String EMAIL = "email";
-    String ESCAPED = "escaped";
-    String HTML = "html";
-    String IMAGE_REFERENCES = "image-references";
-    String NON_EMPTY = "non-empty";
     String OPTIONAL = "optional";
-    String REFERENCES = "references";
     String REQUIRED = "required";
-    String RESOURCE_REQUIRED = "resource-required";
     String CONTENT_BLOCKS = "contentblocks-validator";
-
-    Set<String> REQUIRED_VALIDATORS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED, RESOURCE_REQUIRED)));
 }

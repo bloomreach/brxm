@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ const ckeditorComponent = {
     ariaLabel: '<',
     config: '<',
     id: '<',
-    isRequired: '<',
     name: '<',
     onBlur: '&',
     onFocus: '&',

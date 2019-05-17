@@ -24,13 +24,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationErrorInfo {
 
-    /**
-     * The "required" validation is meant to indicate that a primitive field must have content. What exactly that
-     * means depends on the field type. The "required" validation is *not* meant to indicate that at least one
-     * instance of a multiple field must be present.
-     */
-    public static final String REQUIRED = "required";
-
     private final String validation;
     private final String message; // localized
 
