@@ -41,13 +41,11 @@ import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR
 public class FieldEditor extends Panel {
 
     private String prefix;
-    private final ITypeDescriptor type;
     private final boolean edit;
 
     public FieldEditor(final String id, final ITypeDescriptor type, final IModel<IFieldDescriptor> model, final boolean edit) {
         super(id, model);
 
-        this.type = type;
         this.edit = edit;
 
         setOutputMarkupId(true);
