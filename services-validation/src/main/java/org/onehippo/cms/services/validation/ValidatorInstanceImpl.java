@@ -25,9 +25,9 @@ import javax.jcr.Node;
 import org.onehippo.cms.services.validation.api.FieldContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
-import org.onehippo.cms.services.validation.api.Violation;
 
 class ValidatorInstanceImpl implements ValidatorInstance {
 
@@ -104,12 +104,12 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     @Override
     public Violation createViolation() {
-        return new TranslatedViolation(config.getName(), getLocale());
+        return new TranslatedViolation(getLocale(), config.getName());
     }
 
     @Override
     public Violation createViolation(final String subKey) {
         final String key = config.getName() + "#" + subKey;
-        return new TranslatedViolation(key, getLocale());
+        return new TranslatedViolation(getLocale(), key);
     }
 }

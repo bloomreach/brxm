@@ -49,7 +49,7 @@ public class TranslatedViolationTest {
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(null);
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
         assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
@@ -61,7 +61,7 @@ public class TranslatedViolationTest {
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(null);
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
         assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
@@ -75,7 +75,7 @@ public class TranslatedViolationTest {
         expect(bundle.getString("my-key")).andReturn(null);
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
         assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
@@ -90,7 +90,7 @@ public class TranslatedViolationTest {
         expect(bundle.getString("fallback-key")).andReturn(null);
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault(), "fallback-key");
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key", "fallback-key");
         assertEquals("???my-key???", violation.getMessage());
         verifyAll();
     }
@@ -104,7 +104,7 @@ public class TranslatedViolationTest {
         expect(bundle.getString("my-key")).andReturn("my-message");
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault());
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
         assertEquals("my-message", violation.getMessage());
         verifyAll();
     }
@@ -119,7 +119,7 @@ public class TranslatedViolationTest {
         expect(bundle.getString("fallback-key")).andReturn("Fallback message");
         replayAll();
 
-        final TranslatedViolation violation = new TranslatedViolation("my-key", Locale.getDefault(), "fallback-key");
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key", "fallback-key");
         assertEquals("Fallback message", violation.getMessage());
         verifyAll();
     }

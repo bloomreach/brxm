@@ -70,22 +70,24 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation() {
-        final String key = REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName(context.getType());
-        return new TranslatedViolation(key, getLocale(), REQUIRED_MESSAGE_PREFIX);
+        final String typeKey = translationKey(context.getType());
+        final String jcrTypeKey = translationKey(context.getJcrType());
+        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
     }
 
     @Override
     public Violation createViolation(final String subKey) {
-        final String key = REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName(context.getType()) + "#" + subKey;
-        return new TranslatedViolation(key, getLocale(), REQUIRED_MESSAGE_PREFIX);
+        final String typeKey = translationKey(context.getType()) + "#" + subKey;
+        final String jcrTypeKey = translationKey(context.getJcrType()) + "#" + subKey;
+        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
     }
 
-    /**
-     * A resource bundle key must be a valid JCR property name. In "{@code resource#hippo:mirror}" the part before the
-     * colon would be used as a namespace prefix. Prefixes cannot contain characters like # or _. Replacing the colon
-     * with a dash avoids this problem.
-     */
-    private static String cleanTypeName(final String typeName) {
-        return StringUtils.replace(typeName, ":", "-");
+    private String translationKey(final String typeName) {
+        // A resource bundle key must be a valid JCR property name. In "{@code resource#hippo:mirror}" the part before the
+        // colon would be used as a namespace prefix. Prefixes cannot contain characters like # or _. Replacing the colon
+        // with a dash avoids this problem.
+        final String cleanTypeName = StringUtils.replace(typeName, ":", "-");
+
+        return REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName;
     }
 }

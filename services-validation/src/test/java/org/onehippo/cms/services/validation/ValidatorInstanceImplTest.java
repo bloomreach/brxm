@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.onehippo.cms.services.validation.validator.TestValidationContext;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -76,8 +76,8 @@ public class ValidatorInstanceImplTest {
         assertTrue(violation.isPresent());
 
         final TranslatedViolation translation = (TranslatedViolation) violation.get();
-        assertThat(translation.getKey(), equalTo(expectedViolationKey));
         assertThat(translation.getLocale(), equalTo(locale));
+        assertThat(translation.getFirstKey(), equalTo(expectedViolationKey));
     }
 
     private static class TestValidator1 implements Validator<String> {

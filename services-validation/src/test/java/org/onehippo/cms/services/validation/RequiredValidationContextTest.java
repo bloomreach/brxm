@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.services.validation;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -63,15 +64,13 @@ public class RequiredValidationContextTest {
     @Test
     public void createViolation() {
         final TranslatedViolation violation = (TranslatedViolation) context.createViolation();
-        assertThat(violation.getKey(), equalTo("required#type"));
-        assertThat(violation.getLocale(), equalTo(locale));
+        assertThat(violation.getKeys(), equalTo(Arrays.asList("required#type", "required#jcrType", "required")));
     }
 
     @Test
     public void createViolationWithSubKey() {
         final TranslatedViolation violation = (TranslatedViolation) context.createViolation("subKey");
-        assertThat(violation.getKey(), equalTo("required#type#subKey"));
-        assertThat(violation.getLocale(), equalTo(locale));
+        assertThat(violation.getKeys(), equalTo(Arrays.asList("required#type#subKey", "required#jcrType#subKey", "required")));
     }
 
     @Test
@@ -81,7 +80,6 @@ public class RequiredValidationContextTest {
         context = new RequiredValidationContext(delegate);
 
         final TranslatedViolation violation = (TranslatedViolation) context.createViolation();
-        assertThat(violation.getKey(), equalTo("required#node-name"));
-        assertThat(violation.getLocale(), equalTo(locale));
+        assertThat(violation.getFirstKey(), equalTo("required#node-name"));
     }
 }
