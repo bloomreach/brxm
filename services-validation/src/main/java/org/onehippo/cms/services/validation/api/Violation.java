@@ -15,8 +15,18 @@
  */
 package org.onehippo.cms.services.validation.api;
 
+/**
+ * A violation of a constraint.
+ */
 public interface Violation {
 
+    /**
+     * Returns a human-readable message describing how to resolve this violation.
+     * For consistency, messages should have the form of an imperative sentence
+     * such as "Enter a valid email address".
+     *
+     * @return a human-readable message
+     */
     String getMessage();
 
 }
