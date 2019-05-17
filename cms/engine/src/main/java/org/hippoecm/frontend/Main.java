@@ -143,6 +143,7 @@ public class Main extends PluginApplication {
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
 
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+    public static final String PLUGIN_APPLICATION_SHOW_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
     public final static String PLUGIN_APPLICATION_VALUE_CMS = "cms";
     public final static String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
