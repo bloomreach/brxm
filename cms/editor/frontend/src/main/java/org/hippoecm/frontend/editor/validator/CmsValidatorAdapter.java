@@ -109,8 +109,8 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final String jcrName = fieldDescriptor.getPath();
 
         final ITypeDescriptor fieldType = fieldValidator.getFieldType();
-        final String jcrType = fieldType.getName();
-        final String type = fieldType.getType();
+        final String jcrType = fieldType.getType();
+        final String type = fieldType.getName();
 
         final UserSession userSession = UserSession.get();
         final Locale locale = userSession.getLocale();
@@ -140,7 +140,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final Model<String> message = Model.of(violation.getMessage());
         return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, getScope(fieldValidator)));
     }
-    
+
     private static FeedbackScope getScope(final IFieldValidator fieldValidator) {
         if (fieldValidator.getFieldDescriptor().getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
             return FeedbackScope.COMPOUND;

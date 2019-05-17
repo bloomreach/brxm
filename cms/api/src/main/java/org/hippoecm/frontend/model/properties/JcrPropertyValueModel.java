@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,21 +36,19 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
-import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.repository.util.DateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Model of a property value.  Retrieves the value of a single valued property, or an indexed
- * value of a multi-valued property.  The type of the value returned depends on the JCR type
- * of the property.  I.e. JCR type string maps to {@link String}, date maps to {@link Date}.
+ * Model of a property value.  Retrieves the value of a single valued property, or an indexed value of a multi-valued
+ * property.  The type of the value returned depends on the JCR type of the property.  I.e. JCR type string maps to
+ * {@link String}, date maps to {@link Date}.
  * <p>
  * One can also set and retrieve the underlying {@link Value}.
  */
 public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>, IObjectClassAwareModel<T> {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPropertyValueModel.class);
 
@@ -60,7 +58,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     // dynamically reload value
     private transient boolean loaded = false;
-    private transient Value value = null;
+    private transient Value value;
     private transient PropertyDefinition propertyDefinition;
 
     private JcrPropertyModel propertyModel;
@@ -69,8 +67,8 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     /**
      * single-valued constructor.
-     * 
-     * @param propertyModel 
+     *
+     * @param propertyModel
      */
     public JcrPropertyValueModel(JcrPropertyModel propertyModel) {
         this(NO_INDEX, null, propertyModel);
@@ -78,7 +76,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     /**
      * Indexed value of a multi-valued property.
-     * 
+     *
      * @param index
      * @param propertyModel
      */
@@ -87,12 +85,11 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     }
 
     /**
-     * Multi-valued property constructor.
-     * Can be used for single-valued properties by setting index to NO_INDEX
-     * 
+     * Multi-valued property constructor. Can be used for single-valued properties by setting index to NO_INDEX
+     *
      * @param index
      * @param value
-     * @param propertyModel 
+     * @param propertyModel
      */
     public JcrPropertyValueModel(int index, Value value, JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
@@ -116,6 +113,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     /**
      * Returns the {@link javax.jcr.nodetype.PropertyDefinition} for the current property.
+     *
      * @return the property definition.
      */
     private PropertyDefinition getPropertyDefinition() {
@@ -134,10 +132,12 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     }
 
     /**
-     * Determines the type of the property. If the type is not yet defined, the type will be resolved based on the value.
-     * If the value is <code>null</code> the type of property is determined based on the {@link javax.jcr.nodetype.PropertyDefinition}.
-     * @see javax.jcr.PropertyType for the resulting values.
+     * Determines the type of the property. If the type is not yet defined, the type will be resolved based on the
+     * value. If the value is <code>null</code> the type of property is determined based on the {@link
+     * javax.jcr.nodetype.PropertyDefinition}.
+     *
      * @return an integer representing the type of property.
+     * @see javax.jcr.PropertyType for the resulting values.
      */
     public int getType() {
         if (type == NO_TYPE) {
@@ -163,10 +163,9 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         }
         this.type = type;
     }
-    
+
     /**
-     * The index of a value in a multi-valued property.  NO_INDEX (-1) is returned
-     * for a single-valued property.
+     * The index of a value in a multi-valued property.  NO_INDEX (-1) is returned for a single-valued property.
      */
     public int getIndex() {
         return index;
@@ -259,16 +258,16 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             load();
             if (value != null) {
                 switch (value.getType()) {
-                case PropertyType.BOOLEAN:
-                    return (T) Boolean.valueOf(value.getBoolean());
-                case PropertyType.DATE:
-                    return (T) value.getDate().getTime();
-                case PropertyType.DOUBLE:
-                    return (T) Double.valueOf(value.getDouble());
-                case PropertyType.LONG:
-                    return (T) Long.valueOf(value.getLong());
-                default:
-                    return (T) value.getString();
+                    case PropertyType.BOOLEAN:
+                        return (T) Boolean.valueOf(value.getBoolean());
+                    case PropertyType.DATE:
+                        return (T) value.getDate().getTime();
+                    case PropertyType.DOUBLE:
+                        return (T) Double.valueOf(value.getDouble());
+                    case PropertyType.LONG:
+                        return (T) Long.valueOf(value.getLong());
+                    default:
+                        return (T) value.getString();
                 }
             }
         } catch (RepositoryException ex) {
@@ -290,23 +289,23 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
             int type = getType();
             switch (type) {
-            case PropertyType.BOOLEAN:
-                value = factory.createValue((Boolean) object);
-                break;
-            case PropertyType.DATE:
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime((Date) object);
-                value = factory.createValue(calendar);
-                break;
-            case PropertyType.DOUBLE:
-                value = factory.createValue((Double) object);
-                break;
-            case PropertyType.LONG:
-                value = factory.createValue((Long) object);
-                break;
-            default:
-                String string = object.toString();
-                value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+                case PropertyType.BOOLEAN:
+                    value = factory.createValue((Boolean) object);
+                    break;
+                case PropertyType.DATE:
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime((Date) object);
+                    value = factory.createValue(calendar);
+                    break;
+                case PropertyType.DOUBLE:
+                    value = factory.createValue((Double) object);
+                    break;
+                case PropertyType.LONG:
+                    value = factory.createValue((Long) object);
+                    break;
+                default:
+                    String string = object.toString();
+                    value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
             }
         } catch (ValueFormatException ex) {
             log.info("invalid value " + object + ": " + ex.getMessage());
@@ -342,11 +341,11 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         this.index = index;
     }
 
-    private Value createEmptyValue() throws UnsupportedRepositoryOperationException, RepositoryException {
+    private Value createEmptyValue() throws RepositoryException {
         ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
         int propertyType = getType();
-        propertyType  = (propertyType == PropertyType.UNDEFINED) ? PropertyType.STRING : propertyType;
-        String propertyValue = (propertyType == PropertyType.DATE) ? PropertyValueProvider.EMPTY_DATE_VALUE : StringUtils.EMPTY;
+        propertyType = (propertyType == PropertyType.UNDEFINED) ? PropertyType.STRING : propertyType;
+        String propertyValue = (propertyType == PropertyType.DATE) ? DateConstants.EMPTY_DATE_VALUE : StringUtils.EMPTY;
         return factory.createValue(propertyValue, propertyType);
     }
 
@@ -384,7 +383,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrPropertyValueModel<?> == false) {
+        if (!(object instanceof JcrPropertyValueModel<?>)) {
             return false;
         }
         if (this == object) {
@@ -403,16 +402,16 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     public Class getObjectClass() {
         int type = getType();
         switch (type) {
-        case PropertyType.BOOLEAN:
-            return Boolean.class;
-        case PropertyType.DATE:
-            return Date.class;
-        case PropertyType.DOUBLE:
-            return Double.class;
-        case PropertyType.LONG:
-            return Long.class;
-        case PropertyType.UNDEFINED:
-            return null;
+            case PropertyType.BOOLEAN:
+                return Boolean.class;
+            case PropertyType.DATE:
+                return Date.class;
+            case PropertyType.DOUBLE:
+                return Double.class;
+            case PropertyType.LONG:
+                return Long.class;
+            case PropertyType.UNDEFINED:
+                return null;
         }
         return String.class;
     }
