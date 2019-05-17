@@ -37,6 +37,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.JavaTypeDescriptor;
 import org.junit.Test;
+import org.onehippo.repository.util.DateConstants;
 
 import static org.hippoecm.frontend.validation.ValidatorUtils.REQUIRED_VALIDATOR;
 import static org.junit.Assert.assertEquals;
@@ -88,17 +89,17 @@ public class PropertyValueProviderTest extends PluginTest {
         provider.addNew();
 
         assertEquals("Expected to store empty-date value in the date property",
-                PropertyValueProvider.EMPTY_DATE, testNode.getProperty("frontendtest:date").getDate().getTime());
+                DateConstants.EMPTY_DATE, testNode.getProperty("frontendtest:date").getDate().getTime());
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
         assertEquals("Expected to return empty-date for the field storing empty-date value",
-                PropertyValueProvider.EMPTY_DATE, pvm.getObject());
+                DateConstants.EMPTY_DATE, pvm.getObject());
 
         provider.detach();
         assertEquals(1, provider.size());
         pvm = provider.iterator(0, 1).next();
-        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
+        assertEquals(DateConstants.EMPTY_DATE, pvm.getObject());
     }
 
     /**
@@ -109,7 +110,7 @@ public class PropertyValueProviderTest extends PluginTest {
      */
     @Test
     public void canStoreEmptyValuesInMultiValuesDateField() throws RepositoryException {
-        final Date[] dates = new Date[]{PropertyValueProvider.EMPTY_DATE, new Date(), PropertyValueProvider.EMPTY_DATE};
+        final Date[] dates = new Date[]{DateConstants.EMPTY_DATE, new Date(), DateConstants.EMPTY_DATE};
         final int valuesCount = dates.length;
 
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
@@ -148,7 +149,7 @@ public class PropertyValueProviderTest extends PluginTest {
     @Test
     public void canReadEmptyValueInMultiValuesDateField() throws RepositoryException {
         final Calendar emptyDateCalendar = Calendar.getInstance();
-        emptyDateCalendar.setTime(PropertyValueProvider.EMPTY_DATE);
+        emptyDateCalendar.setTime(DateConstants.EMPTY_DATE);
 
         Node testNode = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
         testNode.setProperty("frontendtest:dates", emptyDateCalendar);
@@ -163,7 +164,7 @@ public class PropertyValueProviderTest extends PluginTest {
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
+        assertEquals(DateConstants.EMPTY_DATE, pvm.getObject());
         assertFalse(session.hasPendingChanges());
     }
 
@@ -179,7 +180,7 @@ public class PropertyValueProviderTest extends PluginTest {
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
+        assertEquals(DateConstants.EMPTY_DATE, pvm.getObject());
         Date date = new Date();
         pvm.setObject(date);
         provider.detach();

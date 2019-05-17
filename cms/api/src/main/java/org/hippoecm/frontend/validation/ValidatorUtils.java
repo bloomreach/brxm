@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,16 +26,29 @@ public class ValidatorUtils {
 
     private static final Logger log = LoggerFactory.getLogger(ValidatorUtils.class);
 
+    /**
+     * @deprecated not used by the system anymore, will be removed in a future version.
+     */
+    @Deprecated
     public static final String NON_EMPTY_VALIDATOR = "non-empty";
+
     public static final String OPTIONAL_VALIDATOR = "optional";
     public static final String REQUIRED_VALIDATOR = "required";
+
+    /**
+     * @deprecated not used by the system anymore, will be removed in a future version.
+     */
+    @Deprecated
     public static final String RESOURCE_REQUIRED_VALIDATOR = "resource-required";
 
-    public static final Set<String> REQUIRED_VALIDATORS =
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(REQUIRED_VALIDATOR, RESOURCE_REQUIRED_VALIDATOR)));
+    /**
+     * @deprecated use {@link #hasRequiredValidator(Set)}.
+     */
+    @Deprecated
+    public static final Set<String> REQUIRED_VALIDATORS = Collections.singleton(REQUIRED_VALIDATOR);
 
     public static boolean hasRequiredValidator(final Set<String> validators) {
-        return validators.stream().anyMatch(REQUIRED_VALIDATORS::contains);
+        return validators.contains(REQUIRED_VALIDATOR);
     }
 
     public static FeedbackScope getFeedbackScope(final String scope) {

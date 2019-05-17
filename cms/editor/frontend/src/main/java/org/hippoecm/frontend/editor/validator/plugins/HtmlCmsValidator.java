@@ -27,8 +27,8 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
-import org.onehippo.cms.services.validation.validator.NonEmptyHtmlValidator;
-import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The builtin "Html" type is checked by the
  * {@link NonEmptyCmsValidator} and does not require special treatment.
- * 
- * 
- * @deprecated Use the {@link NonEmptyHtmlValidator} instead.
+ *
+ * @deprecated not used anymore by the system, will be removed in a future version.
+ * Customized "Html" types should use their own "required" validator.
  */
 @Deprecated
 public class HtmlCmsValidator extends AbstractCmsValidator {
@@ -69,7 +69,8 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
 
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
-        if (HtmlUtils.isEmpty(value)) {
+        final HtmlProcessorService htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+        if (!htmlProcessorService.isVisible(value)) {
             final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.HTML_IS_EMPTY, ValidatorMessages.class);
             violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
         }

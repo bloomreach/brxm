@@ -30,15 +30,17 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.onehippo.cms.services.validation.validator.NonEmptyValidator;
-import org.onehippo.cms.services.validation.api.internal.HtmlUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 
 /**
  * Validator that validates that a String value is non-empty.
  * <p>
- * When the type of the value is the builtin "Html" type, an {@link HtmlCleaner} is used to verify this. Such a field
- * therefore does not require the html validator to be declared separately.
- * 
- * @deprecated Use the {@link NonEmptyValidator} instead.
+ * When the type of the value is the builtin "Html" type, the {@link HtmlProcessorService} is used to verify this. Such
+ * a field therefore does not require the html validator to be declared separately.
+ *
+ * @deprecated Use the {@link NonEmptyValidator} instead for text values and the
+ * {@link org.hippoecm.frontend.plugins.richtext.validation.RequiredFormattedTextValidator} for HTML values.
  */
 @Deprecated
 public class NonEmptyCmsValidator extends AbstractCmsValidator {
@@ -66,7 +68,8 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
         final String value = (String) childModel.getObject();
 
         if ("Html".equals(fieldValidator.getFieldType().getName())) {
-            if (HtmlUtils.isEmpty(value)) {
+            final HtmlProcessorService htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+            if (!htmlProcessorService.isVisible(value)) {
                 final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.HTML_IS_EMPTY, ValidatorMessages.class);
                 violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
             }
