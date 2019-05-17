@@ -47,19 +47,17 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 public class ValidationServiceConfigTest {
 
     private MockNode configNode;
-    private MockNode validatorsNode;
 
     @Before
     public void setUp() throws Exception {
         mockStaticPartial(ValidatorInstanceFactory.class, "createValidatorInstance");
         configNode = MockNode.root().addNode("config", JcrConstants.NT_UNSTRUCTURED);
-        validatorsNode = configNode.addNode("validators", JcrConstants.NT_UNSTRUCTURED);
     }
 
     @Test
     public void logsErrorWhenRepositoryExceptionIsThrown() throws Exception {
         final Node configNode = createMock(Node.class);
-        expect(configNode.getNode("validators")).andThrow(new RepositoryException());
+        expect(configNode.getNodes()).andThrow(new RepositoryException());
         replayAll();
 
         try (final Log4jInterceptor listener = Log4jInterceptor.onError().trap(ValidationServiceConfig.class).build()) {
@@ -84,7 +82,8 @@ public class ValidationServiceConfigTest {
     @Test
     public void returnsNewValidatorFromConfig() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
@@ -95,7 +94,8 @@ public class ValidationServiceConfigTest {
     @Test
     public void returnsSameValidatorInstance() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
@@ -105,9 +105,11 @@ public class ValidationServiceConfigTest {
     @Test
     public void clearsValidatorInstancesOnReconfigure() throws Exception {
         final ValidatorInstance mockInstance = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance);
         final ValidatorInstance mockInstance2 = createMock(ValidatorInstance.class);
-        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class))).andReturn(mockInstance2);
+        expect(ValidatorInstanceFactory.createValidatorInstance(isA(JcrValidatorConfig.class)))
+                .andReturn(mockInstance2);
         replayAll();
 
         final ValidationServiceConfig config = createConfig("mock-validator");
@@ -126,7 +128,7 @@ public class ValidationServiceConfigTest {
 
     private ValidationServiceConfig createConfig(final String... validators) throws RepositoryException {
         for (final String validator : validators) {
-            final MockNode validatorConfigNode = validatorsNode.addNode(validator, JcrConstants.NT_UNSTRUCTURED);
+            final MockNode validatorConfigNode = configNode.addNode(validator, JcrConstants.NT_UNSTRUCTURED);
             validatorConfigNode.setProperty(JcrValidatorConfig.CLASS_NAME, validator + "-validator-classname");
         }
         return new ValidationServiceConfig(configNode);

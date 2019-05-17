@@ -15,14 +15,14 @@
  */
 package org.onehippo.cms.services.validation.validator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContextException;
 import org.onehippo.cms.services.validation.api.Validator;
+import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -32,24 +32,24 @@ import static org.onehippo.cms.services.validation.validator.ValidatorTestUtils.
 public class RegExpValidatorTest {
 
     private TestValidationContext context;
-    private Map<String, String> parameters;
+    private Node config;
 
     @Before
-    public void setUp() {
-        parameters = new HashMap<>();
-        parameters.put("regexp.pattern", "[abc]");
+    public void setUp() throws RepositoryException {
+        config = MockNode.root();
+        config.setProperty("regexp.pattern", "[abc]");
     }
 
     @Test(expected = ValidationContextException.class)
     public void throwsExceptionIfRegexpPatternPropertyIsMissing() {
-        new RegExpValidator(Collections.emptyMap());
+        new RegExpValidator(MockNode.root());
     }
 
     @Test
     public void testValidInput() {
         context = new TestValidationContext(null, "String");
 
-        final Validator<String> validator = new RegExpValidator(parameters);
+        final Validator<String> validator = new RegExpValidator(config);
         assertValid(validator.validate(context, "abc"));
         assertFalse(context.isViolationCreated());
     }
@@ -58,7 +58,7 @@ public class RegExpValidatorTest {
     public void testInvalidInput() {
         context = new TestValidationContext(null, "String");
 
-        final Validator<String> validator = new RegExpValidator(parameters);
+        final Validator<String> validator = new RegExpValidator(config);
         assertInvalid(validator.validate(context, "xyz"));
         assertTrue(context.isViolationCreated());
     }

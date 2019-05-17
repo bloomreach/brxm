@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Validator that validates if the value is null, empty or points to the default empty_node, currently the JCR root
@@ -28,11 +29,9 @@ import org.onehippo.cms.services.validation.api.Violation;
  */
 public class NodeReferenceValidator implements Validator<String> {
 
-    private static final String ROOT_NODE_UUID = "cafebabe-cafe-babe-cafe-babecafebabe";
-
     @Override
     public Optional<Violation> validate(final ValidationContext context, final String value) {
-        if (StringUtils.isBlank(value) || value.equals(ROOT_NODE_UUID)) {
+        if (StringUtils.isBlank(value) || value.equals(JcrConstants.ROOT_NODE_ID)) {
             return Optional.of(context.createViolation());
         }
 

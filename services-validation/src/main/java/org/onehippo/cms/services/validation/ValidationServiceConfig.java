@@ -38,20 +38,23 @@ class ValidationServiceConfig {
     }
 
     void reconfigure(final Node config) {
-        validatorInstances.clear();
-
         try {
-            final Node validators = config.getNode("validators");
-            final NodeIterator iterator = validators.getNodes();
-            while (iterator.hasNext()) {
-                final Node configNode = iterator.nextNode();
-                final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(configNode);
-                final String validatorName = validatorConfig.getName();
-                validatorInstances.computeIfAbsent(validatorName,
-                        name -> ValidatorInstanceFactory.createValidatorInstance(validatorConfig));
-            }
+            createValidators(config);
         } catch (final RepositoryException e) {
             log.error("Failed to reconfigure validator service", e);
+        }
+    }
+
+    private void createValidators(final Node config) throws RepositoryException {
+        validatorInstances.clear();
+
+        final NodeIterator iterator = config.getNodes();
+        while (iterator.hasNext()) {
+            final Node validatorConfigNode = iterator.nextNode();
+            final JcrValidatorConfig validatorConfig = new JcrValidatorConfig(validatorConfigNode);
+            final String validatorName = validatorConfig.getName();
+            validatorInstances.computeIfAbsent(validatorName,
+                    name -> ValidatorInstanceFactory.createValidatorInstance(validatorConfig));
         }
     }
 
@@ -63,4 +66,5 @@ class ValidationServiceConfig {
     ValidatorInstance getValidatorInstance(final String name) {
         return validatorInstances.get(name);
     }
+
 }

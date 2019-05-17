@@ -15,15 +15,16 @@
  */
 package org.onehippo.cms.services.validation;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
+
+import javax.jcr.Node;
 
 import org.junit.Test;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
 import org.onehippo.cms.services.validation.api.Violation;
+import org.onehippo.cms.services.validation.api.internal.ValidatorConfig;
+import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class ValidatorFactoryTest {
 
     @Test
-    public void createValidatorWithoutProperties() {
+    public void createValidator() {
         final ValidatorConfig config = new TestValidatorConfig("mockValidator", MockValidator.class.getName());
 
         final Validator validator = ValidatorFactory.createValidator(config);
@@ -44,14 +45,14 @@ public class ValidatorFactoryTest {
     }
 
     @Test
-    public void createValidatorWithProperties() {
-        final Map<String, String> properties = Collections.singletonMap("key", "value");
+    public void createConfigurableValidator() {
+        final Node configNode = MockNode.root();
         final TestValidatorConfig config = new TestValidatorConfig("parameterized",
-                ParameterizedMockValidator.class.getName(), properties);
+                ConfigurableMockValidator.class.getName(), configNode);
 
         final Validator validator = ValidatorFactory.createValidator(config);
 
-        assertThat(((ParameterizedMockValidator)validator).properties, equalTo(properties));
+        assertThat(((ConfigurableMockValidator)validator).node, equalTo(configNode));
     }
 
     @Test
@@ -89,12 +90,12 @@ public class ValidatorFactoryTest {
         }
     }
 
-    public static class ParameterizedMockValidator extends MockValidator {
+    public static class ConfigurableMockValidator extends MockValidator {
 
-        final Map<String, String> properties;
+        final Node node;
 
-        public ParameterizedMockValidator(final Map<String, String> properties) {
-            this.properties = properties;
+        public ConfigurableMockValidator(final Node node) {
+            this.node = node;
         }
     }
 

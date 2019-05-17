@@ -16,7 +16,11 @@
 
 package org.onehippo.cms.services.validation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -27,16 +31,21 @@ class TranslatedViolation implements Violation {
 
     private static final String VALIDATORS_BUNDLE_NAME = "hippo:cms.validators";
 
-    private final String key;
     private final Locale locale;
+    private final List<String> keys = new ArrayList<>();
 
-    TranslatedViolation(final String key, final Locale locale) {
-        this.key = key;
+    TranslatedViolation(final Locale locale, final String key, final String... fallbackKeys) {
         this.locale = locale;
+        keys.add(key);
+        keys.addAll(Arrays.asList(fallbackKeys));
     }
 
-    String getKey() {
-        return key;
+    String getFirstKey() {
+        return keys.get(0);
+    }
+
+    List<String> getKeys() {
+        return keys;
     }
 
     Locale getLocale() {
@@ -47,24 +56,22 @@ class TranslatedViolation implements Violation {
     public String getMessage() {
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService == null) {
-            return missingValue(key);
+            return missingValue();
         }
 
         final ResourceBundle bundle = localizationService.getResourceBundle(VALIDATORS_BUNDLE_NAME, locale);
         if (bundle == null) {
-            return missingValue(key);
+            return missingValue();
         }
 
-        final String value = bundle.getString(key);
-        if (value == null) {
-            return missingValue(key);
-        }
-        return value;
-
+        return keys.stream()
+                .map(bundle::getString)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(missingValue());
     }
 
-    private static String missingValue(final String key) {
-        return "???" + key + "???";
+    private String missingValue() {
+        return "???" + getFirstKey() + "???";
     }
-
 }
