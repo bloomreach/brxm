@@ -26,7 +26,7 @@
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>5.6.4-SNAPSHOT</version>
+  <version>5.6.4</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
@@ -46,7 +46,7 @@
     <hippo.hst.version>5.6.3</hippo.hst.version>
     <hippo.services.webfiles.version>4.6.3</hippo.services.webfiles.version>
     <hippo.services.contenttype.version>4.6.3</hippo.services.contenttype.version>
-    <hippo.services.htmlprocessor.version>12.6.4-SNAPSHOT</hippo.services.htmlprocessor.version>
+    <hippo.services.htmlprocessor.version>12.6.4</hippo.services.htmlprocessor.version>
     <hippo.essentials-components.version>4.6.3</hippo.essentials-components.version>
 
   </properties>
