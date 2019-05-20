@@ -1,5 +1,5 @@
 /*
- * Copyright 2007-2018 Hippo
+ * Copyright 2007-2019 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0.5'>
+
+// MAJOR RELEASE MARKER NODETYPES (abstract): DO NOT EXTEND!
+[hipposys:ntd_v13] abstract
 
 // REPOSITORY: DOCUMENT DATA TYPES AND MARKERS
 

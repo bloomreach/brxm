@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,12 +32,14 @@ import javax.management.ObjectName;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.api.stats.RepositoryStatistics;
+import org.apache.jackrabbit.core.ExtendedJackrabbitRepositoryImpl;
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.apache.jackrabbit.core.SearchManager;
 import org.apache.jackrabbit.core.cluster.ClusterNode;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.fs.db.DatabaseFileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.journal.ExternalRepositorySyncRevisionServiceImpl;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
@@ -62,7 +64,7 @@ import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl implements InternalHippoRepository {
+public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements InternalHippoRepository {
 
     public static final String REPOSITORY_STATS_JMX_NAME = "org.hippoecm.repository:type=Repository,name=statistics";
 
@@ -242,6 +244,23 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     @Override
     protected NodeTypeRegistry createNodeTypeRegistry() throws RepositoryException {
         return new HippoNodeTypeRegistry(context.getNamespaceRegistry(), context.getFileSystem());
+    }
+
+    /**
+     * Create a HippoClusterNode which provides special handling (ignore) of initial cluster sync events for the
+     * NodeTypeRegistry, NamespaceRegistry and PrivilegeRegistry when they are persisted in the database.
+     * @return HippoClusterNode instead of (Jackrabbit)ClusterNode
+     * @throws RepositoryException
+     */
+    @Override
+    protected ClusterNode createClusterNode() throws RepositoryException {
+        try {
+            HippoClusterNode clusterNode = new HippoClusterNode(getFileSystem() instanceof DatabaseFileSystem);
+            clusterNode.init(createClusterContext());
+            return clusterNode;
+        } catch (Exception e) {
+            throw new RepositoryException(e);
+        }
     }
 
     protected NodeId getRootNodeId() {
