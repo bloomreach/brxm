@@ -100,7 +100,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
             final String configurationParameter = PluginApplication.get()
-                    .getConfigurationParameter(Main.PLUGIN_APPLICATION_SHOW_PERSPECTIVE_MENU_PARAMETER
+                    .getConfigurationParameter(Main.PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER
                             , Boolean.FALSE.toString());
             final boolean showPerspectiveMenu = Boolean.parseBoolean(configurationParameter);
             context.registerService(new NestedBrowserContextService(!showPerspectiveMenu)
