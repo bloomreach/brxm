@@ -85,10 +85,14 @@ class nodeLinkController {
   }
 
   openLinkPicker() {
-    const uuid = this.ngModel.$modelValue;
-    return this.PickerService.pickLink(this.config.linkpicker, { uuid })
-      .then(link => this._onLinkPicked(link))
-      .catch(() => this._focusSelectButton());
+    if (!this._linkPickerPromise) {
+      const uuid = this.ngModel.$modelValue;
+      this._linkPickerPromise = this.PickerService.pickLink(this.config.linkpicker, { uuid })
+        .then(link => this._onLinkPicked(link))
+        .catch(() => this._focusSelectButton())
+        .finally(() => delete this._linkPickerPromise);
+    }
+    return this._linkPickerPromise;
   }
 
   _onLinkPicked(link) {
