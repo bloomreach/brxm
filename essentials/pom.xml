@@ -27,7 +27,7 @@
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>12.6.4-SNAPSHOT</version>
+  <version>12.6.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
