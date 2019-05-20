@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
@@ -31,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
@@ -43,16 +43,10 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.UserGroupListPanel;
 
 public class PermissionsPanel extends AdminBreadCrumbPanel {
 
-    /**
-     * Visibility toggle so that either the link or the form is visible.
-     */
-    private boolean formVisible = false;
-
     public PermissionsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext pluginContext) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        final List<String> roles = Group.getAllRoles();
         final List<IColumn<Domain, String>> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-header"), "name") {
@@ -63,24 +57,20 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
                 final AjaxLinkLabel action = new AjaxLinkLabel(componentId, PropertyModel.of(model, "name")) {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
-                        activate(new IBreadCrumbPanelFactory() {
-                            public BreadCrumbPanel create(final String componentId,
-                                                          final IBreadCrumbModel breadCrumbModel) {
-                                return new SetPermissionsPanel(componentId, breadCrumbModel, model);
-                            }
-                        });
+                        activate((IBreadCrumbPanelFactory) (componentId1, breadCrumbModel1) -> new SetPermissionsPanel(componentId1, breadCrumbModel1, model));
                     }
                 };
                 item.add(action);
             }
         });
 
+        final List<String> roles = Group.getAllRoles();
         for (final String role : roles) {
             columns.add(new AbstractColumn<Domain, String>(new Model<>("Role: " + role)) {
                 public void populateItem(final Item<ICellPopulator<Domain>> cellItem, final String componentId, final IModel<Domain> model) {
                     final Domain domain = model.getObject();
-                    final ArrayList<User> userList = new ArrayList<>();
-                    final ArrayList<Group> groupList = new ArrayList<>();
+                    final List<User> userList = new ArrayList<>();
+                    final List<Group> groupList = new ArrayList<>();
 
                     final Domain.AuthRole authRole = domain.getAuthRoles().get(role);
 
@@ -106,15 +96,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
             });
         }
 
-
-        final AdminDataTable<Domain> table = new AdminDataTable<Domain>("table", columns, new DomainDataProvider(), 20) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public boolean isVisible() {
-                return !formVisible;
-            }
-        };
+        final AdminDataTable<Domain> table = new AdminDataTable<Domain>("table", columns, new DomainDataProvider(), 20);
         add(table);
     }
 
