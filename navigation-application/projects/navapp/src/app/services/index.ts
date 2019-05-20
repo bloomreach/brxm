@@ -4,3 +4,4 @@
 
 export * from './navigation-configuration.service';
 export * from './navapp-settings.service';
+export * from './communications.service';

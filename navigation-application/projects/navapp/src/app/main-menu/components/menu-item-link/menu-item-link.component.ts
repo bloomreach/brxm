@@ -4,7 +4,6 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { CommunicationsService } from '../../../communication/services';
 import { MenuItemLink } from '../../models';
 import { MenuStateService } from '../../services';
 
@@ -23,13 +22,11 @@ export class MenuItemLinkComponent {
 
   constructor(
     private menuStateService: MenuStateService,
-    private communicationsService: CommunicationsService,
   ) {}
 
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
     this.menuStateService.setActiveItem(this.config);
-    this.communicationsService.navigate(this.config.appId, this.config.appPath);
   }
 }

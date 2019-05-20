@@ -1,5 +1,5 @@
 export interface ChildConnectConfig {
-  iframe: HTMLElement;
+  iframe: HTMLIFrameElement;
   methods?: ParentApi;
 }
 

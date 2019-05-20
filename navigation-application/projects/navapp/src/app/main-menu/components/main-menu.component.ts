@@ -5,7 +5,6 @@
 import { Component, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { CommunicationsService } from '../../communication/services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
@@ -17,7 +16,6 @@ import { MenuStateService } from '../services';
 export class MainMenuComponent {
   constructor(
     private menuStateService: MenuStateService,
-    private communicationsService: CommunicationsService,
   ) {}
 
   get collapsed(): boolean {
@@ -54,7 +52,6 @@ export class MainMenuComponent {
 
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
-      this.communicationsService.navigate(item.appId, item.appPath);
       return;
     }
 
