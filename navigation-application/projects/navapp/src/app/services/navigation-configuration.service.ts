@@ -11,14 +11,14 @@ import { NavConfigResource, NavItem } from '../models';
 
 import { NavAppSettingsService } from './navapp-settings.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class NavigationConfigurationService {
   private readonly hostElement: HTMLElement;
   private readonly renderer: Renderer2;
 
-  private navigationConfiguration = new BehaviorSubject<Map<string, NavItem>>(
-    new Map(),
-  );
+  private navigationConfiguration = new BehaviorSubject<Map<string, NavItem>>(new Map());
 
   constructor(
     private http: HttpClient,
@@ -60,8 +60,8 @@ export class NavigationConfigurationService {
     }
   }
 
-  private getConfigFromREST(url: string): any {
-    return this.http.get(url);
+  private getConfigFromREST(url: string): Promise<NavItem[]> {
+    return this.http.get<NavItem[]>(url).toPromise();
   }
 
   private getConfigFromIframe(url: string): Promise<NavItem[]> {

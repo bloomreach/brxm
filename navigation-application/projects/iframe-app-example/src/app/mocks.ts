@@ -3,37 +3,37 @@ import { NavItem } from '@bloomreach/navapp-communication';
 export const navigationConfiguration: NavItem[] = [
   {
     id: 'experience-manager',
-    appIframeUrl: 'localhost:4201/brxm',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'experience-manager',
   },
   {
     id: 'projects',
-    appIframeUrl: 'localhost:4201/brxm',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'projects',
   },
   {
     id: 'category-ranking',
-    appIframeUrl: 'localhost:4201/brsm/category-ranking',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'category-ranking',
   },
   {
     id: 'all-category-pages',
-    appIframeUrl: 'localhost:4201/brsm/all-category-pages',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'all-category-pages',
   },
   {
     id: 'top-opportunities',
-    appIframeUrl: 'localhost:4201/brsm/opportunities',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'top-opportunities',
   },
   {
     id: 'improve-category-navigation',
-    appIframeUrl: 'localhost:4201/brsm/improve-category-navigation',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'improve-category-navigation',
   },
   {
     id: 'product-a-b-testing',
-    appIframeUrl: 'localhost:4201/brsm/product-a-b-testing',
+    appIframeUrl: 'http://localhost:4201',
     appPath: 'product-a-b-testing',
   },
 ];

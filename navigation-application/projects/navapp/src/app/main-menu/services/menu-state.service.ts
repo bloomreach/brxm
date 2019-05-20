@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { CommunicationsService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
 import { MenuBuilderService } from './menu-builder.service';
@@ -17,11 +18,10 @@ export class MenuStateService implements OnDestroy {
 
   constructor(
     private menuBuilderService: MenuBuilderService,
+    private communicationsService: CommunicationsService,
   ) {
     this.menusStream$ = this.menuBuilderService.buildMenu();
-    this.menusStream$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(menu => {
+    this.menusStream$.pipe(takeUntil(this.unsubscribe)).subscribe(menu => {
       if (this.currentMenu && this.currentMenu.length) {
         throw new Error(
           'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.',
@@ -56,6 +56,7 @@ export class MenuStateService implements OnDestroy {
   setActiveItem(item: MenuItemLink): void {
     this.closeDrawer();
     this.breadcrumbs = this.buildBreadcrumbs(this.currentMenu, item);
+    this.communicationsService.navigate(item.appId, item.appPath);
   }
 
   isMenuItemActive(item: MenuItem): boolean {

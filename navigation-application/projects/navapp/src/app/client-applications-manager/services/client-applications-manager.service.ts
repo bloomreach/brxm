@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
-import { NavigationConfigurationService } from '../../services';
+import { NavigationConfigurationService } from '../../services/navigation-configuration.service';
 import { ClientApplicationConfiguration, ClientApplicationHandler } from '../models';
 
 import { ClientApplicationsRegistryService } from './client-applications-registry.service';
@@ -18,20 +18,20 @@ export class ClientApplicationsManagerService {
   private applicationsConfigurations: ClientApplicationConfiguration[];
   private applications$ = new Subject<ClientApplicationHandler>();
 
-  get applicationCreated$(): Observable<ClientApplicationHandler> {
-    return this.applications$.asObservable();
-  }
-
   constructor(
     private registry: ClientApplicationsRegistryService,
-    navConfigService: NavigationConfigurationService,
-    rendererFactory: RendererFactory2,
+    private navConfigService: NavigationConfigurationService,
+    private rendererFactory: RendererFactory2,
   ) {
-    this.renderer = rendererFactory.createRenderer(undefined, undefined);
+    this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
 
-    navConfigService.navigationConfiguration$.pipe(
-      map(navConfig => this.buildClientApplicationsConfigurations(navConfig.values())),
-    ).subscribe(appConfigs => this.applicationsConfigurations = appConfigs);
+    this.navConfigService.navigationConfiguration$
+      .pipe(map(navConfig => this.buildClientApplicationsConfigurations(navConfig.values())))
+      .subscribe(appConfigs => (this.applicationsConfigurations = appConfigs));
+  }
+
+  get applicationCreated$(): Observable<ClientApplicationHandler> {
+    return this.applications$.asObservable();
   }
 
   getApplicationHandler(id: string): ClientApplicationHandler {
@@ -63,7 +63,9 @@ export class ClientApplicationsManagerService {
 
   private tryToCreateAnIframe(id: string): ClientApplicationHandler {
     if (!this.applicationsConfigurations) {
-      throw new Error('An attempt to access applications configuration before it has been initialized.');
+      throw new Error(
+        'An attempt to access applications configuration before it has been initialized.',
+      );
     }
 
     const clientAppConfig = this.applicationsConfigurations.find(config => config.url === id);
@@ -77,16 +79,17 @@ export class ClientApplicationsManagerService {
     return new ClientApplicationHandler(clientAppConfig.url, iframeEl);
   }
 
-  private buildClientApplicationsConfigurations(navConfig: IterableIterator<NavItem>): ClientApplicationConfiguration[] {
-    const uniqueUrlsSet = Array.from(navConfig).reduce(
-      (uniqueUrls, config) => {
-        uniqueUrls.add(config.appIframeUrl);
-        return uniqueUrls;
-      },
-      new Set<string>(),
-    );
+  private buildClientApplicationsConfigurations(
+    navConfig: IterableIterator<NavItem>,
+  ): ClientApplicationConfiguration[] {
+    const uniqueUrlsSet = Array.from(navConfig).reduce((uniqueUrls, config) => {
+      uniqueUrls.add(config.appIframeUrl);
+      return uniqueUrls;
+    }, new Set<string>());
 
-    return Array.from(uniqueUrlsSet.values()).map(url => new ClientApplicationConfiguration(url, url));
+    return Array.from(uniqueUrlsSet.values()).map(
+      url => new ClientApplicationConfiguration(url, url),
+    );
   }
 
   private createIframe(url: string): HTMLIFrameElement {
