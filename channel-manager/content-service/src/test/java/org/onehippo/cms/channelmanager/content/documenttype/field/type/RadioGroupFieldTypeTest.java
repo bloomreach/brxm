@@ -38,9 +38,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -63,6 +65,8 @@ public class RadioGroupFieldTypeTest {
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_ORDER)).andReturn(Optional.of("descending"));
         expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
+        expect(fieldTypeContext.getStringConfig(Config.VALUELIST_PROVIDER))
+                .andReturn(Optional.of("service.valuelist.default"));
 
         replayAll();
 
@@ -74,6 +78,30 @@ public class RadioGroupFieldTypeTest {
         assertThat(radioGroupFieldType.getSortOrder(), equalTo("descending"));
         assertThat(radioGroupFieldType.getOrientation(), equalTo("vertical"));
 
+        verifyAll();
+        assertThat(radioGroupFieldType.getValueListProvider(), equalTo("service.valuelist.default"));
+        assertTrue(radioGroupFieldType.isSupported());
+    }
+    
+    @Test
+    public void testUnsupportedWithNonDefaultValueListProvider() {
+        final RadioGroupFieldType radioGroupFieldType = new RadioGroupFieldType();
+        FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(radioGroupFieldType)
+                .jcrName("myproject:radiogroup").build();
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_ORDER)).andReturn(Optional.of("descending"));
+        expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
+        expect(fieldTypeContext.getStringConfig(Config.VALUELIST_PROVIDER))
+                .andReturn(Optional.of("service.valuelist.custom"));
+
+        replayAll();
+
+        radioGroupFieldType.init(fieldTypeContext);
+        
+        assertFalse(radioGroupFieldType.isSupported());
+        
         verifyAll();
     }
 

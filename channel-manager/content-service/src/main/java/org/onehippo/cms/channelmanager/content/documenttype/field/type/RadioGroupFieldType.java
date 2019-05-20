@@ -28,6 +28,7 @@ public class RadioGroupFieldType extends PropertyFieldType {
     private String sortBy = null;
     private String sortOrder = null;
     private String orientation = null;
+    private String valueListProvider = null;
 
     public RadioGroupFieldType() {
         setType(Type.RADIO_GROUP);
@@ -40,9 +41,20 @@ public class RadioGroupFieldType extends PropertyFieldType {
         fieldContext.getStringConfig(Config.SORT_BY).ifPresent(this::setSortBy);
         fieldContext.getStringConfig(Config.SORT_ORDER).ifPresent(this::setSortOrder);
         fieldContext.getStringConfig(Config.ORIENTATION).ifPresent(this::setOrientation);
+        fieldContext.getStringConfig(Config.VALUELIST_PROVIDER).ifPresent(this::setValueListProvider);
         return super.init(fieldContext);
     }
 
+    @Override
+    public boolean isSupported() {
+        return isDefaultValueListProvider() && super.isSupported();
+    }
+
+    private boolean isDefaultValueListProvider() {
+        return StringUtils.isBlank(valueListProvider) || 
+               StringUtils.equals(valueListProvider, "service.valuelist.default"); 
+    }
+    
     @Override
     protected String getDefault() {
         return StringUtils.EMPTY;
@@ -91,5 +103,13 @@ public class RadioGroupFieldType extends PropertyFieldType {
 
     private void setOrientation(final String orientation) {
         this.orientation = orientation;
+    }
+
+    public String getValueListProvider() {
+        return valueListProvider;
+    }
+
+    public void setValueListProvider(final String valueListProvider) {
+        this.valueListProvider = valueListProvider;
     }
 }
