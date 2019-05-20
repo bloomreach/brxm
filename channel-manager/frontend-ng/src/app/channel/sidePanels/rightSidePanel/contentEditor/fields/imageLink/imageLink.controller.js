@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,10 +76,14 @@ class ImageLinkController {
   }
 
   openImagePicker() {
-    const uuid = this.ngModel.$modelValue;
-    return this.PickerService.pickImage(this.config.imagepicker, { uuid })
-      .then(image => this._onImagePicked(image))
-      .catch(() => this.setFocus());
+    if (!this._imagePickerPromise) {
+      const uuid = this.ngModel.$modelValue;
+      this._imagePickerPromise = this.PickerService.pickImage(this.config.imagepicker, { uuid })
+        .then(image => this._onImagePicked(image))
+        .catch(() => this.setFocus())
+        .finally(() => delete this._imagePickerPromise);
+    }
+    return this._imagePickerPromise;
   }
 
   _onImagePicked(image) {

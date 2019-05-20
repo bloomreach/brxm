@@ -262,6 +262,21 @@ describe('nodeLinkController', () => {
       });
       $scope.$digest();
     });
+
+    it('never opens more than one picker at a time', () => {
+      const deferred = $q.defer();
+      PickerService.pickLink.and.returnValue(deferred.promise);
+
+      $ctrl.openLinkPicker();
+      $ctrl.openLinkPicker();
+      expect(PickerService.pickLink.calls.count()).toBe(1);
+
+      deferred.resolve();
+      $scope.$digest();
+
+      $ctrl.openLinkPicker();
+      expect(PickerService.pickLink.calls.count()).toBe(2);
+    });
   });
 
   describe('clear link', () => {
