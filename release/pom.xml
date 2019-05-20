@@ -143,9 +143,14 @@
       ${docker.brxm.jvm.args}
     </docker.brxm.envRun.JAVA_OPTS>
 
-    <!-- Default user and user id for brXM container -->
+    <!-- Default user, user id and group id for brXM container -->
     <docker.brxm.container.username>brxmuser</docker.brxm.container.username>
     <docker.brxm.container.uid>1001</docker.brxm.container.uid>
+    <docker.brxm.container.gid>1001</docker.brxm.container.gid>
+    <docker.brxm.container.dev.username>brxmdevuser</docker.brxm.container.dev.username>
+    <!-- GID is set as 1000 by default to avoid getting permission error on most Linux systems in the local development-->
+    <docker.brxm.container.dev.gid>1000</docker.brxm.container.dev.gid>
+    <docker.brxm.container.dev.uid>1000</docker.brxm.container.dev.uid>
 
   </properties>
 
