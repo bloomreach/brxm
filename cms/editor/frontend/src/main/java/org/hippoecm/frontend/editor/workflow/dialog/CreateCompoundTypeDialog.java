@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
         private TextFieldWidget nameComponent;
 
         TypeDetailStep(NewCompoundTypeAction action) {
-            super(new ResourceModel("type-detail-title"), new ResourceModel("compound-type-detail-summary"));
+            super(new ResourceModel("type-detail-title"), null);
 
             final IModel<String> nameLabel = new ResourceModel("name-caption");
             nameComponent = new RequiredTextFieldWidget("name", PropertyModel.of(action, "name"), nameLabel);

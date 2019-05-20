@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -99,8 +98,8 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
         final SearchTermPanel searchTermPanel = new SearchTermPanel("search-field") {
             @Override
-            public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
-                super.processSubmit(target, form, searchTerm);
+            public void processSubmit(final AjaxRequestTarget target, final String searchTerm) {
+                super.processSubmit(target, searchTerm);
                 groupDataProvider.setSearchTerm(searchTerm);
                 target.add(table);
             }

@@ -90,12 +90,11 @@ OpenUi = new class {
       url: iframeUrl,
       iframe: iframe,
       appendTo: iframeParentElement,
-      methods: {
+      methods: Object.assign({
         emitEvent: emitter.emit.bind(emitter),
-        getProperties: () => this._getProperties(parameters),
-        openDialog: (options) => this.openDialog(options, parameters),
-        ...methods,
-      }
+        getProperties: this._getProperties.bind(this, parameters),
+        openDialog: this.openDialog.bind(this, parameters),
+      }, methods)
     });
     Object.assign(connection, { emitter });
     return connection;
@@ -109,16 +108,6 @@ OpenUi = new class {
   }
 
   _getExtensionUrl(url, base) {
-    return this._isAbsoluteUrl(url)
-      ? this._getAbsoluteUrl(url)
-      : this._getAbsoluteUrl(url, base)
-  }
-
-  _isAbsoluteUrl(url) {
-    return url.startsWith('http://') || url.startsWith('https://');
-  }
-
-  _getAbsoluteUrl(url, base) {
     const absUrl = new URL(url, base);
     this._addQueryParameters(absUrl);
     return absUrl;
@@ -159,7 +148,7 @@ OpenUi = new class {
     }
   }
 
-  openDialog(options, parameters) {
+  openDialog(parameters, options) {
     if (this.dialog) {
       return Promise.reject({
         code: 'DialogExists',

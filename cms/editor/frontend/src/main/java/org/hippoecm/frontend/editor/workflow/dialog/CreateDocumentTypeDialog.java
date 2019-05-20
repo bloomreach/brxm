@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
         private TextFieldWidget nameComponent;
 
         TypeDetailStep(NewDocumentTypeAction action, final List<String> candidatesSuperTypes) {
-            super(new ResourceModel("type-detail-title"), new ResourceModel("type-detail-summary"));
+            super(new ResourceModel("type-detail-title"), null);
 
             final DropDownChoice<String> superTypeChoice = new DropDownChoice<>("super-type-list",
                     new PropertyModel<>(action, "superType"), candidatesSuperTypes);

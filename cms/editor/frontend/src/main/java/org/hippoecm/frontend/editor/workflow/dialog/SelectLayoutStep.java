@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class SelectLayoutStep extends WizardStep {
     private final ILayoutProvider layoutProvider;
 
     public SelectLayoutStep(final IModel<String> layoutModel, final ILayoutProvider layouts) {
-        super(new ResourceModel("select-layout-title"), new ResourceModel("select-layout-summary"));
+        super(new ResourceModel("select-layout-title"), null);
 
         this.layoutProvider = layouts;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class SearchTermPanel extends Panel {
 
+    private final AjaxSubmitLink browseLink;
     private String searchTerm = StringUtils.EMPTY;
     private boolean searchActive = false;
 
@@ -47,7 +48,7 @@ public class SearchTermPanel extends Panel {
             @Override
             public void onEnter(final AjaxRequestTarget target) {
                 super.onEnter(target);
-                processSubmit(target, form, searchTerm);
+                processSubmit(target, searchTerm);
             }
         };
 
@@ -56,23 +57,23 @@ public class SearchTermPanel extends Panel {
         search.add(new DefaultFocusBehavior());
         form.add(search);
 
-        final AjaxSubmitLink browseLink = new AjaxSubmitLink("toggle") {
+        browseLink = new AjaxSubmitLink("toggle") {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 // when searchActive this link is the remove link
                 if (searchActive) {
                     searchTerm = null;
                 }
-                processSubmit(target, form, searchTerm);
+                processSubmit(target, searchTerm);
             }
         };
         browseLink.add(createSearchIcon());
         form.add(browseLink);
     }
 
-    public void processSubmit(final AjaxRequestTarget target, final Form<?> form, final String searchTerm) {
+    public void processSubmit(final AjaxRequestTarget target, final String searchTerm) {
         searchActive = StringUtils.isNotBlank(searchTerm);
-        target.add(form);
+        target.add(browseLink);
     }
 
     private Component createSearchIcon() {
