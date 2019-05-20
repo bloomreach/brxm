@@ -14,25 +14,25 @@ export class MenuStructureService {
 
   private createMenuStructure(): MenuItem[] {
     const home = new MenuItemLink(
-      'hippo-perspective-dashboardperspective"',
+      'hippo-perspective-dashboardperspective',
       'Home',
       'home',
     );
 
     const experienceManager = new MenuItemLink(
-      'hippo-perspective-channelmanagerperspective"',
+      'hippo-perspective-channelmanagerperspective',
       'Experience Manager',
       'experience-manager',
     );
 
     const projects = new MenuItemLink(
-      'hippo-perspective-projecstperspective"',
+      'hippo-perspective-projecstperspective',
       'Projects',
       'projects',
     );
 
     const content = new MenuItemLink(
-      'hippo-perspective-browserperspective"',
+      'hippo-perspective-browserperspective',
       'Content',
       'documents',
     );
