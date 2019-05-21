@@ -24,6 +24,11 @@ import java.util.Collection;
 public interface ResourceCollection extends Iterable<Resource> {
 
     /**
+     * Empty {@link ResourceCollection} object.
+     */
+    final ResourceCollection EMPTY = new EmptyResourceCollection();
+
+    /**
      * Returns a read-only collection over elements of type {@code Resource}.
      * <P>
      * This method is provided for templating language such as Freemarker

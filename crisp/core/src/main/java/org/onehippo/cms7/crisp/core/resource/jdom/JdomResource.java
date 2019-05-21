@@ -166,6 +166,11 @@ public class JdomResource extends AbstractResource {
     @Override
     public ResourceCollection getChildren(long offset, long limit) {
         final List<Resource> allChildren = getInternalAllChildren();
+
+        if (offset < 0 || offset >= allChildren.size()) {
+            throw new IllegalArgumentException("Invalid offset: " + offset + " (size = " + allChildren.size() + ")");
+        }
+
         return new ListResourceCollection(ResourceCollectionUtils.createSubList(allChildren, offset, limit));
     }
 

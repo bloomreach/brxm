@@ -186,6 +186,10 @@ public abstract class AbstractResource implements Resource {
      */
     @Override
     public ResourceCollection getChildren() {
+        if (!isAnyChildContained()) {
+            return ResourceCollection.EMPTY;
+        }
+
         return getChildren(0L, -1L);
     }
 

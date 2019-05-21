@@ -283,4 +283,50 @@ public class JacksonResourceTest {
         final String nodeDataInJson = objectMapper.writeValueAsString(rootResource.getNodeData());
         assertEquals(rootNodeInJson, nodeDataInJson);
     }
+
+    @Test
+    public void testGetChildrenOnEmptyResource() throws Exception {
+        final JsonNode node = objectMapper.readTree("{}");
+        JacksonResource resource = new JacksonResource(node);
+        assertFalse(resource.isAnyChildContained());
+        assertEquals(0, resource.getChildCount());
+        ResourceCollection children = resource.getChildren();
+        assertNotNull(children);
+        assertEquals(0, children.size());
+    }
+
+    @Test
+    public void testGetChildrenOnNonEmptyResource() throws Exception {
+        final JsonNode node = objectMapper.readTree("{ \"a\": { \"a1\": \"v1\" }, \"b\": { \"b1\": \"v2\" } }");
+        JacksonResource resource = new JacksonResource(node);
+        assertTrue(resource.isAnyChildContained());
+        assertEquals(2, resource.getChildCount());
+        ResourceCollection children = resource.getChildren();
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, -1);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, 2);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, 3);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        try {
+            children = resource.getChildren(-1, 2);
+            fail("Should have had an IllegalArgumentException for the negative offset.");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            children = resource.getChildren(2, 2);
+            fail("Should have had an IllegalArgumentException for the out-of-bound offset.");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
 }

@@ -16,6 +16,7 @@
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,7 @@ import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
 import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -264,4 +266,53 @@ public class JdomResourceTest {
         assertEquals(rootNodeInXml, nodeDataInXml);
     }
 
+    @Test
+    public void testGetChildrenOnEmptyResource() throws Exception {
+        SAXBuilder jdomBuilder = new SAXBuilder();
+        Document jdomDocument = jdomBuilder.build(new StringReader("<resource></resource>"));
+        Element element = jdomDocument.getRootElement();
+        JdomResource resource = new JdomResource(element);
+        assertFalse(resource.isAnyChildContained());
+        assertEquals(0, resource.getChildCount());
+        ResourceCollection children = resource.getChildren();
+        assertNotNull(children);
+        assertEquals(0, children.size());
+    }
+
+    @Test
+    public void testGetChildrenOnNonEmptyResource() throws Exception {
+        SAXBuilder jdomBuilder = new SAXBuilder();
+        Document jdomDocument = jdomBuilder.build(new StringReader("<resource><a a1=\"v1\"/><b b1=\"v2\"/></resource>"));
+        Element element = jdomDocument.getRootElement();
+        JdomResource resource = new JdomResource(element);
+        assertTrue(resource.isAnyChildContained());
+        assertEquals(2, resource.getChildCount());
+        ResourceCollection children = resource.getChildren();
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, -1);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, 2);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        children = resource.getChildren(0, 3);
+        assertNotNull(children);
+        assertEquals(2, children.size());
+
+        try {
+            children = resource.getChildren(-1, 2);
+            fail("Should have had an IllegalArgumentException for the negative offset.");
+        } catch (IllegalArgumentException expected) {
+        }
+
+        try {
+            children = resource.getChildren(2, 2);
+            fail("Should have had an IllegalArgumentException for the out-of-bound offset.");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
 }
