@@ -17,14 +17,17 @@
 
 package org.hippoecm.frontend;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
@@ -45,7 +48,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
-    private String url = "http://localhost:4200/";
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -60,33 +62,40 @@ public class NavAppHeaderItem extends HeaderItem {
 
         StringHeaderItem.forString("<base href=" + contextPath + "/>").render(response);
 
-        final String javascript = String.format("NavAppSettings = %s;", parse(getSettings(contextPath, userSession)));
+        final NavAppSettings navAppSettings = getSettings(contextPath, userSession);
+        final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
+
+        final NavAppSettings.AppSettings appSettings = navAppSettings.getAppSettings();
+        final Optional<URL> optionalURL = Optional.ofNullable(appSettings.getNavAppLocation());
 
         JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
 
-        boolean fallBackToPackagedNavapp = false;
-        boolean development = true;
-        final Stream<String> resourcesStream = Stream.of("runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js");
-        resourcesStream
-                .forEach(resourceName -> {
-                    final ResourceReference reference = fallBackToPackagedNavapp ? getPackagedReference(resourceName) : getUrlResourceReference(resourceName);
-                    if (development){
-                        final ResourceReference mapReference = getUrlResourceReference(resourceName + ".map");
-                        final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(mapReference);
-                        item.setDefer(true);
-                        item.render(response);
-                    }
-                    final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(reference);
+        final String[] jsResources = new String[]{"runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js"};
+        final List<String> resourcesList = new ArrayList<>(Arrays.asList(jsResources));
+        if (isLocalDevelopment()){
+            final List<String> jsMapResources = resourcesList.stream().map(s -> s + ".map").collect(Collectors.toList());
+            resourcesList.addAll(jsMapResources);
+        }
+        resourcesList.stream()
+                .map(name -> optionalURL.map(url -> getUrlResourceReference(name, url.toString()))
+                        .orElse(getPackagedReference(name)))
+                .map(JavaScriptHeaderItem::forReference)
+                .forEach(item -> {
                     item.setDefer(true);
                     item.render(response);
                 });
     }
 
-    protected UrlResourceReference getUrlResourceReference(final String resourceName) {
+
+    private boolean isLocalDevelopment() {
+        return "development".equals(System.getProperty("wicket.configuration"));
+    }
+
+    private ResourceReference getUrlResourceReference(final String resourceName, final String url) {
         return new UrlResourceReference(Url.parse(String.format("%s/%s", url, resourceName)));
     }
 
-    protected JavaScriptResourceReference getPackagedReference(final String resourceName) {
+    private ResourceReference getPackagedReference(final String resourceName) {
         return new JavaScriptResourceReference(getClass(), resourceName);
     }
 
@@ -108,6 +117,12 @@ public class NavAppHeaderItem extends HeaderItem {
 
         final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
         appSettings.setNavConfigResources(navConfigResources);
+        final String navappLocation = System.getProperty("navapp.location", null);
+        try {
+            appSettings.setNavAppLocation(new URL(navappLocation));
+        } catch (MalformedURLException e) {
+            log.warn(e.getMessage(), e);
+        }
         navAppSettings.setAppSettings(appSettings);
         return navAppSettings;
     }
