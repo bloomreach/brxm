@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 
+import { QaHelperService } from '../../../services';
 import { MenuItem, MenuItemContainer } from '../../models';
 import { MenuStateService } from '../../services';
 
@@ -38,6 +39,7 @@ export class MenuDrawerComponent implements OnChanges {
 
   constructor(
     private menuStateService: MenuStateService,
+    private qaHelperService: QaHelperService,
     private elRef: ElementRef,
   ) {}
 
@@ -53,6 +55,10 @@ export class MenuDrawerComponent implements OnChanges {
 
   isActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
+  }
+
+  getQaClass(item: MenuItem): string {
+    return this.qaHelperService.getMenuItemClass(item);
   }
 
   @HostListener('document:click', ['$event'])

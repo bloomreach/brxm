@@ -5,3 +5,4 @@
 export * from './navigation-configuration.service';
 export * from './navapp-settings.service';
 export * from './communications.service';
+export * from './qa-helper.service';

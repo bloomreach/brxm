@@ -5,6 +5,7 @@
 import { Component, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { QaHelperService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
@@ -16,6 +17,7 @@ import { MenuStateService } from '../services';
 export class MainMenuComponent {
   constructor(
     private menuStateService: MenuStateService,
+    private qaHelperService: QaHelperService,
   ) {}
 
   get collapsed(): boolean {
@@ -62,5 +64,9 @@ export class MainMenuComponent {
 
   isMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
+  }
+
+  getQaClass(item: MenuItem | string): string {
+    return this.qaHelperService.getMenuItemClass(item);
   }
 }
