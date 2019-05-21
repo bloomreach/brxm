@@ -1,4 +1,19 @@
-= Update the navapp and navapp-communication libary
+= README
+
+== Local development
+
+Start the navigation application with the following parameters:
+
+[source, bash]
+----
+ng serve  --deploy-url="http://localhost:4200/" --serve-path="/" --publicHost="http://localhost:4200" <1>
+cp -Rv dist/navapp/assets $exploded_cms_dir_in_tomcat/ <2>
+----
+<1> deploy-url will prepend js resource with the full url, serve-path will reset the path to the root and
+publicHost will make sure the socket to reload the app will use the right location
+<2> Make sure assets have the same relative path as in the angular app
+
+== Update the navapp and navapp-communication libary
 
 The navigation application ( https://www.npmjs.com/package/@bloomreach/navapp[navapp] )
 and the navigation applicaiton communication library ( https://www.npmjs.com/package/@bloomreach/navapp-communication[navapp-communication] ) are projects
