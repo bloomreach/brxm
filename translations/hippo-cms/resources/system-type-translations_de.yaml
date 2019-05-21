@@ -28,3 +28,7 @@ definitions:
       /de:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Zahl
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Offener String der Benutzerschnittstelle

@@ -7,6 +7,8 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:types/selection:listitem:
       /nl:
         jcr:primaryType: hipposys:resourcebundle
+        selection:label: Waarde
+        selection:key: Sleutel
         jcr:name: Waardelijst item
     /hippo:configuration/hippo:translations/hippo:types/selection:StaticDropdown:
       /nl:
@@ -20,6 +22,7 @@ definitions:
       /nl:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Waardelijst
+        selection:listitem: Waarden
     /hippo:configuration/hippo:translations/hippo:types/selection:BooleanRadioGroup:
       /nl:
         jcr:primaryType: hipposys:resourcebundle

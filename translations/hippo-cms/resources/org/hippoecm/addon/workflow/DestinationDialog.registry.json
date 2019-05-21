@@ -2,58 +2,28 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot move document when document with same name exists" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=missing required name to copy document" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "permission.denied" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot move document to same folder" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot copy document when document with same name exists" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "foldertypes.denied" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "de" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

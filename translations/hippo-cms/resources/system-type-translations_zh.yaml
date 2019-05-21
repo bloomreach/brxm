@@ -28,3 +28,7 @@ definitions:
       /zh:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: 十进制数
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /zh:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: 打开 UI 字符串
