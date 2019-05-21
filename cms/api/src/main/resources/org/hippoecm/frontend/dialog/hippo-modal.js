@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -174,6 +174,14 @@
     if (this.settings.resizable) {
       this.resizer = new WicketWindowResizer();
     }
+
+    if (this.settings.heightUnit === '%') {
+      const dialogBoundaryHeight = ['.w_top', '.w_bottom', '.w_caption']
+        .map(selector => $(selector).height())
+        .reduce((x, y) => x + y);
+      this.content.style.height = `calc(${this.settings.height}vh - ${dialogBoundaryHeight}px)`;
+      this.center();
+    }
   };
 
   Wicket.Window.prototype.toggleFullscreen = function () {
@@ -324,7 +332,7 @@
       width: (Wicket.Window.current.width + deltaX < this.initialWidth) ? 0 : deltaX,
     };
   };
-  
+
   WicketWindowResizer.prototype.restoreDatatableHeight = function () {
     this.readComponents();
     if (this.picker != null && this.pickerList != null) {
