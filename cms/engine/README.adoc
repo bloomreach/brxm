@@ -2,16 +2,23 @@
 
 == Local development
 
-Start the navigation application with the following parameters:
+* Start the navigation application with the following parameters:
 
 [source, bash]
 ----
-ng serve  --deploy-url="http://localhost:4200/" --serve-path="/" --publicHost="http://localhost:4200" <1>
-cp -Rv dist/navapp/assets $exploded_cms_dir_in_tomcat/ <2>
+ng serve  --deploy-url="http://localhost:4200/" --serve-path="/" --publicHost="http://localhost:4200"
 ----
-<1> deploy-url will prepend js resource with the full url, serve-path will reset the path to the root and
-publicHost will make sure the socket to reload the app will use the right location
-<2> Make sure assets have the same relative path as in the angular app
+* Start the application with the following default jvm args:
+** "wicket.deployment" with the value "development", e.g. -Dwicket.deployment=development
+** "navapp.location" with the location of the cdn, e.g. -Dnavapp.location="http://localhost:4200"
+
+These properties can also be added to the filter config of the WicketFilter.
+
+* Copy the "assets" folder navigation application distribution to the exploded cms of your application
+
+
+
+
 
 == Update the navapp and navapp-communication libary
 
