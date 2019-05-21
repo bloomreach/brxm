@@ -28,7 +28,10 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
@@ -42,6 +45,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
+    private String url = "http://localhost:4200/";
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -60,13 +64,30 @@ public class NavAppHeaderItem extends HeaderItem {
 
         JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
 
-        Stream.of("runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js")
+        boolean fallBackToPackagedNavapp = false;
+        boolean development = true;
+        final Stream<String> resourcesStream = Stream.of("runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js");
+        resourcesStream
                 .forEach(resourceName -> {
-                    final JavaScriptResourceReference reference = new JavaScriptResourceReference(getClass(), resourceName);
+                    final ResourceReference reference = fallBackToPackagedNavapp ? getPackagedReference(resourceName) : getUrlResourceReference(resourceName);
+                    if (development){
+                        final ResourceReference mapReference = getUrlResourceReference(resourceName + ".map");
+                        final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(mapReference);
+                        item.setDefer(true);
+                        item.render(response);
+                    }
                     final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(reference);
                     item.setDefer(true);
                     item.render(response);
                 });
+    }
+
+    protected UrlResourceReference getUrlResourceReference(final String resourceName) {
+        return new UrlResourceReference(Url.parse(String.format("%s/%s", url, resourceName)));
+    }
+
+    protected JavaScriptResourceReference getPackagedReference(final String resourceName) {
+        return new JavaScriptResourceReference(getClass(), resourceName);
     }
 
     private NavAppSettings getSettings(final String contextPath, final PluginUserSession userSession) {
