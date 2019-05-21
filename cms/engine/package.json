@@ -6,8 +6,8 @@
     "build": "node copy-files.js"
   },
   "dependencies": {
-    "@bloomreach/navapp": "^1.0.0-2",
-    "@bloomreach/navapp-communication": "^1.0.0-0"
+    "@bloomreach/navapp": "^1.0.0-7",
+    "@bloomreach/navapp-communication": "^1.0.0-4"
   },
   "devDependencies": {
     "file-system": "^2.2.2"
