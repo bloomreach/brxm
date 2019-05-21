@@ -27,3 +27,7 @@ definitions:
       /es:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Número decimal
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /es:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: Abrir la cadena de IU

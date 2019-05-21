@@ -28,3 +28,7 @@ definitions:
       /nl:
         jcr:primaryType: hipposys:resourcebundle
         jcr:name: Getal met decimalen
+    /hippo:configuration/hippo:translations/hippo:types/hipposys:OpenUiString:
+      /nl:
+        jcr:primaryType: hipposys:resourcebundle
+        jcr:name: UI-string openen
