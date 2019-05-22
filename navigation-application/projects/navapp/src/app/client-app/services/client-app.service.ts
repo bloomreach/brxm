@@ -20,12 +20,15 @@ import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
 import { NavigationConfigurationService } from '../../services/navigation-configuration.service';
-import { ClientApplicationConfiguration, ClientApplicationHandler } from '../models';
+import {
+  ClientApplicationConfiguration,
+  ClientApplicationHandler,
+} from '../models';
 
 import { ClientApplicationsRegistryService } from './client-applications-registry.service';
 
 @Injectable()
-export class ClientApplicationsManagerService {
+export class ClientAppService {
   private renderer: Renderer2;
   private applicationsConfigurations: ClientApplicationConfiguration[];
   private applications$ = new Subject<ClientApplicationHandler>();
@@ -38,7 +41,9 @@ export class ClientApplicationsManagerService {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
 
     this.navConfigService.navigationConfiguration$
-      .pipe(map(navConfig => this.buildClientApplicationsConfigurations(navConfig.values())))
+      .pipe(
+        map(navConfig => this.buildClientAppConfigurations(navConfig.values())),
+      )
       .subscribe(appConfigs => (this.applicationsConfigurations = appConfigs));
   }
 
@@ -80,10 +85,14 @@ export class ClientApplicationsManagerService {
       );
     }
 
-    const clientAppConfig = this.applicationsConfigurations.find(config => config.url === id);
+    const clientAppConfig = this.applicationsConfigurations.find(
+      config => config.url === id,
+    );
 
     if (!clientAppConfig) {
-      throw new Error(`There is no configuration for the client application with id = ${id}`);
+      throw new Error(
+        `There is no configuration for the client application with id = ${id}`,
+      );
     }
 
     const iframeEl = this.createIframe(clientAppConfig.url);
@@ -91,7 +100,7 @@ export class ClientApplicationsManagerService {
     return new ClientApplicationHandler(clientAppConfig.url, iframeEl);
   }
 
-  private buildClientApplicationsConfigurations(
+  private buildClientAppConfigurations(
     navConfig: IterableIterator<NavItem>,
   ): ClientApplicationConfiguration[] {
     const uniqueUrlsSet = Array.from(navConfig).reduce((uniqueUrls, config) => {

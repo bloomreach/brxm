@@ -14,28 +14,4 @@
  * limitations under the License.
  */
 
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-
-import { IframesContainerComponent } from './components';
-import {
-  ClientApplicationsManagerService,
-  ClientApplicationsRegistryService,
-} from './services';
-
-@NgModule({
-  imports: [
-    BrowserModule,
-  ],
-  declarations: [
-    IframesContainerComponent,
-  ],
-  providers: [
-    ClientApplicationsRegistryService,
-    ClientApplicationsManagerService,
-  ],
-  exports: [
-    IframesContainerComponent,
-  ],
-})
-export class ClientApplicationsManagerModule {}
+export * from './client-app.module';

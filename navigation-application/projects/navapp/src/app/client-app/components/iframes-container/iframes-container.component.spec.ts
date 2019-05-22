@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 
 import { ClientApplicationHandler } from '../../models';
-import { ClientApplicationsManagerService } from '../../services';
+import { ClientAppService } from '../../services';
 
 import { IframesContainerComponent } from './iframes-container.component';
 
@@ -12,30 +12,27 @@ describe('IframesContainerComponent', () => {
 
   const fakeApplicationsCreated$ = new Subject<ClientApplicationHandler>();
 
-  let clientApplicationsManagerService: ClientApplicationsManagerService;
+  let clientAppService: ClientAppService;
 
   let el: HTMLElement;
 
   beforeEach(() => {
-    const clientApplicationsManagerServiceMock = {
+    const clientAppServiceMock = {
       applicationCreated$: fakeApplicationsCreated$,
     } as any;
 
     fixture = TestBed.configureTestingModule({
-      imports: [
-      ],
-      declarations: [
-        IframesContainerComponent,
-      ],
+      imports: [],
+      declarations: [IframesContainerComponent],
       providers: [
-        { provide: ClientApplicationsManagerService, useValue: clientApplicationsManagerServiceMock },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
       ],
     }).createComponent(IframesContainerComponent);
 
     component = fixture.componentInstance;
     el = fixture.elementRef.nativeElement;
 
-    clientApplicationsManagerService = TestBed.get(ClientApplicationsManagerService);
+    clientAppService = TestBed.get(ClientAppService);
   });
 
   beforeEach(() => {
@@ -49,7 +46,10 @@ describe('IframesContainerComponent', () => {
   });
 
   it('should add an iframe when client apps manager notifies about that', () => {
-    const fakeApp = new ClientApplicationHandler('some/url', document.createElement('iframe'));
+    const fakeApp = new ClientApplicationHandler(
+      'some/url',
+      document.createElement('iframe'),
+    );
 
     fakeApplicationsCreated$.next(fakeApp);
 

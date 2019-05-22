@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClientApplicationsManagerModule } from './client-applications-manager';
+import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
 import { NavigationConfigurationService } from './services';
 
@@ -18,7 +18,7 @@ describe('AppComponent', () => {
         RouterTestingModule,
         AppRoutingModule,
         MainMenuModule,
-        ClientApplicationsManagerModule,
+        ClientAppModule,
         HttpClientModule,
       ],
       declarations: [AppComponent],

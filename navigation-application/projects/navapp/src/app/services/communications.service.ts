@@ -23,7 +23,7 @@ import {
 } from '@bloomreach/navapp-communication';
 import { from, Observable } from 'rxjs';
 
-import { ClientApplicationsManagerService } from '../client-applications-manager/services';
+import { ClientAppService } from '../client-app/services';
 
 import { OverlayService } from './overlay.service';
 
@@ -34,7 +34,7 @@ export class CommunicationsService {
   private connections: Map<string, Observable<ChildPromisedApi>> = new Map();
 
   constructor(
-    private clientAppsManager: ClientApplicationsManagerService,
+    private clientAppsManager: ClientAppService,
     private overlay: OverlayService,
   ) {}
 

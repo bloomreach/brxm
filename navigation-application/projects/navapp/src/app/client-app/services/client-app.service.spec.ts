@@ -21,7 +21,7 @@ import { NavigationConfigurationService } from '../../services';
 import { navigationConfigurationMapMock } from '../../test-mocks';
 import { ClientApplicationHandler } from '../models';
 
-import { ClientApplicationsManagerService } from './client-applications-manager.service';
+import { ClientAppService } from './client-app.service';
 import { ClientApplicationsRegistryService } from './client-applications-registry.service';
 
 describe('ClientApplicationsRegistryService', () => {
@@ -46,12 +46,16 @@ describe('ClientApplicationsRegistryService', () => {
 
   const fakeIframeEl: HTMLIFrameElement = {} as any;
 
-  let service: ClientApplicationsManagerService;
+  let service: ClientAppService;
 
   beforeEach(() => {
     spyOn(rendererMock, 'createElement').and.returnValue(fakeIframeEl);
 
-    service = new ClientApplicationsManagerService(registryServiceMock, navConfigServiceMock, rendererFactoryMock);
+    service = new ClientAppService(
+      registryServiceMock,
+      navConfigServiceMock,
+      rendererFactoryMock,
+    );
   });
 
   it('should create and return an application handler if it doesn\'t exist', () => {
@@ -65,7 +69,7 @@ describe('ClientApplicationsRegistryService', () => {
     let actual;
     const expected = new ClientApplicationHandler('iframe1-url', fakeIframeEl);
 
-    service.applicationCreated$.subscribe(app => actual = app);
+    service.applicationCreated$.subscribe(app => (actual = app));
     service.getApplicationHandler('iframe1-url');
 
     expect(actual).toEqual(expected);
@@ -95,7 +99,9 @@ describe('ClientApplicationsRegistryService', () => {
       new ClientApplicationHandler('iframe3-url', iframes[2]),
     ];
 
-    spyOn(registryServiceMock, 'has').and.callFake(id => fakeApps.some(app => app.url === id));
+    spyOn(registryServiceMock, 'has').and.callFake(id =>
+      fakeApps.some(app => app.url === id),
+    );
     spyOn(registryServiceMock, 'getAll').and.returnValue(fakeApps);
 
     service.activateApplication('iframe2-url');

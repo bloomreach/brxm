@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClientApplicationsManagerModule } from './client-applications-manager';
+import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
 import { SharedModule } from './shared';
 
@@ -14,7 +14,7 @@ import { SharedModule } from './shared';
     SharedModule,
     AppRoutingModule,
     BrowserModule,
-    ClientApplicationsManagerModule,
+    ClientAppModule,
     HttpClientModule,
     MainMenuModule,
   ],

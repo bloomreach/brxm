@@ -18,7 +18,7 @@ import { Component, ElementRef, OnDestroy, OnInit, Renderer2, RendererFactory2 }
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ClientApplicationsManagerService } from '../../services';
+import { ClientAppService } from '../../services';
 
 @Component({
   selector: 'brna-iframes-container',
@@ -31,7 +31,7 @@ export class IframesContainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private elRef: ElementRef,
-    private clientAppsManager: ClientApplicationsManagerService,
+    private clientAppsManager: ClientAppService,
     private rendererFactory: RendererFactory2,
   ) {}
 
