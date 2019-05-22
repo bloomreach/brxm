@@ -26,6 +26,7 @@ class ComponentEditorService {
     $q,
     $translate,
     ChannelService,
+    CmsService,
     ComponentRenderingService,
     DialogService,
     FeedbackService,
@@ -41,6 +42,7 @@ class ComponentEditorService {
     this.$q = $q;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
@@ -108,6 +110,7 @@ class ComponentEditorService {
     this.propertyGroups = this._groupProperties(this.properties);
 
     this.OverlayService.selectComponent(component.id);
+    this.CmsService.reportUsageStatistic('CompConfigSidePanelOpened');
   }
 
   _onLoadFailure() {
@@ -258,7 +261,8 @@ class ComponentEditorService {
 
   deleteComponent() {
     return this.HstComponentService.deleteComponent(this.container.id, this.component.id)
-      .then(() => this.close());
+      .then(() => this.close())
+      .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelDeleteComp'));
   }
 
   getComponentId() {
@@ -284,7 +288,8 @@ class ComponentEditorService {
       this.component.id,
       this.component.variant,
       this._propertiesAsFormData(),
-    );
+    )
+    .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelSave'));
   }
 
   _propertiesAsFormData() {
