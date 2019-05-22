@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('ComponentEditorService', () => {
+describe('ComponentEditorService', () => {
   let $q;
   let $rootScope;
   let $timeout;
@@ -687,11 +687,14 @@ fdescribe('ComponentEditorService', () => {
       });
     });
 
-    it('reports user statistics', () => {
+    it('reports user statistics', (done) => {
       spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
       openComponentEditor();
-      ComponentEditor.save();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
+      ComponentEditor.save().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
+        done();        
+      });
+      $rootScope.$digest();
     });
   });
 
@@ -705,9 +708,12 @@ fdescribe('ComponentEditorService', () => {
       expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('containerId', 'componentId');
     });
 
-    it('reports user statistics', () => {
-      ComponentEditor.deleteComponent();
-      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelDeleteComp');
+    it('reports user statistics', (done) => {
+      ComponentEditor.deleteComponent().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelDeleteComp');
+        done();        
+      });
+      $rootScope.$digest();
     });
 
     it('calls the dialog service for delete component confirmation', () => {

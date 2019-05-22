@@ -260,9 +260,9 @@ class ComponentEditorService {
   }
 
   deleteComponent() {
-    this.CmsService.reportUsageStatistic('CompConfigSidePanelDeleteComp');
     return this.HstComponentService.deleteComponent(this.container.id, this.component.id)
-      .then(() => this.close());
+      .then(() => this.close())
+      .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelDeleteComp'));
   }
 
   getComponentId() {
@@ -284,12 +284,12 @@ class ComponentEditorService {
   }
 
   save() {
-    this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
     return this.HstComponentService.setParameters(
       this.component.id,
       this.component.variant,
       this._propertiesAsFormData(),
-    );
+    )
+    .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelSave'));
   }
 
   _propertiesAsFormData() {
