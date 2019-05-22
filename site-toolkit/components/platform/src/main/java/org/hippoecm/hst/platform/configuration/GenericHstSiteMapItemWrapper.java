@@ -249,14 +249,15 @@ public class GenericHstSiteMapItemWrapper implements InternalHstSiteMapItem {
     }
 
     @Override
-    public InternalHstSiteMapItem getWildCardPatternChild(String value, List<InternalHstSiteMapItem> excludeList) {
-        return delegatee.getWildCardPatternChild(value, excludeList);
+    public InternalHstSiteMapItem getWildCardPatternChild(String value,
+            List<InternalHstSiteMapItem> wildCardChildSiteMapItems, List<InternalHstSiteMapItem> excludeList) {
+        return delegatee.getWildCardPatternChild(value, wildCardChildSiteMapItems, excludeList);
     }
 
     @Override
     public InternalHstSiteMapItem getAnyPatternChild(String[] elements, int position,
-            List<InternalHstSiteMapItem> excludeList) {
-        return delegatee.getAnyPatternChild(elements, position, excludeList);
+            List<InternalHstSiteMapItem> anyChildSiteMapItems, List<InternalHstSiteMapItem> excludeList) {
+        return delegatee.getAnyPatternChild(elements, position, anyChildSiteMapItems, excludeList);
     }
 
     @Override
@@ -282,6 +283,16 @@ public class GenericHstSiteMapItemWrapper implements InternalHstSiteMapItem {
     @Override
     public String getCanonicalPath() {
         return delegatee.getCanonicalPath();
+    }
+
+    @Override
+    public List<InternalHstSiteMapItem> getWildCardChildSiteMapItems() {
+        return delegatee.getWildCardChildSiteMapItems();
+    }
+
+    @Override
+    public List<InternalHstSiteMapItem> getAnyChildSiteMapItems() {
+        return delegatee.getAnyChildSiteMapItems();
     }
 
     @Override

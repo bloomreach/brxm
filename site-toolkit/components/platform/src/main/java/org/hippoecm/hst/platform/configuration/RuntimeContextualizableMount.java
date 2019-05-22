@@ -23,8 +23,12 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.onehippo.cms7.services.hst.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuntimeContextualizableMount extends RuntimeMount implements ContextualizableMount {
+
+    private static final Logger log = LoggerFactory.getLogger(RuntimeContextualizableMount.class);
 
     private final ContextualizableMount delegatee;
     private final HstSite previewHstSite;
@@ -38,10 +42,11 @@ public class RuntimeContextualizableMount extends RuntimeMount implements Contex
 
         final HstSite delegateeSite = delegatee.getPreviewHstSite();
         if (delegateeSite != null) {
-            previewHstSite = new RuntimeHstSite(delegateeSite, this);
+            previewHstSite = new RuntimeHstSite(delegateeSite, this, virtualHost.getScheme());
         } else {
             previewHstSite = null;
         }
+        log.debug("Runtime contextualizable mount {} is created with scheme {} for host {}.", delegatee.getName(), virtualHost.getScheme(), virtualHost.getName());
     }
 
     @Override

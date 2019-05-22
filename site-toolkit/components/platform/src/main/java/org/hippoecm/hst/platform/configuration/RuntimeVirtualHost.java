@@ -25,8 +25,12 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.platform.model.HstModelImpl.RuntimeHostConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
+
+    private static final Logger log = LoggerFactory.getLogger(RuntimeVirtualHost.class);
 
     private final VirtualHost delegatee;
     private final String hostName;
@@ -68,16 +72,16 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
 
             final Mount rootMount = delegateePortMount.getRootMount();
 
+            final int portNumber = (runtimeHostConfiguration.getPortNumber() != null) ? runtimeHostConfiguration.getPortNumber() : delegateePortMount.getPortNumber();
+            isPortInUrl = runtimeHostConfiguration.isPortInUrl();
+            scheme = runtimeHostConfiguration.getScheme();
+
             final RuntimeMount runtimeMount;
             if (rootMount instanceof ContextualizableMount) {
                 runtimeMount = new RuntimeContextualizableMount((ContextualizableMount)rootMount, RuntimeVirtualHost.this);
             } else {
                 runtimeMount = new RuntimeMount(rootMount, RuntimeVirtualHost.this);
             }
-
-            final int portNumber = (runtimeHostConfiguration.getPortNumber() != null) ? runtimeHostConfiguration.getPortNumber() : delegateePortMount.getPortNumber();
-            isPortInUrl = runtimeHostConfiguration.isPortInUrl();
-            scheme = runtimeHostConfiguration.getScheme();
 
             this.portMount = new PortMount() {
                 @Override
@@ -90,6 +94,10 @@ public class RuntimeVirtualHost extends GenericVirtualHostWrapper {
                     return runtimeMount;
                 }
             };
+            log.debug("Runtime virtual host {} is created with scheme {} and port {} for host {} with source {} and target {}.",
+                    name, scheme, portNumber, runtimeHostConfiguration.getHostName(),
+                    runtimeHostConfiguration.getSourceHostGroupName(),
+                    runtimeHostConfiguration.getTargetHostGroupName());
         }
     }
 

@@ -26,10 +26,14 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.onehippo.cms7.services.hst.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Collections.unmodifiableList;
 
 public class RuntimeMount extends GenericMountWrapper {
+
+    private static final Logger log = LoggerFactory.getLogger(RuntimeMount.class);
 
     private final Mount delegatee;
     private final VirtualHost virtualHost;
@@ -50,7 +54,7 @@ public class RuntimeMount extends GenericMountWrapper {
 
         final HstSite delegateeSite = delegatee.getHstSite();
         if (delegateeSite != null) {
-            hstSite = new RuntimeHstSite(delegateeSite, this);
+            hstSite = new RuntimeHstSite(delegateeSite, this, virtualHost.getScheme());
         } else {
             hstSite = null;
         }
@@ -66,6 +70,7 @@ public class RuntimeMount extends GenericMountWrapper {
         });
 
         childrenList = unmodifiableList(new ArrayList<>(children.values()));
+        log.debug("Runtime mount {} is created with scheme {} for host {}.", delegatee.getName(), virtualHost.getScheme(), virtualHost.getName());
     }
 
     public HstSite getHstSite() {

@@ -39,14 +39,14 @@ public class RuntimeHstSiteMap extends GenericHstSiteMapWrapper {
     private final Map<String, HstSiteMapItem> childrenSiteMapDescendantsByRefId = new DuplicateKeyNotAllowedHashMap<>();
     private final List<HstSiteMapItem> siteMapItems;
 
-    public RuntimeHstSiteMap(final InternalHstSiteMap delegatee, final RuntimeHstSite hstSite) {
+    public RuntimeHstSiteMap(final InternalHstSiteMap delegatee, final RuntimeHstSite hstSite, final String scheme) {
         super(delegatee);
         this.delegatee = delegatee;
         this.hstSite = hstSite;
 
         delegatee.getSiteMapItems().forEach(child -> {
             RuntimeHstSiteMapItem runtimeHstSiteMapItem = new RuntimeHstSiteMapItem((InternalHstSiteMapItem) child,
-                    RuntimeHstSiteMap.this, null);
+                    RuntimeHstSiteMap.this, null, scheme);
             childrenSiteMapItems.put(runtimeHstSiteMapItem.getValue(), runtimeHstSiteMapItem);
             childrenSiteMapDescendants.put(runtimeHstSiteMapItem.getId(), runtimeHstSiteMapItem);
             if (runtimeHstSiteMapItem.getRefId() != null) {

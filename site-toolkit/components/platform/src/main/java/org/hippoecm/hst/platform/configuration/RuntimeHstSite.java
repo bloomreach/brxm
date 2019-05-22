@@ -31,7 +31,7 @@ public class RuntimeHstSite extends GenericHstSiteWrapper {
     private final HstSiteMap hstSiteMap;
     private final HstSiteMenusConfiguration hstSiteMenusConfiguration;
 
-    public RuntimeHstSite(final HstSite delegatee, final RuntimeMount runtimeMount) {
+    public RuntimeHstSite(final HstSite delegatee, final RuntimeMount runtimeMount, final String scheme) {
         super(delegatee);
         this.delegatee = delegatee;
         final Channel delegateeChannel = delegatee.getChannel();
@@ -53,7 +53,7 @@ public class RuntimeHstSite extends GenericHstSiteWrapper {
             channel.setUrl(runtimeUrl);
 
             if (delegatee.getSiteMap() != null) {
-                hstSiteMap = new RuntimeHstSiteMap((InternalHstSiteMap) delegatee.getSiteMap(), RuntimeHstSite.this);
+                hstSiteMap = new RuntimeHstSiteMap((InternalHstSiteMap) delegatee.getSiteMap(), RuntimeHstSite.this, scheme);
             } else {
                 hstSiteMap = null;
             }
