@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,18 @@
 
 overlay-toggle {
   margin-left: 6px !important;
-  margin-right: 6px !important;
 
-  md-icon {
+  .md-button {
     &.active {
-      color: $blue-400;
+      background-color: $blue-50;
+
+      md-icon {
+        color: $blue-400;
+      }
+    }
+
+    &:not([disabled]).md-icon-button:hover {
+      background-color: $grey-300;
     }
   }
 }
