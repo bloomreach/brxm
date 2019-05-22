@@ -17,6 +17,7 @@
 
 package org.hippoecm.frontend;
 
+import java.net.URL;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -86,6 +87,16 @@ public class NavAppSettings {
     public static class AppSettings {
 
         private List<NavConfigResource> navConfigResources;
+
+        private URL navAppLocation;
+
+        public URL getNavAppLocation() {
+            return navAppLocation;
+        }
+
+        public void setNavAppLocation(final URL navAppLocation) {
+            this.navAppLocation = navAppLocation;
+        }
 
         public List<NavConfigResource> getNavConfigResources() {
             return navConfigResources;
