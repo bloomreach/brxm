@@ -29,15 +29,15 @@ export class MenuBuilderService {
   constructor(
     private navConfigService: NavigationConfigurationService,
     private menuStructureService: MenuStructureService,
-  ) { }
+  ) {}
 
   buildMenu(): Observable<MenuItem[]> {
-    return this.navConfigService.navigationConfiguration$.pipe(
-      map(config => {
+    return this.navConfigService.navItems$.pipe(
+      map(navItems => {
         const menu = this.menuStructureService.getMenuStructure();
 
-        this.applyNavigationConfiguration(menu, config);
-        const items = this.filterOutNotConfiguredMenuItems(menu);
+        this.applyNavItems(menu, navItems);
+        const items = this.removeEmptyLeaves(menu);
         items[0].icon = 'br-logo';
         return items;
       }),
@@ -45,31 +45,30 @@ export class MenuBuilderService {
     );
   }
 
-  private applyNavigationConfiguration(menu: MenuItem[], navConfigMap: Map<string, NavItem>): void {
+  private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {
     menu.forEach(item => {
       if (item instanceof MenuItemContainer) {
-        this.applyNavigationConfiguration(item.children, navConfigMap);
+        this.applyNavItems(item.children, navItems);
         return;
       }
 
-      if (navConfigMap.has(item.id)) {
-        const config = navConfigMap.get(item.id);
-
+      const navItem = navItems.find(i => i.id === item.id);
+      if (navItem) {
         // One iframe per app is created so app's url can be used as an identifier
-        item.appId = config.appIframeUrl;
-        item.appPath = config.appPath;
+        item.appId = navItem.appIframeUrl;
+        item.appPath = navItem.appPath;
       }
     });
   }
 
-  private filterOutNotConfiguredMenuItems(menu: MenuItem[]): MenuItem[] {
+  private removeEmptyLeaves(menu: MenuItem[]): MenuItem[] {
     return menu.filter(item => {
       if (item instanceof MenuItemLink) {
         return !!item.appPath;
       }
 
       if (item instanceof MenuItemContainer) {
-        item.children = this.filterOutNotConfiguredMenuItems(item.children);
+        item.children = this.removeEmptyLeaves(item.children);
         return Array.isArray(item.children) && item.children.length > 0;
       }
 

@@ -16,7 +16,10 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { ChildConnectConfig, connectToChild } from '@bloomreach/navapp-communication';
+import {
+  ChildConnectConfig,
+  connectToChild,
+} from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -31,7 +34,7 @@ export class NavigationConfigurationService {
   private readonly hostElement: HTMLElement;
   private readonly renderer: Renderer2;
 
-  private navigationConfiguration = new BehaviorSubject<Map<string, NavItem>>(new Map());
+  private navItems = new BehaviorSubject<NavItem[]>([]);
 
   constructor(
     private http: HttpClient,
@@ -42,44 +45,38 @@ export class NavigationConfigurationService {
     this.hostElement = document.body;
   }
 
-  get navigationConfiguration$(): Observable<Map<string, NavItem>> {
-    return this.navigationConfiguration.asObservable().pipe(filter(config => config.size > 0));
+  get navItems$(): Observable<NavItem[]> {
+    return this.navItems.asObservable().pipe(filter(items => items.length > 0));
   }
 
   init(): Promise<void> {
-    const resourcePromises = this.navAppSettings.appSettings.navConfigResources.map(resource =>
-      this.fetchNavConfig(resource),
+    const resourcePromises = this.navAppSettings.appSettings.navConfigResources.map(
+      resource => this.fetchNavItems(resource),
     );
 
     return Promise.all(resourcePromises)
       .then(navItemArrays => [].concat(...navItemArrays))
-      .then(navItems => this.setNavigationConfiguration(navItems));
+      .then(navItems => this.navItems.next(navItems));
   }
 
-  private setNavigationConfiguration(navItems: NavItem[]): void {
-    const navItemMap = navItems.reduce(
-      (configMap, item) => configMap.set(item.id, item),
-      new Map<string, NavItem>(),
-    );
-
-    this.navigationConfiguration.next(navItemMap);
-  }
-
-  private fetchNavConfig(resource: NavConfigResource): Promise<NavItem[]> {
-    if (resource.resourceType === 'IFRAME') {
-      return this.getConfigFromIframe(resource.url);
-    } else if (resource.resourceType === 'REST') {
-      return this.getConfigFromREST(resource.url);
-    } else {
-      throw new Error(`Resource type ${resource.resourceType} is not supported`);
+  private fetchNavItems(resource: NavConfigResource): Promise<NavItem[]> {
+    switch (resource.resourceType) {
+      case 'IFRAME':
+        return this.getItemsFromIframe(resource.url);
+      case 'REST':
+        return this.getItemsFromREST(resource.url);
+      default:
+        return Promise.reject(
+          new Error(`Resource type ${resource.resourceType} is not supported`),
+        );
     }
   }
 
-  private getConfigFromREST(url: string): Promise<NavItem[]> {
+  private getItemsFromREST(url: string): Promise<NavItem[]> {
     return this.http.get<NavItem[]>(url).toPromise();
   }
 
-  private getConfigFromIframe(url: string): Promise<NavItem[]> {
+  private getItemsFromIframe(url: string): Promise<NavItem[]> {
     const iframe = document.createElement('iframe');
     iframe.src = url;
     iframe.style.visibility = 'hidden';

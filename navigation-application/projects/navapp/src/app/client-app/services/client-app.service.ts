@@ -40,10 +40,8 @@ export class ClientAppService {
   ) {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
 
-    this.navConfigService.navigationConfiguration$
-      .pipe(
-        map(navConfig => this.buildClientAppConfigurations(navConfig.values())),
-      )
+    this.navConfigService.navItems$
+      .pipe(map(navItems => this.buildClientAppConfigurations(navItems)))
       .subscribe(appConfigs => (this.applicationsConfigurations = appConfigs));
   }
 
@@ -101,9 +99,9 @@ export class ClientAppService {
   }
 
   private buildClientAppConfigurations(
-    navConfig: IterableIterator<NavItem>,
+    navItems: NavItem[],
   ): ClientApplicationConfiguration[] {
-    const uniqueUrlsSet = Array.from(navConfig).reduce((uniqueUrls, config) => {
+    const uniqueUrlsSet = navItems.reduce((uniqueUrls, config) => {
       uniqueUrls.add(config.appIframeUrl);
       return uniqueUrls;
     }, new Set<string>());
