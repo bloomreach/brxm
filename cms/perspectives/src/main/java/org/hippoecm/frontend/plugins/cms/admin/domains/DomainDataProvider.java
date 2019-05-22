@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
+
 import org.hippoecm.frontend.session.UserSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +40,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
 
     private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hipposys:domain";
 
-    private static final transient List<Domain> domainList = new ArrayList<>();
-    private static volatile boolean dirty = true;
-
-    private static String sessionId = "none";
+    private final transient List<Domain> domainList = new ArrayList<>();
 
     public DomainDataProvider() {
         setSort("name", SortOrder.ASCENDING);
@@ -71,42 +69,28 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
     }
 
     /**
-     * Actively invalidate cached list
-     */
-    public static void setDirty() {
-        dirty = true;
-    }
-
-    /**
      * Populate list, refresh when a new session id is found or when dirty
      */
-    private static void populateDomainList() {
-        synchronized (DomainDataProvider.class) {
-            if (!dirty && sessionId.equals(Session.get().getId())) {
-                return;
-            }
-            domainList.clear();
-            NodeIterator iterator;
-            try {
-                @SuppressWarnings("deprecation")
-                Query listQuery = UserSession.get().getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
-                iterator = listQuery.execute().getNodes();
-                while (iterator.hasNext()) {
-                    Node node = iterator.nextNode();
-                    if (node != null) {
-                        try {
-                            domainList.add(new Domain(node));
-                        } catch (RepositoryException e) {
-                            log.warn("Unable to instantiate new domain.", e);
-                        }
+    private void populateDomainList() {
+        domainList.clear();
+
+        try {
+            @SuppressWarnings("deprecation")
+            final Query listQuery = UserSession.get().getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
+            final NodeIterator iterator = listQuery.execute().getNodes();
+            while (iterator.hasNext()) {
+                Node node = iterator.nextNode();
+                if (node != null) {
+                    try {
+                        domainList.add(new Domain(node));
+                    } catch (RepositoryException e) {
+                        log.warn("Unable to instantiate new domain.", e);
                     }
                 }
-                Collections.sort(domainList);
-                sessionId = Session.get().getId();
-                dirty = false;
-            } catch (RepositoryException e) {
-                log.error("Error while trying to query domain nodes.", e);
             }
+            Collections.sort(domainList);
+        } catch (RepositoryException e) {
+            log.error("Error while trying to query domain nodes.", e);
         }
     }
 

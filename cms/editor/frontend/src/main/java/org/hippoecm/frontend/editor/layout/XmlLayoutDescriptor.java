@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -218,14 +218,19 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
     public IResource getIcon() {
         return new ResourceStreamResource() {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected IResourceStream getResourceStream() {
                 ClassLoader cl = clModel.getObject();
                 URL url = null;
                 if (variant != null) {
-                    url = cl.getResource(location + "_" + variant + ".png");
+                    url = cl.getResource(location + "_" + variant + ".svg");
+                    if (url == null) {
+                        url = cl.getResource(location + "_" + variant + ".png");
+                    }
+                }
+                if (url == null) {
+                    url = cl.getResource(location + ".svg");
                 }
                 if (url == null) {
                     url = cl.getResource(location + ".png");
