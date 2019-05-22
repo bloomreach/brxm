@@ -102,13 +102,13 @@ public class NavigationItemServiceModuleTest {
         final NavigationItem item1 = navigationItems.get(0);
         assertThat(item1.getId(), is("hippo-perspective-a"));
         assertThat(item1.getAppIframeUrl(), is("scheme://cms.test.com/context-path/?iframe"));
-        assertThat(item1.getAppPath(), is(nullValue()));
+        assertThat(item1.getAppPath(), is("hippo-perspective-a"));
         assertThat(item1.getDisplayName(), is(nullValue()));
 
         final NavigationItem item2 = navigationItems.get(1);
         assertThat(item2.getId(), is("hippo-perspective-b"));
         assertThat(item1.getAppIframeUrl(), is("scheme://cms.test.com/context-path/?iframe"));
-        assertThat(item2.getAppPath(), is(nullValue()));
+        assertThat(item2.getAppPath(), is("hippo-perspective-b"));
         assertThat(item2.getDisplayName(), is(nullValue()));
     }
 
