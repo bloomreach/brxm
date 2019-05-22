@@ -122,16 +122,8 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     }
 
     protected ObjectConverter getObjectConverter() {
-        return new VersionedObjectConverterProxy(getAnnotatedClasses(), new ContentTypesProvider() {
-            @Override
-            public ContentTypes getContentTypes() {
-                try {
-                    return HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
-                } catch (Exception e) {
-                    throw new IllegalStateException("ContentTypeService is unavailable!", e);
-                }
-            }
-        }, true);
+        return new VersionedObjectConverterProxy(getAnnotatedClasses(),
+                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)) , true);
     }
 
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {

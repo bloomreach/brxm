@@ -51,6 +51,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
@@ -265,6 +267,8 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         renderMap.put(hstSite, hstSite);
         expect(requestContext.getAttribute(ContainerConstants.RENDER_BRANCH_ID)).andStubReturn(renderMap);
 
+        expect(requestContext.getContentTypes()).andStubReturn(HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes());
+
         ModifiableRequestContextProvider.set(requestContext);
 
         replay(channel, mount, resolvedMount, hstSite, requestContext);
@@ -424,7 +428,9 @@ public class TestVersionedBean extends AbstractBeanTestCase {
         unpublishedVariant.setProperty(HIPPO_PROPERTY_BRANCH_NAME, branchId);
         session.save();
 
-        ModifiableRequestContextProvider.set(new MockHstRequestContext());
+        final MockHstRequestContext requestContext = new MockHstRequestContext();
+        requestContext.setContentTypes(HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes());
+        ModifiableRequestContextProvider.set(requestContext);
         final HippoDocumentBean bean = (HippoDocumentBean) objectConverter.getObject(unpublishedVariant);
 
         assertThat(bean).isNotNull();

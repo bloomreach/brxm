@@ -44,17 +44,9 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
     }
  
     protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
-        return new VersionedObjectConverterProxy(annotatedClasses, new ContentTypesProvider() {
-            @Override
-            public ContentTypes getContentTypes() {
-                try {
-                    final ContentTypes contentTypes = HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes();
-                    return contentTypes;
-                } catch (Exception e) {
-                    throw new IllegalStateException("ContentTypeService is unavailable!");
-                }
-            }
-        }, true);
+        return new VersionedObjectConverterProxy(annotatedClasses,
+                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
+
     }
 
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {

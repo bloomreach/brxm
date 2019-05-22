@@ -24,6 +24,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.easymock.EasyMock;
 import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
@@ -32,6 +33,7 @@ import org.hippoecm.hst.site.content.beans.NewsArticleBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypeImpl;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypes;
@@ -60,7 +62,7 @@ public class ObjectConverterFactoryBeanTest {
 
     @Test
     public void testCreation() throws Exception {
-        ContentTypes contentType = new ContentTypes() {
+        ContentTypes contentTypes = new ContentTypes() {
             @Override
             public EffectiveNodeTypes getEffectiveNodeTypes() {
                 return null;
@@ -97,12 +99,12 @@ public class ObjectConverterFactoryBeanTest {
             }
         };
         ObjectConverterFactoryBean factory = new ObjectConverterFactoryBean();
-        factory.setContentTypesProvider(new ContentTypesProvider() {
-            @Override
-            public ContentTypes getContentTypes() {
-                return contentType;
-            }
-        });
+
+        final ContentTypeService contentTypeService = EasyMock.niceMock(ContentTypeService.class);
+        EasyMock.expect(contentTypeService.getContentTypes()).andStubReturn(contentTypes);
+        EasyMock.replay(contentTypeService);
+
+        factory.setContentTypesProvider(new ContentTypesProvider(contentTypeService));
         factory.setClasspathResourceScanner(classpathResourceScanner);
         factory.setServletContext(servletContext);
         factory.afterPropertiesSet();

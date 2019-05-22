@@ -18,7 +18,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-  <bean id="org.hippoecm.hst.site.content.ContentTypesProvider" class="org.hippoecm.hst.content.beans.ContentTypesProvider"/>
+  <bean id="org.hippoecm.hst.site.content.ContentTypesProvider" class="org.hippoecm.hst.content.beans.ContentTypesProvider">
+    <constructor-arg ref="org.onehippo.cms7.services.contenttype.ContentTypeService"/>
+  </bean>
 
   <bean id="org.hippoecm.hst.content.beans.manager.ObjectConverter" class="org.hippoecm.hst.site.content.ObjectConverterFactoryBean">
     <property name="classpathResourceScanner" ref="org.hippoecm.hst.util.ClasspathResourceScanner" />

@@ -29,6 +29,8 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
 
 public class AbstractHstQueryTest extends AbstractBeanTestCase {
     protected ObjectConverter objectConverter;
@@ -64,6 +66,7 @@ public class AbstractHstQueryTest extends AbstractBeanTestCase {
         galleryContentBean = (HippoBean)objectConverter.getObject(galleryContentNode);
         assetsContentBean = (HippoBean)objectConverter.getObject(assetsContentNode);
         requestContext.setSiteContentBaseBean(baseContentBean);
+        requestContext.setContentTypes(HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes());
         ModifiableRequestContextProvider.set(requestContext);
     }
 

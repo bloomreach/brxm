@@ -26,6 +26,8 @@ import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -43,6 +45,8 @@ import static org.hippoecm.hst.util.ObjectConverterUtils.getAggregatedMapping;
  * @see ContentTypes
  */
 public class VersionedObjectConverterProxy implements ObjectConverter {
+
+    private final static Logger log = LoggerFactory.getLogger(VersionedObjectConverterProxy.class);
 
     private final Cache<ContentTypes, ObjectConverter> instanceCache = CacheBuilder.newBuilder().weakKeys().build();
 
@@ -63,7 +67,7 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
     /**
      * Create or get content type version specific instance of {@link ObjectConverter}
      */
-    private ObjectConverter getOrCreateObjectConverter() {
+    private ObjectConverter getOrCreateObjectConverter() throws ObjectBeanManagerException {
         final ContentTypes contentTypes = contentTypesProvider.getContentTypes();
         try {
             return instanceCache.get(contentTypes, () -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
@@ -105,11 +109,21 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
 
     @Override
     public Class<? extends HippoBean> getAnnotatedClassFor(final String jcrPrimaryNodeType) {
-        return getOrCreateObjectConverter().getClassFor(jcrPrimaryNodeType);
+        try {
+            return getOrCreateObjectConverter().getClassFor(jcrPrimaryNodeType);
+        } catch (ObjectBeanManagerException e) {
+            log.error("Could not get annoted class for '{}'", jcrPrimaryNodeType, e);
+            return null;
+        }
     }
 
     @Override
     public String getPrimaryNodeTypeNameFor(final Class<? extends HippoBean> hippoBean) {
-        return getOrCreateObjectConverter().getPrimaryNodeTypeNameFor(hippoBean);
+        try {
+            return getOrCreateObjectConverter().getPrimaryNodeTypeNameFor(hippoBean);
+        } catch (ObjectBeanManagerException e) {
+            log.error("Could not get annoted nodetype", e);
+            return null;
+        }
     }
 }
