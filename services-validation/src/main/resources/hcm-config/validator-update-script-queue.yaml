@@ -65,7 +65,7 @@
     \ {\r\n            validators.remove('non-empty')\r\n        }\r\n        return\
     \ validators\r\n    }\r\n\r\n    void logNonEmptyWarning(validators, path) {\r\
     \n        if (validators.contains('non-empty') && !validators.contains('required')\
-    \ && !validators.contains('optional')) {\r\n            log.warn \"Html field\
+    \ && !validators.contains('optional')) {\r\n            log.info \"Field\
     \ with only a 'non-empty' validator. Consider using 'required' or 'optional' instead:\
     \ ${path}\"\r\n        }\r\n    }\r\n    \r\n    boolean undoUpdate(Node node)\
     \ {\r\n        throw new UnsupportedOperationException('Updater does not implement\
