@@ -692,7 +692,7 @@ describe('ComponentEditorService', () => {
       openComponentEditor();
       ComponentEditor.save().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
-        done();        
+        done();
       });
       $rootScope.$digest();
     });
@@ -711,7 +711,7 @@ describe('ComponentEditorService', () => {
     it('reports user statistics', (done) => {
       ComponentEditor.deleteComponent().then(() => {
         expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelDeleteComp');
-        done();        
+        done();
       });
       $rootScope.$digest();
     });

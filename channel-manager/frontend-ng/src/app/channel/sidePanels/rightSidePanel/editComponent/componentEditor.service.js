@@ -289,7 +289,7 @@ class ComponentEditorService {
       this.component.variant,
       this._propertiesAsFormData(),
     )
-    .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelSave'));
+      .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelSave'));
   }
 
   _propertiesAsFormData() {
