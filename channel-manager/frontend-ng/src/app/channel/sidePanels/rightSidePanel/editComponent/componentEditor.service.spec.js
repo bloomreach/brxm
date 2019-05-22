@@ -20,6 +20,7 @@ describe('ComponentEditorService', () => {
   let $timeout;
   let $translate;
   let ChannelService;
+  let CmsService;
   let ComponentEditor;
   let ComponentRenderingService;
   let DialogService;
@@ -54,6 +55,7 @@ describe('ComponentEditorService', () => {
       _$timeout_,
       _$translate_,
       _ChannelService_,
+      _CmsService_,
       _ComponentEditor_,
       _ComponentRenderingService_,
       _DialogService_,
@@ -70,6 +72,7 @@ describe('ComponentEditorService', () => {
       $timeout = _$timeout_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
+      CmsService = _CmsService_;
       ComponentEditor = _ComponentEditor_;
       ComponentRenderingService = _ComponentRenderingService_;
       DialogService = _DialogService_;
@@ -84,6 +87,7 @@ describe('ComponentEditorService', () => {
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
+    spyOn(CmsService, 'reportUsageStatistic');
     spyOn(OverlayService, 'selectComponent');
     spyOn(OverlayService, 'deselectComponent');
 
@@ -193,6 +197,13 @@ describe('ComponentEditorService', () => {
       $rootScope.$digest();
 
       expect(HstComponentService.getProperties).toHaveBeenCalledWith('componentId', 'componentVariant');
+    });
+
+    it('reports user statistics', () => {
+      ComponentEditor.open(testData);
+      $rootScope.$digest();
+
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelOpened');
     });
 
     it('stores the editor data', () => {
@@ -675,6 +686,16 @@ describe('ComponentEditorService', () => {
         c: 'value-c',
       });
     });
+
+    it('reports user statistics', (done) => {
+      spyOn(HstComponentService, 'setParameters').and.returnValue($q.resolve());
+      openComponentEditor();
+      ComponentEditor.save().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelSave');
+        done();        
+      });
+      $rootScope.$digest();
+    });
   });
 
   describe('delete component functions', () => {
@@ -685,6 +706,14 @@ describe('ComponentEditorService', () => {
     it('calls the hst component service for deleteComponent', () => {
       ComponentEditor.deleteComponent();
       expect(HstComponentService.deleteComponent).toHaveBeenCalledWith('containerId', 'componentId');
+    });
+
+    it('reports user statistics', (done) => {
+      ComponentEditor.deleteComponent().then(() => {
+        expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CompConfigSidePanelDeleteComp');
+        done();        
+      });
+      $rootScope.$digest();
     });
 
     it('calls the dialog service for delete component confirmation', () => {
