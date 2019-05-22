@@ -6,7 +6,8 @@
       caption="Home"
       icon="br-logo"
       [collapsed]="collapsed"
-      class="menu-item home">
+      class="menu-item home"
+      [ngClass]="getQaClass('home')">
     </brna-top-level-menu-item>
     <brna-top-level-menu-item
       *ngFor="let item of menu$ | async"
@@ -19,7 +20,8 @@
       [pressed]="item === drawerMenuItem"
       [active]="isMenuItemActive(item)"
       (click)="onMenuItemClick($event, item)"
-      class="menu-item">
+      class="menu-item"
+      [ngClass]="getQaClass(item)">
     </brna-top-level-menu-item>
   </div>
 
@@ -28,15 +30,17 @@
       caption="Help"
       icon="help"
       [collapsed]="collapsed"
-      class="menu-item">
+      class="menu-item"
+      [ngClass]="getQaClass('help')">
     </brna-top-level-menu-item>
     <brna-top-level-menu-item
       caption="User account"
       icon="user"
       [collapsed]="collapsed"
-      class="menu-item">
+      class="menu-item"
+      [ngClass]="getQaClass('user')">
     </brna-top-level-menu-item>
-    <div class="menu-item trigger" (click)="toggle()">
+    <div class="menu-item trigger qa-menu-trigger" (click)="toggle()">
       <mat-icon *ngIf="collapsed" svgIcon="nav-expand"></mat-icon>
       <mat-icon *ngIf="!collapsed" svgIcon="nav-collapse"></mat-icon>
     </div>

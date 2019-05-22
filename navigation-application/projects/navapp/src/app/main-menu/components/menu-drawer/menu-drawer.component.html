@@ -5,12 +5,14 @@
     <brna-menu-item-link
       *ngIf="!isContainer(item)"
       [config]="item"
-      [active]="isActive(item)">
+      [active]="isActive(item)"
+      [ngClass]="getQaClass(item)">
     </brna-menu-item-link>
     <brna-expandable-menu-item
       *ngIf="isContainer(item)"
       [config]="item"
-      [active]="isActive(item)">
+      [active]="isActive(item)"
+      [ngClass]="getQaClass(item)">
     </brna-expandable-menu-item>
   </div>
 </div>
