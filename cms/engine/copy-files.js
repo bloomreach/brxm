@@ -20,7 +20,7 @@ const fs = require('file-system');
 const sourceDir = 'node_modules/@bloomreach';
 const targetDir = 'target/classes/org/hippoecm/frontend';
 
-fs.recurse(sourceDir, ['**/bundles/*.(js|map)', 'navapp/dist/navapp/*.(js|map)'], (filepath, relative, filename) => {
+fs.recurse(sourceDir, ['**/bundles/*.(js|map)', 'navapp/dist/navapp/*.(js|map|css)'], (filepath, relative, filename) => {
 
   if (filename) {
     const destpath = `${targetDir}/${filename}`;
