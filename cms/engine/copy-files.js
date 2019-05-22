@@ -36,3 +36,5 @@ fs.recurse(sourceDir, ['**/bundles/*.(js|map)', 'navapp/dist/navapp/*.(js|map|cs
       });
   }
 });
+
+fs.copyFile('node_modules/penpal/dist/penpal.js', targetDir + "/penpal.js");

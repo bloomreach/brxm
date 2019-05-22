@@ -26,14 +26,6 @@
 (function () {
   'use strict';
 
-  function connectToParent (cfg) {
-    // TODO (meggermont): replace this stub with implementation from navigation client npm package
-    console.log('Stubbed connection to parent:', cfg);
-    return new Promise(function (resolve, ignore) {
-      resolve({updateLocation: 'NOT IMPLEMENTED'});
-    });
-  }
-
   // Implementation of the Child API
   Hippo.NavAppToApp = {
 
@@ -59,7 +51,7 @@
   };
 
   // Establish the connection
-  connectToParent(parentConnectionConfig)
+  window.bloomreach['navapp-communication'].connectToParent(parentConnectionConfig)
     .then(parentApi =>
       Object.assign(Hippo.AppToNavApp, parentApi))
     .catch(error =>

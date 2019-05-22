@@ -22,9 +22,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.HippoHeaderItem;
 import org.hippoecm.frontend.util.RequestUtils;
@@ -48,6 +51,14 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
 
     @Override
     public void render(final Response response) {
+
+        // TODO (meggermont): for now load as package resources
+        final String communicationLib = "bloomreach-navapp-communication.umd.js";
+        final ResourceReference penPalReference, navAppReference;
+        penPalReference = new JavaScriptResourceReference(HippoHeaderItem.class, "penpal.js");
+        navAppReference = new JavaScriptResourceReference(HippoHeaderItem.class, communicationLib);
+        JavaScriptHeaderItem.forReference(penPalReference).render(response);
+        JavaScriptHeaderItem.forReference(navAppReference).render(response);
         OnDomReadyHeaderItem.forScript(createScript()).render(response);
     }
 
@@ -57,9 +68,7 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
         variables.put(PARENT_ORIGIN, RequestUtils.getFarthestUrlPrefix(RequestCycle.get().getRequest()));
 
         try (final PackageTextTemplate javaScript = new PackageTextTemplate(NavAppToAppHeaderItem.class, NAVIGATION_API_JS)) {
-
             return javaScript.asString(variables);
-
         } catch (IOException e) {
             log.error("Failed to create script for resource {}, returning empty string instead.", NAVIGATION_API_JS, e);
             return "";
