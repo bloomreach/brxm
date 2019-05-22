@@ -10,7 +10,7 @@ const prefix = 'qa';
 export class QaHelperService {
   getMenuItemClass(item: MenuItem | string): string {
     if (typeof item === 'string') {
-      return `${prefix}-${item}`;
+      return `${prefix}-menu-item-${item}`;
     }
 
     const classNamesList: string[] = [];
