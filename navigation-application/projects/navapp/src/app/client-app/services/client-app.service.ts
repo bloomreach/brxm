@@ -25,16 +25,14 @@ import {
   ClientApplicationHandler,
 } from '../models';
 
-import { ClientApplicationsRegistryService } from './client-applications-registry.service';
-
 @Injectable()
 export class ClientAppService {
   private renderer: Renderer2;
   private applicationsConfigurations: ClientApplicationConfiguration[];
   private applications$ = new Subject<ClientApplicationHandler>();
+  private iframes = new Map<string, ClientApplicationHandler>();
 
   constructor(
-    private registry: ClientApplicationsRegistryService,
     private navConfigService: NavigationConfigurationService,
     private rendererFactory: RendererFactory2,
   ) {
@@ -50,11 +48,11 @@ export class ClientAppService {
   }
 
   getApplicationHandler(id: string): ClientApplicationHandler {
-    let handler = this.registry.get(id);
+    let handler = this.iframes.get(id);
 
     if (!handler) {
       handler = this.tryToCreateAnIframe(id);
-      this.registry.set(id, handler);
+      this.iframes.set(id, handler);
       this.applications$.next(handler);
     }
 
@@ -62,11 +60,11 @@ export class ClientAppService {
   }
 
   activateApplication(id: string): void {
-    if (!this.registry.has(id)) {
+    if (!this.iframes.has(id)) {
       throw new Error(`An attempt to activate non existing iframe id = ${id}`);
     }
 
-    this.registry.getAll().forEach(handler => {
+    Array.from(this.iframes.values()).forEach(handler => {
       if (handler.url === id) {
         handler.iframeEl.classList.remove('hidden');
         return;

@@ -18,15 +18,12 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { IframesContainerComponent } from './components';
-import {
-  ClientApplicationsRegistryService,
-  ClientAppService,
-} from './services';
+import { ClientAppService } from './services';
 
 @NgModule({
   imports: [BrowserModule],
   declarations: [IframesContainerComponent],
-  providers: [ClientApplicationsRegistryService, ClientAppService],
+  providers: [ClientAppService],
   exports: [IframesContainerComponent],
 })
 export class ClientAppModule {}

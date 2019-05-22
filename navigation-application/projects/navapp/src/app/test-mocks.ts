@@ -30,7 +30,7 @@ const item2 = new MenuItemContainer('Item 2', [
 
 export const menuStructureMock: MenuItem[] = [item1, item2];
 
-const navConfig: NavItem[] = [
+export const navConfig: NavItem[] = [
   {
     id: 'subsubitem1',
     appIframeUrl: 'iframe1-url',
@@ -42,8 +42,3 @@ const navConfig: NavItem[] = [
     appPath: 'app-path-for-sub-item2',
   },
 ];
-
-export const navigationConfigurationMapMock: Map<
-  string,
-  NavItem
-> = navConfig.reduce((map, item) => map.set(item.id, item), new Map());

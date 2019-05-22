@@ -15,4 +15,3 @@
  */
 
 export * from './client-app.service';
-export * from './client-applications-registry.service';
