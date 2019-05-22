@@ -283,13 +283,13 @@ class ComponentEditorService {
     return this.ComponentRenderingService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
-  save() {
-    return this.HstComponentService.setParameters(
+  async save() {
+    await this.HstComponentService.setParameters(
       this.component.id,
       this.component.variant,
       this._propertiesAsFormData(),
-    )
-    .then(() => this.CmsService.reportUsageStatistic('CompConfigSidePanelSave'));
+    );
+    return this.CmsService.reportUsageStatistic('CompConfigSidePanelSave');
   }
 
   _propertiesAsFormData() {
