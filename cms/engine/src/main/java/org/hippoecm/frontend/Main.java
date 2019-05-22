@@ -80,6 +80,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
+import org.apache.wicket.resource.NoOpTextCompressor;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
@@ -205,6 +206,11 @@ public class Main extends PluginApplication {
     @Override
     protected void init() {
         super.init();
+        // FIXME (meggermont): There seems to be a bug in the default Wicket js compressor
+        // The default Wicket js compressor messes up the @bloomreach/navapp/dist/main.js
+        // so that it no longer is valid javascript. So, for now I have to replace it
+        // with the noop compressor.
+        super.getResourceSettings().setJavaScriptCompressor(new NoOpTextCompressor());
 
         initializeFallBackCredentials();
 
@@ -815,11 +821,12 @@ public class Main extends PluginApplication {
 
         setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
             final boolean navAppMode = PluginUserSession.get().getApplicationName().equals("cms") && !hasIFrameParameter();
+
             @Override
             public void render(final HeaderItem item) {
                 if (navAppMode) {
                     if (item instanceof FilteredHeaderItem) {
-                        final FilteredHeaderItem filteredHeaderItem = (FilteredHeaderItem)item;
+                        final FilteredHeaderItem filteredHeaderItem = (FilteredHeaderItem) item;
                         if (filteredHeaderItem.getFilterName().equals(NavAppPanel.NAVAPP_HEADER_ITEM)) {
                             super.render(item);
                         }

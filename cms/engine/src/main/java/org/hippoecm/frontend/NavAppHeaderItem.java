@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
@@ -66,22 +69,25 @@ public class NavAppHeaderItem extends HeaderItem {
         final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
 
         final NavAppSettings.AppSettings appSettings = navAppSettings.getAppSettings();
-        final Optional<URL> optionalURL = Optional.ofNullable(appSettings.getNavAppLocation());
 
         JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
 
-        final String[] jsResources = new String[]{"runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js"};
-        final List<String> resourcesList = new ArrayList<>(Arrays.asList(jsResources));
+        final List<String> resourcesList = new ArrayList<>(Arrays.asList("runtime.js", "es2015-polyfills.js", "polyfills.js", "main.js"));
         if (isLocalDevelopment()){
+            resourcesList.add("styles.js");
+            resourcesList.add("vendor.js");
             final List<String> jsMapResources = resourcesList.stream().map(s -> s + ".map").collect(Collectors.toList());
             resourcesList.addAll(jsMapResources);
+        } else {
+            CssHeaderItem.forReference(new CssResourceReference(getClass(), "styles.css")).render(response);
         }
+
+        final Optional<URL> optionalURL = Optional.ofNullable(appSettings.getNavAppLocation());
         resourcesList.stream()
                 .map(name -> optionalURL.map(url -> getUrlResourceReference(name, url.toString()))
                         .orElse(getPackagedReference(name)))
                 .map(JavaScriptHeaderItem::forReference)
                 .forEach(item -> {
-                    item.setDefer(true);
                     item.render(response);
                 });
     }
@@ -118,10 +124,12 @@ public class NavAppHeaderItem extends HeaderItem {
         final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
         appSettings.setNavConfigResources(navConfigResources);
         final String navappLocation = System.getProperty("navapp.location", null);
-        try {
-            appSettings.setNavAppLocation(new URL(navappLocation));
-        } catch (MalformedURLException e) {
-            log.warn(e.getMessage(), e);
+        if (StringUtils.isNotBlank(navappLocation)) {
+            try {
+                appSettings.setNavAppLocation(new URL(navappLocation));
+            } catch (MalformedURLException e) {
+                log.warn(e.getMessage(), e);
+            }
         }
         navAppSettings.setAppSettings(appSettings);
         return navAppSettings;
