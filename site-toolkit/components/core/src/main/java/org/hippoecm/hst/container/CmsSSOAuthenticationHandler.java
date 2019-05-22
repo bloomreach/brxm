@@ -18,8 +18,14 @@ package org.hippoecm.hst.container;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import javax.jcr.Credentials;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionActivationListener;
+import javax.servlet.http.HttpSessionEvent;
+
+import com.google.common.cache.Cache;
 
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -38,6 +44,8 @@ import static org.hippoecm.hst.util.HstRequestUtils.getCmsBaseURL;
 public class CmsSSOAuthenticationHandler {
 
     private final static Logger log = LoggerFactory.getLogger(CmsSSOAuthenticationHandler.class);
+
+    private final static String HTTP_SESSION_ATTR_LISTENER_NAME = CmsSSOAuthenticationHandler.class.getName() + ".listener";
 
     static boolean isAuthenticated(final HstContainerRequest containerRequest) {
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", containerRequest.getRequestURL());
@@ -60,7 +68,8 @@ public class CmsSSOAuthenticationHandler {
      * committed already with a redirect or an error
      */
     static boolean authenticate(final HstContainerRequest containerRequest,
-                                final HttpServletResponse servletResponse) throws ContainerException {
+                                final HttpServletResponse servletResponse,
+                                final Cache<String, SimpleCredentials> cmsUserRegistry) throws ContainerException {
 
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", containerRequest.getRequestURL());
 
@@ -105,6 +114,11 @@ public class CmsSSOAuthenticationHandler {
         }
 
         log.debug("Authenticated '{}' successfully", cmsSessionContext.getRepositoryCredentials().getUserID());
+
+
+        httpSession.setAttribute(HTTP_SESSION_ATTR_LISTENER_NAME, new CmsSCIDRegistryCleanupListener(cmsUserRegistry, cmsSessionContextId));
+
+        cmsUserRegistry.put(cmsSessionContextId, cmsSessionContext.getRepositoryCredentials());
 
         setRequestAttributes(containerRequest, cmsSessionContext);
 
@@ -183,4 +197,27 @@ public class CmsSSOAuthenticationHandler {
         return destinationPath.toString();
     }
 
+
+    // TODO on cms logout, the HttpSession of the site is not logged out, meaning that ths cmsSessionContextId
+    // TODO is not yet removed from the cmsSCIDRegistry. Should be done
+    private static class CmsSCIDRegistryCleanupListener implements HttpSessionActivationListener {
+
+        private final Cache<String, SimpleCredentials> cmsUserRegistry;
+        private final String cmsSessionContextId;
+
+        private CmsSCIDRegistryCleanupListener(Cache<String, SimpleCredentials> cmsUserRegistry, String cmsSessionContextId) {
+            this.cmsUserRegistry = cmsUserRegistry;
+            this.cmsSessionContextId = cmsSessionContextId;
+        }
+
+        @Override
+        public void sessionWillPassivate(final HttpSessionEvent se) {
+            cmsUserRegistry.invalidate(cmsSessionContextId);
+        }
+
+        @Override
+        public void sessionDidActivate(final HttpSessionEvent se) {
+            cmsUserRegistry.invalidate(cmsSessionContextId);
+        }
+    }
 }

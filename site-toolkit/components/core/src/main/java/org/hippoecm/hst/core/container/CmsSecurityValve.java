@@ -22,6 +22,7 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.container.PreviewAuthenticationContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -61,13 +62,34 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             return;
         }
 
+        final PreviewAuthenticationContext previewAuthenticationContext = PreviewAuthenticationContext.get(context.getServletRequest());
+        if (previewAuthenticationContext != null) {
+            log.debug("Request '{}' is done with a valid token.", servletRequest.getRequestURL());
+
+            final Session jcrSession;
+            try {
+                // since the call is stateless without http session, at the end of the request the JCR Session needs to
+                // be logged out, hence autoLogout = true
+                jcrSession = sessionSecurityDelegation.createPreviewSecurityDelegate(previewAuthenticationContext.getCredentials(), true);
+            } catch (LoginException e) {
+                throw new ContainerException("CMS user credentials have changed");
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException : {}", e.toString());
+                throw new ContainerException(e);
+            }
+
+            ((HstMutableRequestContext) requestContext).setSession(jcrSession);
+            context.invokeNext();
+            return;
+        }
+
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", servletRequest.getRequestURL());
 
         final HttpSession httpSession = servletRequest.getSession(false);
         final CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
         if (httpSession == null || cmsSessionContext == null) {
-            throw new ContainerException("Request is a cms request but there has not been an SSO handshake.");
+            throw new ContainerException("Request is a channel manager request but there has not been an SSO handshake.");
         }
 
         // We synchronize on http session to disallow concurrent requests for the Channel manager.
