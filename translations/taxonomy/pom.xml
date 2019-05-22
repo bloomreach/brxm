@@ -25,7 +25,7 @@
   
   <name>Hippo Plugin Taxonomy Translations</name>
   <artifactId>hippo-plugin-taxonomy-l10n</artifactId>
-  <version>${hippo.plugin.taxonomy.version}</version>
+  <version>4.6.5-SNAPSHOT</version>
   
   <dependencies>
     <dependency>
