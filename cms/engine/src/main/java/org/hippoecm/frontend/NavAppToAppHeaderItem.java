@@ -15,7 +15,7 @@
  *
  */
 
-package org.hippoecm.frontend.navigation;
+package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -29,7 +29,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.hippoecm.frontend.HippoHeaderItem;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
