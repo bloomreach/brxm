@@ -17,18 +17,24 @@
 
 package org.hippoecm.frontend;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
@@ -56,17 +62,41 @@ public class NavAppHeaderItem extends HeaderItem {
 
         StringHeaderItem.forString("<base href=" + contextPath + "/>").render(response);
 
-        final String javascript = String.format("NavAppSettings = %s;", parse(getSettings(contextPath, userSession)));
+        final NavAppSettings navAppSettings = getSettings(contextPath, userSession);
+        final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
+
+        final NavAppSettings.AppSettings appSettings = navAppSettings.getAppSettings();
+        final Optional<URL> optionalURL = Optional.ofNullable(appSettings.getNavAppLocation());
 
         JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
 
-        Stream.of("runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js")
-                .forEach(resourceName -> {
-                    final JavaScriptResourceReference reference = new JavaScriptResourceReference(getClass(), resourceName);
-                    final JavaScriptReferenceHeaderItem item = JavaScriptHeaderItem.forReference(reference);
+        final String[] jsResources = new String[]{"runtime.js", "es2015-polyfills.js", "polyfills.js", "styles.js", "vendor.js", "main.js"};
+        final List<String> resourcesList = new ArrayList<>(Arrays.asList(jsResources));
+        if (isLocalDevelopment()){
+            final List<String> jsMapResources = resourcesList.stream().map(s -> s + ".map").collect(Collectors.toList());
+            resourcesList.addAll(jsMapResources);
+        }
+        resourcesList.stream()
+                .map(name -> optionalURL.map(url -> getUrlResourceReference(name, url.toString()))
+                        .orElse(getPackagedReference(name)))
+                .map(JavaScriptHeaderItem::forReference)
+                .forEach(item -> {
                     item.setDefer(true);
                     item.render(response);
                 });
+    }
+
+
+    private boolean isLocalDevelopment() {
+        return "development".equals(System.getProperty("wicket.configuration"));
+    }
+
+    private ResourceReference getUrlResourceReference(final String resourceName, final String url) {
+        return new UrlResourceReference(Url.parse(String.format("%s/%s", url, resourceName)));
+    }
+
+    private ResourceReference getPackagedReference(final String resourceName) {
+        return new JavaScriptResourceReference(getClass(), resourceName);
     }
 
     private NavAppSettings getSettings(final String contextPath, final PluginUserSession userSession) {
@@ -87,6 +117,12 @@ public class NavAppHeaderItem extends HeaderItem {
 
         final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
         appSettings.setNavConfigResources(navConfigResources);
+        final String navappLocation = System.getProperty("navapp.location", null);
+        try {
+            appSettings.setNavAppLocation(new URL(navappLocation));
+        } catch (MalformedURLException e) {
+            log.warn(e.getMessage(), e);
+        }
         navAppSettings.setAppSettings(appSettings);
         return navAppSettings;
     }
