@@ -24,6 +24,7 @@ public class NavigationItemFactoryImpl implements NavigationItemFactory {
         final NavigationItem navigationItem = new NavigationItem();
         navigationItem.setId(getId(perspectiveClassName));
         navigationItem.setAppIframeUrl(appIframeUrl);
+        navigationItem.setAppPath(getId(perspectiveClassName));
         return navigationItem;
     }
 
