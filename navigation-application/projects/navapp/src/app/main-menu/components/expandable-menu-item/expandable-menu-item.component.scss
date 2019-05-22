@@ -3,7 +3,6 @@
 :host {
   display: block;
   overflow: hidden;
-  padding-top: 5px;
 
   &.active .header {
     color: $menu-active-text-color;

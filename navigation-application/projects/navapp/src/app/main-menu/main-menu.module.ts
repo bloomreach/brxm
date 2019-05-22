@@ -5,8 +5,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ClickOutsideModule } from 'ng-click-outside';
 
-import { MaterialModule } from '../shared/material/material.module';
+import { MaterialModule } from '../shared';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { MainMenuComponent } from './components/main-menu.component';
@@ -16,7 +17,12 @@ import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-
 import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
 
 @NgModule({
-  imports: [CommonModule, BrowserAnimationsModule, MaterialModule],
+  imports: [
+    CommonModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    ClickOutsideModule,
+  ],
   declarations: [
     MainMenuComponent,
     TopLevelMenuItemComponent,
