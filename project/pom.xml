@@ -1068,6 +1068,7 @@
                 <exclude>**/*.bin</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
                 <exclude>**/README.md</exclude>
+                <exclude>**/README.adoc</exclude>
                 <!-- exclude IntelliJ module files of sub-projects -->
                 <exclude>**/*.iml</exclude>
                 <!-- exclude IntelliJ Atlassian plugin file -->
