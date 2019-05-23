@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -51,15 +49,10 @@ import com.google.common.collect.Sets;
 public class CmsValidatorAdapter implements ICmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(CmsValidatorAdapter.class);
-    private static final List<String> IGNORED_VALIDATOR_NAMES = new ArrayList<>();
 
-    static {
-        IGNORED_VALIDATOR_NAMES.add("optional");
-    }
-    
     private final String name;
 
-    public CmsValidatorAdapter(final String name) {
+    CmsValidatorAdapter(final String name) {
         this.name = name;
     }
 
@@ -74,9 +67,6 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static ValidatorInstance getValidator(final String name) {
-        if (IGNORED_VALIDATOR_NAMES.contains(name)) {
-            return null;
-        }
         final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
 
         if (service == null) {

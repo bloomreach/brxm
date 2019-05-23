@@ -25,6 +25,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
 
+import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
+
 public class ValidatorService extends Plugin {
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
@@ -52,6 +54,10 @@ public class ValidatorService extends Plugin {
 
     public ICmsValidator getValidator(final String name) {
         if (StringUtils.isEmpty(name)) {
+            return null;
+        }
+
+        if (OPTIONAL_VALIDATOR.equals(name)) {
             return null;
         }
 
