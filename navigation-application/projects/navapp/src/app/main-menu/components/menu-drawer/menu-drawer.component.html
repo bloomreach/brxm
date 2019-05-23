@@ -1,4 +1,6 @@
-<div *ngIf="config" [@fadeIn]="configChange$ | async">
+<div *ngIf="config" [@fadeIn]="configChange$ | async"
+     (clickOutside)="onClickedOutside()"
+     class="content-wrapper">
   <h1 class="header">{{ config?.caption }}</h1>
 
   <div *ngFor="let item of config.children">
@@ -16,3 +18,4 @@
     </brna-expandable-menu-item>
   </div>
 </div>
+<div class="window-content-cover"></div>

@@ -1,5 +1,5 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, HostBinding, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { QaHelperService } from '../../../services';
@@ -40,13 +40,16 @@ export class MenuDrawerComponent implements OnChanges {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-    private elRef: ElementRef,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('config' in changes) {
       this.configChange$.next({});
     }
+  }
+
+  onClickedOutside(): void {
+    this.menuStateService.closeDrawer();
   }
 
   isContainer(item: MenuItem): boolean {
@@ -59,14 +62,5 @@ export class MenuDrawerComponent implements OnChanges {
 
   getQaClass(item: MenuItem): string {
     return this.qaHelperService.getMenuItemClass(item);
-  }
-
-  @HostListener('document:click', ['$event'])
-  private onDocumentClick(event): void {
-    if (this.elRef.nativeElement.contains(event.target)) {
-      return;
-    }
-
-    this.menuStateService.closeDrawer();
   }
 }

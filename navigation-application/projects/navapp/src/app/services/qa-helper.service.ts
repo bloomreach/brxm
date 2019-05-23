@@ -9,6 +9,10 @@ const prefix = 'qa';
 })
 export class QaHelperService {
   getMenuItemClass(item: MenuItem | string): string {
+    if (!item) {
+      return '';
+    }
+
     if (typeof item === 'string') {
       return `${prefix}-menu-item-${item}`;
     }
