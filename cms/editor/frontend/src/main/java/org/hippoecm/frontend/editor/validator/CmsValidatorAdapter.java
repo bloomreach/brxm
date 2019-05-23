@@ -48,11 +48,11 @@ import com.google.common.collect.Sets;
 
 public class CmsValidatorAdapter implements ICmsValidator {
 
-    public static final Logger log = LoggerFactory.getLogger(CmsValidatorAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(CmsValidatorAdapter.class);
 
     private final String name;
 
-    public CmsValidatorAdapter(final String name) {
+    CmsValidatorAdapter(final String name) {
         this.name = name;
     }
 
