@@ -22,3 +22,6 @@ const targetDir = 'target/classes/navapp';
 fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDir);
 fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDir);
 fs.copyFile('node_modules/penpal/dist/penpal.js', targetDir + "/penpal.js");
+
+fs.rename('target/classes/navapp/navapp/assets', 'target/classes/navapp/assets');
+fs.rmdirSync('target/classes/navapp/navapp');
