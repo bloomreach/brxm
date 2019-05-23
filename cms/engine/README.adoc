@@ -6,19 +6,11 @@
 
 [source, bash]
 ----
-ng serve  --deploy-url="http://localhost:4200/" --serve-path="/" --publicHost="http://localhost:4200"
+ng serve --publicHost="http://localhost:4200"
 ----
 * Start the application with the following default jvm args:
 ** "wicket.deployment" with the value "development", e.g. -Dwicket.deployment=development
 ** "navapp.location" with the location of the cdn, e.g. -Dnavapp.location="http://localhost:4200"
-
-These properties can also be added to the filter config of the WicketFilter.
-
-* Copy the "assets" folder navigation application distribution to the exploded cms of your application
-
-
-
-
 
 == Update the navapp and navapp-communication libary
 
