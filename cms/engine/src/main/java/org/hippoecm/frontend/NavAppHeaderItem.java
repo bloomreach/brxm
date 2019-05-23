@@ -23,22 +23,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,78 +63,89 @@ public class NavAppHeaderItem extends HeaderItem {
     public void render(final Response response) {
 
         final String contextPath = WebApplication.get().getServletContext().getContextPath();
-        final PluginUserSession userSession = PluginUserSession.get();
+        final String cmsLocation = getCmsLocation(contextPath);
+        final URL navAppLocation = getNavAppLocation(cmsLocation);
+        final String navAppResourcePrefix = getNavappResourcePrefix();
+        StringHeaderItem.forString(String.format("<base href=%s/>", navAppLocation)).render(response);
 
-        StringHeaderItem.forString("<base href=" + contextPath + "/>").render(response);
-
-        final NavAppSettings navAppSettings = getSettings(contextPath, userSession);
+        final NavAppSettings navAppSettings = getSettings(navAppLocation, cmsLocation, contextPath, PluginUserSession.get());
         final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
-
-        final NavAppSettings.AppSettings appSettings = navAppSettings.getAppSettings();
 
         JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
 
         final List<String> resourcesList = new ArrayList<>(Arrays.asList("runtime.js", "es2015-polyfills.js", "polyfills.js", "main.js"));
-        if (isLocalDevelopment()){
+        if (isLocalDevelopment()) {
             resourcesList.add("styles.js");
             resourcesList.add("vendor.js");
-            final List<String> jsMapResources = resourcesList.stream().map(s -> s + ".map").collect(Collectors.toList());
-            resourcesList.addAll(jsMapResources);
         } else {
-            CssHeaderItem.forReference(new CssResourceReference(getClass(), "styles.css")).render(response);
+            CssHeaderItem.forReference(getUrlResourceReference(navAppLocation.toString(), navAppResourcePrefix + "styles.css")).render(response);
         }
 
-        final Optional<URL> optionalURL = Optional.ofNullable(appSettings.getNavAppLocation());
+        final Function<String, ResourceReference> toHeaderItem = name -> getUrlResourceReference(navAppLocation.toString(), name);
         resourcesList.stream()
-                .map(name -> optionalURL.map(url -> getUrlResourceReference(name, url.toString()))
-                        .orElse(getPackagedReference(name)))
-                .map(JavaScriptHeaderItem::forReference)
-                .forEach(item -> {
-                    item.render(response);
-                });
+                .map(name -> String.format("%s%s", navAppResourcePrefix, name))
+                .map(toHeaderItem.andThen(JavaScriptHeaderItem::forReference))
+                .forEach(item -> item.render(response));
     }
 
+    private URL getNavAppLocation(String cmsLocation) {
+        try {
+            return new URL(System.getProperty("navapp.location", cmsLocation));
+        } catch (MalformedURLException e) {
+            throw new WicketRuntimeException(e);
+        }
+    }
+
+    private String getNavappResourcePrefix() {
+        return System.getProperty("navapp.location", null) == null ? "navapp/" : "";
+    }
+
+    private String getCmsLocation(String contextPath) {
+        final Request wicketRequest = RequestCycle.get().getRequest();
+        final HttpServletRequest request = (HttpServletRequest) wicketRequest.getContainerRequest();
+        final String scheme = RequestUtils.getFarthestRequestScheme(request);
+        final String remoteAddr = RequestUtils.getFarthestRequestHost(request);
+        return String.format("%s://%s%s", scheme, remoteAddr, contextPath);
+    }
 
     private boolean isLocalDevelopment() {
         return "development".equals(System.getProperty("wicket.configuration"));
     }
 
-    private ResourceReference getUrlResourceReference(final String resourceName, final String url) {
-        return new UrlResourceReference(Url.parse(String.format("%s/%s", url, resourceName)));
+    private ResourceReference getUrlResourceReference(final String location, final String resourceName) {
+        final Url parsedUrl = Url.parse(String.format("%s/%s", location, resourceName));
+        return new UrlResourceReference(parsedUrl);
     }
 
-    private ResourceReference getPackagedReference(final String resourceName) {
-        return new JavaScriptResourceReference(getClass(), resourceName);
-    }
-
-    private NavAppSettings getSettings(final String contextPath, final PluginUserSession userSession) {
+    private NavAppSettings getSettings(final URL navAppLocation, final String cmsLocation, final String contextPath, final PluginUserSession userSession) {
         final NavAppSettings navAppSettings = new NavAppSettings();
+        navAppSettings.setUserSettings(getUserSettings(userSession));
+        navAppSettings.setAppSettings(getAppSettings(navAppLocation, cmsLocation, contextPath));
+        return navAppSettings;
+    }
 
-        final NavAppSettings.UserSettings userSettings = new NavAppSettings.UserSettings();
-        userSettings.setLanguage(userSession.getLocale().getLanguage());
-        userSettings.setTimeZone(userSession.getTimeZone());
-        userSettings.setUserName(userSession.getUserName());
-        navAppSettings.setUserSettings(userSettings);
-
+    private NavAppSettings.AppSettings getAppSettings(final URL navAppLocation, final String cmsLocation, final String contextPath) {
         final List<NavAppSettings.NavConfigResource> navConfigResources = new ArrayList<>();
         final NavAppSettings.NavConfigResource brXmResource = new NavAppSettings.NavConfigResource();
         brXmResource.setResourceType(NavAppSettings.ResourceType.REST);
+
         final String endpointUrl = "navigationitems";
-        brXmResource.setUrl(String.format("%s/ws/%s", contextPath, endpointUrl));
+        brXmResource.setUrl(String.format("%s/ws/%s", cmsLocation, endpointUrl));
         navConfigResources.add(brXmResource);
 
         final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
         appSettings.setNavConfigResources(navConfigResources);
-        final String navappLocation = System.getProperty("navapp.location", null);
-        if (StringUtils.isNotBlank(navappLocation)) {
-            try {
-                appSettings.setNavAppLocation(new URL(navappLocation));
-            } catch (MalformedURLException e) {
-                log.warn(e.getMessage(), e);
-            }
-        }
-        navAppSettings.setAppSettings(appSettings);
-        return navAppSettings;
+        appSettings.setNavAppLocation(navAppLocation);
+        appSettings.setContextPath(contextPath);
+        return appSettings;
+    }
+
+    private NavAppSettings.UserSettings getUserSettings(final PluginUserSession userSession) {
+        final NavAppSettings.UserSettings userSettings = new NavAppSettings.UserSettings();
+        userSettings.setLanguage(userSession.getLocale().getLanguage());
+        userSettings.setTimeZone(userSession.getTimeZone());
+        userSettings.setUserName(userSession.getUserName());
+        return userSettings;
     }
 
     private String parse(NavAppSettings navAppSettings) {
