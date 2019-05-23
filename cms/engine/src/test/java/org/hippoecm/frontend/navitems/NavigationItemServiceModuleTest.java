@@ -20,9 +20,7 @@ package org.hippoecm.frontend.navitems;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -30,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +37,6 @@ import org.onehippo.repository.mock.MockNodeIterator;
 
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -92,7 +88,7 @@ public class NavigationItemServiceModuleTest {
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
         replay(sessionRequestProvider);
 
-        expect(request.getScheme()).andReturn("scheme");
+        expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         expect(request.getContextPath()).andReturn("/context-path");
         replay(request);
 
@@ -101,13 +97,13 @@ public class NavigationItemServiceModuleTest {
 
         final NavigationItem item1 = navigationItems.get(0);
         assertThat(item1.getId(), is("hippo-perspective-a"));
-        assertThat(item1.getAppIframeUrl(), is("scheme://cms.test.com/context-path/?iframe"));
+        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
         assertThat(item1.getAppPath(), is("hippo-perspective-a"));
         assertThat(item1.getDisplayName(), is(nullValue()));
 
         final NavigationItem item2 = navigationItems.get(1);
         assertThat(item2.getId(), is("hippo-perspective-b"));
-        assertThat(item1.getAppIframeUrl(), is("scheme://cms.test.com/context-path/?iframe"));
+        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
         assertThat(item2.getAppPath(), is("hippo-perspective-b"));
         assertThat(item2.getDisplayName(), is(nullValue()));
     }
@@ -125,7 +121,7 @@ public class NavigationItemServiceModuleTest {
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
         replay(sessionRequestProvider);
 
-        expect(request.getScheme()).andReturn("scheme");
+        expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         expect(request.getContextPath()).andReturn("/context-path");
         replay(request);
 
