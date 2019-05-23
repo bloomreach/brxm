@@ -29,7 +29,7 @@
               ]
             },
             "assets": [
-              { "glob": "**/**/*", "input": "projects/navapp/src/assets/", "output": "/navapp/assets/" }
+              { "glob": "**/**/*", "input": "projects/navapp/src/navapp/assets/", "output": "/navapp/assets/" }
             ],
             "styles": [
               "node_modules/normalize.css/normalize.css",
