@@ -15,4 +15,3 @@
  */
 
 export * from './client-application-configuration.model';
-export * from './client-application-handler.model';

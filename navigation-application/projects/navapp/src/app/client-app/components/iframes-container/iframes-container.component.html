@@ -1,0 +1,3 @@
+<brna-iframe-app *ngFor="let appConfig of appConfigs; trackBy: getConfigId" [appConfig]="appConfig"
+                 [class.hidden]="!isActive(appConfig)">
+</brna-iframe-app>

@@ -14,39 +14,50 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, OnDestroy, OnInit, Renderer2, RendererFactory2 } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { ClientApplicationConfiguration } from '../../models';
 import { ClientAppService } from '../../services';
 
 @Component({
   selector: 'brna-iframes-container',
-  template: '',
+  templateUrl: './iframes-container.component.html',
   styleUrls: ['iframes-container.component.scss'],
 })
 export class IframesContainerComponent implements OnInit, OnDestroy {
-  private renderer: Renderer2;
   private unsubscribe = new Subject();
+  private activeAppId: string;
 
-  constructor(
-    private elRef: ElementRef,
-    private clientAppsManager: ClientAppService,
-    private rendererFactory: RendererFactory2,
-  ) {}
+  appConfigs: ClientApplicationConfiguration[] = [];
+
+  constructor(private clientAppService: ClientAppService) {}
 
   ngOnInit(): void {
-    this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
+    this.clientAppService.appConfigs$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(appConfigs => {
+        this.appConfigs = appConfigs;
+      });
 
-    this.clientAppsManager.applicationCreated$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(app => {
-      this.renderer.appendChild(this.elRef.nativeElement, app.iframeEl);
-    });
+    this.clientAppService.activeAppId$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(activeAppId => {
+        this.activeAppId = activeAppId;
+      });
   }
 
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  isActive(appConfig: ClientApplicationConfiguration): boolean {
+    return this.activeAppId === appConfig.id ? true : false;
+  }
+
+  getConfigId(index: number, config: ClientApplicationConfiguration): string {
+    return config.id;
   }
 }

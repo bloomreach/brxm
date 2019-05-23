@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { IframesContainerComponent } from './components';
+import { IframeAppComponent } from './components/iframe-app/iframe-app.component';
 import { ClientAppService } from './services';
 
 @NgModule({
-  imports: [BrowserModule],
-  declarations: [IframesContainerComponent],
+  imports: [BrowserModule, CommonModule],
+  declarations: [IframesContainerComponent, IframeAppComponent],
   providers: [ClientAppService],
   exports: [IframesContainerComponent],
 })
