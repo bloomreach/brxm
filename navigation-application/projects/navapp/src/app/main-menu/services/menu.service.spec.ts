@@ -17,7 +17,7 @@
 import { async, fakeAsync, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { NavigationConfigurationService } from '../../services';
+import { NavConfigService } from '../../services';
 import { menuStructureMock, navConfig } from '../../test-mocks';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
@@ -25,7 +25,7 @@ import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
 
 describe('MenuBuilderService', () => {
-  const navConfigServiceMock: NavigationConfigurationService = {
+  const navConfigServiceMock: NavConfigService = {
     navItems$: of(navConfig),
   } as any;
 

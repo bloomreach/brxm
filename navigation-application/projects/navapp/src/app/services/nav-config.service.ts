@@ -30,7 +30,7 @@ import { NavAppSettingsService } from './navapp-settings.service';
 @Injectable({
   providedIn: 'root',
 })
-export class NavigationConfigurationService {
+export class NavConfigService {
   private readonly hostElement: HTMLElement;
   private readonly renderer: Renderer2;
 

@@ -19,7 +19,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
-import { NavigationConfigurationService } from '../../services/navigation-configuration.service';
+import { NavConfigService } from '../../services/nav-config.service';
 
 @Injectable()
 export class ClientAppService {
@@ -27,7 +27,7 @@ export class ClientAppService {
 
   private activeAppURL = new BehaviorSubject<string>(undefined);
 
-  constructor(private navConfigService: NavigationConfigurationService) {
+  constructor(private navConfigService: NavConfigService) {
     this.navConfigService.navItems$
       .pipe(map(navItems => this.filterUniqueURLs(navItems)))
       .subscribe(appURLs => {

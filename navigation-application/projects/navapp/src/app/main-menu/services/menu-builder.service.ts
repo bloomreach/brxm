@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { NavItem } from '../../models/dto';
-import { NavigationConfigurationService } from '../../services';
+import { NavConfigService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
 import { MenuStructureService } from './menu-structure.service';
@@ -27,7 +27,7 @@ import { MenuStructureService } from './menu-structure.service';
 @Injectable()
 export class MenuBuilderService {
   constructor(
-    private navConfigService: NavigationConfigurationService,
+    private navConfigService: NavConfigService,
     private menuStructureService: MenuStructureService,
   ) {}
 

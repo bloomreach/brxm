@@ -1,6 +1,6 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 
-import { NavigationConfigurationService } from './services';
+import { NavConfigService } from './services';
 
 import { MenuStateService } from './main-menu/services';
 
@@ -15,7 +15,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private menuStateService: MenuStateService,
-    private navConfigService: NavigationConfigurationService,
+    private navConfigService: NavConfigService,
   ) {}
 
   get isMenuCollapsed(): boolean {

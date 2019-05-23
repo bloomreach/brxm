@@ -17,14 +17,14 @@
 import { Renderer2, RendererFactory2 } from '@angular/core';
 import { of } from 'rxjs';
 
-import { NavigationConfigurationService } from '../../services';
+import { NavConfigService } from '../../services';
 import { navConfig } from '../../test-mocks';
 import { ClientApplicationHandler } from '../models';
 
 import { ClientAppService } from './client-app.service';
 
 describe('ClientApplicationsRegistryService', () => {
-  const navConfigServiceMock: NavigationConfigurationService = {
+  const navConfigServiceMock: NavConfigService = {
     navItems$: of(navConfig),
   } as any;
 
