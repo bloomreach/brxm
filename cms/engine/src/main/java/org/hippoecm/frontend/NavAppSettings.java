@@ -89,6 +89,7 @@ public class NavAppSettings {
         private List<NavConfigResource> navConfigResources;
 
         private URL navAppLocation;
+        private String contextPath;
 
         public URL getNavAppLocation() {
             return navAppLocation;
@@ -96,6 +97,14 @@ public class NavAppSettings {
 
         public void setNavAppLocation(final URL navAppLocation) {
             this.navAppLocation = navAppLocation;
+        }
+
+        public String getContextPath() {
+            return contextPath;
+        }
+
+        public void setContextPath(final String contextPath) {
+            this.contextPath = contextPath;
         }
 
         public List<NavConfigResource> getNavConfigResources() {

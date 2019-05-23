@@ -17,24 +17,8 @@
 
 const fs = require('file-system');
 
-const sourceDir = 'node_modules/@bloomreach';
-const targetDir = 'target/classes/org/hippoecm/frontend';
+const targetDir = 'target/classes/navapp';
 
-fs.recurse(sourceDir, ['**/bundles/*.(js|map)', 'navapp/dist/navapp/*.(js|map|css)'], (filepath, relative, filename) => {
-
-  if (filename) {
-    const destpath = `${targetDir}/${filename}`;
-    fs.copyFile(filepath, destpath,
-      {
-        done: (err) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(`[npm] copied ${filename} to ${destpath}`);
-          }
-        }
-      });
-  }
-});
-
+fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDir);
+fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDir);
 fs.copyFile('node_modules/penpal/dist/penpal.js', targetDir + "/penpal.js");
