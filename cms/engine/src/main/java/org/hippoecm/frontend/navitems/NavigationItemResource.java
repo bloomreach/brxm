@@ -28,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -55,7 +56,7 @@ public final class NavigationItemResource {
     }
 
     private String getAppIframeUrl(HttpServletRequest request) {
-        final String scheme = request.getScheme();
+        final String scheme = RequestUtils.getFarthestRequestScheme(request);
         final String requestHost = sessionRequestContextProvider.getFarthestRequestHost(request);
         final String contextPath = request.getContextPath();
         return String.format("%s://%s%s/?%s", scheme, requestHost, contextPath, Main.CMS_AS_IFRAME_QUERY_PARAMETER);
