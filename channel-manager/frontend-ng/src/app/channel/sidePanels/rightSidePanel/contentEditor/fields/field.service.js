@@ -111,19 +111,19 @@ class FieldService {
       this.throttled[documentId] = {};
     }
 
-    const promise = this.$q.defer();
+    const deferred = this.$q.defer();
     this.throttled[documentId][name] = this.$timeout(() => {
       if (!immediate) {
         this._save(documentId, name, values)
-          .then(promise.resolve)
-          .catch(promise.reject);
+          .then(deferred.resolve)
+          .catch(deferred.reject);
       }
 
       this._abortThrottled(documentId, name);
     }, this.AUTOSAVE_DELAY);
 
     if (!immediate) {
-      return promise;
+      return deferred.promise;
     }
 
     return this._save(documentId, name, values);
