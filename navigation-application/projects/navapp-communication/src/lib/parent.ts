@@ -1,4 +1,4 @@
-import penpal from 'penpal';
+import Penpal from 'penpal';
 
 import {
   ChildApi,
@@ -27,6 +27,6 @@ export function connectToParent({
   const proxies: ChildApi = createProxies(methods);
   const proxiedMethods = mergeIntersecting(methods, proxies);
 
-  return penpal.connectToParent({ parentOrigin, methods: proxiedMethods })
+  return Penpal.connectToParent({ parentOrigin, methods: proxiedMethods })
     .promise;
 }

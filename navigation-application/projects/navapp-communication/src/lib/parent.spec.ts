@@ -1,10 +1,10 @@
-import penpal from 'penpal';
+import Penpal from 'penpal';
 
 import { connectToParent, createProxies } from './parent';
 
 describe('connectToParent', () => {
   beforeEach(() => {
-    spyOn(penpal, 'connectToParent').and.callThrough();
+    spyOn(Penpal, 'connectToParent').and.callThrough();
   });
 
   it('should pass config to penpal connectToParent', () => {
@@ -19,7 +19,7 @@ describe('connectToParent', () => {
     };
 
     connectToParent(config);
-    expect(penpal.connectToParent).toHaveBeenCalledWith(config);
+    expect(Penpal.connectToParent).toHaveBeenCalledWith(config);
   });
 
   it('should default the config methods to an empty object', () => {
@@ -29,7 +29,7 @@ describe('connectToParent', () => {
     };
 
     connectToParent(config);
-    expect(penpal.connectToParent).toHaveBeenCalledWith({
+    expect(Penpal.connectToParent).toHaveBeenCalledWith({
       parentOrigin,
       methods: {},
     });
@@ -62,7 +62,7 @@ describe('connectToParent', () => {
     };
 
     connectToParent(config);
-    expect(penpal.connectToParent).toHaveBeenCalled();
-    expect(penpal.connectToParent).not.toHaveBeenCalledWith(config); // So therefore the proxy is called.
+    expect(Penpal.connectToParent).toHaveBeenCalled();
+    expect(Penpal.connectToParent).not.toHaveBeenCalledWith(config); // So therefore the proxy is called.
   });
 });

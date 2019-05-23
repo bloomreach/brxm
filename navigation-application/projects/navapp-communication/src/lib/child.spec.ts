@@ -1,10 +1,10 @@
-import penpal from 'penpal';
+import Penpal from 'penpal';
 
 import { connectToChild } from './child';
 
 describe('connectToChild', () => {
   beforeEach(() => {
-    spyOn(penpal, 'connectToChild').and.callThrough();
+    spyOn(Penpal, 'connectToChild').and.callThrough();
   });
 
   it('should pass config to penpal connectToChild', () => {
@@ -19,7 +19,7 @@ describe('connectToChild', () => {
     };
 
     connectToChild(config);
-    expect(penpal.connectToChild).toHaveBeenCalledWith(config);
+    expect(Penpal.connectToChild).toHaveBeenCalledWith(config);
   });
 
   it('should default the config methods to an empty object', () => {
@@ -31,7 +31,7 @@ describe('connectToChild', () => {
     };
 
     connectToChild(config);
-    expect(penpal.connectToChild).toHaveBeenCalledWith({
+    expect(Penpal.connectToChild).toHaveBeenCalledWith({
       iframe,
       methods: {},
     });
