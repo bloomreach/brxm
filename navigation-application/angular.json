@@ -18,7 +18,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/navapp",
+            "outputPath": "dist/navapp/",
             "index": "projects/navapp/src/index.html",
             "main": "projects/navapp/src/main.ts",
             "polyfills": "projects/navapp/src/polyfills.ts",
@@ -29,8 +29,7 @@
               ]
             },
             "assets": [
-              "projects/navapp/src/favicon.ico",
-              "projects/navapp/src/assets"
+              { "glob": "**/**/*", "input": "projects/navapp/src/assets/", "output": "/navapp/assets/" }
             ],
             "styles": [
               "node_modules/normalize.css/normalize.css",
