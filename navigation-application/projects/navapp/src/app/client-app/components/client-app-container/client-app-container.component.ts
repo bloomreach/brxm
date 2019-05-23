@@ -21,11 +21,11 @@ import { takeUntil } from 'rxjs/operators';
 import { ClientAppService } from '../../services';
 
 @Component({
-  selector: 'brna-iframes-container',
-  templateUrl: './iframes-container.component.html',
-  styleUrls: ['iframes-container.component.scss'],
+  selector: 'brna-client-app-container',
+  templateUrl: './client-app-container.component.html',
+  styleUrls: ['client-app-container.component.scss'],
 })
-export class IframesContainerComponent implements OnInit, OnDestroy {
+export class ClientAppContainerComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
   private activeAppURL: string;
 

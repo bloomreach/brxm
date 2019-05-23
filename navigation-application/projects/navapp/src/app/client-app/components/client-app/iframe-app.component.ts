@@ -13,11 +13,11 @@ import { CommunicationsService } from '../../../services';
 import { ConnectionService } from '../../../services/connection.service';
 
 @Component({
-  selector: 'brna-iframe-app',
-  templateUrl: './iframe-app.component.html',
-  styleUrls: ['./iframe-app.component.scss'],
+  selector: 'brna-client-app',
+  templateUrl: './client-app.component.html',
+  styleUrls: ['./client-app.component.scss'],
 })
-export class IframeAppComponent implements OnInit, AfterViewInit {
+export class ClientAppComponent implements OnInit, AfterViewInit {
   @Input()
   appURL: string;
 

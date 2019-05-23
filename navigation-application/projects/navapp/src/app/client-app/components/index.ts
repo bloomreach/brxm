@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export * from './iframes-container/iframes-container.component';
+export * from './client-app-container/client-app-container.component';

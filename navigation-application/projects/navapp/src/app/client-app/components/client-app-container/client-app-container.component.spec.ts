@@ -4,11 +4,11 @@ import { Subject } from 'rxjs';
 import { ClientApplicationHandler } from '../../models';
 import { ClientAppService } from '../../services';
 
-import { IframesContainerComponent } from './iframes-container.component';
+import { ClientAppContainerComponent } from './client-app-container.component';
 
 describe('IframesContainerComponent', () => {
-  let component: IframesContainerComponent;
-  let fixture: ComponentFixture<IframesContainerComponent>;
+  let component: ClientAppContainerComponent;
+  let fixture: ComponentFixture<ClientAppContainerComponent>;
 
   const fakeApplicationsCreated$ = new Subject<ClientApplicationHandler>();
 
@@ -23,11 +23,11 @@ describe('IframesContainerComponent', () => {
 
     fixture = TestBed.configureTestingModule({
       imports: [],
-      declarations: [IframesContainerComponent],
+      declarations: [ClientAppContainerComponent],
       providers: [
         { provide: ClientAppService, useValue: clientAppServiceMock },
       ],
-    }).createComponent(IframesContainerComponent);
+    }).createComponent(ClientAppContainerComponent);
 
     component = fixture.componentInstance;
     el = fixture.elementRef.nativeElement;

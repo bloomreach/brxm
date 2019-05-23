@@ -18,14 +18,14 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { IframesContainerComponent } from './components';
-import { IframeAppComponent } from './components/iframe-app/iframe-app.component';
+import { ClientAppContainerComponent } from './components';
+import { ClientAppComponent } from './components/client-app/iframe-app.component';
 import { ClientAppService } from './services';
 
 @NgModule({
   imports: [BrowserModule, CommonModule],
-  declarations: [IframesContainerComponent, IframeAppComponent],
+  declarations: [ClientAppContainerComponent, ClientAppComponent],
   providers: [ClientAppService],
-  exports: [IframesContainerComponent],
+  exports: [ClientAppContainerComponent],
 })
 export class ClientAppModule {}
