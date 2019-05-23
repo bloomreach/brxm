@@ -76,22 +76,6 @@ definitions:
             hipposysedit:path: contentbeanstest:richTextEditorCompoundType
             hipposysedit:primary: false
             hipposysedit:type: hippostd:html
-#          /booleanRadioGroupTypeField:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:booleanRadioGroupTypeField
-#            hipposysedit:primary: false
-#            hipposysedit:type: selection:BooleanRadioGroup
-#          /imagelinkCompoundType:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:imagelinkCompoundType
-#            hipposysedit:primary: false
-#            hipposysedit:type: hippogallerypicker:imagelink
 #          /docbaseTypeField:
 #            jcr:primaryType: hipposysedit:field
 #            hipposysedit:mandatory: false
@@ -100,30 +84,6 @@ definitions:
 #            hipposysedit:path: contentbeanstest:docbaseTypeField
 #            hipposysedit:primary: false
 #            hipposysedit:type: Docbase
-#          /dynamicdropdownTypeField:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:dynamicdropdownTypeField
-#            hipposysedit:primary: false
-#            hipposysedit:type: DynamicDropdown
-#          /radioGroupTypeField:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:radioGroupTypeField
-#            hipposysedit:primary: false
-#            hipposysedit:type: selection:RadioGroup
-#          /staticdropdownTypeField:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:staticdropdownTypeField
-#            hipposysedit:primary: false
-#            hipposysedit:type: StaticDropdown
 #          /textTypeField:
 #            jcr:primaryType: hipposysedit:field
 #            hipposysedit:mandatory: false
@@ -199,12 +159,6 @@ definitions:
           /contentbeanstest:richTextEditorCompoundType:
             jcr:primaryType: hippostd:html
             hippostd:content: ''
-#          /contentbeanstest:imagelinkCompoundType:
-#            jcr:primaryType: hippogallerypicker:imagelink
-#            hippo:docbase: db02dde5-0098-4488-a72c-2a4fc6d51beb
-#            hippo:facets: []
-#            hippo:modes: []
-#            hippo:values: []
           /contentbeanstest:mirrorCompoundType:
             jcr:primaryType: hippo:mirror
             hippo:docbase: 64ab4648-0c20-40d2-9f18-d7a394f0334b
@@ -217,7 +171,3 @@ definitions:
             jcr:encoding: UTF-8
             jcr:lastModified: 2008-03-26T12:03:00+01:00
             jcr:mimeType: application/vnd.hippo.blank
-#          /contentbeanstest:listitemCompoundType:
-#            jcr:primaryType: selection:listitem
-#            selection:key: ''
-#            selection:label: ''

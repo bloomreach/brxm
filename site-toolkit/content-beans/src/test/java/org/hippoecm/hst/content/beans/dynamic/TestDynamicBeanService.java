@@ -23,16 +23,12 @@ import java.util.Locale;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -45,9 +41,12 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
     private static final String BOOLEAN_TYPE_METHOD_NAME = "getBooleanTypeField";
+    private static final String CALENDER_DATE_TYPE_METHOD_NAME = "getCalendardateTypeField";
     private static final String DATE_TYPE_METHOD_NAME = "getDateTypeField";
     private static final String DECIMAL_NUMBER_TYPE_METHOD_NAME = "getDoubleTypeField";
+    private static final String DOCBASE_TYPE_METHOD_NAME = "getDocbaseTypeField";
     private static final String INTEGER_NUMBER_TYPE_METHOD_NAME = "getLongTypeField";
+    private static final String HTML_TYPE_METHOD_NAME = "getHtmlTypeField";
     private static final String STRING_TYPE_METHOD_NAME = "getStringTypeField";
     private static final String TEXT_TYPE_METHOD_NAME = "getTextTypeField";
 
@@ -61,9 +60,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
-
-    // TODO Fix test
-    @Ignore
+    @Ignore // This test belongs to the improvement of CMS-11933
     @Test
     public void testGetValueOfStringTypeFieldWithoutContentBean() throws Exception {
 
@@ -75,8 +72,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("string Value", value);
     }
 
-    // TODO Fix test
-    @Ignore
+    @Ignore // This test belongs to the improvement of CMS-11933
     @Test
     public void testGetValueOfTextTypeFieldWithoutContentBean() throws Exception {
 
@@ -131,8 +127,33 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-
         assertTrue(DateUtils.isSameDay(result, value.getTime()));
+    }
+
+    @Ignore // This test belongs to the improvement of CMS-11933
+    @Test
+    public void testGetValueOfCalendarDateTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Calendar value = callContentBeanMethod(generatedBean, CALENDER_DATE_TYPE_METHOD_NAME, Calendar.class);
+
+        assertNotNull("The method '" + CALENDER_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
+
+        Date result = dateParser.parse("25/03/2019");
+        assertTrue(DateUtils.isSameDay(result, value.getTime()));
+    }
+
+    @Ignore // This test belongs to the improvement of CMS-11933
+    @Test
+    public void testGetValueOfHtmlTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        String value = callContentBeanMethod(generatedBean, HTML_TYPE_METHOD_NAME, String.class);
+
+        assertNotNull("The method '" + HTML_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals("htmltypecontent", value);
     }
 
     @Test
@@ -147,6 +168,18 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("richtexteditorcontent", hippoHtml.getContent());
     }
 
+    @Ignore // This test belongs to the improvement of CMS-11933
+    @Test
+    public void testGetContentOfDocbaseTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        HippoBean hippoBean = callContentBeanMethod(generatedBean, DOCBASE_TYPE_METHOD_NAME, HippoBean.class);
+
+        assertNotNull("The method '" + DOCBASE_TYPE_METHOD_NAME + "' didn't return any value", hippoBean);
+
+        assertEquals("2dcef400-50e2-456e-9722-fd496defa56b", hippoBean.getNode().getIdentifier());
+    }
 
     @Test
     public void testGetContentOfLinkCompoundTypeWithoutContentBean() throws Exception {
