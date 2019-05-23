@@ -53,6 +53,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
+    private static final String NAVAPP_LOCATION = "navapp.location";
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -90,17 +91,17 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private URL getNavAppLocation(String cmsLocation) {
         try {
-            return new URL(System.getProperty("navapp.location", cmsLocation));
+            return new URL(System.getProperty(NAVAPP_LOCATION, cmsLocation));
         } catch (MalformedURLException e) {
             throw new WicketRuntimeException(e);
         }
     }
 
     private String getNavappResourcePrefix() {
-        return System.getProperty("navapp.location", null) == null ? "navapp/" : "";
+        return System.getProperty(NAVAPP_LOCATION, null) == null ? "navapp/" : "";
     }
 
-    private String getCmsLocation(String contextPath) {
+    static String getCmsLocation(String contextPath) {
         final Request wicketRequest = RequestCycle.get().getRequest();
         final HttpServletRequest request = (HttpServletRequest) wicketRequest.getContainerRequest();
         final String scheme = RequestUtils.getFarthestRequestScheme(request);
@@ -112,7 +113,7 @@ public class NavAppHeaderItem extends HeaderItem {
         return "development".equals(System.getProperty("wicket.configuration"));
     }
 
-    private ResourceReference getUrlResourceReference(final String location, final String resourceName) {
+    static ResourceReference getUrlResourceReference(final String location, final String resourceName) {
         final Url parsedUrl = Url.parse(String.format("%s/%s", location, resourceName));
         return new UrlResourceReference(parsedUrl);
     }

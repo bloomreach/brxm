@@ -18,20 +18,28 @@
 package org.hippoecm.frontend;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
+import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.NavAppHeaderItem.getCmsLocation;
+import static org.hippoecm.frontend.NavAppHeaderItem.getUrlResourceReference;
 
 /**
  * Constructs and injects a javascript implementation of the nav-app to app API.
@@ -42,6 +50,7 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
     private static final String PARENT_ORIGIN = "parentOrigin";
 
     private static final Logger log = LoggerFactory.getLogger(NavAppToAppHeaderItem.class);
+    private static final String NAVAPP_COMMUNICATION_LOCATION = "navapp-communication.location";
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -51,14 +60,18 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
     @Override
     public void render(final Response response) {
 
-        // TODO (meggermont): for now load as package resources
-        final String communicationLib = "bloomreach-navapp-communication.umd.js";
-        final ResourceReference penPalReference, navAppReference;
-        penPalReference = new JavaScriptResourceReference(HippoHeaderItem.class, "penpal.js");
-        navAppReference = new JavaScriptResourceReference(HippoHeaderItem.class, communicationLib);
-        JavaScriptHeaderItem.forReference(penPalReference).render(response);
-        JavaScriptHeaderItem.forReference(navAppReference).render(response);
+        final String contextPath = WebApplication.get().getServletContext().getContextPath();
+        final String cmsLocation = getCmsLocation(contextPath);
+        final URL navAppCommunicationLocation = getNavAppCommunicationLocation(cmsLocation);
+        final String navAppCommunicationResourcePrefix = getNavAppCommunicationResourcePrefix();
+
+        final Function<String, ResourceReference> toHeaderItem = name -> getUrlResourceReference(navAppCommunicationLocation.toString(), name);
+        Stream.of("penpal.js", "bloomreach-navapp-communication.umd.js")
+                .map(name -> String.format("%s%s", navAppCommunicationResourcePrefix, name))
+                .map(toHeaderItem.andThen(JavaScriptHeaderItem::forReference))
+                .forEach(item -> item.render(response));
         OnDomReadyHeaderItem.forScript(createScript()).render(response);
+
     }
 
     private String createScript() {
@@ -73,5 +86,18 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
             return "";
         }
     }
+
+    private URL getNavAppCommunicationLocation(String cmsLocation) {
+        try {
+            return new URL(System.getProperty(NAVAPP_COMMUNICATION_LOCATION, cmsLocation));
+        } catch (MalformedURLException e) {
+            throw new WicketRuntimeException(e);
+        }
+    }
+
+    private String getNavAppCommunicationResourcePrefix() {
+        return System.getProperty(NAVAPP_COMMUNICATION_LOCATION, null) == null ? "navapp/" : "";
+    }
+
 
 }
