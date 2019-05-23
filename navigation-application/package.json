@@ -15,7 +15,8 @@
     "postbuild:prod": "npx del ./dist/navapp/index.html ./dist/navapp/favicon.ico",
     "prerelease:navapp": "npm run lint && npm run test:single-run && npm run build:prod",
     "release:navapp": "release-it premajor",
-    "release:navapp-communication": "cd ./projects/navapp-communication && release-it premajor"
+    "release:navapp-communication": "cd ./projects/navapp-communication && release-it premajor",
+    "postrelease:navapp-communication": "npm install @bloomreach/navapp-communication@next && git commit -am \"TRIVIAL Bump navapp-communication\" && git push"
   },
   "browser": "dist/navapp/main.js",
   "files": [
