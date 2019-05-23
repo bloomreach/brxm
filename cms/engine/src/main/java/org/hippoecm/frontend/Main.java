@@ -206,11 +206,6 @@ public class Main extends PluginApplication {
     @Override
     protected void init() {
         super.init();
-        // FIXME (meggermont): There seems to be a bug in the default Wicket js compressor
-        // The default Wicket js compressor messes up the @bloomreach/navapp/dist/main.js
-        // so that it no longer is valid javascript. So, for now I have to replace it
-        // with the noop compressor.
-        super.getResourceSettings().setJavaScriptCompressor(new NoOpTextCompressor());
 
         initializeFallBackCredentials();
 
