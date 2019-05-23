@@ -11,7 +11,6 @@ import { connectToChild } from '@bloomreach/navapp-communication';
 
 import { CommunicationsService } from '../../../services';
 import { ConnectionService } from '../../../services/connection.service';
-import { ClientApplicationConfiguration } from '../../models';
 
 @Component({
   selector: 'brna-iframe-app',
@@ -20,7 +19,7 @@ import { ClientApplicationConfiguration } from '../../models';
 })
 export class IframeAppComponent implements OnInit, AfterViewInit {
   @Input()
-  appConfig: ClientApplicationConfiguration;
+  appURL: string;
 
   @ViewChild('iframe')
   iframe: ElementRef;
@@ -34,9 +33,7 @@ export class IframeAppComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.url = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      this.appConfig.url,
-    );
+    this.url = this.domSanitizer.bypassSecurityTrustResourceUrl(this.appURL);
   }
 
   ngAfterViewInit(): void {
@@ -44,7 +41,7 @@ export class IframeAppComponent implements OnInit, AfterViewInit {
       iframe: this.iframe.nativeElement,
       methods: this.communicationsService.parentApiMethods,
     }).then(child => {
-      this.connectionService.addConnection(this.appConfig, child);
+      this.connectionService.addConnection(this.appURL, child);
     });
   }
 }

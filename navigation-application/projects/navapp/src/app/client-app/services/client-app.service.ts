@@ -20,46 +20,39 @@ import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
 import { NavigationConfigurationService } from '../../services/navigation-configuration.service';
-import { ClientApplicationConfiguration } from '../models';
 
 @Injectable()
 export class ClientAppService {
-  private appConfigs = new BehaviorSubject<ClientApplicationConfiguration[]>(
-    [],
-  );
+  private appURLs = new BehaviorSubject<string[]>([]);
 
-  private activeAppId = new BehaviorSubject<string>(undefined);
+  private activeAppURL = new BehaviorSubject<string>(undefined);
 
   constructor(private navConfigService: NavigationConfigurationService) {
     this.navConfigService.navItems$
-      .pipe(map(navItems => this.buildAppConfigs(navItems)))
-      .subscribe(appConfigs => {
-        this.appConfigs.next(appConfigs);
+      .pipe(map(navItems => this.filterUniqueURLs(navItems)))
+      .subscribe(appURLs => {
+        this.appURLs.next(appURLs);
       });
   }
 
-  get appConfigs$(): Observable<ClientApplicationConfiguration[]> {
-    return this.appConfigs.asObservable();
+  get appURLs$(): Observable<string[]> {
+    return this.appURLs.asObservable();
   }
 
-  get activeAppId$(): Observable<string> {
-    return this.activeAppId.asObservable();
+  get activeAppURL$(): Observable<string> {
+    return this.activeAppURL.asObservable();
   }
 
   activateApplication(id: string): void {
-    this.activeAppId.next(id);
+    this.activeAppURL.next(id);
   }
 
-  private buildAppConfigs(
-    navItems: NavItem[],
-  ): ClientApplicationConfiguration[] {
+  private filterUniqueURLs(navItems: NavItem[]): string[] {
     const uniqueUrlsSet = navItems.reduce((uniqueUrls, config) => {
       uniqueUrls.add(config.appIframeUrl);
       return uniqueUrls;
     }, new Set<string>());
 
-    return Array.from(uniqueUrlsSet.values()).map(
-      url => new ClientApplicationConfiguration(url, url),
-    );
+    return Array.from(uniqueUrlsSet.values());
   }
 }

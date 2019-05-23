@@ -5,19 +5,14 @@
 import { Injectable } from '@angular/core';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
-import { ClientApplicationConfiguration } from '../client-app/models';
-
 @Injectable({
   providedIn: 'root',
 })
 export class ConnectionService {
   private connections: Map<string, ChildPromisedApi> = new Map();
 
-  addConnection(
-    appConfig: ClientApplicationConfiguration,
-    app: ChildPromisedApi,
-  ): void {
-    this.connections.set(appConfig.id, app);
+  addConnection(appURL: string, app: ChildPromisedApi): void {
+    this.connections.set(appURL, app);
   }
 
   getConnection(id: string): ChildPromisedApi {

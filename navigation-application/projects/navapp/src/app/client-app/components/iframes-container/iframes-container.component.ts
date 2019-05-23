@@ -18,7 +18,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ClientApplicationConfiguration } from '../../models';
 import { ClientAppService } from '../../services';
 
 @Component({
@@ -28,23 +27,23 @@ import { ClientAppService } from '../../services';
 })
 export class IframesContainerComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
-  private activeAppId: string;
+  private activeAppURL: string;
 
-  appConfigs: ClientApplicationConfiguration[] = [];
+  appURLs: string[] = [];
 
   constructor(private clientAppService: ClientAppService) {}
 
   ngOnInit(): void {
-    this.clientAppService.appConfigs$
+    this.clientAppService.appURLs$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(appConfigs => {
-        this.appConfigs = appConfigs;
+      .subscribe(appURLs => {
+        this.appURLs = appURLs;
       });
 
-    this.clientAppService.activeAppId$
+    this.clientAppService.activeAppURL$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(activeAppId => {
-        this.activeAppId = activeAppId;
+      .subscribe(activeAppURL => {
+        this.activeAppURL = activeAppURL;
       });
   }
 
@@ -53,11 +52,7 @@ export class IframesContainerComponent implements OnInit, OnDestroy {
     this.unsubscribe.complete();
   }
 
-  isActive(appConfig: ClientApplicationConfiguration): boolean {
-    return this.activeAppId === appConfig.id ? true : false;
-  }
-
-  getConfigId(index: number, config: ClientApplicationConfiguration): string {
-    return config.id;
+  isActive(appURL: string): boolean {
+    return this.activeAppURL === appURL ? true : false;
   }
 }
