@@ -19,9 +19,11 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_GALLERYTYPE;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.jcr.Credentials;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
@@ -30,6 +32,9 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
@@ -41,6 +46,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
     
     private final DynamicObjectConverterImpl objectConverter;
+
+    private String[] galleryTypes;
 
     private class BeanInfo {
         private final Class<? extends HippoBean> beanClass;
@@ -62,6 +69,38 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     public DynamicBeanDefinitionService(final DynamicObjectConverterImpl objectConverter) {
         this.objectConverter = objectConverter;
+
+        final ComponentManager componentManager = HstServices.getComponentManager();
+        if (componentManager == null) {
+            galleryTypes = new String[]{GALLERY_IMAGESET_NODETYPE};
+            return;
+        }
+        final Repository repository = componentManager.getComponent(Repository.class.getName());
+        final Credentials configUser = componentManager.getComponent(Credentials.class.getName() + ".hstconfigreader");
+        Session session = null;
+        try {
+            session = repository.login(configUser);
+            try {
+                final HippoBean gallery = (HippoBean) objectConverter.getObject(session, "/content/gallery");
+                if (gallery == null) {
+                    log.warn("The 'content/gallery' node is not found, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
+                    galleryTypes = new String[]{GALLERY_IMAGESET_NODETYPE};
+                } else {
+                    galleryTypes = gallery.getProperty(HIPPOSTD_GALLERYTYPE);
+                }
+            } catch (ObjectBeanManagerException e) {
+                log.warn("Failed to get the gallery type(s), the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
+                galleryTypes = new String[]{GALLERY_IMAGESET_NODETYPE};
+            }
+
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        } finally {
+            if (session != null) {
+                 session.logout();
+            }
+        }
+
     }
 
     private BeanInfo createCompoundBeanDef(@Nullable BeanInfo parentBeanInfo, final ContentType contentType) {
@@ -207,19 +246,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     private Class<? extends HippoBean> getGalleryImageSetTypeClass() {
-        HippoBean gallery = null;
-        try {
-            gallery = (HippoBean) objectConverter.getObject(RequestContextProvider.get().getSession(), "/content/gallery");
-            if (gallery == null) {
-                log.warn("The 'content/gallery' node is not found, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
-                return HippoGalleryImageSet.class;
-            }
-        } catch (RepositoryException | ObjectBeanManagerException e) {
-            log.warn("Failed to get the gallery type(s), the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
-            return HippoGalleryImageSet.class;
-        }
-
-        final String[] galleryTypes = gallery.getMultipleProperty(HIPPOSTD_GALLERYTYPE);
         if (galleryTypes == null || galleryTypes[0].equals(GALLERY_IMAGESET_NODETYPE) || galleryTypes.length > 1) {
             if (galleryTypes != null && galleryTypes.length > 1) {
                 log.warn("More than one gallery type is defined, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
@@ -257,11 +283,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     @Override
     protected void addBeanMethodHippoResource(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoResource(methodName, propertyName, multiple);
-    }
-
-    @Override
-    protected void addBeanMethodContentBlocks(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
-        builder.addBeanMethodContentBlocks(methodName, propertyName, multiple);
     }
 
     @Override
