@@ -29,5 +29,6 @@ public class CmsSessionUtil {
                                                  final PluginUserSession session) {
         service.setData(context, CmsSessionContext.REPOSITORY_CREDENTIALS, session.getCredentials());
         service.setData(context, CmsSessionContext.LOCALE, session.getLocale());
+        service.setData(context, CmsSessionContext.TIME_ZONE, session.getTimeZone());
     }
 }

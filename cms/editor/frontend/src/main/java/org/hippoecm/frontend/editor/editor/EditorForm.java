@@ -47,7 +47,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,21 +55,21 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
 
     private static final Logger log = LoggerFactory.getLogger(EditorForm.class);
 
-    private IPluginContext context;
-    private IPluginConfig config;
+    private final IPluginContext context;
+    private final IPluginConfig config;
 
     private IClusterControl cluster;
     private ModelReference modelService;
-    private ServiceTracker<IRenderService> fieldTracker;
-    private List<IRenderService> fields;
-    private TemplateEngineFactory engineFactory;
-    private ITemplateEngine engine;
-    private String engineId;
+    private final ServiceTracker<IRenderService> fieldTracker;
+    private final List<IRenderService> fields;
+    private final TemplateEngineFactory engineFactory;
+    private final ITemplateEngine engine;
+    private final String engineId;
 
-    private ValidationService validation;
+    private final ValidationService validation;
 
-    public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
-                      IPluginConfig config) {
+    public EditorForm(final String wicketId, final JcrNodeModel model, final IRenderService parent,
+                      final IPluginContext context, final IPluginConfig config) {
         super(wicketId, model);
 
         this.context = context;
@@ -93,17 +93,16 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
 
         fields = new LinkedList<>();
         fieldTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
-            private static final long serialVersionUID = 1L;
 
             @Override
-            public void onRemoveService(IRenderService service, String name) {
+            public void onRemoveService(final IRenderService service, final String name) {
                 replace(new EmptyPanel("template"));
                 service.unbind();
                 fields.remove(service);
             }
 
             @Override
-            public void onServiceAdded(IRenderService service, String name) {
+            public void onServiceAdded(final IRenderService service, final String name) {
                 service.bind(parent, "template");
                 replace(service.getComponent());
                 fields.add(service);
@@ -124,12 +123,12 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         // do the validation
         try {
             validation.doValidate();
-            IValidationResult result = validation.getValidationResult();
+            final IValidationResult result = validation.getValidationResult();
             if (!result.isValid()) {
                 log.debug("Invalid model {}", getModel());
             }
-        } catch (ValidationException e) {
-            log.warn("Failed to validate " + getModel());
+        } catch (final ValidationException e) {
+            log.warn("Failed to validate " + getModel(), e);
         }
     }
 
@@ -155,7 +154,7 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         }
         if (message instanceof ScopedFeedBackMessage) {
             ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
+            return scopedMessage.getScope().equals(FeedbackScope.DOCUMENT);
         }
         return false;
     }
@@ -170,29 +169,29 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
         createTemplate();
     }
 
-    public void render(PluginRequestTarget target) {
-        for (IRenderService child : fields) {
+    public void render(final PluginRequestTarget target) {
+        for (final IRenderService child : fields) {
             child.render(target);
         }
     }
 
     @Override
     // the same logic as in org.apache.wicket.Component.warn
-    public void warn(final IModel<String> message, final ValidationScope scope) {
+    public void warn(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.WARNING, scope));
         addStateChange();
     }
 
     @Override
     // the same logic as in org.apache.wicket.Component.error
-    public void error(final IModel<String> message, final ValidationScope scope) {
+    public void error(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
         addStateChange();
     }
 
     @Override
     protected void onDetach() {
-        IModel<Node> model = this.getModel();
+        final IModel<Node> model = this.getModel();
         if (model != null) {
             model.detach();
         }
@@ -204,25 +203,25 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     }
 
     protected void createTemplate() {
-        JcrNodeModel model = (JcrNodeModel) getModel();
+        final JcrNodeModel model = (JcrNodeModel) getModel();
         if (model != null && model.getNode() != null) {
             try {
-                ITypeDescriptor type = engine.getType(model);
+                final ITypeDescriptor type = engine.getType(model);
 
-                IClusterConfig template = engine.getTemplate(type, IEditor.Mode.EDIT);
-                IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
+                final IClusterConfig template = engine.getTemplate(type, IEditor.Mode.EDIT);
+                final IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig("cluster.options"));
                 parameters.put(RenderService.WICKET_ID, engineId + ".wicket.root");
                 parameters.put(ITemplateEngine.ENGINE, engineId);
                 parameters.put(ITemplateEngine.MODE, IEditor.Mode.EDIT.toString());
 
                 cluster = context.newCluster(template, parameters);
 
-                String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
+                final String modelId = cluster.getClusterConfig().getString(RenderService.MODEL_ID);
                 modelService = new ModelReference<>(modelId, model);
                 modelService.init(context);
 
                 cluster.start();
-            } catch (TemplateEngineException ex) {
+            } catch (final TemplateEngineException ex) {
                 log.error("Unable to open editor", ex);
             }
         }

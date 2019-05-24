@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,8 +24,6 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
-import org.hippoecm.frontend.editor.validator.plugins.EscapedCmsValidator;
-import org.hippoecm.frontend.editor.validator.plugins.RegExCmsValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -57,21 +55,13 @@ public class ValidationPluginTest extends PluginTest {
 
             "/config/test-app/validator/registry", "frontend:plugin",
                 "plugin.class", ValidatorService.class.getName(),
-                "field.validator.service.id", "field.validator.service",
-
-            "/config/test-app/validator/escaped", "frontend:plugin",
-                "plugin.class", EscapedCmsValidator.class.getName(),
-
-            "/config/test-app/validator/email", "frontend:plugin",
-                "plugin.class", RegExCmsValidator.class.getName(),
-                "regex_pattern", "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
-
+                ValidatorService.FIELD_VALIDATOR_SERVICE_ID, ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE,
     };
+
     IPluginConfig config;
     IPluginConfig validator;
     IPluginConfig registry;
-    IPluginConfig escaped;
-    IPluginConfig regex;
+
     private ModelReference modelRef;
 
     @Override
@@ -87,8 +77,6 @@ public class ValidationPluginTest extends PluginTest {
         config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
         validator = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator"));
         registry = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/registry"));
-        escaped = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/escaped"));
-        regex = new JcrClusterConfig(new JcrNodeModel("/config/test-app/validator/email"));
     }
 
     protected Set<Violation> getViolations() {
@@ -107,7 +95,9 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testRequiredProperty() throws Exception {
         start(config);
-
+        start(validator);
+        start(registry);
+        
         Node content = root.getNode("test").addNode("content", "test:validator");
         validate(content);
 
@@ -115,72 +105,11 @@ public class ValidationPluginTest extends PluginTest {
         assertEquals(2, violations.size());
     }
 
-
-    @Test
-    public void testEscapedProperty() throws Exception {
-        start(config);
-        start(validator);
-        start(registry);
-        start(escaped);
-
-        Node content = root.getNode("test").addNode("content", "test:validator");
-        content.setProperty("test:nonempty", "something");
-        content.setProperty("test:mandatory", "something");
-        content.setProperty("test:multiple", new String[]{"something"});
-        validate(content);
-
-        Set<Violation> violations = getViolations();
-        assertEquals(0, violations.size());
-        detach();
-
-        for (char c : "<>\"'&".toCharArray()) {
-            content.setProperty("test:escaped", "a" + c);
-            validate(content);
-            violations = getViolations();
-            assertEquals(1, violations.size());
-            detach();
-        }
-    }
-
-    @Test
-    public void testEmailProperty() throws Exception {
-        start(config);
-        start(validator);
-        start(registry);
-        start(regex);
-
-        Node content = root.getNode("test").addNode("content", "test:validator");
-        content.setProperty("test:nonempty", "something");
-        content.setProperty("test:mandatory", "something");
-        content.setProperty("test:multiple", new String[]{"something"});
-        validate(content);
-
-        Set<Violation> violations = getViolations();
-        assertEquals(0, violations.size());
-        detach();
-
-        String[] wrongEmailArray = new String[]{"info@one$hippo.com", "info@onehippo", ""};
-        String[] rightEmailArray = new String[]{"info@onehippo.com", "info@onehippo.org", "123info@google.com"};
-
-        for (String wrong : wrongEmailArray) {
-            content.setProperty("test:email", wrong);
-            validate(content);
-            violations = getViolations();
-            assertEquals(1, violations.size());
-            detach();
-        }
-        for (String right : rightEmailArray) {
-            content.setProperty("test:email", right);
-            validate(content);
-            violations = getViolations();
-            assertEquals(0, violations.size());
-            detach();
-        }
-    }
-
     @Test
     public void testRequiredChildNode() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         validate(content);
@@ -211,6 +140,8 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testPathTranslation() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         content.addNode("test:single", "test:validator");
@@ -242,6 +173,8 @@ public class ValidationPluginTest extends PluginTest {
     @Test
     public void testCascading() throws Exception {
         start(config);
+        start(validator);
+        start(registry);
 
         Node content = root.getNode("test").addNode("content", "test:container");
         Node uncascaded = content.addNode("test:uncascaded", "test:uncascaded");
@@ -251,18 +184,4 @@ public class ValidationPluginTest extends PluginTest {
         Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
     }
-
-    /*
-    @Test
-    public void testSetPathFailsWhenSubtypeHasSamePath() throws Exception {
-        JcrNodeModel nodeModel = new JcrNodeModel("/hippo:namespaces/test/test/hippo:nodetype/hippo:nodetype[2]");
-        JcrTypeDescriptor typeDescriptor = new JcrTypeDescriptor(nodeModel, new JcrTypeLocator());
-        typeDescriptor.getField("title").setPath("test:extra");
-
-        TemplateTypeValidator validator = new TemplateTypeValidator();
-        Set<Violation> violations = validator.validate(nodeModel);
-        assertEquals(1, violations.size());
-    }
-    */
-
 }
