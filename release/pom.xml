@@ -58,6 +58,7 @@
     <hippo.services.autoreload.version>13.3.0-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>13.3.0-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>13.3.0-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.validation.version>13.3.0-SNAPSHOT</hippo.services.validation.version>
     <hippo.services.webfiles.version>13.3.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>13.3.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>13.3.0-SNAPSHOT</hippo.utilities.version>
@@ -278,6 +279,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-services-htmlprocessor</artifactId>
         <version>${hippo.services.htmlprocessor.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services-validation</artifactId>
+        <version>${hippo.services.validation.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
