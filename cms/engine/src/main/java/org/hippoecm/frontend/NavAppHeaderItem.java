@@ -17,30 +17,24 @@
 
 package org.hippoecm.frontend;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.RequestUtils;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +47,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
-    private static final String NAVAPP_LOCATION = "navapp.location";
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -63,90 +56,73 @@ public class NavAppHeaderItem extends HeaderItem {
     @Override
     public void render(final Response response) {
 
-        final String contextPath = WebApplication.get().getServletContext().getContextPath();
-        final String cmsLocation = getCmsLocation(contextPath);
-        final URL navAppLocation = getNavAppLocation(cmsLocation);
-        final String navAppResourcePrefix = getNavappResourcePrefix();
-        StringHeaderItem.forString(String.format("<base href=%s/>", navAppLocation)).render(response);
+        final NavAppSettings navAppSettings = NavAppSettingFactory.newInstance(RequestCycle.get().getRequest(), PluginUserSession.get());
+        final URI navAppLocation = navAppSettings.getAppSettings().getNavAppLocation();
+        final URI brXmLocation = navAppSettings.getAppSettings().getBrXmLocation();
 
-        final NavAppSettings navAppSettings = getSettings(navAppLocation, cmsLocation, contextPath, PluginUserSession.get());
-        final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
+        final HeaderItem navAppSettingsHeaderItem = getNavAppSettingsHeaderItem(navAppSettings);
+        final HeaderItem baseTagHeaderItem = getBaseTagHeaderItem(navAppLocation);
 
-        JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings").render(response);
+        Stream.concat(
+                Stream.of(navAppSettingsHeaderItem, baseTagHeaderItem),
+                getScrTagHeaderItems(brXmLocation, navAppLocation)
+        ).forEach(item -> item.render(response));
 
-        final List<String> resourcesList = new ArrayList<>(Arrays.asList("runtime.js", "es2015-polyfills.js", "polyfills.js", "main.js"));
-        if (isLocalDevelopment()) {
-            resourcesList.add("styles.js");
-            resourcesList.add("vendor.js");
+    }
+
+    private Stream<HeaderItem> getScrTagHeaderItems(URI brXmLocation, URI navAppLocation) {
+
+        final Function<Url, UrlResourceReference> urlResourceReferenceFactory;
+        final String navAppResourcePrefix;
+        if (brXmLocation.equals(navAppLocation)) {
+            // If these two URIs are the same then the resources are being served by
+            // the CMS itself so we must add the antiCache query parameter
+            urlResourceReferenceFactory = WebApplicationHelper::createUniqueUrlResourceReference;
+            // It is assumed that the web.xml contains a servlet mapping for /navapp and that
+            // the ResourceServlet is being used to serve the resources inside of that directory.
+            // When running mvn package the files needed for the navapp (and navigation-communication)
+            // are copied into  the target directory. See copy-files.js
+            navAppResourcePrefix = "navapp/";
         } else {
-            CssHeaderItem.forReference(getUrlResourceReference(navAppLocation.toString(), navAppResourcePrefix + "styles.css")).render(response);
+            urlResourceReferenceFactory = UrlResourceReference::new;
+            navAppResourcePrefix = "";
         }
 
-        final Function<String, ResourceReference> toHeaderItem = name -> getUrlResourceReference(navAppLocation.toString(), name);
-        resourcesList.stream()
-                .map(name -> String.format("%s%s", navAppResourcePrefix, name))
-                .map(toHeaderItem.andThen(JavaScriptHeaderItem::forReference))
-                .forEach(item -> item.render(response));
+        final Function<String, Url> urlGenerator = resourceName -> Url.parse(String.format("%s/%s%s", navAppLocation, navAppResourcePrefix, resourceName));
+        return Stream.concat(
+                getCssSrcTagNames()
+                        .map(urlGenerator.andThen(urlResourceReferenceFactory))
+                        .map(CssHeaderItem::forReference),
+                getJavascriptSrcTagNames()
+                        .map(urlGenerator.andThen(urlResourceReferenceFactory))
+                        .map(JavaScriptHeaderItem::forReference)
+        );
     }
 
-    private URL getNavAppLocation(String cmsLocation) {
-        try {
-            return new URL(System.getProperty(NAVAPP_LOCATION, cmsLocation));
-        } catch (MalformedURLException e) {
-            throw new WicketRuntimeException(e);
+    private Stream<String> getJavascriptSrcTagNames() {
+        final List<String> javascriptResources = Arrays.asList("runtime.js", "es2015-polyfills.js", "polyfills.js", "main.js");
+        if (WebApplication.get().usesDevelopmentConfig()) {
+            return Stream.concat(
+                    javascriptResources.stream(),
+                    Stream.of("styles.js", "vendor.js"));
         }
+        return javascriptResources.stream();
     }
 
-    private String getNavappResourcePrefix() {
-        return System.getProperty(NAVAPP_LOCATION, null) == null ? "navapp/" : "";
+    private Stream<String> getCssSrcTagNames() {
+        if (WebApplication.get().usesDevelopmentConfig()) {
+            Stream.empty();
+        }
+        return Stream.of("styles.css");
     }
 
-    static String getCmsLocation(String contextPath) {
-        final Request wicketRequest = RequestCycle.get().getRequest();
-        final HttpServletRequest request = (HttpServletRequest) wicketRequest.getContainerRequest();
-        final String scheme = RequestUtils.getFarthestRequestScheme(request);
-        final String remoteAddr = RequestUtils.getFarthestRequestHost(request);
-        return String.format("%s://%s%s", scheme, remoteAddr, contextPath);
+    private HeaderItem getBaseTagHeaderItem(URI navAppLocation) {
+        return StringHeaderItem.forString(String.format("<base href=%s/>", navAppLocation));
     }
 
-    private boolean isLocalDevelopment() {
-        return "development".equals(System.getProperty("wicket.configuration"));
-    }
-
-    static ResourceReference getUrlResourceReference(final String location, final String resourceName) {
-        final Url parsedUrl = Url.parse(String.format("%s/%s", location, resourceName));
-        return new UrlResourceReference(parsedUrl);
-    }
-
-    private NavAppSettings getSettings(final URL navAppLocation, final String cmsLocation, final String contextPath, final PluginUserSession userSession) {
-        final NavAppSettings navAppSettings = new NavAppSettings();
-        navAppSettings.setUserSettings(getUserSettings(userSession));
-        navAppSettings.setAppSettings(getAppSettings(navAppLocation, cmsLocation, contextPath));
-        return navAppSettings;
-    }
-
-    private NavAppSettings.AppSettings getAppSettings(final URL navAppLocation, final String cmsLocation, final String contextPath) {
-        final List<NavAppSettings.NavConfigResource> navConfigResources = new ArrayList<>();
-        final NavAppSettings.NavConfigResource brXmResource = new NavAppSettings.NavConfigResource();
-        brXmResource.setResourceType(NavAppSettings.ResourceType.REST);
-
-        final String endpointUrl = "navigationitems";
-        brXmResource.setUrl(String.format("%s/ws/%s", cmsLocation, endpointUrl));
-        navConfigResources.add(brXmResource);
-
-        final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
-        appSettings.setNavConfigResources(navConfigResources);
-        appSettings.setNavAppLocation(navAppLocation);
-        appSettings.setContextPath(contextPath);
-        return appSettings;
-    }
-
-    private NavAppSettings.UserSettings getUserSettings(final PluginUserSession userSession) {
-        final NavAppSettings.UserSettings userSettings = new NavAppSettings.UserSettings();
-        userSettings.setLanguage(userSession.getLocale().getLanguage());
-        userSettings.setTimeZone(userSession.getTimeZone());
-        userSettings.setUserName(userSession.getUserName());
-        return userSettings;
+    private HeaderItem getNavAppSettingsHeaderItem(NavAppSettings navAppSettings) {
+        final String javascript = String.format("NavAppSettings = %s;", parse(navAppSettings));
+        return JavaScriptHeaderItem.forScript(javascript, "hippo-nav-app-settings");
     }
 
     private String parse(NavAppSettings navAppSettings) {
