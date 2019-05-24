@@ -21,9 +21,9 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.ValueContext;
 
-public class FieldContextImpl implements FieldContext {
+public class ValueContextImpl implements ValueContext {
 
     private final String jcrName;
     private final String jcrType;
@@ -33,7 +33,7 @@ public class FieldContextImpl implements FieldContext {
     private final Node parentNode;
     private final Node documentNode;
 
-    public FieldContextImpl(final String jcrName, final String jcrType, final String type, final Node documentNode,
+    public ValueContextImpl(final String jcrName, final String jcrType, final String type, final Node documentNode,
                             final Node parentNode, final Locale locale, final TimeZone timeZone) {
         this.jcrName = jcrName;
         this.jcrType = jcrType;

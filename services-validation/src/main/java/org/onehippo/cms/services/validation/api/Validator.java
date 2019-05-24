@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Checks whether a value adheres to certain constraints.
  *
- * The value type {@link V} should match with the JCR type of the field for which the validator is used.
+ * The value type {@link V} should match with the JCR type of the value for which the validator is used.
  * For example, a field of type String will get a {@link String} value. Using a validator with an incompatible
  * value type will result in a {@link ClassCastException} at runtime.
  *

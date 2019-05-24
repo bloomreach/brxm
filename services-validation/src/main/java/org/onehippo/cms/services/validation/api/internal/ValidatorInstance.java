@@ -19,14 +19,14 @@ package org.onehippo.cms.services.validation.api.internal;
 import org.onehippo.cms.services.validation.api.AbstractValidator;
 import org.onehippo.cms.services.validation.api.ValidationContext;
 import org.onehippo.cms.services.validation.api.Validator;
-import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.ValueContext;
 
 /**
  * An instance of a {@link Validator}.
  *
  * Provides access to the configuration of a validator and to translated violations.
  */
-public interface ValidatorInstance extends AbstractValidator<FieldContext, Object>, ValidationContext {
+public interface ValidatorInstance extends AbstractValidator<ValueContext, Object>, ValidationContext {
 
     /**
      * @return the configuration of this validator instance.
