@@ -8,7 +8,8 @@
 <div *ngIf="isOpened" [@slideInOut]="isOpened" class="items-wrapper">
   <brna-menu-item-link
     *ngFor="let item of config.children"
-    [config]="item" class="item"
-    [active]="isChildMenuItemActive(item)">
+    [config]="item"
+    [active]="isChildMenuItemActive(item)"
+    class="item">
   </brna-menu-item-link>
 </div>

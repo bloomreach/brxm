@@ -26,7 +26,7 @@ export class MenuStructureService {
     );
 
     const projects = new MenuItemLink(
-      'hippo-perspective-projecstperspective',
+      'hippo-perspective-projectsperspective',
       'Projects',
       'projects',
     );
@@ -35,6 +35,12 @@ export class MenuStructureService {
       'hippo-perspective-browserperspective',
       'Content',
       'documents',
+    );
+
+    const settings = new MenuItemLink(
+      'hippo-perspective-adminperspective',
+      'Settings',
+      'settings',
     );
 
     const documentSearch = new MenuItemLink(
@@ -123,6 +129,15 @@ export class MenuStructureService {
             ),
           ],
         ),
+        new MenuItemContainer(
+          'Library',
+          [
+            new MenuItemLink(
+              'hippo-perspective-reportsperspective',
+              'Content Reports',
+            ),
+          ],
+        ),
         new MenuItemLink(
           'product-a-b-testing',
           'Product A/B testing',
@@ -139,6 +154,7 @@ export class MenuStructureService {
       documentSearch,
       categories,
       insights,
+      settings,
     ];
   }
 }
