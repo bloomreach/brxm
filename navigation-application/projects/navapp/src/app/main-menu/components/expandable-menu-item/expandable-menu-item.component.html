@@ -6,14 +6,10 @@
   <mat-icon svgIcon="baseline-expand_less" class="icon" [class.hidden]="!isOpened"></mat-icon>
 </h2>
 <div *ngIf="isOpened" [@slideInOut]="isOpened" class="items-wrapper">
-  <ng-container *ngFor="let item of config.children">
-    <ng-container [ngSwitch]="item.constructor.name">
-      <brna-menu-item-link *ngSwitchCase="'MenuItemLink'" [config]="item" class="item"
-        [active]="isChildMenuItemActive(item)">
-      </brna-menu-item-link>
-      <brna-expandable-menu-item *ngSwitchCase="'MenuItemContainer'" [config]="item" class="item"
-        [active]="isChildMenuItemActive(item)">
-      </brna-expandable-menu-item>
-    </ng-container>
-  </ng-container>
+  <brna-menu-item-link
+    *ngFor="let item of config.children"
+    [config]="item"
+    [active]="isChildMenuItemActive(item)"
+    class="item">
+  </brna-menu-item-link>
 </div>
