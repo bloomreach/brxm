@@ -23,7 +23,7 @@ definitions:
               hipposysedit:path: resourcebundle:id
               hipposysedit:primary: false
               hipposysedit:type: String
-              hipposysedit:validators: [non-empty, required]
+              hipposysedit:validators: [required]
         /hipposysedit:prototypes:
           jcr:primaryType: hipposysedit:prototypeset
           /hipposysedit:prototype:
