@@ -18,6 +18,7 @@ package org.onehippo.cms7.services.cmscontext;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSession;
@@ -46,6 +47,12 @@ public interface CmsSessionContext {
      */
     String LOCALE = "locale";
 
+    /**
+     * Key to retrieve the time zone applicable to the current CMS session.
+     *
+     * @see #getLocale()
+     */
+    String TIME_ZONE = "timeZone";
 
     /**
      * Key to retrieve the context payload
@@ -92,6 +99,13 @@ public interface CmsSessionContext {
      */
     default Locale getLocale() {
         return (Locale) get(LOCALE);
+    }
+
+    /**
+     * @return the TimeZone applicable to the current CMS session
+     */
+    default TimeZone getTimeZone() {
+        return (TimeZone) get(TIME_ZONE);
     }
 
     /**

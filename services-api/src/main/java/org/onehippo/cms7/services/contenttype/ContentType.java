@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,9 @@ public interface ContentType {
      * defines it has a 'required' validator.<br/>
      * TODO: determine if 'true' is a proper or even meaningful if {@link #isDerivedType()}
      * @return True when a content item of this type will automatically be validated
+     * @deprecated Use validation as offered by the hippo-services-validation module. Cascading is then obsolete.
      */
+    @Deprecated
     boolean isCascadeValidate();
 
     /**
