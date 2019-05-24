@@ -1181,13 +1181,45 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "ERROR_CREATE_WITH_UNKNOWN_VALIDATOR" : {
-      "status" : "CLEAN",
-      "locales" : null
+    "DOCUMENT_CONTAINS_ONE_ERROR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
-    "ERROR_SAVE_WITH_UNKNOWN_VALIDATOR" : {
-      "status" : "CLEAN",
-      "locales" : null
+    "ERROR_CREATE_WITH_UNSUPPORTED_VALIDATOR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "DOCUMENT_CONTAINS_MULTIPLE_ERRORS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_SAVE_WITH_UNSUPPORTED_VALIDATOR" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
