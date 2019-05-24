@@ -20,10 +20,10 @@
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues track by $index"
                       ng-switch="::$ctrl.fieldType.type"
-                      ng-class="{ 
-                      'has-focused-field': $ctrl.hasFocus, 
-                      'has-hint': $ctrl.fieldType.hint, 
-                      'md-input-has-value': $ctrl.fieldType.type === 'RADIO_GROUP' || $ctrl.fieldType.type === 'BOOLEAN_RADIO_GROUP'  
+                      ng-class="{
+                      'has-focused-field': $ctrl.hasFocus,
+                      'has-hint': $ctrl.fieldType.hint,
+                      'md-input-has-value': $ctrl.fieldType.type === 'RADIO_GROUP' || $ctrl.fieldType.type === 'BOOLEAN_RADIO_GROUP'
                       }">
 
     <label ng-if="::$first && $ctrl.fieldType.type !== 'BOOLEAN'"
@@ -156,7 +156,7 @@
                  true-label="::$ctrl.fieldType.trueLabel"
                  is-required="::$ctrl.fieldType.required">
     </radio-group>
-      
+
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
               ng-change="$ctrl.valueChanged()"
@@ -176,7 +176,6 @@
               name="::$ctrl.getFieldName($index)"
               aria-label="::$ctrl.fieldType.displayName"
               config="::$ctrl.fieldType.config"
-              is-required="::$ctrl.fieldType.required"
               on-focus="$ctrl.focusPrimitive($event)"
               on-blur="$ctrl.blurPrimitive($event)"
               field-object="$ctrl.form[$ctrl.getFieldName($index)]"
@@ -210,14 +209,16 @@
                on-focus="$ctrl.focusPrimitive($event)"
                on-blur="$ctrl.blurPrimitive($event)">
     </node-link>
-    
+
     <openui-string-field ng-switch-when="OPEN_UI"
                          layout="row"
                          extension-id="{{:: $ctrl.fieldType.uiExtension }}"
+                         name="{{::$ctrl.getFieldName($index)}}"
                          ng-change="$ctrl.valueChanged()"
                          ng-model="fieldValue.value"
                          ng-focus="$ctrl.focusPrimitive($event)"
-                         ng-blur="$ctrl.blurPrimitive($event)">
+                         ng-blur="$ctrl.blurPrimitive($event)"
+                         ng-required="::$ctrl.fieldType.required">
     </openui-string-field>
 
     <div ng-if="::$last"

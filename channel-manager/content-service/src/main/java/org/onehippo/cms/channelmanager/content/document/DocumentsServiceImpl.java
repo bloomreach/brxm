@@ -158,9 +158,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType docType = getDocumentType(handle, userContext);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
+        if (docType.isReadOnlyDueToUnsupportedValidator()) {
             throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR), handle)
+                    withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR), handle)
             );
         }
 
@@ -211,9 +211,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType docType = getDocumentType(handle, userContext);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
+        if (docType.isReadOnlyDueToUnsupportedValidator()) {
             throw new ForbiddenException(
-                    withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR), handle)
+                    withDisplayName(new ErrorInfo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR), handle)
             );
         }
 
@@ -252,8 +252,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType docType = getDocumentType(handle, userContext);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
+        if (docType.isReadOnlyDueToUnsupportedValidator()) {
+            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         // Push fields onto draft node
@@ -314,8 +314,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType docType = getDocumentType(handle, userContext);
-        if (docType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNKNOWN_VALIDATOR));
+        if (docType.isReadOnlyDueToUnsupportedValidator()) {
+            throw new ForbiddenException(new ErrorInfo(Reason.SAVE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         // Write field value to draft node
@@ -381,8 +381,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, userContext);
-        if (documentType.isReadOnlyDueToUnknownValidator()) {
-            throw new ForbiddenException(new ErrorInfo(Reason.CREATE_WITH_UNKNOWN_VALIDATOR));
+        if (documentType.isReadOnlyDueToUnsupportedValidator()) {
+            throw new ForbiddenException(new ErrorInfo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR));
         }
 
         final FolderWorkflow folderWorkflow = getFolderWorkflow(folder);

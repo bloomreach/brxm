@@ -76,10 +76,14 @@ class ImageLinkController {
   }
 
   openImagePicker() {
-    const uuid = this.ngModel.$modelValue;
-    return this.PickerService.pickImage(this.config.imagepicker, { uuid })
-      .then(image => this._onImagePicked(image))
-      .catch(() => this.setFocus());
+    if (!this._imagePickerPromise) {
+      const uuid = this.ngModel.$modelValue;
+      this._imagePickerPromise = this.PickerService.pickImage(this.config.imagepicker, { uuid })
+        .then(image => this._onImagePicked(image))
+        .catch(() => this.setFocus())
+        .finally(() => delete this._imagePickerPromise);
+    }
+    return this._imagePickerPromise;
   }
 
   _onImagePicked(image) {

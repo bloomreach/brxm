@@ -47,7 +47,7 @@ public class OpenUiStringFieldType extends PropertyFieldType {
 
     @Override
     public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
-        return null;
+        return value.getValue();
     }
 
     private void setUiExtension(final String uiExtension) {

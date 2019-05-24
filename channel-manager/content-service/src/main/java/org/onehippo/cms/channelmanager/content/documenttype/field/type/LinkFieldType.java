@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -28,6 +30,10 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
+import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
+
 public abstract class LinkFieldType extends LeafNodeFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
@@ -36,7 +42,7 @@ public abstract class LinkFieldType extends LeafNodeFieldType {
     public FieldValue readValue(final Node node) {
         final FieldValue value = new FieldValue();
         try {
-            final String uuid = readUuid(node);
+            final String uuid = readUuid(node, getEmptyNodeIdentifiers(node));
             value.setValue(uuid);
             value.setMetadata(createMetadata(uuid, node, node.getSession()));
         } catch (final RepositoryException e) {
@@ -45,14 +51,17 @@ public abstract class LinkFieldType extends LeafNodeFieldType {
         return value;
     }
 
+    protected HashSet<String> getEmptyNodeIdentifiers(final Node node) throws RepositoryException {
+        return Sets.newHashSet(ROOT_NODE_ID);
+    }
+
     protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) throws RepositoryException {
         return null;
     }
 
-    private static String readUuid(final Node node) throws RepositoryException {
+    private static String readUuid(final Node node, final Set<String> emptyNodeIdentifiers) throws RepositoryException {
         final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, StringUtils.EMPTY);
-        final String rootUuid = node.getSession().getRootNode().getIdentifier();
-        return uuid.equals(rootUuid) ? StringUtils.EMPTY : uuid;
+        return emptyNodeIdentifiers.contains(uuid) ? StringUtils.EMPTY : uuid;
     }
 
     @Override
@@ -62,8 +71,7 @@ public abstract class LinkFieldType extends LeafNodeFieldType {
 
     private static void writeUuid(final Node node, final String uuid) throws RepositoryException {
         if (StringUtils.isEmpty(uuid)) {
-            final String rootUuid = node.getSession().getRootNode().getIdentifier();
-            writeDocBase(node, rootUuid);
+            writeDocBase(node, ROOT_NODE_ID);
         } else {
             writeDocBase(node, uuid);
         }

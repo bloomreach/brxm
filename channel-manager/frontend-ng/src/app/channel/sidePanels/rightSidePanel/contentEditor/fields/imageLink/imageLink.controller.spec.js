@@ -287,6 +287,21 @@ describe('imageLinkController', () => {
       });
       $scope.$digest();
     });
+
+    it('never opens more than one picker at a time', () => {
+      const deferred = $q.defer();
+      PickerService.pickImage.and.returnValue(deferred.promise);
+
+      $ctrl.openImagePicker();
+      $ctrl.openImagePicker();
+      expect(PickerService.pickImage.calls.count()).toBe(1);
+
+      deferred.resolve();
+      $scope.$digest();
+
+      $ctrl.openImagePicker();
+      expect(PickerService.pickImage.calls.count()).toBe(2);
+    });
   });
 
   describe('clearPickedImage', () => {

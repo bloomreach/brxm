@@ -79,15 +79,13 @@ public interface FieldType {
     void setMultiple(final boolean isMultiple);
 
     /**
-     * Represents the "required" validator, which indicates that a primitive field must have content. What exactly that
+     * Represents the "required" validator, which indicates that a field must have content. What exactly that
      * means depends on the field type. The "required" validator is *not* meant to indicate that at least one
      * instance of a multiple field must be present.
      *
      * @return true or false
      */
     boolean isRequired();
-
-    void setRequired(boolean required);
 
     /**
      * Checks if an initialized field is supported, i.e. should be present in a document type.
@@ -165,13 +163,13 @@ public interface FieldType {
 
     /**
      * Marks this field as having a validator known by the system
-     * but not yet supported in this part of the code base.
+     * but not supported in this part of the code base.
      */
     void setUnsupportedValidator(boolean hasUnsupportedValidators);
 
     /**
      * @return whether this field has a validator known by the system
-     * but not yet supported in this part of the code base.
+     * but not supported in this part of the code base.
      */
     boolean hasUnsupportedValidator();
 }

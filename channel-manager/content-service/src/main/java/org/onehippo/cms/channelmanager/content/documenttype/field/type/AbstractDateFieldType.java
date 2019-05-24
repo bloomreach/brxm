@@ -19,9 +19,9 @@ import java.util.Calendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
-import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.repository.util.DateConstants;
 
 public abstract class AbstractDateFieldType extends PropertyFieldType {
 
@@ -35,7 +35,7 @@ public abstract class AbstractDateFieldType extends PropertyFieldType {
     @Override
     protected String fieldSpecificConversion(final String input) {
         if (StringUtils.isBlank(input)) {
-            return PropertyValueProvider.EMPTY_DATE_VALUE;
+            return DateConstants.EMPTY_DATE_VALUE;
         } else {
             return input;
         }
@@ -48,7 +48,7 @@ public abstract class AbstractDateFieldType extends PropertyFieldType {
         }
 
         final Calendar calendar = ISO8601.parse(value);
-        if (calendar == null || calendar.getTime().equals(PropertyValueProvider.EMPTY_DATE)) {
+        if (calendar == null || calendar.getTime().equals(DateConstants.EMPTY_DATE)) {
             return new FieldValue(StringUtils.EMPTY);
         }
 
@@ -60,13 +60,13 @@ public abstract class AbstractDateFieldType extends PropertyFieldType {
         final String value = fieldValue.getValue();
 
         if (StringUtils.isBlank(value)) {
-            return PropertyValueProvider.EMPTY_DATE;
+            return DateConstants.EMPTY_DATE;
         }
 
         final Calendar calendar = ISO8601.parse(value);
 
         if (calendar == null) {
-            return PropertyValueProvider.EMPTY_DATE;
+            return DateConstants.EMPTY_DATE;
         }
 
         return calendar.getTime();

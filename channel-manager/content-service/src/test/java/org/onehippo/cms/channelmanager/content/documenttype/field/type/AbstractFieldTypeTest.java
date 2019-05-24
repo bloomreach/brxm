@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -36,8 +35,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidator
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.FieldContext;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -82,11 +79,8 @@ public class AbstractFieldTypeTest {
     public void isRequired() {
         assertFalse(fieldType.isRequired());
 
-        fieldType.setRequired(true);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
         assertTrue(fieldType.isRequired());
-
-        fieldType.setRequired(false);
-        assertFalse(fieldType.isRequired());
     }
 
     @Test

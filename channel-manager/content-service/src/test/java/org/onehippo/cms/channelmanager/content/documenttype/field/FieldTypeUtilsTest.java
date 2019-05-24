@@ -62,7 +62,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -109,23 +108,6 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void determineRequiredValidator() {
-        final ValidationService validationService = createMock(ValidationService.class);
-        final FieldType fieldType = createMock(AbstractFieldType.class);
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-
-        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
-
-        fieldType.setRequired(true);
-        expectLastCall();
-
-        replayAll();
-
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("required"));
-        verifyAll();
-    }
-
-    @Test
     public void determineZeroValidators() {
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
@@ -158,7 +140,7 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void determineUnknownValidator() {
+    public void determineUnsupportedValidator() {
         final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
@@ -166,33 +148,18 @@ public class FieldTypeUtilsTest {
         final DocumentType docType = createMock(DocumentType.class);
 
         expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
-        expect(validationService.getValidator("unknown-validator")).andReturn(null);
+        expect(validationService.getValidator("unsupported-validator")).andReturn(null);
         expect(fieldContext.getParentContext()).andReturn(parentContext);
         expect(parentContext.getDocumentType()).andReturn(docType);
         expect(fieldType.getId()).andReturn("fieldId");
         expect(docType.getId()).andReturn("docTypeId");
-        docType.setReadOnlyDueToUnknownValidator(true);
+        fieldType.setUnsupportedValidator(true);
+        expectLastCall();
+        docType.setReadOnlyDueToUnsupportedValidator(true);
         expectLastCall();
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("unknown-validator"));
-        verifyAll();
-    }
-
-    @Test
-    public void determineUnsupportedValidator() {
-        final ValidationService validationService = createMock(ValidationService.class);
-        final FieldType fieldType = createMock(AbstractFieldType.class);
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-
-        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
-
-        fieldType.setUnsupportedValidator(eq(true));
-        expectLastCall();
-
-        replayAll();
-
-        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList(FieldValidators.RESOURCE_REQUIRED));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("unsupported-validator"));
         verifyAll();
     }
 
@@ -783,7 +750,7 @@ public class FieldTypeUtilsTest {
     public void checkCardinalityNoneButRequired() {
         FieldType fieldType = new TestFieldType();
         fieldType.setMinValues(0);
-        fieldType.setRequired(true);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
         checkCardinality(fieldType, Collections.emptyList());
     }
 
@@ -900,7 +867,6 @@ public class FieldTypeUtilsTest {
         final FieldPath emptyFieldPath = new FieldPath("");
         final List<FieldValue> fieldValues = Collections.emptyList();
         final List<FieldType> fields = Collections.emptyList();
-        final Node node = createMock(Node.class);
 
         assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, null));
     }

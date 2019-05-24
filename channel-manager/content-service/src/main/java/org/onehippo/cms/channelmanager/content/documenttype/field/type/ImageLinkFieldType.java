@@ -15,12 +15,14 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.util.collections.MiniMap;
 import org.onehippo.addon.frontend.gallerypicker.ImageItem;
 import org.onehippo.addon.frontend.gallerypicker.ImageItemFactory;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -28,6 +30,8 @@ import org.onehippo.cms.channelmanager.content.picker.ImagePicker;
 import org.onehippo.cms.json.Json;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static org.onehippo.repository.util.JcrConstants.GALLERY_PATH;
 
 public class ImageLinkFieldType extends LinkFieldType {
 
@@ -59,9 +63,17 @@ public class ImageLinkFieldType extends LinkFieldType {
 
     @Override
     protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) {
-        final MiniMap<String, Object> map = new MiniMap<>(1);
-        map.put("url", getImageUrl(uuid, session));
-        return map;
+        return Collections.singletonMap("url", getImageUrl(uuid, session));
+    }
+
+    @Override
+    protected HashSet<String> getEmptyNodeIdentifiers(final Node node) throws RepositoryException {
+        final HashSet<String> emptyNodeIdentifiers = super.getEmptyNodeIdentifiers(node);
+        final Session session = node.getSession();
+        if (session.nodeExists(GALLERY_PATH)) {
+            emptyNodeIdentifiers.add(session.getNode(GALLERY_PATH).getIdentifier());
+        }
+        return emptyNodeIdentifiers;
     }
 
     private String getImageUrl(final String uuid, final Session session) {
