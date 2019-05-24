@@ -19,6 +19,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -139,6 +141,9 @@ public class RequestUtils {
         return request.getScheme();
     }
 
+    public static String getFarthestRequestScheme(Request request) {
+        return getFarthestRequestScheme((HttpServletRequest) request.getContainerRequest());
+    }
 
     /**
      * Parse comma separated multiple header value and return an array if the header exists.
@@ -259,5 +264,28 @@ public class RequestUtils {
     public static StringValue getQueryParameterValue(String name) {
         final RequestCycle requestCycle = RequestCycle.get();
         return requestCycle == null ? null : requestCycle.getRequest().getQueryParameters().getParameterValue(name);
+    }
+
+    /**
+     * Returns the context path of the CMS.
+     *
+     * @return the context path
+     * @throws WicketRuntimeException if there is no wicket WebApplication
+     */
+    public static String getContextPath() {
+        return WebApplication.get().getServletContext().getContextPath();
+    }
+
+    /**
+     * Returns the browser window.location of the cms as seen after logging in in the CMS.
+     *
+     * @param request the http request
+     * @return location of the CMS
+     * @throws WicketRuntimeException if there is no wicket WebApplication
+     */
+    public static String getCmsLocation(Request request) {
+        return String.format("%s%s",
+                getFarthestUrlPrefix(request),
+                getContextPath());
     }
 }
