@@ -17,9 +17,11 @@
 
 package org.hippoecm.frontend;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.TimeZone;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * JavaBean representing the settings of the Navigation Application
@@ -88,14 +90,24 @@ public class NavAppSettings {
 
         private List<NavConfigResource> navConfigResources;
 
-        private URL navAppLocation;
+        private URI brXmLocation;
+        private URI navAppLocation;
         private String contextPath;
 
-        public URL getNavAppLocation() {
+        @JsonIgnore
+        public URI getBrXmLocation() {
+            return brXmLocation;
+        }
+
+        public void setBrXmLocation(final URI brXmLocation) {
+            this.brXmLocation = brXmLocation;
+        }
+
+        public URI getNavAppLocation() {
             return navAppLocation;
         }
 
-        public void setNavAppLocation(final URL navAppLocation) {
+        public void setNavAppLocation(final URI navAppLocation) {
             this.navAppLocation = navAppLocation;
         }
 
