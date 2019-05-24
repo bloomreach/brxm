@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.ValueContext;
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class ValidationUtil {
      * @return whether the validator deemed the value valid
      */
     public static boolean validateValue(final FieldValue value,
-                                        final FieldContext context,
+                                        final ValueContext context,
                                         final String validatorName,
                                         final Object validatedValue) {
         final ValidatorInstance validator = FieldTypeUtils.getValidator(validatorName);
@@ -81,7 +81,7 @@ public class ValidationUtil {
      * @return 1 if a validator deemed the value invalid, 0 otherwise
      */
     public static int validateValue(final FieldValue value,
-                                    final FieldContext context,
+                                    final ValueContext context,
                                     final Set<String> validatorNames,
                                     final Object validatedValue) {
         return validatorNames.stream()

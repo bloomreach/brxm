@@ -21,8 +21,8 @@ import java.util.TimeZone;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
-import org.onehippo.cms.services.validation.api.FieldContext;
+import org.onehippo.cms.services.validation.api.ValueContext;
+import org.onehippo.cms.services.validation.api.internal.ValueContextImpl;
 
 public class CompoundContext {
 
@@ -54,7 +54,7 @@ public class CompoundContext {
         return new CompoundContext(child, document, locale, timeZone);
     }
 
-    public FieldContext getFieldContext(final String jcrName, final String jcrType, final String type) {
-        return new FieldContextImpl(jcrName, jcrType, type, document, node, locale, timeZone);
+    public ValueContext getValueContext(final String jcrName, final String jcrType, final String type) {
+        return new ValueContextImpl(jcrName, jcrType, type, document, node, locale, timeZone);
     }
 }
