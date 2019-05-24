@@ -36,10 +36,10 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms.services.validation.api.FieldContext;
-import org.onehippo.cms.services.validation.api.internal.FieldContextImpl;
+import org.onehippo.cms.services.validation.api.ValueContext;
 import org.onehippo.cms.services.validation.api.internal.ValidationService;
 import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValueContextImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +92,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
             return Collections.emptySet();
         }
 
-        final FieldContext context = createValidationContext(fieldValidator, parentModel.getObject());
+        final ValueContext context = createValueContext(fieldValidator, parentModel.getObject());
         try {
             final Optional<org.onehippo.cms.services.validation.api.Violation> violation = validator.validate(context, valueModel.getObject());
             return violation.isPresent()
@@ -104,7 +104,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         }
     }
 
-    private static FieldContext createValidationContext(final IFieldValidator fieldValidator, final Node parentNode) {
+    private static ValueContext createValueContext(final IFieldValidator fieldValidator, final Node parentNode) {
         final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
         final String jcrName = fieldDescriptor.getPath();
 
@@ -117,7 +117,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
         final TimeZone timeZone = userSession.getTimeZone();
         final Node documentNode = findDocumentNode(parentNode);
 
-        return new FieldContextImpl(jcrName, jcrType, type, documentNode, parentNode, locale, timeZone);
+        return new ValueContextImpl(jcrName, jcrType, type, documentNode, parentNode, locale, timeZone);
     }
 
     private static Node findDocumentNode(Node node) {
