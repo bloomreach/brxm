@@ -1,11 +1,9 @@
 @import 'variables';
 @import 'mixins';
 
-$menu-icon-size: 24px;
-
-@mixin showStillIcon() {
+@mixin showNormalIcon() {
   .icon {
-    display: inline;
+    display: block;
   }
 
   .icon.active {
@@ -19,23 +17,24 @@ $menu-icon-size: 24px;
   }
 
   .icon.active {
-    display: inline;
+    display: block;
   }
 }
 
 :host {
-  @include showStillIcon;
-
-  border-left: solid 1px $menu-bg;
   cursor: pointer;
-  display: block;
+  display: grid;
   height: $menu-root-item-height;
-  overflow: hidden;
   position: relative;
+}
 
-  &.pressed {
-    background-color: $menu-sub-item-bg;
-  }
+.menu-item {
+  @include showNormalIcon;
+
+  align-items: center;
+  display: grid;
+  grid-template-columns: $menu-collapsed-width 1fr;
+  padding-right: (2 * $menu-icon-margin);
 
   &::before {
     background-color: $menu-active-text-color;
@@ -49,6 +48,18 @@ $menu-icon-size: 24px;
     width: 5px;
   }
 
+  &:hover {
+    @include showNormalIcon;
+
+    background-color: $menu-hover-bg;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
+
+    .mat-icon,
+    .caption {
+      color: $menu-hover-text-color;
+    }
+  }
+
   &.active {
     @include showActiveIcon;
 
@@ -59,47 +70,50 @@ $menu-icon-size: 24px;
     .mat-icon,
     .caption {
       color: $menu-active-text-color;
+      transition: color 300ms;
+    }
+
+    &:hover {
+      @include showNormalIcon;
     }
   }
 
-  &:hover {
-    @include showStillIcon;
+  &.pressed:not(:hover) {
+    background-color: $menu-sub-item-bg;
 
-    background-color: $menu-hover-bg;
-    width: $menu-width;
-
-    &.collapsed {
-      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
-    }
-
-    &.active {
+    &:hover {
       .mat-icon,
       .caption {
-        color: $menu-active-text-color;
+        color: $menu-text-color;
       }
     }
+  }
 
-    .mat-icon,
-    .caption {
-      color: $menu-hover-text-color;
+  &.collapsed {
+    padding-right: 0;
+
+    &:hover {
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
+      height: 100%;
+      left: 0;
+      padding-right: (2 * $menu-icon-margin);
+      position: absolute;
+      top: 0;
     }
   }
 }
 
 .mat-icon {
-  @include alignVerticallyByAbsolutePositioning;
-
   color: $menu-icon-color;
-  left: ($menu-collapsed-width - $menu-icon-size) / 2;
-  transition: color 500ms;
+  justify-self: center;
 }
 
 .caption {
-  @include alignVerticallyByAbsolutePositioning;
-
   color: $menu-text-color;
-  left: $menu-collapsed-width;
-  line-height: $menu-root-item-height;
-  transition: color 300ms;
   white-space: nowrap;
+}
+
+// Force color of home svg icon, should be fixed in svg by designer
+:host:first-child .mat-icon {
+  color: $white;
 }

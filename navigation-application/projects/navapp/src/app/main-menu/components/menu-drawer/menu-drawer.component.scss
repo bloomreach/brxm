@@ -3,13 +3,20 @@
 :host {
   background-color: $menu-drawer-bg;
   color: $menu-text-color;
+  display: block;
+  height: 100%;
+  left: 100%;
+  min-width: $menu-drawer-width;
+  position: absolute;
+  top: 0;
+  z-index: -1;
 }
 
 .header {
   font-size: 25px;
   font-weight: 200;
   margin: 0;
-  padding: 16px 0;
+  padding: 16px 16px 16px 0;
 }
 
 .content-wrapper {

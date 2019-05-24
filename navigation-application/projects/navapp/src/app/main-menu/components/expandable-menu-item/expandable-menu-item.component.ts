@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
+import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 
 import { QaHelperService } from '../../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../../models';
@@ -27,13 +33,19 @@ import { MenuStateService } from '../../services';
   styleUrls: ['expandable-menu-item.component.scss'],
   animations: [
     trigger('slideInOut', [
-      transition(':enter', [
-        style({ height: '0' }),
-        animate('300ms ease', style({ height: '*' })),
-      ]),
-      transition(':leave', [
-        animate('300ms ease', style({ height: '0' })),
-      ]),
+      state(
+        'false',
+        style({
+          height: '0',
+        }),
+      ),
+      state(
+        'true',
+        style({
+          height: '*',
+        }),
+      ),
+      transition('false <=> true', animate('300ms ease')),
     ]),
   ],
 })
@@ -56,7 +68,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
     return this.isChildMenuOpened;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.active) {
       this.isChildMenuOpened = true;
     }
