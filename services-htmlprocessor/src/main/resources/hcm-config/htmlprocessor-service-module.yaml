@@ -5,6 +5,7 @@ definitions:
       hipposys:className: org.onehippo.cms7.services.htmlprocessor.HtmlProcessorServiceModule
       /hippo:moduleconfig:
         jcr:primaryType: hipposys:moduleconfig
+        visibleElements: [applet, embed, form, iframe, img, object, table]
         /richtext:
           jcr:primaryType: hipposys:moduleconfig
           charset: UTF-8
