@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@
 
 document-fields {
   display: block;
+  padding-right: $form-dense-distance;
+  padding-top: $form-dense-distance;
 
-  &.top-level {
-    padding-right: $form-dense-distance;
-    padding-top: $form-dense-distance;
+  & & {
+    padding-right: 0;
+    padding-top: 0;
   }
 
   label {
@@ -32,11 +34,6 @@ document-fields {
     &::after {
       content: '' !important; // hide material required mark
     }
-  }
-
-  h5 {
-    margin-bottom: $form-dense-distance;
-    margin-left: -6px;
   }
 
   .checkbox-hint {
@@ -63,5 +60,47 @@ primitive-field,
 compound-field {
   primitive-field > .field {
     padding-left: 0;
+  }
+}
+
+.field {
+  &--bordered {
+    border-left: 3px solid $grey-500;
+    margin-bottom: $form-dense-distance;
+
+    & & {
+      border-left: none;
+    }
+  }
+
+  &--focused {
+    border-color: $blue-500;
+  }
+
+  &--invalid {
+    border-color: $red-500;
+  }
+
+  &__title {
+    margin-bottom: $form-dense-distance;
+    margin-left: -6px;
+
+    h5 {
+      margin-bottom: 0;
+    }
+
+    &--focused,
+    &--focused &-icon {
+      color: $blue-500;
+    }
+
+    &--invalid,
+    &--invalid &-icon {
+      color: $red-500;
+    }
+  }
+
+  &__error {
+    margin-left: $icon-size + 4px;
   }
 }

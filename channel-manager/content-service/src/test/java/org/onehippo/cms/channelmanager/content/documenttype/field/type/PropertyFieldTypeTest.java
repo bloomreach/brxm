@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo.Code;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -47,35 +48,40 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertViolation;
+import static org.onehippo.cms.channelmanager.content.documenttype.field.type.AbstractFieldTypeTest.assertZeroViolations;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({JcrUtils.class, NamespaceUtils.class})
-public class PrimitiveFieldTypeTest {
+@PrepareForTest({JcrUtils.class, FieldTypeUtils.class, NamespaceUtils.class})
+public class PropertyFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
-    private PrimitiveFieldType fieldType;
+    private PropertyFieldType fieldType;
     private Node node;
+    private CompoundContext nodeContext;
 
     @Before
     public void setup() {
         PowerMock.mockStatic(JcrUtils.class);
         PowerMock.mockStatic(NamespaceUtils.class);
-        fieldType = new PrimitiveFieldType() {
+        fieldType = new PropertyFieldType() {
 
             @Override
-            protected int getPropertyType() {
-                return PropertyType.STRING;
+            public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+                return value.getValue();
             }
 
             @Override
@@ -85,6 +91,7 @@ public class PrimitiveFieldTypeTest {
         };
         fieldType.setType(Type.STRING);
         node = MockNode.root();
+        nodeContext = new CompoundContext(node, null, null, null);
     }
 
     @Test
@@ -165,7 +172,7 @@ public class PrimitiveFieldTypeTest {
         node.setProperty(PROPERTY, "Value");
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo("Value"));
 
-        fieldType.addValidator(Validator.REQUIRED);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
         node.getProperty(PROPERTY).remove();
         assertThat(fieldType.readFrom(node).get().get(0).getValue(), equalTo(""));
 
@@ -176,6 +183,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToSingleField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, "Old Value");
 
         try {
@@ -207,6 +215,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToOptionalPresentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         node.setProperty(PROPERTY, "Old Value");
 
@@ -233,6 +242,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToOptionalAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
 
         fieldType.writeTo(node, Optional.empty());
@@ -256,6 +266,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultiplePresentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -285,6 +296,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultipleAbsentField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -306,6 +318,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToMultipleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMultiple(true);
@@ -324,6 +337,7 @@ public class PrimitiveFieldTypeTest {
     @Test
     public void writeToSingleIncorrectField() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, new String[]{"Old Value"}); // multiple property in spite of singular type
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
@@ -352,7 +366,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.setId(PROPERTY);
         expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(mockedNode)).andReturn("bla");
-        PowerMock.replayAll(mockedNode);
+        replayAll();
 
         assertThat(fieldType.readFrom(mockedNode).get().get(0).getValue(), equalTo(""));
     }
@@ -362,9 +376,10 @@ public class PrimitiveFieldTypeTest {
         final Node mockedNode = createMock(Node.class);
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         expect(mockedNode.hasProperty(PROPERTY)).andReturn(false);
         expect(mockedNode.setProperty(PROPERTY, "New Value", PropertyType.STRING)).andThrow(new RepositoryException());
-        replay(mockedNode);
+        replayAll();
 
         try {
             fieldType.writeTo(mockedNode, Optional.of(listOf(valueOf("New Value"))));
@@ -372,7 +387,7 @@ public class PrimitiveFieldTypeTest {
         } catch (InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(mockedNode);
+        verifyAll();
     }
 
     @Test
@@ -383,7 +398,7 @@ public class PrimitiveFieldTypeTest {
         fieldType.setMinValues(0);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         expect(mockedNode.hasProperty(PROPERTY)).andThrow(new RepositoryException());
-        replay(mockedNode);
+        replayAll();
 
         try {
             fieldType.writeTo(mockedNode, Optional.empty());
@@ -391,15 +406,16 @@ public class PrimitiveFieldTypeTest {
         } catch (final InternalServerErrorException e) {
             assertNull(e.getPayload());
         }
-        verify(mockedNode);
+        verifyAll();
     }
 
     @Test
     public void writeSingleOnExistingMultipleProperty() throws Exception {
         final Property replacedProperty = node.setProperty(PROPERTY, new String[]{"Value1", "Value2"});
 
-        fieldType.setMultiple(false);
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
+        fieldType.setMultiple(false);
         fieldType.writeTo(node, Optional.of(listOf(valueOf("New Value"))));
 
         assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
@@ -410,9 +426,10 @@ public class PrimitiveFieldTypeTest {
     public void writeMultipleOnExistingSingleProperty() throws Exception {
         final Property replacedProperty = node.setProperty(PROPERTY, "Value");
 
+        fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxValues(2);
         fieldType.setMultiple(true);
-        fieldType.setId(PROPERTY);
         fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value1"), valueOf("New Value2"))));
 
         assertFalse(node.getProperty(PROPERTY).isSame(replacedProperty));
@@ -421,94 +438,125 @@ public class PrimitiveFieldTypeTest {
 
     @Test
     public void writeFieldOtherId() throws ErrorWithPayloadException {
-        final Node mockedNode = createMock(Node.class);
         fieldType.setId(PROPERTY);
 
         final FieldPath fieldPath = new FieldPath("other:id");
         final List<FieldValue> fieldValues = Collections.emptyList();
-        replay(mockedNode);
+        replayAll();
 
-        assertFalse(fieldType.writeField(mockedNode, fieldPath, fieldValues));
-        verify(mockedNode);
+        assertFalse(fieldType.writeField(fieldPath, fieldValues, null));
+        verifyAll();
     }
 
     @Test
     public void writeFieldSuccess() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("value"));
 
-        assertTrue(fieldType.writeField(node, fieldPath, fieldValues));
+        assertTrue(fieldType.writeField(fieldPath, fieldValues, nodeContext));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("value"));
     }
 
     @Test
-    public void writeFieldDoesNotValidate() throws ErrorWithPayloadException, RepositoryException {
+    public void writeFieldValidates() throws ErrorWithPayloadException, RepositoryException {
         fieldType.setId(PROPERTY);
-        fieldType.addValidator(Validator.REQUIRED);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
 
         final FieldPath fieldPath = new FieldPath(PROPERTY);
         final FieldValue emptyValue = new FieldValue("");
 
-        assertTrue(fieldType.writeField(node, fieldPath, Collections.singletonList(emptyValue)));
+        mockStaticPartial(FieldTypeUtils.class, "getValidator");
+        expect(FieldTypeUtils.getValidator(FieldValidators.REQUIRED)).andReturn(new TestValidatorInstance(new AlwaysGoodTestValidator()));
+        replayAll();
+
+        final boolean valueWritten = fieldType.writeField(fieldPath, Collections.singletonList(emptyValue), nodeContext);
+
+        assertTrue(valueWritten);
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
+        verifyAll();
     }
 
     @Test
-    public void validateNonRequired() {
-        assertTrue(fieldType.validate(Collections.emptyList()));
-        assertTrue(fieldType.validate(listOf(valueOf(""))));
-        assertTrue(fieldType.validate(listOf(valueOf("blabla"))));
-        assertTrue(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
+    public void validateEmpty() {
+        assertZeroViolations(fieldType.validate(Collections.emptyList(), null));
     }
 
     @Test
-    public void validateRequired() {
-        fieldType.addValidator(Validator.REQUIRED);
+    public void validateGood() {
+        assertZeroViolations(fieldType.validate(listOf(valueOf("")), null));
+        assertZeroViolations(fieldType.validate(listOf(valueOf("blabla")), null));
+        assertZeroViolations(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two")), null));
+    }
 
-        // valid values
-        assertTrue(fieldType.validate(listOf(valueOf("5"))));
-        assertTrue(fieldType.validate(Arrays.asList(valueOf("10"), valueOf("20"))));
+    @Test
+    public void validateBad() {
+        mockValidators();
 
-        // invalid values
-        FieldValue v = valueOf("");
-        assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue("test");
 
-        v = valueOf(null);
-        assertFalse(fieldType.validate(listOf(v)));
-        assertThat(v.getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
+        assertViolation(fieldType.validateValue(test, context));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
+    }
 
-        List<FieldValue> l = Arrays.asList(valueOf("10"), valueOf(""));
-        assertFalse(fieldType.validate(l));
-        assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+    @Test
+    public void validateSecondBad() {
+        mockValidators();
 
-        l = Arrays.asList(valueOf("10"), valueOf(null));
-        assertFalse(fieldType.validate(l));
-        assertFalse(l.get(0).hasErrorInfo());
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        fieldType.addValidatorName("always-good");
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue("test");
 
-        l = Arrays.asList(valueOf(""), valueOf("10"));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertFalse(l.get(1).hasErrorInfo());
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
+        assertViolation(fieldType.validateValue(test, context));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("always-bad"));
+    }
 
-        l = Arrays.asList(valueOf(null), valueOf("10"));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertFalse(l.get(1).hasErrorInfo());
+    @Test
+    public void firstViolationIsReported() {
+        mockValidators();
 
-        l = Arrays.asList(valueOf(""), valueOf(""));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        fieldType.addValidatorName("non-empty");
+        fieldType.addValidatorName("always-bad");
+        final FieldValue test = new FieldValue(""); // empty value should trigger non-empty validator
 
-        l = Arrays.asList(valueOf(null), valueOf(null));
-        assertFalse(fieldType.validate(l));
-        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
-        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(Code.REQUIRED_FIELD_EMPTY));
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
+        assertViolation(fieldType.validateValue(test, context));
+        assertThat(test.getErrorInfo().getValidation(), equalTo("non-empty")); // and not "always-bad"
+    }
+
+    @Test
+    public void ignoreUnknownValidators() {
+        mockValidators();
+
+        fieldType.addValidatorName("unknown");
+        fieldType.addValidatorName("always-good");
+        final FieldValue test = new FieldValue("test");
+
+        final CompoundContext context = new CompoundContext(MockNode.root(), null, null, null);
+        assertZeroViolations(fieldType.validateValue(test, context));
+    }
+
+    private static void mockValidators() {
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "getValidator");
+        expect(FieldTypeUtils.getValidator(eq("always-good")))
+                .andReturn(new TestValidatorInstance(new AlwaysGoodTestValidator()))
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("always-bad")))
+                .andReturn(new TestValidatorInstance(new AlwaysBadTestValidator()))
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("non-empty")))
+                .andReturn(new TestValidatorInstance(new NonEmptyTestValidator()))
+                .anyTimes();
+        expect(FieldTypeUtils.getValidator(eq("unknown")))
+                .andReturn(null)
+                .anyTimes();
+        replayAll();
     }
 
     private List<FieldValue> listOf(final FieldValue value) {

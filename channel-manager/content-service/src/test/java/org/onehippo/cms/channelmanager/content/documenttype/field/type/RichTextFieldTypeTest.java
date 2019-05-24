@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -28,10 +27,10 @@ import javax.jcr.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -40,30 +39,27 @@ import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorConfig;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorImpl;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import static org.easymock.EasyMock.anyInt;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({FieldTypeUtils.class, HtmlProcessorFactory.class})
+@PrepareForTest({HtmlProcessorFactory.class})
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
@@ -82,18 +78,20 @@ public class RichTextFieldTypeTest {
 
     private RichTextFieldType initField(final HtmlProcessor htmlProcessor) {
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
         expect(parentContext.getDocumentType()).andReturn(new DocumentType());
         expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
 
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn(FIELD_NAME);
+        expect(fieldContext.getJcrName()).andReturn(FIELD_NAME).anyTimes();
+        expect(fieldContext.getJcrType()).andReturn("hippostd:html").anyTimes();
+        expect(fieldContext.getType()).andReturn("hippostd:html").anyTimes();
         expect(fieldContext.getValidators()).andReturn(Collections.emptyList()).anyTimes();
         expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
         expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
 
-        final Locale locale = new Locale("nl");
-        expect(parentContext.getLocale()).andReturn(locale);
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
         expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.empty());
@@ -153,8 +151,8 @@ public class RichTextFieldTypeTest {
         void run() throws Exception;
     }
 
-    private static void assertWarningsLogged(final long count, final Code code, final Code... verifications) throws Exception {
-        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(RichTextFieldType.class).build()) {
+    private static void assertWarningsLogged(final long count, final Class clazz, final Code code, final Code... verifications) throws Exception {
+        try (Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(clazz).build()) {
             try {
                 code.run();
             } finally {
@@ -167,7 +165,7 @@ public class RichTextFieldTypeTest {
     }
 
     private static void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
-        assertWarningsLogged(0, code, verifications);
+        assertWarningsLogged(0, RichTextFieldType.class, code, verifications);
     }
 
     @Test
@@ -247,7 +245,7 @@ public class RichTextFieldTypeTest {
         final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
-        assertWarningsLogged(1, () -> assertFalse(field.readFrom(document).isPresent()));
+        assertWarningsLogged(1, RichTextFieldType.class, () -> assertFalse(field.readFrom(document).get().get(0).hasValue()));
     }
 
     @Test
@@ -336,15 +334,16 @@ public class RichTextFieldTypeTest {
     @Test(expected = InternalServerErrorException.class)
     public void exceptionWhileWriting() throws Exception {
         final RichTextFieldType field = initField();
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeNodeValues");
-        FieldTypeUtils.writeNodeValues(anyObject(), anyObject(), anyInt(), anyObject());
-        expectLastCall().andThrow(new RepositoryException());
-        replayAll();
+        final Node value = addValue("<p>value</p>");
 
-        addValue("<p>value</p>");
+        // checkin the node to make it throw an exception when writing to it
+        value.addMixin(JcrConstants.MIX_VERSIONABLE);
+        value.getSession().getWorkspace().getVersionManager().checkin(value.getPath());
+
         final FieldValue newValue = new FieldValue("<p>changed</p>");
 
         assertWarningsLogged(1,
+                NodeFieldType.class,
                 () -> field.writeTo(document, Optional.of(Collections.singletonList(newValue))),
                 () -> {
                     final List<FieldValue> fieldValues = field.readFrom(document)
@@ -352,44 +351,6 @@ public class RichTextFieldTypeTest {
                     assertThat(fieldValues.size(), equalTo(1));
                     assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
                 });
-    }
-
-    @Test
-    public void validateRequired() {
-        final RichTextFieldType field = initField();
-        field.addValidator(FieldType.Validator.REQUIRED);
-
-        assertTrue(field.isRequired());
-        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
-        assertFalse(field.validate(Collections.singletonList(new FieldValue(""))));
-        assertFalse(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
-    }
-
-    @Test
-    public void validateNotRequired() {
-        final RichTextFieldType field = initField();
-        assertFalse(field.isRequired());
-        assertTrue(field.validate(Collections.singletonList(new FieldValue("test"))));
-        assertTrue(field.validate(Collections.singletonList(new FieldValue(""))));
-        assertTrue(field.validate(Arrays.asList(new FieldValue("test"), new FieldValue(""))));
-    }
-
-    @Test
-    public void validateRequiredValue() {
-        final RichTextFieldType field = initField();
-        field.addValidator(FieldType.Validator.REQUIRED);
-
-        assertTrue(field.isRequired());
-        assertTrue(field.validateValue(new FieldValue("test")));
-        assertFalse(field.validateValue(new FieldValue("")));
-    }
-
-    @Test
-    public void validateNotRequiredValue() {
-        final RichTextFieldType field = initField();
-        assertFalse(field.isRequired());
-        assertTrue(field.validateValue(new FieldValue("test")));
-        assertTrue(field.validateValue(new FieldValue("")));
     }
 
     @Test

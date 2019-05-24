@@ -120,7 +120,7 @@ public class ChoiceFieldUtils {
                     choices.put(choiceId, choice);
                 } else {
                     // not all available choices are supported
-                    fieldsInfo.addUnsupportedField(fieldContext.getName(), fieldContext.getValidators());
+                    fieldsInfo.addUnsupportedField(fieldContext.getJcrName(), fieldContext.getValidators());
                 }
             });
         }
@@ -216,8 +216,9 @@ public class ChoiceFieldUtils {
         }
 
         final FieldTypeContext fieldContext = new FieldTypeContext(
-            choiceId,                // the ID of a list-based choice is both the field name
+            choiceId,                // the ID of a list-based choice is the JCR name
             choiceId,                // and the JCR type
+            choiceId,                // and the type
             false,                   // a choice is always stored in a node
             false,                   // a choice itself is never multiple
             Collections.emptyList(), // a choice does not have any validators itself

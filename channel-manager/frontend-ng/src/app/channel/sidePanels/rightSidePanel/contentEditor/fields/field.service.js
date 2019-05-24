@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,30 @@
  */
 
 class FieldService {
-  constructor($timeout, ContentService) {
+  constructor($timeout, $q, ContentService) {
     'ngInject';
 
     this.$timeout = $timeout;
+    this.$q = $q;
     this.ContentService = ContentService;
 
     this.documentId = null;
-    this.activeSaveTimers = {};
+    this.throttled = {};
     this.AUTOSAVE_DELAY = 2000;
 
     this._focusedInput = null;
     this._customFocusCallback = null;
+  }
+
+  cleanValues(values) {
+    const cleanedValues = angular.copy(values);
+    // do not send back errorInfo
+    if (angular.isArray(cleanedValues)) {
+      cleanedValues.forEach(value => delete value.errorInfo);
+    } else if (angular.isObject(cleanedValues)) {
+      delete cleanedValues.errorInfo;
+    }
+    return cleanedValues;
   }
 
   shouldPreserveFocus(relatedTarget) {
@@ -71,36 +83,68 @@ class FieldService {
     return this.documentId;
   }
 
-  startSaveTimer(fieldName, fieldValue) {
-    const documentId = this.getDocumentId();
+  save({
+    documentId = this.getDocumentId(),
+    name,
+    values,
+    throttle = false,
+  }) {
+    const wasThrottled = this._abortThrottled(documentId, name);
 
-    if (!this.activeSaveTimers[documentId]) this.activeSaveTimers[documentId] = {};
+    if (throttle) {
+      return this._throttle(documentId, name, values, !wasThrottled);
+    }
 
-    this._clearFieldTimer(documentId, fieldName);
+    try {
+      return this._save(documentId, name, values);
+    } finally {
+      this._abortThrottled(documentId, name);
+    }
+  }
 
-    this.activeSaveTimers[documentId][fieldName] = this.$timeout(() => {
-      this.saveField(fieldName, fieldValue, documentId);
+  _save(documentId, name, values) {
+    return this.ContentService.saveField(documentId, name, this.cleanValues(values));
+  }
+
+  _throttle(documentId, name, values, immediate) {
+    if (!this.throttled[documentId]) {
+      this.throttled[documentId] = {};
+    }
+
+    const deferred = this.$q.defer();
+    this.throttled[documentId][name] = this.$timeout(() => {
+      if (!immediate) {
+        this._save(documentId, name, values)
+          .then(deferred.resolve)
+          .catch(deferred.reject);
+      }
+
+      this._abortThrottled(documentId, name);
     }, this.AUTOSAVE_DELAY);
-  }
 
-  saveField(fieldName, fieldValue, documentId = this.getDocumentId()) {
-    this._clearFieldTimer(documentId, fieldName);
-    this.ContentService.saveField(documentId, fieldName, fieldValue);
-    this._cleanupTimers(documentId);
-  }
-
-  _clearFieldTimer(documentId, fieldName) {
-    if (this.activeSaveTimers[documentId] && this.activeSaveTimers[documentId][fieldName]) {
-      this.$timeout.cancel(this.activeSaveTimers[documentId][fieldName]);
-      delete this.activeSaveTimers[documentId][fieldName];
+    if (!immediate) {
+      return deferred.promise;
     }
+
+    return this._save(documentId, name, values);
   }
 
-  _cleanupTimers(documentId) {
-    const timers = this.activeSaveTimers[documentId];
-    if (timers && Object.keys(timers).length === 0) {
-      delete this.activeSaveTimers[documentId];
+  _abortThrottled(documentId, name) {
+    if (!this._isThrottled(documentId, name)) {
+      return false;
     }
+
+    this.$timeout.cancel(this.throttled[documentId][name]);
+    delete this.throttled[documentId][name];
+    if (!Object.keys(this.throttled[documentId] || {}).length) {
+      delete this.throttled[documentId];
+    }
+
+    return true;
+  }
+
+  _isThrottled(documentId, name) {
+    return this.throttled[documentId] && this.throttled[documentId][name];
   }
 }
 

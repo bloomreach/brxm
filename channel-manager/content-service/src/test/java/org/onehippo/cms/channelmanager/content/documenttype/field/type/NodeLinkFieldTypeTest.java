@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,15 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Type;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -43,7 +44,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -109,7 +109,10 @@ public class NodeLinkFieldTypeTest {
         clusterOptions.setProperty("language.context.aware", true);
         clusterOptions.setProperty("nodetypes", new String[0]);
 
-        final FieldTypeContext context = new FieldTypeContext(null, null, false, false, null, null, editorConfigNode);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
+        expect(parentContext.getLocale()).andReturn(TestUserContext.TEST_LOCALE);
+        replayAll();
+        final FieldTypeContext context = new FieldTypeContext(null, null, null, false, false, null, parentContext, editorConfigNode);
         linkFieldType.init(context);
 
         final JsonNode linkPickerConfig = linkFieldType.getConfig().get("linkpicker");
@@ -121,16 +124,6 @@ public class NodeLinkFieldTypeTest {
         assertThat(linkPickerConfig.get("last.visited.nodetypes").asText(), equalTo(""));
         assertThat(linkPickerConfig.get("language.context.aware").asBoolean(), equalTo(true));
         assertThat(linkPickerConfig.get("nodetypes").size(), equalTo(0));
-    }
-
-    @Test
-    public void getDefault() {
-        assertThat(linkFieldType.getDefault(), equalTo(""));
-    }
-
-    @Test
-    public void getPropertyType() {
-        assertThat(linkFieldType.getPropertyType(), equalTo(PropertyType.STRING));
     }
 
     @Test
@@ -293,22 +286,5 @@ public class NodeLinkFieldTypeTest {
         replayAll();
 
         linkFieldType.writeValues(node, Optional.of(Collections.singletonList(new FieldValue("1234"))), true);
-    }
-
-    @Test
-    public void validateValueNotRequired() {
-        assertTrue(linkFieldType.validateValue(new FieldValue()));
-    }
-
-    @Test
-    public void validateValueRequiredNotEmpty() {
-        linkFieldType.addValidator(FieldType.Validator.REQUIRED);
-        assertTrue(linkFieldType.validateValue(new FieldValue("1234")));
-    }
-
-    @Test
-    public void validateValueRequiredAndEmpty() {
-        linkFieldType.addValidator(FieldType.Validator.REQUIRED);
-        assertFalse(linkFieldType.validateValue(new FieldValue("")));
     }
 }

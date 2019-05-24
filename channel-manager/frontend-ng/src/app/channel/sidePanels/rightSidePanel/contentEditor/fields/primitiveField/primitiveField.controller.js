@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,30 @@ class PrimitiveFieldCtrl {
     this.$scope = $scope;
     this.FieldService = FieldService;
     this.SharedSpaceToolbarService = SharedSpaceToolbarService;
+  }
+
+  $onChanges(changes) {
+    if (changes.fieldValues) {
+      this._onFieldValuesChanged(changes.fieldValues.currentValue);
+    }
+  }
+
+  _onFieldValuesChanged(fieldValues) {
+    delete this.firstServerError;
+
+    fieldValues.forEach((value, index) => {
+      const field = this.form[this.getFieldName(index)];
+      if (!field) {
+        return;
+      }
+
+      const isValid = !value.errorInfo || !value.errorInfo.message;
+      field.$setValidity('server', isValid);
+
+      if (!isValid && !this.firstServerError) {
+        this.firstServerError = value.errorInfo.message;
+      }
+    });
   }
 
   getFieldName(index) {
@@ -80,12 +104,41 @@ class PrimitiveFieldCtrl {
   }
 
   valueChanged() {
-    this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues);
+    this._saveField({ throttle: true });
   }
 
-  _saveField() {
-    if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.saveField(this.getFieldName(), this.fieldValues);
+  _saveField(options) {
+    if (!angular.equals(
+      this.FieldService.cleanValues(this.oldValues),
+      this.FieldService.cleanValues(this.fieldValues),
+    )) {
+      this.FieldService.save({
+        ...options,
+        name: this.getFieldName(),
+        values: this.fieldValues,
+      }).then(this._afterSaveField.bind(this));
+    }
+  }
+
+  _afterSaveField(validatedValues) {
+    let errorsChanged = false;
+
+    validatedValues.forEach((validatedValue, index) => {
+      const currentValue = this.fieldValues[index];
+
+      if (validatedValue.errorInfo && !currentValue.errorInfo) {
+        currentValue.errorInfo = validatedValue.errorInfo;
+        errorsChanged = true;
+      }
+
+      if (!validatedValue.errorInfo && currentValue.errorInfo) {
+        delete currentValue.errorInfo;
+        errorsChanged = true;
+      }
+    });
+
+    if (errorsChanged) {
+      this._onFieldValuesChanged(this.fieldValues);
     }
   }
 }

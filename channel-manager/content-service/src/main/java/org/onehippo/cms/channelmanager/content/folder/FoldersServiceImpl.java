@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.document.util.FolderUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -46,7 +46,7 @@ public class FoldersServiceImpl implements FoldersService {
     }
 
     @Override
-    public List<Folder> getFolders(final String path, final Session session) throws ErrorWithPayloadException {
+    public List<Folder> getFolders(final String path, final UserContext userContext) throws ErrorWithPayloadException {
         final List<Folder> folders = new LinkedList<>();
         if (Strings.isNullOrEmpty(path) || "/".equals(path)) {
             return folders;
@@ -54,7 +54,7 @@ public class FoldersServiceImpl implements FoldersService {
 
         final String relPath = path.startsWith("/") ? path.substring(1) : path;
         try {
-            Node node = session.getRootNode();
+            Node node = userContext.getSession().getRootNode();
             final String[] names = relPath.split("/");
             Folder folder = null;
             for (final String name : names) {

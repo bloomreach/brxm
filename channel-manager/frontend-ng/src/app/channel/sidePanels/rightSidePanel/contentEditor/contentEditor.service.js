@@ -28,7 +28,7 @@ const ERROR_MAP = {
     titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE',
   },
-  CREATE_WITH_UNKNOWN_VALIDATOR: {
+  CREATE_WITH_UNSUPPORTED_VALIDATOR: {
     titleKey: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
     messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
     linkToContentEditor: true,
@@ -316,16 +316,26 @@ class ContentEditorService {
   save(force) {
     return this._saveDocument(force)
       .catch((response) => {
+        const result = this.$q.reject(); // tell the caller that saving has failed.
+
         let params;
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
+
+        if (isDocument(response.data)) {
+          this._reloadDocumentType();
+          this.document = response.data;
+
+          const count = response.data.info && response.data.info.errorCount;
+          errorKey = count !== 1
+            ? 'DOCUMENT_CONTAINS_MULTIPLE_ERRORS'
+            : 'DOCUMENT_CONTAINS_ONE_ERROR';
+          params = { name: response.data.displayName, count };
+        }
 
         if (isErrorInfo(response.data)) {
           const errorInfo = response.data;
           errorKey = `ERROR_${errorInfo.reason}`;
           params = this._extractErrorParams(errorInfo);
-        } else if (isDocument(response.data)) {
-          errorKey = 'ERROR_INVALID_DATA';
-          this._reloadDocumentType();
         }
 
         if (params) {
@@ -334,7 +344,7 @@ class ContentEditorService {
           this.FeedbackService.showError(errorKey);
         }
 
-        return this.$q.reject(); // tell the caller that saving has failed.
+        return result;
       });
   }
 
@@ -397,7 +407,7 @@ class ContentEditorService {
     return this._askSaveOrDiscardChanges(messageKey, messageParams)
       .then((action) => {
         if (action === 'SAVE') {
-          return this._saveDocument()
+          return this.save()
             .then(() => action); // let caller know that changes have been saved
         }
 

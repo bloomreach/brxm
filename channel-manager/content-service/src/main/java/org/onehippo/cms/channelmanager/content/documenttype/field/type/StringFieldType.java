@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class StringFieldType extends PrimitiveFieldType {
+public class StringFieldType extends PropertyFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldType.class);
     private static final String DEFAULT_VALUE = StringUtils.EMPTY;
@@ -67,19 +68,19 @@ public class StringFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
-    }
-
-    @Override
     protected String getDefault() {
         return DEFAULT_VALUE;
     }
 
     @Override
+    public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return value.getValue();
+    }
+
+    @Override
     protected void fieldSpecificValidations(final String validatedField) throws ErrorWithPayloadException {
         if (maxLength != null && validatedField.length() > maxLength) {
-            throw INVALID_DATA.get();
+            throw FieldTypeUtils.INVALID_DATA.get();
         }
     }
 }

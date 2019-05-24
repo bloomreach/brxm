@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ describe('EditContentMainCtrl', () => {
         'confirmPublication',
         'confirmSaveOrDiscardChanges',
         'discardChanges',
+        'getDocument',
         'getDocumentId',
         'getDocumentType',
         'getDocumentDisplayName',
@@ -132,6 +133,38 @@ describe('EditContentMainCtrl', () => {
 
       expect($ctrl.startLoading).toHaveBeenCalled();
       expect($ctrl.loading).toBe(false);
+    });
+
+    describe('on server-side validation error', () => {
+      let $$element;
+
+      beforeEach(() => {
+        $$element = { focus: jasmine.createSpy() };
+        $ctrl.form = {
+          $error: {
+            server: [{ $$element }],
+          },
+        };
+        ContentEditor.save.and.returnValue($q.reject());
+      });
+
+      it('sets focus on the first element on server-side validation error', () => {
+        $ctrl.save();
+        $scope.$digest();
+
+        expect($$element.focus).toHaveBeenCalled();
+      });
+
+      it('removes an old watch for setting focus on the first element on server-side validation error', () => {
+        const stopPreviousWatch = jasmine.createSpy('stopPreviousWatch');
+        $ctrl.stopServerErrorWatch = stopPreviousWatch;
+
+        $ctrl.save();
+        $scope.$digest();
+
+        expect(stopPreviousWatch).toHaveBeenCalled();
+        expect($ctrl.stopServerErrorWatch).toBeUndefined();
+      });
     });
   });
 

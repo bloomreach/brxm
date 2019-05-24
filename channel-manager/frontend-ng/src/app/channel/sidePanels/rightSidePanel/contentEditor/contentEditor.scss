@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,6 @@ content-editor {
 
   .feedback > :last-child {
     margin-bottom: 0;
-  }
-
-  .top-level > .field-wrapper > * > .field-bordered {
-    border-left: 3px solid $grey-500;
-    margin-bottom: $form-dense-distance;
   }
 
   // multiple fields should only have 1 error message visible

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,54 @@
  * limitations under the License.
  */
 
-class CompoundFieldCtrl {
-  constructor() {
+export default class CompoundFieldCtrl {
+  constructor($element, $scope) {
     'ngInject';
+
+    this.children = new Set();
+    this.$element = $element;
+    this.$scope = $scope;
   }
 
-  focusCompound() {
+  $onInit() {
+    if (this.parent) {
+      this.parent.children.add(this);
+    }
+  }
+
+  $onDestroy() {
+    if (this.parent) {
+      this.parent.children.delete(this);
+    }
+  }
+
+  $onChanges(changes) {
+    if (changes.fieldValue) {
+      this.setError(!!changes.fieldValue.currentValue.errorInfo);
+    }
+  }
+
+  setError(value) {
+    this.hasError = value;
+
+    if (this.hasError) {
+      this.$scope.collapse.open();
+      this.$element.triggerHandler('focus');
+    }
+
+    if (this.parent) {
+      this.parent.setError([...this.parent.children]
+        .reduce((result, child) => result || child.hasError, false));
+    }
+  }
+
+  onFocus() {
     this.hasFocus = true;
-    this.onFieldFocus();
+    this.$element.triggerHandler('focus');
   }
 
-  blurCompound() {
+  onBlur() {
     delete this.hasFocus;
-    this.onFieldBlur();
+    this.$element.triggerHandler('blur');
   }
 }
-
-export default CompoundFieldCtrl;

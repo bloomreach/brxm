@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -36,27 +38,27 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanRadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateAndTimeFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DateOnlyFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.DoubleFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.BooleanRadioGroupFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ImageLinkFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.LongFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.NodeLinkFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.OpenUiStringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.RadioGroupFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.StaticDropdownFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
@@ -65,6 +67,9 @@ import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,12 +88,6 @@ public class FieldTypeUtils {
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
-    // Translate JCR level validator to FieldType.Validator
-    private static final Map<String, Validator> VALIDATOR_MAP;
-
-    // Unsupported validators of which we know they have field-scope only
-    private static final Set<String> UNSUPPORTED_FIELD_VALIDATORS;
-
     // A map for associating supported JCR-level field types with relevant information
     private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
@@ -100,20 +99,6 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
         IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recursion for content blocks. We implement this ourselves.
 
-        VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put(FieldValidators.REQUIRED, Validator.REQUIRED);
-        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, Validator.REQUIRED);
-        // Apparently, making a String field required puts above two(!) values onto the validator property.
-
-        UNSUPPORTED_FIELD_VALIDATORS = new HashSet<>();
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.EMAIL);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.ESCAPED);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.HTML);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.IMAGE_REFERENCES);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REFERENCES);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.REQUIRED);
-        UNSUPPORTED_FIELD_VALIDATORS.add(FieldValidators.RESOURCE_REQUIRED);
-
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -124,14 +109,14 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Boolean", new TypeDescriptor(BooleanFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Date", new TypeDescriptor(DateAndTimeFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("CalendarDate", new TypeDescriptor(DateOnlyFieldType.class, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("selection:RadioGroup", 
+        FIELD_TYPE_MAP.put("selection:RadioGroup",
                 new TypeDescriptor(RadioGroupFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("selection:BooleanRadioGroup", new TypeDescriptor(BooleanRadioGroupFieldType.class,
                 PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
-        FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class, 
+        FIELD_TYPE_MAP.put(GalleryPickerNodeType.NT_IMAGE_LINK, new TypeDescriptor(ImageLinkFieldType.class,
                 NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(HippoNodeType.NT_MIRROR, new TypeDescriptor(NodeLinkFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("OpenUiString", new TypeDescriptor(OpenUiStringFieldType.class, PROPERTY_FIELD_PLUGIN));
@@ -140,6 +125,9 @@ public class FieldTypeUtils {
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.editor.layout.");
         STRUCTURE_PLUGIN_CLASSES.add("org.hippoecm.frontend.service.render.ListViewPlugin");
     }
+
+    public static final Supplier<ErrorWithPayloadException> INVALID_DATA
+            = () -> new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
 
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
 
@@ -169,10 +157,10 @@ public class FieldTypeUtils {
     }
 
     private static class TypeDescriptor {
-        public final Class<? extends FieldType> fieldTypeClass;
-        public final String defaultPluginClass;
+        final Class<? extends FieldType> fieldTypeClass;
+        final String defaultPluginClass;
 
-        public TypeDescriptor(final Class<? extends FieldType> fieldTypeClass, final String defaultPluginClass) {
+        TypeDescriptor(final Class<? extends FieldType> fieldTypeClass, final String defaultPluginClass) {
             this.fieldTypeClass = fieldTypeClass;
             this.defaultPluginClass = defaultPluginClass;
         }
@@ -180,25 +168,57 @@ public class FieldTypeUtils {
 
     /**
      * Translate the set of validators specified at JCR level into a set of validators at the {@link FieldType} level.
-     * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
-     * unknown validator'.
+     * When the list of validators contains an unsupported validator (i.e. a Wicket-specific one), the document type is
+     * marked as 'readonly due to unsupported validator'.
      *
-     * @param fieldType  Specification of a field type
-     * @param docType    The document type the field is a part of
-     * @param validators List of 0 or more validators specified at JCR level
+     * @param fieldType    Specification of a field type
+     * @param fieldContext The context of the field
+     * @param validatorNames List of 0 or more validator names specified at JCR level
      */
-    public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
-        for (final String validator : validators) {
-            if (IGNORED_VALIDATORS.contains(validator)) {
-                // Do nothing
-            } else if (VALIDATOR_MAP.containsKey(validator)) {
-                fieldType.addValidator(VALIDATOR_MAP.get(validator));
-            } else if (UNSUPPORTED_FIELD_VALIDATORS.contains(validator)) {
-                fieldType.addValidator(Validator.UNSUPPORTED);
-            } else {
-                docType.setReadOnlyDueToUnknownValidator(true);
+    public static void determineValidators(final FieldType fieldType, final FieldTypeContext fieldContext,
+                                           final List<String> validatorNames) {
+        if (validatorNames.isEmpty()) {
+            return;
+        }
+
+        final ValidationService validationService = HippoServiceRegistry.getService(ValidationService.class);
+        if (validationService == null) {
+            log.error("Cannot load {} from service registry, field validation will be disabled",
+                    ValidationService.class.getSimpleName());
+            return;
+        }
+
+        for (final String validatorName : validatorNames) {
+            if (!IGNORED_VALIDATORS.contains(validatorName)) {
+                final ValidatorInstance validator = validationService.getValidator(validatorName);
+                if (validator != null) {
+                    fieldType.addValidatorName(validatorName);
+                } else {
+                    fieldType.setUnsupportedValidator(true);
+
+                    final DocumentType docType = fieldContext.getParentContext().getDocumentType();
+                    log.info("Field '{}' in document type '{}' has unsupported validator '{}', " +
+                                    "documents of this type will be read only in the Channel Manager",
+                            fieldType.getId(), docType.getId(), validatorName);
+                    docType.setReadOnlyDueToUnsupportedValidator(true);
+                }
             }
         }
+    }
+
+    public static ValidatorInstance getValidator(final String validatorName) {
+        if (StringUtils.isBlank(validatorName)) {
+            return null;
+        }
+
+        final ValidationService validationService = HippoServiceRegistry.getService(ValidationService.class);
+        if (validationService == null) {
+            log.error("Cannot load {} from service registry, field validation will be disabled",
+                    ValidationService.class.getSimpleName());
+            return null;
+        }
+
+        return validationService.getValidator(validatorName);
     }
 
     /**
@@ -307,6 +327,24 @@ public class FieldTypeUtils {
                 .flatMap(NamespaceUtils::getPluginClassForField);
     }
 
+    public static void checkCardinality(final FieldType field, final List<FieldValue> values) {
+        if (values.size() < field.getMinValues()) {
+            throw INVALID_DATA.get();
+        }
+        if (values.size() > field.getMaxValues()) {
+            throw INVALID_DATA.get();
+        }
+        if (field.isRequired() && values.isEmpty()) {
+            throw INVALID_DATA.get();
+        }
+    }
+
+    public static void trimToMaxValues(final List list, final int maxValues) {
+        while (list.size() > maxValues) {
+            list.remove(list.size() - 1);
+        }
+    }
+
     /**
      * Try to read a list of fields from a node into a map of values.
      *
@@ -342,57 +380,47 @@ public class FieldTypeUtils {
         }
     }
 
-    public static void writeNodeValues(final NodeIterator nodes,
-                                       final List<FieldValue> values,
-                                       final int maxValues,
-                                       final NodeFieldType field) throws RepositoryException, ErrorWithPayloadException {
-        final long count = nodes.getSize();
-
-        // additional cardinality check to prevent creating new values or remove a subset of the old values
-        if (!values.isEmpty() && values.size() != count && count <= maxValues) {
-            throw new BadRequestException(new ErrorInfo(Reason.CARDINALITY_CHANGE));
-        }
-
-        for (final FieldValue value : values) {
-            field.writeValue(nodes.nextNode(), value);
-        }
-
-        // delete excess nodes to match field type
-        while (nodes.hasNext()) {
-            nodes.nextNode().remove();
-        }
-    }
-
-    public static boolean writeFieldValue(final FieldPath fieldPath, final List<FieldValue> fieldValues, final List<FieldType> fields, final Node node) throws ErrorWithPayloadException {
+    public static boolean writeFieldValue(final FieldPath fieldPath,
+                                          final List<FieldValue> fieldValues,
+                                          final List<FieldType> fields,
+                                          final CompoundContext context) throws ErrorWithPayloadException {
         if (fieldPath.isEmpty()) {
             return false;
         }
         for (final FieldType field : fields) {
-            if (field.writeField(node, fieldPath, fieldValues)) {
+            if (field.writeField(fieldPath, fieldValues, context)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static boolean writeFieldNodeValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException {
+    public static boolean writeFieldNodeValue(final FieldPath fieldPath,
+                                              final List<FieldValue> values,
+                                              final NodeFieldType field,
+                                              final CompoundContext context) throws ErrorWithPayloadException {
         if (!fieldPath.startsWith(field.getId())) {
             return false;
         }
+        final Node parentNode = context.getNode();
         final String childName = fieldPath.getFirstSegment();
         try {
-            if (!node.hasNode(childName)) {
+            if (!parentNode.hasNode(childName)) {
                 throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
             }
-            final Node child = node.getNode(childName);
-            return field.writeFieldValue(child, fieldPath.getRemainingSegments(), values);
+            final Node child = parentNode.getNode(childName);
+            final CompoundContext childContext = context.getChildContext(child);
+            return field.writeFieldValue(fieldPath.getRemainingSegments(), values, childContext);
         } catch (final RepositoryException e) {
-            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(node), e);
+            log.warn("Failed to write value of field '{}' to node '{}'", fieldPath, JcrUtils.getNodePathQuietly(parentNode), e);
             throw new InternalServerErrorException();
         }
     }
 
-    public static boolean writeChoiceFieldValue(final Node node, final FieldPath fieldPath, final List<FieldValue> values, final NodeFieldType field) throws ErrorWithPayloadException, RepositoryException {
+    public static boolean writeChoiceFieldValue(final FieldPath fieldPath,
+                                                final List<FieldValue> values,
+                                                final NodeFieldType field,
+                                                final CompoundContext context) throws ErrorWithPayloadException, RepositoryException {
         if (!fieldPath.is(field.getId())) {
             return false;
         }
@@ -401,7 +429,8 @@ public class FieldTypeUtils {
         }
         // Choices can never be multiple, there is always only one value.
         final FieldValue choiceFieldValue = values.get(0);
-        field.writeValue(node, choiceFieldValue);
+        field.writeValue(context.getNode(), choiceFieldValue);
+        field.validateValue(choiceFieldValue, context);
         return true;
     }
 
@@ -412,20 +441,42 @@ public class FieldTypeUtils {
      *
      * @param valueMap set of field type ID -> to be validated list of field values mappings
      * @param fields   set of field type definitions, including the applicable validators
-     * @return true if all checked field values are valid, false otherwise.
+     * @param context  context of the fields
+     * @return the number of violations found
      */
-    public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
-        boolean isValid = true;
+    public static int validateFieldValues(final Map<String, List<FieldValue>> valueMap,
+                                          final List<FieldType> fields,
+                                          final CompoundContext context) throws ErrorWithPayloadException {
+        int violationCount = 0;
 
         for (final FieldType fieldType : fields) {
             final String fieldId = fieldType.getId();
             if (valueMap.containsKey(fieldId)) {
-                if (!fieldType.validate(valueMap.get(fieldId))) {
-                    isValid = false;
-                }
+                final List<FieldValue> fieldValues = valueMap.get(fieldId);
+                violationCount += fieldType.validate(fieldValues, context);
             }
         }
 
-        return isValid;
+        return violationCount;
+    }
+
+    public static int validateNodeValues(final NodeIterator nodes,
+                                       final List<FieldValue> values,
+                                       final NodeFieldType field,
+                                       final CompoundContext context) {
+        final long count = nodes.getSize();
+        if (values.size() != count) {
+            throw new BadRequestException(new ErrorInfo(Reason.INVALID_DATA));
+        }
+
+        int violationCount = 0;
+
+        for (final FieldValue value : values) {
+            final Node child = nodes.nextNode();
+            final CompoundContext childContext = context.getChildContext(child);
+            violationCount += field.validateValue(value, childContext);
+        }
+
+        return violationCount;
     }
 }

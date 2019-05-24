@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,88 +15,34 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFieldType {
+import com.google.common.collect.Sets;
+
+import static org.onehippo.repository.util.JcrConstants.ROOT_NODE_ID;
+
+public abstract class LinkFieldType extends LeafNodeFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(LinkFieldType.class);
-
-    private static final String DEFAULT_VALUE = StringUtils.EMPTY;
-
-    @Override
-    protected String getDefault() {
-        return DEFAULT_VALUE;
-    }
-
-    @Override
-    protected void writeValues(final Node node, final Optional<List<FieldValue>> optionalValues, final boolean validateValues) throws ErrorWithPayloadException {
-        final String valueName = getId();
-        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
-
-        if (validateValues) {
-            checkCardinality(values);
-        }
-
-        try {
-            final NodeIterator children = node.getNodes(valueName);
-            FieldTypeUtils.writeNodeValues(children, values, getMaxValues(), this);
-        } catch (final RepositoryException e) {
-            log.warn("Failed to write {} field '{}'", getType(), valueName, e);
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
-    }
-
-    @Override
-    protected List<FieldValue> readValues(final Node node) {
-        final String nodeName = getId();
-
-        try {
-            final NodeIterator children = node.getNodes(nodeName);
-            final List<FieldValue> values = new ArrayList<>((int) children.getSize());
-            for (final Node child : new NodeIterable(children)) {
-                final FieldValue value = readValue(child);
-                if (value.hasValue()) {
-                    values.add(value);
-                }
-            }
-            return values;
-        } catch (final RepositoryException e) {
-            log.warn("Failed to read nodes for {} type '{}'", getType(), getId(), e);
-        }
-        return Collections.emptyList();
-    }
 
     @Override
     public FieldValue readValue(final Node node) {
         final FieldValue value = new FieldValue();
         try {
-            final String uuid = readUuid(node);
+            final String uuid = readUuid(node, getEmptyNodeIdentifiers(node));
             value.setValue(uuid);
             value.setMetadata(createMetadata(uuid, node, node.getSession()));
         } catch (final RepositoryException e) {
@@ -105,14 +51,17 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
         return value;
     }
 
+    protected HashSet<String> getEmptyNodeIdentifiers(final Node node) throws RepositoryException {
+        return Sets.newHashSet(ROOT_NODE_ID);
+    }
+
     protected Map<String, Object> createMetadata(final String uuid, final Node node, final Session session) throws RepositoryException {
         return null;
     }
 
-    private static String readUuid(final Node node) throws RepositoryException {
+    private static String readUuid(final Node node, final Set<String> emptyNodeIdentifiers) throws RepositoryException {
         final String uuid = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, StringUtils.EMPTY);
-        final String rootUuid = node.getSession().getRootNode().getIdentifier();
-        return uuid.equals(rootUuid) ? StringUtils.EMPTY : uuid;
+        return emptyNodeIdentifiers.contains(uuid) ? StringUtils.EMPTY : uuid;
     }
 
     @Override
@@ -122,8 +71,7 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
 
     private static void writeUuid(final Node node, final String uuid) throws RepositoryException {
         if (StringUtils.isEmpty(uuid)) {
-            final String rootUuid = node.getSession().getRootNode().getIdentifier();
-            writeDocBase(node, rootUuid);
+            writeDocBase(node, ROOT_NODE_ID);
         } else {
             writeDocBase(node, uuid);
         }
@@ -132,10 +80,4 @@ public abstract class LinkFieldType extends PrimitiveFieldType implements NodeFi
     private static void writeDocBase(final Node node, final String rootUuid) throws RepositoryException {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, rootUuid);
     }
-
-    @Override
-    public boolean validateValue(final FieldValue value) {
-        return !isRequired() || validateSingleRequired(value);
-    }
-
 }

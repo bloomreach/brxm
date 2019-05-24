@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.PropertyType;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 
 /**
  * DoubleFieldType controls the reading and writing of a Double type field from and to a node's property.
@@ -25,7 +26,7 @@ import javax.jcr.PropertyType;
  * a "no-change" read-and-write operation may have the effect that the document is adjusted towards better consistency
  * with the field type definition.
  */
-public class DoubleFieldType extends PrimitiveFieldType {
+public class DoubleFieldType extends PropertyFieldType {
 
     private static final String DEFAULT_VALUE = "0.0";
 
@@ -34,18 +35,17 @@ public class DoubleFieldType extends PrimitiveFieldType {
     }
 
     @Override
-    protected int getPropertyType() {
-        return PropertyType.DOUBLE;
+    protected String getDefault() {
+        return DEFAULT_VALUE;
     }
 
     @Override
-    protected String getDefault() {
-        return DEFAULT_VALUE;
+    public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return Double.parseDouble(value.getValue());
     }
 
     @Override
     protected String fieldSpecificConversion(final String input) {
         return Double.parseDouble(input) + "";
     }
-
 }

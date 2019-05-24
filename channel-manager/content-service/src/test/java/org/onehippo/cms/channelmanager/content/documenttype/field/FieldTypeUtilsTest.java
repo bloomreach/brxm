@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,15 +41,21 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFie
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType.Validator;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.services.validation.api.ValidationContextException;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -60,14 +67,18 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class, ContentTypeContext.class})
+@PrepareForTest({AbstractFieldType.class, NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class,
+        ContentTypeContext.class, HippoServiceRegistry.class, StringFieldType.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
@@ -79,56 +90,134 @@ public class FieldTypeUtilsTest {
         PowerMock.mockStatic(ChoiceFieldUtils.class);
         PowerMock.mockStatic(ContentTypeContext.class);
         PowerMock.mockStatic(FieldTypeFactory.class);
+        PowerMock.mockStatic(HippoServiceRegistry.class);
         PowerMock.mockStatic(NamespaceUtils.class);
     }
 
     @Test
-    public void validateIgnoredValidator() {
+    public void determineIgnoredValidator() {
+        final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
-        final DocumentType docType = createMock(DocumentType.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, docType, Collections.singletonList("optional"));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("optional"));
+        verifyAll();
     }
 
     @Test
-    public void validateMappedValidators() {
+    public void determineZeroValidators() {
         final FieldType fieldType = createMock(AbstractFieldType.class);
-        final DocumentType docType = createMock(DocumentType.class);
+        final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
 
-        fieldType.addValidator(Validator.REQUIRED);
-        expectLastCall();
-        fieldType.addValidator(Validator.REQUIRED);
-        expectLastCall();
-        replayAll();
-
-        FieldTypeUtils.determineValidators(fieldType, docType, Arrays.asList("required", "non-empty"));
+        FieldTypeUtils.determineValidators(fieldType, fieldTypeContext, Collections.emptyList());
     }
 
     @Test
-    public void validateFieldValidators() {
+    public void determineTwoSupportedValidators() {
+        final ValidationService validationService = createMock(ValidationService.class);
+        final ValidatorInstance email = createMock(ValidatorInstance.class);
+        final ValidatorInstance references = createMock(ValidatorInstance.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
-        final DocumentType docType = createMock(DocumentType.class);
+        final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
 
-        fieldType.addValidator(Validator.UNSUPPORTED);
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("email")).andReturn(email);
+        expect(validationService.getValidator("references")).andReturn(references);
+
+        fieldType.addValidatorName("email");
         expectLastCall();
-        fieldType.addValidator(Validator.UNSUPPORTED);
+
+        fieldType.addValidatorName("references");
         expectLastCall();
+
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, docType, Arrays.asList("email", "references"));
+        FieldTypeUtils.determineValidators(fieldType, fieldTypeContext, Arrays.asList("email", "references"));
+        verifyAll();
     }
 
     @Test
-    public void validateUnknownValidators() {
+    public void determineUnsupportedValidator() {
+        final ValidationService validationService = createMock(ValidationService.class);
         final FieldType fieldType = createMock(AbstractFieldType.class);
+        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
+        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
         final DocumentType docType = createMock(DocumentType.class);
 
-        docType.setReadOnlyDueToUnknownValidator(true);
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("unsupported-validator")).andReturn(null);
+        expect(fieldContext.getParentContext()).andReturn(parentContext);
+        expect(parentContext.getDocumentType()).andReturn(docType);
+        expect(fieldType.getId()).andReturn("fieldId");
+        expect(docType.getId()).andReturn("docTypeId");
+        fieldType.setUnsupportedValidator(true);
+        expectLastCall();
+        docType.setReadOnlyDueToUnsupportedValidator(true);
         expectLastCall();
         replayAll();
 
-        FieldTypeUtils.determineValidators(fieldType, docType, Collections.singletonList("unknown-validator"));
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("unsupported-validator"));
+        verifyAll();
+    }
+
+    @Test
+    public void determineValidatorsWithoutValidationService() {
+        final FieldType fieldType = createMock(AbstractFieldType.class);
+        final FieldTypeContext fieldTypeContext = createMock(FieldTypeContext.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(null);
+        replayAll();
+
+        FieldTypeUtils.determineValidators(fieldType, fieldTypeContext, Arrays.asList("email", "references"));
+        verifyAll();
+    }
+
+    @Test
+    public void getValidatorIgnoresBlankNames() {
+        assertNull(FieldTypeUtils.getValidator(null));
+        assertNull(FieldTypeUtils.getValidator(""));
+        assertNull(FieldTypeUtils.getValidator(" "));
+    }
+
+    @Test
+    public void getValidatorWithoutValidationService() {
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(null);
+        replayAll();
+
+        FieldTypeUtils.getValidator("test");
+        verifyAll();
+    }
+
+    @Test
+    public void getUnknownValidator() {
+        ValidationService validationService = createMock(ValidationService.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("test")).andReturn(null);
+
+        replayAll();
+
+        final ValidatorInstance test = FieldTypeUtils.getValidator("test");
+        assertNull(test);
+        verifyAll();
+    }
+
+    @Test
+    public void getKnownValidator() throws ValidationContextException {
+        ValidationService validationService = createMock(ValidationService.class);
+        ValidatorInstance validator = createMock(ValidatorInstance.class);
+
+        expect(HippoServiceRegistry.getService(ValidationService.class)).andReturn(validationService);
+        expect(validationService.getValidator("test")).andReturn(validator);
+        expectLastCall();
+        replayAll();
+
+        final ValidatorInstance test = FieldTypeUtils.getValidator("test");
+        assertNotNull(test);
+        verifyAll();
     }
 
     @Test
@@ -633,6 +722,76 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
+    public void checkCardinalityMoreThanAllowed() {
+        final List<FieldValue> list = new ArrayList<>();
+        list.add(new FieldValue("one"));
+        list.add(new FieldValue("two"));
+        list.add(new FieldValue("three"));
+
+        FieldType fieldType = new TestFieldType();
+        fieldType.setMaxValues(2);
+        checkCardinality(fieldType, list);
+    }
+
+    @Test
+    public void checkCardinalityLessThanRequired() {
+        final List<FieldValue> list = new ArrayList<>();
+        list.add(new FieldValue("one"));
+        list.add(new FieldValue("two"));
+        list.add(new FieldValue("three"));
+
+        FieldType fieldType = new TestFieldType();
+        assertThat(fieldType.getMinValues(), CoreMatchers.equalTo(1));
+        fieldType.setMinValues(4);
+        checkCardinality(fieldType, list);
+    }
+
+    @Test
+    public void checkCardinalityNoneButRequired() {
+        FieldType fieldType = new TestFieldType();
+        fieldType.setMinValues(0);
+        fieldType.addValidatorName(FieldValidators.REQUIRED);
+        checkCardinality(fieldType, Collections.emptyList());
+    }
+
+
+    private void checkCardinality(final FieldType fieldType, final List<FieldValue> list) {
+        try {
+            FieldTypeUtils.checkCardinality(fieldType, list);
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), CoreMatchers.equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+    }
+
+    @Test
+    public void checkCardinalitySuccess() {
+        FieldType fieldType = new TestFieldType();
+        FieldTypeUtils.checkCardinality(fieldType, Collections.singletonList(new FieldValue("one")));
+    }
+
+    @Test
+    public void trimToMaxValues() {
+        final List<String> list = new ArrayList<>();
+        list.add("one");
+        list.add("two");
+        list.add("three");
+
+        FieldTypeUtils.trimToMaxValues(list, 2);
+        assertThat(list.size(), CoreMatchers.equalTo(2));
+        assertThat(list.get(1), CoreMatchers.equalTo("two"));
+
+        FieldTypeUtils.trimToMaxValues(list, 5);
+        assertThat(list.size(), CoreMatchers.equalTo(2));
+        assertThat(list.get(1), CoreMatchers.equalTo("two"));
+
+        FieldTypeUtils.trimToMaxValues(list, 0);
+        assertThat(list.size(), CoreMatchers.equalTo(0));
+    }
+
+    @Test
     public void readFieldValues() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
@@ -708,9 +867,8 @@ public class FieldTypeUtilsTest {
         final FieldPath emptyFieldPath = new FieldPath("");
         final List<FieldValue> fieldValues = Collections.emptyList();
         final List<FieldType> fields = Collections.emptyList();
-        final Node node = createMock(Node.class);
 
-        assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, node));
+        assertFalse(FieldTypeUtils.writeFieldValue(emptyFieldPath, fieldValues, fields, null));
     }
 
     @Test
@@ -724,14 +882,14 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2, field3);
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
 
-        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
-        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(true);
+        expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
+        expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(true);
 
         replayAll();
 
-        assertTrue(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
-
+        assertTrue(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, nodeContext));
         verifyAll();
     }
 
@@ -745,13 +903,15 @@ public class FieldTypeUtilsTest {
 
         final List<FieldType> fields = Arrays.asList(field1, field2);
         final Node node = createMock(Node.class);
+        final CompoundContext nodeContext = new CompoundContext(node, null, null, null);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
 
-        expect(field1.writeField(node, fieldPath, fieldValues)).andReturn(false);
-        expect(field2.writeField(node, fieldPath, fieldValues)).andReturn(false);
+        expect(field1.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
+        expect(field2.writeField(fieldPath, fieldValues, nodeContext)).andReturn(false);
 
         replayAll();
 
-        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, node));
+        assertFalse(FieldTypeUtils.writeFieldValue(fieldPath, fieldValues, fields, nodeContext));
 
         verifyAll();
     }
@@ -760,23 +920,24 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesNoFields() {
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
 
-        assertTrue(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList()));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Collections.emptyList(), null), equalTo(0));
     }
 
     @Test
     public void validateFieldValuesTwoValid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
         valueMap.put("field2", validValueList);
 
         expect(field1.getId()).andReturn("field1");
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(true);
+        expect(field2.validate(validValueList, validationContext)).andReturn(0);
         replayAll();
 
-        assertTrue(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(0));
         verifyAll();
     }
 
@@ -784,6 +945,7 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesFirstInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
@@ -791,12 +953,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", validValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(false);
+        expect(field1.validate(invalidValueList, validationContext)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(validValueList)).andReturn(true);
+        expect(field2.validate(validValueList, validationContext)).andReturn(0);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(1));
         verifyAll();
     }
 
@@ -804,6 +966,7 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesSecondInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         final List<FieldValue> validValueList = Collections.singletonList(new FieldValue("valid"));
@@ -811,12 +974,12 @@ public class FieldTypeUtilsTest {
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(validValueList)).andReturn(true);
+        expect(field1.validate(validValueList, validationContext)).andReturn(0);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(false);
+        expect(field2.validate(invalidValueList, validationContext)).andReturn(1);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(1));
         verifyAll();
     }
 
@@ -824,18 +987,19 @@ public class FieldTypeUtilsTest {
     public void validateFieldValuesBothInvalid() {
         final StringFieldType field1 = createMock(StringFieldType.class);
         final StringFieldType field2 = createMock(StringFieldType.class);
+        final CompoundContext validationContext = createMock(CompoundContext.class);
         final Map<String, List<FieldValue>> valueMap = new HashMap<>();
         final List<FieldValue> invalidValueList = Collections.singletonList(new FieldValue("invalid"));
         valueMap.put("field1", invalidValueList);
         valueMap.put("field2", invalidValueList);
 
         expect(field1.getId()).andReturn("field1");
-        expect(field1.validate(invalidValueList)).andReturn(false);
+        expect(field1.validate(invalidValueList, validationContext)).andReturn(1);
         expect(field2.getId()).andReturn("field2");
-        expect(field2.validate(invalidValueList)).andReturn(false);
+        expect(field2.validate(invalidValueList, validationContext)).andReturn(1);
         replayAll();
 
-        assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
+        assertThat(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2), validationContext), equalTo(2));
         verifyAll();
     }
 
@@ -934,5 +1098,37 @@ public class FieldTypeUtilsTest {
 
         verifyAll();
 
+    }
+
+    private static class TestFieldType extends AbstractFieldType {
+
+        @Override
+        public Optional<List<FieldValue>> readFrom(Node node) {
+            return Optional.empty();
+        }
+
+        @Override
+        public List<FieldValue> readValues(final Node node) {
+            return null;
+        }
+
+        @Override
+        public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+            return null;
+        }
+
+        @Override
+        public void writeValues(Node node, Optional<List<FieldValue>> optionalValue, boolean checkCardinality) {
+        }
+
+        @Override
+        public boolean writeField(FieldPath fieldPath, List<FieldValue> value, final CompoundContext context) {
+            return false;
+        }
+
+        @Override
+        public int validate(final List<FieldValue> valueList, final CompoundContext context) throws ErrorWithPayloadException {
+            return 0;
+        }
     }
 }

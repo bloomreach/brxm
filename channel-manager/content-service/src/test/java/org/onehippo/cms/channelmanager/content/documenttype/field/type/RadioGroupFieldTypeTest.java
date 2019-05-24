@@ -22,16 +22,21 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.forge.selection.frontend.plugin.Config;
 import org.onehippo.repository.mock.MockNode;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.expect;
@@ -39,32 +44,22 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
-import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+@RunWith(PowerMockRunner.class)
+@PowerMockIgnore("javax.management.*")
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class})
 public class RadioGroupFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
 
-    private FieldTypeContext getFieldTypeContext() {
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:radiogroup");
-        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
-        expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
-        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-    
-        return fieldContext;
-    }
-    
     @Test
     public void testFieldConfig() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final RadioGroupFieldType radioGroupFieldType = new RadioGroupFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(radioGroupFieldType)
+                .jcrName("myproject:radiogroup").build();
+
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
@@ -75,7 +70,6 @@ public class RadioGroupFieldTypeTest {
 
         replayAll();
 
-        RadioGroupFieldType radioGroupFieldType = new RadioGroupFieldType();
         radioGroupFieldType.init(fieldTypeContext);
 
         assertThat(radioGroupFieldType.getSource(), equalTo("/source/path"));
@@ -83,13 +77,17 @@ public class RadioGroupFieldTypeTest {
         assertThat(radioGroupFieldType.getSortBy(), equalTo("key"));
         assertThat(radioGroupFieldType.getSortOrder(), equalTo("descending"));
         assertThat(radioGroupFieldType.getOrientation(), equalTo("vertical"));
+
+        verifyAll();
         assertThat(radioGroupFieldType.getValueListProvider(), equalTo("service.valuelist.default"));
         assertTrue(radioGroupFieldType.isSupported());
     }
     
     @Test
     public void testUnsupportedWithNonDefaultValueListProvider() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final RadioGroupFieldType radioGroupFieldType = new RadioGroupFieldType();
+        FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(radioGroupFieldType)
+                .jcrName("myproject:radiogroup").build();
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
@@ -100,20 +98,22 @@ public class RadioGroupFieldTypeTest {
 
         replayAll();
 
-        RadioGroupFieldType radioGroupFieldType = new RadioGroupFieldType();
         radioGroupFieldType.init(fieldTypeContext);
         
         assertFalse(radioGroupFieldType.isSupported());
+        
+        verifyAll();
     }
-    
+
     @Test
     public void writeToSingleDouble() throws Exception {
         final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new RadioGroupFieldType();
+        final PropertyFieldType fieldType = new RadioGroupFieldType();
         final String oldValue = "one";
         final String newValue = "two";
 
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         node.setProperty(PROPERTY, oldValue);
 
         try {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ package org.onehippo.cms.channelmanager.content.documenttype;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-
-import javax.jcr.Session;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.TestUserContext;
+import org.onehippo.cms.channelmanager.content.UserContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
@@ -40,6 +39,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -47,6 +48,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.createPartialMock;
@@ -54,14 +56,13 @@ import static org.powermock.api.easymock.PowerMock.expectPrivate;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({ContentTypeContext.class, DocumentTypesServiceImpl.class, FieldTypeUtils.class,
         LocalizationUtils.class})
 public class DocumentTypesServiceImplTest {
 
-    private DocumentTypesService documentTypesService = DocumentTypesService.get();
+    private final DocumentTypesService documentTypesService = DocumentTypesService.get();
 
     @Before
     public void setup() {
@@ -76,20 +77,20 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeNoContext() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.empty());
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.empty());
 
         replayAll();
 
         try {
-            documentTypesService.getDocumentType(id, session, locale);
+            documentTypesService.getDocumentType(id, userContext);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (UncheckedExecutionException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof NotFoundException);
+            assertNull(((NotFoundException)cause).getPayload());
         }
 
         verifyAll();
@@ -98,25 +99,24 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeNotADocument() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.of(context));
-
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(context.getContentType()).andReturn(contentType);
         expect(contentType.isDocumentType()).andReturn(false);
 
         replayAll();
 
         try {
-            documentTypesService.getDocumentType(id, session, locale);
+            documentTypesService.getDocumentType(id, userContext);
             fail("No exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (UncheckedExecutionException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof NotFoundException);
+            assertNull(((NotFoundException)cause).getPayload());
         }
 
         verifyAll();
@@ -125,16 +125,14 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeNoDisplayName() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
         docType.setId(id);
         expectLastCall();
@@ -162,7 +160,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+        assertThat(documentTypesService.getDocumentType(id, userContext), equalTo(docType));
 
         verifyAll();
     }
@@ -170,8 +168,7 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeWithDisplayName() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
@@ -179,8 +176,7 @@ public class DocumentTypesServiceImplTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.of(resourceBundle)))
                 .andReturn(Optional.of("Document Display Name"));
         docType.setId(id);
@@ -212,7 +208,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), equalTo(docType));
+        assertThat(documentTypesService.getDocumentType(id, userContext), equalTo(docType));
 
         verifyAll();
     }
@@ -220,8 +216,7 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeWithoutAllFields() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
@@ -231,8 +226,7 @@ public class DocumentTypesServiceImplTest {
         fieldsInfo.setCanCreateAllRequiredFields(true);
         fieldsInfo.addUnsupportedField("Test");
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
         docType.setId(id);
@@ -261,7 +255,7 @@ public class DocumentTypesServiceImplTest {
 
         replayAll();
 
-        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
+        assertThat(documentTypesService.getDocumentType(id, userContext), is(equalTo(docType)));
 
         verifyAll();
     }
@@ -269,15 +263,13 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void getDocumentTypeWithUnsupportedRequiredField() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final List<FieldType> fields = new ArrayList<>();
 
-        expect(ContentTypeContext.createForDocumentType(id, session, locale, docType))
-                .andReturn(Optional.of(context));
+        expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
 
         docType.setId(id);
@@ -310,7 +302,7 @@ public class DocumentTypesServiceImplTest {
         replayAll();
 
         fieldsInfo.addUnsupportedField("Test", Collections.singletonList("required"));
-        assertThat(documentTypesService.getDocumentType(id, session, locale), is(equalTo(docType)));
+        assertThat(documentTypesService.getDocumentType(id, userContext), is(equalTo(docType)));
 
         verifyAll();
     }
@@ -318,18 +310,17 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void documentTypeIsCached() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType);
+        expectPrivate(docTypesServiceMock, method, id, userContext).andReturn(docType);
 
         replayAll();
 
-        final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, session, locale);
-        final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, session, locale);
+        final DocumentType documentType1 = docTypesServiceMock.getDocumentType(id, userContext);
+        final DocumentType documentType2 = docTypesServiceMock.getDocumentType(id, userContext);
         assertThat(documentType1, sameInstance(documentType2));
 
         verifyAll();
@@ -338,19 +329,18 @@ public class DocumentTypesServiceImplTest {
     @Test
     public void documentTypeCacheCanBeInvalidated() throws Exception {
         final String id = "document:type";
-        final Session session = createMock(Session.class);
-        final Locale locale = new Locale("en");
+        final UserContext userContext = new TestUserContext();
         final DocumentType docType = createMock(DocumentType.class);
         final String method = "createDocumentType";
 
         final DocumentTypesService docTypesServiceMock = createPartialMock(DocumentTypesServiceImpl.class, method);
-        expectPrivate(docTypesServiceMock, method, id, session, locale).andReturn(docType).times(2);
+        expectPrivate(docTypesServiceMock, method, id, userContext).andReturn(docType).times(2);
 
         replayAll();
 
-        docTypesServiceMock.getDocumentType(id, session, locale);
+        docTypesServiceMock.getDocumentType(id, userContext);
         docTypesServiceMock.invalidateCache();
-        docTypesServiceMock.getDocumentType(id, session, locale);
+        docTypesServiceMock.getDocumentType(id, userContext);
         verifyAll();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,36 @@
 describe('PrimitiveField', () => {
   let $componentController;
   let $ctrl;
+  let $rootScope;
+  let $q;
   let FieldService;
   let onFieldFocus;
   let onFieldBlur;
 
-  const fieldType = { id: 'field:type' };
-  const fieldValues = [
-    { value: 'Value 1' },
-    { value: 'Value 2' },
-    { value: 'Value 3' },
-  ];
+  let fieldType;
+  let fieldValues;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$componentController_, _$rootScope_, _FieldService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _FieldService_) => {
       $componentController = _$componentController_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       FieldService = _FieldService_;
+
+      spyOn(FieldService, 'save').and.returnValue($q.resolve());
     });
 
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
+
+    fieldType = { id: 'field:type' };
+    fieldValues = [
+      { value: 'Value 1' },
+      { value: 'Value 2' },
+      { value: 'Value 3' },
+    ];
 
     $ctrl = $componentController('primitiveField', {
     }, {
@@ -212,31 +221,81 @@ describe('PrimitiveField', () => {
     expect(onFieldBlur).toHaveBeenCalled();
   });
 
-  it('starts a save timer when the value changed', () => {
-    spyOn(FieldService, 'startSaveTimer');
+  describe('valueChanged', () => {
+    let field;
 
-    $ctrl.valueChanged();
+    beforeEach(() => {
+      field = {
+        $invalid: false,
+        $setValidity: () => {},
+      };
+      $ctrl.form = { 'test-name/field:type': field };
+    });
 
-    expect(FieldService.startSaveTimer).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    it('starts a save timer when the value changed', () => {
+      $ctrl.valueChanged();
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+    });
+
+    it('sets server errors when the auto-saved value contains errorInfo objects', () => {
+      const validatedValues = angular.copy(fieldValues);
+      validatedValues[0].errorInfo = {
+        message: 'First error',
+      };
+      validatedValues[2].errorInfo = {
+        message: 'Second error',
+      };
+      FieldService.save.and.returnValue($q.resolve(validatedValues));
+      spyOn(field, '$setValidity');
+
+      $ctrl.valueChanged();
+      $rootScope.$digest();
+
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+      expect(field.$setValidity).toHaveBeenCalledWith('server', false);
+      expect($ctrl.firstServerError).toBe('First error');
+    });
+
+    it('removes server errors when the auto-saved value does not contain errorInfo objects', () => {
+      const validatedValues = angular.copy(fieldValues);
+      FieldService.save.and.returnValue($q.resolve(validatedValues));
+      spyOn(field, '$setValidity');
+
+      fieldValues[1].errorInfo = { message: '"Error' };
+      $ctrl.firstServerError = 'Error';
+      $ctrl.valueChanged();
+      $rootScope.$digest();
+
+      expect(FieldService.save)
+        .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+      expect(field.$setValidity).toHaveBeenCalledWith('server', true);
+      expect($ctrl.firstServerError).toBeUndefined();
+    });
   });
 
   it('saves the field on blur when the value has changed', () => {
-    spyOn(FieldService, 'saveField');
+    const validatedValues = angular.copy(fieldValues); // values without errorInfo objects
+    FieldService.save.and.returnValue($q.resolve(validatedValues));
 
     $ctrl.focusPrimitive();
-    fieldValues[1].value = 'Changed';
-    $ctrl.blurPrimitive();
 
-    expect(FieldService.saveField).toHaveBeenCalledWith('test-name/field:type', fieldValues);
+    fieldValues[1].value = 'Changed';
+    const expectedFieldValues = angular.copy(fieldValues);
+
+    $ctrl.blurPrimitive();
+    $rootScope.$digest();
+
+    expect(FieldService.save).toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues });
+    expect($ctrl.fieldValues).toEqual(expectedFieldValues);
   });
 
   it('does not save the field on blur when the value has not changed', () => {
-    spyOn(FieldService, 'saveField');
-
     $ctrl.focusPrimitive();
     $ctrl.blurPrimitive();
 
-    expect(FieldService.saveField).not.toHaveBeenCalled();
+    expect(FieldService.save).not.toHaveBeenCalled();
   });
 
   it('broadcasts event "primitive-field:focus" when clicking on the field label', () => {
@@ -245,5 +304,54 @@ describe('PrimitiveField', () => {
     $ctrl.onLabelClick($event);
 
     expect($ctrl.$scope.$broadcast).toHaveBeenCalledWith('primitive-field:focus', $event);
+  });
+
+  describe('$onChanges', () => {
+    beforeEach(() => {
+      $ctrl.form = {
+        field1: {
+          $setValidity: jasmine.createSpy(),
+          $error: {
+            server: false,
+          },
+        },
+        field2: {
+          $setValidity: jasmine.createSpy(),
+          $error: {
+            server: true,
+          },
+        },
+      };
+    });
+
+    it('makes form field invalid', () => {
+      spyOn($ctrl, 'getFieldName').and.returnValue('field1');
+
+      $ctrl.$onChanges({
+        fieldValues: {
+          currentValue: [{
+            errorInfo: { message: 'error message' },
+          }],
+        },
+      });
+
+      expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field1.$setValidity).toHaveBeenCalledWith('server', false);
+      expect($ctrl.firstServerError).toBe('error message');
+    });
+
+    it('makes form field valid', () => {
+      spyOn($ctrl, 'getFieldName').and.returnValue('field2');
+
+      $ctrl.$onChanges({
+        fieldValues: {
+          currentValue: [{}],
+        },
+      });
+
+      expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field2.$setValidity).toHaveBeenCalledWith('server', true);
+      expect($ctrl.firstServerError).toBeUndefined();
+    });
   });
 });

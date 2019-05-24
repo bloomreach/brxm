@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -70,7 +70,7 @@ public class StringFieldTypeTest {
     }
 
     @Test
-    public void initializeMaxLengthNoMaxLength() throws Exception {
+    public void initializeMaxLengthNoMaxLength() {
         expect(context.getStringConfig("maxlength")).andReturn(Optional.empty());
 
         replay(context);
@@ -82,7 +82,7 @@ public class StringFieldTypeTest {
     }
 
     @Test
-    public void initializeMaxLengthBadFormat() throws Exception {
+    public void initializeMaxLengthBadFormat() {
         expect(context.getStringConfig("maxlength")).andReturn(Optional.of("bad format"));
 
         PowerMock.replayAll(context);
@@ -94,7 +94,7 @@ public class StringFieldTypeTest {
     }
 
     @Test
-    public void initializeMaxLengthGoodFormat() throws Exception {
+    public void initializeMaxLengthGoodFormat() {
         expect(context.getStringConfig("maxlength")).andReturn(Optional.of("123"));
 
         PowerMock.replayAll(context);
@@ -108,6 +108,7 @@ public class StringFieldTypeTest {
     @Test
     public void writeToSingleTooLong() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxLength("10");
         node.setProperty(PROPERTY, "Old Value");
 
@@ -126,6 +127,7 @@ public class StringFieldTypeTest {
     @Test
     public void writeToMultipleTooLong() throws Exception {
         fieldType.setId(PROPERTY);
+        fieldType.setJcrType(PropertyType.TYPENAME_STRING);
         fieldType.setMaxValues(Integer.MAX_VALUE);
         fieldType.setMinValues(0);
         fieldType.setMaxLength("10");
@@ -157,10 +159,6 @@ public class StringFieldTypeTest {
 
         fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value!"), valueOf("New Value!"))));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
-    }
-
-    private List<FieldValue> listOf(final FieldValue value) {
-        return Collections.singletonList(value);
     }
 
     private FieldValue valueOf(final String value) {

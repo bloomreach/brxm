@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class FieldValueTest {
         FieldValue value1 = new FieldValue("value");
 
         FieldValue value2 = new FieldValue("value");
-        value2.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        value2.setErrorInfo(new ValidationErrorInfo("required", "Bad!"));
 
         assertTrue(value1.equals(value2));
     }

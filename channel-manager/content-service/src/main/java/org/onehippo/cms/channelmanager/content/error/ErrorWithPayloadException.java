@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.onehippo.cms.channelmanager.content.error;
 
 import javax.ws.rs.core.Response;
 
-public abstract class ErrorWithPayloadException extends Exception {
+public abstract class ErrorWithPayloadException extends RuntimeException {
     private final Object payload;
     private final Response.Status status;
 

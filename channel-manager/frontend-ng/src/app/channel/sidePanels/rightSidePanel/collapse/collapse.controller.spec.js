@@ -46,7 +46,7 @@ describe('collapse controller', () => {
   });
 
   it('calls collapse when field is open', () => {
-    spyOn(collapseCtrl, 'collapse');
+    spyOn(collapseCtrl, 'collapse').and.callThrough();
     collapseCtrl.isCollapsed = false;
 
     collapseCtrl.toggle();
@@ -56,7 +56,7 @@ describe('collapse controller', () => {
   });
 
   it('calls open when field is collapsed', () => {
-    spyOn(collapseCtrl, 'open');
+    spyOn(collapseCtrl, 'open').and.callThrough();
     collapseCtrl.isCollapsed = true;
 
     collapseCtrl.toggle();

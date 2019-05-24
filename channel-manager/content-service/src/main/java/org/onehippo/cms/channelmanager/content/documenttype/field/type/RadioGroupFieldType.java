@@ -15,13 +15,13 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
 import org.onehippo.forge.selection.frontend.plugin.Config;
 
-public class RadioGroupFieldType extends PrimitiveFieldType {
+public class RadioGroupFieldType extends PropertyFieldType {
 
     private String source = null;
     private String sortComparator = null;
@@ -56,13 +56,13 @@ public class RadioGroupFieldType extends PrimitiveFieldType {
     }
     
     @Override
-    protected int getPropertyType() {
-        return PropertyType.STRING;
+    protected String getDefault() {
+        return StringUtils.EMPTY;
     }
 
     @Override
-    protected String getDefault() {
-        return StringUtils.EMPTY;
+    public Object getValidatedValue(final FieldValue value, final CompoundContext context) {
+        return value.getValue();
     }
 
     public String getSource() {

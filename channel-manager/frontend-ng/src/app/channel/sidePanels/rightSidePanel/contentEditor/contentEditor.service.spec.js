@@ -558,8 +558,11 @@ describe('ContentEditorService', () => {
       });
 
       describe('fails because of an invalid field', () => {
+        let saveResponse;
+
         beforeEach(() => {
-          const saveResponse = angular.copy(testDocument);
+          saveResponse = angular.copy(testDocument);
+          saveResponse.info.errorCount = 1;
           saveResponse.fields['ns:string'] = [
             {
               value: '',
@@ -586,7 +589,7 @@ describe('ContentEditorService', () => {
 
           $rootScope.$digest();
 
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA');
+          expect(ContentEditor.getDocument()).toBe(saveResponse);
           expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
           expect(ContentEditor.getDocumentType()).toBe(reloadedDocumentType);
         });
@@ -600,7 +603,6 @@ describe('ContentEditorService', () => {
 
           $rootScope.$digest();
 
-          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA');
           expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
           expect(ContentEditor.getDocumentType()).toBe(testDocumentType);
           expect(ContentEditor.getError()).toEqual({
@@ -608,6 +610,20 @@ describe('ContentEditorService', () => {
             messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
             disableContentButtons: true,
           });
+        });
+
+        it('shows a feedback with error count', () => {
+          const reloadedDocumentType = angular.copy(testDocumentType);
+          ContentService.getDocumentType.and.returnValue($q.resolve(reloadedDocumentType));
+
+          ContentEditor.save();
+          $rootScope.$digest();
+
+          expect(FeedbackService.showError).toHaveBeenCalledWith(
+            jasmine.anything(),
+            { name: testDocument.displayName, count: 1 },
+          );
+          expect(FeedbackService.showError.calls.mostRecent().args[0]).toContain('DOCUMENT_CONTAINS');
         });
       });
 

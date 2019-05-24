@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 describe('CompoundField', () => {
   let $componentController;
-
   let $ctrl;
-  let onFieldFocus;
-  let onFieldBlur;
+  let $element;
+  let $scope;
+  let parent;
 
-  const dummyType = { };
-  const dummyValues = [];
+  const fieldType = {};
+  const fieldValue = [];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
@@ -31,41 +31,102 @@ describe('CompoundField', () => {
       $componentController = _$componentController_;
     });
 
-    onFieldFocus = jasmine.createSpy('onFieldFocus');
-    onFieldBlur = jasmine.createSpy('onFieldBlur');
-
-    $ctrl = $componentController('compoundField', {
-    }, {
-      fieldType: dummyType,
-      fieldValues: dummyValues,
+    parent = {
+      children: new Set(),
+      setError: jasmine.createSpy('setError'),
+    };
+    $scope = { collapse: jasmine.createSpyObj('CollapseCtrl', ['open']) };
+    $element = angular.element('<div>');
+    $ctrl = $componentController('compoundField', { $element, $scope }, {
+      fieldType,
+      fieldValue,
+      parent,
       name: 'test-name',
-      onFieldFocus,
-      onFieldBlur,
     });
   });
 
   it('initializes the component', () => {
-    expect($ctrl.fieldType).toBe(dummyType);
-    expect($ctrl.fieldValues).toBe(dummyValues);
+    spyOn(parent.children, 'add');
+    $ctrl.$onInit();
+
+    expect($ctrl.fieldType).toBe(fieldType);
+    expect($ctrl.fieldValue).toBe(fieldValue);
     expect($ctrl.name).toBe('test-name');
-    expect($ctrl.onFieldFocus).toBe(onFieldFocus);
-    expect($ctrl.onFieldBlur).toBe(onFieldBlur);
+    expect(parent.children.add).toHaveBeenCalledWith($ctrl);
   });
 
-  it('keeps track of the focused state', () => {
-    expect($ctrl.hasFocus).toBeFalsy();
+  it('destroys the component', () => {
+    spyOn(parent.children, 'delete');
+    $ctrl.$onDestroy();
 
-    $ctrl.focusCompound();
+    expect(parent.children.delete).toHaveBeenCalledWith($ctrl);
+  });
+
+  it('focuses the component', () => {
+    const focusHandler = jasmine.createSpy('onFocus');
+    $element.on('focus', focusHandler);
+
+    $ctrl.onFocus();
 
     expect($ctrl.hasFocus).toBeTruthy();
-    expect(onFieldFocus).toHaveBeenCalled();
-    expect(onFieldBlur).not.toHaveBeenCalled();
-    onFieldFocus.calls.reset();
+    expect(focusHandler).toHaveBeenCalled();
+  });
 
-    $ctrl.blurCompound();
+  it('blurs the component', () => {
+    const blurHandler = jasmine.createSpy('onBlur');
+    $element.on('blur', blurHandler);
+
+    $ctrl.onBlur();
 
     expect($ctrl.hasFocus).toBeFalsy();
-    expect(onFieldFocus).not.toHaveBeenCalled();
-    expect(onFieldBlur).toHaveBeenCalled();
+    expect(blurHandler).toHaveBeenCalled();
+  });
+
+  describe('$onChanges', () => {
+    beforeEach(() => {
+      spyOn($ctrl, 'setError');
+    });
+
+    it('sets the error state', () => {
+      $ctrl.$onChanges({ fieldValue: { currentValue: { errorInfo: {} } } });
+
+      expect($ctrl.setError).toHaveBeenCalledWith(true);
+    });
+
+    it('unsets the error state', () => {
+      $ctrl.$onChanges({ fieldValue: { currentValue: { } } });
+
+      expect($ctrl.setError).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe('setError', () => {
+    it('sets the error flag', () => {
+      $ctrl.setError(true);
+      expect($ctrl.hasError).toBe(true);
+
+      $ctrl.setError(false);
+      expect($ctrl.hasError).toBe(false);
+    });
+
+    it('opens the collapsible block', () => {
+      $ctrl.setError(true);
+
+      expect($scope.collapse.open).toHaveBeenCalled();
+    });
+
+    it('keeps parent error state', () => {
+      parent.children.add({ hasError: true }, $ctrl);
+      $ctrl.setError(false);
+
+      expect(parent.setError).toHaveBeenCalledWith(true);
+    });
+
+    it('updates parent error state', () => {
+      parent.children.add({ hasError: false }, $ctrl);
+      $ctrl.setError(false);
+
+      expect(parent.setError).toHaveBeenCalledWith(false);
+    });
   });
 });

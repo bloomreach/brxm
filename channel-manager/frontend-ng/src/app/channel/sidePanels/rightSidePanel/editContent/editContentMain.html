@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@
     </md-button>
 
     <md-button class="qa-save"
+               md-no-ink
                ng-if="!$ctrl.isPublishAllowed()"
                ng-click="$ctrl.save()"
                ng-disabled="!$ctrl.isSaveAllowed()">

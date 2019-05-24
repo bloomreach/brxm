@@ -30,9 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -44,16 +44,17 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
-import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({JcrUtils.class, NamespaceUtils.class})
+@PrepareForTest({JcrUtils.class, NamespaceUtils.class, LocalizationUtils.class, FieldTypeUtils.class})
 public class BooleanRadioGroupFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
@@ -66,7 +67,8 @@ public class BooleanRadioGroupFieldTypeTest {
 
     @Test
     public void testFieldConfig() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(booleanRadioGroupFieldType).build();
         expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of("Sad"));
         expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
@@ -74,18 +76,20 @@ public class BooleanRadioGroupFieldTypeTest {
 
         replayAll();
 
-        BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
         booleanRadioGroupFieldType.init(fieldTypeContext);
 
         assertThat(booleanRadioGroupFieldType.getFalseLabel(), equalTo("Sad"));
         assertThat(booleanRadioGroupFieldType.getOrientation(), equalTo("vertical"));
         assertThat(booleanRadioGroupFieldType.getSource(), equalTo("/source/path"));
         assertThat(booleanRadioGroupFieldType.getTrueLabel(), equalTo("Happy"));
+
+        verifyAll();
     }
 
     @Test
     public void testFieldConfigDefaultValues() {
-        FieldTypeContext fieldTypeContext = getFieldTypeContext();
+        final BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(booleanRadioGroupFieldType).build();
         expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.empty());
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.empty());
         expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of(""));
@@ -93,36 +97,32 @@ public class BooleanRadioGroupFieldTypeTest {
 
         replayAll();
 
-        BooleanRadioGroupFieldType booleanRadioGroupFieldType = new BooleanRadioGroupFieldType();
         booleanRadioGroupFieldType.init(fieldTypeContext);
 
         assertThat(booleanRadioGroupFieldType.getTrueLabel(), equalTo("true"));
         assertThat(booleanRadioGroupFieldType.getFalseLabel(), equalTo("false"));
-    }
 
-    private FieldTypeContext getFieldTypeContext() {
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:booleanradiogroup");
-        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
-        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-
-        return fieldContext;
+        verifyAll();
     }
 
     @Test
     public void writeToSingleBoolean() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanRadioGroupFieldType();
+        final PropertyFieldType fieldType = new BooleanRadioGroupFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName(PROPERTY).build();
+
+        expect(fieldTypeContext.getStringConfig(Config.TRUE_LABEL)).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig(Config.FALSE_LABEL)).andReturn(Optional.of(""));
+        expect(fieldTypeContext.getStringConfig(Config.ORIENTATION)).andReturn(Optional.of("vertical"));
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
+
+        replayAll();
+
+        fieldType.init(fieldTypeContext);
+
         final Boolean oldValue = Boolean.TRUE;
         final Boolean newValue = Boolean.FALSE;
-
-        fieldType.setId(PROPERTY);
+        final Node node = MockNode.root();
         node.setProperty(PROPERTY, oldValue);
 
         try {
@@ -149,33 +149,48 @@ public class BooleanRadioGroupFieldTypeTest {
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf("" + newValue))));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("" + newValue));
+
+        verifyAll();
     }
 
     @Test
     public void writeIncorrectValueDoesNotOverwriteExistingValue() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
+        final PropertyFieldType fieldType = new BooleanFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName(PROPERTY).build();
+        expect(JcrUtils.getNodePathQuietly(anyObject(Node.class))).andReturn("/");
+        replayAll();
+
+        fieldType.init(fieldTypeContext);
+
         final Boolean oldValue = Boolean.TRUE;
         final String invalidValue = "foo";
-
-        fieldType.setId(PROPERTY);
+        final Node node = MockNode.root();
         node.setProperty(PROPERTY, oldValue);
 
         fieldType.writeTo(node, Optional.of(listOf(valueOf(invalidValue))));
         assertThat(node.getProperty(PROPERTY).getBoolean(), equalTo(oldValue));
+
+        verifyAll();
     }
 
     @Test
     public void writeIncorrectValuesDoesNotOverwriteExistingValues() throws Exception {
-        final Node node = MockNode.root();
-        final PrimitiveFieldType fieldType = new BooleanFieldType();
 
-        fieldType.setId(PROPERTY);
-        fieldType.setMultiple(true);
+        final PropertyFieldType fieldType = new BooleanFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(fieldType)
+                .jcrName(PROPERTY)
+                .multiple(true)
+                .build();
+        expect(JcrUtils.getNodePathQuietly(anyObject(Node.class))).andReturn("/");
+        replayAll();
+
+        fieldType.init(fieldTypeContext);
         fieldType.setMaxValues(2);
 
         final Boolean oldValue1 = Boolean.TRUE;
         final Boolean oldValue2 = Boolean.TRUE;
+        final Node node = MockNode.root();
         node.setProperty(PROPERTY, new String[]{oldValue1 + "", oldValue2 + ""}, PropertyType.BOOLEAN);
 
         final String invalidValue1 = "foo";
@@ -185,6 +200,8 @@ public class BooleanRadioGroupFieldTypeTest {
         final Value[] values = node.getProperty(PROPERTY).getValues();
         assertThat(values[0].getBoolean(), equalTo(oldValue1));
         assertThat(values[1].getBoolean(), equalTo(oldValue2));
+
+        verifyAll();
     }
 
 

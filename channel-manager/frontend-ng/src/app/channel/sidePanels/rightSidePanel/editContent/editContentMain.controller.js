@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,25 @@ class EditContentMainCtrl {
         this.HippoIframeService.reload();
         this.CmsService.reportUsageStatistic('CMSChannelsSaveDocument');
       })
+      .catch(() => this._focusFirstInvalidField())
       .finally(stopLoading);
+  }
+
+  _focusFirstInvalidField() {
+    // stop previous watch if it still exists
+    if (this.stopServerErrorWatch) {
+      this.stopServerErrorWatch();
+    }
+    // create new watch for server errors, and focus the first field with such an error
+    this.stopServerErrorWatch = this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length > 0) {
+        error[0].$$element.focus();
+        this.stopServerErrorWatch();
+        delete this.stopServerErrorWatch;
+      }
+    });
+
+    return this.$q.reject();
   }
 
   startLoading() {

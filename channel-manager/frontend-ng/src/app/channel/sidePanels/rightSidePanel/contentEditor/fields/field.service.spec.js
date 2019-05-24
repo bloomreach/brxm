@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 describe('field service', () => {
+  let $q;
   let $timeout;
   let FieldService;
   let ContentService;
@@ -21,57 +22,72 @@ describe('field service', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.contentEditor.fields');
 
-    inject((_$timeout_, _FieldService_, _ContentService_) => {
+    inject((_$q_, _$timeout_, _FieldService_, _ContentService_) => {
+      $q = _$q_;
       $timeout = _$timeout_;
       FieldService = _FieldService_;
       ContentService = _ContentService_;
     });
   });
 
-  it('should start a save timer for field', () => {
-    spyOn(FieldService, '_clearFieldTimer');
-    spyOn(FieldService, 'saveField');
+  it('should throttle continues field savings', () => {
+    spyOn(ContentService, 'saveField').and.returnValue($q.resolve());
+
     FieldService.setDocumentId('mockDocumentId');
-
-    expect(FieldService.activeSaveTimers).toEqual({});
-
-    FieldService.startSaveTimer('mockFieldName', 'mockValue');
-
-    expect(FieldService._clearFieldTimer).toHaveBeenCalled();
-
+    for (let i = 1; i <= 10; i++) { // eslint-disable-line no-plusplus
+      FieldService.save({ name: 'field', values: 'a'.repeat(i), throttle: true });
+    }
     $timeout.flush();
-    expect(FieldService.saveField).toHaveBeenCalled();
+
+    expect(ContentService.saveField).toHaveBeenCalledTimes(2);
+    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'a']);
+    expect(ContentService.saveField.calls.argsFor(1)).toEqual(['mockDocumentId', 'field', 'a'.repeat(10)]);
   });
 
   it('should save a field', () => {
     spyOn(ContentService, 'saveField');
-    spyOn(FieldService, '_clearFieldTimer');
-    spyOn(FieldService, '_cleanupTimers');
+
     FieldService.setDocumentId('mockDocumentId');
+    FieldService.save({ name: 'mockFieldName', values: 'mockValue' });
 
-    FieldService.saveField('mockFieldName', 'mockValue');
-
-    expect(FieldService._clearFieldTimer).toHaveBeenCalled();
-    expect(FieldService._cleanupTimers).toHaveBeenCalled();
     expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', 'mockValue');
   });
 
-  it('should clear field timer if exists', () => {
-    FieldService.activeSaveTimers.mockDocumentId = {};
-    FieldService.activeSaveTimers.mockDocumentId.mockFieldName = () => { angular.noop(); };
+  it('should not save errorInfo in arrays', () => {
+    const mockValue = [{ value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } }];
+    const mockValueResult = [{ value: 'mockValue' }];
+    spyOn(ContentService, 'saveField');
 
-    spyOn($timeout, 'cancel');
+    FieldService.setDocumentId('mockDocumentId');
+    FieldService.save({ name: 'mockFieldName', values: mockValue });
 
-    FieldService._clearFieldTimer('mockDocumentId', 'mockFieldName');
-
-    expect($timeout.cancel).toHaveBeenCalled();
-    expect(FieldService.activeSaveTimers.mockDocumentId).toEqual({});
+    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
   });
 
-  it('should clean up timers', () => {
-    FieldService.activeSaveTimers.mockDocumentId = {};
-    FieldService._cleanupTimers('mockDocumentId');
-    expect(FieldService.activeSaveTimers.mockDocumentId).not.toBeDefined();
+  it('should not save errorInfo in single value', () => {
+    const mockValue = { value: 'mockValue', errorInfo: { validation: 'mockValue', message: 'invalid' } };
+    const mockValueResult = { value: 'mockValue' };
+    spyOn(ContentService, 'saveField');
+
+    FieldService.setDocumentId('mockDocumentId');
+    FieldService.save({ name: 'mockFieldName', values: mockValue });
+
+    expect(ContentService.saveField).toHaveBeenCalledWith('mockDocumentId', 'mockFieldName', mockValueResult);
+  });
+
+  it('should cancel throttled save upon immediate save', () => {
+    spyOn(ContentService, 'saveField').and.returnValue($q.resolve());
+
+    FieldService.setDocumentId('mockDocumentId');
+    FieldService.save({ name: 'field', values: 'a', throttle: true });
+    FieldService.save({ name: 'field', values: 'aa', throttle: true });
+    FieldService.save({ name: 'field', values: 'b' });
+
+    $timeout.flush();
+
+    expect(ContentService.saveField).toHaveBeenCalledTimes(2);
+    expect(ContentService.saveField.calls.argsFor(0)).toEqual(['mockDocumentId', 'field', 'a']);
+    expect(ContentService.saveField.calls.argsFor(1)).toEqual(['mockDocumentId', 'field', 'b']);
   });
 
   it('should set document id', () => {

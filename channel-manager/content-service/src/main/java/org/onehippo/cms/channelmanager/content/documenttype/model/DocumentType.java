@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;
-    private boolean readOnlyDueToUnknownValidator;
+    private boolean readOnlyDueToUnsupportedValidator;
     private boolean allFieldsIncluded;
     private boolean canCreateAllRequiredFields;
     private final List<FieldType> fields; // ordered list of fields
@@ -65,12 +65,12 @@ public class DocumentType {
         this.displayName = displayName;
     }
 
-    public boolean isReadOnlyDueToUnknownValidator() {
-        return readOnlyDueToUnknownValidator;
+    public boolean isReadOnlyDueToUnsupportedValidator() {
+        return readOnlyDueToUnsupportedValidator;
     }
 
-    public void setReadOnlyDueToUnknownValidator(final boolean readOnlyDueToUnknownValidator) {
-        this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
+    public void setReadOnlyDueToUnsupportedValidator(final boolean readOnlyDueToUnsupportedValidator) {
+        this.readOnlyDueToUnsupportedValidator = readOnlyDueToUnsupportedValidator;
     }
 
     public boolean isAllFieldsIncluded() {

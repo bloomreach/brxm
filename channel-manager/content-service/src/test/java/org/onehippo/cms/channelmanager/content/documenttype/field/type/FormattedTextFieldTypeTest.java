@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Collections;
-import java.util.Locale;
+import java.io.IOException;
 import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.ckeditor.CKEditorConfig;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.json.Json;
 import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorFactory;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -34,45 +33,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({HtmlProcessorFactory.class})
+@PrepareForTest({HtmlFieldConfig.class, HtmlProcessorFactory.class, LocalizationUtils.class, FieldTypeUtils.class})
 public class FormattedTextFieldTypeTest {
 
-    private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson) {
-        return initField(defaultJson, overlayedJson, appendedJson, "formatted", "formatted");
-    }
+    private static FormattedTextFieldType initField(final String defaultJson,
+                                             final String defaultHtmlProcessorId,
+                                             final String htmlProcessorId) throws IOException {
+        mockStatic(HtmlFieldConfig.class);
 
-    private FormattedTextFieldType initField(final String defaultJson, final String overlayedJson, final String appendedJson,
-                                             final String defaultHtmlProcessorId, final String htmlProcessorId) {
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        expect(parentContext.getDocumentType()).andReturn(new DocumentType());
-        expect(parentContext.getResourceBundle()).andReturn(Optional.empty());
-
-        final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
-        expect(fieldContext.getName()).andReturn("myproject:htmlfield");
-        expect(fieldContext.getValidators()).andReturn(Collections.emptyList());
-        expect(fieldContext.isMultiple()).andReturn(false).anyTimes();
-        expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty()).anyTimes();
-        expect(fieldContext.getParentContext()).andReturn(parentContext).anyTimes();
-
-        final Locale locale = new Locale("nl");
-        expect(parentContext.getLocale()).andReturn(locale);
+        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(field)
+                .jcrName("myproject:htmlfield")
+                .build();
 
         expect(fieldContext.getStringConfig("maxlength")).andReturn(Optional.empty());
-        expect(fieldContext.getStringConfig("ckeditor.config.overlayed.json")).andReturn(Optional.of(overlayedJson));
-        expect(fieldContext.getStringConfig("ckeditor.config.appended.json")).andReturn(Optional.of(appendedJson));
+        expect(HtmlFieldConfig.readJson(fieldContext, defaultJson)).andReturn(Json.object(defaultJson));
         expect(fieldContext.getStringConfig("htmlprocessor.id")).andReturn(Optional.of(htmlProcessorId));
 
         replayAll();
 
-        final FormattedTextFieldType field = new FormattedTextFieldType(defaultJson, defaultHtmlProcessorId);
         field.init(fieldContext);
 
         return field;
@@ -80,49 +65,26 @@ public class FormattedTextFieldTypeTest {
 
     @Test
     public void getType() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("", "formatted");
+        final FormattedTextFieldType field = new FormattedTextFieldType();
         assertEquals(FieldType.Type.HTML, field.getType());
     }
 
     @Test
-    public void configWithErrorsIsNull() {
-        final FormattedTextFieldType field = new FormattedTextFieldType("{ this is not valid json ", "formatted");
-        assertNull(field.getConfig());
+    public void getConfig() throws IOException {
+        final String defaultConfig = "{ a: 1 }";
+        final FormattedTextFieldType field = initField(defaultConfig, "", "");
+        assertEquals(Json.object(defaultConfig), field.getConfig());
     }
 
     @Test
-    public void configContainsLanguage() {
-        final FormattedTextFieldType field = initField("", "", "");
-        assertEquals("nl", field.getConfig().get("language").asText());
-    }
-
-    @Test
-    public void configIsCombined() {
-        final FormattedTextFieldType field = initField("{ test: 1, plugins: 'a,b' }", "{ test: 2 }", "{ plugins: 'c,d' }");
-        assertEquals(2, field.getConfig().get("test").asInt());
-        assertEquals("a,b,c,d", field.getConfig().get("plugins").asText());
-    }
-
-    @Test
-    public void customConfigIsDisabledWhenNotConfigured() {
-        final FormattedTextFieldType field = initField("", "", "");
-        assertEquals("", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
-    }
-
-    @Test
-    public void customConfigIsKeptWhenConfigured() {
-        final FormattedTextFieldType field = initField("{ customConfig: 'myconfig.js' }", "", "");
-        assertEquals("myconfig.js", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
-    }
-
-    @Test
-    public void customHtmlProcessorId() {
+    public void customHtmlProcessorId() throws IOException {
         mockStatic(HtmlProcessorFactory.class);
         expect(HtmlProcessorFactory.of(eq("custom-formatted")))
                 .andReturn((HtmlProcessorFactory) () -> HtmlProcessorFactory.NOOP);
 
 
-        initField("", "", "", "formatted", "custom-formatted");
+        initField("", "formatted", "custom-formatted");
+
         verifyAll();
     }
 }

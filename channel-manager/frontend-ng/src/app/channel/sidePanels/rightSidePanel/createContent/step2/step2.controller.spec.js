@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,6 +185,38 @@ describe('Create content step 2 controller', () => {
     });
 
     $rootScope.$digest();
+  });
+
+  describe('server-side validation error', () => {
+    let $$element;
+
+    beforeEach(() => {
+      $$element = { focus: jasmine.createSpy() };
+      $ctrl.form = {
+        $error: {
+          server: [{ $$element }],
+        },
+      };
+      spyOn(ContentEditor, 'save').and.returnValue($q.reject());
+    });
+
+    it('sets focus on the first element on server-side validation error', () => {
+      $ctrl.save();
+      $rootScope.$digest();
+
+      expect($$element.focus).toHaveBeenCalled();
+    });
+
+    it('removes an old watch for setting focus on the first element on server-side validation error', () => {
+      const stopPreviousWatch = jasmine.createSpy('stopPreviousWatch');
+      $ctrl.stopServerErrorWatch = stopPreviousWatch;
+
+      $ctrl.save();
+      $rootScope.$digest();
+
+      expect(stopPreviousWatch).toHaveBeenCalled();
+      expect($ctrl.stopServerErrorWatch).toBeUndefined();
+    });
   });
 
   it('stops create content when close is called', () => {

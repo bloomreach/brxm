@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,21 +17,15 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Calendar;
 
-import javax.jcr.PropertyType;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
-import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.repository.util.DateConstants;
 
-public abstract class AbstractDateFieldType extends PrimitiveFieldType {
+public abstract class AbstractDateFieldType extends PropertyFieldType {
 
     private static final String DEFAULT_DISPLAY_VALUE = StringUtils.EMPTY;
-
-    @Override
-    protected int getPropertyType() {
-        return PropertyType.DATE;
-    }
 
     @Override
     protected String getDefault() {
@@ -41,7 +35,7 @@ public abstract class AbstractDateFieldType extends PrimitiveFieldType {
     @Override
     protected String fieldSpecificConversion(final String input) {
         if (StringUtils.isBlank(input)) {
-            return PropertyValueProvider.EMPTY_DATE_VALUE;
+            return DateConstants.EMPTY_DATE_VALUE;
         } else {
             return input;
         }
@@ -54,10 +48,27 @@ public abstract class AbstractDateFieldType extends PrimitiveFieldType {
         }
 
         final Calendar calendar = ISO8601.parse(value);
-        if (calendar == null || calendar.getTime().equals(PropertyValueProvider.EMPTY_DATE)) {
+        if (calendar == null || calendar.getTime().equals(DateConstants.EMPTY_DATE)) {
             return new FieldValue(StringUtils.EMPTY);
         }
 
         return new FieldValue(value);
+    }
+
+    @Override
+    public Object getValidatedValue(final FieldValue fieldValue, final CompoundContext context) {
+        final String value = fieldValue.getValue();
+
+        if (StringUtils.isBlank(value)) {
+            return DateConstants.EMPTY_DATE;
+        }
+
+        final Calendar calendar = ISO8601.parse(value);
+
+        if (calendar == null) {
+            return DateConstants.EMPTY_DATE;
+        }
+
+        return calendar.getTime();
     }
 }

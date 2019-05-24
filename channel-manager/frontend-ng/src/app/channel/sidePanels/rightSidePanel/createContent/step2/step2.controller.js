@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ class Step2Controller {
         this.form.$setPristine();
         this.documentIsSaved = true;
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SAVED');
-        this.ContentEditor.discardChanges()
+        return this.ContentEditor.discardChanges()
           .then(() => this.Step2Service.saveComponentParameter())
           .then(() => {
             this.CreateContentService.finish(this.ContentEditor.getDocumentId());
@@ -92,6 +92,7 @@ class Step2Controller {
             this.CmsService.reportUsageStatistic('CreateContent2Done');
           });
       })
+      .catch(() => this._focusFirstInvalidField())
       .finally(stopLoading);
   }
 
@@ -99,6 +100,21 @@ class Step2Controller {
     this.loading = true;
 
     return () => { this.loading = false; };
+  }
+
+  _focusFirstInvalidField() {
+    // stop previous watch if it still exists
+    if (this.stopServerErrorWatch) {
+      this.stopServerErrorWatch();
+    }
+    // create new watch for server errors, and focus the first field with such an error
+    this.stopServerErrorWatch = this.$scope.$watch('$ctrl.form.$error.server', (error) => {
+      if (error && error.length > 0) {
+        error[0].$$element.focus();
+        this.stopServerErrorWatch();
+        delete this.stopServerErrorWatch;
+      }
+    });
   }
 
   isEditing() {
