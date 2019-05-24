@@ -19,9 +19,23 @@ const fs = require('file-system');
 
 const targetDir = 'target/classes/navapp';
 
-fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDir);
-fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDir);
-fs.copyFile('node_modules/penpal/dist/penpal.js', targetDir + "/penpal.js");
+// ----------------------------------------------------------------------------
+// Files needed for the Navigation Application
+// ----------------------------------------------------------------------------
 
-fs.rename('target/classes/navapp/navapp/assets', 'target/classes/navapp/assets');
-fs.rmdirSync('target/classes/navapp/navapp');
+fs.copySync('node_modules/@bloomreach/navapp/dist/navapp/', targetDir);
+
+// TODO (meggermont): explain why
+// Move the assets from navapp/navapp/assets to navapp/assets and then remove the empty dir
+fs.copySync(targetDir + '/navapp/assets', targetDir  + '/assets', );
+fs.rmdirSync(targetDir + '/navapp');
+
+
+
+// ----------------------------------------------------------------------------
+// Files needed for the navigation communication library used by the CMS
+// ----------------------------------------------------------------------------
+
+fs.copyFileSync('node_modules/penpal/dist/penpal.js', targetDir + "/penpal.js");
+fs.copySync('node_modules/@bloomreach/navapp-communication/bundles/', targetDir);
+
