@@ -81,4 +81,9 @@ public final class JcrConstants {
 
     public static final String ROOT_NODE_ID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
+    public static final String DOCUMENTS_PATH = "/content/documents";
+    public static final String GALLERY_PATH = "/content/gallery";
+    public static final String ASSETS_PATH = "/content/assets";
+    public static final String ATTIC_PATH = "/content/attic";
+
 }

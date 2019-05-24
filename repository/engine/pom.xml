@@ -111,11 +111,17 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+    
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
@@ -125,10 +131,12 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-commons</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms7-utilities</artifactId>

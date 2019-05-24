@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.l10n;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.LocaleUtils;
@@ -25,6 +26,7 @@ import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW;
 import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ResourceBundleLoaderTest extends RepositoryTestCase {
@@ -40,7 +42,7 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
     @Test
     public void testLoadBundles() throws Exception {
         final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
-        assertEquals("Unexpected number of resource bundles", 6, bundles.size());
+        assertEquals("Unexpected number of resource bundles", 7, bundles.size());
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("en"))));
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl"))));
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl_BE"))));
@@ -86,12 +88,12 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
         // fallback to nl
         assertEquals("waarde2", nl_be_foo.getString("key2"));
         // no fallback
-        assertEquals(null, en_GB.getString("key2"));
+        assertNull(en_GB.getString("key2"));
 
         assertEquals("value3", en_GB.getString("key3"));
         // no fallback
-        assertEquals(null, nl.getString("key3"));
-        assertEquals(null, nl_be_foo.getString("key3"));
+        assertNull(nl.getString("key3"));
+        assertNull(nl_be_foo.getString("key3"));
     }
 
     @Test
@@ -108,4 +110,56 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
         assertTrue(nl.containsKey("key2"));
     }
 
+    @Test
+    public void testParameterizedNullParameters() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+        
+        assertEquals(bundle.getString("key1", null), "value1 - ${variable1}");
+    }
+
+    @Test
+    public void testParameterizedSingleParameter() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+        
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("variable1", "replaced");
+        assertEquals(bundle.getString("key1", parameters), "value1 - replaced");
+    }
+
+    @Test
+    public void testParameterizedTwoParameters() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+        
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("variable1", "replaced");
+        parameters.put("variable2", "replaced too");
+        assertEquals(bundle.getString("key2", parameters), "value2 - replaced - replaced too");
+    }
+    
+    @Test
+    public void testParameterizedOneParameter() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", "variable1", "replaced"), "value1 - replaced");
+    }
+
+    @Test
+    public void testParameterizedOneParameterWithNullName() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", null, "replaced"), "value1 - ${variable1}");
+    }
+
+    @Test
+    public void testParameterizedOneParameterWithNullValue() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle bundle = bundles.get(new ResourceBundleKey("group.with-variables", LocaleUtils.toLocale("en")));
+
+        assertEquals(bundle.getString("key1", "variable1", null), "value1 - ${variable1}");
+    }
 }

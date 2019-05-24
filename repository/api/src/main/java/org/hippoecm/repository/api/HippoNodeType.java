@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 package org.hippoecm.repository.api;
 
 /**
- * This interface defines the node types and item names that are in use by
- * the Hippo repository build on top of JCR.
+ * This interface defines the node types and item names that are in use by the Hippo repository build on top of JCR.
  */
 public interface HippoNodeType {
 
@@ -196,6 +195,11 @@ public interface HippoNodeType {
 
     public static final String HIPPO_AVAILABILITY = "hippo:availability";
 
+    /**
+     * @deprecated since 13.3.0, to be removed in a future release. Implement validation using the classes in the
+     * hippo-services-validation module. Cascading is then obsolete.
+     */
+    @Deprecated
     public static final String HIPPO_CASCADEVALIDATION = "hipposysedit:cascadevalidation";
 
     public static final String HIPPO_CLASSNAME = "hipposys:classname";
