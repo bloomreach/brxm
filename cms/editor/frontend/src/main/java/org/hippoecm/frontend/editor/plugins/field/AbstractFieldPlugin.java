@@ -59,13 +59,14 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -224,7 +225,10 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     // print first violation
                     final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
                     final String msgCode = getMarkupId() + msg.hashCode();
-                    javascript += String.format("if ($('.%s').length === 0) { $('#%s').append('<span class=\"validation-message %s\">%s</span>'); }", msgCode, getMarkupId(), msgCode, msg);
+                    javascript += String.format(
+                        "if ($('.%s').length) { return; }" +
+                        "$('#%s').append('<span class=\"validation-message %s\">%s</span>');",
+                        msgCode, getMarkupId(), msgCode, msg);
                 }
 
                 target.appendJavaScript(javascript);
@@ -236,6 +240,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private Violation findFirstViolation() {
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field == null) {
+            return null;
+        }
+
+        // show no validation messages for compounds, such as content blocks
+        if (field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
             return null;
         }
 
@@ -256,12 +265,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         return violations.stream()
                 .filter(violation -> isFieldViolation(field, violation))
-                .reduce((first, second) -> second) // return last element
+                .findFirst()
                 .orElse(null);
     }
 
     private static boolean isFieldViolation(final IFieldDescriptor field, final Violation violation) {
-        if (!violation.getValidationScope().equals(ValidationScope.FIELD)) {
+        if (!violation.getFeedbackScope().equals(FeedbackScope.FIELD)) {
             return false;
         }
         final Set<ModelPath> dependentPaths = violation.getDependentPaths();

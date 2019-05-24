@@ -85,6 +85,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-validation</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>

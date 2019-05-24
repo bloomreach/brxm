@@ -12,8 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-editor .validation-message {
-  color: $validation-message-color;
-  position: relative;
-  top: -24px;
+.hippo-editor {
+  .validation-message {
+    color: $validation-message-color;
+    position: relative;
+    top: -24px;
+  }
+
+  .compound-validation-message {
+    background-color: $feedback-error-color;
+    top: -16px;
+    left: -8px;
+    width: calc(100%);
+    padding: 8px;
+  }
+
+  .hippo-editor-compound-field > .hippo-editor-field > .hippo-editor-field-subfield.compound-validation-border {
+    border-color: $validation-border;
+  }
 }

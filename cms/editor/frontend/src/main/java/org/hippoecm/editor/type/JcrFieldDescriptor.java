@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,8 @@ package org.hippoecm.editor.type;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,8 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
@@ -67,7 +65,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return getString(HippoNodeType.HIPPO_PATH);
     }
 
-    public void setPath(String path) {
+    public void setPath(final String path) {
         setString(HippoNodeType.HIPPO_PATH, path);
     }
 
@@ -75,13 +73,13 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return getString(HippoNodeType.HIPPOSYSEDIT_TYPE);
     }
 
-    void setType(String type) {
+    void setType(final String type) {
         setString(HippoNodeType.HIPPOSYSEDIT_TYPE, type);
     }
 
     public ITypeDescriptor getTypeDescriptor() {
         try {
-            String fieldType = getType();
+            final String fieldType = getType();
             if (fieldType.equals(type.getType())) {
                 return type;
             }
@@ -123,7 +121,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return excluded;
     }
 
-    public void setExcluded(Set<String> set) {
+    public void setExcluded(final Set<String> set) {
         excluded = set;
     }
 
@@ -143,26 +141,26 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return Collections.unmodifiableSet(getStringSet(HippoNodeType.HIPPO_VALIDATORS));
     }
 
-    public void addValidator(String validator) {
-        Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+    public void addValidator(final String validator) {
+        final Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
         validators.add(validator);
         setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
     }
 
-    public void removeValidator(String validator) {
-        Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+    public void removeValidator(final String validator) {
+        final Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
         validators.remove(validator);
         setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
     }
 
     @Override
-    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
-        EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+    protected void processEvents(final IObservationContext context, Iterator<? extends IEvent> events) {
+        final EventCollection<TypeDescriptorEvent> collection = new EventCollection<>();
         collection.add(new TypeDescriptorEvent(type, this, TypeDescriptorEvent.EventType.FIELD_CHANGED));
         context.notifyObservers(collection);
     }
 
-    void copy(IFieldDescriptor source) {
+    void copy(final IFieldDescriptor source) {
         setName(source.getName());
         setType(source.getTypeDescriptor().getName());
         setPath(source.getPath());
@@ -176,7 +174,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         //        setProtected(source.isProtected());
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         if (name == null || "".equals(name)) {
             throw new IllegalArgumentException("Null or empty field name is not allowed");
         }
@@ -196,7 +194,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         setBoolean(HippoNodeType.HIPPO_PRIMARY, isprimary);
     }
 
-    private String getString(String path) {
+    private String getString(final String path) {
         try {
             if (getNode().hasProperty(path)) {
                 return getNode().getProperty(path).getString();
@@ -207,7 +205,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return null;
     }
 
-    private void setString(String path, String value) {
+    private void setString(final String path, final String value) {
         try {
             getNode().setProperty(path, value);
         } catch (RepositoryException ex) {
@@ -215,13 +213,13 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         }
     }
 
-    private Set<String> getStringSet(String path) {
-        Set<String> result = new TreeSet<String>();
+    private Set<String> getStringSet(final String path) {
+        Set<String> result = new LinkedHashSet<>();
         try {
             if (getNode().hasProperty(path)) {
                 Value[] values = getNode().getProperty(path).getValues();
-                for (int i = 0; i < values.length; i++) {
-                    result.add(values[i].getString());
+                for (final Value value : values) {
+                    result.add(value.getString());
                 }
             }
         } catch (RepositoryException ex) {
@@ -230,14 +228,14 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return result;
     }
 
-    private void setStringSet(String path, Set<String> strings) {
+    private void setStringSet(final String path, final Set<String> strings) {
         try {
             if (strings != null && strings.size() > 0) {
                 ValueFactory vf = getNode().getSession().getValueFactory();
                 Value[] values = new Value[strings.size()];
                 int i = 0;
-                for (Iterator<String> iter = strings.iterator(); iter.hasNext();) {
-                    values[i++] = vf.createValue(iter.next());
+                for (final String string : strings) {
+                    values[i++] = vf.createValue(string);
                 }
                 getNode().setProperty(path, values);
             } else {
@@ -248,7 +246,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         }
     }
 
-    private boolean getBoolean(String path) {
+    private boolean getBoolean(final String path) {
         try {
             if (getNode().hasProperty(path)) {
                 return getNode().getProperty(path).getBoolean();
@@ -259,7 +257,7 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
         return false;
     }
 
-    private void setBoolean(String path, boolean value) {
+    private void setBoolean(final String path, boolean value) {
         try {
             getNode().setProperty(path, value);
         } catch (RepositoryException ex) {
