@@ -104,14 +104,19 @@ class PrimitiveFieldCtrl {
   }
 
   valueChanged() {
-    this.FieldService.startSaveTimer(this.getFieldName(), this.fieldValues,
-      validatedValues => this._afterSaveField(validatedValues));
+    this._saveField({ throttle: true });
   }
 
-  _saveField() {
-    if (!angular.equals(this.oldValues, this.fieldValues)) {
-      this.FieldService.saveField(this.getFieldName(), this.fieldValues)
-        .then(validatedValues => this._afterSaveField(validatedValues));
+  _saveField(options) {
+    if (!angular.equals(
+      this.FieldService.cleanValues(this.oldValues),
+      this.FieldService.cleanValues(this.fieldValues),
+    )) {
+      this.FieldService.save({
+        ...options,
+        name: this.getFieldName(),
+        values: this.fieldValues,
+      }).then(this._afterSaveField.bind(this));
     }
   }
 
