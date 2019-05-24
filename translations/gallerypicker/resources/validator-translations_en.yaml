@@ -3,4 +3,5 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /en:
         jcr:primaryType: hipposys:resourcebundle
+        required#hippogallerypicker-imagelink: Select an image
         image-references: Select an image

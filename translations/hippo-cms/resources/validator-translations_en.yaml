@@ -3,10 +3,17 @@ definitions:
     /hippo:configuration/hippo:translations/hippo:cms/validators:
       /en:
         jcr:primaryType: hipposys:resourcebundle
-        escaped: 'Do not use these characters: < > & '' "'
-        resource-required: Upload a file
-        summaryMultiple: This document has {0} errors
+        required#Date: Enter a date
+        required#hippo-resource: Upload a resource
         non-empty: Enter a value
+        required: Enter a value
+        escaped: 'Do not use these characters: < > & '' "'
+        required#String: Enter some text
+        resource-required: Upload a file
+        summaryMultiple: This document has ${numberOfErrors} errors
+        required#OpenUiString: Enter a value
         html: Enter a value
         summarySingle: This document has 1 error
+        required#hippo-mirror: Select a link
         email: Enter a valid email address
+        required#hippostd-html: Enter some text
