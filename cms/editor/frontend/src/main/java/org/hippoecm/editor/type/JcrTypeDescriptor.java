@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
 
 public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(JcrTypeDescriptor.class);
 
     ITypeLocator locator;
@@ -64,22 +62,22 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     private String name;
     private Map<String, IFieldDescriptor> declaredFields;
     private Map<String, IFieldDescriptor> fields;
-    private Map<String, IObserver> observers = new TreeMap<String, IObserver>();
+    private Map<String, IObserver> observers = new TreeMap<>();
     private IFieldDescriptor primary;
-    private transient boolean attached = false;
+    private transient boolean attached;
 
     public JcrTypeDescriptor(JcrNodeModel nodeModel, ITypeLocator locator) throws RepositoryException {
         super(nodeModel);
 
         this.locator = locator;
 
-        Node typeNode = nodeModel.getNode();
+        final Node typeNode = nodeModel.getNode();
         Node templateTypeNode = typeNode;
         while (!templateTypeNode.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
             templateTypeNode = templateTypeNode.getParent();
         }
 
-        String prefix = templateTypeNode.getParent().getName();
+        final String prefix = templateTypeNode.getParent().getName();
         if ("system".equals(prefix)) {
             name = templateTypeNode.getName();
         } else {
@@ -96,7 +94,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public String getType() {
         try {
-            Node typeNode = getNode();
+            final Node typeNode = getNode();
             if (typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
                 return typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
             }
@@ -108,10 +106,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public List<String> getSuperTypes() {
         try {
-            Node node = getNode();
-            List<String> superTypes = new LinkedList<String>();
+            final Node node = getNode();
+            final List<String> superTypes = new LinkedList<>();
             if (node.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                final Value[] values = node.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
                 for (Value value : values) {
                     superTypes.add(value.getString());
                 }
@@ -134,7 +132,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public void setSuperTypes(List<String> superTypes) {
         try {
-            String[] types = superTypes.toArray(new String[superTypes.size()]);
+            final String[] types = superTypes.toArray(new String[0]);
             getNode().setProperty(HippoNodeType.HIPPO_SUPERTYPE, types);
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -178,6 +176,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         setBoolean(HippoNodeType.HIPPO_MIXIN, isMixin);
     }
 
+    public void addValidator(final String validator) {
+        final Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+        validators.add(validator);
+        setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
+    }
+
     public boolean isValidationCascaded() {
         return getBoolean(HippoNodeType.HIPPO_CASCADEVALIDATION, true);
     }
@@ -188,9 +192,9 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public void addField(IFieldDescriptor descriptor) {
         try {
-            Node typeNode = getNode();
-            Node field = typeNode.addNode(descriptor.getName(), HippoNodeType.NT_FIELD);
-            JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this);
+            final Node typeNode = getNode();
+            final Node field = typeNode.addNode(descriptor.getName(), HippoNodeType.NT_FIELD);
+            final JcrFieldDescriptor desc = new JcrFieldDescriptor(new JcrNodeModel(field), this);
             desc.copy(descriptor);
 
             detach();
@@ -203,16 +207,16 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         try {
             detach();
 
-            Node fieldNode = getFieldNode(field);
+            final Node fieldNode = getFieldNode(field);
             if (fieldNode != null) {
-                IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this);
+                final IFieldDescriptor descriptor = new JcrFieldDescriptor(new JcrNodeModel(fieldNode), this);
 
                 if (descriptor.isPrimary()) {
                     primary = null;
                 }
                 fieldNode.remove();
             } else {
-                log.warn("field " + field + " was not found in type " + getType());
+                log.warn("field {} was not found in type {}", field, getType());
             }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
@@ -233,12 +237,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             }
         }
 
-        JcrFieldDescriptor field = (JcrFieldDescriptor) declaredFields.get(name);
+        final JcrFieldDescriptor field = (JcrFieldDescriptor) declaredFields.get(name);
         if (field != null) {
             field.setPrimary(true);
             primary = field;
         } else {
-            log.warn("field " + name + " was not found");
+            log.warn("field {} was not found", name);
         }
 
         detach();
@@ -247,7 +251,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     @Override
     public boolean equals(Object object) {
         if (object instanceof JcrTypeDescriptor) {
-            JcrTypeDescriptor that = (JcrTypeDescriptor) object;
+            final JcrTypeDescriptor that = (JcrTypeDescriptor) object;
             return new EqualsBuilder().append(this.name, that.name).isEquals();
         }
         return false;
@@ -262,8 +266,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
      * (re)load the cached fields "fields", "declaredFields", "primary"
      */
     protected void loadFields() {
-        fields = new HashMap<String, IFieldDescriptor>();
-        declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
+        fields = new HashMap<>();
+        declaredFields = new LinkedHashMap<>();
         primary = null;
 
         for (String superType : getSuperTypes()) {
@@ -274,19 +278,19 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             }
         }
         try {
-            Node node = getNode();
+            final Node node = getNode();
             if (node != null) {
-                NodeIterator it = node.getNodes();
+                final NodeIterator it = node.getNodes();
                 while (it.hasNext()) {
-                    Node child = it.nextNode();
+                    final Node child = it.nextNode();
                     if (child != null && child.isNodeType(HippoNodeType.NT_FIELD)) {
-                        JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this);
+                        final JcrFieldDescriptor field = new JcrFieldDescriptor(new JcrNodeModel(child), this);
                         declaredFields.put(field.getName(), field);
                         fields.put(field.getName(), field);
                     }
                 }
             }
-            Set<String> explicit = new HashSet<String>();
+            final Set<String> explicit = new HashSet<>();
             for (IFieldDescriptor field : fields.values()) {
                 if (!field.getPath().equals("*")) {
                     explicit.add(field.getPath());
@@ -327,11 +331,11 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         super.detach();
     }
 
-    private boolean getBoolean(String path) {
+    private boolean getBoolean(final String path) {
         return getBoolean(path, false);
     }
 
-    private boolean getBoolean(String path, boolean defaultValue) {
+    private boolean getBoolean(final String path, final boolean defaultValue) {
         try {
             if (getNode().hasProperty(path)) {
                 return getNode().getProperty(path).getBoolean();
@@ -342,7 +346,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         return defaultValue;
     }
 
-    private void setBoolean(String path, boolean value) {
+    private void setBoolean(final String path, final boolean value) {
         try {
             getNode().setProperty(path, value);
         } catch (RepositoryException ex) {
@@ -350,15 +354,15 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         }
     }
 
-    private Node getFieldNode(String field) throws RepositoryException {
-        Node typeNode = getNode();
-        NodeIterator fieldIter = typeNode.getNodes();
+    private Node getFieldNode(final String field) throws RepositoryException {
+        final Node typeNode = getNode();
+        final NodeIterator fieldIter = typeNode.getNodes();
         while (fieldIter.hasNext()) {
-            Node fieldNode = fieldIter.nextNode();
+            final Node fieldNode = fieldIter.nextNode();
             if (!fieldNode.isNodeType(HippoNodeType.NT_FIELD)) {
                 continue;
             }
-            String name = fieldNode.getName();
+            final String name = fieldNode.getName();
             if (name.equals(field)) {
                 return fieldNode;
             }
@@ -384,19 +388,17 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     private void subscribe(final IFieldDescriptor field) {
         final IObservationContext obContext = getObservationContext();
-        IObserver<IFieldDescriptor> observer = new IObserver<IFieldDescriptor>() {
-            private static final long serialVersionUID = 1L;
-
+        final IObserver<IFieldDescriptor> observer = new IObserver<IFieldDescriptor>() {
             public IFieldDescriptor getObservable() {
                 return field;
             }
 
             public void onEvent(Iterator<? extends IEvent<IFieldDescriptor>> events) {
-                EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+                final EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<>();
                 while (events.hasNext()) {
-                    IEvent event = events.next();
+                    final IEvent event = events.next();
                     if (event instanceof TypeDescriptorEvent) {
-                        collection.add((TypeDescriptorEvent) event);
+                        collection.add(event);
                     }
                 }
                 if (collection.size() > 0) {
@@ -409,28 +411,28 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
         obContext.registerObserver(observer);
     }
 
-    private void unsubscribe(IFieldDescriptor field) {
+    private void unsubscribe(final IFieldDescriptor field) {
         final IObservationContext obContext = getObservationContext();
-        IObserver observer = observers.remove(field.getName());
+        final IObserver observer = observers.remove(field.getName());
         obContext.unregisterObserver(observer);
     }
 
     @Override
-    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
+    protected void processEvents(final IObservationContext context, final Iterator<? extends IEvent> events) {
         // do our own event generation, ignoring the JCR events
         updateFields();
         attached = true;
     }
 
-    protected void processEvents(EventCollection collection) {
-        IObservationContext obContext = getObservationContext();
+    protected void processEvents(final EventCollection collection) {
+        final IObservationContext obContext = getObservationContext();
         if (obContext != null) {
             for (IFieldDescriptor field : fields.values()) {
                 unsubscribe(field);
             }
         }
 
-        Map<String, IFieldDescriptor> oldFields = fields;
+        final Map<String, IFieldDescriptor> oldFields = fields;
         fields = null;
         loadFields();
         for (String field : fields.keySet()) {
@@ -439,9 +441,9 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                         TypeDescriptorEvent.EventType.FIELD_ADDED));
             }
         }
-        Iterator<Entry<String, IFieldDescriptor>> iter = oldFields.entrySet().iterator();
+        final Iterator<Entry<String, IFieldDescriptor>> iter = oldFields.entrySet().iterator();
         while (iter.hasNext()) {
-            Entry<String, IFieldDescriptor> entry = iter.next();
+            final Entry<String, IFieldDescriptor> entry = iter.next();
             if (!fields.containsKey(entry.getKey())) {
                 collection.add(new TypeDescriptorEvent(this, entry.getValue(),
                         TypeDescriptorEvent.EventType.FIELD_REMOVED));
@@ -457,10 +459,10 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     protected void updateFields() {
-        EventCollection collection = new EventCollection();
+        final EventCollection collection = new EventCollection();
         processEvents(collection);
         if (collection.size() > 0) {
-            IObservationContext obContext = getObservationContext();
+            final IObservationContext obContext = getObservationContext();
             if (obContext != null) {
                 obContext.notifyObservers(collection);
             }
@@ -472,16 +474,16 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             return true;
         }
         List<String> candidates = getSuperTypes();
-        Set<String> done = new TreeSet<String>();
-        while (candidates.size() > 0) {
-            Set<String> todo = new TreeSet<String>();
+        final Set<String> done = new TreeSet<>();
+        while (!candidates.isEmpty()) {
+            final Set<String> todo = new TreeSet<>();
             for (String candidate : candidates) {
                 if (candidate.equals(typeName)) {
                     return true;
                 } else {
                     done.add(candidate);
                     try {
-                        ITypeDescriptor descriptor = locator.locate(candidate);
+                        final ITypeDescriptor descriptor = locator.locate(candidate);
                         for (String superType : descriptor.getSuperTypes()) {
                             if (!done.contains(superType)) {
                                 todo.add(superType);
@@ -493,9 +495,14 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                     }
                 }
             }
-            candidates = new ArrayList<String>(todo);
+            candidates = new ArrayList<>(todo);
         }
         return false;
+    }
+
+    @Override
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(getStringSet(HippoNodeType.HIPPO_VALIDATORS));
     }
 
     @Override
@@ -511,38 +518,40 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
     }
 
     void validate() {
-        ITypeDescriptor builtin;
+        final ITypeDescriptor builtin;
         try {
             builtin = new BuiltinTypeDescriptor(getType(), locator);
         } catch (StoreException e) {
             return;
         }
 
-        List<String> superTypes = getSuperTypes();
-        List<String> builtinSuperTypes = builtin.getSuperTypes();
+        final List<String> superTypes = getSuperTypes();
+        final List<String> builtinSuperTypes = builtin.getSuperTypes();
         for (String type : builtinSuperTypes) {
             if (!superTypes.contains(type)) {
-                log.warn("Super type " + type + " is defined as super type in CND, but not available in descriptor for " + name);
+                log.warn("Super type {} is defined as super type in CND, but not available in descriptor for {}",
+                        type, name);
             }
         }
         for (String type : superTypes) {
             if (!builtinSuperTypes.contains(type)) {
-                log.warn("Super type " + type + " is declared in descriptor, but is not defined as super type in CND for " + name);
+                log.warn("Super type {} is declared in descriptor, but is not defined as super type in CND for {}",
+                        type, name);
             }
         }
 
         if (isMixin() != builtin.isMixin()) {
-            log.warn("Node type definition and description disagree on mixin status for " + name);
+            log.warn("Node type definition and description disagree on mixin status for {}", name);
         }
 
         if (isNode() != builtin.isNode()) {
-            log.warn("Node type definition and description disagree on compound/primitive classification " + name);
+            log.warn("Node type definition and description disagree on compound/primitive classification {}", name);
         }
 
         if (isNode()) {
-            Map<String, IFieldDescriptor> anyPaths = new HashMap<String, IFieldDescriptor>();
-            Map<String, IFieldDescriptor> pathToField = new HashMap<String, IFieldDescriptor>();
-            Map<String, IFieldDescriptor> nameToField = getDeclaredFields();
+            final Map<String, IFieldDescriptor> anyPaths = new HashMap<>();
+            final Map<String, IFieldDescriptor> pathToField = new HashMap<>();
+            final Map<String, IFieldDescriptor> nameToField = getDeclaredFields();
             for (Map.Entry<String, IFieldDescriptor> entry : nameToField.entrySet()) {
                 if ("*".equals(entry.getValue().getPath())) {
                     anyPaths.put(entry.getValue().getTypeDescriptor().getType(), entry.getValue());
@@ -551,9 +560,9 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 }
             }
 
-            Map<String, IFieldDescriptor> builtinAnyPaths = new HashMap<String, IFieldDescriptor>();
-            Map<String, IFieldDescriptor> builtinPathToField = new HashMap<String, IFieldDescriptor>();
-            Map<String, IFieldDescriptor> builtinNameToField = builtin.getDeclaredFields();
+            final Map<String, IFieldDescriptor> builtinAnyPaths = new HashMap<>();
+            final Map<String, IFieldDescriptor> builtinPathToField = new HashMap<>();
+            final Map<String, IFieldDescriptor> builtinNameToField = builtin.getDeclaredFields();
             for (Map.Entry<String, IFieldDescriptor> entry : builtinNameToField.entrySet()) {
                 if ("*".equals(entry.getValue().getPath())) {
                     builtinAnyPaths.put(entry.getValue().getTypeDescriptor().getType(), entry.getValue());
@@ -566,7 +575,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                 if (builtinPathToField.containsKey(entry.getKey())) {
                     validateField(entry.getValue(), builtinPathToField.get(entry.getKey()));
                 } else if (!builtinAnyPaths.isEmpty()) {
-                    log.warn("Path " + entry.getKey() + " is present in description, but not in CND definition for " + name);
+                    log.warn("Path {} is present in description, but not in CND definition for {}",
+                            entry.getKey(), name);
                 }
             }
             for (Map.Entry<String, IFieldDescriptor> entry : builtinPathToField.entrySet()) {
@@ -574,7 +584,8 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
                     continue;
                 }
                 if (!pathToField.containsKey(entry.getKey())) {
-                    log.warn("Path " + entry.getKey() + " is present in CND definition, but not in description for " + name);
+                    log.warn("Path {} is present in CND definition, but not in description for {}",
+                            entry.getKey(), name);
                 }
             }
 
@@ -583,28 +594,27 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     void validateField(IFieldDescriptor myField, IFieldDescriptor builtinField) {
         if (!myField.getTypeDescriptor().getType().equals(builtinField.getTypeDescriptor().getType())) {
-            log.warn("Node type definition and description disagree on type for field: " + myField.toString());
+            log.warn("Node type definition and description disagree on type for field: {}", myField);
         }
 
         if (myField.isMandatory() != builtinField.isMandatory()) {
-            log.warn("Node type definition and description disagree on mandatory keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on mandatory keyword for {}", myField);
         }
 
         if (myField.isMultiple() != builtinField.isMultiple()) {
-            log.warn("Node type definition and description disagree on multiple keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on multiple keyword for {}", myField);
         }
 
         if (myField.isProtected() != builtinField.isProtected()) {
-            log.warn("Node type definition and description disagree on protected keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on protected keyword for {}", myField);
         }
 
         if (myField.isAutoCreated() != builtinField.isAutoCreated()) {
-            log.warn("Node type definition and description disagree on autocreated keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on autocreated keyword for {}", myField);
         }
 
         if (myField.isPrimary() != builtinField.isPrimary()) {
-            log.warn("Node type definition and description disagree on primary keyword for " + myField.toString());
+            log.warn("Node type definition and description disagree on primary keyword for {}", myField);
         }
     }
-
 }

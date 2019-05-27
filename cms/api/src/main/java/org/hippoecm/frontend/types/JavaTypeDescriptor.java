@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.hippoecm.frontend.types;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -32,33 +34,33 @@ import org.slf4j.LoggerFactory;
 
 public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(JavaTypeDescriptor.class);
 
     ITypeLocator locator;
 
-    private String name;
-    private String type;
+    private final String name;
+    private final String type;
+    private final Map<String, IFieldDescriptor> declaredFields;
+    private final Set<String> validators;
     private List<String> superTypes;
     private transient Map<String, IFieldDescriptor> fields = null;
-    private Map<String, IFieldDescriptor> declaredFields;
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
     private boolean cascadeValidation;
 
-    private IObservationContext obContext;
+    private IObservationContext<ITypeDescriptor> obContext;
     private boolean mutable = true;
 
     public JavaTypeDescriptor(String name, String type, ITypeLocator locator) {
         this.name = name;
         this.type = type;
-        this.superTypes = new LinkedList<String>();
-        this.declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
+        this.superTypes = new LinkedList<>();
+        this.declaredFields = new LinkedHashMap<>();
         this.primary = null;
         this.node = true;
         this.mixin = false;
+        this.validators = new LinkedHashSet<>();
         this.cascadeValidation = true;
         this.locator = locator;
     }
@@ -96,7 +98,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     public Map<String, IFieldDescriptor> getFields() {
         if (fields == null) {
-            fields = new HashMap<String, IFieldDescriptor>();
+            fields = new HashMap<>();
             for (String superType : superTypes) {
                 try {
                     fields.putAll(locator.locate(superType).getFields());
@@ -115,11 +117,11 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     public void addField(IFieldDescriptor field) {
         checkMutable();
-        String name = field.getName();
+        final String name = field.getName();
         declaredFields.put(name, field);
         fields = null;
         if (obContext != null) {
-            EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<IEvent<ITypeDescriptor>>();
+            EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<>();
             collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_ADDED));
             obContext.notifyObservers(collection);
         }
@@ -127,10 +129,10 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     public void removeField(String name) {
         checkMutable();
-        IFieldDescriptor field = declaredFields.remove(name);
+        final IFieldDescriptor field = declaredFields.remove(name);
         fields = null;
         if (obContext != null) {
-            EventCollection<TypeDescriptorEvent> collection = new EventCollection<TypeDescriptorEvent>();
+            final EventCollection<IEvent<ITypeDescriptor>> collection = new EventCollection<>();
             collection.add(new TypeDescriptorEvent(this, field, TypeDescriptorEvent.EventType.FIELD_REMOVED));
             obContext.notifyObservers(collection);
         }
@@ -147,16 +149,16 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
             }
         }
 
-        IFieldDescriptor field = declaredFields.get(name);
+        final IFieldDescriptor field = declaredFields.get(name);
         if (field != null) {
             if (field instanceof JavaFieldDescriptor) {
                 ((JavaFieldDescriptor) field).setPrimary(true);
                 primary = (JavaFieldDescriptor) field;
             } else {
-                log.warn("unknown type " + field.getClass().getName());
+                log.warn("unknown type {}", field.getClass().getName());
             }
         } else {
-            log.warn("field " + name + " was not found");
+            log.warn("field {} was not found", name);
         }
     }
 
@@ -176,6 +178,14 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     public void setIsMixin(boolean isMixin) {
         checkMutable();
         this.mixin = isMixin;
+    }
+
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(validators);
+    }
+
+    public void addValidator(final String validator) {
+        validators.add(validator);
     }
 
     public boolean isValidationCascaded() {

@@ -503,6 +503,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         @Override
+        public void addValidator(final String validator) {
+            typeDescriptor.addValidator(validator);
+        }
+
+        @Override
         public void setIsNode(boolean isNode) {
             typeDescriptor.setIsNode(isNode);
         }
@@ -527,6 +532,11 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
             }
             updatePrototype();
+        }
+
+        @Override
+        public Set<String> getValidators() {
+            return typeDescriptor.getValidators();
         }
 
         @Override
