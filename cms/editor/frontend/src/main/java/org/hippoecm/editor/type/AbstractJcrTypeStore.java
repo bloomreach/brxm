@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -240,6 +240,9 @@ public abstract class AbstractJcrTypeStore implements IStore<ITypeDescriptor> {
                 type.setSuperTypes(object.getSuperTypes());
                 type.setIsNode(object.isNode());
                 type.setIsMixin(object.isMixin());
+
+                object.getValidators().forEach(type::addValidator);
+
                 type.setIsValidationCascaded(object.isValidationCascaded());
                 for (Map.Entry<String, IFieldDescriptor> entry : object.getFields().entrySet()) {
                     type.addField(entry.getValue());
