@@ -3,13 +3,6 @@
 <div class="static-menu" [class.collapsed]="isCollapsed">
   <div class="top-elements">
     <brna-top-level-menu-item
-      caption="Home"
-      icon="br-logo"
-      [collapsed]="collapsed"
-      class="menu-item home"
-      [ngClass]="getQaClass('home')">
-    </brna-top-level-menu-item>
-    <brna-top-level-menu-item
       *ngFor="let item of menu$ | async"
       matRipple
       [matRippleDisabled]="isRippleDisabled(item)"
