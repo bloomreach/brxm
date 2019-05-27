@@ -36,7 +36,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         queryMngr = new HstQueryManagerImpl(session,objectConverter, null);
     }
 

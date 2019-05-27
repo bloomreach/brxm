@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.junit.After;
 import org.junit.Before;
 
 public class AbstractHstQueryTest extends AbstractBeanTestCase {
+    protected ObjectConverter objectConverter;
     protected HstQueryManager queryManager;
     protected javax.jcr.Node baseContentNode;
     protected Node galleryContentNode;
@@ -43,7 +44,7 @@ public class AbstractHstQueryTest extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        ObjectConverter objectConverter = getObjectConverter();
+        objectConverter = createObjectConverter();
         queryManager = new HstQueryManagerImpl(session, objectConverter, null);
         requestContext = new MockHstRequestContext() {
             @Override

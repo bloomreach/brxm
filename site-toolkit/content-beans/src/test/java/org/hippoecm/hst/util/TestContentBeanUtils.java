@@ -54,7 +54,6 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
 
     @Test
     public void testCreateIncomingBeansQueryPrimaryMethodWithSubtypes() throws QueryException, ObjectBeanManagerException, RepositoryException {
-        ObjectConverter objectConverter = getObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);
@@ -76,7 +75,7 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
 
     @Test
     public void testCreateIncomingBeansQueryPrimaryMethodWithoutSubtypes() throws QueryException, ObjectBeanManagerException, RepositoryException {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);
@@ -98,7 +97,7 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
 
     @Test
     public void testCreateIncomingBeansQueryConvenienceMethodWithSingleLinkPath() throws QueryException, ObjectBeanManagerException, RepositoryException {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);
@@ -116,7 +115,6 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
 
     @Test
     public void testCreateIncomingBeansQueryConvenienveMethodWithAssumedLinkPathDepthTest() throws QueryException, ObjectBeanManagerException, RepositoryException {
-        ObjectConverter objectConverter = getObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);
@@ -152,7 +150,6 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
     public void testCreateIncomingBeansQueryConvenienveMethodWithAssumedLinkPathAndBeyondMaximumDepth() throws QueryException, ObjectBeanManagerException, RepositoryException {
         thrown.expect(FilterException.class);
 
-        ObjectConverter objectConverter = getObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);
@@ -168,7 +165,6 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
     public void testCreateIncomingBeansQueryConvenienveMethodWithAssumedLinkPathAndBeyondMinimumDepth() throws QueryException, ObjectBeanManagerException, RepositoryException {
         thrown.expect(FilterException.class);
 
-        ObjectConverter objectConverter = getObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         ContentDocument bean = (ContentDocument) obm.getObject(ANOTHER_SAMPLE_DOCUMENT_PATH);
         HippoFolder scope = (HippoFolder) obm.getObject(CONTENT_PATH);

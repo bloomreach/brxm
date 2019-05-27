@@ -69,7 +69,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     @Test
     public void testNewDocumentIsPreviewAvailable() throws Exception {
 
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
 
@@ -102,7 +102,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     
     @Test
     public void testDocumentManipulationWithDeprecatedWorkflowCallbackHandler() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
@@ -153,7 +153,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testDocumentManipulationWithDeprecatedReviewedActionsWorkflow() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
@@ -204,7 +204,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testDocumentManipulationWithDocumentWorkflow() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         wpm.setWorkflowCallbackHandler(new BaseWorkflowCallbackHandler<DocumentWorkflow>() {
@@ -255,7 +255,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testFolderCreateRemove() throws Exception {
-       ObjectConverter objectConverter = getObjectConverter();
+       ObjectConverter objectConverter = createObjectConverter();
        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
 
         HippoFolderBean newFolder = null;
@@ -280,7 +280,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     @Test
     public void testFolderAutoCreateRemove() throws Exception {
 
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
 
@@ -305,7 +305,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testCreateDocumentUnderFolderHavingSameNameDocumentSibling() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
 
@@ -326,7 +326,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testCreateLocalizedName() throws Exception {
-       ObjectConverter objectConverter = getObjectConverter();
+       ObjectConverter objectConverter = createObjectConverter();
        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         HippoFolderBean newFolder = null;
         try {
@@ -362,7 +362,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
     @Test
     public void testCreateNoLocalizedName() throws Exception {
 
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         HippoFolderBean newFolder = null;
         try {
@@ -390,7 +390,7 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testLocalizedFolderCreation() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
         HippoFolderBean newFolder = null;

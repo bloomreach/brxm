@@ -57,7 +57,7 @@ public class VersionedObjectConverterProxyTest extends AbstractBeanTestCase {
         //Get reference to EventListener of ContentTypeService to invalidate ContentTypesCache
         final EventListener ctEventListener = on(unproxiedContentTypeService).field("contentTypesChangeListener").get();
 
-        final ObjectConverter objectConverter = getObjectConverter();
+        final ObjectConverter objectConverter = createObjectConverter();
 
         //Get a reference to ObjectConverter instance cache of VersionedObjectConverterProxy
         final Cache<ContentTypes, ObjectConverter> instanceCache = on(objectConverter).field("instanceCache").get();

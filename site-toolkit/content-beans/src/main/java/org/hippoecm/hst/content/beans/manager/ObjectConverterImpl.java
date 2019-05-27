@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.manager;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,6 +62,7 @@ public class ObjectConverterImpl implements ObjectConverter {
     private static final Logger log = LoggerFactory.getLogger(ObjectConverterImpl.class);
 
     final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs = new ConcurrentHashMap<>();
+    final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeCompileTimeBeanPairs;
     private List<String> fallBackJcrNodeTypes;
 
     public ObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes) {
@@ -68,6 +70,8 @@ public class ObjectConverterImpl implements ObjectConverter {
         if (isNotEmpty(jcrPrimaryNodeTypeBeanPairs)) {
             this.jcrPrimaryNodeTypeBeanPairs.putAll(jcrPrimaryNodeTypeBeanPairs);
         }
+
+        jcrPrimaryNodeTypeCompileTimeBeanPairs = Collections.unmodifiableMap(jcrPrimaryNodeTypeBeanPairs);
 
         if (fallBackJcrNodeTypes != null) {
             this.fallBackJcrNodeTypes = Arrays.asList(fallBackJcrNodeTypes);
@@ -423,7 +427,11 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
 
     public String getPrimaryNodeTypeNameFor(final Class<? extends HippoBean> hippoBean) {
-        return jcrPrimaryNodeTypeBeanPairs.entrySet().stream().filter(e -> e.getValue() == hippoBean)
-                .findFirst().map(Map.Entry::getKey).orElse(null);
+        // both check jcrPrimaryNodeTypeCompileTimeBeanPairs as well as the potentially runtime replaced classes in
+        // jcrPrimaryNodeTypeBeanPairs
+        return jcrPrimaryNodeTypeCompileTimeBeanPairs.entrySet().stream().filter(e -> e.getValue() == hippoBean)
+                .findFirst().map(Map.Entry::getKey)
+                .orElse(jcrPrimaryNodeTypeBeanPairs.entrySet().stream().filter(e -> e.getValue() == hippoBean)
+                        .findFirst().map(Map.Entry::getKey).orElse(null));
     }
 }

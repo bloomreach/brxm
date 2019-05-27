@@ -29,7 +29,6 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
-import org.apache.jackrabbit.commons.flat.TreeTraverser;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -104,7 +103,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         createVersionHistoryFixture();
 
-        objectConverter = getObjectConverter();
+        objectConverter = createObjectConverter();
 
         previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
 

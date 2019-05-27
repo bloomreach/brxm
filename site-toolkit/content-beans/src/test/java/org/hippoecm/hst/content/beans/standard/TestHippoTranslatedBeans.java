@@ -29,7 +29,7 @@ public class TestHippoTranslatedBeans extends AbstractBeanTestCase {
     @Test
     public void testTranslatedBeans() throws Exception {
              
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         

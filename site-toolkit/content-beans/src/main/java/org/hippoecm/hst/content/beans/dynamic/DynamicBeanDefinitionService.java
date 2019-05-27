@@ -76,8 +76,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> parentBeanDef, final ContentType contentType) {
-        final BeanInfo generatedBeanDef = createDocumentBeanDef(contentType, parentBeanDef != null ? new BeanInfo(parentBeanDef, false) : null);
+    public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final ContentType contentType) {
+        final BeanInfo generatedBeanDef = createDocumentBeanDef(contentType, superClazz != null ? new BeanInfo(superClazz, false) : null);
         return generatedBeanDef.getBeanClass();
     }
 

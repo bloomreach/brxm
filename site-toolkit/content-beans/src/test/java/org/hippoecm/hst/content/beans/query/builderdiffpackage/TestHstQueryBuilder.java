@@ -23,7 +23,6 @@ import javax.jcr.Node;
 import com.google.common.collect.Lists;
 
 import org.hippoecm.hst.AbstractHstQueryTest;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.BasePage;
 import org.hippoecm.hst.content.beans.NewsPage;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
@@ -34,7 +33,6 @@ import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.repository.util.DateTools;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -46,6 +44,8 @@ import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.Order
 import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.create;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestHstQueryBuilder extends AbstractHstQueryTest {
@@ -104,6 +104,15 @@ public class TestHstQueryBuilder extends AbstractHstQueryTest {
 
     @Test
     public void basic_query_with_primaryTypeClazzes_constraints() throws Exception {
+
+        // first trigger object converter get that loads the runtime enhanced class for NewsPage
+        final Object object = objectConverter.getObject(session, "/unittestcontent/documents/unittestproject/News/2009/April/AprilNewsArticle");
+        assertNotNull("Expected bean", object);
+
+        assertFalse("We expect a runtime enhance NewsPage class", object.getClass().equals(NewsPage.class));
+        assertTrue(object instanceof HippoBean);
+        assertEquals(((HippoBean)object).getValueProvider().getJcrNode().getPrimaryNodeType().getName(), "unittestproject:newspage");
+
         HstQuery hstQuery = queryManager.createQuery(baseContentBean, NewsPage.class, PersistableTextPage.class);
 
         HstQuery hstQueryInFluent = create(baseContentBean)

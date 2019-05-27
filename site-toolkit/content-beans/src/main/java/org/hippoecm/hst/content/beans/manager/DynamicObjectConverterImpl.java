@@ -44,15 +44,15 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
-    private final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs = new ConcurrentHashMap<>();
+    private final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs = new ConcurrentHashMap<>();
 
     DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs,
-                               final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeExistingBeanPairs, final String[] fallBackJcrNodeTypes,
+                               final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs, final String[] fallBackJcrNodeTypes,
                                final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
        
-        if (jcrPrimaryNodeTypeExistingBeanPairs != null) {
-            this.jcrPrimaryNodeTypeExistingBeanPairs.putAll(jcrPrimaryNodeTypeExistingBeanPairs);
+        if (jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs != null) {
+            this.jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.putAll(jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs);
         }
        
         // Store ContentTypes as a WeakReference so that
@@ -73,11 +73,11 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
     }
     
     public Class<? extends HippoBean> getExistingBeanClass(final String jcrPrimaryNodeType) {
-        return jcrPrimaryNodeTypeExistingBeanPairs.get(jcrPrimaryNodeType);
+        return jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.get(jcrPrimaryNodeType);
     }
 
     public void removeExistingBeanClass(final String jcrPrimaryNodeType) {
-        jcrPrimaryNodeTypeExistingBeanPairs.remove(jcrPrimaryNodeType);
+        jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.remove(jcrPrimaryNodeType);
     }
     
     @Override
@@ -153,7 +153,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         return createDynamicBeanDefinition(node, null);
     }
 
-    private Class<? extends HippoBean> createDynamicBeanDefinition(final Node node, Class<? extends HippoBean> parentBeanDef) throws RepositoryException {
+    private Class<? extends HippoBean> createDynamicBeanDefinition(final Node node, Class<? extends HippoBean> superClazz) throws RepositoryException {
         final String documentType = node.getPrimaryNodeType().getName();
 
         final ContentTypes contentTypes = contentTypesRef.get();
@@ -161,7 +161,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             //The object has been already garbage collected, in practice, it should never happen
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
-        return dynamicBeanService.createDocumentBeanDef(parentBeanDef, contentTypes.getType(documentType));
+        return dynamicBeanService.createDocumentBeanDef(superClazz, contentTypes.getType(documentType));
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
     @Test
     public void testSimpleObjectGetting() throws Exception {
              
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
@@ -70,7 +70,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
     
     @Test
     public void testSimpleObjectQuery() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         
@@ -99,7 +99,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
 
     @Test
     public void test_bean_by_uuid_of_handle() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         String handleUUID = session.getNode("/unittestcontent/documents/unittestproject/common/homepage").getIdentifier();
@@ -110,7 +110,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
 
     @Test
     public void test_bean_by_uuid_of_document() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         String documentUUID = session.getNode("/unittestcontent/documents/unittestproject/common/homepage/homepage").getIdentifier();
@@ -121,7 +121,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
 
     @Test
     public void test_bean_by_non_existing_uuid() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         final HippoBean beanByUUID = folder.getBeanByUUID(UUID.randomUUID().toString(), HippoBean.class);
@@ -130,7 +130,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
 
     @Test
     public void test_bean_by_invalid_uuid() throws Exception {
-        ObjectConverter objectConverter = getObjectConverter();
+        ObjectConverter objectConverter = createObjectConverter();
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         final HippoBean beanByUUID = folder.getBeanByUUID("INVALID-UUID", HippoBean.class);

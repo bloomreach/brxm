@@ -51,7 +51,7 @@ public abstract class AbstractDynamicBeanServiceTest extends AbstractBeanTestCas
             annotatedClasses.add(BaseDocument.class);
         }
 
-        objectConverter = getObjectConverter(annotatedClasses);
+        objectConverter = createObjectConverter(annotatedClasses);
     }
 
     @After
