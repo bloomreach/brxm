@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { ChildConnectConfig, connectToChild } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { NavConfigResource, NavItem } from '../models';
 
@@ -30,7 +31,7 @@ export class NavigationConfigurationService {
   }
 
   get navigationConfiguration$(): Observable<Map<string, NavItem>> {
-    return this.navigationConfiguration.asObservable();
+    return this.navigationConfiguration.asObservable().pipe(filter(config => config.size > 0));
   }
 
   init(): Promise<void> {

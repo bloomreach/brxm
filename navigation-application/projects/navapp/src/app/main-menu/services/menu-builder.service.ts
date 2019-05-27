@@ -25,7 +25,9 @@ export class MenuBuilderService {
         const menu = this.menuStructureService.getMenuStructure();
 
         this.applyNavigationConfiguration(menu, config);
-        return this.filterOutNotConfiguredMenuItems(menu);
+        const items = this.filterOutNotConfiguredMenuItems(menu);
+        items[0].icon = 'br-logo';
+        return items;
       }),
       shareReplay(),
     );

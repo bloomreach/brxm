@@ -16,7 +16,6 @@ export class MenuStructureService {
     const home = new MenuItemLink(
       'hippo-perspective-dashboardperspective',
       'Home',
-      'home',
     );
 
     const experienceManager = new MenuItemLink(

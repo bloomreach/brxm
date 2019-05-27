@@ -54,6 +54,7 @@ describe('MenuBuilderService', () => {
             ),
             subitem2,
           ],
+          'br-logo',
         ),
       ];
     })();

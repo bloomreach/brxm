@@ -2,6 +2,11 @@ import { NavItem } from '@bloomreach/navapp-communication';
 
 export const navigationConfiguration: NavItem[] = [
   {
+    id: 'hippo-perspective-dashboardperspective',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'hippo-perspective-dashboardperspective',
+  },
+  {
     id: 'hippo-perspective-channelmanagerperspective',
     appIframeUrl: 'http://localhost:4201',
     appPath: 'experience-manager',
