@@ -44,7 +44,7 @@ public class ValidationUtil {
      *
      * @return whether the validator deemed the value valid
      */
-    public static boolean validateValue(final FieldValue value,
+    private static boolean validateValue(final FieldValue value,
                                         final ValueContext context,
                                         final String validatorName,
                                         final Object validatedValue) {
