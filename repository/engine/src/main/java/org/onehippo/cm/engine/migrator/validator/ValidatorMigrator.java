@@ -59,11 +59,15 @@ public class ValidatorMigrator implements ConfigurationMigrator {
 
     @Override
     public boolean migrate(final Session session, final ConfigurationModel configurationModel, final boolean autoExportEnabled) {
+        return true;
+        
+/*
         try {
             return doMigrate(session, autoExportEnabled);
         } catch (final RepositoryException e) {
             throw new MigrationException("ValidatorMigrator failed.", e);
         }
+*/
     }
 
     private boolean doMigrate(final Session session, final boolean autoExportEnabled) throws RepositoryException {
