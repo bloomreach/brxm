@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -176,6 +176,12 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
 
     public void setIsMixin(boolean isMixin) {
         setBoolean(HippoNodeType.HIPPO_MIXIN, isMixin);
+    }
+
+    public void addValidator(final String validator) {
+        final Set<String> validators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+        validators.add(validator);
+        setStringSet(HippoNodeType.HIPPO_VALIDATORS, validators);
     }
 
     public boolean isValidationCascaded() {
@@ -496,6 +502,11 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             candidates = new ArrayList<String>(todo);
         }
         return false;
+    }
+
+    @Override
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(getStringSet(HippoNodeType.HIPPO_VALIDATORS));
     }
 
     @Override

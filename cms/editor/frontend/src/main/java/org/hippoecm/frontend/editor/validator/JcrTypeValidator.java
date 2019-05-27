@@ -16,19 +16,39 @@
 package org.hippoecm.frontend.editor.validator;
 
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.services.validation.api.ValueContext;
+import org.onehippo.cms.services.validation.api.internal.ValidationService;
+import org.onehippo.cms.services.validation.api.internal.ValidatorInstance;
+import org.onehippo.cms.services.validation.api.internal.ValueContextImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Validator for generic jcr node types.
  */
 public class JcrTypeValidator implements ITypeValidator {
+
+    private static final Logger log = LoggerFactory.getLogger(JcrTypeValidator.class);
 
     private final Set<JcrFieldValidator> fieldValidators = new LinkedHashSet<>();
     private final ITypeDescriptor type;
@@ -51,13 +71,81 @@ public class JcrTypeValidator implements ITypeValidator {
         return validatorService;
     }
 
-    public Set<Violation> validate(final IModel model) throws ValidationException {
+    @Override
+    public Set<Violation> validate(final IModel<Node> model) throws ValidationException {
         final Set<Violation> violations = new LinkedHashSet<>();
+        validateFields(model, violations);
+        validateType(model, violations);
+        return violations;
+    }
+
+    private void validateFields(final IModel<Node> model, final Set<Violation> violations) throws ValidationException {
         for (final JcrFieldValidator fieldValidator : fieldValidators) {
             final Set<Violation> fieldViolations = fieldValidator.validate(model);
             violations.addAll(fieldViolations);
         }
-        return violations;
     }
 
+    private void validateType(final IModel<Node> model, final Set<Violation> violations) {
+        final Set<String> validators = type.getValidators();
+        if (validators.isEmpty()) {
+            return;
+        }
+
+        final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
+        if (service == null) {
+            log.error("Failed to get ValidationService, cannot validate type '{}'", type.getName());
+            return;
+        }
+
+        final Node node = model.getObject();
+        final ValueContext context;
+        try {
+            context = createTypeContext(node);
+        } catch (RepositoryException e) {
+            log.warn("Cannot create validation context for node '{}', cannot validate type '{}'",
+                    JcrUtils.getNodePathQuietly(node), type.getName(), e);
+            return;
+        }
+
+        for (String validatorName : validators) {
+            final ValidatorInstance validator = service.getValidator(validatorName);
+            if (validator == null) {
+                log.warn("Ignoring unknown validator '{}'", validatorName);
+            } else {
+                validator.validate(context, node)
+                           .map(violation -> this.convertViolation(violation, model))
+                           .ifPresent(violations::add);
+            }
+        }
+    }
+
+    private ValueContext createTypeContext(final Node node) throws RepositoryException {
+        final String jcrName = node.getName();
+        final String jcrType = type.getType();
+        final Node parent = node.getParent();
+        final UserSession userSession = UserSession.get();
+        final Locale locale = userSession.getLocale();
+        final TimeZone timeZone = userSession.getTimeZone();
+
+        return new ValueContextImpl(jcrName, jcrType, jcrType, node, parent, locale, timeZone);
+    }
+
+    private Violation convertViolation(org.onehippo.cms.services.validation.api.Violation violation, IModel<Node> model) {
+        final Model<String> messageModel = Model.of(violation.getMessage());
+
+        final boolean isCompound = type.isType(HippoNodeType.NT_COMPOUND);
+        final FeedbackScope feedbackScope = isCompound ? FeedbackScope.COMPOUND : FeedbackScope.DOCUMENT;
+
+        final Node node = model.getObject();
+
+        try {
+            IFieldDescriptor fieldDescriptor = new JavaFieldDescriptor(type, node.getName());
+            JcrFieldValidator fieldValidator = new JcrFieldValidator(fieldDescriptor, this);
+            return fieldValidator.newValueViolation(model, messageModel, feedbackScope);
+        } catch (RepositoryException | StoreException | ValidationException e) {
+            log.warn("Failed to create violation after validating node '{}'", JcrUtils.getNodePathQuietly(node), e);
+            return null;
+        }
+    }
 }

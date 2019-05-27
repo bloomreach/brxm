@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,16 @@
  */
 package org.hippoecm.frontend.model.ocm;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -70,6 +75,42 @@ abstract public class JcrObject implements IDetachable, IObservable {
 
     protected JcrNodeModel getNodeModel() {
         return nodeModel;
+    }
+
+    protected Set<String> getStringSet(final String relPath) {
+        try {
+            final Node node = getNode();
+            if (node.hasProperty(relPath)) {
+                final Value[] values = node.getProperty(relPath).getValues();
+                final Set<String> result = new LinkedHashSet<>();
+                for (final Value value : values) {
+                    result.add(value.getString());
+                }
+                return result;
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot read multiple string property '{}'", relPath, e);
+        }
+        return Collections.emptySet();
+    }
+
+    protected void setStringSet(final String relPath, final Set<String> strings) {
+        try {
+            final Node node = getNode();
+            if (strings != null && !strings.isEmpty()) {
+                final ValueFactory vf = node.getSession().getValueFactory();
+                final Value[] values = new Value[strings.size()];
+                int i = 0;
+                for (final String string : strings) {
+                    values[i++] = vf.createValue(string);
+                }
+                node.setProperty(relPath, values);
+            } else {
+                node.setProperty(relPath, (Value[]) null);
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot write multiple string property '{}'", relPath, e);
+        }
     }
 
     public void save() {
