@@ -28,8 +28,8 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
 import org.onehippo.cms.services.validation.api.ValueContext;
 
 public class CompoundFieldType extends NodeFieldType {

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationErrorInfo;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

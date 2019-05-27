@@ -16,7 +16,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 
 /**
  * LongFieldType controls the reading and writing of a Long type field from and to a node's property.

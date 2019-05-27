@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
+package org.onehippo.cms.channelmanager.content.documenttype.validation;
 
 import java.util.Optional;
 import java.util.Set;
