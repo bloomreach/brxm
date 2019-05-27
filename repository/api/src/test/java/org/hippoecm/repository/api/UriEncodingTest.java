@@ -94,6 +94,9 @@ public class UriEncodingTest {
         assertEquals("abc", uri.encode("abc."));
         assertEquals("a", uri.encode("a..."));
         assertEquals("e...e", uri.encode("e...e"));
+
+        // leading period left alone
+        assertEquals(".abc", uri.encode(".abc."));
     }
 
     @Test(expected = UnsupportedOperationException.class)
