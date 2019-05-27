@@ -17,6 +17,8 @@ package org.hippoecm.frontend.editor.validator;
 
 import java.util.Set;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -27,6 +29,6 @@ import org.hippoecm.frontend.validation.Violation;
  */
 public interface ITypeValidator extends IClusterable {
 
-    Set<Violation> validate(IModel model) throws ValidationException;
+    Set<Violation> validate(IModel<Node> model) throws ValidationException;
 
 }

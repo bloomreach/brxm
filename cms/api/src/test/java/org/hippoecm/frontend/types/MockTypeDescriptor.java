@@ -17,6 +17,7 @@ package org.hippoecm.frontend.types;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -76,6 +77,11 @@ public class MockTypeDescriptor implements ITypeDescriptor {
     }
 
     @Override
+    public Set<String> getValidators() {
+        return null;
+    }
+
+    @Override
     public boolean isValidationCascaded() {
         return false;
     }
@@ -108,6 +114,10 @@ public class MockTypeDescriptor implements ITypeDescriptor {
     @Override
     public void setIsMixin(final boolean isMixin) {
 
+    }
+
+    @Override
+    public void addValidator(final String validator) {
     }
 
     @Override

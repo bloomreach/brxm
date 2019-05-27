@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.hippoecm.frontend.types;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -46,6 +48,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     private JavaFieldDescriptor primary;
     private boolean node;
     private boolean mixin;
+    private Set<String> validators;
     private boolean cascadeValidation;
 
     private IObservationContext obContext;
@@ -59,6 +62,7 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
         this.primary = null;
         this.node = true;
         this.mixin = false;
+        this.validators = new LinkedHashSet<>();
         this.cascadeValidation = true;
         this.locator = locator;
     }
@@ -176,6 +180,14 @@ public class JavaTypeDescriptor implements ITypeDescriptor, IDetachable {
     public void setIsMixin(boolean isMixin) {
         checkMutable();
         this.mixin = isMixin;
+    }
+
+    public Set<String> getValidators() {
+        return Collections.unmodifiableSet(validators);
+    }
+
+    public void addValidator(final String validator) {
+        validators.add(validator);
     }
 
     public boolean isValidationCascaded() {

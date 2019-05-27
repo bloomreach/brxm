@@ -17,15 +17,12 @@ package org.hippoecm.editor.type;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 
-import org.hippoecm.frontend.model.JcrNodeModel;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -42,11 +39,11 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
 
+    private final JcrTypeDescriptor type;
     private Set<String> excluded;
-    private JcrTypeDescriptor type;
     private String name;
 
-    public JcrFieldDescriptor(JcrNodeModel model, JcrTypeDescriptor type) {
+    public JcrFieldDescriptor(final IModel<Node> model, final JcrTypeDescriptor type) {
         super(model);
         this.type = type;
         try {
@@ -208,39 +205,6 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     private void setString(final String path, final String value) {
         try {
             getNode().setProperty(path, value);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-    }
-
-    private Set<String> getStringSet(final String path) {
-        Set<String> result = new LinkedHashSet<>();
-        try {
-            if (getNode().hasProperty(path)) {
-                Value[] values = getNode().getProperty(path).getValues();
-                for (final Value value : values) {
-                    result.add(value.getString());
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
-        }
-        return result;
-    }
-
-    private void setStringSet(final String path, final Set<String> strings) {
-        try {
-            if (strings != null && strings.size() > 0) {
-                ValueFactory vf = getNode().getSession().getValueFactory();
-                Value[] values = new Value[strings.size()];
-                int i = 0;
-                for (final String string : strings) {
-                    values[i++] = vf.createValue(string);
-                }
-                getNode().setProperty(path, values);
-            } else {
-                getNode().setProperty(path, (Value[]) null);
-            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
