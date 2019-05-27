@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * All instances of a type that correspond to the same node are equivalent with respect
  * to the hashCode and equals methods.
  */
-abstract public class JcrObject implements IDetachable, IObservable {
+public abstract class JcrObject implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(JcrObject.class);
 
