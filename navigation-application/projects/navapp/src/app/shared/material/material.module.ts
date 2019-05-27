@@ -23,6 +23,7 @@ export class MaterialModule {
   ) {
     const menuItemIconsList = [
       'br-logo',
+      'br-logo.active',
       'audiences',
       'audiences.active',
       'categories',
