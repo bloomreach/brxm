@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -65,8 +66,12 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
      */
     private ObjectConverter getOrCreateObjectConverter() {
         final ContentTypes contentTypes = contentTypesProvider.getContentTypes();
-        return instanceCache.asMap().computeIfAbsent(contentTypes, (k) -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
-                jcrNodeTypeExistingClassPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
+        try {
+            return instanceCache.get(contentTypes, () -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
+                    jcrNodeTypeExistingClassPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Could not create ObjectConverter",e);
+        }
     }
 
     @Override
