@@ -18,10 +18,13 @@
 package org.hippoecm.frontend;
 
 import java.net.URI;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.request.Request;
+import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.NavConfigResource;
+import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.RequestUtils;
 
@@ -29,17 +32,20 @@ final class NavAppSettingFactory {
 
     static final String NAVAPP_LOCATION = "navapp.location";
 
-    private NavAppSettingFactory() {
+    private final INavAppSettingsService navAppSettingsService;
+
+    NavAppSettingFactory(INavAppSettingsService navAppSettingsService) {
+        this.navAppSettingsService = navAppSettingsService;
     }
 
-    static NavAppSettings newInstance(Request request, PluginUserSession userSession) {
+    NavAppSettings newInstance(Request request, PluginUserSession userSession) {
         final NavAppSettings navAppSettings = new NavAppSettings();
         navAppSettings.setAppSettings(getAppSettings(request));
         navAppSettings.setUserSettings(getUserSettings(userSession));
         return navAppSettings;
     }
 
-    private static NavAppSettings.UserSettings getUserSettings(PluginUserSession userSession) {
+    private NavAppSettings.UserSettings getUserSettings(PluginUserSession userSession) {
         final NavAppSettings.UserSettings userSettings = new NavAppSettings.UserSettings();
         userSettings.setUserName(userSession.getUserName());
         userSettings.setLanguage(userSession.getLocale().getLanguage());
@@ -47,7 +53,7 @@ final class NavAppSettingFactory {
         return userSettings;
     }
 
-    private static NavAppSettings.AppSettings getAppSettings(final Request request) {
+    private NavAppSettings.AppSettings getAppSettings(final Request request) {
         final NavAppSettings.AppSettings appSettings = new NavAppSettings.AppSettings();
         appSettings.setContextPath(RequestUtils.getContextPath());
         final String cmsLocation = RequestUtils.getCmsLocation(request);
@@ -57,12 +63,24 @@ final class NavAppSettingFactory {
         return appSettings;
     }
 
-    private static List<NavAppSettings.NavConfigResource> getNavConfigResources(final String cmsLocation) {
+    private List<NavConfigResource> getNavConfigResources(final String cmsLocation) {
+        final List<NavConfigResource> navConfigResources = new ArrayList<>();
+        navConfigResources.add(getBrXmNavConfigResource(cmsLocation + "/ws/navigationitems", ResourceType.REST));
+        navConfigResources.addAll(this.navAppSettingsService.getNavConfigResources());
+        return navConfigResources;
+    }
 
-        NavAppSettings.NavConfigResource navConfigResource = new NavAppSettings.NavConfigResource();
-        navConfigResource.setResourceType(NavAppSettings.ResourceType.REST);
-        navConfigResource.setUrl(cmsLocation + "/ws/navigationitems");
+    private NavConfigResource getBrXmNavConfigResource(final String url, ResourceType resourceType) {
+        return new NavConfigResource() {
+            @Override
+            public String getUrl() {
+                return url;
+            }
 
-        return Collections.singletonList(navConfigResource);
+            @Override
+            public ResourceType getResourceType() {
+                return resourceType;
+            }
+        };
     }
 }

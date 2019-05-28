@@ -18,6 +18,7 @@
 package org.hippoecm.frontend;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -27,6 +28,7 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,9 +48,13 @@ public class NavAppSettingFactoryTest extends WicketTester {
     private HttpServletRequest servletRequest;
     @Mock
     private PluginUserSession userSession;
+    @Mock
+    private INavAppSettingsService navAppSettingsService;
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
+
+    private NavAppSettingFactory navAppSettingFactory;
 
     @Before
     public void setUp() throws Exception {
@@ -62,11 +68,15 @@ public class NavAppSettingFactoryTest extends WicketTester {
         expect(userSession.getLocale()).andReturn(Locale.CANADA);
         expect(userSession.getTimeZone()).andReturn(TimeZone.getDefault());
         replay(userSession);
+        expect(navAppSettingsService.getNavConfigResources()).andReturn(Collections.emptyList());
+        replay(navAppSettingsService);
+
+        this.navAppSettingFactory = new NavAppSettingFactory(navAppSettingsService);
     }
 
     @Test
     public void navapp_and_brxm_location_same_if_system_property_not_set() {
-        final NavAppSettings navAppSettings = NavAppSettingFactory.newInstance(request, userSession);
+        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(request, userSession);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host)));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
     }
@@ -78,7 +88,7 @@ public class NavAppSettingFactoryTest extends WicketTester {
         final URI navAppLocation = URI.create("https://www.abc.xy:1010/somewhere-far-away");
         System.setProperty(NavAppSettingFactory.NAVAPP_LOCATION, navAppLocation.toString());
 
-        final NavAppSettings navAppSettings = NavAppSettingFactory.newInstance(request, userSession);
+        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(request, userSession);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(navAppLocation));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
 

@@ -21,6 +21,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.hippoecm.frontend.service.NavConfigResource;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -125,39 +127,6 @@ public class NavAppSettings {
 
         public void setNavConfigResources(final List<NavConfigResource> navConfigResources) {
             this.navConfigResources = navConfigResources;
-        }
-    }
-
-    public enum ResourceType {
-        REST,
-        IFRAME,
-    }
-
-    /**
-     * Represents a resource that can be called to get information about menu items.
-     * There are two types of resources:
-     * A REST resource which is accessible via an XHR call
-     * An IFRAME resource which is HTML + javascript that should be rendered in an
-     * iframe and once it's loaded and registered provides the menu API methods.
-     */
-    public static class NavConfigResource {
-        private String url;
-        private ResourceType resourceType;
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(final String url) {
-            this.url = url;
-        }
-
-        public ResourceType getResourceType() {
-            return resourceType;
-        }
-
-        public void setResourceType(final ResourceType resourceType) {
-            this.resourceType = resourceType;
         }
     }
 
