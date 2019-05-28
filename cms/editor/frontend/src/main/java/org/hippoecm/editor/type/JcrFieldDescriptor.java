@@ -35,6 +35,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.cms.services.validation.legacy.LegacyValidatorMapper.legacyMapper;
+
 public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
 
     private static final Logger log = LoggerFactory.getLogger(JcrFieldDescriptor.class);
@@ -135,7 +137,8 @@ public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
     }
 
     public Set<String> getValidators() {
-        return Collections.unmodifiableSet(getStringSet(HippoNodeType.HIPPO_VALIDATORS));
+        final Set<String> legacyValidators = getStringSet(HippoNodeType.HIPPO_VALIDATORS);
+        return Collections.unmodifiableSet(legacyMapper(legacyValidators, getType()));
     }
 
     public void addValidator(final String validator) {
