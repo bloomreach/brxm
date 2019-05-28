@@ -48,6 +48,12 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
 
+    private final NavAppSettingFactory navAppSettingFactory;
+
+    public NavAppHeaderItem(final NavAppSettingFactory navAppSettingFactory) {
+        this.navAppSettingFactory = navAppSettingFactory;
+    }
+
     @Override
     public Iterable<?> getRenderTokens() {
         return Collections.singleton("nav-app-header-item");
@@ -56,7 +62,7 @@ public class NavAppHeaderItem extends HeaderItem {
     @Override
     public void render(final Response response) {
 
-        final NavAppSettings navAppSettings = NavAppSettingFactory.newInstance(RequestCycle.get().getRequest(), PluginUserSession.get());
+        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(RequestCycle.get().getRequest(), PluginUserSession.get());
         final URI navAppLocation = navAppSettings.getAppSettings().getNavAppLocation();
         final URI brXmLocation = navAppSettings.getAppSettings().getBrXmLocation();
 

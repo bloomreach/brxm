@@ -15,16 +15,14 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.TimeZone;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.Validate;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -48,6 +46,7 @@ import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IController;
+import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.NestedBrowserContextService;
@@ -57,6 +56,8 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+
+import static org.hippoecm.frontend.NavAppPanel.NAVAPP_HEADER_ITEM;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
@@ -186,7 +187,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         final String message = String.format("%s should not be null, make sure it's registered on the %s"
                 , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
         Validate.notNull(nestedBrowserContextService, message);
-        if (!nestedBrowserContextService.hidePerspectiveMenu()){
+        if (!nestedBrowserContextService.hidePerspectiveMenu()) {
             final String script = String.format("$(\"div#ft\").addClass(\"%s\")", "show-perspective-menu");
             response.render(JavaScriptHeaderItem.forScript(script, "show-perspective-menu"));
         }
@@ -362,7 +363,13 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         Validate.notNull(nestedBrowserContextService, message);
 
         if (nestedBrowserContextService.showNavigationApplication()) {
-            final NavAppPanel navAppPanel = new NavAppPanel("root");
+
+
+            final INavAppSettingsService navAppSettingsService = context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
+            final NavAppSettingFactory navAppSettingsFactory = new NavAppSettingFactory(navAppSettingsService);
+
+            final HeaderItem navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettingsFactory), NAVAPP_HEADER_ITEM);
+            final NavAppPanel navAppPanel = new NavAppPanel("root", navAppHeaderItem);
             navAppPanel.setRenderBodyOnly(true);
             replace(navAppPanel);
         } else {
