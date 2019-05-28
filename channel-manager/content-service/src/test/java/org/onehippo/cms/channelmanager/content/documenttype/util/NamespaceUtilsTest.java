@@ -86,7 +86,7 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getRootNodeWithInvalidId() throws Exception {
+    public void getRootNodeWithInvalidId() {
         final Session session = createMock(Session.class);
 
         assertFalse(NamespaceUtils.getContentTypeRootNode("bla:bla:bla", session).isPresent());
