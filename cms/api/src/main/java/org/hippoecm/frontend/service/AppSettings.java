@@ -17,12 +17,24 @@
 
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.request.Request;
-import org.apache.wicket.util.io.IClusterable;
+import java.net.URI;
+import java.util.List;
 
-public interface INavAppSettingsService extends IClusterable {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    String SERVICE_ID = "service.navappsettings";
+/**
+ * JavaBean containing the settings of the Navigation Application.
+ * These are the settings that the app needs to bootstrap itself.
+ */
+public interface AppSettings {
 
-    NavAppSettings getNavAppSettings(Request request);
+    @JsonIgnore
+    URI getBrXmLocation();
+
+    URI getNavAppLocation();
+
+    String getContextPath();
+
+    List<NavConfigResource> getNavConfigResources();
+
 }
