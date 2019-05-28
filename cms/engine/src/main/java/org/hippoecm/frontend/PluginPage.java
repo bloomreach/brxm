@@ -49,6 +49,7 @@ import org.hippoecm.frontend.service.IController;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NestedBrowserContextService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -363,13 +364,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         Validate.notNull(nestedBrowserContextService, message);
 
         if (nestedBrowserContextService.showNavigationApplication()) {
-
-
             final INavAppSettingsService navAppSettingsService = context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
-            final NavAppSettingFactory navAppSettingsFactory = new NavAppSettingFactory(navAppSettingsService);
-
-            final HeaderItem navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettingsFactory), NAVAPP_HEADER_ITEM);
-            final NavAppPanel navAppPanel = new NavAppPanel("root", navAppHeaderItem);
+            final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(RequestCycle.get().getRequest());
+            final NavAppPanel navAppPanel = new NavAppPanel("root", navAppSettings);
             navAppPanel.setRenderBodyOnly(true);
             replace(navAppPanel);
         } else {

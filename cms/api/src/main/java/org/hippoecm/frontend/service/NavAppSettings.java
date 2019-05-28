@@ -17,12 +17,9 @@
 
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.request.Request;
-import org.apache.wicket.util.io.IClusterable;
+public interface NavAppSettings {
 
-public interface INavAppSettingsService extends IClusterable {
+    UserSettings getUserSettings();
 
-    String SERVICE_ID = "service.navappsettings";
-
-    NavAppSettings getNavAppSettings(Request request);
+    AppSettings getAppSettings();
 }

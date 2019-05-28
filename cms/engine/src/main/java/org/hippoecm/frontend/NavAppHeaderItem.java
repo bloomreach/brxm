@@ -31,9 +31,8 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.UrlResourceReference;
-import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
@@ -48,10 +47,10 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
 
-    private final NavAppSettingFactory navAppSettingFactory;
+    private final NavAppSettings navAppSettings;
 
-    public NavAppHeaderItem(final NavAppSettingFactory navAppSettingFactory) {
-        this.navAppSettingFactory = navAppSettingFactory;
+    public NavAppHeaderItem(final NavAppSettings navAppSettings) {
+        this.navAppSettings = navAppSettings;
     }
 
     @Override
@@ -62,7 +61,6 @@ public class NavAppHeaderItem extends HeaderItem {
     @Override
     public void render(final Response response) {
 
-        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(RequestCycle.get().getRequest(), PluginUserSession.get());
         final URI navAppLocation = navAppSettings.getAppSettings().getNavAppLocation();
         final URI brXmLocation = navAppSettings.getAppSettings().getBrXmLocation();
 

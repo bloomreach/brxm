@@ -19,8 +19,10 @@ package org.hippoecm.frontend;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.service.NavAppSettings;
 
 public class NavAppPanel extends Panel {
 
@@ -28,12 +30,11 @@ public class NavAppPanel extends Panel {
 
     private final HeaderItem navAppHeaderItem;
 
-    public NavAppPanel(final String id, final HeaderItem navAppHeaderItem) {
+    public NavAppPanel(String id, NavAppSettings navAppSettings) {
         super(id);
-        this.navAppHeaderItem = navAppHeaderItem;
+        this.navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettings), NAVAPP_HEADER_ITEM);
         add(new HeaderResponseContainer(NAVAPP_HEADER_ITEM, NAVAPP_HEADER_ITEM));
     }
-
 
     @Override
     public void renderHead(final IHeaderResponse response) {

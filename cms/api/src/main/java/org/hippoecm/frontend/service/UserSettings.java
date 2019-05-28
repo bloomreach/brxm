@@ -17,12 +17,19 @@
 
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.request.Request;
-import org.apache.wicket.util.io.IClusterable;
+import java.util.TimeZone;
 
-public interface INavAppSettingsService extends IClusterable {
+/**
+ * JavaBean containing the settings of a logged in user.
+ */
+public interface UserSettings {
 
-    String SERVICE_ID = "service.navappsettings";
+    String getUserName();
 
-    NavAppSettings getNavAppSettings(Request request);
+    String getEmail();
+
+    String getLanguage();
+
+    TimeZone getTimeZone();
+
 }

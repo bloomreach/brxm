@@ -15,10 +15,11 @@
  *
  */
 
-package org.hippoecm.frontend;
+package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -28,7 +29,13 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.NavAppSettings;
+import org.hippoecm.frontend.service.NavConfigResource;
+import org.hippoecm.frontend.service.ResourceType;
+import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +44,11 @@ import org.junit.runner.RunWith;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
-public class NavAppSettingFactoryTest extends WicketTester {
+public class NavAppSettingServiceTest extends WicketTester {
 
     @Mock
     private ServletWebRequest request;
@@ -49,36 +57,49 @@ public class NavAppSettingFactoryTest extends WicketTester {
     @Mock
     private PluginUserSession userSession;
     @Mock
-    private INavAppSettingsService navAppSettingsService;
+    private IPluginContext context;
+    @Mock
+    private IPluginConfig config;
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
 
-    private NavAppSettingFactory navAppSettingFactory;
+    private INavAppSettingsService navAppSettingsService;
 
     @Before
     public void setUp() throws Exception {
 
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         replay(request);
+
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
         expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(host);
         replay(servletRequest);
+
         expect(userSession.getUserName()).andReturn("userName");
         expect(userSession.getLocale()).andReturn(Locale.CANADA);
         expect(userSession.getTimeZone()).andReturn(TimeZone.getDefault());
         replay(userSession);
-        expect(navAppSettingsService.getNavConfigResources()).andReturn(Collections.emptyList());
-        replay(navAppSettingsService);
 
-        this.navAppSettingFactory = new NavAppSettingFactory(navAppSettingsService);
+        expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
+        expect(config.getPluginConfigSet()).andReturn(Collections.emptySet());
+        replay(config);
+
+        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
+
+
     }
 
     @Test
     public void navapp_and_brxm_location_same_if_system_property_not_set() {
-        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(request, userSession);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host)));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
+
+        testUserSettingsAssertions(navAppSettings.getUserSettings());
+        testNavConfigResourceAssertions(navAppSettings.getAppSettings().getNavConfigResources());
     }
 
 
@@ -86,12 +107,29 @@ public class NavAppSettingFactoryTest extends WicketTester {
     public void navapp_and_brxm_location_different_if_system_property_set() {
 
         final URI navAppLocation = URI.create("https://www.abc.xy:1010/somewhere-far-away");
-        System.setProperty(NavAppSettingFactory.NAVAPP_LOCATION, navAppLocation.toString());
+        System.setProperty(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY, navAppLocation.toString());
 
-        final NavAppSettings navAppSettings = navAppSettingFactory.newInstance(request, userSession);
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(navAppLocation));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
 
-        System.getProperties().remove(NavAppSettingFactory.NAVAPP_LOCATION);
+        testUserSettingsAssertions(navAppSettings.getUserSettings());
+        testNavConfigResourceAssertions(navAppSettings.getAppSettings().getNavConfigResources());
+
+        System.getProperties().remove(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY);
     }
+
+
+    private void testUserSettingsAssertions(UserSettings userSettings) {
+        assertThat(userSettings.getUserName(), is("userName"));
+        assertThat(userSettings.getLanguage(), is(Locale.CANADA.getLanguage()));
+        assertThat(userSettings.getTimeZone(), is(TimeZone.getDefault()));
+        assertThat(userSettings.getEmail(), is(nullValue()));
+    }
+
+    private void testNavConfigResourceAssertions(List<NavConfigResource> navConfigResources) {
+        assertThat(navConfigResources.size(), is(1));
+        assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));
+    }
+
 }
