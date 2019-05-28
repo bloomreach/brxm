@@ -42,6 +42,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -187,7 +188,7 @@ public class NamespaceUtilsTest {
 
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
         expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
-        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), anyObject())).andReturn(new String[0]);
+        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), aryEq(new String[0]))).andReturn(new String[0]);
         replayAll();
 
         final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
@@ -197,7 +198,7 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getNodeTypeValidatorNamesSuccesfully() throws RepositoryException {
+    public void getNodeTypeValidatorNamesSuccessfully() throws RepositoryException {
         final Node contentTypeRootNode = createMock(Node.class);
         final Node nodeTypeNode = createMock(Node.class);
         final String[] validators = {"a", "b"};

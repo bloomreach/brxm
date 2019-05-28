@@ -206,6 +206,7 @@ public class ValidationUtilsTest {
         final boolean valid = ValidationUtils.validateDocument(document, docType, draft, userContext);
         assertFalse(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(3));
+        assertThat(document.getInfo().getErrorMessages(), equalTo(Collections.singletonList("error in document")));
 
         verifyAll();
     }
