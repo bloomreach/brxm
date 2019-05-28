@@ -20,7 +20,7 @@ import java.util.Calendar;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.repository.util.DateConstants;
 
 public abstract class AbstractDateFieldType extends PropertyFieldType {

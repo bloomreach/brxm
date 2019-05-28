@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.content.document.model;
 
+import java.util.List;
+
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -29,7 +31,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Type {@code type} attribute refers to the document's {@link DocumentType} by id.
  */
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@JsonIgnoreProperties(value = "errorCount", allowGetters = true) // only return the error count, never let clients set it
+// only return the error count and error messages, never let clients set it
+@JsonIgnoreProperties(value = {"errorCount", "errorMessages"}, allowGetters = true)
 public class DocumentInfo {
 
     // enveloped reference to document type: { id: "namespace:typename" }
@@ -40,6 +43,10 @@ public class DocumentInfo {
 
     // the number of validation errors
     private int errorCount;
+
+    // human-readable messages of document-level validation errors
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<String> errorMessages;
 
     // maps to hippostd:publishableSummary (new, live, changed, or unknown)
     private PublicationState publicationState;
@@ -84,6 +91,14 @@ public class DocumentInfo {
 
     public void setErrorCount(final int errorCount) {
         this.errorCount = errorCount;
+    }
+
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void setErrorMessages(final List<String> errorMessages) {
+        this.errorMessages = errorMessages;
     }
 
     public PublicationState getPublicationState() {

@@ -32,7 +32,7 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;

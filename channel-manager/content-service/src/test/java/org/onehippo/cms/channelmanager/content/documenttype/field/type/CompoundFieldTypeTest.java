@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;

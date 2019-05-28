@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +41,9 @@ public class DocumentType {
     private final List<FieldType> fields; // ordered list of fields
 
     @JsonInclude(Include.NON_EMPTY)
+    private final Set<String> validatorNames; // names of document validators
+
+    @JsonInclude(Include.NON_EMPTY)
     private Set<String> unsupportedFieldTypes = null; // for reporting purposes
 
     @JsonInclude(Include.NON_EMPTY)
@@ -47,6 +51,7 @@ public class DocumentType {
 
     public DocumentType() {
         fields = new ArrayList<>();
+        validatorNames = new LinkedHashSet<>();
     }
 
     public String getId() {
@@ -83,6 +88,14 @@ public class DocumentType {
 
     public List<FieldType> getFields() {
         return fields;
+    }
+
+    public Set<String> getValidatorNames() {
+        return validatorNames;
+    }
+
+    public void addValidatorName(final String validatorName) {
+        validatorNames.add(validatorName);
     }
 
     public Set<String> getUnsupportedFieldTypes() {

@@ -56,8 +56,9 @@ import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUti
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -105,6 +106,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
         FieldTypeUtils.class,
         FolderUtils.class,
         JcrUtils.class,
+        ValidationUtils.class,
         WorkflowUtils.class
 })
 public class DocumentsServiceImplTest {
@@ -135,6 +137,7 @@ public class DocumentsServiceImplTest {
         PowerMock.mockStatic(FieldTypeUtils.class);
         PowerMock.mockStatic(FolderUtils.class);
         PowerMock.mockStatic(JcrUtils.class);
+        PowerMock.mockStatic(ValidationUtils.class);
         PowerMock.mockStatic(WorkflowUtils.class);
 
         info = new NewDocumentInfo();
@@ -146,7 +149,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void obtainEditableDocumentNotAHandle() throws Exception {
+    public void obtainEditableDocumentNotAHandle() {
         final String uuid = "uuid";
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         replayAll();
@@ -162,7 +165,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void obtainEditableDocumentNoNodeType() throws Exception {
+    public void obtainEditableDocumentNoNodeType() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
@@ -182,7 +185,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void obtainEditableDocumentDeleted() throws Exception {
+    public void obtainEditableDocumentDeleted() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
@@ -202,7 +205,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void obtainEditableDocumentNoWorkflow() throws Exception {
+    public void obtainEditableDocumentNoWorkflow() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
@@ -561,7 +564,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableDocumentNotAHandle() throws Exception {
+    public void updateEditableDocumentNotAHandle() {
         final Document document = new Document();
         final String uuid = "uuid";
 
@@ -580,7 +583,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableDocumentNoWorkflow() throws Exception {
+    public void updateEditableDocumentNoWorkflow() {
         final Document document = new Document();
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
@@ -605,7 +608,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableDocumentDraftVariantNotFound() throws Exception {
+    public void updateEditableDocumentDraftVariantNotFound() {
         final Document document = new Document();
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
@@ -842,7 +845,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(1);
+        expect(ValidationUtils.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(false);
 
         replayAll();
 
@@ -882,7 +885,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtils.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 
@@ -935,7 +938,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtils.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 
@@ -984,7 +987,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtils.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 
@@ -1000,7 +1003,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableFieldNotAHandle() throws Exception {
+    public void updateEditableFieldNotAHandle() {
         final String uuid = "uuid";
         final FieldPath fieldPath = new FieldPath("ns:field");
         final List<FieldValue> fieldValues = Collections.singletonList(new FieldValue("drafted value"));
@@ -1020,7 +1023,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableFieldNoWorkflow() throws Exception {
+    public void updateEditableFieldNoWorkflow() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final FieldPath fieldPath = new FieldPath("ns:field");
@@ -1046,7 +1049,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateEditableFieldVariantNotFound() throws Exception {
+    public void updateEditableFieldVariantNotFound() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
@@ -1439,37 +1442,37 @@ public class DocumentsServiceImplTest {
 
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutName() throws Exception {
+    public void createDocumentWithoutName() {
         info.setName("");
         documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutSlug() throws Exception {
+    public void createDocumentWithoutSlug() {
         info.setSlug("");
         documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutDocumentTemplateQuery() throws Exception {
+    public void createDocumentWithoutDocumentTemplateQuery() {
         info.setDocumentTemplateQuery("");
         documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutDocumentTypeId() throws Exception {
+    public void createDocumentWithoutDocumentTypeId() {
         info.setDocumentTypeId("");
         documentsService.createDocument(info, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void createDocumentWithoutRootPath() throws Exception {
+    public void createDocumentWithoutRootPath() {
         info.setRootPath("");
         documentsService.createDocument(info, userContext);
     }
 
     @Test
-    public void createDocumentWithExistingName() throws Exception {
+    public void createDocumentWithExistingName() {
         final Node folderNode = createMock(Node.class);
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1494,7 +1497,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDocumentWithExistingSlug() throws Exception {
+    public void createDocumentWithExistingSlug() {
         final Node folderNode = createMock(Node.class);
         expect(FolderUtils.getFolder(eq("/content/documents/channel/news"), eq(session)))
                 .andReturn(folderNode);
@@ -1741,20 +1744,20 @@ public class DocumentsServiceImplTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void updateDocumentNamesWithoutDisplayName() throws Exception {
+    public void updateDocumentNamesWithoutDisplayName() {
         final Document document = new Document();
         documentsService.updateDocumentNames("uuid", MASTER_BRANCH_ID, document, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void updateDocumentNamesWithoutUrlName() throws Exception {
+    public void updateDocumentNamesWithoutUrlName() {
         final Document document = new Document();
         document.setDisplayName("Breaking News");
         documentsService.updateDocumentNames("uuid", MASTER_BRANCH_ID, document, userContext);
     }
 
     @Test(expected = BadRequestException.class)
-    public void updateDocumentNamesNotAHandle() throws Exception {
+    public void updateDocumentNamesNotAHandle() {
         final String uuid = "uuid";
         final Document document = new Document();
 
@@ -1765,7 +1768,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDocumentNamesUrlNameClashes() throws Exception {
+    public void updateDocumentNamesUrlNameClashes() {
         final String uuid = "uuid";
         final String urlName = "new name";
         final String encodedUrlName = "new-name";
@@ -1837,7 +1840,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDocumentNamesDisplayNameOnlyAndClashes() throws Exception {
+    public void updateDocumentNamesDisplayNameOnlyAndClashes() {
         final String uuid = "uuid";
         final String displayName = "New Name";
         final String encodedDisplayName = "New Name (encoded)";
@@ -1871,7 +1874,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDocumentNamesDisplayNameOnly() throws Exception {
+    public void updateDocumentNamesDisplayNameOnly() {
         final String uuid = "uuid";
         final String displayName = "New Name";
         final String encodedDisplayName = "New Name (encoded)";
@@ -1958,7 +1961,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDocumentNamesBothDisplayNameClashes() throws Exception {
+    public void updateDocumentNamesBothDisplayNameClashes() {
         final String uuid = "uuid";
         final String displayName = "New Name";
         final String encodedDisplayName = "New Name (encoded)";
@@ -1993,7 +1996,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteDocumentNotAHandle() throws Exception {
+    public void deleteDocumentNotAHandle() {
         final String uuid = "uuid";
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
@@ -2003,7 +2006,7 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void deleteDocumentNoWorkflow() throws Exception {
+    public void deleteDocumentNoWorkflow() {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 

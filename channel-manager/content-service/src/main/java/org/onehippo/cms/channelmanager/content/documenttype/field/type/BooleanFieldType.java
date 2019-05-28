@@ -18,7 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 
 public class BooleanFieldType extends PropertyFieldType {
     private static final String DEFAULT_VALUE = "false";

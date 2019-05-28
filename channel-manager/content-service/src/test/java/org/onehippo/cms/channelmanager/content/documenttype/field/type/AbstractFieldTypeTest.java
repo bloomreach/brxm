@@ -16,8 +16,10 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,9 +34,9 @@ import org.onehippo.cms.channelmanager.content.document.util.FieldPath;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.ValueContext;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -56,7 +58,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtil.class})
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtils.class})
 public class AbstractFieldTypeTest {
 
     private AbstractFieldType fieldType;
@@ -155,10 +157,9 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, String.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, "validator1", one.getValue())).andReturn(true);
-        expect(ValidationUtil.validateValue(one, valueContext, "validator2", one.getValue())).andReturn(true);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(0);
 
         replayAll();
 
@@ -168,7 +169,7 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
-    public void validatorValueFirstBad() {
+    public void validatorValueOneBad() {
         fieldType = createFieldType("field:id", "field:jcr-type", "field:effective-type");
         fieldType.addValidatorName("validator1");
         fieldType.addValidatorName("validator2");
@@ -179,9 +180,9 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, String.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, "validator1", one.getValue())).andReturn(false);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(1);
 
         replayAll();
 
@@ -191,7 +192,7 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
-    public void validatorValueSecondBad() {
+    public void validatorValueTwoBad() {
         fieldType = createFieldType("field:id", "field:jcr-type", "field:effective-type");
         fieldType.addValidatorName("validator1");
         fieldType.addValidatorName("validator2");
@@ -202,14 +203,13 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, String.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, "validator1", one.getValue())).andReturn(true);
-        expect(ValidationUtil.validateValue(one, valueContext, "validator2", one.getValue())).andReturn(false);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(2);
 
         replayAll();
 
-        assertViolation(fieldType.validateValue(one, context));
+        assertViolations(fieldType.validateValue(one, context), 2);
 
         verifyAll();
     }
@@ -307,6 +307,10 @@ public class AbstractFieldTypeTest {
         assertThat(fieldType.getHint(), equalTo(hint));
         assertThat(fieldType.getMinValues(), equalTo(min));
         assertThat(fieldType.getMaxValues(), equalTo(max));
+    }
+
+    private static Set<String> set(String... strings) {
+        return new LinkedHashSet<>(Arrays.asList(strings));
     }
 
     private static class TestAbstractFieldType extends AbstractFieldType {

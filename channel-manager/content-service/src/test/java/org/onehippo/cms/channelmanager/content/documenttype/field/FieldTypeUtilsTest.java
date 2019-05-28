@@ -46,7 +46,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.Formatted
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
