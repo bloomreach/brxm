@@ -77,9 +77,9 @@ public class ValidationUtils {
     }
 
     private static int validateType(final DocumentInfo documentInfo,
-                                             final DocumentType docType,
-                                             final Node draftNode,
-                                             final UserContext userContext) {
+                                    final DocumentType docType,
+                                    final Node draftNode,
+                                    final UserContext userContext) {
         final Set<String> validatorNames = docType.getValidatorNames();
         if (validatorNames.isEmpty()) {
             return 0;
