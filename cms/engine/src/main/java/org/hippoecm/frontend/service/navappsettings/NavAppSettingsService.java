@@ -44,7 +44,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String RESOURCE_TYPE = "resource.type";
 
     // To make unit testing easier
-    private final Supplier<PluginUserSession> pluginUserSessionSupplier;
+    private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
 
     NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier) {
         super(context, config);

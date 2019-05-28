@@ -47,7 +47,7 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
 
-    private final NavAppSettings navAppSettings;
+    private final transient NavAppSettings navAppSettings;
 
     public NavAppHeaderItem(final NavAppSettings navAppSettings) {
         this.navAppSettings = navAppSettings;
@@ -115,9 +115,10 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private Stream<String> getCssSrcTagNames() {
         if (WebApplication.get().usesDevelopmentConfig()) {
-            Stream.empty();
+            return Stream.empty();
+        } else {
+            return Stream.of("styles.css");
         }
-        return Stream.of("styles.css");
     }
 
     private HeaderItem getBaseTagHeaderItem(URI navAppLocation) {
