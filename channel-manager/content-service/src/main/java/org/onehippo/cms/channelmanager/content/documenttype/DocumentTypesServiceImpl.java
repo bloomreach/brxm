@@ -24,6 +24,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
@@ -85,6 +86,9 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setCanCreateAllRequiredFields(fieldsInformation.getCanCreateAllRequiredFields());
         docType.setUnsupportedFieldTypes(fieldsInformation.getUnsupportedFieldTypes());
         docType.setUnsupportedRequiredFieldTypes(fieldsInformation.getUnsupportedRequiredFieldTypes());
+
+        NamespaceUtils.getNodeTypeValidatorNames(context.getContentTypeRoot())
+                .forEach(docType::addValidatorName);
 
         return docType;
     }

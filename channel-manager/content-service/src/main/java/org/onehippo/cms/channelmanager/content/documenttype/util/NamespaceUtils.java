@@ -17,15 +17,19 @@
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -62,7 +66,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the root node of a document type's definition in the repository.
+     * Retrieves the root node of a document type's definition in the repository.
      *
      * @param typeId  ID of a document type, e.g. "myhippoproject:newsdocument"
      * @param session system JCR session meant for read-only access
@@ -88,7 +92,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve a content type's nodeType node
+     * Retrieves a content type's nodeType node
      *
      * @param contentTypeRootNode JCR root node of the content type
      * @param allowChildless      when set to false and the nodeType node exists but has no children, ignore it
@@ -103,14 +107,38 @@ public class NamespaceUtils {
                 }
             }
         } catch (RepositoryException e) {
-            log.debug("Failed to find nodeType node for content type '{}'.",
+            log.warn("Failed to find nodeType node for content type '{}'",
                     JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
         }
         return Optional.empty();
     }
 
     /**
-     * Retrieve all editor configuration nodes of a content type, given its root node.
+     * Retrieves a content type's validators
+     *
+     * @param contentTypeRootNode JCR root node of the content type
+     * @return                    the validator names (can be an empty set)
+     */
+    public static Set<String> getNodeTypeValidatorNames(final Node contentTypeRootNode) {
+        try {
+            if (contentTypeRootNode.hasNode(NODE_TYPE_PATH)) {
+                final Node nodeTypeNode = contentTypeRootNode.getNode(NODE_TYPE_PATH);
+                final String[] validatorNames = JcrUtils.getMultipleStringProperty(nodeTypeNode, HippoNodeType.HIPPO_VALIDATORS, ArrayUtils.EMPTY_STRING_ARRAY);
+                if (validatorNames.length > 0) {
+                    final LinkedHashSet<String> result = new LinkedHashSet<>();
+                    Collections.addAll(result, validatorNames);
+                    return result;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to get validator names for content type '{}'",
+                    JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
+        }
+        return Collections.emptySet();
+    }
+
+    /**
+     * Retrieves all editor configuration nodes of a content type, given its root node.
      *
      * We suppress the warning because JCR unfortunately defines NodeIterator to be a subclass
      * of the raw Iterator instead of Iterator<Node>.
@@ -135,7 +163,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the "hipposysedit:path" value from a child node of a nodeType node.
+     * Retrieves the "hipposysedit:path" value from a child node of a nodeType node.
      *
      * @param nodeTypeNode JCR nodeType node of a content type
      * @param fieldName    name of the desired child node
@@ -196,7 +224,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the (CMS) plugin class in use for a specific field.
+     * Retrieves the (CMS) plugin class in use for a specific field.
      *
      * @param editorFieldConfigNode JCR node representing an editor field (or group of fields)
      * @return                      the plugin class name or nothing, wrapped in an Optional
@@ -206,7 +234,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the Wicket ID for a specific field
+     * Retrieves the Wicket ID for a specific field
      *
      * @param editorFieldConfigNode JCR node representing an editor field configuration node
      * @return                      the Wicket ID or nothing, wrapped in an Optional
@@ -216,7 +244,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the "field" property for a specific field
+     * Retrieves the "field" property for a specific field
      *
      * @param editorFieldConfigNode JCR node representing an editor field configuration node
      * @return                      value of the "field" property or nothing, wrapped in an Optional
@@ -226,7 +254,7 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve a sorter for the fields of a content type.
+     * Retrieves a sorter for the fields of a content type.
      *
      * @param contentTypeRootNode JCR node representing the root of a content type definition
      * @return                    Appropriate sorter or nothing, wrapped in an Optional

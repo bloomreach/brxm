@@ -58,6 +58,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -105,6 +106,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
         FieldTypeUtils.class,
         FolderUtils.class,
         JcrUtils.class,
+        ValidationUtil.class,
         WorkflowUtils.class
 })
 public class DocumentsServiceImplTest {
@@ -135,6 +137,7 @@ public class DocumentsServiceImplTest {
         PowerMock.mockStatic(FieldTypeUtils.class);
         PowerMock.mockStatic(FolderUtils.class);
         PowerMock.mockStatic(JcrUtils.class);
+        PowerMock.mockStatic(ValidationUtil.class);
         PowerMock.mockStatic(WorkflowUtils.class);
 
         info = new NewDocumentInfo();
@@ -842,7 +845,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(1);
+        expect(ValidationUtil.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(false);
 
         replayAll();
 
@@ -882,7 +885,7 @@ public class DocumentsServiceImplTest {
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtil.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 
@@ -935,7 +938,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtil.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 
@@ -984,7 +987,7 @@ public class DocumentsServiceImplTest {
         session.save();
         expectLastCall();
 
-        expect(FieldTypeUtils.validateFieldValues(eq(document.getFields()), eq(Collections.emptyList()), anyObject(CompoundContext.class))).andReturn(0);
+        expect(ValidationUtil.validateDocument(eq(document), eq(docType), eq(draft), eq(userContext))).andReturn(true);
 
         replayAll();
 

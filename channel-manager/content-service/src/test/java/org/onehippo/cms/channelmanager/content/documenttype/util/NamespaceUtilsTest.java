@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.util;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -40,15 +41,17 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
@@ -66,7 +69,7 @@ public class NamespaceUtilsTest {
         final Node rootNode = createMock(Node.class);
 
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andReturn(rootNode);
-        replay(session);
+        replayAll();
 
         assertThat(NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).get(), equalTo(rootNode));
     }
@@ -77,7 +80,7 @@ public class NamespaceUtilsTest {
         final Node rootNode = createMock(Node.class);
 
         expect(session.getNode("/hippo:namespaces/system/String")).andReturn(rootNode);
-        replay(session);
+        replayAll();
 
         assertThat(NamespaceUtils.getContentTypeRootNode("String", session).get(), equalTo(rootNode));
     }
@@ -94,7 +97,7 @@ public class NamespaceUtilsTest {
         final Session session = createMock(Session.class);
 
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andThrow(new RepositoryException());
-        replay(session);
+        replayAll();
 
         assertFalse(NamespaceUtils.getContentTypeRootNode("ns:testdocument", session).isPresent());
     }
@@ -105,13 +108,10 @@ public class NamespaceUtilsTest {
 
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
-
-        replayAll(contentTypeRootNode);
+        replayAll();
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
-
-        verify(contentTypeRootNode);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -119,12 +119,10 @@ public class NamespaceUtilsTest {
         final Node contentTypeRootNode = createMock(Node.class);
 
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(false);
-
-        replay(contentTypeRootNode);
+        replayAll();
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
-
-        verify(contentTypeRootNode);
+        verifyAll();
     }
 
     @Test
@@ -134,12 +132,10 @@ public class NamespaceUtilsTest {
 
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
         expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
-
-        replay(contentTypeRootNode);
+        replayAll();
 
         assertThat(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, true).get(), equalTo(nodeTypeNode));
-
-        verify(contentTypeRootNode);
+        verifyAll();
     }
 
     @Test
@@ -150,12 +146,10 @@ public class NamespaceUtilsTest {
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
         expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
         expect(nodeTypeNode.hasNodes()).andReturn(false);
-
-        replay(contentTypeRootNode, nodeTypeNode);
+        replayAll();
 
         assertFalse(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).isPresent());
-
-        verify(contentTypeRootNode, nodeTypeNode);
+        verifyAll();
     }
 
     @Test
@@ -166,12 +160,73 @@ public class NamespaceUtilsTest {
         expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
         expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
         expect(nodeTypeNode.hasNodes()).andReturn(true);
-
-        replay(contentTypeRootNode, nodeTypeNode);
+        replayAll();
 
         assertThat(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).get(), equalTo(nodeTypeNode));
+        verifyAll();
+    }
 
-        verify(contentTypeRootNode, nodeTypeNode);
+    @Test
+    public void getNodeTypeValidatorNamesWithoutNode() throws RepositoryException {
+        final Node contentTypeRootNode = createMock(Node.class);
+
+        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(false);
+        replayAll();
+
+        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
+
+        assertThat(validatorNames, empty());
+        verifyAll();
+
+    }
+
+    @Test
+    public void getNodeTypeValidatorNamesWithoutProperty() throws RepositoryException {
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node nodeTypeNode = createMock(Node.class);
+
+        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
+        expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
+        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), anyObject())).andReturn(new String[0]);
+        replayAll();
+
+        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
+
+        assertThat(validatorNames, empty());
+        verifyAll();
+    }
+
+    @Test
+    public void getNodeTypeValidatorNamesSuccesfully() throws RepositoryException {
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node nodeTypeNode = createMock(Node.class);
+        final String[] validators = {"a", "b"};
+
+        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
+        expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
+        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), anyObject())).andReturn(validators);
+        replayAll();
+
+        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
+
+        assertThat(validatorNames.size(), equalTo(2));
+        assertTrue(validatorNames.contains("a"));
+        assertTrue(validatorNames.contains("b"));
+        verifyAll();
+    }
+
+    @Test
+    public void getNodeTypeValidatorNamesWithRepositoryException() throws RepositoryException {
+        final Node contentTypeRootNode = createMock(Node.class);
+
+        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/");
+        replayAll();
+
+        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
+
+        assertThat(validatorNames, empty());
+        verifyAll();
     }
 
     @Test
@@ -180,14 +235,10 @@ public class NamespaceUtilsTest {
 
         expect(contentTypeRootNode.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/bla");
-
         replayAll();
-        replay(contentTypeRootNode);
 
-        assertTrue(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode).isEmpty());
-
-        verify(contentTypeRootNode);
-        PowerMock.verifyAll();
+        assertThat(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode), empty());
+        verifyAll();
     }
 
     @Test
@@ -195,12 +246,10 @@ public class NamespaceUtilsTest {
         final Node contentTypeRootNode = createMock(Node.class);
 
         expect(contentTypeRootNode.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(false);
+        replayAll();
 
-        replay(contentTypeRootNode);
-
-        assertTrue(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode).isEmpty());
-
-        verify(contentTypeRootNode);
+        assertThat(NamespaceUtils.getEditorFieldConfigNodes(contentTypeRootNode), empty());
+        verifyAll();
     }
 
     @Test
@@ -226,14 +275,10 @@ public class NamespaceUtilsTest {
 
         expect(nodeTypeNode.hasNode("fieldName")).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(nodeTypeNode)).andReturn("/bla");
-
         replayAll();
-        replay(nodeTypeNode);
 
         assertFalse(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName").isPresent());
-
-        verify(nodeTypeNode);
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -241,12 +286,10 @@ public class NamespaceUtilsTest {
         final Node nodeTypeNode = createMock(Node.class);
 
         expect(nodeTypeNode.hasNode("fieldName")).andReturn(false);
-
-        replay(nodeTypeNode);
+        replayAll();
 
         assertFalse(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName").isPresent());
-
-        verify(nodeTypeNode);
+        verifyAll();
     }
 
     @Test
@@ -260,12 +303,10 @@ public class NamespaceUtilsTest {
         expect(fieldNode.hasProperty(HippoNodeType.HIPPO_PATH)).andReturn(true);
         expect(fieldNode.getProperty(HippoNodeType.HIPPO_PATH)).andReturn(property);
         expect(property.getString()).andReturn("/path");
-
-        replay(nodeTypeNode, fieldNode, property);
+        replayAll();
 
         assertThat(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName").get(), equalTo("/path"));
-
-        verify(nodeTypeNode, fieldNode, property);
+        verifyAll();
     }
 
     @Test
@@ -303,22 +344,21 @@ public class NamespaceUtilsTest {
         expect(contentTypeEditorConfigNode.getProperty(propertyName)).andReturn(property);
         expect(property.getString()).andReturn("256");
 
-        replay(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        replayAll();
 
         assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
-        verify(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        verifyAll();
     }
 
     @Test
     public void getConfigPropertyNoClusterOptionsFromType() throws Exception {
         final String propertyName = "maxlength";
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
-        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
-        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
-        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node contentTypeEditorConfigNode = createMock(Node.class);
         final Property property = createMock(Property.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", "hippo:fieldtype",
@@ -334,23 +374,21 @@ public class NamespaceUtilsTest {
         expect(contentTypeEditorConfigNode.getProperty(propertyName)).andReturn(property);
         expect(property.getString()).andReturn("256");
 
-        replay(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        replayAll();
 
         assertThat(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).get(),
                 equalTo("256"));
 
-        verify(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        verifyAll();
     }
 
     @Test
     public void getConfigPropertyNoClusterOptionsNotInType() throws Exception {
         final String propertyName = "maxlength";
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final Node editorFieldConfigNode = createMock("editorFieldConfigNode", Node.class);
-        final Node clusterOptionsNode = createMock("clusterOptionNode", Node.class);
-        final Node contentTypeRootNode = createMock("contentTypeRootNode", Node.class);
-        final Node contentTypeEditorConfigNode = createMock("contentTypeEditorConfigNode", Node.class);
-        final Property property = createMock(Property.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node contentTypeRootNode = createMock(Node.class);
+        final Node contentTypeEditorConfigNode = createMock(Node.class);
         final Session session = createMock(Session.class);
         final FieldTypeContext fieldContext = new FieldTypeContext("fieldName", "hippo:fieldtype", "hippo:fieldtype",
                 true, false, Collections.emptyList(), parentContext, editorFieldConfigNode);
@@ -363,11 +401,11 @@ public class NamespaceUtilsTest {
         expect(contentTypeRootNode.getNode("editor:templates/_default_")).andReturn(contentTypeEditorConfigNode);
         expect(contentTypeEditorConfigNode.hasProperty(propertyName)).andReturn(false);
 
-        replay(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        replayAll();
 
         assertFalse(NamespaceUtils.getConfigProperty(fieldContext, propertyName, JcrStringReader.get()).isPresent());
 
-        verify(parentContext, editorFieldConfigNode, clusterOptionsNode, contentTypeRootNode, contentTypeEditorConfigNode, property, session);
+        verifyAll();
     }
 
     @Test
@@ -379,7 +417,7 @@ public class NamespaceUtilsTest {
         expect(editorFieldNode.hasProperty("plugin.class")).andReturn(true);
         expect(editorFieldNode.getProperty("plugin.class")).andReturn(property);
         expect(property.getString()).andReturn(pluginClass);
-        replay(editorFieldNode, property);
+        replayAll();
 
         assertThat(NamespaceUtils.getPluginClassForField(editorFieldNode).get(), equalTo(pluginClass));
     }
@@ -389,7 +427,7 @@ public class NamespaceUtilsTest {
         final Node editorFieldNode = createMock(Node.class);
 
         expect(editorFieldNode.hasProperty("plugin.class")).andReturn(false);
-        replay(editorFieldNode);
+        replayAll();
 
         assertFalse(NamespaceUtils.getPluginClassForField(editorFieldNode).isPresent());
     }
@@ -413,11 +451,11 @@ public class NamespaceUtilsTest {
         expect(editorFieldNode.hasProperty("wicket.id")).andReturn(true);
         expect(editorFieldNode.getProperty("wicket.id")).andReturn(property);
         expect(property.getString()).andReturn("WicketID");
-        replay(editorFieldNode, property);
+        replayAll();
 
         assertThat(NamespaceUtils.getWicketIdForField(editorFieldNode).get(), equalTo("WicketID"));
 
-        verify(editorFieldNode, property);
+        verifyAll();
     }
 
     @Test
@@ -428,11 +466,11 @@ public class NamespaceUtilsTest {
         expect(editorFieldNode.hasProperty("field")).andReturn(true);
         expect(editorFieldNode.getProperty("field")).andReturn(property);
         expect(property.getString()).andReturn("fieldName");
-        replay(editorFieldNode, property);
+        replayAll();
 
         assertThat(NamespaceUtils.getFieldProperty(editorFieldNode).get(), equalTo("fieldName"));
 
-        verify(editorFieldNode, property);
+        verifyAll();
     }
 
     @Test
@@ -497,7 +535,7 @@ public class NamespaceUtilsTest {
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(true);
         expect(root.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(editorNode);
         expect(editorNode.hasNode("root")).andReturn(false);
-        replay(root, editorNode);
+        replayAll();
 
         assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
@@ -507,7 +545,7 @@ public class NamespaceUtilsTest {
         final Node root = createMock(Node.class);
 
         expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(false);
-        replay(root);
+        replayAll();
 
         assertFalse(NamespaceUtils.retrieveFieldSorter(root).isPresent());
     }

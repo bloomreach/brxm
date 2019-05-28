@@ -54,8 +54,9 @@ import org.onehippo.cms.channelmanager.content.document.util.HintsUtils;
 import org.onehippo.cms.channelmanager.content.document.util.PublicationStateUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ConflictException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -267,10 +268,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
 
-        final CompoundContext documentContext = new CompoundContext(draftNode, draftNode, userContext.getLocale(), userContext.getTimeZone());
-        final int violationCount = FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields(), documentContext);
-        if (violationCount > 0) {
-            document.getInfo().setErrorCount(violationCount);
+        if (!ValidationUtil.validateDocument(document, docType, draftNode, userContext)) {
             throw new BadRequestException(document);
         }
 

@@ -17,12 +17,15 @@
 ^Value of hint action \'.+\' is expected to be boolean but it was \'.+\'
 Cancel request received but no pending request found for 'uuid'.
 Cannot change the URL name of document
+Cannot create validation context
 Cannot determine publication state of document handle
 Cannot load ValidationService from service registry, field validation will be disabled
 Cannot read config of field
 Could not determine publication state of document
 Document workflow action 'actionNotYetImplemented' is not implemented
 Empty contextPath
+Error while validating field 'myproject:field' of type 'String', assuming it's valid
+Error while validating node '/example' with validator 'bad', assuming it's valid
 Failed reading hints from workflow
 Failed to add category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to add document 'breaking-news' of type 'project:newsdocument' to folder '/content/documents/channel/news' using template query 'new-news-document'
@@ -44,9 +47,11 @@ Failed to dispose of editable instance
 Failed to erase document 'uuid'
 Failed to execute 'add' with category 'new-folder', type 'hippostd:folder' and relPath 'test'
 Failed to execute template query 'new-document'
+Failed to find nodeType node for content type '/bla'
 Failed to find validator 'unknown', ignoring it
 Failed to get folder '/test'
 Failed to get or create folder 'test' below 'null'
+Failed to get validator names for content type '/'
 Failed to load validator
 Failed to obtain draft for user 'bla'.
 Failed to persist changes
