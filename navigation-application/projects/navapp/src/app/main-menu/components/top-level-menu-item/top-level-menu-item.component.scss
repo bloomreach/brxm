@@ -113,7 +113,14 @@
   white-space: nowrap;
 }
 
-// Force color of home svg icon, should be fixed in svg by designer
-:host:first-child .mat-icon {
-  color: $white;
+// Specific styling for the bloomreach logo in the first item
+:host.home {
+  .mat-icon,
+  .active {
+    color: $white;
+  }
+
+  .active:hover .mat-icon {
+    color: $menu-hover-text-color;
+  }
 }
