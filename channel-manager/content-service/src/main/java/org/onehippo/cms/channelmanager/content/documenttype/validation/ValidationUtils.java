@@ -42,11 +42,11 @@ import org.onehippo.cms.services.validation.api.internal.ValueContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ValidationUtil {
+public class ValidationUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidationUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ValidationUtils.class);
 
-    private ValidationUtil() {
+    private ValidationUtils() {
     }
 
     /**

@@ -63,7 +63,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest(FieldTypeUtils.class)
-public class ValidationUtilTest {
+public class ValidationUtilsTest {
 
     @Before
     public void setUp() {
@@ -81,7 +81,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final boolean valid = ValidationUtil.validateDocument(document, docType, draftNode, userContext);
+        final boolean valid = ValidationUtils.validateDocument(document, docType, draftNode, userContext);
         assertTrue(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(0));
 
@@ -102,7 +102,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        ValidationUtil.validateDocument(document, docType, draftNode, userContext);
+        ValidationUtils.validateDocument(document, docType, draftNode, userContext);
         final CompoundContext documentContext = context.getValue();
 
         assertThat(documentContext.getNode(), equalTo(draftNode));
@@ -123,7 +123,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final boolean valid = ValidationUtil.validateDocument(document, docType, draftNode, userContext);
+        final boolean valid = ValidationUtils.validateDocument(document, docType, draftNode, userContext);
         assertFalse(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(1));
 
@@ -153,7 +153,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        ValidationUtil.validateDocument(document, docType, draft, userContext);
+        ValidationUtils.validateDocument(document, docType, draft, userContext);
         final ValueContext typeContext = context.getValue();
 
         assertThat(typeContext.getJcrName(), equalTo("example"));
@@ -181,7 +181,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        ValidationUtil.validateDocument(document, docType, draftNode, userContext);
+        ValidationUtils.validateDocument(document, docType, draftNode, userContext);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final boolean valid = ValidationUtil.validateDocument(document, docType, draft, userContext);
+        final boolean valid = ValidationUtils.validateDocument(document, docType, draft, userContext);
         assertFalse(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(3));
 
@@ -230,7 +230,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final boolean valid = ValidationUtil.validateDocument(document, docType, draft, userContext);
+        final boolean valid = ValidationUtils.validateDocument(document, docType, draft, userContext);
         assertFalse(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(1));
         assertThat(document.getInfo().getErrorMessages(), equalTo(Collections.singletonList("error in document")));
@@ -261,7 +261,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final boolean valid = ValidationUtil.validateDocument(document, docType, draft, userContext);
+        final boolean valid = ValidationUtils.validateDocument(document, docType, draft, userContext);
         assertFalse(valid);
         assertThat(document.getInfo().getErrorCount(), equalTo(1));
         assertThat(document.getInfo().getErrorMessages(), equalTo(Collections.singletonList("error in document")));
@@ -274,7 +274,7 @@ public class ValidationUtilTest {
         final FieldValue fieldValue = new FieldValue();
         final ValueContext context = createMock(ValueContext.class);
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, Collections.emptySet(), "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, Collections.emptySet(), "data");
 
         assertThat(violations, equalTo(0));
     }
@@ -288,7 +288,7 @@ public class ValidationUtilTest {
         expect(FieldTypeUtils.getValidator("validatorName")).andReturn(validator);
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, Collections.singleton("validatorName"), "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, Collections.singleton("validatorName"), "data");
         assertThat(violations, equalTo(0));
         verifyAll();
     }
@@ -302,7 +302,7 @@ public class ValidationUtilTest {
         expect(FieldTypeUtils.getValidator("validatorName")).andReturn(validator);
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, Collections.singleton("validatorName"), "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, Collections.singleton("validatorName"), "data");
         assertThat(violations, equalTo(1));
         assertThat(fieldValue.getErrorInfo().getValidation(), equalTo("validatorName"));
         assertThat(fieldValue.getErrorInfo().getMessage(), equalTo("Always bad"));
@@ -319,7 +319,7 @@ public class ValidationUtilTest {
         expect(FieldTypeUtils.getValidator("first")).andReturn(firstValidator);
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, validators, "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, validators, "data");
         assertThat(violations, equalTo(1));
         assertThat(fieldValue.getErrorInfo().getValidation(), equalTo("first"));
         assertThat(fieldValue.getErrorInfo().getMessage(), equalTo("Always bad"));
@@ -338,7 +338,7 @@ public class ValidationUtilTest {
         expect(FieldTypeUtils.getValidator("second")).andReturn(secondValidator);
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, validators, "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, validators, "data");
         assertThat(violations, equalTo(1));
         assertThat(fieldValue.getErrorInfo().getValidation(), equalTo("second"));
         assertThat(fieldValue.getErrorInfo().getMessage(), equalTo("Always bad"));
@@ -356,7 +356,7 @@ public class ValidationUtilTest {
         expect(FieldTypeUtils.getValidator("second")).andReturn(validator);
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, validators, "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, validators, "data");
         assertThat(violations, equalTo(1));
         assertThat(fieldValue.getErrorInfo().getValidation(), equalTo("second"));
         assertThat(fieldValue.getErrorInfo().getMessage(), equalTo("Always bad"));
@@ -379,7 +379,7 @@ public class ValidationUtilTest {
 
         replayAll();
 
-        final int violations = ValidationUtil.validateValue(fieldValue, context, validators, "data");
+        final int violations = ValidationUtils.validateValue(fieldValue, context, validators, "data");
         assertThat(violations, equalTo(1));
         assertThat(fieldValue.getErrorInfo().getValidation(), equalTo("second"));
         assertThat(fieldValue.getErrorInfo().getMessage(), equalTo("Always bad"));

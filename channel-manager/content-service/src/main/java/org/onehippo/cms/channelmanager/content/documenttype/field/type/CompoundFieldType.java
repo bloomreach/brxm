@@ -29,7 +29,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
 
 public class CompoundFieldType extends NodeFieldType {
@@ -109,7 +109,7 @@ public class CompoundFieldType extends NodeFieldType {
 
         final Object validatedValue = context.getNode();
         final ValueContext valueContext = context.getValueContext(getId(), getJcrType(), getEffectiveType());
-        return ValidationUtil.validateValue(value, valueContext, getValidatorNames(), validatedValue);
+        return ValidationUtils.validateValue(value, valueContext, getValidatorNames(), validatedValue);
     }
 
 }

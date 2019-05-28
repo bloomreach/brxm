@@ -36,7 +36,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.ValueContext;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -58,7 +58,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtil.class})
+@PrepareForTest({LocalizationUtils.class, FieldTypeUtils.class, ValidationUtils.class})
 public class AbstractFieldTypeTest {
 
     private AbstractFieldType fieldType;
@@ -157,9 +157,9 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(0);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(0);
 
         replayAll();
 
@@ -180,9 +180,9 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(1);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(1);
 
         replayAll();
 
@@ -203,9 +203,9 @@ public class AbstractFieldTypeTest {
                 .andReturn(valueContext);
 
         final FieldValue one = new FieldValue("one");
-        mockStaticPartial(ValidationUtil.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
+        mockStaticPartial(ValidationUtils.class, "validateValue", FieldValue.class, ValueContext.class, Set.class,
                 Object.class);
-        expect(ValidationUtil.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(2);
+        expect(ValidationUtils.validateValue(one, valueContext, set("validator1", "validator2"), one.getValue())).andReturn(2);
 
         replayAll();
 

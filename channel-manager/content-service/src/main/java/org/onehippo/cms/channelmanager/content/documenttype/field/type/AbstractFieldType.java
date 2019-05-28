@@ -31,7 +31,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeConte
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.validation.CompoundContext;
-import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtil;
+import org.onehippo.cms.channelmanager.content.documenttype.validation.ValidationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
@@ -257,6 +257,6 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         final Object validatedValue = getValidatedValue(value, context);
         final ValueContext valueContext = context.getValueContext(getId(), jcrType, effectiveType);
-        return ValidationUtil.validateValue(value, valueContext, validatorNames, validatedValue);
+        return ValidationUtils.validateValue(value, valueContext, validatorNames, validatedValue);
     }
 }
