@@ -57,6 +57,13 @@ class ContentEditorCtrl {
     return this.ContentEditor.getDocument().info.locale;
   }
 
+  getDocumentErrorMessages() {
+    if (!this.isEditing()) {
+      return [];
+    }
+    return this.ContentEditor.getDocument().info.errorMessages || [];
+  }
+
   getError() {
     return this.ContentEditor.getError();
   }
