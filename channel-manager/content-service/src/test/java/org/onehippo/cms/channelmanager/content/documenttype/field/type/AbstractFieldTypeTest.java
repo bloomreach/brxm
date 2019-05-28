@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.services.validation.api.ValueContext;
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -46,10 +48,10 @@ import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectLastCall;
 import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -64,6 +66,7 @@ public class AbstractFieldTypeTest {
     @Before
     public void setup() {
         fieldType = new TestAbstractFieldType();
+        fieldType.setType(FieldType.Type.HTML);
     }
 
     @Test
@@ -273,8 +276,61 @@ public class AbstractFieldTypeTest {
     }
 
     @Test
+    public void initSupportLegacyResourceRequiredValidator() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .validators(Collections.singletonList("resource-required"))
+                .build();
+
+        // expect that the legacy validator name is mapped to a valid one
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("required"));
+        expectLastCall();
+
+        replayAll();
+
+        fieldType.init(fieldContext);
+        
+        verifyAll();
+    }
+
+    @Test
+    public void initSupportLegacyCombinedValidators() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .validators(Arrays.asList("non-empty", "required"))
+                .build();
+
+        // expect that the legacy validators combination are mapped to one valid one
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("required"));
+        expectLastCall();
+
+        replayAll();
+
+        fieldType.init(fieldContext);
+        
+        verifyAll();
+    }
+
+    @Test
+    public void initSupportLegacyHtmlNonEmptyValidator() {
+        final FieldTypeContext fieldContext = new MockFieldTypeContext.Builder(fieldType)
+                .validators(Collections.singletonList("non-empty"))
+                .build();
+
+        // expect that the legacy validators combination are mapped to one valid one
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
+        FieldTypeUtils.determineValidators(fieldType, fieldContext, Collections.singletonList("non-empty-html"));
+        expectLastCall();
+
+        replayAll();
+
+        fieldType.init(fieldContext);
+        
+        verifyAll();
+    }
+
+    @Test
     public void type() {
-        assertNull(fieldType.getType());
         fieldType.setType(FieldType.Type.MULTILINE_STRING);
         assertThat(fieldType.getType(), equalTo(FieldType.Type.MULTILINE_STRING));
     }
