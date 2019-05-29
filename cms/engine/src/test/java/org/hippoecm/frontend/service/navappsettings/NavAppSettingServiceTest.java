@@ -25,10 +25,12 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.wicket.ThreadContext;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -40,6 +42,7 @@ import org.hippoecm.frontend.service.NavConfigResource;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +56,7 @@ import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
-public class NavAppSettingServiceTest extends WicketTester {
+public class NavAppSettingServiceTest {
 
     @Mock
     private ServletWebRequest request;
@@ -68,8 +71,14 @@ public class NavAppSettingServiceTest extends WicketTester {
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
+    private final String contextPath = "/context-path";
 
     private INavAppSettingsService navAppSettingsService;
+
+    @Mock
+    private WebApplication webApplication;
+    @Mock
+    private ServletContext servletContext;
 
     @Before
     public void setUp() {
@@ -93,15 +102,24 @@ public class NavAppSettingServiceTest extends WicketTester {
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
 
+        expect(webApplication.getServletContext()).andReturn(servletContext).anyTimes();
+        replay(webApplication);
+        expect(servletContext.getContextPath()).andReturn(contextPath).anyTimes();
+        replay(servletContext);
+        ThreadContext.setApplication(webApplication);
+    }
 
+    @After
+    public void tearDown() {
+        ThreadContext.setApplication(null);
     }
 
     @Test
     public void navapp_and_brxm_location_same_if_system_property_not_set() {
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host)));
-        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
+        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host + contextPath)));
+        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
         testAppSettingsAssertions(navAppSettings.getAppSettings());
@@ -116,7 +134,7 @@ public class NavAppSettingServiceTest extends WicketTester {
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(navAppLocation));
-        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
+        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
         testAppSettingsAssertions(navAppSettings.getAppSettings());
@@ -143,7 +161,7 @@ public class NavAppSettingServiceTest extends WicketTester {
         testAppSettingsAssertions(navAppSettings.getAppSettings());
 
         final NavConfigResource iframeResource = navConfigResources.stream().filter(r -> ResourceType.IFRAME == r.getResourceType()).findFirst().orElseThrow(() -> new RuntimeException("IFRAME resource not found"));
-        assertThat(iframeResource.getUrl(), is("some-other-url1/?parent=" + navAppSettings.getAppSettings().getBrXmLocation()));
+        assertThat(iframeResource.getUrl(), is("some-other-url1/?parent=" + scheme + "://" + host));
     }
 
 
@@ -155,12 +173,11 @@ public class NavAppSettingServiceTest extends WicketTester {
     }
 
     private void testAppSettingsAssertions(AppSettings appSettings) {
-        // I would like to mock the servlet context, but I don't see an easy way to do that with the WicketTester
-        assertThat(appSettings.getContextPath(), is(""));
-
+        assertThat(appSettings.getContextPath(), is(contextPath));
+        // First resource must always be present
         final List<NavConfigResource> navConfigResources = appSettings.getNavConfigResources();
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));
-        assertThat(navConfigResources.get(0).getUrl(), is(scheme + "://" + host + NAVIGATIONITEMS_ENDPOINT));
+        assertThat(navConfigResources.get(0).getUrl(), is(scheme + "://" + host + contextPath + NAVIGATIONITEMS_ENDPOINT));
     }
 
 }

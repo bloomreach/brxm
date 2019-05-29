@@ -155,7 +155,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return createResource(url, type);
     }
 
-    private String getUrl(ResourceType resourceType, String resourceUrl, String urlPrefix) {
+    private String getUrl(ResourceType resourceType, String resourceUrl, String parentOrigin) {
         switch (resourceType) {
             case IFRAME:
                 // FIXME (meggermont): remove parent query parameter
@@ -169,7 +169,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
                 // Since we don't have that yet we use the unsafe query parameter
                 // for now. This method can be removed once we have a safe way of
                 // getting the parent origin.
-                return String.format("%s/?parent=%s", resourceUrl, urlPrefix);
+                return String.format("%s/?parent=%s", resourceUrl, parentOrigin);
             default:
                 return resourceUrl;
         }
