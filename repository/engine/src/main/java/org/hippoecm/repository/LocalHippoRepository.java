@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -36,6 +37,7 @@ import org.apache.jackrabbit.core.journal.JournalConnectionHelperAccessorImpl;
 import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
+import org.hippoecm.repository.security.AuthenticationStatus;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
@@ -317,7 +319,14 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         nodeTypesChangeTracker = new NodeTypesChangeTracker(rootSession.impersonate(new SimpleCredentials("system", new char[]{})));
         nodeTypesChangeTracker.start();
 
-        ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
+        final HippoSecurityManager securityManager = (HippoSecurityManager) jackrabbitRepository.getSecurityManager();
+        securityManager.configure();
+
+        // check for default admin password and issue a stern warning
+        final AuthenticationStatus status = securityManager.authenticate(new SimpleCredentials("admin", "admin".toCharArray()));
+        if (status.equals(AuthenticationStatus.SUCCEEDED)) {
+            log.error("\n\n\tInsecure default administrator credentials are enabled! Change the password!\n");
+        }
     }
 
     protected void migrateToV12IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
