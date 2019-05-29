@@ -116,7 +116,7 @@
 // Specific styling for the bloomreach logo in the first item
 :host.home {
   .mat-icon,
-  .active {
+  .active .mat-icon {
     color: $white;
   }
 
