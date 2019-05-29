@@ -31,9 +31,8 @@ import org.apache.wicket.markup.head.StringHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.UrlResourceReference;
-import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
@@ -48,6 +47,12 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppHeaderItem.class);
 
+    private final transient NavAppSettings navAppSettings;
+
+    public NavAppHeaderItem(final NavAppSettings navAppSettings) {
+        this.navAppSettings = navAppSettings;
+    }
+
     @Override
     public Iterable<?> getRenderTokens() {
         return Collections.singleton("nav-app-header-item");
@@ -56,7 +61,6 @@ public class NavAppHeaderItem extends HeaderItem {
     @Override
     public void render(final Response response) {
 
-        final NavAppSettings navAppSettings = NavAppSettingFactory.newInstance(RequestCycle.get().getRequest(), PluginUserSession.get());
         final URI navAppLocation = navAppSettings.getAppSettings().getNavAppLocation();
         final URI brXmLocation = navAppSettings.getAppSettings().getBrXmLocation();
 
@@ -111,9 +115,10 @@ public class NavAppHeaderItem extends HeaderItem {
 
     private Stream<String> getCssSrcTagNames() {
         if (WebApplication.get().usesDevelopmentConfig()) {
-            Stream.empty();
+            return Stream.empty();
+        } else {
+            return Stream.of("styles.css");
         }
-        return Stream.of("styles.css");
     }
 
     private HeaderItem getBaseTagHeaderItem(URI navAppLocation) {
