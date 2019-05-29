@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/navapp",
-  "version": "1.0.0-14",
+  "version": "1.0.0-15",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
