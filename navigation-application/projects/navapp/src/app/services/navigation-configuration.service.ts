@@ -54,10 +54,12 @@ export class NavigationConfigurationService {
   }
 
   private fetchNavConfig(resource: NavConfigResource): Promise<NavItem[]> {
-    if (resource.resourceType === 'iframe') {
+    if (resource.resourceType === 'IFRAME') {
       return this.getConfigFromIframe(resource.url);
     } else if (resource.resourceType === 'REST') {
       return this.getConfigFromREST(resource.url);
+    } else {
+      throw new Error(`Resource type ${resource.resourceType} is not supported`);
     }
   }
 

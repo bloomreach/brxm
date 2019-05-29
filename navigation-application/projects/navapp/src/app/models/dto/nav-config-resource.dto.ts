@@ -1,4 +1,4 @@
 export interface NavConfigResource {
-  resourceType: 'iframe' | 'REST';
+  resourceType: 'IFRAME' | 'REST';
   url: string;
 }
