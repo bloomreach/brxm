@@ -19,9 +19,8 @@ export class AppComponent implements OnInit {
       console.log('Iframe app was not loaded inside iframe');
       return;
     }
-    const parentOrigin = new URLSearchParams(window.location.search).get('parent');
     const config: ParentConnectConfig = {
-      parentOrigin,
+      parentOrigin: '*',
       methods: {
         navigate: (location: NavLocation) => {
           this.navigateCount += 1;
