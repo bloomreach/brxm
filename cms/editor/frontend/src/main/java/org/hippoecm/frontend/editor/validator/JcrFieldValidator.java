@@ -58,7 +58,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     private final ValidatorService validatorService;
     private ITypeValidator typeValidator;
 
-    JcrFieldValidator(final IFieldDescriptor field, final JcrTypeValidator container) throws StoreException {
+    public JcrFieldValidator(final IFieldDescriptor field, final JcrTypeValidator container) throws StoreException {
         this.field = field;
         this.validatorService = container.getValidatorService();
         this.fieldType = field.getTypeDescriptor();
