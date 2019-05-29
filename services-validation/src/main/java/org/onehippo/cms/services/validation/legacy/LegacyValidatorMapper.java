@@ -26,13 +26,13 @@ import java.util.Set;
 /**
  * This utility is created to support the pre-13.3.0 configuration of document field validators.
  *
- * @deprecated This class has only a function for 13.3.0 versions and higher but will be released in a next major
- * version.
+ * @deprecated This class has only a function for 13.3.0 versions and higher and will be removed
+ * in a next major version.
  */
 @Deprecated
 public class LegacyValidatorMapper {
 
-    private final static Set<String> combination = new HashSet<>(Arrays.asList("non-empty", "required"));
+    private static final Set<String> combination = new HashSet<>(Arrays.asList("non-empty", "required"));
 
     /**
      * Map a legacy validator to one that works correctly with the current implementation if necessary.
@@ -41,7 +41,7 @@ public class LegacyValidatorMapper {
         if (legacyValidators == null) {
             return null;
         }
-        if (legacyValidators.size() == 0) {
+        if (legacyValidators.isEmpty()) {
             return Collections.emptySet();
         }
 
