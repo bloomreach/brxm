@@ -22,21 +22,22 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.hippoecm.frontend.service.NavAppSettings;
 
 public class NavAppPanel extends Panel {
 
     static final String NAVAPP_HEADER_ITEM = "navapp-header-item";
 
-    private static final HeaderItem NAVAPP_ITEM = new FilteredHeaderItem(new NavAppHeaderItem(), NAVAPP_HEADER_ITEM);
+    private final HeaderItem navAppHeaderItem;
 
-    public NavAppPanel(final String id) {
+    public NavAppPanel(String id, NavAppSettings navAppSettings) {
         super(id);
+        this.navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettings), NAVAPP_HEADER_ITEM);
         add(new HeaderResponseContainer(NAVAPP_HEADER_ITEM, NAVAPP_HEADER_ITEM));
     }
 
-
     @Override
     public void renderHead(final IHeaderResponse response) {
-        response.render(NAVAPP_ITEM);
+        response.render(navAppHeaderItem);
     }
 }
