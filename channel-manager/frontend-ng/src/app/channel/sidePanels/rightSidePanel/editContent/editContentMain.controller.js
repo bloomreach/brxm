@@ -61,6 +61,10 @@ class EditContentMainCtrl {
     return this.ContentEditor.isEditing() && !this.ContentEditor.getDocumentType().allFieldsIncluded;
   }
 
+  getDocumentErrorMessages() {
+    return this.ContentEditor.getDocumentErrorMessages();
+  }
+
   save() {
     const stopLoading = this.startLoading();
 

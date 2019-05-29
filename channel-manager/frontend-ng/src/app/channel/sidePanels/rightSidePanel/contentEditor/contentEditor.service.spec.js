@@ -40,6 +40,7 @@ describe('ContentEditorService', () => {
     expect(ContentEditor.getDocument()).toEqual(testDocument);
     expect(ContentEditor.getDocumentType()).toEqual(testDocumentType);
     expect(ContentEditor.getDocumentDisplayName()).toEqual('Test');
+    expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
     expect(ContentEditor.isDocumentDirty()).toBeFalsy();
     expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     expect(ContentEditor.isEditing()).toBe(true);
@@ -202,10 +203,24 @@ describe('ContentEditorService', () => {
       expect(ContentEditor.isPublishAllowed()).toBeFalsy();
     });
 
+    it('returns document-level error messages', () => {
+      const errorMessages = [
+        'Something is wrong',
+        'Something else is wrong too',
+      ];
+      testDocument.info.errorMessages = errorMessages;
+
+      ContentEditor.open('test');
+      $rootScope.$digest();
+
+      expect(ContentEditor.getDocumentErrorMessages()).toEqual(errorMessages);
+    });
+
     describe('and sets an error when it', () => {
       function expectError(error) {
         expect(ContentEditor.getDocument()).toBeUndefined();
         expect(ContentEditor.getDocumentType()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.isDocumentDirty()).toBeFalsy();
         expect(ContentEditor.isEditing()).toBe(false);
         expect(ContentEditor.getError()).toEqual(error);
@@ -265,6 +280,7 @@ describe('ContentEditorService', () => {
         expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
         expect(ContentService.getEditableDocument).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_DOCUMENT_INVALID_TITLE',
           messageKey: 'FEEDBACK_DOCUMENT_INVALID_MESSAGE',
@@ -291,6 +307,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBe('changed');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -318,6 +335,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
           messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
@@ -344,6 +362,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBe('new');
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_EDITABLE_TITLE',
@@ -367,6 +386,7 @@ describe('ContentEditorService', () => {
         expect(ContentService.getEditableDocument).toHaveBeenCalledWith('test');
         expect(ContentService.getDocumentType).not.toHaveBeenCalled();
         expect(ContentEditor.getDocument()).toBeUndefined();
+        expect(ContentEditor.getDocumentErrorMessages()).toEqual([]);
         expect(ContentEditor.getPublicationState()).toBeUndefined();
         expect(ContentEditor.getError()).toEqual({
           titleKey: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',

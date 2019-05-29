@@ -229,6 +229,15 @@ describe('Create content step 2 controller', () => {
     expect($ctrl.getDocument()).toBe(testDocument);
   });
 
+  it('returns the document error messages', () => {
+    const errorMessages = [
+      'some error',
+      'another error',
+    ];
+    spyOn(ContentEditor, 'getDocumentErrorMessages').and.returnValue(errorMessages);
+    expect($ctrl.getDocumentErrorMessages()).toBe(errorMessages);
+  });
+
   it('opens the edit-name-url dialog', () => {
     spyOn(Step2Service, 'openEditNameUrlDialog');
     $ctrl.openEditNameUrlDialog();
