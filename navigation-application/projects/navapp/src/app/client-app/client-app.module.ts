@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { ClientAppContainerComponent } from './components';
-import { ClientAppComponent } from './components/client-app/iframe-app.component';
+import { ClientAppComponent } from './components/client-app/client-app.component';
 import { ClientAppService } from './services';
 
 @NgModule({

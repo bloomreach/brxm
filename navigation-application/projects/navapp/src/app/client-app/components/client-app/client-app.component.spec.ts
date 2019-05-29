@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClientAppComponent } from './iframe-app.component';
+import { ClientAppComponent } from './client-app.component';
 
 describe('IframeAppComponent', () => {
   let component: ClientAppComponent;
@@ -8,9 +8,8 @@ describe('IframeAppComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClientAppComponent ],
-    })
-    .compileComponents();
+      declarations: [ClientAppComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
