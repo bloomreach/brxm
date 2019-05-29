@@ -58,6 +58,8 @@ export class NavigationConfigurationService {
       return this.getConfigFromIframe(resource.url);
     } else if (resource.resourceType === 'REST') {
       return this.getConfigFromREST(resource.url);
+    } else {
+      throw new Error(`Resource type ${resource.resourceType} is not supported`);
     }
   }
 
