@@ -112,7 +112,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final URI brXmLocation = URI.create(cmsLocation);
         final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
-        final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation, parentOrigin);
+        final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation);
 
         return new AppSettings() {
 
@@ -138,42 +138,22 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         };
     }
 
-    private List<NavConfigResource> readNavConfigResources(String cmsLocation, String parentOrigin) {
+    private List<NavConfigResource> readNavConfigResources(String cmsLocation) {
         final IPluginConfig navConfigResources = getPluginConfig().getPluginConfig(NAV_CONFIG_RESOURCES);
         final List<NavConfigResource> resources = new ArrayList<>();
         resources.add(createResource(cmsLocation + NAVIGATIONITEMS_ENDPOINT, ResourceType.REST));
         for (IPluginConfig eachResource : navConfigResources.getPluginConfigSet()) {
-            resources.add(readResource(eachResource, parentOrigin));
+            resources.add(readResource(eachResource));
         }
         return resources;
     }
 
-    private NavConfigResource readResource(IPluginConfig resourceConfig, String parentOrigin) {
-        final String resourceUrl = resourceConfig.getString(RESOURCE_URL);
+    private NavConfigResource readResource(IPluginConfig resourceConfig) {
+        final String url = resourceConfig.getString(RESOURCE_URL);
         final ResourceType type = ResourceType.valueOf(resourceConfig.getString(RESOURCE_TYPE).toUpperCase());
-        final String url = getUrl(type, resourceUrl, parentOrigin);
         return createResource(url, type);
     }
 
-    private String getUrl(ResourceType resourceType, String resourceUrl, String parentOrigin) {
-        switch (resourceType) {
-            case IFRAME:
-                // FIXME (meggermont): remove parent query parameter
-                // To be able to setup a postMessage from an iframe to a parent
-                // we need to know the parent url. This information should not
-                // come from a query parameter, because that would allow anyone
-                // to embed the child iframe in their page. Instead the parent
-                // origin should be provided on the domain of the iframe itself.
-                // This can e.g. be done via a cookie set by the server that
-                // serves the source of the iframe.
-                // Since we don't have that yet we use the unsafe query parameter
-                // for now. This method can be removed once we have a safe way of
-                // getting the parent origin.
-                return String.format("%s/?parent=%s", resourceUrl, parentOrigin);
-            default:
-                return resourceUrl;
-        }
-    }
 
     private NavConfigResource createResource(final String url, ResourceType resourceType) {
         return new NavConfigResource() {
