@@ -17,6 +17,7 @@ package org.onehippo.cms.services.validation.legacy;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -33,6 +34,11 @@ public class LegacyValidatorMapperTest {
         assertNull(LegacyValidatorMapper.legacyMapper((Set<String>) null, ""));
 
         assertEquals(LegacyValidatorMapper.legacyMapper(Collections.emptySet(), null).size(), 0);
+
+        assertNull(LegacyValidatorMapper.legacyMapper((List<String>) null, null));
+        assertNull(LegacyValidatorMapper.legacyMapper((List<String>) null, ""));
+
+        assertEquals(LegacyValidatorMapper.legacyMapper(Collections.emptyList(), null).size(), 0);
     }
 
     @Test

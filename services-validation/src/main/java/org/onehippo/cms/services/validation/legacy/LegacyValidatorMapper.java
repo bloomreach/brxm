@@ -65,6 +65,9 @@ public class LegacyValidatorMapper {
     }
 
     public static List<String> legacyMapper(final List<String> legacyValidators, final String fieldType) {
+        if (legacyValidators == null) {
+            return null;
+        }
         return new ArrayList<>(legacyMapper(new LinkedHashSet<>(legacyValidators), fieldType));
     }
 
