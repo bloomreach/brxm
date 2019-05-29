@@ -23,14 +23,8 @@ content-editor {
     margin: 0 4px;
   }
 
-  .feedback {
-    > :first-child {
-      margin-top: 0;
-    }
-
-    > :last-child {
-      margin-bottom: 0;
-    }
+  .feedback > :last-child {
+    margin-bottom: 0;
   }
 
   // multiple fields should only have 1 error message visible
