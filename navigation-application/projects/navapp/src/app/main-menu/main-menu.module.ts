@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ClickOutsideModule } from 'ng-click-outside';
 
-import { MaterialModule } from '../shared';
+import { SharedModule } from '../shared';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { MainMenuComponent } from './components/main-menu.component';
@@ -20,7 +20,7 @@ import { MenuBuilderService, MenuStateService, MenuStructureService } from './se
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    MaterialModule,
+    SharedModule,
     ClickOutsideModule,
   ],
   declarations: [

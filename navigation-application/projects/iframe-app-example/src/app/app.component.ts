@@ -8,11 +8,14 @@ import { navigationConfiguration } from './mocks';
   template: `
     <h1>Number of times navigated {{ navigateCount }}</h1>
     <h2>It was navigated to "{{ navigatedTo }}"</h2>
+    <h3>The button was clicked {{ buttonClicked }} times.</h3>
+    <button (click)="onButtonClicked()">Button</button>
   `,
 })
 export class AppComponent implements OnInit {
   navigateCount = 0;
   navigatedTo: string;
+  buttonClicked = 0;
 
   ngOnInit(): void {
     if (window.parent === window) {
@@ -34,5 +37,9 @@ export class AppComponent implements OnInit {
     };
 
     connectToParent(config);
+  }
+
+  onButtonClicked(): void {
+    this.buttonClicked++;
   }
 }
