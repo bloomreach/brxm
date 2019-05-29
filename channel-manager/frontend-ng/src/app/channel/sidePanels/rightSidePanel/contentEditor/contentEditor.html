@@ -43,16 +43,6 @@
     </div>
   </div>
 
-  <div ng-if="$ctrl.getDocumentErrorMessages().length"
-       class="feedback qa-feedback"
-       md-colors="{background: 'hippo-red-50'}">
-
-    <p class="qa-feedback-message"
-       ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()">
-      {{ ::errorMessage }}
-    </p>
-  </div>
-
   <document-fields ng-if="$ctrl.isEditing()"
                    field-types="$ctrl.getFieldTypes()"
                    field-values="$ctrl.getFieldValues()"

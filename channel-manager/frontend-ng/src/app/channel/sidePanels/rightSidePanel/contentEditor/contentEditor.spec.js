@@ -94,18 +94,6 @@ describe('ContentEditorCtrl', () => {
     expect($ctrl.getDocumentLocale()).toBe('en');
   });
 
-  it('gets the document error messages', () => {
-    ContentEditor.isEditing.and.returnValue(false);
-    expect($ctrl.getDocumentErrorMessages()).toEqual([]);
-
-    ContentEditor.isEditing.and.returnValue(true);
-    ContentEditor.getDocument.and.returnValue({ info: {} });
-    expect($ctrl.getDocumentErrorMessages()).toEqual([]);
-
-    ContentEditor.getDocument.and.returnValue({ info: { errorMessages: ['one', 'two'] } });
-    expect($ctrl.getDocumentErrorMessages()).toEqual(['one', 'two']);
-  });
-
   it('gets the error', () => {
     const error = {};
     ContentEditor.getError.and.returnValue(error);

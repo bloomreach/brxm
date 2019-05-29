@@ -28,6 +28,11 @@
     </div>
   </md-toolbar>
 
+  <md-subheader ng-if="$ctrl.getDocumentErrorMessages().length"
+                md-colors="{background: 'hippo-red-50'}">
+    <div ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()">{{ ::errorMessage }}</div>
+  </md-subheader>
+
   <form name="$ctrl.form"
         class="form-dense-layout"
         layout="column"

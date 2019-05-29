@@ -164,6 +164,13 @@ class ContentEditorService {
     return this.error && this.error.messageParams && this.error.messageParams.displayName;
   }
 
+  getDocumentErrorMessages() {
+    if (this.document) {
+      return this.document.info.errorMessages || [];
+    }
+    return [];
+  }
+
   getPublicationState() {
     return this.publicationState;
   }

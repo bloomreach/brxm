@@ -25,6 +25,11 @@
     <div translate="NOT_ALL_FIELDS_SHOWN_LINK" translate-value-click-action='$ctrl.switchEditor()' translate-compile></div>
   </md-subheader>
 
+  <md-subheader ng-if="$ctrl.getDocumentErrorMessages().length"
+                md-colors="{background: 'hippo-red-50'}">
+    <div ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()">{{ ::errorMessage }}</div>
+  </md-subheader>
+
   <content-editor flex="grow"
                   layout="column"
                   on-switch-editor="$ctrl.switchEditor()"

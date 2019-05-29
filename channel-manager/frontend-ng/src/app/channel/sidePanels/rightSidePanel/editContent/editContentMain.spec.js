@@ -45,6 +45,7 @@ describe('EditContentMainCtrl', () => {
         'getDocumentId',
         'getDocumentType',
         'getDocumentDisplayName',
+        'getDocumentErrorMessages',
         'isDocumentDirty',
         'isEditing',
         'isPublishAllowed',
@@ -101,6 +102,15 @@ describe('EditContentMainCtrl', () => {
         expect($ctrl.notAllFieldsShown()).toBe(editing && !allFieldsIncluded);
       });
     });
+  });
+
+  it('returns the document error messages', () => {
+    const errorMessages = [
+      'some error',
+      'another error',
+    ];
+    ContentEditor.getDocumentErrorMessages.and.returnValue(errorMessages);
+    expect($ctrl.getDocumentErrorMessages()).toBe(errorMessages);
   });
 
   describe('save', () => {

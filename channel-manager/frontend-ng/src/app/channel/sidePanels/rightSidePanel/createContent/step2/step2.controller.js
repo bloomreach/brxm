@@ -133,6 +133,10 @@ class Step2Controller {
     return this.ContentEditor.getDocument();
   }
 
+  getDocumentErrorMessages() {
+    return this.ContentEditor.getDocumentErrorMessages();
+  }
+
   confirmDiscardChanges(messageKey, titleKey) {
     if (this.ContentEditor.isKilled()) {
       return this.$q.resolve(); // editor was killed, don't show dialog
