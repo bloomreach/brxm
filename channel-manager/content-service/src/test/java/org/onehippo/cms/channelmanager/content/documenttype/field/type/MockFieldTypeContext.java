@@ -112,6 +112,10 @@ public class MockFieldTypeContext {
         public FieldTypeContext build() {
             final FieldTypeContext fieldContext = PowerMock.createMock(FieldTypeContext.class);
 
+            PowerMock.mockStaticPartial(FieldTypeUtils.class, "determineValidators");
+            FieldTypeUtils.determineValidators(fieldType, fieldContext, validators);
+            expectLastCall();
+
             final Optional<ResourceBundle> optionalResourceBundle = Optional.ofNullable(resourceBundle);
             final Optional<Node> optionalEditorFieldNode = Optional.ofNullable(editorFieldNode);
             PowerMock.mockStaticPartial(LocalizationUtils.class, "determineFieldDisplayName", "determineFieldHint");

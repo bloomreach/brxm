@@ -41,8 +41,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import static org.onehippo.cms.services.validation.legacy.LegacyValidatorMapper.legacyMapper;
-
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentType}. It can be serialized into JSON to
  * expose it through a REST API.
@@ -199,7 +197,7 @@ public abstract class AbstractFieldType implements BaseFieldType {
 
         final List<String> validators = fieldContext.getValidators();
 
-        FieldTypeUtils.determineValidators(this, fieldContext, legacyMapper(validators, getType().name()));
+        FieldTypeUtils.determineValidators(this, fieldContext, validators);
 
         // determine cardinality
         if (validators.contains(FieldValidators.OPTIONAL)) {
