@@ -161,7 +161,8 @@ public class NavAppSettingServiceTest {
         testAppSettingsAssertions(navAppSettings.getAppSettings());
 
         final NavConfigResource iframeResource = navConfigResources.stream().filter(r -> ResourceType.IFRAME == r.getResourceType()).findFirst().orElseThrow(() -> new RuntimeException("IFRAME resource not found"));
-        assertThat(iframeResource.getUrl(), is("some-other-url1/?parent=" + scheme + "://" + host));
+        assertThat(iframeResource.getUrl(), is("some-other-url1"));
+
     }
 
 
