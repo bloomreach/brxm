@@ -86,7 +86,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
             @Override
             public String getEmail() {
-                // TODO (meggermont)
+                // TODO (meggermont): read optional email address from repository
                 return null;
             }
 
@@ -104,15 +104,15 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private AppSettings createAppSettings(Request request) {
 
+        final String parentOrigin = RequestUtils.getFarthestUrlPrefix(request);
         final String contextPath = RequestUtils.getContextPath();
-        final String cmsLocation = RequestUtils.getCmsLocation(request);
+        final String cmsLocation = String.format("%s%s", parentOrigin, contextPath);
 
         final URI brXmLocation = URI.create(cmsLocation);
         final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
-        final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation);
+        final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation, parentOrigin);
 
         return new AppSettings() {
-
 
             @Override
             public URI getBrXmLocation() {
@@ -136,20 +136,41 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         };
     }
 
-    private List<NavConfigResource> readNavConfigResources(String cmsLocation) {
+    private List<NavConfigResource> readNavConfigResources(String cmsLocation, String parentOrigin) {
         final IPluginConfig navConfigResources = getPluginConfig().getPluginConfig(NAV_CONFIG_RESOURCES);
         final List<NavConfigResource> resources = new ArrayList<>();
         resources.add(createResource(cmsLocation + "/ws/navigationitems", ResourceType.REST));
         for (IPluginConfig eachResource : navConfigResources.getPluginConfigSet()) {
-            resources.add(readResource(eachResource));
+            resources.add(readResource(eachResource, parentOrigin));
         }
         return resources;
     }
 
-    private NavConfigResource readResource(final IPluginConfig resourceConfig) {
+    private NavConfigResource readResource(IPluginConfig resourceConfig, String parentOrigin) {
         final String resourceUrl = resourceConfig.getString(RESOURCE_URL);
-        final ResourceType resourceType = ResourceType.valueOf(resourceConfig.getString(RESOURCE_TYPE).toUpperCase());
-        return createResource(resourceUrl, resourceType);
+        final ResourceType type = ResourceType.valueOf(resourceConfig.getString(RESOURCE_TYPE).toUpperCase());
+        final String url = getUrl(type, resourceUrl, parentOrigin);
+        return createResource(url, type);
+    }
+
+    private String getUrl(ResourceType resourceType, String resourceUrl, String urlPrefix) {
+        switch (resourceType) {
+            case IFRAME:
+                // FIXME (meggermont): remove parent query parameter
+                // To be able to setup a postMessage from an iframe to a parent
+                // we need to know the parent url. This information should not
+                // come from a query parameter, because that would allow anyone
+                // to embed the child iframe in their page. Instead the parent
+                // origin should be provided on the domain of the iframe itself.
+                // This can e.g. be done via a cookie set by the server that
+                // serves the source of the iframe.
+                // Since we don't have that yet we use the unsafe query parameter
+                // for now. This method can be removed once we have a safe way of
+                // getting the parent origin.
+                return String.format("%s/?parent=%s", resourceUrl, urlPrefix);
+            default:
+                return resourceUrl;
+        }
     }
 
     private NavConfigResource createResource(final String url, ResourceType resourceType) {
