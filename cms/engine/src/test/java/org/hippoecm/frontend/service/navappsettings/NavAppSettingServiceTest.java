@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +33,7 @@ import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NavConfigResource;
@@ -43,8 +46,10 @@ import org.junit.runner.RunWith;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -59,7 +64,7 @@ public class NavAppSettingServiceTest extends WicketTester {
     @Mock
     private IPluginContext context;
     @Mock
-    private IPluginConfig config;
+    private IPluginConfig config, cfg1, cfg2;
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
@@ -67,7 +72,7 @@ public class NavAppSettingServiceTest extends WicketTester {
     private INavAppSettingsService navAppSettingsService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         replay(request);
@@ -99,7 +104,7 @@ public class NavAppSettingServiceTest extends WicketTester {
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
-        testNavConfigResourceAssertions(navAppSettings.getAppSettings().getNavConfigResources());
+        testAppSettingsAssertions(navAppSettings.getAppSettings());
     }
 
 
@@ -114,9 +119,31 @@ public class NavAppSettingServiceTest extends WicketTester {
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host)));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
-        testNavConfigResourceAssertions(navAppSettings.getAppSettings().getNavConfigResources());
+        testAppSettingsAssertions(navAppSettings.getAppSettings());
 
         System.getProperties().remove(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY);
+    }
+
+    @Test
+    public void loads_extra_navcfg_resources_from_config() {
+
+        reset(config);
+        expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
+        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1, cfg2).collect(Collectors.toSet()));
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("some-other-url1");
+        expect(cfg2.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.REST.name());
+        expect(cfg2.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("some-other-url2");
+        replay(config, cfg1, cfg2);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        final List<NavConfigResource> navConfigResources = navAppSettings.getAppSettings().getNavConfigResources();
+        assertThat(navConfigResources.size(), is(3));
+        testAppSettingsAssertions(navAppSettings.getAppSettings());
+
+        final NavConfigResource iframeResource = navConfigResources.stream().filter(r -> ResourceType.IFRAME == r.getResourceType()).findFirst().orElseThrow(() -> new RuntimeException("IFRAME resource not found"));
+        assertThat(iframeResource.getUrl(), is("some-other-url1/?parent=" + navAppSettings.getAppSettings().getBrXmLocation()));
     }
 
 
@@ -127,9 +154,13 @@ public class NavAppSettingServiceTest extends WicketTester {
         assertThat(userSettings.getEmail(), is(nullValue()));
     }
 
-    private void testNavConfigResourceAssertions(List<NavConfigResource> navConfigResources) {
-        assertThat(navConfigResources.size(), is(1));
+    private void testAppSettingsAssertions(AppSettings appSettings) {
+        // I would like to mock the servlet context, but I don't see an easy way to do that with the WicketTester
+        assertThat(appSettings.getContextPath(), is(""));
+
+        final List<NavConfigResource> navConfigResources = appSettings.getNavConfigResources();
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));
+        assertThat(navConfigResources.get(0).getUrl(), is(scheme + "://" + host + NAVIGATIONITEMS_ENDPOINT));
     }
 
 }

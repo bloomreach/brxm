@@ -43,6 +43,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String RESOURCE_URL = "resource.url";
     static final String RESOURCE_TYPE = "resource.type";
 
+    static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
+
     // To make unit testing easier
     private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
 
@@ -139,7 +141,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private List<NavConfigResource> readNavConfigResources(String cmsLocation, String parentOrigin) {
         final IPluginConfig navConfigResources = getPluginConfig().getPluginConfig(NAV_CONFIG_RESOURCES);
         final List<NavConfigResource> resources = new ArrayList<>();
-        resources.add(createResource(cmsLocation + "/ws/navigationitems", ResourceType.REST));
+        resources.add(createResource(cmsLocation + NAVIGATIONITEMS_ENDPOINT, ResourceType.REST));
         for (IPluginConfig eachResource : navConfigResources.getPluginConfigSet()) {
             resources.add(readResource(eachResource, parentOrigin));
         }
