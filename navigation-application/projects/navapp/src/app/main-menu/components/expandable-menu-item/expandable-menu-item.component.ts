@@ -5,9 +5,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 
+import { QaHelperService } from '../../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../../models';
 import { MenuStateService } from '../../services';
-import { QaHelperService } from '../../../services';
 
 @Component({
   selector: 'brna-expandable-menu-item',
