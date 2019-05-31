@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoItem;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 /**
   * [robotstxt:section]
@@ -27,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoItem;
   *   - robotstxt:disallow (string) multiple 
  */
 @Node(jcrType = "robotstxt:section")
+@HippoEssentialsGenerated(allowModifications = false)
 public class Section extends HippoItem {
 
     private final static String DISALLOW_PREFIX = "Disallow: ";

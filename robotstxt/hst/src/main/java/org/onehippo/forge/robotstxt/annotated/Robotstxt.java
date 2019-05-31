@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 /**
  * [robotstxt:robotstxt] > hippo:document, hippostd:publishable, hippostd:publishableSummary
@@ -27,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
  *   + robotstxt:section (robotstxt:section) multiple
  */
 @Node(jcrType="robotstxt:robotstxt")
+@HippoEssentialsGenerated(allowModifications = false)
 public class Robotstxt extends HippoDocument {
 
     public List<Section> getSections() {
