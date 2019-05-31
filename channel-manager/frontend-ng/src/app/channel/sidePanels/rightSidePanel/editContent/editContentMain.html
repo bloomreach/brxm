@@ -26,8 +26,12 @@
   </md-subheader>
 
   <md-subheader ng-if="$ctrl.getDocumentErrorMessages().length"
-                md-colors="{background: 'hippo-red-50'}">
-    <div ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()">{{ ::errorMessage }}</div>
+                md-colors="{background: 'hippo-red-50'}"
+                class="qa-feedback">
+    <div ng-repeat="errorMessage in $ctrl.getDocumentErrorMessages()"
+         class="qa-feedback-message">
+      {{ ::errorMessage }}
+    </div>
   </md-subheader>
 
   <content-editor flex="grow"
