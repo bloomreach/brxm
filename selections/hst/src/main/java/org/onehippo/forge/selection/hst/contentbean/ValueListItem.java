@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.forge.selection.hst.contentbean;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoItem;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 /**
  * [selection:listitem] 
@@ -25,6 +26,7 @@ import org.hippoecm.hst.content.beans.standard.HippoItem;
  *  - selection:label (string) 
  */
 @Node(jcrType = "selection:listitem")
+@HippoEssentialsGenerated(allowModifications = false)
 public class ValueListItem extends HippoItem  {
 
     public String getKey() {
