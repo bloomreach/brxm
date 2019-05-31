@@ -9,13 +9,16 @@ import { ChildPromisedApi } from '@bloomreach/navapp-communication';
   providedIn: 'root',
 })
 export class ConnectionService {
-  private connections: Map<string, ChildPromisedApi> = new Map();
+  private connections: Map<string, Promise<ChildPromisedApi>> = new Map();
 
-  addConnection(appURL: string, app: ChildPromisedApi): void {
-    this.connections.set(appURL, app);
+  addConnection(
+    appURL: string,
+    appConnection: Promise<ChildPromisedApi>,
+  ): void {
+    this.connections.set(appURL, appConnection);
   }
 
-  getConnection(id: string): ChildPromisedApi {
+  getConnection(id: string): Promise<ChildPromisedApi> {
     if (!this.connections.has(id)) {
       throw new Error(`There is no connection to an ifrane with id = ${id}`);
     }

@@ -37,11 +37,11 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    connectToChild({
+    const connection = connectToChild({
       iframe: this.iframe.nativeElement,
       methods: this.communicationsService.parentApiMethods,
-    }).then(child => {
-      this.connectionService.addConnection(this.appURL, child);
     });
+
+    this.connectionService.addConnection(this.appURL, connection);
   }
 }

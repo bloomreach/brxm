@@ -42,7 +42,7 @@ export class CommunicationsService {
   navigate(clientAppId: string, path: string): void {
     this.connectionService
       .getConnection(clientAppId)
-      .navigate({ path })
+      .then(child => child.navigate({ path }))
       .then(() => {
         this.clientAppsManager.activateApplication(clientAppId);
       });
