@@ -18,6 +18,7 @@ package org.hippoecm.hst.content.beans.manager;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.jcr.Node;
@@ -52,13 +53,17 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
        
         if (jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs != null) {
-            this.jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.putAll(jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs);
+            final Map<String,Class<? extends HippoBean>> enchanceableBeanMap = jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.entrySet()
+                    .stream()
+                    .filter(entry -> shouldGenerateNewForExistingBean(entry.getValue()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            this.jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.putAll(enchanceableBeanMap);
         }
        
         // Store ContentTypes as a WeakReference so that
         // corresponding ObjectConverter cache entry at VersionedObjectConverterProxy could be eventually invalidated
         this.contentTypesRef = new WeakReference<>(contentTypes);
-        dynamicBeanService = new DynamicBeanDefinitionService(this);
+        this.dynamicBeanService = new DynamicBeanDefinitionService(this);
     }
 
     public boolean shouldGenerateNewForExistingBean(final Class<? extends HippoBean> existingBeanClass) {

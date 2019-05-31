@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.content.beans.standard;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.repository.api.HippoNode;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 /**
  * This bean is only to map a hippo:translation to a bean: Normally, you never use this bean at all, as translations are 
@@ -27,6 +28,7 @@ import org.hippoecm.repository.api.HippoNode;
 
 @Indexable(ignore = true)
 @Node(jcrType="hippo:translation")
+@HippoEssentialsGenerated(allowModifications = false)
 public class HippoTranslation extends HippoItem {
     
 }

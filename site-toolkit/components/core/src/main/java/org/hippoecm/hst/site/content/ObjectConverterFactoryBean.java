@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.site.content;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -37,7 +36,6 @@ import org.springframework.web.context.ServletContextAware;
  * ObjectConverter factory bean
  */
 public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConverter> implements ComponentManagerAware, ServletContextAware {
-    private static final int GLOBAL_RESOURCE_PATH_SIZE = 3;
 
     private ServletContext servletContext;
     private ClasspathResourceScanner classpathResourceScanner;
@@ -101,8 +99,7 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
 
     @Override
     protected ObjectConverter createInstance() {
-        List<Class<? extends HippoBean>> allAnnotatedClasses = null;
-        List<Class<? extends HippoBean>> applicationAnnotatedClasses = null;
+        List<Class<? extends HippoBean>> annotatedClasses = null;
 
         if (annotatedClassesResourcePath == null && servletContext != null) {
             annotatedClassesResourcePath = servletContext.getInitParameter(annotatedClassesInitParam);
@@ -110,34 +107,17 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
 
         if (annotatedClassesResourcePath != null) {
             try {
-                String[] resourcePaths = StringUtils.split(annotatedClassesResourcePath, ", \t\r\n");
-                
-                if (resourcePaths != null) {                
-                    if (resourcePaths.length > GLOBAL_RESOURCE_PATH_SIZE) {
-                        // set last GLOBAL_RESOURCE_PATH_SIZE paths as global paths
-                        allAnnotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner,
-                                Arrays.copyOfRange(resourcePaths, resourcePaths.length - GLOBAL_RESOURCE_PATH_SIZE, resourcePaths.length));
-                        // set other paths as application's paths 
-                        applicationAnnotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner,
-                                Arrays.copyOfRange(resourcePaths, 0, resourcePaths.length - GLOBAL_RESOURCE_PATH_SIZE));
-                        for (Class<? extends HippoBean> beanClass : applicationAnnotatedClasses) {
-                            if (!allAnnotatedClasses.contains(beanClass)) {
-                                allAnnotatedClasses.add(beanClass);
-                            }
-                        }
-                    } else {
-                        allAnnotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, resourcePaths);
-                    }
-                }
-               
+                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner,
+                        StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
             } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
+
         if (generateDynamicBean == null || generateDynamicBean.booleanValue()) {
-            return new VersionedObjectConverterProxy(applicationAnnotatedClasses, allAnnotatedClasses, contentTypesProvider);
+            return new VersionedObjectConverterProxy(annotatedClasses, contentTypesProvider);
         } else {
-            return ObjectConverterUtils.createObjectConverter(allAnnotatedClasses);
+            return ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
     }
 

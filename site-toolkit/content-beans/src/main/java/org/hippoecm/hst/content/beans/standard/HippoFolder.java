@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,10 +29,12 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippostd:folder")
+@HippoEssentialsGenerated(allowModifications = false)
 public class HippoFolder extends HippoItem implements HippoFolderBean {
     private static Logger log = LoggerFactory.getLogger(HippoFolder.class);
     protected ArrayList<HippoFolderBean> hippoFolders;
