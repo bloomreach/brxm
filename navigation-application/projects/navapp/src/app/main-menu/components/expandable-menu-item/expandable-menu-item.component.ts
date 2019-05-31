@@ -5,8 +5,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 
-import { MenuItem, MenuItemContainer } from '../../models';
+import { MenuItem, MenuItemContainer, MenuItemLink } from '../../models';
 import { MenuStateService } from '../../services';
+import { QaHelperService } from '../../../services';
 
 @Component({
   selector: 'brna-expandable-menu-item',
@@ -36,6 +37,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
 
   constructor(
     private menuStateService: MenuStateService,
+    private qaHelperService: QaHelperService,
   ) {}
 
   get isOpened(): boolean {
@@ -54,5 +56,8 @@ export class ExpandableMenuItemComponent implements OnChanges {
 
   isChildMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
+  }
+  getQaClass(item: MenuItemLink): string {
+    return this.qaHelperService.getMenuItemClass(item);
   }
 }
