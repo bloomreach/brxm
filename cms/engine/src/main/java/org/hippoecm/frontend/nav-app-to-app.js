@@ -26,6 +26,11 @@
 (function () {
   'use strict';
 
+  if (window.parent === window) {
+    // not in an iframe, so there will be no parent to connect to
+    return;
+  }
+
   // Implementation of the Child API
   Hippo.NavAppToApp = {
 
