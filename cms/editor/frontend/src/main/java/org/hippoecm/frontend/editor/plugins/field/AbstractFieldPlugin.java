@@ -26,9 +26,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
@@ -103,7 +103,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
     }
 
-    static final Logger log = LoggerFactory.getLogger(AbstractFieldPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractFieldPlugin.class);
 
     public static final String FIELD = "field";
     public static final String TYPE = "type";
@@ -208,27 +208,20 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     @Override
     public void render(final PluginRequestTarget target) {
         if (isActive() && IEditor.Mode.EDIT == mode && filter != null) {
-            final Violation firstViolation = findFirstViolation();
-            filter.setValid(firstViolation == null);
+            final Violation violation = findFirstViolation();
+            filter.setValid(violation == null);
 
             if (target != null) {
-                String javascript = "";
+                String javascript = String.format(
+                    "const fieldElement = $('#%s');" +
+                    "fieldElement.find('> .validation-message').remove();" + // clear previous validation messages
+                    "fieldElement.toggleClass('%s', %b);",
+                    getMarkupId(), ValidationFilter.INVALID, violation != null);
 
-                // clear previous validation messages
-                javascript += String.format("$('.validation-message', '#%s').remove();", getMarkupId());
-
-                if (firstViolation == null) {
-                    javascript += String.format("$('#%s').removeClass('%s');", getMarkupId(), ValidationFilter.INVALID);
-                } else {
-                    javascript += String.format("$('#%s').addClass('%s');", getMarkupId(), ValidationFilter.INVALID);
-
-                    // print first violation
-                    final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
-                    final String msgCode = getMarkupId() + msg.hashCode();
+                if (violation != null) {
+                    final String message = StringEscapeUtils.escapeHtml(violation.getMessage().getObject());
                     javascript += String.format(
-                        "if ($('.%s').length) { return; }" +
-                        "$('#%s').append('<span class=\"validation-message %s\">%s</span>');",
-                        msgCode, getMarkupId(), msgCode, msg);
+                        "fieldElement.append('<span class=\"validation-message\">%s</span>');", message);
                 }
 
                 target.appendJavaScript(javascript);
