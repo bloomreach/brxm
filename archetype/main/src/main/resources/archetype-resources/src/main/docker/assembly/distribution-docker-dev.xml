@@ -9,6 +9,7 @@
   <componentDescriptors>
     <componentDescriptor>${project.basedir}/src/main/assembly/shared-lib-development-data-component.xml</componentDescriptor>
     <componentDescriptor>${project.basedir}/src/main/docker/assembly/shared-lib-component-docker.xml</componentDescriptor>
+    <componentDescriptor>${project.basedir}/src/main/docker/assembly/conf-component-docker-dev.xml</componentDescriptor>
   </componentDescriptors>
   <dependencySets>
     <dependencySet>

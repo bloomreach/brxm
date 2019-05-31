@@ -14,6 +14,7 @@ RUN /brxm/bin/common/setup-devuser.sh
 
 USER ${docker.brxm.container.dev.uid}
 
+COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/conf /usr/local/tomcat/conf/
 COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/webapps /usr/local/tomcat/webapps/
 COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/autoreload /usr/local/tomcat/shared/lib
 ${docker.brxm.copy.dev.libs.cmd}COPY --chown=${docker.brxm.container.dev.uid}:${docker.brxm.container.dev.gid} maven/shared /usr/local/tomcat/shared/

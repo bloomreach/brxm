@@ -9,14 +9,14 @@ ENV JAVA_MAXHEAP "512m"
 # Default tomcat http max threads variable
 ENV TOMCAT_MAXTHREADS "200"
 
-# BrXM project path variable
-ENV BRXM_PROJECT_PATH "${docker.brxm.project.path}"
-
 # Default repository settings 
-ENV REPO_PATH "${BRXM_PROJECT_PATH}/target/storage"
+ENV REPO_PATH "${docker.brxm.project.path}/target/storage"
 ENV REPO_CONFIG ""
 ENV REPO_BOOTSTRAP "false"
 ENV REPO_AUTOEXPORT_ALLOWED "false"
+
+# Default database profile
+ENV profile "h2"
 
 # Prepare dirs
 # Delete default & unused war files
