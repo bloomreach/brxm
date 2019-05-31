@@ -41,34 +41,41 @@ public class LegacyValidatorMapper {
         if (legacyValidators == null) {
             return null;
         }
-        if (legacyValidators.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        final LinkedHashSet<String> validators = new LinkedHashSet<>(legacyValidators);
-
-        if (validators.containsAll(combination)) {
-            validators.remove("non-empty");
-        }
-
-        if (validators.contains("resource-required")) {
-            validators.remove("resource-required");
-            validators.add("required");
-        }
-
-        if ("html".equalsIgnoreCase(fieldType) && validators.contains("non-empty") && !validators.contains("required")) {
-            validators.remove("non-empty");
-            validators.add("non-empty-html");
-        }
-
-        return validators;
+        return new LinkedHashSet<>(legacyMapper(new ArrayList<>(legacyValidators), fieldType));
     }
 
     public static List<String> legacyMapper(final List<String> legacyValidators, final String fieldType) {
         if (legacyValidators == null) {
             return null;
         }
-        return new ArrayList<>(legacyMapper(new LinkedHashSet<>(legacyValidators), fieldType));
+
+        if (legacyValidators.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final ArrayList<String> validators = new ArrayList<>(legacyValidators);
+
+        if (validators.containsAll(combination)) {
+            validators.remove("non-empty");
+        }
+
+        replace(validators, "resource-required", "required");
+        replace(validators, "html", "non-empty-html");
+
+        if ("html".equalsIgnoreCase(fieldType)) {
+            replace(validators, "non-empty", "non-empty-html");
+        }
+
+        return validators;
+    }
+
+    private static void replace(final List<String> list, final String oldValue, final String newValue) {
+        for (int i = 0; i < list.size(); i++) {
+            final String value = list.get(i);
+            if (value.equals(oldValue)) {
+                list.set(i, newValue);
+            }
+        }
     }
 
     private LegacyValidatorMapper() {

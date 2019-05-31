@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.services.validation.legacy;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,7 +25,6 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
 
 public class LegacyValidatorMapperTest {
     
@@ -47,32 +47,45 @@ public class LegacyValidatorMapperTest {
         set.add("required");
         set.add("non-empty");
         final Set<String> mappedSet = LegacyValidatorMapper.legacyMapper(set, null);
-        
-        assertTrue(mappedSet.contains("required"));
-        assertEquals(mappedSet.size(), 1);
+
+        assertEquals(Collections.singleton("required"), mappedSet);
     }
 
     @Test
     public void testResourceRequired() {
         final Set<String> mappedSet = LegacyValidatorMapper.legacyMapper(Collections.singleton("resource-required"), null);
-        
-        assertTrue(mappedSet.contains("required"));
-        assertEquals(mappedSet.size(), 1);
+
+        assertEquals(Collections.singleton("required"), mappedSet);
     }
 
     @Test
     public void testNonEmptyHtml() {
         final Set<String> mappedSet = LegacyValidatorMapper.legacyMapper(Collections.singleton("non-empty"), "Html");
 
-        assertTrue(mappedSet.contains("non-empty-html"));
-        assertEquals(mappedSet.size(), 1);
+        assertEquals(Collections.singleton("non-empty-html"), mappedSet);
     }
     
     @Test
     public void testNonEmptyOther() {
         final Set<String> mappedSet = LegacyValidatorMapper.legacyMapper(Collections.singleton("non-empty"), "Othertype");
 
-        assertTrue(mappedSet.contains("non-empty"));
-        assertEquals(mappedSet.size(), 1);
+        assertEquals(Collections.singleton("non-empty"), mappedSet);
+    }
+
+    @Test
+    public void testHtml() {
+        final Set<String> mappedSet = LegacyValidatorMapper.legacyMapper(Collections.singleton("html"), "Sometype");
+
+        assertEquals(Collections.singleton("non-empty-html"), mappedSet);
+    }
+
+    @Test
+    public void orderDoesNotChange() {
+        final List<String> original = Arrays.asList("html", "custom1", "custom2");
+        final List<String> expected = Arrays.asList("non-empty-html", "custom1", "custom2");
+
+        final List<String> actual = LegacyValidatorMapper.legacyMapper(original, "String");
+
+        assertEquals(expected, actual);
     }
 }
