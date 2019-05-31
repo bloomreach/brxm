@@ -24,5 +24,13 @@ public interface INavAppSettingsService extends IClusterable {
 
     String SERVICE_ID = "service.navappsettings";
 
+    /**
+     * Returns the navigation application settings for a request of a logged in user. It is assumed that a valid
+     * PluginUserSession for this request exists, because the returned NavAppSettings must contain user specific
+     * attributes like user name, language and time zone.
+     *
+     * @param request a request from a logged in user
+     * @return navigation application settings for the user request
+     */
     NavAppSettings getNavAppSettings(Request request);
 }

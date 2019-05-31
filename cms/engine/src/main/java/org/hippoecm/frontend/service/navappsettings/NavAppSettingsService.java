@@ -19,9 +19,11 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -45,7 +47,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
 
-    // To make unit testing easier
+    // To make unit testing easier (needs to be transient to prevent Wicket from serializing it.
     private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
 
     NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier) {
@@ -139,26 +141,33 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
     private List<NavConfigResource> readNavConfigResources(String cmsLocation) {
-        final IPluginConfig navConfigResources = getPluginConfig().getPluginConfig(NAV_CONFIG_RESOURCES);
         final List<NavConfigResource> resources = new ArrayList<>();
-        resources.add(createResource(cmsLocation + NAVIGATIONITEMS_ENDPOINT, ResourceType.REST));
-        for (IPluginConfig eachResource : navConfigResources.getPluginConfigSet()) {
+        resources.add(createResource(URI.create(cmsLocation + NAVIGATIONITEMS_ENDPOINT), ResourceType.REST));
+
+        final IPluginConfig pluginConfig = getPluginConfig();
+        final IPluginConfig navConfigResources = pluginConfig.getPluginConfig(NAV_CONFIG_RESOURCES);
+        final Set<IPluginConfig> configSet = navConfigResources.getPluginConfigSet();
+        for (IPluginConfig eachResource : configSet) {
             resources.add(readResource(eachResource));
         }
         return resources;
     }
 
     private NavConfigResource readResource(IPluginConfig resourceConfig) {
-        final String url = resourceConfig.getString(RESOURCE_URL);
+        final String resourceUrlString = resourceConfig.getString(RESOURCE_URL).trim();
+        if (StringUtils.isBlank(resourceUrlString)) {
+            throw new IllegalArgumentException(RESOURCE_URL + " must not be empty or null");
+        }
+        final URI url = URI.create(resourceUrlString);
         final ResourceType type = ResourceType.valueOf(resourceConfig.getString(RESOURCE_TYPE).toUpperCase());
         return createResource(url, type);
     }
 
 
-    private NavConfigResource createResource(final String url, ResourceType resourceType) {
+    private NavConfigResource createResource(URI url, ResourceType resourceType) {
         return new NavConfigResource() {
             @Override
-            public String getUrl() {
+            public URI getUrl() {
                 return url;
             }
 

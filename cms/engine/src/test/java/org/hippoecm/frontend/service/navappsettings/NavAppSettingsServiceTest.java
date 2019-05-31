@@ -18,6 +18,7 @@
 package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -50,13 +51,15 @@ import org.junit.runner.RunWith;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 @RunWith(EasyMockRunner.class)
-public class NavAppSettingServiceTest {
+public class NavAppSettingsServiceTest {
 
     @Mock
     private ServletWebRequest request;
@@ -161,8 +164,49 @@ public class NavAppSettingServiceTest {
         testAppSettingsAssertions(navAppSettings.getAppSettings());
 
         final NavConfigResource iframeResource = navConfigResources.stream().filter(r -> ResourceType.IFRAME == r.getResourceType()).findFirst().orElseThrow(() -> new RuntimeException("IFRAME resource not found"));
-        assertThat(iframeResource.getUrl(), is("some-other-url1"));
+        assertThat(iframeResource.getUrl(), is(URI.create("some-other-url1")));
 
+    }
+
+
+    @Test
+    public void throws_on_invalid_navcfg_resource_uri() {
+
+        reset(config);
+        expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
+        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(Collectors.toSet()));
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("invalid resource url");
+        replay(config, cfg1);
+
+        try {
+            navAppSettingsService.getNavAppSettings(request);
+            fail("should have thrown an exception because the resource url is invalid");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getCause(), instanceOf(URISyntaxException.class));
+        }
+    }
+
+
+    @Test
+    public void throws_on_empty_navcfg_resource_uri() {
+
+        reset(config);
+        expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
+        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(Collectors.toSet()));
+        expect(cfg1.getName()).andStubReturn("cfg1");
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
+        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("\t\t   \t\t");
+        replay(config, cfg1);
+
+        try {
+            navAppSettingsService.getNavAppSettings(request);
+            fail("should have thrown an exception because the resource url is invalid");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), is(NavAppSettingsService.RESOURCE_URL + " must not be empty or null"));
+        }
     }
 
 
@@ -178,7 +222,7 @@ public class NavAppSettingServiceTest {
         // First resource must always be present
         final List<NavConfigResource> navConfigResources = appSettings.getNavConfigResources();
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));
-        assertThat(navConfigResources.get(0).getUrl(), is(scheme + "://" + host + contextPath + NAVIGATIONITEMS_ENDPOINT));
+        assertThat(navConfigResources.get(0).getUrl(), is(URI.create(scheme + "://" + host + contextPath + NAVIGATIONITEMS_ENDPOINT)));
     }
 
 }

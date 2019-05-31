@@ -17,6 +17,8 @@
 
 package org.hippoecm.frontend.service;
 
+import java.net.URI;
+
 /**
  * Represents a resource that can be called to get information about menu items.
  * There are two types of resources:
@@ -26,7 +28,7 @@ package org.hippoecm.frontend.service;
  */
 public interface NavConfigResource {
 
-    String getUrl();
+    URI getUrl();
 
     ResourceType getResourceType();
 }
