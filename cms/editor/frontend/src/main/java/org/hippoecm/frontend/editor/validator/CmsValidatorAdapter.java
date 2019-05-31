@@ -73,13 +73,11 @@ public class CmsValidatorAdapter implements ICmsValidator {
             throw new IllegalStateException("Failed to retrieve ValidationService from HippoServiceRegistry");
         }
 
-        final ValidatorInstance validator = service.getValidator(name);
+        return service.getValidator(name);
+    }
 
-        if (validator == null) {
-            log.warn("Failed to retrieve validator '{}' from validation module", name);
-        }
-
-        return validator;
+    static boolean hasValidator(final String name) {
+        return getValidator(name) != null;
     }
 
     @Override
@@ -89,6 +87,7 @@ public class CmsValidatorAdapter implements ICmsValidator {
 
         final ValidatorInstance validator = getValidator(name);
         if (validator == null) {
+            log.warn("Failed to retrieve validator '{}' from validation service, ignoring it", name);
             return Collections.emptySet();
         }
 
