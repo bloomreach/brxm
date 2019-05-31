@@ -14,6 +14,7 @@ definitions:
         required#hippo-resource: Upload a resource
         required#hippostd-html: Enter some text
         non-empty: Enter a value
+        non-empty-html: Enter some text
         html: Enter a value
         resource-required: Upload a file
         summarySingle: This document has 1 error
