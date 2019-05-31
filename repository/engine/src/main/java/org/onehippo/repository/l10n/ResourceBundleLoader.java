@@ -211,11 +211,12 @@ class ResourceBundleLoader {
             return new StringSubstitutor(parameters).replace(getString(key));
         }
 
+        @Override
         public String getString(final String key, final String parameterName, final String parameterValue) {
             return new StringSubstitutor(Collections.singletonMap(parameterName, parameterValue))
                     .replace(getString(key));
         }
-        
+
         @Override
         public java.util.ResourceBundle toJavaResourceBundle() {
             return new ResourceBundleDecorator(this);
