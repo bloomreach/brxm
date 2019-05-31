@@ -40,7 +40,11 @@ import org.hippoecm.repository.api.HippoNodeType;
  * has been uploaded.
  *
  * @author David de Bos
+ *
+ * @deprecated a required resource field is now validated by the new-style required validator located at
+ * /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/required/hippo:resource.
  */
+@Deprecated
 public class ResourceRequiredValidator extends AbstractCmsValidator {
 
     private static final String INVALID_VALIDATION_EXCEPTION_ERROR_MESSAGE = "Invalid validation exception. " +
