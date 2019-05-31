@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -31,6 +32,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReade
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.services.validation.legacy.LegacyValidatorMapper;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
@@ -38,17 +40,19 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStaticPartial;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
-@PrepareForTest({ContentTypeContext.class, NamespaceUtils.class})
+@PrepareForTest({ContentTypeContext.class, NamespaceUtils.class, LegacyValidatorMapper.class})
 public class FieldTypeContextTest {
 
     @Before
@@ -203,6 +207,21 @@ public class FieldTypeContextTest {
         assertThat(ftc.getEditorConfigNode(), equalTo(Optional.of(editorFieldConfigNode)));
         assertThat(ftc.getParentContext(), equalTo(context));
 
+        verifyAll();
+    }
+
+    @Test
+    public void createContextForLegacyValidators() {
+        final List<String> legacyValidators = Arrays.asList("required", "non-empty");
+        final List<String> newValidators = Collections.singletonList("required");
+
+        mockStaticPartial(LegacyValidatorMapper.class, "legacyMapper", List.class, String.class);
+        expect(LegacyValidatorMapper.legacyMapper(eq(legacyValidators), eq("Html"))).andReturn(newValidators);
+        replayAll();
+
+        final FieldTypeContext requiredString = new FieldTypeContext("myproject:description", "String", "Html",
+                true, false, legacyValidators, null, null);
+        assertThat(requiredString.getValidators(), equalTo(newValidators));
         verifyAll();
     }
 

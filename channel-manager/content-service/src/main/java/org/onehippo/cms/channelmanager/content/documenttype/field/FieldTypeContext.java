@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReade
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrMultipleStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrStringReader;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.services.validation.legacy.LegacyValidatorMapper;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
@@ -113,7 +114,7 @@ public class FieldTypeContext {
         this.type = type;
         this.isProperty = isProperty;
         this.isMultiple = isMultiple;
-        this.validators = validators;
+        this.validators = LegacyValidatorMapper.legacyMapper(validators, type);
         this.parentContext = parentContext;
         this.editorConfigNode = editorConfigNode;
     }
