@@ -38,7 +38,6 @@ public class ValidatorService extends Plugin {
     private static final Logger log = LoggerFactory.getLogger(ValidatorService.class);
 
     private final Map<String, ICmsValidator> oldStyleValidators = new HashMap<>();
-    private final Map<String, ICmsValidator> newStyleValidators = new HashMap<>();
 
     public ValidatorService(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -66,36 +65,42 @@ public class ValidatorService extends Plugin {
             return null;
         }
 
-        if (!newStyleValidators.containsKey(name) && CmsValidatorAdapter.hasValidator(name)) {
-            final CmsValidatorAdapter newStyleValidator = new CmsValidatorAdapter(name);
-            newStyleValidators.put(name, newStyleValidator);
-        }
+        boolean oldStyleValidatorExists = oldStyleValidators.containsKey(name);
+        boolean newStyleValidatorExists = CmsValidatorAdapter.hasValidator(name);
 
-        if (oldStyleValidators.containsKey(name) && newStyleValidators.containsKey(name)) {
+        if (oldStyleValidatorExists && newStyleValidatorExists) {
             log.warn("Validator '{}' has two implementations. Only the new style implementation"
-                    + " (/hippo:configuration/hippo:modules/validation/hippo:moduleconfig/{})"
-                    + " will be used."
-                    + " The old style implementation"
-                    + " (/hippo:configuration/hippo:frontend/cms/cms-validators/{})"
-                    + " will be ignored and can be removed.",
+                            + " (/hippo:configuration/hippo:modules/validation/hippo:moduleconfig/{})"
+                            + " will be used."
+                            + " The old style implementation"
+                            + " (/hippo:configuration/hippo:frontend/cms/cms-validators/{})"
+                            + " will be ignored and can be removed.",
                     name, name, name);
         }
 
-        final ICmsValidator validator = newStyleValidators.getOrDefault(name, oldStyleValidators.get(name));
-
-        if (validator == null) {
-            log.warn("Cannot find validator '{}'", name);
+        if (newStyleValidatorExists) {
+            return new CmsValidatorAdapter(name);
         }
 
-        return validator;
+        if (oldStyleValidatorExists) {
+            return oldStyleValidators.get(name);
+        }
+
+        log.warn("Cannot find validator '{}'", name);
+        return null;
     }
 
     public boolean containsValidator(final String name) {
-        return newStyleValidators.containsKey(name) || oldStyleValidators.containsKey(name);
+        return CmsValidatorAdapter.hasValidator(name) || oldStyleValidators.containsKey(name);
     }
 
+    /**
+     * Checks whether there are validators in the system
+     * @return always true
+     * @deprecated there are always validators, so usage of this method is pointless
+     */
+    @Deprecated
     public boolean isEmpty() {
-        return newStyleValidators.isEmpty() && oldStyleValidators.isEmpty();
+        return false;
     }
-
 }
