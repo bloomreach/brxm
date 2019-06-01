@@ -15,36 +15,83 @@
  */
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
 import { NavConfigService } from '../../services/nav-config.service';
+import { ClientApp } from '../models/client-app.model';
 
 @Injectable()
 export class ClientAppService {
-  private appURLs = new BehaviorSubject<string[]>([]);
+  get apps$(): Observable<ClientApp[]> {
+    return this.apps.asObservable();
+  }
 
-  private activeAppURL = new BehaviorSubject<string>(undefined);
+  get activeAppId$(): Observable<string> {
+    return this.activeAppId.asObservable();
+  }
 
-  constructor(private navConfigService: NavConfigService) {
+  get connectionsEstablished$(): Observable<boolean> {
+    return this.connectionsEstablished.asObservable();
+  }
+
+  private apps = new BehaviorSubject<ClientApp[]>([]);
+  private activeAppId = new BehaviorSubject<string>(undefined);
+  private connectionsEstablished = new Subject<boolean>();
+
+  constructor(private navConfigService: NavConfigService) {}
+
+  init(): void {
     this.navConfigService.navItems$
-      .pipe(map(navItems => this.filterUniqueURLs(navItems)))
-      .subscribe(appURLs => {
-        this.appURLs.next(appURLs);
-      });
-  }
-
-  get appURLs$(): Observable<string[]> {
-    return this.appURLs.asObservable();
-  }
-
-  get activeAppURL$(): Observable<string> {
-    return this.activeAppURL.asObservable();
+      .pipe(
+        map(navItems => this.filterUniqueURLs(navItems)),
+        map(uniqueURLs => uniqueURLs.map(url => new ClientApp(url))),
+      )
+      .subscribe(apps => this.apps.next(apps));
   }
 
   activateApplication(id: string): void {
-    this.activeAppURL.next(id);
+    this.activeAppId.next(id);
+  }
+
+  addConnection(app: ClientApp, api: ChildPromisedApi): void {
+    app.api = api;
+    this.updateApp(app);
+
+    this.checkEstablishedConnections();
+  }
+
+  getApp(id: string): ClientApp {
+    const apps = this.apps.getValue();
+    const app = apps.find(a => a.id === id);
+    if (!app) {
+      throw new Error(`There is no connection to an ifrane with id = ${id}`);
+    }
+
+    return app;
+  }
+
+  private updateApp(app: ClientApp): void {
+    const apps = this.apps.getValue();
+
+    apps.map(a => {
+      if (a.id === app.id) {
+        a = app;
+      }
+    });
+
+    this.apps.next(apps);
+  }
+
+  private checkEstablishedConnections(): void {
+    const apps = this.apps.getValue();
+    const allConnected = apps.every((a: ClientApp) => a.api !== undefined);
+
+    if (allConnected) {
+      this.connectionsEstablished.next(true);
+    }
   }
 
   private filterUniqueURLs(navItems: NavItem[]): string[] {

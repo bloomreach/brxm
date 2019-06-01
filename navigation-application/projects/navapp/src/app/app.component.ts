@@ -2,6 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 
 import { NavConfigService } from './services';
 
+import { ClientAppService } from './client-app/services';
 import { MenuStateService } from './main-menu/services';
 
 @Component({
@@ -14,15 +15,12 @@ export class AppComponent implements OnInit {
   typography = true;
 
   constructor(
-    private menuStateService: MenuStateService,
     private navConfigService: NavConfigService,
+    private clientAppService: ClientAppService,
   ) {}
-
-  get isMenuCollapsed(): boolean {
-    return this.menuStateService.isMenuCollapsed;
-  }
 
   ngOnInit(): void {
     this.navConfigService.init();
+    this.clientAppService.init();
   }
 }

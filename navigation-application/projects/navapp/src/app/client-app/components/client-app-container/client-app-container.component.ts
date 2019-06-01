@@ -18,6 +18,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services';
 
 @Component({
@@ -27,23 +28,23 @@ import { ClientAppService } from '../../services';
 })
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
-  private activeAppURL: string;
+  private activeAppId: string;
 
-  appURLs: string[] = [];
+  apps: ClientApp[] = [];
 
   constructor(private clientAppService: ClientAppService) {}
 
   ngOnInit(): void {
-    this.clientAppService.appURLs$
+    this.clientAppService.apps$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(appURLs => {
-        this.appURLs = appURLs;
+      .subscribe(apps => {
+        this.apps = apps;
       });
 
-    this.clientAppService.activeAppURL$
+    this.clientAppService.activeAppId$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(activeAppURL => {
-        this.activeAppURL = activeAppURL;
+      .subscribe(activeAppId => {
+        this.activeAppId = activeAppId;
       });
   }
 
@@ -53,6 +54,6 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   }
 
   isActive(appURL: string): boolean {
-    return this.activeAppURL === appURL ? true : false;
+    return this.activeAppId === appURL ? true : false;
   }
 }

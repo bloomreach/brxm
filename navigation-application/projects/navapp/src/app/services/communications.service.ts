@@ -19,7 +19,6 @@ import { ParentApi } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services';
 
-import { ConnectionService } from './connection.service';
 import { OverlayService } from './overlay.service';
 
 @Injectable({
@@ -27,9 +26,8 @@ import { OverlayService } from './overlay.service';
 })
 export class CommunicationsService {
   constructor(
-    private clientAppsManager: ClientAppService,
+    private clientAppService: ClientAppService,
     private overlay: OverlayService,
-    private connectionService: ConnectionService,
   ) {}
 
   get parentApiMethods(): ParentApi {
@@ -40,11 +38,11 @@ export class CommunicationsService {
   }
 
   navigate(clientAppId: string, path: string): void {
-    this.connectionService
-      .getConnection(clientAppId)
-      .then(child => child.navigate({ path }))
+    this.clientAppService
+      .getApp(clientAppId)
+      .api.navigate({ path })
       .then(() => {
-        this.clientAppsManager.activateApplication(clientAppId);
+        this.clientAppService.activateApplication(clientAppId);
       });
   }
 }

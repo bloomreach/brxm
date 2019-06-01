@@ -10,7 +10,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { connectToChild } from '@bloomreach/navapp-communication';
 
 import { CommunicationsService } from '../../../services';
-import { ConnectionService } from '../../../services/connection.service';
+import { ClientApp } from '../../models/client-app.model';
+import { ClientAppService } from '../../services';
 
 @Component({
   selector: 'brna-client-app',
@@ -19,7 +20,7 @@ import { ConnectionService } from '../../../services/connection.service';
 })
 export class ClientAppComponent implements OnInit, AfterViewInit {
   @Input()
-  appURL: string;
+  app: ClientApp;
 
   @ViewChild('iframe')
   iframe: ElementRef;
@@ -28,20 +29,20 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
 
   constructor(
     private domSanitizer: DomSanitizer,
-    private connectionService: ConnectionService,
+    private clientAppService: ClientAppService,
     private communicationsService: CommunicationsService,
   ) {}
 
   ngOnInit(): void {
-    this.url = this.domSanitizer.bypassSecurityTrustResourceUrl(this.appURL);
+    this.url = this.domSanitizer.bypassSecurityTrustResourceUrl(this.app.url);
   }
 
   ngAfterViewInit(): void {
-    const connection = connectToChild({
+    connectToChild({
       iframe: this.iframe.nativeElement,
       methods: this.communicationsService.parentApiMethods,
-    });
-
-    this.connectionService.addConnection(this.appURL, connection);
+    }).then(childApi =>
+      this.clientAppService.addConnection(this.app, childApi),
+    );
   }
 }
