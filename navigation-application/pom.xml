@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -133,8 +133,15 @@
             <artifactId>apache-rat-plugin</artifactId>
             <inherited>false</inherited>
             <configuration>
+              <licenses>
+                <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
+                  <copyrightOwner>BloomReach\. All rights reserved\. \(https://www\.bloomreach\.com/\)</copyrightOwner>
+                </license>
+              </licenses>
               <excludes combine.children="append">
-                <exclude>**</exclude>
+                <exclude>.*</exclude>
+                <exclude>projects/navapp/**</exclude>
+                <exclude>**/browserslist</exclude>
               </excludes>
             </configuration>
           </plugin>
