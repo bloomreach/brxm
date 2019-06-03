@@ -17,12 +17,6 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,7 +26,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -55,18 +48,16 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
-import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getViolationPerCompound;
+
 public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
-    final static Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -135,90 +126,29 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
 
             // clear previous validation messages and styling
-            target.appendJavaScript(String.format(
-                "$('.validation-message', '#%s').remove(); " +
-                "$('.compound-validation-border', '#%s').removeClass('compound-validation-border');",
-                getMarkupId(), getMarkupId())
-            );
+            final String markupId = getMarkupId();
+            final StringBuilder script = new StringBuilder(String.format(
+                    "const subfields = $('#%s > .hippo-editor-field > .hippo-editor-field-subfield');" +
+                    "subfields.find('> .compound-validation-message').remove();" +
+                    "subfields.filter('.compound-validation-border').removeClass('compound-validation-border');",
+                    markupId));
 
-            getViolationMessagePerCompound().forEach(violationMessage -> {
-                final CharSequence msg = JavaScriptUtils.escapeQuotes(violationMessage.getMessage());
-                final String msgHash = getMarkupId() + msg.hashCode() + violationMessage.getIndex();
+            final FieldPluginHelper fieldHelper = getFieldHelper();
+            final IFieldDescriptor field = fieldHelper.getField();
+            final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
+            getViolationPerCompound(field, validationModel).forEach(violation -> {
+                final String messageElement = String.format(
+                        "<div class=\"validation-message compound-validation-message\">%s</div>", violation.getMessage());
 
-                target.appendJavaScript(String.format(
-                    "if ($('.%s').length) { return; }" +
-                    "const msg = '<div class=\"validation-message compound-validation-message %s\">%s</div>';" +
-                    "$('#%s > .hippo-editor-field > .hippo-editor-field-subfield').eq(%d).addClass('compound-validation-border').prepend(msg);",
-                    msgHash, msgHash, msg, getMarkupId(), violationMessage.getIndex())
+                script.append(String.format(
+                        "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
+                        violation.getIndex(), messageElement)
                 );
             });
+
+            target.appendJavaScript(script.toString());
         }
         super.render(target);
-    }
-
-    private Stream<ViolationMessage> getViolationMessagePerCompound() {
-        final IFieldDescriptor field = getFieldHelper().getField();
-        if (field == null) {
-            return Stream.empty();
-        }
-
-        final IModel<IValidationResult> validationModel = getFieldHelper().getValidationModel();
-        if (validationModel == null) {
-            return Stream.empty();
-        }
-
-        final IValidationResult validationResult = validationModel.getObject();
-        if (validationResult == null || validationResult.isValid()) {
-            return Stream.empty();
-        }
-
-        final Set<Violation> violations = validationResult.getViolations();
-        if (violations == null || violations.isEmpty()) {
-            return Stream.empty();
-        }
-
-        return violations.stream()
-                .filter(violation -> violation.getFeedbackScope().equals(FeedbackScope.COMPOUND))
-                .map(violation -> nodeViolation(field, violation))
-                .filter(Objects::nonNull)
-                .filter(distinctByKey(ViolationMessage::getIndex));
-    }
-
-    private static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
-        final Set<Object> seen = ConcurrentHashMap.newKeySet();
-        return t -> seen.add(keyExtractor.apply(t));
-    }
-
-    private ViolationMessage nodeViolation(final IFieldDescriptor field, final Violation violation) {
-        final Set<ModelPath> dependentPaths = violation.getDependentPaths();
-        for (final ModelPath path : dependentPaths) {
-            if (path.getElements().length > 0) {
-                final ModelPathElement first = path.getElements()[0];
-                if (first.getField().equals(field)) {
-                    return new ViolationMessage(violation.getMessage().getObject(), first);
-                }
-            }
-        }
-        return null;
-    }
-
-    private static class ViolationMessage {
-
-        private final String message;
-        private final int index;
-
-        ViolationMessage(final String message, final ModelPathElement pathElement) {
-            this.message = message;
-            this.index = pathElement.getIndex();
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public int getIndex() {
-            return index;
-        }
     }
 
     @Override
