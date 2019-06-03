@@ -40,7 +40,7 @@ public class ViolationUtils {
     public static Optional<ViolationMessage> getFirstFieldViolation(final IFieldDescriptor field,
                                                                     final IModel<IValidationResult> validationModel) {
 
-        // show no validation messages for compounds, such as content blocks
+        // show no validation messages for content blocks
         if (field != null && field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
             return Optional.empty();
         }
