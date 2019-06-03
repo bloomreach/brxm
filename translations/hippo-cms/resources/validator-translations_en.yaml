@@ -11,6 +11,7 @@ definitions:
         required#String: Enter some text
         resource-required: Upload a file
         summaryMultiple: This document has ${numberOfErrors} errors
+        non-empty-html: Enter some text
         required#OpenUiString: Enter a value
         html: Enter a value
         summarySingle: This document has 1 error
