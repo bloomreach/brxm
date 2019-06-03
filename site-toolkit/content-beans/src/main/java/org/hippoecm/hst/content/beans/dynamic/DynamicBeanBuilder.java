@@ -15,13 +15,17 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
@@ -29,13 +33,19 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
-import net.bytebuddy.dynamic.TargetType;
+import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
+import net.bytebuddy.dynamic.TargetType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.MethodDelegation;
@@ -298,16 +308,38 @@ public class DynamicBeanBuilder {
      * </pre>
      */
     private void addMultiParamGetMethod(final String methodName, final Class<?> returnType,
-            final String superMethodName, final Class<?> superMethodReturnType, final String propertyName) {
+                                        final String superMethodName, final Class<?> superMethodReturnType, final String propertyName) {
         try {
-            builder = builder
-                        .defineMethod(methodName, returnType, Modifier.PUBLIC)
-                        .intercept(
+            final Builder.MethodDefinition.ReceiverTypeDefinition<? extends HippoBean> intercept = builder
+                    .defineMethod(methodName, returnType, Modifier.PUBLIC)
+                    .intercept(
                             MethodCall
-                                .invoke(HippoBean.class.getDeclaredMethod(superMethodName, String.class, Class.class))
-                                .onSuper()
-                                .with(propertyName, superMethodReturnType)
-                                .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
+                                    .invoke(HippoBean.class.getDeclaredMethod(superMethodName, String.class, Class.class))
+                                    .onSuper()
+                                    .with(propertyName, superMethodReturnType)
+                                    .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
+
+            if (Collection.class.isAssignableFrom(returnType)) {
+
+                // TODO WE cannot YET serialize List of beans or compounds hence now really ugly add json ignore...
+                // TODO once compound structures are allowed in the json output, this can be removed. SINCE we
+                // TODO should only do the JsonIgnore for PLATFORM webapp and NOT for normal websites which would
+                // TODO otherwise can a wrong SPA page model api, we have extra check to only add the JsonIgnore for the
+                // TODO cms/platform webapp
+
+                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                final HstModel model = hstModelRegistry.getHstModel(DynamicBeanBuilder.class.getClassLoader());
+                final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(model.getVirtualHosts().getContextPath());
+
+                if (context.getType() == HippoWebappContext.Type.CMS || context.getType() == HippoWebappContext.Type.PLATFORM) {
+                    builder = intercept.annotateMethod(AnnotationDescription.Builder.ofType(JsonIgnore.class).build());
+                } else {
+                    builder = intercept;
+                }
+
+            } else {
+                builder = intercept;
+            }
             methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, superMethodReturnType, e);
