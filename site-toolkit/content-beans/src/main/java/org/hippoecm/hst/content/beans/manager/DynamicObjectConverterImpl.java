@@ -17,8 +17,6 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.jcr.Node;
@@ -45,28 +43,26 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
-    private final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs = new ConcurrentHashMap<>();
 
-    DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs,
-                               final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs, final String[] fallBackJcrNodeTypes,
+    DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes,
                                final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
-       
-        if (jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs != null) {
-            final Map<String,Class<? extends HippoBean>> enchanceableBeanMap = jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.entrySet()
-                    .stream()
-                    .filter(entry -> shouldGenerateNewForExistingBean(entry.getValue()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            this.jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.putAll(enchanceableBeanMap);
-        }
-       
+
         // Store ContentTypes as a WeakReference so that
         // corresponding ObjectConverter cache entry at VersionedObjectConverterProxy could be eventually invalidated
         this.contentTypesRef = new WeakReference<>(contentTypes);
-        this.dynamicBeanService = new DynamicBeanDefinitionService(this);
+
+        dynamicBeanService = new DynamicBeanDefinitionService(this);
+
+        jcrPrimaryNodeTypeBeanPairs.entrySet()
+                .stream()
+                .filter(entry -> shouldGenerateEnhancedBean(entry.getValue()))
+                .forEach(entry -> dynamicBeanService.createDocumentBeanDef(entry.getValue(), contentTypes.getType(entry.getKey())));
+
+
     }
 
-    public boolean shouldGenerateNewForExistingBean(final Class<? extends HippoBean> existingBeanClass) {
+    public boolean shouldGenerateEnhancedBean(final Class<? extends HippoBean> existingBeanClass) {
         // if the HippoEssentialsGenerated is not defined on class or allowModifications filed is true, then the bean will be generated
         if (existingBeanClass != null) {
             final HippoEssentialsGenerated hippoEssentialsGenerated = existingBeanClass.getDeclaredAnnotation(HippoEssentialsGenerated.class);
@@ -76,15 +72,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         }
         return false;
     }
-    
-    public Class<? extends HippoBean> getExistingBeanClass(final String jcrPrimaryNodeType) {
-        return jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.get(jcrPrimaryNodeType);
-    }
 
-    public void removeExistingBeanClass(final String jcrPrimaryNodeType) {
-        jcrPrimaryNodeTypeRuntimeEnhanceableBeanPairs.remove(jcrPrimaryNodeType);
-    }
-    
     @Override
     public Object getObject(final Node node) throws ObjectBeanManagerException {
         final String jcrPrimaryNodeType;
@@ -104,17 +92,6 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
             jcrPrimaryNodeType = useNode.getPrimaryNodeType().getName();
             Class<? extends HippoBean> delegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
-
-            if (delegateeClass != null && isDocumentType(useNode)) {
-                final Class<? extends HippoBean> existingBeanClass = getExistingBeanClass(jcrPrimaryNodeType);
-                if (existingBeanClass != null) {
-                    // A java class of the document type exists, check whether a new bean class is needed to be generated or not
-                    if (shouldGenerateNewForExistingBean(existingBeanClass)) {
-                        delegateeClass = createDynamicBeanDefinition(useNode, existingBeanClass);
-                    }
-                    removeExistingBeanClass(jcrPrimaryNodeType);
-                }
-            }
 
             if (delegateeClass == null) {
                 if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {

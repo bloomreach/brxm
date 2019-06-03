@@ -47,7 +47,6 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
     private final Cache<ContentTypes, ObjectConverter> instanceCache = CacheBuilder.newBuilder().weakKeys().build();
 
     private final ContentTypesProvider contentTypesProvider;
-    private final Map<String, Class<? extends HippoBean>> jcrNodeTypeExistingClassPairs;
     private final Map<String, Class<? extends HippoBean>> jcrNodeTypeClassPairs;
 
     public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedClasses,
@@ -58,9 +57,7 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
     public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedClasses,
             final ContentTypesProvider contentTypesProvider, final boolean ignoreDuplicates) {
         this.contentTypesProvider = contentTypesProvider;
-        this.jcrNodeTypeExistingClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses,
-                null, ignoreDuplicates));
-        this.jcrNodeTypeClassPairs = unmodifiableMap(getAggregatedMapping(annotatedClasses, ignoreDuplicates));
+        this.jcrNodeTypeClassPairs = getAggregatedMapping(annotatedClasses, ignoreDuplicates);
     }
 
     /**
@@ -70,7 +67,7 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
         final ContentTypes contentTypes = contentTypesProvider.getContentTypes();
         try {
             return instanceCache.get(contentTypes, () -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
-                    jcrNodeTypeExistingClassPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
+                    DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
         } catch (ExecutionException e) {
             throw new RuntimeException("Could not create ObjectConverter",e);
         }
