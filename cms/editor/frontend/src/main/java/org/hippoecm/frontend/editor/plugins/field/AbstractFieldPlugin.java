@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Item;
@@ -28,7 +29,6 @@ import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.core.util.string.JavaScriptUtils;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
@@ -42,6 +42,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
+import org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.ViolationMessage;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -59,17 +60,16 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getFirstFieldViolation;
 import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
@@ -103,7 +103,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
     }
 
-    static final Logger log = LoggerFactory.getLogger(AbstractFieldPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractFieldPlugin.class);
 
     public static final String FIELD = "field";
     public static final String TYPE = "type";
@@ -208,81 +208,30 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     @Override
     public void render(final PluginRequestTarget target) {
         if (isActive() && IEditor.Mode.EDIT == mode && filter != null) {
-            final Violation firstViolation = findFirstViolation();
-            filter.setValid(firstViolation == null);
+
+            final IFieldDescriptor field = helper.getField();
+            final IModel<IValidationResult> validationModel = helper.getValidationModel();
+            final Optional<ViolationMessage> violation = getFirstFieldViolation(field, validationModel);
+
+            filter.setValid(!violation.isPresent());
 
             if (target != null) {
-                String javascript = "";
+                String javascript = String.format(
+                    "const fieldElement = $('#%s');" +
+                    "fieldElement.find('> .validation-message').remove();" + // clear previous validation messages
+                    "fieldElement.toggleClass('%s', %b);",
+                    getMarkupId(), ValidationFilter.INVALID, violation.isPresent());
 
-                // clear previous validation messages
-                javascript += String.format("$('.validation-message', '#%s').remove();", getMarkupId());
-
-                if (firstViolation == null) {
-                    javascript += String.format("$('#%s').removeClass('%s');", getMarkupId(), ValidationFilter.INVALID);
-                } else {
-                    javascript += String.format("$('#%s').addClass('%s');", getMarkupId(), ValidationFilter.INVALID);
-
-                    // print first violation
-                    final CharSequence msg = JavaScriptUtils.escapeQuotes(firstViolation.getMessage().getObject());
-                    final String msgCode = getMarkupId() + msg.hashCode();
+                if (violation.isPresent()) {
+                    final String message = violation.get().getMessage();
                     javascript += String.format(
-                        "if ($('.%s').length) { return; }" +
-                        "$('#%s').append('<span class=\"validation-message %s\">%s</span>');",
-                        msgCode, getMarkupId(), msgCode, msg);
+                        "fieldElement.append('<span class=\"validation-message\">%s</span>');", message);
                 }
 
                 target.appendJavaScript(javascript);
             }
         }
         super.render(target);
-    }
-
-    private Violation findFirstViolation() {
-        final IFieldDescriptor field = getFieldHelper().getField();
-        if (field == null) {
-            return null;
-        }
-
-        // show no validation messages for compounds, such as content blocks
-        if (field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
-            return null;
-        }
-
-        final IModel<IValidationResult> validationModel = helper.getValidationModel();
-        if (validationModel == null) {
-            return null;
-        }
-
-        final IValidationResult validationResult = validationModel.getObject();
-        if (validationResult == null || validationResult.isValid()) {
-            return null;
-        }
-
-        final Set<Violation> violations = validationResult.getViolations();
-        if (violations == null || violations.isEmpty()) {
-            return null;
-        }
-
-        return violations.stream()
-                .filter(violation -> isFieldViolation(field, violation))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private static boolean isFieldViolation(final IFieldDescriptor field, final Violation violation) {
-        if (!violation.getFeedbackScope().equals(FeedbackScope.FIELD)) {
-            return false;
-        }
-        final Set<ModelPath> dependentPaths = violation.getDependentPaths();
-        for (final ModelPath path : dependentPaths) {
-            if (path.getElements().length > 0) {
-                final ModelPathElement first = path.getElements()[0];
-                if (first.getField().equals(field)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
