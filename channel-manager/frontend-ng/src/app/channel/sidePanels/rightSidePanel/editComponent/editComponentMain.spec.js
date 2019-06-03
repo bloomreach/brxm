@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ describe('EditComponentMainCtrl', () => {
         'updatePreview',
       ]);
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
+      EditComponentService = jasmine.createSpyObj('EditComponentService', ['isReadyForUser', 'killEditor']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
       OverlayService = jasmine.createSpyObj('OverlayService', ['onSelectDocument']);
 
@@ -217,6 +218,18 @@ describe('EditComponentMainCtrl', () => {
     expect($ctrl.isReadOnly()).toBe(false);
   });
 
+  describe('isDeleteDisabled', () => {
+    it('is disabled when the component is read-only', () => {
+      ComponentEditor.isReadOnly.and.returnValue(true);
+      expect($ctrl.isDeleteDisabled()).toBe(true);
+    });
+    it('is disabled when the editor is not ready for the user yet', () => {
+      ComponentEditor.isReadOnly.and.returnValue(false);
+      EditComponentService.isReadyForUser.and.returnValue(false);
+      expect($ctrl.isDeleteDisabled()).toBe(true);
+    });
+  });
+
   describe('isSaveAllowed', () => {
     it('returns falsy when the form does not exist yet', () => {
       delete $ctrl.form;
@@ -312,8 +325,6 @@ describe('EditComponentMainCtrl', () => {
           error: null,
         },
       }));
-
-      spyOn(EditComponentService, 'killEditor');
 
       $ctrl.save()
         .then(() => {
@@ -501,7 +512,6 @@ describe('EditComponentMainCtrl', () => {
       beforeEach(() => {
         ComponentEditor.deleteComponent.and.returnValue($q.resolve());
         ComponentEditor.confirmDeleteComponent.and.returnValue($q.resolve());
-        spyOn(EditComponentService, 'killEditor');
 
         $ctrl.deleteComponent();
         $scope.$digest();

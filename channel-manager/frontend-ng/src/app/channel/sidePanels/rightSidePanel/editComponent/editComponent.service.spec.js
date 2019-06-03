@@ -158,12 +158,33 @@ describe('EditComponentService', () => {
       expect(RightSidePanelService.stopLoading).toHaveBeenCalled();
     });
 
-    it('stops editing when opening the  component editor fails', () => {
+    it('marks the service as not ready for the user', () => {
+      EditComponentService.readyForUser = true;
+      EditComponentService.startEditing(mockComponent);
+
+      expect(EditComponentService.isReadyForUser()).toBe(false);
+    });
+
+    it('marks the service as ready for the user when the component editor succeeds', () => {
+      EditComponentService.readyForUser = false;
+      editComponent();
+
+      expect(EditComponentService.isReadyForUser()).toBe(true);
+    });
+
+    it('stops editing when opening the component editor fails', () => {
       spyOn(EditComponentService, 'stopEditing');
       ComponentEditor.open.and.returnValue($q.reject());
       editComponent();
 
       expect(EditComponentService.stopEditing).toHaveBeenCalled();
+    });
+
+    it('marks the service as not ready for the user when the component editor fails', () => {
+      ComponentEditor.open.and.returnValue($q.reject());
+      editComponent();
+
+      expect(EditComponentService.isReadyForUser()).toBe(false);
     });
   });
 
