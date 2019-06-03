@@ -48,6 +48,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
@@ -75,6 +76,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
@@ -83,6 +85,8 @@ import org.onehippo.forge.contentblocks.sort.SortHelper;
 import org.onehippo.forge.contentblocks.validator.ContentBlocksValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getViolationPerCompound;
 
 /**
  * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with
@@ -104,9 +108,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private static final String PROVIDER_COMPOUND = "cpItemsPath";
     private static final String COMPOUND_LIST = "compoundList";
     private static final String SHOW_COMPOUND_NAMES = "showCompoundNames";
-    
+
     private static final String FIELD_CONTAINER_ID = "fieldContainer";
-    
+
     private static final String CONTENTPICKER_ADD = "contentpicker-add";
 
     private final List<String> compoundList;
@@ -174,6 +178,36 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         controls.add(focusMarker = new FocusLink("focusMarker"));
         return controls;
+    }
+
+    @Override
+    public void render(final PluginRequestTarget target) {
+        if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
+
+            // clear previous validation messages and styling
+            final String markupId = getMarkupId();
+            final StringBuilder script = new StringBuilder(String.format(
+                "const subfields = $('#%s > .hippo-editor-compound-field > .hippo-editor-field > .hippo-editor-field-subfield');" +
+                "subfields.find('> .compound-validation-message').remove();" +
+                "subfields.filter('.compound-validation-border').removeClass('compound-validation-border');",
+                markupId));
+
+            final FieldPluginHelper fieldHelper = getFieldHelper();
+            final IFieldDescriptor field = fieldHelper.getField();
+            final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
+            getViolationPerCompound(field, validationModel).forEach(violation -> {
+                final String messageElement = String.format(
+                        "<div class=\"validation-message compound-validation-message\">%s</div>", violation.getMessage());
+
+                script.append(String.format(
+                        "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
+                        violation.getIndex(), messageElement)
+                );
+            });
+
+            target.appendJavaScript(script.toString());
+        }
+        super.render(target);
     }
 
     /**
@@ -274,7 +308,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     protected AbstractProvider getProvider() {
         return provider;
     }
-    
+
     public int getMaxItems() {
         return maxItems;
     }
