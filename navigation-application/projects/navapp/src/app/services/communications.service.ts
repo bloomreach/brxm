@@ -19,10 +19,13 @@ import {
   ChildConnectConfig,
   ChildPromisedApi,
   connectToChild,
+  ParentApi,
 } from '@bloomreach/navapp-communication';
 import { from, Observable } from 'rxjs';
 
 import { ClientApplicationsManagerService } from '../client-applications-manager/services';
+
+import { OverlayService } from './overlay.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +33,17 @@ import { ClientApplicationsManagerService } from '../client-applications-manager
 export class CommunicationsService {
   private connections: Map<string, Observable<ChildPromisedApi>> = new Map();
 
-  constructor(private clientAppsManager: ClientApplicationsManagerService) {}
+  constructor(
+    private clientAppsManager: ClientApplicationsManagerService,
+    private overlay: OverlayService,
+  ) {}
+
+  private get parentApiMethods(): ParentApi {
+    return {
+      showMask: () => this.overlay.enable(),
+      hideMask: () => this.overlay.disable(),
+    };
+  }
 
   navigate(clientAppId: string, path: string): void {
     const handler = this.clientAppsManager.getApplicationHandler(clientAppId);
@@ -51,6 +64,7 @@ export class CommunicationsService {
 
     const config: ChildConnectConfig = {
       iframe: iframeEl,
+      methods: this.parentApiMethods,
     };
 
     const obs = from(connectToChild(config));

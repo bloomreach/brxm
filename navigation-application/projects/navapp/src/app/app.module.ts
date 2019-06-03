@@ -6,12 +6,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientApplicationsManagerModule } from './client-applications-manager';
 import { MainMenuModule } from './main-menu';
-import { MaterialModule } from './shared';
+import { SharedModule } from './shared';
 
 @NgModule({
   imports: [
     BrowserModule,
-    MaterialModule,
+    SharedModule,
     AppRoutingModule,
     BrowserModule,
     ClientApplicationsManagerModule,
