@@ -65,8 +65,8 @@ public class DynamicBeanUtils {
         if (Strings.isNullOrEmpty(myName) || myName.trim().equals(":")) {
             throw new IllegalArgumentException(String.format("Unable to construct method name from: %s", name));
         }
-        myName = CharMatcher.whitespace().removeFrom(myName);
-        // replace all whitespaces:
+        myName = CharMatcher.whitespace().removeFrom(myName).replaceAll("[^A-Za-z0-9:]", "");
+        // replace all whitespaces and non-alphanumeric characters except colon:
         final int index = myName.indexOf(':');
         if (index == -1 || index == myName.length() - 1) {
             return PREFIX_GET + StringUtils.capitalize(myName.replace(':', ' ').trim());
