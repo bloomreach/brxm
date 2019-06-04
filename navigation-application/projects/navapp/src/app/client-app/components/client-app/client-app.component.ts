@@ -23,7 +23,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   app: ClientApp;
 
   @ViewChild('iframe')
-  iframe: ElementRef;
+  iframe: ElementRef<HTMLIFrameElement>;
 
   url: SafeResourceUrl;
 
