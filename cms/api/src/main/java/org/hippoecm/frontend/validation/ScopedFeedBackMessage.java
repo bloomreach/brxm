@@ -23,6 +23,7 @@ import org.apache.wicket.feedback.FeedbackMessage;
 public class ScopedFeedBackMessage extends FeedbackMessage {
 
     private FeedbackScope scope;
+    private FeedbackPriority feedbackPriority = FeedbackPriority.NORMAL;
 
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level) {
         super(reporter, message, level);
@@ -39,6 +40,14 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
         return scope;
     }
 
+    public FeedbackPriority getFeedbackPriority() {
+        return feedbackPriority;
+    }
+    
+    public void setFeedbackPriority(final FeedbackPriority feedbackPriority) {
+        this.feedbackPriority = feedbackPriority;
+    }
+
     @Override
     public String toString() {
         return "ScopedFeedBackMessage{" +
@@ -46,6 +55,7 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
                 ", scope=" + scope +
                 ", reporter = " + ((getReporter() == null) ? "null" : getReporter().getId()) +
                 ", level = " + getLevelAsString() +
+                ", priority = " + feedbackPriority +
                 '}';
     }
 }
