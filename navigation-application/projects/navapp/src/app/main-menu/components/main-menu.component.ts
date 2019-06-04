@@ -16,7 +16,7 @@
 
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
 import { QaHelperService } from '../../services';
@@ -59,7 +59,7 @@ export class MainMenuComponent implements OnInit {
   ngOnInit(): void {
     this.clientAppService.connectionsEstablished$
       .pipe(
-        take(1),
+        first(),
         switchMap(() => this.menu$),
       )
       .subscribe(items => this.selectMenuItem(items[0]));
