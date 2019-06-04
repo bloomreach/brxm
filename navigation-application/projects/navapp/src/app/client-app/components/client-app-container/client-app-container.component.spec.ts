@@ -7,7 +7,7 @@ import { ClientAppService } from '../../services';
 
 import { ClientAppContainerComponent } from './client-app-container.component';
 
-fdescribe('ClientAppContainerComponent', () => {
+describe('ClientAppContainerComponent', () => {
   let component: ClientAppContainerComponent;
   let fixture: ComponentFixture<ClientAppContainerComponent>;
 
