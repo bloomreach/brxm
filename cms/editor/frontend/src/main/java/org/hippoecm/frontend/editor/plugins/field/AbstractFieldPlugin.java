@@ -27,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -224,8 +225,10 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 if (violation.isPresent()) {
                     final String message = violation.get().getMessage();
+                    final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
                     javascript += String.format(
-                        "fieldElement.append('<span class=\"validation-message\">%s</span>');", message);
+                            "fieldElement.append('<span class=\"validation-message\">%s</span>');",
+                            StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
                 }
 
                 target.appendJavaScript(javascript);

@@ -23,7 +23,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
@@ -109,7 +108,7 @@ public class ViolationUtils {
         private final int index;
 
         ViolationMessage(final String message, final int index) {
-            this.message = StringEscapeUtils.escapeHtml(message);
+            this.message = message;
             this.index = index;
         }
 

@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -137,12 +138,15 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             final IFieldDescriptor field = fieldHelper.getField();
             final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
             getViolationPerCompound(field, validationModel).forEach(violation -> {
+                final String message = violation.getMessage();
+                final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
                 final String messageElement = String.format(
-                        "<div class=\"validation-message compound-validation-message\">%s</div>", violation.getMessage());
+                        "<div class=\"validation-message compound-validation-message\">%s</div>",
+                        htmlEscapedMessage);
 
                 script.append(String.format(
                         "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
-                        violation.getIndex(), messageElement)
+                        violation.getIndex(), StringEscapeUtils.escapeJavaScript(messageElement))
                 );
             });
 
