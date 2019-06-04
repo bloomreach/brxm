@@ -91,6 +91,7 @@ export class ClientAppService {
 
     if (allConnected) {
       this.connectionsEstablished.next(true);
+      this.connectionsEstablished.complete();
     }
   }
 
