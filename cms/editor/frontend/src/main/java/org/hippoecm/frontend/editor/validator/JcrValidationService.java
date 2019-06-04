@@ -33,12 +33,13 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
+import org.hippoecm.frontend.validation.FeedbackPriority;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
-import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -144,12 +145,12 @@ public class JcrValidationService implements IValidationService, IDetachable {
 
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
         if (result.getAffectedFields() == 1) {
-            logger.error(getResourceBundleModel("summarySingle", null), FeedbackScope.DOCUMENT);
+            logger.error(getResourceBundleModel("summarySingle", null), FeedbackScope.DOCUMENT, FeedbackPriority.HIGH);
         }
         if (result.getAffectedFields() > 1) {
             final IModel<String> resourceBundleModel = getResourceBundleModel("summaryMultiple",
                     Collections.singletonMap("numberOfErrors", Integer.toString(result.getAffectedFields())));
-            logger.error(resourceBundleModel, FeedbackScope.DOCUMENT);
+            logger.error(resourceBundleModel, FeedbackScope.DOCUMENT, FeedbackPriority.HIGH);
         }
     }
 
