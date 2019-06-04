@@ -10,23 +10,30 @@
 }
 
 .header {
+  align-items: center;
   cursor: pointer;
+  display: flex;
   font-size: $menu-sub-menu-font-size;
+  justify-content: space-between;
   margin: 0;
   overflow: hidden;
-  padding: 0 35px 5px 0;
+  padding: 0 10px 5px 0;
   position: relative;
-
-  .icon {
-    position: absolute;
-    right: 10px;
-    top: 4px;
-  }
 }
 
+// Height for closed and opened state is set even though its also set in the
+// angular animation for this component. This is because angular removes styles
+// set by animations and then the closed .item-wrappers will be shown while
+// the close drawer animation runs.
 .items-wrapper {
   background-color: $menu-sub-sub-item-bg;
-  padding-left: 10px;
+  height: 0;
+  overflow: hidden;
+  padding: 0 10px;
+
+  &.opened {
+    height: auto;
+  }
 
   > .item {
     font-size: $menu-sub-sub-menu-font-size;

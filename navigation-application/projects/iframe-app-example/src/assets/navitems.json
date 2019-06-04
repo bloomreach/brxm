@@ -13,6 +13,10 @@
     "id": "hippo-perspective-projectsperspective",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "projects"
+  },
+  {
+    "id": "experience-manager-2",
+    "appIframeUrl": "http://localhost:4202",
+    "appPath": "experience-manager-2"
   }
-
 ]

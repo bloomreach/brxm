@@ -63,26 +63,14 @@ export class MenuStructureService {
     const categories = new MenuItemContainer(
       'Categories',
       [
-        new MenuItemLink(
-          'category-ranking',
-          'Category Ranking',
-        ),
-        new MenuItemLink(
-          'all-category-pages',
-          'All Category Pages',
-        ),
+        new MenuItemLink('category-ranking', 'Category Ranking'),
+        new MenuItemLink('all-category-pages', 'All Category Pages'),
         new MenuItemLink(
           'category-ranking-diagnostics',
           'Category Ranking Diagnostics',
         ),
-        new MenuItemLink(
-          'category-facets-ranking',
-          'Category Facets',
-        ),
-        new MenuItemLink(
-          'category-banners',
-          'Category Banners',
-        ),
+        new MenuItemLink('category-facets-ranking', 'Category Facets'),
+        new MenuItemLink('category-banners', 'Category Banners'),
       ],
       'categories',
     );
@@ -90,71 +78,38 @@ export class MenuStructureService {
     const insights = new MenuItemContainer(
       'Insights',
       [
-        new MenuItemContainer(
-          'Opportunities',
-          [
-            new MenuItemLink(
-              'top-opportunities',
-              'Top Opportunities',
-            ),
-            new MenuItemLink(
-              'improve-category-navigation',
-              'Improve Category Navigation',
-            ),
-            new MenuItemLink(
-              'improve-site-search',
-              'Improve Site Search',
-            ),
-          ],
-        ),
-        new MenuItemLink(
-          'activities',
-          'Activities',
-        ),
-        new MenuItemLink(
-          'playbooks',
-          'Playbooks',
-        ),
-        new MenuItemContainer(
-          'Collections',
-          [
-            new MenuItemLink(
-              'product-collections',
-              'Product Collections',
-            ),
-            new MenuItemLink(
-              'category-collections',
-              'Category Collections',
-            ),
-            new MenuItemLink(
-              'page-collections',
-              'Page Collections',
-            ),
-            new MenuItemLink(
-              'query-collections',
-              'Query Collections',
-            ),
-            new MenuItemLink(
-              'brand-collections',
-              'Brand Collections',
-            ),
-          ],
-        ),
-        new MenuItemContainer(
-          'Library',
-          [
-            new MenuItemLink(
-              'hippo-perspective-reportsperspective',
-              'Content Reports',
-            ),
-          ],
-        ),
-        new MenuItemLink(
-          'product-a-b-testing',
-          'Product A/B testing',
-        ),
+        new MenuItemContainer('Opportunities', [
+          new MenuItemLink('top-opportunities', 'Top Opportunities'),
+          new MenuItemLink(
+            'improve-category-navigation',
+            'Improve Category Navigation',
+          ),
+          new MenuItemLink('improve-site-search', 'Improve Site Search'),
+        ]),
+        new MenuItemLink('activities', 'Activities'),
+        new MenuItemLink('playbooks', 'Playbooks'),
+        new MenuItemContainer('Collections', [
+          new MenuItemLink('product-collections', 'Product Collections'),
+          new MenuItemLink('category-collections', 'Category Collections'),
+          new MenuItemLink('page-collections', 'Page Collections'),
+          new MenuItemLink('query-collections', 'Query Collections'),
+          new MenuItemLink('brand-collections', 'Brand Collections'),
+        ]),
+        new MenuItemContainer('Library', [
+          new MenuItemLink(
+            'hippo-perspective-reportsperspective',
+            'Content Reports',
+          ),
+        ]),
+        new MenuItemLink('product-a-b-testing', 'Product A/B testing'),
       ],
       'insights',
+    );
+
+    const experienceManager2 = new MenuItemLink(
+      'experience-manager-2',
+      'Experience Manager 2',
+      'experience-manager',
     );
 
     return [
@@ -166,6 +121,7 @@ export class MenuStructureService {
       categories,
       insights,
       settings,
+      experienceManager2,
     ];
   }
 }

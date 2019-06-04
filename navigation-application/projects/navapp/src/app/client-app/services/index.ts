@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-export * from './client-application-configuration.model';
-export * from './client-application-handler.model';
+export * from './client-app.service';

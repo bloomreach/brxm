@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export * from './navigation-configuration.service';
+export * from './nav-config.service';
 export * from './navapp-settings.service';
 export * from './communications.service';
 export * from './qa-helper.service';

@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-export class ClientApplicationHandler {
-  constructor(
-    public url: string,
-    public iframeEl: HTMLIFrameElement,
-  ) {}
-}
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { ClientAppContainerComponent } from './components';
+import { ClientAppComponent } from './components/client-app/client-app.component';
+import { ClientAppService } from './services';
+
+@NgModule({
+  imports: [BrowserModule, CommonModule],
+  declarations: [ClientAppContainerComponent, ClientAppComponent],
+  providers: [ClientAppService],
+  exports: [ClientAppContainerComponent],
+})
+export class ClientAppModule {}

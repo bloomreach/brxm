@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-export * from './client-applications-manager.service';
-export * from './client-applications-registry.service';
+export * from './client-app-container/client-app-container.component';

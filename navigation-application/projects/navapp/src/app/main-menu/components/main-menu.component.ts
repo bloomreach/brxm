@@ -16,8 +16,9 @@
 
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 
+import { ClientAppService } from '../../client-app/services';
 import { QaHelperService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
@@ -28,7 +29,6 @@ import { MenuStateService } from '../services';
   styleUrls: ['main-menu.component.scss'],
 })
 export class MainMenuComponent implements OnInit {
-
   get collapsed(): boolean {
     return this.menuStateService.isMenuCollapsed;
   }
@@ -52,10 +52,17 @@ export class MainMenuComponent implements OnInit {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-  ) { }
+    private clientAppService: ClientAppService,
+  ) {}
 
+  // Should be replaced with proper routing later
   ngOnInit(): void {
-    this.menu$.pipe(first()).subscribe(items => this.selectMenuItem(items[0]));
+    this.clientAppService.connectionsEstablished$
+      .pipe(
+        first(),
+        switchMap(() => this.menu$),
+      )
+      .subscribe(items => this.selectMenuItem(items[0]));
   }
 
   toggle(): void {
@@ -72,7 +79,6 @@ export class MainMenuComponent implements OnInit {
   }
 
   selectMenuItem(item: MenuItem): void {
-
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
       return;

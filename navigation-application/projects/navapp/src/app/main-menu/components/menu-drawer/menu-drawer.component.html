@@ -1,20 +1,21 @@
-<div *ngIf="config" [@fadeIn]="configChange$ | async"
+<div *ngIf="config"
+     [@fadeIn]="configChange$ | async"
      (clickOutside)="onClickedOutside()"
      class="content-wrapper">
   <h1 class="header">{{ config?.caption }}</h1>
 
   <div *ngFor="let item of config.children">
     <brna-menu-item-link
-      *ngIf="!isContainer(item)"
-      [config]="item"
-      [active]="isActive(item)"
-      [ngClass]="getQaClass(item)">
+                         *ngIf="!isContainer(item)"
+                         [config]="item"
+                         [active]="isActive(item)"
+                         [ngClass]="getQaClass(item)">
     </brna-menu-item-link>
     <brna-expandable-menu-item
-      *ngIf="isContainer(item)"
-      [config]="item"
-      [active]="isActive(item)"
-      [ngClass]="getQaClass(item)">
+                               *ngIf="isContainer(item)"
+                               [config]="item"
+                               [active]="isActive(item)"
+                               [ngClass]="getQaClass(item)">
     </brna-expandable-menu-item>
   </div>
 </div>

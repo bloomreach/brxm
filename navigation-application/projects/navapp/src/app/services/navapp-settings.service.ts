@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { NavAppSettings, NavConfigResource } from '../models';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,7 +19,13 @@ export class NavAppSettingsService implements NavAppSettings {
   };
 
   constructor() {
-    const settings: NavAppSettings = (window as any).NavAppSettings;
+    let settings: NavAppSettings;
+
+    if (environment.production) {
+      settings = (window as any).NavAppSettings;
+    } else {
+      settings = environment.NavAppSettings;
+    }
     Object.assign(this, settings);
   }
 }

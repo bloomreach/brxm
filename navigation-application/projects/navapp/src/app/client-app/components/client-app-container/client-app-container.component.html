@@ -1,0 +1,4 @@
+<brna-client-app *ngFor="let app of apps"
+                 [app]="app"
+                 [class.hidden]="!isActive(app.url)">
+</brna-client-app>

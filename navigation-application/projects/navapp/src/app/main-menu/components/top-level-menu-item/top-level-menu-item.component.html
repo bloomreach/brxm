@@ -1,5 +1,12 @@
 <!-- (C) Copyright 2019 Bloomreach. All rights reserved. (https://www.bloomreach.com) -->
-
-<mat-icon [svgIcon]="icon" class="icon"></mat-icon>
-<mat-icon *ngIf="activeIcon" [svgIcon]="activeIcon" class="icon active"></mat-icon>
-<span class="caption">{{ caption }}</span>
+<div class="menu-item" matRipple [ngClass]="{
+  'pressed': pressed,
+  'active': active,
+  'collapsed': collapsed
+}">
+  <mat-icon [svgIcon]="icon" class="icon"></mat-icon>
+  <mat-icon *ngIf="activeIcon" [svgIcon]="activeIcon" class="icon active"></mat-icon>
+  <div class="caption">
+    {{ caption }}
+  </div>
+</div>

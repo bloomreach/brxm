@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { Component, HostBinding, Input } from '@angular/core';
-
-import { MenuItem } from '../../models';
 
 @Component({
   selector: 'brna-top-level-menu-item',
   templateUrl: 'top-level-menu-item.component.html',
   styleUrls: ['top-level-menu-item.component.scss'],
+  animations: [
+    trigger('collapseToggle', [
+      state('true', style({ width: '56px'})),
+      state('false', style({ width: '*' })),
+      transition('true <=> false', animate('300ms ease')),
+    ]),
+  ],
 })
 export class TopLevelMenuItemComponent {
   @Input()
@@ -34,14 +46,12 @@ export class TopLevelMenuItemComponent {
   caption = '';
 
   @Input()
-  @HostBinding('class.collapsed')
+  @HostBinding('@collapseToggle')
   collapsed = true;
 
   @Input()
-  @HostBinding('class.active')
   active = false;
 
   @Input()
-  @HostBinding('class.pressed')
   pressed = false;
 }

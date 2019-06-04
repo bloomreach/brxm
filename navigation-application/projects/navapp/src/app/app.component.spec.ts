@@ -4,9 +4,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClientApplicationsManagerModule } from './client-applications-manager';
+import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
-import { NavigationConfigurationService } from './services';
+import { NavConfigService } from './services';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -18,11 +18,11 @@ describe('AppComponent', () => {
         RouterTestingModule,
         AppRoutingModule,
         MainMenuModule,
-        ClientApplicationsManagerModule,
+        ClientAppModule,
         HttpClientModule,
       ],
       declarations: [AppComponent],
-      providers: [NavigationConfigurationService],
+      providers: [NavConfigService],
     }).createComponent(AppComponent);
 
     fixture = TestBed.createComponent(AppComponent);
