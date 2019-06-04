@@ -29,19 +29,9 @@ import { Component, HostBinding, Input } from '@angular/core';
   styleUrls: ['top-level-menu-item.component.scss'],
   animations: [
     trigger('collapseToggle', [
-      state(
-        'true',
-        style({
-          width: '56px',
-        }),
-      ),
-      state(
-        'false',
-        style({
-          width: '*',
-        }),
-      ),
-      transition('true <=> false', [animate('300ms ease')]),
+      state('true', style({ width: '56px'})),
+      state('false', style({ width: '*' })),
+      transition('true <=> false', animate('300ms ease')),
     ]),
   ],
 })

@@ -33,18 +33,8 @@ import { MenuStateService } from '../../services';
   styleUrls: ['expandable-menu-item.component.scss'],
   animations: [
     trigger('slideInOut', [
-      state(
-        'false',
-        style({
-          height: '0',
-        }),
-      ),
-      state(
-        'true',
-        style({
-          height: '*',
-        }),
-      ),
+      state('false', style({ height: '0' })),
+      state('true', style({ height: '*' })),
       transition('false <=> true', animate('300ms ease')),
     ]),
   ],
@@ -62,7 +52,8 @@ export class ExpandableMenuItemComponent implements OnChanges {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-  ) {}
+  ) {
+  }
 
   get isOpened(): boolean {
     return this.isChildMenuOpened;
@@ -81,6 +72,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
   isChildMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
   }
+
   getQaClass(item: MenuItemLink): string {
     return this.qaHelperService.getMenuItemClass(item);
   }
