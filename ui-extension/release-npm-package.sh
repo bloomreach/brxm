@@ -25,8 +25,9 @@
 # - This can only be done within 72 hours after publishing
 # - PUBLISHED VERSIONS CAN NEVER BE REUSED AGAIN, so publishing again needs to increase the patch version.
 
+# Ensure that this script fails fast on any npm error
 set -eo pipefail
-shopt -s
+shopt -s inherit_errexit
 
 if [ $# -ne 1 ]; then
   echo "Usage: $0 <version>";
