@@ -29,22 +29,26 @@ public interface InternalHstSiteMapItem extends HstSiteMapItem, CanonicalInfo {
      * Internal only! Not an api.
      * 
      * @param pathElementValue any value splitted by slash in path like /path/to/element
+     * @param wildCardChildSiteMapItems {@link List} of {@link HstSiteMapItem} items that match
+     *   with a wildcard pattern
      * @param excludedSiteList sites to be excluded from traverse
      * @return
      */
     InternalHstSiteMapItem getWildCardPatternChild(String pathElementValue,
-            List<InternalHstSiteMapItem> excludedSiteList);
+            List<InternalHstSiteMapItem> wildCardChildSiteMapItems, List<InternalHstSiteMapItem> excludedSiteList);
 
     /**
      * Internal only! Not an api.
      * 
      * @param pathElements list of path elements to traverse
      * @param position of the path element
+     * @param anyChildSiteMapItems {@link List} of {@link HstSiteMapItem} items that match
+     *   with any pattern
      * @param excludedSiteList sites to be excluded from traverse
      * @return
      */
     InternalHstSiteMapItem getAnyPatternChild(String[] pathElements, int position,
-            List<InternalHstSiteMapItem> excludedSiteList);
+            List<InternalHstSiteMapItem> anyChildSiteMapItems, List<InternalHstSiteMapItem> excludedSiteList);
 
     /**
      * Internal only! Not an api.
@@ -68,5 +72,17 @@ public interface InternalHstSiteMapItem extends HstSiteMapItem, CanonicalInfo {
      * @return postfix of the wildcard definition
      */
     String getWildCardPostfix();
+
+    /**
+     * 
+     * @return {@link List} of {@link HstSiteMapItem} items that configured to be accessed by a wildcard
+     */
+    List<InternalHstSiteMapItem> getWildCardChildSiteMapItems();
+
+    /**
+     * 
+     * @return {@link List} of {@link HstSiteMapItem} items that configured to be accessed by any
+     */
+    List<InternalHstSiteMapItem> getAnyChildSiteMapItems();
 
 }

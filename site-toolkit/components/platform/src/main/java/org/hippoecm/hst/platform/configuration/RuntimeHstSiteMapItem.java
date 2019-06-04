@@ -33,18 +33,36 @@ public class RuntimeHstSiteMapItem extends GenericHstSiteMapItemWrapper {
     private final HstSiteMap hstSiteMap;
     private final HstSiteMapItem parentItem;
     private final Map<String, HstSiteMapItem> childrenSiteMapItems = new HashMap<>();
+    private final Map<String, InternalHstSiteMapItem> wildCardChildrenSiteMapItems = new HashMap<>();
+    private final Map<String, InternalHstSiteMapItem> anyChildrenSiteMapItems = new HashMap<>();
     private final List<HstSiteMapItem> siteMapItems;
+    private final List<InternalHstSiteMapItem> wildCardChildSiteMapItems;
+    private final List<InternalHstSiteMapItem> anyChildSiteMapItems;
+    private final String scheme;
 
     public RuntimeHstSiteMapItem(final InternalHstSiteMapItem delegatee, final RuntimeHstSiteMap hstSiteMap,
-            final RuntimeHstSiteMapItem parentHstSiteMapItem) {
+            final RuntimeHstSiteMapItem parentHstSiteMapItem, final String scheme) {
         super(delegatee);
         this.delegatee = delegatee;
         this.hstSiteMap = hstSiteMap;
+        this.scheme = scheme;
 
         delegatee.getChildren().forEach(child -> {
             RuntimeHstSiteMapItem runtimeHstSiteMapItem = new RuntimeHstSiteMapItem((InternalHstSiteMapItem) child,
-                    hstSiteMap, RuntimeHstSiteMapItem.this);
+                    hstSiteMap, RuntimeHstSiteMapItem.this, scheme);
             childrenSiteMapItems.put(runtimeHstSiteMapItem.getValue(), runtimeHstSiteMapItem);
+        });
+
+        delegatee.getWildCardChildSiteMapItems().forEach(child -> {
+            RuntimeHstSiteMapItem runtimeHstSiteMapItem = new RuntimeHstSiteMapItem((InternalHstSiteMapItem) child,
+                    hstSiteMap, RuntimeHstSiteMapItem.this, scheme);
+            wildCardChildrenSiteMapItems.put(runtimeHstSiteMapItem.getValue(), runtimeHstSiteMapItem);
+        });
+
+        delegatee.getAnyChildSiteMapItems().forEach(child -> {
+            RuntimeHstSiteMapItem runtimeHstSiteMapItem = new RuntimeHstSiteMapItem((InternalHstSiteMapItem) child,
+                    hstSiteMap, RuntimeHstSiteMapItem.this, scheme);
+            anyChildrenSiteMapItems.put(runtimeHstSiteMapItem.getValue(), runtimeHstSiteMapItem);
         });
 
         if (delegatee.getParentItem() != null && parentHstSiteMapItem != null) {
@@ -54,6 +72,8 @@ public class RuntimeHstSiteMapItem extends GenericHstSiteMapItemWrapper {
         }
 
         siteMapItems = unmodifiableList(new ArrayList<>(childrenSiteMapItems.values()));
+        wildCardChildSiteMapItems = unmodifiableList(new ArrayList<>(wildCardChildrenSiteMapItems.values()));
+        anyChildSiteMapItems = unmodifiableList(new ArrayList<>(anyChildrenSiteMapItems.values()));
     }
 
     @Override
@@ -67,6 +87,16 @@ public class RuntimeHstSiteMapItem extends GenericHstSiteMapItemWrapper {
     }
 
     @Override
+    public List<InternalHstSiteMapItem> getWildCardChildSiteMapItems() {
+        return wildCardChildSiteMapItems;
+    }
+
+    @Override
+    public List<InternalHstSiteMapItem> getAnyChildSiteMapItems() {
+        return anyChildSiteMapItems;
+    }
+
+    @Override
     public HstSiteMapItem getParentItem() {
         return parentItem;
     }
@@ -74,6 +104,11 @@ public class RuntimeHstSiteMapItem extends GenericHstSiteMapItemWrapper {
     @Override
     public HstSiteMap getHstSiteMap() {
         return hstSiteMap;
+    }
+
+    @Override
+    public String getScheme() {
+        return scheme;
     }
 
     @Override

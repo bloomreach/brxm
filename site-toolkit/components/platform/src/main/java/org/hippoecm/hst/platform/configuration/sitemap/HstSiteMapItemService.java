@@ -89,9 +89,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class HstSiteMapItemService implements InternalHstSiteMapItem, ConfigurationLockInfo
-{
+public class HstSiteMapItemService implements InternalHstSiteMapItem, ConfigurationLockInfo {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
@@ -204,7 +202,6 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
     private boolean containerResource;
     private boolean hiddenInChannelManager;
     private boolean markedDeleted;
-
 
     HstSiteMapItemService(final HstNode node,
                           final MountSiteMapConfiguration mountSiteMapConfiguration,
@@ -624,8 +621,6 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
         return childSiteMapItems.get(value);
     }
 
-
-
     public List<HstSiteMapItem> getChildren() {
         return Collections.unmodifiableList(new ArrayList<>(childSiteMapItems.values()));
     }
@@ -805,6 +800,15 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
         return occurences;
     }
 
+    @Override
+    public List<InternalHstSiteMapItem> getWildCardChildSiteMapItems() {
+        return containsWildCardChildSiteMapItems;
+    }
+
+    @Override
+    public List<InternalHstSiteMapItem> getAnyChildSiteMapItems() {
+        return containsAnyChildSiteMapItems;
+    }
 
     // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY
 
@@ -817,23 +821,23 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
     }
 
     @Override
-    public InternalHstSiteMapItem getWildCardPatternChild(String value, List<InternalHstSiteMapItem> excludeList){
-        if(value == null || containsWildCardChildSiteMapItems.isEmpty()) {
+    public InternalHstSiteMapItem getWildCardPatternChild(String value, List<InternalHstSiteMapItem> wildCardChildSiteMapItems,  List<InternalHstSiteMapItem> excludeList){
+        if(value == null || wildCardChildSiteMapItems.isEmpty()) {
             return null;
         }
-        return match(value, containsWildCardChildSiteMapItems, excludeList);
+        return match(value, wildCardChildSiteMapItems, excludeList);
     }
 
     @Override
-    public InternalHstSiteMapItem getAnyPatternChild(String[] elements, int position, List<InternalHstSiteMapItem> excludeList){
-        if(value == null || containsAnyChildSiteMapItems.isEmpty()) {
+    public InternalHstSiteMapItem getAnyPatternChild(String[] elements, int position, List<InternalHstSiteMapItem> anyChildSiteMapItems, List<InternalHstSiteMapItem> excludeList){
+        if(value == null || anyChildSiteMapItems.isEmpty()) {
             return null;
         }
         StringBuilder remainder = new StringBuilder(elements[position]);
         while(++position < elements.length) {
             remainder.append("/").append(elements[position]);
         }
-        return match(remainder.toString(), containsAnyChildSiteMapItems, excludeList);
+        return match(remainder.toString(), anyChildSiteMapItems, excludeList);
     }
 
     @Override
