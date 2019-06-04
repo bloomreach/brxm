@@ -48,12 +48,8 @@
     methods: Hippo.Cms,
   };
   window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig)
-    .then(childApi => {
-        console.log('Connect to sub app');
-        Object.assign(Hippo.subApp, childApi)
-      }
-    ).catch(error =>
-    console.error(error));
+    .then(childApi => Object.assign(Hippo.subApp, childApi))
+    .catch(error => console.error(error));
 
 }());
 //# sourceURL=cms-subapp-iframe-communication.js
