@@ -44,6 +44,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.FeedbackPriority;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -186,6 +187,17 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
     // the same logic as in org.apache.wicket.Component.error
     public void error(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
+        addStateChange();
+    }
+
+    @Override
+    public void error(final IModel<String> message, final FeedbackScope scope, final FeedbackPriority priority) {
+        // the same logic as in org.apache.wicket.Component.error
+        final ScopedFeedBackMessage feedback = 
+                new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope);
+        feedback.setFeedbackPriority(priority);
+        
+        getFeedbackMessages().add(feedback);
         addStateChange();
     }
 
