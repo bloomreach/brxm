@@ -1,5 +1,7 @@
-.overlay {
+:host {
+  background: rgba(0, 0, 0, .32);
   bottom: 0;
+  display: block;
   left: 0;
   position: absolute;
   right: 0;

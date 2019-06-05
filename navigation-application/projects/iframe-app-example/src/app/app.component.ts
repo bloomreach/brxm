@@ -15,23 +15,25 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { connectToParent, NavLocation, ParentConnectConfig } from '@bloomreach/navapp-communication';
+import {
+  connectToParent,
+  NavLocation,
+  ParentConnectConfig,
+} from '@bloomreach/navapp-communication';
+import { ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
 
 import { mockSites, navigationConfiguration } from './mocks';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <h1>Number of times navigated {{ navigateCount }}</h1>
-    <h2>It was navigated to "{{ navigatedTo }}"</h2>
-    <h3>The button was clicked {{ buttonClicked }} times.</h3>
-    <button (click)="onButtonClicked()">Button</button>
-  `,
+  templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
   navigateCount = 0;
   navigatedTo: string;
   buttonClicked = 0;
+  parent: ParentPromisedApi;
+  overlayed = false;
 
   ngOnInit(): void {
     if (window.parent === window) {
@@ -54,10 +56,24 @@ export class AppComponent implements OnInit {
       },
     };
 
-    connectToParent(config);
+    connectToParent(config).then(parent => (this.parent = parent));
   }
 
   onButtonClicked(): void {
     this.buttonClicked++;
+  }
+
+  toggleOverlay(): void {
+    if (this.overlayed) {
+      this.parent.hideMask().then(() => {
+        console.log('hiding parent mask');
+        this.overlayed = false;
+      });
+    } else {
+      this.parent.showMask().then(() => {
+        console.log('showing parent mask');
+        this.overlayed = true;
+      });
+    }
   }
 }

@@ -30,9 +30,14 @@
             },
             "assets": [
               "projects/navapp/src/favicon.ico",
-              { "glob": "**/**/*", "input": "projects/navapp/src/navapp/assets/", "output": "/navapp/assets/" }
+              {
+                "glob": "**/**/*",
+                "input": "projects/navapp/src/navapp/assets/",
+                "output": "/navapp/assets/"
+              }
             ],
             "styles": [
+              "node_modules/open-sans-fontface/open-sans.css",
               "node_modules/normalize.css/normalize.css",
               "projects/navapp/src/styles.scss"
             ],

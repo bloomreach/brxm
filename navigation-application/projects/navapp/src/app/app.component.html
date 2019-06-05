@@ -1,6 +1,7 @@
-<nav class="nav">
+<brna-overlay *ngIf="isOverlayVisible$ | async" class="overlay"></brna-overlay>
+<nav>
   <brna-main-menu></brna-main-menu>
 </nav>
-<main class="main">
+<main>
   <brna-client-app-container></brna-client-app-container>
 </main>

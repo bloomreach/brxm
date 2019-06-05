@@ -1,9 +1,8 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-
-import { NavConfigService } from './services';
+import { Observable } from 'rxjs';
 
 import { ClientAppService } from './client-app/services';
-import { MenuStateService } from './main-menu/services';
+import { NavConfigService, OverlayService } from './services';
 
 @Component({
   selector: 'brna-root',
@@ -17,7 +16,12 @@ export class AppComponent implements OnInit {
   constructor(
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
+    private overlayService: OverlayService,
   ) {}
+
+  get isOverlayVisible$(): Observable<boolean> {
+    return this.overlayService.visible$;
+  }
 
   ngOnInit(): void {
     this.navConfigService.init();
