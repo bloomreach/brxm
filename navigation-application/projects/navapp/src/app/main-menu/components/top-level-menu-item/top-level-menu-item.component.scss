@@ -24,7 +24,7 @@
 :host {
   cursor: pointer;
   display: grid;
-  height: $menu-root-item-height;
+  height: $menu-top-item-height;
   position: relative;
 }
 
@@ -79,7 +79,7 @@
   }
 
   &.pressed:not(:hover) {
-    background-color: $menu-sub-item-bg;
+    background-color: $menu-drawer-bg;
 
     &:hover {
       .mat-icon,

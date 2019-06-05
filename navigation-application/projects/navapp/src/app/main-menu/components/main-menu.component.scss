@@ -22,6 +22,6 @@
   cursor: pointer;
   display: grid;
   grid-template-columns: $menu-collapsed-width;
-  height: $menu-root-item-height;
+  height: $menu-top-item-height;
   place-items: center center;
 }

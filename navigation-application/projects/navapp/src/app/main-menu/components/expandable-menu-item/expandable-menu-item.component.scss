@@ -4,7 +4,8 @@
   display: block;
   overflow: hidden;
 
-  &.active .header {
+  &.active .header,
+  &.active .header .icon {
     color: $menu-active-text-color;
   }
 }
@@ -13,12 +14,21 @@
   align-items: center;
   cursor: pointer;
   display: flex;
-  font-size: $menu-sub-menu-font-size;
+  font-size: $menu-drawer-font-size;
   justify-content: space-between;
   margin: 0;
   overflow: hidden;
   padding: 0 10px 5px 0;
   position: relative;
+
+  .icon {
+    color: $menu-icon-color;
+  }
+
+  &:hover,
+  &:hover .icon {
+    color: $white;
+  }
 }
 
 // Height for closed and opened state is set even though its also set in the
@@ -26,7 +36,7 @@
 // set by animations and then the closed .item-wrappers will be shown while
 // the close drawer animation runs.
 .items-wrapper {
-  background-color: $menu-sub-sub-item-bg;
+  background-color: $menu-sub-item-bg;
   height: 0;
   overflow: hidden;
   padding: 0 10px;
@@ -36,7 +46,7 @@
   }
 
   > .item {
-    font-size: $menu-sub-sub-menu-font-size;
+    font-size: $menu-sub-menu-font-size;
   }
 
   .item:first-child {

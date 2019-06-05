@@ -7,14 +7,25 @@
     'nav main';
   grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
+  position: relative;
 }
 
-.nav {
+nav {
   display: grid;
   grid-area: nav;
   z-index: 1;
 }
 
-.main {
+main {
+  background: $white;
   grid-area: main;
+  z-index: 0;
+}
+
+.overlay {
+  z-index: 3;
+
+  ~ main {
+    z-index: 4;
+  }
 }

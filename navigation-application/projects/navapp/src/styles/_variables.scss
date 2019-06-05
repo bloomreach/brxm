@@ -80,25 +80,25 @@ $body-text-color: $grey-900;
 //
 // Font, line-height, and color for body text, headings, and more.
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$font-weight-semibold: 600;
 
 // Menu
-$menu-root-item-height: 46px;
+$menu-top-item-height: 48px;
 $menu-icon-size: 24px;
 $menu-icon-margin: 16px;
 $menu-width: 224px;
 $menu-drawer-width: 200px;
 $menu-collapsed-width: ($menu-icon-size + 2 * $menu-icon-margin);
 
-$menu-sub-menu-font-size: 14px;
-$menu-sub-sub-menu-font-size: 12px;
+$menu-drawer-font-size: 14px;
+$menu-sub-menu-font-size: 13px;
 
-$menu-bg: rgb(48, 62, 84);
-$menu-drawer-bg: rgb(31, 45, 65);
-$menu-sub-item-bg: rgb(31, 45, 65);
-$menu-sub-sub-item-bg: rgb(26, 37, 54);
+$menu-bg: #37475f;
 $menu-hover-bg: #fff;
+$menu-drawer-bg: #23334a;
+$menu-sub-item-bg: #1b283b;
 
-$menu-text-color: #fff;
+$menu-text-color: #ccc;
 $menu-hover-text-color: $menu-bg;
-$menu-active-text-color: rgb(29, 161, 242);
-$menu-icon-color: rgb(172, 178, 187);
+$menu-active-text-color: #1ea7eb;
+$menu-icon-color: #b3b3b3;

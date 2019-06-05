@@ -2,7 +2,7 @@
 
 :host {
   display: block;
-  font-size: $menu-sub-menu-font-size;
+  font-size: $menu-drawer-font-size;
   padding: 5px 0;
 
   &.active .menu-item-link {
@@ -14,4 +14,8 @@
   color: $menu-text-color;
   text-decoration: none;
   white-space: nowrap;
+
+  &:hover {
+    color: $white;
+  }
 }

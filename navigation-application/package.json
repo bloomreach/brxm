@@ -35,6 +35,7 @@
     "core-js": "^2.5.4",
     "ng-click-outside": "~4.0.0",
     "normalize.css": "~8.0.1",
+    "open-sans-fontface": "^1.4.0",
     "penpal": "^4.0.0",
     "rxjs": "~6.3.3",
     "tslib": "^1.9.0",
