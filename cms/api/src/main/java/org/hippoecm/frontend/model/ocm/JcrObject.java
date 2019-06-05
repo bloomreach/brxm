@@ -144,7 +144,7 @@ public abstract class JcrObject implements IDetachable, IObservable {
      * @param context subtype specific observation context
      * @param events received JCR events
      */
-    abstract protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
+    protected abstract void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
 
     public void startObservation() {
         observing = true;
