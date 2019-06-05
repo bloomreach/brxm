@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,11 +22,13 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Indexable(ignore = true)
 @Node(jcrType="hippo:mirror")
+@HippoEssentialsGenerated(allowModifications = false)
 public class HippoMirror extends HippoFolder implements HippoMirrorBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoMirror.class);

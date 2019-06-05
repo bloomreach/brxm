@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 /**
  * Bean mapping class for the 'hippogallery:imageset' document type
  */
 
 @Node(jcrType = "hippogallery:imageset")
+@HippoEssentialsGenerated(allowModifications = false)
 public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryImageSetBean {
-
-    private static Logger log = LoggerFactory.getLogger(HippoGalleryImageSet.class);
 
     @Override
     public String getDescription() {
