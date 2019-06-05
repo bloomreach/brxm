@@ -13,35 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NavAppSettings } from '../app/models';
-
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const NavAppSettings: NavAppSettings = {
-  userSettings: {
-    userName: 'Frank Zappa',
-    language: 'en',
-    timeZone: 'Europe/Amsterdam',
-  },
-  appSettings: {
-    navConfigResources: [
-      {
-        resourceType: 'IFRAME',
-        url: 'http://localhost:4201',
-      },
-      {
-        resourceType: 'REST',
-        url: 'http://localhost:4201/assets/navitems.json',
-      },
-    ],
-  },
-};
-
 export const environment = {
   production: false,
-  NavAppSettings,
 };
 
 /*

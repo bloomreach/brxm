@@ -19,13 +19,7 @@ export class NavAppSettingsService implements NavAppSettings {
   };
 
   constructor() {
-    let settings: NavAppSettings;
-
-    if (environment.production) {
-      settings = (window as any).NavAppSettings;
-    } else {
-      settings = environment.NavAppSettings;
-    }
+    const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
   }
 }
