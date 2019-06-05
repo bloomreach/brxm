@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NavItem } from '@bloomreach/navapp-communication';
+import { NavItem, Site } from '@bloomreach/navapp-communication';
 
 export const navigationConfiguration: NavItem[] = [
   {
@@ -41,5 +41,166 @@ export const navigationConfiguration: NavItem[] = [
     id: 'product-a-b-testing',
     appIframeUrl: 'http://localhost:4201',
     appPath: 'product-a-b-testing',
+  },
+];
+
+export const mockSites: Site[] = [
+  {
+    id: 0x001,
+    name: 'www.company.com',
+    subGroups: [
+      {
+        id: 0x011,
+        name: 'UK & Germany',
+        subGroups: [
+          {
+            id: 0x111,
+            name: 'Office UK',
+          },
+          {
+            id: 0x211,
+            name: 'Office DE',
+          },
+        ],
+      },
+      {
+        id: 0x021,
+        name: 'Europe',
+        subGroups: [
+          {
+            id: 0x121,
+            name: 'Office UK',
+          },
+          {
+            id: 0x221,
+            name: 'Office DE',
+          },
+          {
+            id: 0x321,
+            name: 'Office FR',
+          },
+        ],
+      },
+      {
+        id: 0x031,
+        name: 'All sites',
+        subGroups: [
+          {
+            id: 0x131,
+            name: 'Office UK',
+          },
+          {
+            id: 0x231,
+            name: 'Office DE',
+          },
+          {
+            id: 0x331,
+            name: 'Office FR',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 0x002,
+    name: 'An example company that has a very long name and a subgroup with many items',
+    subGroups: [
+      {
+        id: 0x012,
+        name: 'Sub company 001',
+      },
+      {
+        id: 0x022,
+        name: 'Sub company 002',
+      },
+      {
+        id: 0x032,
+        name: 'Sub company 003',
+      },
+      {
+        id: 0x042,
+        name: 'Sub company 004',
+      },
+      {
+        id: 0x052,
+        name: 'Sub company 005',
+      },
+      {
+        id: 0x062,
+        name: 'Sub company 006',
+      },
+      {
+        id: 0x072,
+        name: 'Sub company 007',
+      },
+      {
+        id: 0x082,
+        name: 'Sub company 008',
+      },
+      {
+        id: 0x0A2,
+        name: 'Sub company 009',
+      },
+      {
+        id: 0x0B2,
+        name: 'Sub company 010',
+      },
+      {
+        id: 0x0C2,
+        name: 'Sub company 011',
+      },
+      {
+        id: 0x0D2,
+        name: 'Sub company 012',
+      },
+    ],
+  },
+  {
+    id: 0x003,
+    name: 'Name\twith\ttabs',
+  },
+  {
+    id: 0x004,
+    name: '٩(̾●̮̮̃̾•̃̾)۶',
+  },
+  {
+    id: 0x005,
+    name: '°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸',
+  },
+  {
+    id: 0x006,
+    name: '^⨀ᴥ⨀^',
+  },
+  {
+    id: 0x007,
+    name: 'Name\twith\ttabs',
+  },
+  {
+    id: 0x008,
+    name: 'myapp.com',
+    subGroups: [
+      {
+        id: 0x018,
+        name: 'myapp.com.1',
+        subGroups: [
+          {
+            id: 0x118,
+            name: 'myapp.com.1.1',
+            subGroups: [
+              {
+                id: 0x1118,
+                name: 'myapp.com.1.1.1',
+                subGroups: [
+                  {
+                    id: 0x11118,
+                    name: 'myapp.com.1.1.1.1',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
 ];

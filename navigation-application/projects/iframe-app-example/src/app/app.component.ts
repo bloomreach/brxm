@@ -17,7 +17,7 @@
 import { Component, OnInit } from '@angular/core';
 import { connectToParent, NavLocation, ParentConnectConfig } from '@bloomreach/navapp-communication';
 
-import { navigationConfiguration } from './mocks';
+import { mockSites, navigationConfiguration } from './mocks';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +47,9 @@ export class AppComponent implements OnInit {
         },
         getNavItems: () => {
           return navigationConfiguration;
+        },
+        getSites: () => {
+          return mockSites;
         },
       },
     };
