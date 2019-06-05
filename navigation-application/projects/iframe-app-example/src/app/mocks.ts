@@ -47,7 +47,7 @@ export const navigationConfiguration: NavItem[] = [
 export const mockSites: Site[] = [
   {
     id: 0x001,
-    name: 'adidas.co.uk',
+    name: 'www.company.com',
     subGroups: [
       {
         id: 0x011,
@@ -55,11 +55,11 @@ export const mockSites: Site[] = [
         subGroups: [
           {
             id: 0x111,
-            name: 'Adidas UK',
+            name: 'Office UK',
           },
           {
             id: 0x211,
-            name: 'Adidas DE',
+            name: 'Office DE',
           },
         ],
       },
@@ -69,15 +69,15 @@ export const mockSites: Site[] = [
         subGroups: [
           {
             id: 0x121,
-            name: 'Adidas UK',
+            name: 'Office UK',
           },
           {
             id: 0x221,
-            name: 'Adidas DE',
+            name: 'Office DE',
           },
           {
             id: 0x321,
-            name: 'Adidas FR',
+            name: 'Office FR',
           },
         ],
       },
@@ -87,15 +87,15 @@ export const mockSites: Site[] = [
         subGroups: [
           {
             id: 0x131,
-            name: 'Adidas UK',
+            name: 'Office UK',
           },
           {
             id: 0x231,
-            name: 'Adidas DE',
+            name: 'Office DE',
           },
           {
             id: 0x331,
-            name: 'Adidas FR',
+            name: 'Office FR',
           },
         ],
       },
@@ -103,7 +103,7 @@ export const mockSites: Site[] = [
   },
   {
     id: 0x002,
-    name: 'An example company that has a a very long name and a subgroup with many items',
+    name: 'An example company that has a very long name and a subgroup with many items',
     subGroups: [
       {
         id: 0x012,
