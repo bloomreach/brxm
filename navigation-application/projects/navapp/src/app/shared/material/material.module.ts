@@ -51,6 +51,7 @@ export class MaterialModule {
       'widget',
       'widget.active',
       'extensions',
+      'extensions.active',
       'help',
       'user',
     ];

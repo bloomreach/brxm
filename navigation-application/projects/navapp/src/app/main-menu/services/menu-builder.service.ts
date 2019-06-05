@@ -46,18 +46,16 @@ export class MenuBuilderService {
   }
 
   private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {
-    menu.forEach(item => {
-      if (item instanceof MenuItemContainer) {
-        this.applyNavItems(item.children, navItems);
-        return;
+    const menuItemLinks = this.getMenuItemLinks(menu);
+    navItems.forEach(navItem => {
+      let item = menuItemLinks.find(i => i.id === navItem.id);
+      if (!item) {
+        item = new MenuItemLink(navItem.id, navItem.displayName || navItem.id);
+        this.menuStructureService.addExtension(item);
       }
-
-      const navItem = navItems.find(i => i.id === item.id);
-      if (navItem) {
-        // One iframe per app is created so app's url can be used as an identifier
-        item.appId = navItem.appIframeUrl;
-        item.appPath = navItem.appPath;
-      }
+      // One iframe per app is created so app's url can be used as an identifier
+      item.appId = navItem.appIframeUrl;
+      item.appPath = navItem.appPath;
     });
   }
 
@@ -74,5 +72,16 @@ export class MenuBuilderService {
 
       throw new Error('MenuItem has unknown type.');
     });
+  }
+
+  private getMenuItemLinks(menu: MenuItem[]): MenuItemLink[] {
+    return menu.reduce(
+      (leafs, item) => {
+        if (item instanceof MenuItemContainer) {
+          return leafs.concat(this.getMenuItemLinks(item.children));
+        }
+        leafs.push(item);
+        return leafs;
+      }, []);
   }
 }

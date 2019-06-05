@@ -20,6 +20,14 @@ import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
 @Injectable()
 export class MenuStructureService {
+  private extensions = new MenuItemContainer(
+    'Extensions', [], 'extensions',
+  );
+
+  addExtension(item: MenuItemLink): void {
+    this.extensions.children.push(item);
+  }
+
   getMenuStructure(): MenuItem[] {
     return this.createMenuStructure();
   }
@@ -120,6 +128,7 @@ export class MenuStructureService {
       documentSearch,
       categories,
       insights,
+      this.extensions,
       settings,
       experienceManager2,
     ];
