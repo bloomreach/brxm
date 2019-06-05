@@ -6,8 +6,8 @@
     "build": "node copy-files.js"
   },
   "dependencies": {
-    "@bloomreach/navapp": "^1.0.0-17",
-    "@bloomreach/navapp-communication": "^1.0.0-6",
+    "@bloomreach/navapp": "^1.0.0-18",
+    "@bloomreach/navapp-communication": "^1.0.0-7",
     "penpal": "^4.0.0"
   },
   "devDependencies": {
