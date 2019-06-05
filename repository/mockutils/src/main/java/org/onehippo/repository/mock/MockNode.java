@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -290,14 +290,22 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public Property setProperty(final String name, final Value value) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, value.getType());
-        p.setValue(value);
-        return p;
+        if (value == null) {
+            removeProperty(name);
+            return null;
+        } else {
+            final Property p = getPropertyOrAddNew(name, value.getType());
+            p.setValue(value);
+            return p;
+        }
     }
 
     @Override
     public Property setProperty(final String name, final Value[] values) throws RepositoryException {
-        if (values.length > 0) {
+        if (values == null) {
+            removeProperty(name);
+            return null;
+        } else if (values.length > 0) {
             return setProperty(name, values, values[0].getType());
         } else {
             // If type cannot be inferred by the given value, then let's assume it as string in mock utils..
@@ -307,30 +315,50 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public Property setProperty(final String name, final String value) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, PropertyType.STRING);
-        p.setValue(value);
-        return p;
+        if (value == null) {
+            removeProperty(name);
+            return null;
+        } else {
+            final Property p = getPropertyOrAddNew(name, PropertyType.STRING);
+            p.setValue(value);
+            return p;
+        }
     }
 
     @Override
     public Property setProperty(final String name, final String value, final int type) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, type);
-        p.setValue(value);
-        return p;
+        if (value == null) {
+            removeProperty(name);
+            return null;
+        } else {
+            final Property p = getPropertyOrAddNew(name, type);
+            p.setValue(value);
+            return p;
+        }
     }
 
     @Override
     public Property setProperty(final String name, final String[] values) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, PropertyType.STRING);
-        p.setValue(values);
-        return p;
+        if (values == null) {
+            removeProperty(name);
+            return null;
+        } else {
+            final Property p = getPropertyOrAddNew(name, PropertyType.STRING);
+            p.setValue(values);
+            return p;
+        }
     }
 
     @Override
     public Property setProperty(final String name, final String[] values, final int type) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, type);
-        p.setValue(values);
-        return p;
+        if (values == null) {
+            removeProperty(name);
+            return null;
+        } else {
+            final Property p = getPropertyOrAddNew(name, type);
+            p.setValue(values);
+            return p;
+        }
     }
 
     @Override

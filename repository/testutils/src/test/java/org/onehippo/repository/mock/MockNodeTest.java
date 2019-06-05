@@ -132,6 +132,15 @@ public class MockNodeTest {
     }
 
     @Test
+    public void propertySetToNullRemovesProperty() throws RepositoryException {
+        MockNode node = MockNode.root();
+        node.setProperty("prop", "value");
+        node.setProperty("prop", (Value)null);
+
+        assertFalse(node.hasProperty("prop"));
+    }
+
+    @Test
     public void multiplePropertyIsSet() throws RepositoryException {
         MockNode node = MockNode.root();
         String[] values = {"value1", "value2"};
@@ -180,6 +189,15 @@ public class MockNodeTest {
         MockValue[] expected = new MockValue[1];
         expected[0] = new MockValue(PropertyType.STRING, "value");
         assertArrayEquals(expected, actual.getValues());
+    }
+
+    @Test
+    public void multiplePropertySetToNullRemovesProperty() throws RepositoryException {
+        MockNode node = MockNode.root();
+        node.setProperty("prop", "value");
+        node.setProperty("prop", (Value[])null);
+
+        assertFalse(node.hasProperty("prop"));
     }
 
     @Test
