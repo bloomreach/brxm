@@ -13,10 +13,9 @@
     "type": "git",
     "url": "https://code.onehippo.org/cms-community/bloomreach-ui-extension"
   },
-  "main": "dist/ui-extension.js",
+  "browser": "dist/ui-extension.js",
   "module": "dist/ui-extension.mjs",
   "es2015": "dist/ui-extension.es6.mjs",
-  "browser": "dist/ui-extension.min.js",
   "types": "dist/ui-extension.d.ts",
   "files": [
     "dist/"
