@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.site.content;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -33,13 +31,9 @@ import org.hippoecm.hst.site.container.SpringMetadataReaderClasspathResourceScan
 import org.hippoecm.hst.site.content.beans.NewsArticleBean;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeChild;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
+import org.onehippo.cms7.services.contenttype.ContentTypeImpl;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
-import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypes;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mock.web.MockServletContext;
@@ -79,7 +73,7 @@ public class ObjectConverterFactoryBeanTest {
 
             @Override
             public ContentType getType(final String name) {
-                return null;
+                return new ContentTypeImpl("testsite", "newsarticle", 1L);
             }
 
             @Override
