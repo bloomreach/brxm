@@ -18,6 +18,7 @@ nav {
 
 main {
   background: $white;
+  display: grid;
   grid-area: main;
   z-index: 0;
 }
