@@ -42,7 +42,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
       iframe: this.iframe.nativeElement,
       methods: this.communicationsService.parentApiMethods,
     }).then(childApi =>
-      this.clientAppService.addConnection(this.app, childApi),
+      this.clientAppService.addConnection(this.app.id, childApi),
     );
   }
 }

@@ -84,6 +84,7 @@ $font-weight-semibold: 600;
 
 // Menu
 $menu-top-item-height: 48px;
+$menu-top-item-small-height: 38px;
 $menu-icon-size: 24px;
 $menu-icon-margin: 16px;
 $menu-width: 224px;
@@ -99,6 +100,7 @@ $menu-drawer-bg: #23334a;
 $menu-sub-item-bg: #1b283b;
 
 $menu-text-color: #ccc;
+$menu-pressed-text-color: #fff;
 $menu-hover-text-color: $menu-bg;
 $menu-active-text-color: #1ea7eb;
 $menu-icon-color: #b3b3b3;

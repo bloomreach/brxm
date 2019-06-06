@@ -1,4 +1,4 @@
-<brna-client-app *ngFor="let app of apps"
+<brna-client-app *ngFor="let app of apps; trackBy: trackByAppIdFn"
                  [app]="app"
                  [class.hidden]="!isActive(app.url)">
 </brna-client-app>

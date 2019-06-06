@@ -2,17 +2,23 @@
 
 <div class="static-menu">
   <div class="top-elements">
-    <brna-top-level-menu-item *ngFor="let item of menu$ | async; first as isFirst"
+    <brna-top-level-menu-item caption="Home"
+                              icon="br-logo"
+                              [collapsed]="collapsed"
+                              [ngClass]="getQaClass('home')"
+                              [active]="isHomeMenuItemActive()"
+                              (click)="onHomeMenuItemClick($event)"
+                              class="home">
+    </brna-top-level-menu-item>
+    <brna-top-level-menu-item *ngFor="let item of menuItems"
                               [caption]="item.caption"
                               [icon]="item.icon"
                               [activeIcon]="item.icon  + '.active'"
                               [collapsed]="collapsed"
                               [pressed]="item === drawerMenuItem"
                               [active]="isMenuItemActive(item)"
-                              (click)="onMenuItemClick($event, item)"
-                              class="menu-item"
-                              [class.home]="isFirst"
-                              [ngClass]="getQaClass(item)">
+                              [ngClass]="getQaClass(item)"
+                              (click)="onMenuItemClick($event, item)">
     </brna-top-level-menu-item>
   </div>
 
@@ -20,14 +26,14 @@
     <brna-top-level-menu-item caption="Help"
                               icon="help"
                               [collapsed]="collapsed"
-                              class="menu-item"
+                              [small]="true"
                               [ngClass]="getQaClass('help')">
     </brna-top-level-menu-item>
 
     <brna-top-level-menu-item caption="User account"
                               icon="user"
                               [collapsed]="collapsed"
-                              class="menu-item"
+                              [small]="true"
                               [ngClass]="getQaClass('user')">
     </brna-top-level-menu-item>
 
