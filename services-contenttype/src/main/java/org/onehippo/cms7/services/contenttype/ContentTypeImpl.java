@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     private boolean cascadeValidate;
     private Map<String, ContentTypeProperty> properties = new LinkedHashMap<String, ContentTypeProperty>();
     private Map<String, ContentTypeChild> children = new LinkedHashMap<String, ContentTypeChild>();
+    private List<String> validators = new ArrayList<>();
 
     public ContentTypeImpl(String prefix, String name, long contentTypesVersion) {
         this.version = contentTypesVersion;
@@ -91,6 +93,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         for (Map.Entry<String, ContentTypeChild> entry : other.children.entrySet()) {
             children.put(entry.getKey(), new ContentTypeChildImpl((ContentTypeChildImpl) entry.getValue()));
         }
+        validators.addAll(other.validators);
     }
 
     @Override
@@ -106,6 +109,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
             ((Sealable)cti).seal();
         }
         children = Collections.unmodifiableMap(children);
+        validators = Collections.unmodifiableList(validators);
     }
 
     @Override
@@ -213,6 +217,11 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     public ContentTypeItem getItem(String name) {
         ContentTypeItem item = children.get(name);
         return item != null ? item : properties.get(name);
+    }
+
+    @Override
+    public List<String> getValidators() {
+        return validators;
     }
 
     @Override

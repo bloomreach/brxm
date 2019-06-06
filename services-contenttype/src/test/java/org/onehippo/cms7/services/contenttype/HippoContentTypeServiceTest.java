@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -32,10 +30,11 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class HippoContentTypeServiceTest extends RepositoryTestCase {
@@ -181,6 +180,10 @@ public class HippoContentTypeServiceTest extends RepositoryTestCase {
         try {
             ctCache.getType("testnamespace:test").getProperties().clear();
             fail("UnsupportedOperationException expected for ContentTypes.getType(testnamespace:test).getProperties().clear()");
+        } catch (UnsupportedOperationException uoe) {}
+        try {
+            ctCache.getType("testnamespace:test").getValidators().clear();
+            fail("UnsupportedOperationException expected for ContentTypes.getType(testnamespace:test).getValidators().clear()");
         } catch (UnsupportedOperationException uoe) {}
         try {
             ctCache.getType("testnamespace:test").getProperties().get("testnamespace:title").getItemProperties().clear();
