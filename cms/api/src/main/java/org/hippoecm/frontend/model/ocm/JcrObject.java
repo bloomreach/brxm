@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.model.ocm;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -78,20 +77,19 @@ public abstract class JcrObject implements IDetachable, IObservable {
     }
 
     protected Set<String> getStringSet(final String relPath) {
+        final Set<String> result = new LinkedHashSet<>();
         try {
             final Node node = getNode();
             if (node.hasProperty(relPath)) {
                 final Value[] values = node.getProperty(relPath).getValues();
-                final Set<String> result = new LinkedHashSet<>();
                 for (final Value value : values) {
                     result.add(value.getString());
                 }
-                return result;
             }
         } catch (RepositoryException e) {
             log.error("Cannot read multiple string property '{}'", relPath, e);
         }
-        return Collections.emptySet();
+        return result;
     }
 
     protected void setStringSet(final String relPath, final Set<String> strings) {
@@ -146,7 +144,7 @@ public abstract class JcrObject implements IDetachable, IObservable {
      * @param context subtype specific observation context
      * @param events received JCR events
      */
-    abstract protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
+    protected abstract void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
 
     public void startObservation() {
         observing = true;
