@@ -23,6 +23,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -36,8 +39,13 @@ import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.RequestUtils;
+import org.hippoecm.repository.api.HippoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
+
+    private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
 
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
@@ -81,29 +89,48 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
     private UserSettings createUserSettings(final PluginUserSession userSession) {
+
+        final String userName = userSession.getUserName();
+        final String email = getEmail(userSession);
+        final String language = userSession.getLocale().getLanguage();
+        final TimeZone timeZone = userSession.getTimeZone();
+
         return new UserSettings() {
 
             @Override
             public String getUserName() {
-                return userSession.getUserName();
+                return userName;
             }
 
             @Override
             public String getEmail() {
-                // TODO (meggermont): read optional email address from repository
-                return null;
+                return email;
             }
 
             @Override
             public String getLanguage() {
-                return userSession.getLocale().getLanguage();
+                return language;
             }
 
             @Override
             public TimeZone getTimeZone() {
-                return userSession.getTimeZone();
+                return timeZone;
             }
         };
+    }
+
+    private String getEmail(final PluginUserSession userSession) {
+        final Session session = userSession.getJcrSession();
+        if (session instanceof HippoSession) {
+            final HippoSession hippoSession = (HippoSession) session;
+            try {
+                return hippoSession.getUser().getEmail();
+            } catch (RepositoryException e) {
+                log.error("Failed to get user email", e);
+                return null;
+            }
+        }
+        return null;
     }
 
     private AppSettings createAppSettings(Request request) {
