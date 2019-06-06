@@ -42,7 +42,7 @@ describe('ClientAppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ClientAppComponent);
     component = fixture.componentInstance;
-    component.app = new ClientApp('http://mytesturl.com');
+    component.app = new ClientApp('mytesturl');
     fixture.detectChanges();
   });
 
