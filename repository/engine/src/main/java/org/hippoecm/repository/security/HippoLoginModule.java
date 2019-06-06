@@ -39,6 +39,8 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class HippoLoginModule implements LoginModule {
@@ -137,7 +139,8 @@ public class HippoLoginModule implements LoginModule {
             }
 
             // basic security check
-            if ("".equals(userId) || creds.getPassword() == null || creds.getPassword().length == 0) {
+            if (isEmpty(userId) || ((creds.getPassword() == null || creds.getPassword().length == 0)
+                    && creds.getAttribute("providerId") == null)) {
                 log.debug("Empty username or password not allowed.");
                 return false;
             }
