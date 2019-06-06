@@ -17,19 +17,15 @@
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -111,30 +107,6 @@ public class NamespaceUtils {
                     JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
         }
         return Optional.empty();
-    }
-
-    /**
-     * Retrieves a content type's validators
-     *
-     * @param contentTypeRootNode JCR root node of the content type
-     * @return                    the validator names (can be an empty set)
-     */
-    public static Set<String> getNodeTypeValidatorNames(final Node contentTypeRootNode) {
-        try {
-            if (contentTypeRootNode.hasNode(NODE_TYPE_PATH)) {
-                final Node nodeTypeNode = contentTypeRootNode.getNode(NODE_TYPE_PATH);
-                final String[] validatorNames = JcrUtils.getMultipleStringProperty(nodeTypeNode, HippoNodeType.HIPPO_VALIDATORS, ArrayUtils.EMPTY_STRING_ARRAY);
-                if (validatorNames.length > 0) {
-                    final LinkedHashSet<String> result = new LinkedHashSet<>();
-                    Collections.addAll(result, validatorNames);
-                    return result;
-                }
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to get validator names for content type '{}'",
-                    JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
-        }
-        return Collections.emptySet();
     }
 
     /**

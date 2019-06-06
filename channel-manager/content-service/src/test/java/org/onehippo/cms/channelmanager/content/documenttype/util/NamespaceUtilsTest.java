@@ -19,7 +19,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.util;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -41,15 +40,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
@@ -164,69 +159,6 @@ public class NamespaceUtilsTest {
         replayAll();
 
         assertThat(NamespaceUtils.getNodeTypeNode(contentTypeRootNode, false).get(), equalTo(nodeTypeNode));
-        verifyAll();
-    }
-
-    @Test
-    public void getNodeTypeValidatorNamesWithoutNode() throws RepositoryException {
-        final Node contentTypeRootNode = createMock(Node.class);
-
-        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(false);
-        replayAll();
-
-        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
-
-        assertThat(validatorNames, empty());
-        verifyAll();
-
-    }
-
-    @Test
-    public void getNodeTypeValidatorNamesWithoutProperty() throws RepositoryException {
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node nodeTypeNode = createMock(Node.class);
-
-        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
-        expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
-        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), aryEq(new String[0]))).andReturn(new String[0]);
-        replayAll();
-
-        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
-
-        assertThat(validatorNames, empty());
-        verifyAll();
-    }
-
-    @Test
-    public void getNodeTypeValidatorNamesSuccessfully() throws RepositoryException {
-        final Node contentTypeRootNode = createMock(Node.class);
-        final Node nodeTypeNode = createMock(Node.class);
-        final String[] validators = {"a", "b"};
-
-        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(true);
-        expect(contentTypeRootNode.getNode(NamespaceUtils.NODE_TYPE_PATH)).andReturn(nodeTypeNode);
-        expect(JcrUtils.getMultipleStringProperty(eq(nodeTypeNode), eq(HippoNodeType.HIPPO_VALIDATORS), anyObject())).andReturn(validators);
-        replayAll();
-
-        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
-
-        assertThat(validatorNames.size(), equalTo(2));
-        assertTrue(validatorNames.contains("a"));
-        assertTrue(validatorNames.contains("b"));
-        verifyAll();
-    }
-
-    @Test
-    public void getNodeTypeValidatorNamesWithRepositoryException() throws RepositoryException {
-        final Node contentTypeRootNode = createMock(Node.class);
-
-        expect(contentTypeRootNode.hasNode(NamespaceUtils.NODE_TYPE_PATH)).andThrow(new RepositoryException());
-        expect(JcrUtils.getNodePathQuietly(contentTypeRootNode)).andReturn("/");
-        replayAll();
-
-        final Set<String> validatorNames = NamespaceUtils.getNodeTypeValidatorNames(contentTypeRootNode);
-
-        assertThat(validatorNames, empty());
         verifyAll();
     }
 
