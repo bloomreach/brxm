@@ -26,6 +26,14 @@
   display: grid;
   height: $menu-top-item-height;
   position: relative;
+
+  &.small {
+    height: $menu-top-item-small-height;
+
+    .mat-icon {
+      width: 16px;
+    }
+  }
 }
 
 .menu-item {
@@ -45,7 +53,7 @@
     position: absolute;
     top: 0;
     transition: opacity 300ms;
-    width: 5px;
+    width: 4px;
   }
 
   &:hover {
@@ -80,6 +88,11 @@
 
   &.pressed:not(:hover) {
     background-color: $menu-drawer-bg;
+
+    .mat-icon,
+    .caption {
+      color: $menu-pressed-text-color;
+    }
 
     &:hover {
       .mat-icon,

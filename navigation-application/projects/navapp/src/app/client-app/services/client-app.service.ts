@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
@@ -52,42 +52,45 @@ export class ClientAppService {
       .subscribe(apps => this.apps.next(apps));
   }
 
-  activateApplication(id: string): void {
-    this.activeAppId.next(id);
+  activateApplication(appId: string): void {
+    this.activeAppId.next(appId);
   }
 
-  addConnection(app: ClientApp, api: ChildPromisedApi): void {
-    app.api = api;
-    this.updateApp(app);
+  addConnection(appId: string, api: ChildPromisedApi): void {
+    this.updateApp(appId, api);
 
     this.checkEstablishedConnections();
   }
 
-  getApp(id: string): ClientApp {
+  getApp(appId: string): ClientApp {
     const apps = this.apps.getValue();
-    const app = apps.find(a => a.id === id);
+    const app = apps.find(a => a.id === appId);
     if (!app) {
-      throw new Error(`There is no connection to an ifrane with id = ${id}`);
+      throw new Error(`There is no connection to an ifrane with id = ${appId}`);
     }
 
     return app;
   }
 
-  private updateApp(app: ClientApp): void {
+  private updateApp(appId: string, api: ChildPromisedApi): void {
     const apps = this.apps.getValue();
+    const appToUpdateIndex = apps.findIndex(app => app.id === appId);
 
-    apps.map(a => {
-      if (a.id === app.id) {
-        a = app;
-      }
-    });
+    if (appToUpdateIndex === -1) {
+      return;
+    }
+
+    const updatedApp = { ...apps[appToUpdateIndex] };
+    updatedApp.api = api;
+
+    apps[appToUpdateIndex] = updatedApp;
 
     this.apps.next(apps);
   }
 
   private checkEstablishedConnections(): void {
     const apps = this.apps.getValue();
-    const allConnected = apps.every((a: ClientApp) => a.api !== undefined);
+    const allConnected = apps.every(a => a.api !== undefined);
 
     if (allConnected) {
       this.connectionsEstablished.next(true);

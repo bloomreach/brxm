@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
 import { QaHelperService } from '../../services';
@@ -28,13 +28,20 @@ import { MenuStateService } from '../services';
   templateUrl: 'main-menu.component.html',
   styleUrls: ['main-menu.component.scss'],
 })
-export class MainMenuComponent implements OnInit {
+export class MainMenuComponent implements OnInit, OnDestroy {
+  menuItems: MenuItem[] = [];
+
+  private homeMenuItem: MenuItemLink;
+  private unsubscribe = new Subject();
+
+  constructor(
+    private menuStateService: MenuStateService,
+    private qaHelperService: QaHelperService,
+    private clientAppService: ClientAppService,
+  ) {}
+
   get collapsed(): boolean {
     return this.menuStateService.isMenuCollapsed;
-  }
-
-  get menu$(): Observable<MenuItem[]> {
-    return this.menuStateService.menu$;
   }
 
   get isDrawerOpen(): boolean {
@@ -49,28 +56,35 @@ export class MainMenuComponent implements OnInit {
   get isCollapsed(): boolean {
     return this.collapsed;
   }
-  constructor(
-    private menuStateService: MenuStateService,
-    private qaHelperService: QaHelperService,
-    private clientAppService: ClientAppService,
-  ) {}
 
   // Should be replaced with proper routing later
   ngOnInit(): void {
-    this.clientAppService.connectionsEstablished$
-      .pipe(
-        first(),
-        switchMap(() => this.menu$),
-      )
-      .subscribe(items => this.selectMenuItem(items[0]));
+    this.menuStateService.menu$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(menuItems => {
+      this.homeMenuItem = menuItems[0] as MenuItemLink;
+      this.menuItems = menuItems.slice(1);
+    });
+
+    this.clientAppService.connectionsEstablished$.pipe(
+      first(),
+      switchMap(() => this.menuStateService.menu$),
+      takeUntil(this.unsubscribe),
+    ).subscribe(() => this.selectMenuItem(this.homeMenuItem));
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   toggle(): void {
     this.menuStateService.toggle();
   }
 
-  isRippleDisabled(item: MenuItemContainer): boolean {
-    return item instanceof MenuItemContainer;
+  onHomeMenuItemClick(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    this.selectMenuItem(this.homeMenuItem);
   }
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
@@ -91,6 +105,10 @@ export class MainMenuComponent implements OnInit {
 
   isMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
+  }
+
+  isHomeMenuItemActive(): boolean {
+    return this.isMenuItemActive(this.homeMenuItem);
   }
 
   getQaClass(item: MenuItem | string): string {

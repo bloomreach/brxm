@@ -54,6 +54,10 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   }
 
   isActive(appURL: string): boolean {
-    return this.activeAppId === appURL ? true : false;
+    return this.activeAppId === appURL;
+  }
+
+  trackByAppIdFn(index: number, app: ClientApp): string {
+    return app.id;
   }
 }

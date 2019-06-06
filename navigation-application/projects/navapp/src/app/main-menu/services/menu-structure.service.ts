@@ -33,7 +33,7 @@ export class MenuStructureService {
   }
 
   private createMenuStructure(): MenuItem[] {
-    const home = new MenuItemLink(
+    const dashboard = new MenuItemLink(
       'hippo-perspective-dashboardperspective',
       'Home',
     );
@@ -121,7 +121,7 @@ export class MenuStructureService {
     );
 
     return [
-      home,
+      dashboard,
       experienceManager,
       projects,
       content,

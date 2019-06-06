@@ -5,7 +5,7 @@
   'collapsed': collapsed
 }">
   <mat-icon [svgIcon]="icon" class="icon"></mat-icon>
-  <mat-icon *ngIf="activeIcon" [svgIcon]="activeIcon" class="icon active"></mat-icon>
+  <mat-icon [svgIcon]="activeIcon || icon" class="icon active"></mat-icon>
   <div class="caption">
     {{ caption }}
   </div>

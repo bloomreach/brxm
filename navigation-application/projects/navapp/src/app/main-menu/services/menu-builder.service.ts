@@ -37,9 +37,7 @@ export class MenuBuilderService {
         const menu = this.menuStructureService.getMenuStructure();
 
         this.applyNavItems(menu, navItems);
-        const items = this.removeEmptyLeaves(menu);
-        items[0].icon = 'br-logo';
-        return items;
+        return this.removeEmptyLeaves(menu);
       }),
       shareReplay(),
     );
