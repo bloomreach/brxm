@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -148,4 +149,10 @@ public interface ContentType {
      * @return a {@link ContentTypeProperty} or {@link ContentTypeChild} element by that name
      */
     ContentTypeItem getItem(String name);
+
+    /**
+     * @return The set of validators for this ContentType, may be empty but never null.
+     */
+    List<String> getValidators();
+
 }
