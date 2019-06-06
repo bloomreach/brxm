@@ -37,8 +37,8 @@ export class CommunicationsService {
     private clientAppService: ClientAppService,
   ) { }
 
-  navigate(clientAppId: string, path: string): void {
-    this.clientAppService
+  navigate(clientAppId: string, path: string): Promise<void> {
+    return this.clientAppService
       .getApp(clientAppId)
       .api.navigate({ path })
       .then(() => {
