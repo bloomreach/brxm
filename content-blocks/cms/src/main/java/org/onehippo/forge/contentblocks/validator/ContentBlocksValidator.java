@@ -53,7 +53,6 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
         super(context, config);
     }
 
-
     @Override
     public void preValidation(final IFieldValidator type) {
         // Do nothing as we configure the validator ourselves.
@@ -63,7 +62,10 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
     public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel jcrNodeModel,
                                    final IModel model) throws ValidationException {
 
-        final Node contentBlockNode = (Node) model.getObject();
+        @SuppressWarnings("unchecked")
+        final IModel<Node> nodeModel = (IModel<Node>) model;
+
+        final Node contentBlockNode = nodeModel.getObject();
         final JcrTypeLocator jcrTypeLocator = new JcrTypeLocator();
 
         try {
@@ -76,7 +78,8 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
                     ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, ValidatorService.class);
             if (validatorService == null) {
                 log.error("ValidatorService is not found by '{}': cannot validate content block node {}",
-                        ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, JcrUtils.getNodePathQuietly(contentBlockNode));
+                        ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE,
+                        JcrUtils.getNodePathQuietly(contentBlockNode));
                 return Collections.emptySet();
             }
 
@@ -86,7 +89,7 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
                 return Collections.emptySet();
             }
 
-            final Set<Violation> violations = validator.validate(new JcrNodeModel(contentBlockNode));
+            final Set<Violation> violations = validator.validate(nodeModel);
 
             // correct node index on behalf of multiples (which content blocks are)
             final int index = getModelPathIndex(contentBlockNode);
@@ -94,8 +97,8 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
             // Correct the paths of the violations, that are based on the type only, by prepending with the content
             // blocks compound path.
             final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
-            return JcrFieldValidator.prependFieldPathToViolations(violations, fieldDescriptor, fieldDescriptor.getPath(),
-                    index);
+            return JcrFieldValidator.prependFieldPathToViolations(violations, fieldDescriptor,
+                    fieldDescriptor.getPath(), index);
         } finally {
             jcrTypeLocator.detach();
         }
