@@ -51,17 +51,10 @@ describe('MenuBuilderService', () => {
       subitem2.appPath = 'app-path-for-sub-item2';
 
       return [
-        new MenuItemContainer(
-          'Item 2',
-          [
-            new MenuItemContainer(
-              'Sub item 1',
-              [subsubitem1],
-            ),
-            subitem2,
-          ],
-          'br-logo',
-        ),
+        new MenuItemContainer('Item 2', [
+          new MenuItemContainer('Sub item 1', [subsubitem1]),
+          subitem2,
+        ]),
       ];
     })();
 
