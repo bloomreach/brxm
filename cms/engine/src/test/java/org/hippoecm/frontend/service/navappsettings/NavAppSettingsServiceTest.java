@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,10 +44,12 @@ import org.hippoecm.frontend.service.NavConfigResource;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.repository.security.User;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -82,9 +85,13 @@ public class NavAppSettingsServiceTest {
     private WebApplication webApplication;
     @Mock
     private ServletContext servletContext;
+    @Mock
+    private HippoSession hippoSession;
+    @Mock
+    private User user;
 
     @Before
-    public void setUp() {
+    public void setUp() throws RepositoryException {
 
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         replay(request);
@@ -93,10 +100,17 @@ public class NavAppSettingsServiceTest {
         expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(host);
         replay(servletRequest);
 
+        expect(userSession.getJcrSession()).andReturn(hippoSession);
         expect(userSession.getUserName()).andReturn("userName");
         expect(userSession.getLocale()).andReturn(Locale.CANADA);
         expect(userSession.getTimeZone()).andReturn(TimeZone.getDefault());
         replay(userSession);
+
+        expect(hippoSession.getUser()).andReturn(user);
+        replay(hippoSession);
+
+        expect(user.getEmail()).andReturn("email");
+        replay(user);
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
         expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
@@ -209,12 +223,22 @@ public class NavAppSettingsServiceTest {
         }
     }
 
+    @Test
+    public void is_resilient_to_RepositoryExceptions() throws RepositoryException {
+        reset(hippoSession);
+        expect(hippoSession.getUser()).andThrow(new RepositoryException("can always happen"));
+        replay(hippoSession);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getUserSettings().getEmail(), is(nullValue()));
+    }
+
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
         assertThat(userSettings.getUserName(), is("userName"));
         assertThat(userSettings.getLanguage(), is(Locale.CANADA.getLanguage()));
         assertThat(userSettings.getTimeZone(), is(TimeZone.getDefault()));
-        assertThat(userSettings.getEmail(), is(nullValue()));
+        assertThat(userSettings.getEmail(), is("email"));
     }
 
     private void testAppSettingsAssertions(AppSettings appSettings) {
