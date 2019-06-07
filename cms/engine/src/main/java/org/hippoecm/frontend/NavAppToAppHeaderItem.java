@@ -41,9 +41,16 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
 
     private static final String NAVIGATION_API_JS = "nav-app-to-app.js";
     private static final String PARENT_ORIGIN = "parentOrigin";
+    private static final String LOGOUT_CALLBACK_URL = "logoutCallbackUrl";
 
     private static final Logger log = LoggerFactory.getLogger(NavAppToAppHeaderItem.class);
     private static final String NAVAPP_COMMUNICATION_LOCATION = "navapp-communication.location";
+
+    private final String logoutCallbackUrl;
+
+    public NavAppToAppHeaderItem(String logoutCallbackUrl) {
+        this.logoutCallbackUrl = logoutCallbackUrl;
+    }
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -68,6 +75,7 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
 
         final Map<String, String> variables = new HashMap<>();
         variables.put(PARENT_ORIGIN, RequestUtils.getFarthestUrlPrefix(RequestCycle.get().getRequest()));
+        variables.put(LOGOUT_CALLBACK_URL, logoutCallbackUrl);
 
         try (final PackageTextTemplate javaScript = new PackageTextTemplate(NavAppToAppHeaderItem.class, NAVIGATION_API_JS)) {
             return javaScript.asString(variables);
