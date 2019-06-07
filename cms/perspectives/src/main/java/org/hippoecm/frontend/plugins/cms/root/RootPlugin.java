@@ -261,8 +261,6 @@ public class RootPlugin extends TabsPlugin {
         response.render(new MonitorExtUserActivityHeaderItem(userActivity));
 
         response.render(UsageStatisticsHeaderItem.get());
-
-        response.render(new NavAppToAppHeaderItem());
     }
 
     protected String getItemId() {
