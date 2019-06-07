@@ -15,11 +15,12 @@
  */
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
-import { QaHelperService } from '../../services';
+import { UserSettings } from '../../models/dto';
+import { NavAppSettingsService, QaHelperService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
@@ -30,6 +31,7 @@ import { MenuStateService } from '../services';
 })
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
+  currentUserSettings: UserSettings;
 
   private homeMenuItem: MenuItemLink;
   private unsubscribe = new Subject();
@@ -38,6 +40,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
     private clientAppService: ClientAppService,
+    private navAppSettingsService: NavAppSettingsService,
   ) {}
 
   get collapsed(): boolean {
@@ -46,6 +49,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   get isDrawerOpen(): boolean {
     return this.menuStateService.isDrawerOpened;
+  }
+
+  get isUserSettingsDrawerOpen(): boolean {
+    return !!this.currentUserSettings;
   }
 
   get drawerMenuItem(): MenuItemContainer {
@@ -92,7 +99,13 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.selectMenuItem(item);
   }
 
+  onUserMenuItemClick(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    this.selectUserMenuItem();
+  }
+
   selectMenuItem(item: MenuItem): void {
+    this.currentUserSettings = undefined;
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
       return;
@@ -101,6 +114,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
+  }
+
+  selectUserMenuItem(): void {
+    this.currentUserSettings = this.navAppSettingsService.userSettings;
   }
 
   isMenuItemActive(item: MenuItem): boolean {
