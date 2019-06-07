@@ -53,6 +53,9 @@ export class AppComponent implements OnInit {
         getSites: () => {
           return mockSites;
         },
+        logout: () => {
+          return Promise.resolve();
+        },
       },
     };
 

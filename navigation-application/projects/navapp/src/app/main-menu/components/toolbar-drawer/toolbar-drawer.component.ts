@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 import { UserSettings } from '../../../models/dto';
+import { CommunicationsService } from '../../../services';
 
 @Component({
   selector: 'brna-toolbar-drawer',
@@ -12,6 +13,10 @@ export class ToolbarDrawerComponent  {
   @Input()
   config: UserSettings;
 
+  constructor(
+    private communicationService: CommunicationsService,
+  ) {}
+
   get userName(): string {
     return this.config.userName;
   }
@@ -20,7 +25,15 @@ export class ToolbarDrawerComponent  {
     return this.config.email || '';
   }
 
-  logout(): void {
-    console.log(`logging out ${this.userName}`);
+  get loginUrl(): string {
+    return window.location.href;
   }
+
+  logout(): void {
+    this.communicationService.logout().subscribe(() => {
+      console.log('all apps logged out');
+      window.location.reload();
+    });
+  }
+
 }

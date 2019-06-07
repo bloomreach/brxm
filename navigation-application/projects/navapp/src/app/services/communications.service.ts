@@ -16,6 +16,8 @@
 
 import { Injectable } from '@angular/core';
 import { ParentApi } from '@bloomreach/navapp-communication';
+import { Observable } from 'rxjs';
+import { flatMap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services';
 
@@ -44,5 +46,15 @@ export class CommunicationsService {
       .then(() => {
         this.clientAppService.activateApplication(clientAppId);
       });
+  }
+
+  logout(): Observable<Promise<void>> {
+    return this.clientAppService.apps$.pipe(
+      flatMap(apps =>
+        apps.filter(app => app.api.logout).map(app => {
+          console.log(`logging out of ${app.id}`);
+          return app.api.logout();
+        })),
+    );
   }
 }
