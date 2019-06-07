@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import org.onehippo.cms.services.validation.api.Violation;
@@ -33,6 +34,7 @@ class TranslatedViolation implements Violation {
 
     private final Locale locale;
     private final List<String> keys = new ArrayList<>();
+    private Map<String, String> parameters = null;
 
     TranslatedViolation(final Locale locale, final String key, final String... fallbackKeys) {
         this.locale = locale;
@@ -52,6 +54,10 @@ class TranslatedViolation implements Violation {
         return locale;
     }
 
+    void setParameters(final Map<String, String> parameters) {
+        this.parameters = parameters;    
+    }
+    
     @Override
     public String getMessage() {
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
@@ -65,7 +71,7 @@ class TranslatedViolation implements Violation {
         }
 
         return keys.stream()
-                .map(bundle::getString)
+                .map(key -> bundle.getString(key, parameters))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(missingValue());
