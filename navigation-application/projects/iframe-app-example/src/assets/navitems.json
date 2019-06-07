@@ -13,5 +13,10 @@
     "id": "hippo-perspective-projectsperspective",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "projects"
+  },
+  {
+    "id": "hippo-perspective-searchperspective",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "hippo-perspective-searchperspective"
   }
 ]

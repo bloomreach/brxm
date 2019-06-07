@@ -63,9 +63,9 @@ export class MenuStructureService {
     );
 
     const documentSearch = new MenuItemLink(
-      'document-search',
+      'hippo-perspective-searchperspective',
       'Document Search',
-      'documents',
+      'document-search',
     );
 
     const categories = new MenuItemContainer(
