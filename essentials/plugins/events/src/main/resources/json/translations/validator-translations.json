@@ -1,0 +1,18 @@
+{
+  "hippo:cms": {
+    "validators":   {
+      "en":     {
+        "sequentialDates": "Choose an end date past the start date"
+      },
+      "nl":     {
+        "sequentialDates": "Kies een einddatum na de startdatum"
+      },
+      "fr":     {
+        "sequentialDates": "Choisissez une date de fin après la date de début"
+      },
+      "de":     {
+        "sequentialDates": "Wählen Sie ein Enddatum nach dem Startdatum"
+      }
+    }
+  }
+}
