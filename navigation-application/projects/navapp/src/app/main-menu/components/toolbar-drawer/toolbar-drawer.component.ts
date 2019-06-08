@@ -8,14 +8,14 @@ import { CommunicationsService } from '../../../services';
   templateUrl: './toolbar-drawer.component.html',
   styleUrls: ['./toolbar-drawer.component.scss'],
 })
-export class ToolbarDrawerComponent  {
+export class ToolbarDrawerComponent {
 
   @Input()
   config: UserSettings;
 
   constructor(
     private communicationService: CommunicationsService,
-  ) {}
+  ) { }
 
   get userName(): string {
     return this.config.userName;
@@ -30,10 +30,14 @@ export class ToolbarDrawerComponent  {
   }
 
   logout(): void {
-    this.communicationService.logout().subscribe(() => {
-      console.log('all apps logged out');
-      window.location.reload();
-    });
+    this.communicationService
+      .logout()
+      .subscribe(results => {
+        results
+          .filter(e => e instanceof Error)
+          .forEach(e => console.error(e));
+        window.location.reload();
+      });
   }
 
 }

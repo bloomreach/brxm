@@ -54,7 +54,11 @@ export class AppComponent implements OnInit {
           return mockSites;
         },
         logout: () => {
-          return Promise.resolve();
+          if (this.navigateCount % 2) {
+            return Promise.reject(new Error('Whoa!'));
+          } else {
+            return Promise.resolve();
+          }
         },
       },
     };

@@ -17,8 +17,9 @@
 import { Injectable } from '@angular/core';
 import { ParentApi } from '@bloomreach/navapp-communication';
 import { Observable } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 
+import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services';
 
 import { OverlayService } from './overlay.service';
@@ -27,10 +28,6 @@ import { OverlayService } from './overlay.service';
   providedIn: 'root',
 })
 export class CommunicationsService {
-  constructor(
-    private clientAppService: ClientAppService,
-    private overlay: OverlayService,
-  ) {}
 
   get parentApiMethods(): ParentApi {
     return {
@@ -38,6 +35,18 @@ export class CommunicationsService {
       hideMask: () => this.overlay.disable(),
     };
   }
+
+  private static async resolveAlways<T>(p: Promise<T>): Promise<any> {
+    try {
+      return await p;
+    } catch (err) {
+      return err;
+    }
+  }
+  constructor(
+    private clientAppService: ClientAppService,
+    private overlay: OverlayService,
+  ) { }
 
   navigate(clientAppId: string, path: string): void {
     this.clientAppService
@@ -48,13 +57,16 @@ export class CommunicationsService {
       });
   }
 
-  logout(): Observable<Promise<void>> {
+  logout(): Observable<any[]> {
     return this.clientAppService.apps$.pipe(
-      flatMap(apps =>
-        apps.filter(app => app.api.logout).map(app => {
-          console.log(`logging out of ${app.id}`);
-          return app.api.logout();
-        })),
+      mergeMap(apps => Promise.all(this.logoutApps(apps))),
     );
   }
+
+  private logoutApps(clientApps: ClientApp[]): Promise<any>[] {
+    return clientApps
+      .filter(app => app.api.logout)
+      .map(app => CommunicationsService.resolveAlways(app.api.logout()));
+  }
+
 }
