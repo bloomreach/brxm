@@ -26,6 +26,8 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.wicket.mock.MockApplication;
+import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.junit.Before;
@@ -91,6 +93,8 @@ public class NavigationItemServiceModuleTest {
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         expect(request.getContextPath()).andReturn("/context-path");
         replay(request);
+
+        new WicketTester(new MockApplication());
 
         final List<NavigationItem> navigationItems = resource.getNavigationItems(request);
         assertThat(navigationItems.size(), is(2));
