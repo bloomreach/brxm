@@ -17,6 +17,11 @@
 
 package org.hippoecm.frontend.navitems;
 
+import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+
+import java.util.MissingResourceException;
+
 public class NavigationItemFactoryImpl implements NavigationItemFactory {
 
     @Override
@@ -25,6 +30,7 @@ public class NavigationItemFactoryImpl implements NavigationItemFactory {
         navigationItem.setId(getId(perspectiveClassName));
         navigationItem.setAppIframeUrl(appIframeUrl);
         navigationItem.setAppPath(getId(perspectiveClassName));
+        navigationItem.setDisplayName(getDisplayName(perspectiveClassName));
         return navigationItem;
     }
 
@@ -32,5 +38,17 @@ public class NavigationItemFactoryImpl implements NavigationItemFactory {
         final int lastDotIndex = perspectiveClassName.lastIndexOf('.');
         final String perspectiveName = perspectiveClassName.substring(1 + lastDotIndex);
         return String.format("hippo-perspective-%s", perspectiveName.toLowerCase());
+    }
+
+    private String getDisplayName(String perspectiveClassName) {
+        try {
+            java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle(perspectiveClassName, Session.get().getLocale());
+            if (bundle != null && bundle.containsKey(Perspective.TITLE_KEY)) {
+                return bundle.getString(Perspective.TITLE_KEY);
+            }
+        } catch(MissingResourceException ignored) {
+            // perspective-title and resource bundle are optional. Ignore if the resource bundle doesn't exist
+        }
+        return null;
     }
 }
