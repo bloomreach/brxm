@@ -236,6 +236,7 @@ public class ChoiceFieldUtilsTest {
         expect(choice.isMultiple()).andReturn(false);
         expect(choice.getValidators()).andReturn(Collections.emptyList());
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
+        expect(ContentTypeContext.getContentType("String")).andReturn(Optional.empty());
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
