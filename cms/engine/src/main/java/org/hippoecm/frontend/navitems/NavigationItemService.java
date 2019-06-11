@@ -18,6 +18,7 @@
 package org.hippoecm.frontend.navitems;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Session;
 
@@ -28,7 +29,8 @@ public interface NavigationItemService {
      *
      * @param userSession  jcr session of the logged in user
      * @param appIframeUrl the url of the iframe that the navigation items must belong to.
+     * @param locale       the locale to use for localizing the displayName of a navigation item.
      * @return list of navigation items
      */
-    List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl);
+    List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl, Locale locale);
 }

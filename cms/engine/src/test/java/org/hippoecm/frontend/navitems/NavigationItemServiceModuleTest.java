@@ -19,6 +19,7 @@ package org.hippoecm.frontend.navitems;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
@@ -77,15 +78,20 @@ public class NavigationItemServiceModuleTest {
         // Without the plugin.class property
         final MockNode p3 = mockNode.addNode("p3", null);
 
+        // with perspective-name resource
+        final MockNode p4 = mockNode.addNode("p4", null);
+        p4.setProperty("plugin.class", "org.hippoecm.frontend.navitems.DisplayNamePerspective");
+
         expect(queryManager.createQuery(anyString(), anyString())).andReturn(query);
         replay(queryManager);
         expect(query.execute()).andReturn(queryResult);
         replay(query);
-        expect(queryResult.getNodes()).andReturn(new MockNodeIterator(Arrays.asList(p1, p2, p3)));
+        expect(queryResult.getNodes()).andReturn(new MockNodeIterator(Arrays.asList(p1, p2, p3, p4)));
         replay(queryResult);
 
         expect(sessionRequestProvider.getJcrSession(request)).andReturn(mockNode.getSession());
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
+        expect(sessionRequestProvider.getLocale(request)).andReturn(Locale.getDefault());
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
@@ -93,7 +99,7 @@ public class NavigationItemServiceModuleTest {
         replay(request);
 
         final List<NavigationItem> navigationItems = resource.getNavigationItems(request);
-        assertThat(navigationItems.size(), is(2));
+        assertThat(navigationItems.size(), is(3));
 
         final NavigationItem item1 = navigationItems.get(0);
         assertThat(item1.getId(), is("hippo-perspective-a"));
@@ -106,6 +112,12 @@ public class NavigationItemServiceModuleTest {
         assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
         assertThat(item2.getAppPath(), is("hippo-perspective-b"));
         assertThat(item2.getDisplayName(), is(nullValue()));
+
+        final NavigationItem item4 = navigationItems.get(2);
+        assertThat(item4.getId(), is("hippo-perspective-displaynameperspective"));
+        assertThat(item4.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
+        assertThat(item4.getAppPath(), is("hippo-perspective-displaynameperspective"));
+        assertThat(item4.getDisplayName(), is("Dummy perspective"));
     }
 
 
@@ -119,6 +131,7 @@ public class NavigationItemServiceModuleTest {
 
         expect(sessionRequestProvider.getJcrSession(request)).andReturn(mockNode.getSession());
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
+        expect(sessionRequestProvider.getLocale(request)).andReturn(Locale.getDefault());
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
