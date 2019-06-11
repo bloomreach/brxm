@@ -1,17 +1,11 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { FlatTreeControl } from '@angular/cdk/tree';
+import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, HostBinding } from '@angular/core';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material';
 
 import { Site } from '../../../models';
 import { NavConfigService } from '../../../services';
-
-/** Flat node with expandable and level information */
-interface ExampleFlatNode {
-  expandable: boolean;
-  name: string;
-  level: number;
-}
+import { SiteSelectionSidePanelService } from '../../services';
 
 @Component({
   selector: 'brna-site-selection-side-panel',
@@ -33,31 +27,22 @@ export class SiteSelectionSidePanelComponent {
   @HostBinding('@slideInOut')
   animate = true;
 
-  treeControl = new FlatTreeControl<ExampleFlatNode>(
-    node => node.level, node => node.expandable);
+  treeControl = new NestedTreeControl<Site>(node => node.subGroups);
+  dataSource = new MatTreeNestedDataSource<Site>();
 
-  treeFlattener = new MatTreeFlattener(
-    this.transformer, node => node.level, node => node.expandable, node => node.subGroups);
-
-  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
-  constructor(private navConfigService: NavConfigService) {
+  constructor(
+    private navConfigService: NavConfigService,
+    private siteSelectionPanelService: SiteSelectionSidePanelService,
+  ) {
     navConfigService.sites$.subscribe(sites => this.dataSource.data = sites);
   }
 
-  hasChild(index: number, node: ExampleFlatNode): boolean {
-    return node.expandable;
+  hasChild(index: number, node: Site): boolean {
+    return node.subGroups && node.subGroups.length > 0;
   }
 
-  onLeafNodeClicked(node: ExampleFlatNode): void {
-    console.log('onLeafNodeClicked', node);
-  }
-
-  private transformer(node: Site, level: number): any {
-    return {
-      expandable: !!node.subGroups && node.subGroups.length > 0,
-      name: node.name,
-      level,
-    };
+  onLeafNodeClicked(site: Site): void {
+    this.navConfigService.setSelectedSite(site);
+    this.siteSelectionPanelService.close();
   }
 }

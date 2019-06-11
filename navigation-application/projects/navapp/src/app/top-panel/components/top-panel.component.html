@@ -1,2 +1,7 @@
-<button (click)="onButtonClick()">Toggle panel</button>
+<div (click)="onSiteSelectorClicked()" class="site-selector-value">
+  <span *ngIf="selectedSite$ | async as site; else pleaseSelectSite">
+    {{ site }}
+  </span>
+  <ng-template #pleaseSelectSite>Please select a site...</ng-template>
+</div>
 <brna-site-selection-side-panel *ngIf="isSidePanelOpened"></brna-site-selection-side-panel>

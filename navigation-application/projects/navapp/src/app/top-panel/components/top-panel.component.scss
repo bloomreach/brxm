@@ -1,8 +1,17 @@
 @import 'variables';
 
 :host {
-  display: block;
-  height: $top-panel-height;
-  border-bottom: 1px solid $top-panel-border-color;
+  align-items: center;
   background-color: $top-panel-bg;
+  border-bottom: 1px solid $top-panel-border-color;
+  display: grid;
+  grid-template: 'site-selector-value';
+  height: $top-panel-height;
+  justify-items: end;
+}
+
+.site-selector-value {
+  cursor: pointer;
+  grid-area: site-selector-value;
+  padding-right: 20px;
 }
