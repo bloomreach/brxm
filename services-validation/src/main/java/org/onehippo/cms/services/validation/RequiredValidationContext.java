@@ -71,9 +71,7 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation() {
-        final String typeKey = translationKey(context.getType());
-        final String jcrTypeKey = translationKey(context.getJcrType());
-        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        return createViolation((Map<String, String>) null);
     }
 
     @Override
@@ -88,9 +86,7 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation(final String subKey) {
-        final String typeKey = translationKey(context.getType()) + "#" + subKey;
-        final String jcrTypeKey = translationKey(context.getJcrType()) + "#" + subKey;
-        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        return createViolation(subKey, null);
     }
 
     @Override

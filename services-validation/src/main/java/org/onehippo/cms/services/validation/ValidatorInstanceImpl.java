@@ -105,7 +105,7 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     @Override
     public Violation createViolation() {
-        return new TranslatedViolation(getLocale(), config.getName());
+        return createViolation((Map<String, String>) null);
     }
 
     @Override
@@ -117,8 +117,7 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     @Override
     public Violation createViolation(final String subKey) {
-        final String key = config.getName() + "#" + subKey;
-        return new TranslatedViolation(getLocale(), key);
+        return createViolation(subKey, null);
     }
 
     @Override
