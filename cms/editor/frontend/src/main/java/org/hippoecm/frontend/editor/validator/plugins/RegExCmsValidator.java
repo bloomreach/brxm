@@ -26,7 +26,14 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms.services.validation.validator.RegExpValidator;
 
+/**
+ * Validator that validates if the given value matches the configured regular expression.
+ * 
+ * @deprecated Use the {@link RegExpValidator} instead.
+ */
+@Deprecated
 public class RegExCmsValidator extends AbstractCmsValidator {
 
     private final Pattern pattern;
@@ -39,7 +46,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         if (config.containsKey(PATTERN_KEY)) {
             pattern = Pattern.compile(config.getString(PATTERN_KEY));
         } else {
-            throw new Exception("regex_pattern property should be set in the plugin configuration of: "
+            throw new Exception("Property \"regex_pattern\" should be set in the plugin configuration of: "
                     + config.getName());
         }
     }
@@ -59,7 +66,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (!pattern.matcher(value).find()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
         }
         return violations;
     }

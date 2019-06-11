@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 package org.hippoecm.frontend.model.ocm;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -39,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * All instances of a type that correspond to the same node are equivalent with respect
  * to the hashCode and equals methods.
  */
-abstract public class JcrObject implements IDetachable, IObservable {
+public abstract class JcrObject implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(JcrObject.class);
 
@@ -70,6 +74,41 @@ abstract public class JcrObject implements IDetachable, IObservable {
 
     protected JcrNodeModel getNodeModel() {
         return nodeModel;
+    }
+
+    protected Set<String> getStringSet(final String relPath) {
+        final Set<String> result = new LinkedHashSet<>();
+        try {
+            final Node node = getNode();
+            if (node.hasProperty(relPath)) {
+                final Value[] values = node.getProperty(relPath).getValues();
+                for (final Value value : values) {
+                    result.add(value.getString());
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot read multiple string property '{}'", relPath, e);
+        }
+        return result;
+    }
+
+    protected void setStringSet(final String relPath, final Set<String> strings) {
+        try {
+            final Node node = getNode();
+            if (strings != null && !strings.isEmpty()) {
+                final ValueFactory vf = node.getSession().getValueFactory();
+                final Value[] values = new Value[strings.size()];
+                int i = 0;
+                for (final String string : strings) {
+                    values[i++] = vf.createValue(string);
+                }
+                node.setProperty(relPath, values);
+            } else {
+                node.setProperty(relPath, (Value[]) null);
+            }
+        } catch (RepositoryException e) {
+            log.error("Cannot write multiple string property '{}'", relPath, e);
+        }
     }
 
     public void save() {
@@ -105,7 +144,7 @@ abstract public class JcrObject implements IDetachable, IObservable {
      * @param context subtype specific observation context
      * @param events received JCR events
      */
-    abstract protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
+    protected abstract void processEvents(IObservationContext context, Iterator<? extends IEvent> events);
 
     public void startObservation() {
         observing = true;

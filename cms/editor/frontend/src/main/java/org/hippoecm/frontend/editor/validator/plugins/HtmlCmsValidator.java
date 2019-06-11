@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.validator.HtmlValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -28,6 +27,8 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.htmlprocessor.HtmlProcessorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,23 +38,24 @@ import org.slf4j.LoggerFactory;
  * <p>
  * The builtin "Html" type is checked by the
  * {@link NonEmptyCmsValidator} and does not require special treatment.
+ *
+ * @deprecated not used anymore by the system, will be removed in a future version.
+ * Customized "Html" types should use their own "required" validator.
  */
+@Deprecated
 public class HtmlCmsValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(HtmlCmsValidator.class);
 
-    private final HtmlValidator htmlValidator;
-
     public HtmlCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        htmlValidator = new HtmlValidator();
     }
 
     @Override
     public void preValidation(final IFieldValidator type) throws ValidationException {
         if (!"String".equals(type.getFieldType().getType())) {
             throw new ValidationException("Invalid validation exception; " +
-                    "cannot validate non-string field for emptyness");
+                    "cannot validate non-string field for emptiness");
         }
         if ("Html".equals(type.getFieldType().getName())) {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'. " +
@@ -62,14 +64,15 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
                                    final IModel childModel) throws ValidationException {
-        
+
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
-        for (final String key : htmlValidator.validateNonEmpty(value)) {
-            final ClassResourceModel message = new ClassResourceModel(key, ValidatorMessages.class);
-            violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
+        final HtmlProcessorService htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
+        if (!htmlProcessorService.isVisible(value)) {
+            final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.HTML_IS_EMPTY, ValidatorMessages.class);
+            violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
         }
         return violations;
     }

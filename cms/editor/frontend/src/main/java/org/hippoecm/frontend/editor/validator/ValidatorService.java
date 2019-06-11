@@ -24,12 +24,20 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.validation.ICmsValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 
 public class ValidatorService extends Plugin {
 
     public static final String VALIDATOR_SERVICE_ID = "validator.instance.service.id";
+    public static final String FIELD_VALIDATOR_SERVICE_ID = "field.validator.service.id";
+    public static final String DEFAULT_FIELD_VALIDATOR_SERVICE = "field.validator.service";
 
-    private final Map<String, ICmsValidator> map = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(ValidatorService.class);
+
+    private final Map<String, ICmsValidator> oldStyleValidators = new HashMap<>();
 
     public ValidatorService(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -37,30 +45,62 @@ public class ValidatorService extends Plugin {
         context.registerTracker(new ServiceTracker<ICmsValidator>(ICmsValidator.class) {
 
             protected void onServiceAdded(final ICmsValidator service, final String name) {
-                map.put(service.getName(), service);
+                oldStyleValidators.put(service.getName(), service);
             }
 
             protected void onRemoveService(final ICmsValidator service, final String name) {
-                map.remove(service.getName());
+                oldStyleValidators.remove(service.getName());
             }
         }, VALIDATOR_SERVICE_ID);
 
-        context.registerService(this, config.getString("field.validator.service.id", "field.validator.service"));
+        context.registerService(this, config.getString(FIELD_VALIDATOR_SERVICE_ID, DEFAULT_FIELD_VALIDATOR_SERVICE));
     }
 
     public ICmsValidator getValidator(final String name) {
-        if (StringUtils.isNotEmpty(name) && map.containsKey(name)) {
-            return map.get(name);
+        if (StringUtils.isEmpty(name)) {
+            return null;
         }
+
+        if (OPTIONAL_VALIDATOR.equals(name)) {
+            return null;
+        }
+
+        boolean oldStyleValidatorExists = oldStyleValidators.containsKey(name);
+        boolean newStyleValidatorExists = CmsValidatorAdapter.hasValidator(name);
+
+        if (oldStyleValidatorExists && newStyleValidatorExists) {
+            log.warn("Validator '{}' has two implementations. Only the new style implementation"
+                            + " (/hippo:configuration/hippo:modules/validation/hippo:moduleconfig/{})"
+                            + " will be used."
+                            + " The old style implementation"
+                            + " (/hippo:configuration/hippo:frontend/cms/cms-validators/{})"
+                            + " will be ignored and can be removed.",
+                    name, name, name);
+        }
+
+        if (newStyleValidatorExists) {
+            return new CmsValidatorAdapter(name);
+        }
+
+        if (oldStyleValidatorExists) {
+            return oldStyleValidators.get(name);
+        }
+
+        log.warn("Cannot find validator '{}'", name);
         return null;
     }
 
     public boolean containsValidator(final String name) {
-        return map.containsKey(name);
+        return CmsValidatorAdapter.hasValidator(name) || oldStyleValidators.containsKey(name);
     }
 
-    public boolean isEmpty(){
-        return map.isEmpty();
+    /**
+     * Checks whether there are validators in the system
+     * @return always true
+     * @deprecated there are always validators, so usage of this method is pointless
+     */
+    @Deprecated
+    public boolean isEmpty() {
+        return false;
     }
-
 }

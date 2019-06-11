@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.types;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -122,6 +123,13 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     boolean isType(String typeName);
 
     /**
+     * The symbolic names for validators associated with this type.
+     *
+     * @return the names of applicable validators
+     */
+    Set<String> getValidators();
+
+    /**
      * Returns true if validation is cascaded, i.e. whether fields with this type
      * are automatically validated.  When false, the field needs the "required"
      * validator to get the field value validated.
@@ -165,6 +173,8 @@ public interface ITypeDescriptor extends IClusterable, IObservable {
     void setIsNode(boolean isNode);
 
     void setIsMixin(boolean isMixin);
+
+    void addValidator(String validator);
 
     /**
      * @param isCascaded are fields of this type always validated

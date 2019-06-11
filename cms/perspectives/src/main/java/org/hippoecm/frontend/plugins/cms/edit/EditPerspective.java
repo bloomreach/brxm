@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.frontend.validation.FeedbackMessageComparator;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
@@ -92,6 +93,7 @@ public class EditPerspective extends Perspective {
             }
         }));
         feedback.setOutputMarkupId(true);
+        feedback.setSortingComparator(new FeedbackMessageComparator());
         add(feedback);
 
         if (config.containsKey(IValidationService.VALIDATE_ID)) {
