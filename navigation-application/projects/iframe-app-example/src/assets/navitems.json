@@ -18,5 +18,20 @@
     "id": "hippo-perspective-searchperspective",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "hippo-perspective-searchperspective"
+  },
+  {
+    "id": "hippo-perspective-experienceoptimizerperspective",
+    "appIframeUrl": "https://marketplace.bloomreach.com",
+    "appPath": "hippo-perspective-experienceoptimizerperspective"
+  },
+  {
+    "id": "hippo-perspective-adminperspective",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "hippo-perspective-adminperspective"
+  },
+  {
+    "id": "hippo-perspective-formdataperspective",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "hippo-perspective-formdataperspective"
   }
 ]

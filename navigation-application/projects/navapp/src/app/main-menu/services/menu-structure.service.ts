@@ -56,9 +56,12 @@ export class MenuStructureService {
       'documents',
     );
 
-    const settings = new MenuItemLink(
-      'hippo-perspective-adminperspective',
-      'Settings',
+    const setup = new MenuItemContainer(
+      'Setup',
+      [
+        new MenuItemLink('hippo-perspective-adminperspective', 'System'),
+        new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
+      ],
       'settings',
     );
 
@@ -83,6 +86,11 @@ export class MenuStructureService {
       'categories',
     );
 
+    const seo = new MenuItemLink(
+      'seo',
+      'SEO',
+      'seo',
+    );
     const insights = new MenuItemContainer(
       'Insights',
       [
@@ -114,6 +122,15 @@ export class MenuStructureService {
       'insights',
     );
 
+    const audiences = new MenuItemContainer(
+      'Audiences',
+      [
+        new MenuItemLink('hippo-perspective-experienceoptimizerperspective', 'Content audiences'),
+        new MenuItemLink('merchandising-audiences', 'Merchandising audiences'),
+      ],
+      'audiences',
+    );
+
     const experienceManager2 = new MenuItemLink(
       'experience-manager-2',
       'Experience Manager 2',
@@ -127,9 +144,11 @@ export class MenuStructureService {
       content,
       documentSearch,
       categories,
+      seo,
       insights,
+      audiences,
       this.extensions,
-      settings,
+      setup,
       experienceManager2,
     ];
   }
