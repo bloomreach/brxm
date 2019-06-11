@@ -21,31 +21,41 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 
 public class ScopedFeedBackMessage extends FeedbackMessage {
-    
-    private ValidationScope scope;
-    
+
+    private FeedbackScope scope;
+    private FeedbackPriority feedbackPriority = FeedbackPriority.NORMAL;
+
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level) {
         super(reporter, message, level);
-        this.scope = ValidationScope.DOCUMENT;
+        this.scope = FeedbackScope.DOCUMENT;
     }
 
-    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level, 
-                                 final ValidationScope scope) {
+    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
+                                 final FeedbackScope scope) {
         super(reporter, message, level);
         this.scope = scope;
     }
 
-    public ValidationScope getScope() {
+    public FeedbackScope getScope() {
         return scope;
     }
+
+    public FeedbackPriority getFeedbackPriority() {
+        return feedbackPriority;
+    }
     
+    public void setFeedbackPriority(final FeedbackPriority feedbackPriority) {
+        this.feedbackPriority = feedbackPriority;
+    }
+
     @Override
     public String toString() {
         return "ScopedFeedBackMessage{" +
                 "message = " + getMessage() +
                 ", scope=" + scope +
-                ", reporter = " + ((getReporter() == null) ? "null" : getReporter().getId()) + 
+                ", reporter = " + ((getReporter() == null) ? "null" : getReporter().getId()) +
                 ", level = " + getLevelAsString() +
+                ", priority = " + feedbackPriority +
                 '}';
     }
 }

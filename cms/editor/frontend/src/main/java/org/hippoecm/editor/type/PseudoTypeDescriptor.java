@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.editor.type;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -83,6 +84,14 @@ public class PseudoTypeDescriptor implements ITypeDescriptor, IDetachable {
 
     public boolean isType(String typeName) {
         return upstream.isType(typeName);
+    }
+
+    public Set<String> getValidators() {
+        return upstream.getValidators();
+    }
+
+    public void addValidator(final String validator) {
+        upstream.addValidator(validator);
     }
 
     public boolean isValidationCascaded() {

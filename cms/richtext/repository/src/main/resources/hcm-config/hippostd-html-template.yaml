@@ -9,7 +9,6 @@ definitions:
         /hipposysedit:nodetype:
           jcr:primaryType: hipposysedit:nodetype
           jcr:mixinTypes: ['hipposysedit:remodel']
-          hipposysedit:cascadevalidation: false
           hipposysedit:uri: http://www.onehippo.org/jcr/hippostd/nt/2.0
           /content:
             jcr:primaryType: hipposysedit:field
@@ -17,7 +16,6 @@ definitions:
             hipposysedit:path: hippostd:content
             hipposysedit:primary: true
             hipposysedit:type: String
-            hipposysedit:validators: [html]
           /links:
             jcr:primaryType: hipposysedit:field
             hipposysedit:path: '*'

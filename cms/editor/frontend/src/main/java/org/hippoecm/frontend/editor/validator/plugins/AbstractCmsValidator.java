@@ -25,24 +25,24 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.ICmsValidator;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
     private final static String SCOPE = "scope";
-    
+
     private final String name;
-    private ValidationScope validationScope = ValidationScope.DOCUMENT;
+    private FeedbackScope feedbackScope = FeedbackScope.DOCUMENT;
 
     public AbstractCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
-        
+
         if (config.containsKey(SCOPE)) {
-            validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
+            feedbackScope = (ValidatorUtils.getFeedbackScope(config.getString(SCOPE)));
         }
     }
 
@@ -50,8 +50,8 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return name;
     }
 
-    protected ValidationScope getValidationScope() {
-        return validationScope;
+    protected FeedbackScope getFeedbackScope() {
+        return feedbackScope;
     }
 
     /**
@@ -66,7 +66,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
      * @return a model of the translation of the message
      */
     protected IModel<String> getTranslation() {
-        return getResourceBundleModel(getName(), Session.get().getLocale());
+        return getResourceBundleModel(getName());
     }
 
     /**
@@ -82,11 +82,11 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
      */
     protected IModel<String> getTranslation(final String alternateKey) {
         final String key = getName() + "#" + alternateKey;
-        return getResourceBundleModel(key, Session.get().getLocale());
+        return getResourceBundleModel(key);
     }
 
-    private IModel<String> getResourceBundleModel(final String key, final Locale locale) {
-        return new ResourceBundleModel("hippo:cms.validators", key, locale);
+    private IModel<String> getResourceBundleModel(final String key) {
+        return new ResourceBundleModel.Builder("hippo:cms.validators", key).build();
     }
 
 }

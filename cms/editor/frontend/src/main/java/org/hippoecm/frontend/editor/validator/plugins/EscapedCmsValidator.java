@@ -26,10 +26,17 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.onehippo.cms.services.validation.validator.EscapedHtmlValidator;
 
+/**
+ * Validator that validates if the value is properly HTML escaped using a regular expression.
+ *
+ * @deprecated Use the {@link EscapedHtmlValidator} instead.
+ */
+@Deprecated
 public class EscapedCmsValidator extends AbstractCmsValidator {
 
-    static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
+    private static final Pattern INVALID_CHARS = Pattern.compile(".*[<>&\"'].*");
 
     public EscapedCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -37,17 +44,17 @@ public class EscapedCmsValidator extends AbstractCmsValidator {
 
     @Override
     public void preValidation(final IFieldValidator type) throws ValidationException {
-       //do nothing
+        //do nothing
     }
 
     @Override
-    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model, 
+    public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel model,
                                    final IModel childModel) throws ValidationException {
-        
+
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (INVALID_CHARS.matcher(value).matches()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
         }
         return violations;
     }

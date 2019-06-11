@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,11 +30,11 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -43,16 +44,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getViolationPerCompound;
+
 public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
-    final static Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -71,7 +77,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
-            
+
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(CssClass.append("hippo-node-field-name-" + name));
 
@@ -106,7 +112,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     protected AbstractProvider<Node, JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel<Node> nodeModel) {
+                                                               IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
             return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<>(nodeModel.getObject()));
@@ -114,6 +120,39 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             log.warn("Could not find prototype", ex);
             return null;
         }
+    }
+
+    @Override
+    public void render(final PluginRequestTarget target) {
+        if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
+
+            // clear previous validation messages and styling
+            final String markupId = getMarkupId();
+            final StringBuilder script = new StringBuilder(String.format(
+                    "const subfields = $('#%s > .hippo-editor-field > .hippo-editor-field-subfield');" +
+                    "subfields.find('> .compound-validation-message').remove();" +
+                    "subfields.filter('.compound-validation-border').removeClass('compound-validation-border');",
+                    markupId));
+
+            final FieldPluginHelper fieldHelper = getFieldHelper();
+            final IFieldDescriptor field = fieldHelper.getField();
+            final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
+            getViolationPerCompound(field, validationModel).forEach(violation -> {
+                final String message = violation.getMessage();
+                final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+                final String messageElement = String.format(
+                        "<div class=\"validation-message compound-validation-message\">%s</div>",
+                        htmlEscapedMessage);
+
+                script.append(String.format(
+                        "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
+                        violation.getIndex(), StringEscapeUtils.escapeJavaScript(messageElement))
+                );
+            });
+
+            target.appendJavaScript(script.toString());
+        }
+        super.render(target);
     }
 
     @Override
@@ -145,21 +184,21 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             Event event = jcrEvent.getEvent();
             try {
                 switch (event.getType()) {
-                case 0:
-                    modelChanged();
-                    return;
-                case Event.NODE_ADDED:
-                case Event.NODE_MOVED:
-                case Event.NODE_REMOVED:
-                    String path = event.getPath();
-                    String name = path.substring(path.lastIndexOf('/') + 1);
-                    if (name.indexOf('[') > 0) {
-                        name = name.substring(0, name.indexOf('['));
-                    }
-                    if (name.equals(field.getPath())) {
+                    case 0:
                         modelChanged();
                         return;
-                    }
+                    case Event.NODE_ADDED:
+                    case Event.NODE_MOVED:
+                    case Event.NODE_REMOVED:
+                        String path = event.getPath();
+                        String name = path.substring(path.lastIndexOf('/') + 1);
+                        if (name.indexOf('[') > 0) {
+                            name = name.substring(0, name.indexOf('['));
+                        }
+                        if (name.equals(field.getPath())) {
+                            modelChanged();
+                            return;
+                        }
                 }
             } catch (RepositoryException ex) {
                 log.error("Error filtering event", ex);
@@ -233,9 +272,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     /**
-     * If validation has already been done, trigger it again. This is useful when items in the form
-     * have moved to a different location or have been removed. After redrawing a possible error message
-     * is shown at the correct field.
+     * If validation has already been done, trigger it again. This is useful when items in the form have moved to a
+     * different location or have been removed. After redrawing a possible error message is shown at the correct field.
      */
     private void validateModelObjects() {
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);

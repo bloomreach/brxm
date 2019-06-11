@@ -36,14 +36,18 @@ import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
- * ResourceRequiredValidator validates fields that are a (subtype of) {@link HippoNodeType.NT_RESOURCE} that a resource
+ * ResourceRequiredValidator validates fields that are a (subtype of) {@link HippoNodeType#NT_RESOURCE} that a resource
  * has been uploaded.
  *
  * @author David de Bos
+ *
+ * @deprecated a required resource field is now validated by the new-style required validator located at
+ * /hippo:configuration/hippo:modules/validation/hippo:moduleconfig/required/hippo:resource.
  */
+@Deprecated
 public class ResourceRequiredValidator extends AbstractCmsValidator {
 
-    public static final String INVALID_VALIDATION_EXCEPTION_ERROR_MESSAGE = "Invalid validation exception. " +
+    private static final String INVALID_VALIDATION_EXCEPTION_ERROR_MESSAGE = "Invalid validation exception. " +
             "A ResourceRequiredValidator can only be used for field types that are a (subtype of) " +
             HippoNodeType.NT_RESOURCE;
 
@@ -78,7 +82,7 @@ public class ResourceRequiredValidator extends AbstractCmsValidator {
             final Node node = ((JcrNodeModel) childModel).getNode();
             final Property resourceData = node.getProperty("jcr:data");
             if (!(resourceData.getLength() > 0)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
             }
         } catch (final Exception e) {
             throw new ValidationException(e);

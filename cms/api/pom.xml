@@ -39,10 +39,6 @@
       <artifactId>htmldiff</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.htmlcleaner</groupId>
-      <artifactId>htmlcleaner</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.yui</groupId>
       <artifactId>yui-2.xx-sources</artifactId>
     </dependency>
