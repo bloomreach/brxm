@@ -40,17 +40,17 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     private EffectiveNodeTypeImpl ent;
     private String name;
     private String prefix;
-    private SortedSet<String> superTypes = new TreeSet<String>();
-    private SortedSet<String> aggregatedTypes = new TreeSet<String>();
+    private SortedSet<String> superTypes = new TreeSet<>();
+    private SortedSet<String> aggregatedTypes = new TreeSet<>();
     private boolean documentType;
     private boolean compoundType;
     private boolean mixin;
     private boolean cascadeValidate;
-    private Map<String, ContentTypeProperty> properties = new LinkedHashMap<String, ContentTypeProperty>();
-    private Map<String, ContentTypeChild> children = new LinkedHashMap<String, ContentTypeChild>();
+    private Map<String, ContentTypeProperty> properties = new LinkedHashMap<>();
+    private Map<String, ContentTypeChild> children = new LinkedHashMap<>();
     private List<String> validators = new ArrayList<>();
 
-    public ContentTypeImpl(String prefix, String name, long contentTypesVersion) {
+    public ContentTypeImpl(final String prefix, final String name, final long contentTypesVersion) {
         this.version = contentTypesVersion;
         this.aggregate = false;
         this.derivedType = false;
@@ -59,7 +59,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         aggregatedTypes.add(this.name);
     }
 
-    public ContentTypeImpl(EffectiveNodeTypeImpl ent, long contentTypesVersion) {
+    public ContentTypeImpl(final EffectiveNodeTypeImpl ent, final long contentTypesVersion) {
         this.version = contentTypesVersion;
         aggregate = false;
         this.derivedType = true;
@@ -74,7 +74,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         cascadeValidate = false;
     }
 
-    public ContentTypeImpl(ContentTypeImpl other) {
+    public ContentTypeImpl(final ContentTypeImpl other) {
         this.version = other.version;
         aggregate = other.aggregate;
         this.derivedType = other.derivedType;
@@ -87,10 +87,10 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         superTypes.addAll(other.superTypes);
         aggregatedTypes.addAll(other.aggregatedTypes);
         cascadeValidate = other.cascadeValidate;
-        for (Map.Entry<String, ContentTypeProperty> entry : other.properties.entrySet()) {
+        for (final Map.Entry<String, ContentTypeProperty> entry : other.properties.entrySet()) {
             properties.put(entry.getKey(), new ContentTypePropertyImpl((ContentTypePropertyImpl)entry.getValue()));
         }
-        for (Map.Entry<String, ContentTypeChild> entry : other.children.entrySet()) {
+        for (final Map.Entry<String, ContentTypeChild> entry : other.children.entrySet()) {
             children.put(entry.getKey(), new ContentTypeChildImpl((ContentTypeChildImpl) entry.getValue()));
         }
         validators.addAll(other.validators);
@@ -101,11 +101,11 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         ent.seal();
         superTypes = Collections.unmodifiableSortedSet(superTypes);
         aggregatedTypes = Collections.unmodifiableSortedSet(aggregatedTypes);
-        for (ContentTypeItem cti : properties.values() ) {
+        for (final ContentTypeItem cti : properties.values() ) {
             ((Sealable)cti).seal();
         }
         properties = Collections.unmodifiableMap(properties);
-        for (ContentTypeItem cti : children.values() ) {
+        for (final ContentTypeItem cti : children.values() ) {
             ((Sealable)cti).seal();
         }
         children = Collections.unmodifiableMap(children);
@@ -132,7 +132,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return ent;
     }
 
-    public void setEffectiveNodeType(EffectiveNodeTypeImpl ent) {
+    public void setEffectiveNodeType(final EffectiveNodeTypeImpl ent) {
         checkSealed();
         this.ent = ent;
         superTypes.addAll(ent.getSuperTypes());
@@ -143,8 +143,8 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     @Override
     public String getName() {
         if (name == null) {
-            Iterator<String> iterator = aggregatedTypes.iterator();
-            StringBuilder sb = new StringBuilder(iterator.next());
+            final Iterator<String> iterator = aggregatedTypes.iterator();
+            final StringBuilder sb = new StringBuilder(iterator.next());
             while (iterator.hasNext()) {
                 sb.append(',');
                 sb.append(iterator.next());
@@ -178,7 +178,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return documentType;
     }
 
-    public void setDocumentType(boolean documentType) {
+    public void setDocumentType(final boolean documentType) {
         checkSealed();
         this.documentType = documentType;
     }
@@ -188,7 +188,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return compoundType;
     }
 
-    public void setCompoundType(boolean compoundType) {
+    public void setCompoundType(final boolean compoundType) {
         checkSealed();
         this.compoundType = compoundType;
     }
@@ -198,7 +198,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return mixin;
     }
 
-    public void setMixin(boolean mixin) {
+    public void setMixin(final boolean mixin) {
         checkSealed();
         this.mixin = mixin;
     }
@@ -208,14 +208,14 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return cascadeValidate;
     }
 
-    public void setCascadeValidate(boolean cascadeValidate) {
+    public void setCascadeValidate(final boolean cascadeValidate) {
         checkSealed();
         this.cascadeValidate = cascadeValidate;
     }
 
     @Override
-    public ContentTypeItem getItem(String name) {
-        ContentTypeItem item = children.get(name);
+    public ContentTypeItem getItem(final String name) {
+        final ContentTypeItem item = children.get(name);
         return item != null ? item : properties.get(name);
     }
 
@@ -238,7 +238,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return isSealed() ? getName().hashCode() : super.hashCode();
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         }
@@ -248,13 +248,13 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return false;
     }
 
-    public boolean contains(ContentTypeImpl other) {
-        for (String s : other.superTypes) {
+    public boolean contains(final ContentTypeImpl other) {
+        for (final String s : other.superTypes) {
             if (!isContentType(s)) {
                 return false;
             }
         }
-        for (String s : other.aggregatedTypes) {
+        for (final String s : other.aggregatedTypes) {
             if (!isContentType(s)) {
                 return false;
             }
@@ -262,7 +262,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return true;
     }
 
-    public boolean merge(ContentTypeImpl other, boolean superType) {
+    public boolean merge(final ContentTypeImpl other, final boolean superType) {
         checkSealed();
         if (!ent.merge(other.getEffectiveNodeType(), superType) && contains(other)) {
             return false;
@@ -285,7 +285,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
 
         ContentTypeItemImpl cti;
 
-        for (Map.Entry<String, ContentTypeChild> entry : other.getChildren().entrySet()) {
+        for (final Map.Entry<String, ContentTypeChild> entry : other.getChildren().entrySet()) {
             if (!isContentType(entry.getValue().getDefiningType())) {
                 cti = (ContentTypeItemImpl)children.get(entry.getKey());
                 if (cti != null) {
@@ -293,11 +293,11 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                     if (cti.isMultiple() != entry.getValue().isMultiple() ||
                             cti.getItemType().equals(entry.getValue().getItemType())) {
                         log.error("Conflicting ContentType child named {} encountered while merging ContentType {} into {}. Incoming child ignored."
-                                , new String[]{cti.getName(), other.getName(), getName()});
+                                , cti.getName(), other.getName(), getName());
                     }
                     else {
                         log.warn("Duplicate ContentType child named {} encountered while merging ContentType {} into {}. Incoming child ignored."
-                                , new String[]{cti.getName(), other.getName(), getName()});
+                                , cti.getName(), other.getName(), getName());
                     }
                 }
                 else {
@@ -305,14 +305,14 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                         // non-derived types may not have property & child by same name: child takes precedence
                         cti = (ContentTypeItemImpl)properties.remove(entry.getKey());
                         log.warn("Duplicate ContentType child and property named {} encountered while merging ContentType {} into non-derived type {}. Dropping existing property."
-                                , new String[]{cti.getName(), other.getName(), getName()});
+                                , cti.getName(), other.getName(), getName());
                     }
                     children.put(entry.getKey(), new ContentTypeChildImpl((ContentTypeChildImpl)entry.getValue()));
                 }
             }
         }
 
-        for (Map.Entry<String, ContentTypeProperty> entry : other.getProperties().entrySet()) {
+        for (final Map.Entry<String, ContentTypeProperty> entry : other.getProperties().entrySet()) {
             if (!isContentType(entry.getValue().getDefiningType())) {
                 cti = (ContentTypeItemImpl)properties.get(entry.getKey());
                 if (cti != null) {
@@ -320,18 +320,18 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                     if (cti.isMultiple() != entry.getValue().isMultiple() ||
                             !cti.getEffectiveType().equals(entry.getValue().getEffectiveType())) {
                         log.error("Conflicting ContentType property named {} encountered while merging ContentType {} into {}. Incoming property ignored."
-                                , new String[]{cti.getName(), other.getName(), getName()});
+                                , cti.getName(), other.getName(), getName());
                     }
                     else {
                         log.warn("Duplicate ContentType property named {} encountered while merging ContentType {} into {}. Incoming property ignored."
-                               , new String[]{cti.getName(), other.getName(), getName()});
+                               , cti.getName(), other.getName(), getName());
                     }
                 }
                 else if (!isDerivedType() && children.containsKey(entry.getKey())) {
                     // non-derived types may not have property & child by same name: child takes precedence
                     cti = (ContentTypeItemImpl)children.get(entry.getKey());
                     log.warn("Duplicate ContentType child and property named {} encountered while merging ContentType {} into non-derived type {}. Incoming property ignored."
-                            , new String[]{cti.getName(), other.getName(), getName()});
+                            , cti.getName(), other.getName(), getName());
                 }
                 else {
                     properties.put(entry.getKey(), new ContentTypePropertyImpl((ContentTypePropertyImpl)entry.getValue()));
@@ -351,30 +351,30 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         return true;
     }
 
-    public void resolveItems(ContentTypesCache ctCache) {
+    public void resolveItems(final ContentTypesCache ctCache) {
         checkSealed();
         mergeInheritedItems(ctCache);
         mapEffectiveItems(ctCache);
         resolveUnmappedItems(ctCache);
     }
 
-    private void mergeInheritedItems(ContentTypesCache ctCache) {
-        for (String s : superTypes) {
-            ContentTypeImpl ct = ctCache.getActCache().get(s);
-            for (Map.Entry<String, ContentTypeChild> entry : ct.children.entrySet()) {
+    private void mergeInheritedItems(final ContentTypesCache ctCache) {
+        for (final String s : superTypes) {
+            final ContentTypeImpl ct = ctCache.getActCache().get(s);
+            for (final Map.Entry<String, ContentTypeChild> entry : ct.children.entrySet()) {
                 if (!children.containsKey(entry.getKey())) {
                     if (!isDerivedType() && properties.remove(entry.getKey()) != null) {
                         log.warn("Duplicate ContentType child and property named {} encountered while merging super type {} items into non-derived type {}. Dropping existing property."
-                                , new String[]{entry.getKey(), ct.getName(), getName()});
+                                , entry.getKey(), ct.getName(), getName());
                     }
                     children.put(entry.getKey(), entry.getValue());
                 }
             }
-            for (Map.Entry<String, ContentTypeProperty> entry : ct.properties.entrySet()) {
+            for (final Map.Entry<String, ContentTypeProperty> entry : ct.properties.entrySet()) {
                 if (!properties.containsKey(entry.getKey())) {
                     if (!isDerivedType() && children.containsKey(entry.getKey())) {
                         log.warn("Duplicate ContentType child and property named {} encountered while merging super type {} items into non-derived type {}. Ignoring super type property."
-                                , new String[]{entry.getKey(), ct.getName(), getName()});
+                                , entry.getKey(), ct.getName(), getName());
                     }
                     else {
                         properties.put(entry.getKey(), entry.getValue());
@@ -384,17 +384,17 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         }
     }
 
-    private void mapEffectiveItems(ContentTypesCache ctCache) {
-        Set<String> removedItems = new HashSet<String>();
+    private void mapEffectiveItems(final ContentTypesCache ctCache) {
+        final Set<String> removedItems = new HashSet<>();
 
-        for (Map.Entry<String,List<EffectiveNodeTypeChild>> entry : ent.getChildren().entrySet()) {
+        for (final Map.Entry<String,List<EffectiveNodeTypeChild>> entry : ent.getChildren().entrySet()) {
             if (!"*".equals(entry.getKey())) {
                 ContentTypeChildImpl cti = (ContentTypeChildImpl)children.get(entry.getKey());
                 if (cti == null) {
                     if (!isDerivedType() && properties.containsKey(entry.getKey())) {
                         log.error("Effective NodeType {} defines a child node named {} which conflicts with an non-derived ContentType {} property. "
                                  + "The ContentType property is removed and the NodeType child will be hidden."
-                                 , new String[]{ent.getName(), entry.getKey(), getName()});
+                                 , ent.getName(), entry.getKey(), getName());
                         properties.remove(entry.getKey());
                         removedItems.add(entry.getKey());
                     }
@@ -420,17 +420,17 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                     if (ct == null) {
                         log.error("Effective NodeType {} defines a child named {} with a matching child in ContentType {} but with unknown type {}. "
                                 + "The NodeType child will be hidden and the ContentType child removed.",
-                                new String[]{ent.getName(), entry.getKey(), getName(), cti.getEffectiveType()});
+                                ent.getName(), entry.getKey(), getName(), cti.getEffectiveType());
                         children.remove(entry.getKey());
                         removedItems.add(entry.getKey());
                     }
                     else {
                         EffectiveNodeTypeChild matchingChild = null;
                         boolean mismatch = false;
-                        for (EffectiveNodeTypeChild c : entry.getValue()) {
+                        for (final EffectiveNodeTypeChild c : entry.getValue()) {
                             if (matchingChild == null && (!cti.isMultiple() || c.isMultiple())) {
                                 boolean match = true;
-                                for (String requiredType : c.getRequiredPrimaryTypes()) {
+                                for (final String requiredType : c.getRequiredPrimaryTypes()) {
                                     if (!ct.isContentType(requiredType)) {
                                         match = false;
                                         break;
@@ -451,12 +451,12 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                             if (mismatch) {
                                 log.error("Effective NodeType {} defines multiple children named {} but not with a matching type {} or multiplicity for its corresponding child in ContentType {}. "
                                         + "The NodeType children will be hidden and the ContentType child removed."
-                                        , new String[]{ent.getName(), entry.getKey(), cti.getEffectiveType(), getName()});
+                                        , ent.getName(), entry.getKey(), cti.getEffectiveType(), getName());
                             }
                             else {
                                 log.error("Effective NodeType {} defines a child named {} but not with matching type {} or multiplicity for its corresponding child in ContentType {}. "
                                         + "The NodeType child will be hidden and the ContentType child removed."
-                                        , new String[]{ent.getName(), entry.getKey(), cti.getEffectiveType(), getName()});
+                                        , ent.getName(), entry.getKey(), cti.getEffectiveType(), getName());
                             }
                             children.remove(entry.getKey());
                             removedItems.add(entry.getKey());
@@ -465,24 +465,24 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                             if (mismatch) {
                                 log.warn("Effective NodeType {} defines multiple children named {} for its corresponding child of type {} in ContentType {}. "
                                         + "Other NodeType children will be hidden."
-                                        , new String[]{ent.getName(), entry.getKey(), cti.getEffectiveType(), getName()});
+                                        , ent.getName(), entry.getKey(), cti.getEffectiveType(), getName());
                             }
                             if (matchingChild.isAutoCreated() && !cti.isAutoCreated()) {
                                 log.warn("Effective NodeType {} child named {} is autoCreated while its corresponding child in ContentType {} is not. "
                                         + "ContentType child is corrected to be autoCreated."
-                                        , new String[]{ent.getName(), entry.getKey(), getName()});
+                                        , ent.getName(), entry.getKey(), getName());
                                 cti.setAutoCreated(true);
                             }
                             if (matchingChild.isMandatory() && !cti.isMandatory()) {
                                 log.warn("Effective NodeType {} child node named {} is mandatory while its corresponding child in ContentType {} is not. "
                                         + "ContentType child is corrected to be mandatory."
-                                        , new String[]{ent.getName(), entry.getKey(), getName()});
+                                        , ent.getName(), entry.getKey(), getName());
                                 cti.setMandatory(true);
                             }
                             if (matchingChild.isProtected() && !cti.isProtected()) {
                                 log.warn("Effective NodeType {} child node named {} is protected while its corresponding child in ContentType {} is not. "
                                         + "ContentType child is corrected to be protected."
-                                        , new String[]{ent.getName(), entry.getKey(), getName()});
+                                        , ent.getName(), entry.getKey(), getName());
                                 cti.setProtected(true);
                             }
                             cti.setEffectiveNodeTypeItem(matchingChild);
@@ -492,7 +492,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
             }
         }
 
-        for (Map.Entry<String,List<EffectiveNodeTypeProperty>> entry : ent.getProperties().entrySet()) {
+        for (final Map.Entry<String,List<EffectiveNodeTypeProperty>> entry : ent.getProperties().entrySet()) {
             if (!"*".equals(entry.getKey())) {
                 ContentTypePropertyImpl cti = (ContentTypePropertyImpl)properties.get(entry.getKey());
                 if (cti == null) {
@@ -500,7 +500,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                         if (!isDerivedType() && children.containsKey(entry.getKey())) {
                             log.warn("Effective NodeType {} defines a property named {} which conflicts with a equally named child in non-derived ContentType {}. "
                                     + "NodeType property will be hidden."
-                                    , new String[]{ent.getName(), entry.getKey(), getName()});
+                                    , ent.getName(), entry.getKey(), getName());
                         }
                         // create new derived property
                         cti = new ContentTypePropertyImpl(entry.getValue().get(0));
@@ -517,7 +517,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 else {
                     EffectiveNodeTypeProperty matchingProperty = null;
                     boolean mismatch = false;
-                    for (EffectiveNodeTypeProperty p : entry.getValue()) {
+                    for (final EffectiveNodeTypeProperty p : entry.getValue()) {
                         if (matchingProperty == null && p.isMultiple() == cti.isMultiple() && p.getType().equals(cti.getEffectiveType())) {
                             matchingProperty = p;
                         }
@@ -529,12 +529,12 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                         if (mismatch) {
                             log.error("Effective NodeType {} defines multiple properties named {} but not of required type {} or multiplicity for its corresponding property in ContentType {}. "
                                     + "The NodeType properties will be hidden and the ContentType property removed."
-                                    , new String[]{ent.getName(), entry.getKey(), cti.getItemType(), getName()});
+                                    , ent.getName(), entry.getKey(), cti.getItemType(), getName());
                         }
                         else {
                             log.error("Effective NodeType {} defines a property named {} but not of required type {} or multiplicity for its corresponding property in ContentType {}. "
                                     + "The NodeType property will be hidden and the ContentType property removed."
-                                    , new String[]{ent.getName(), entry.getKey(), cti.getItemType(), getName()});
+                                    , ent.getName(), entry.getKey(), cti.getItemType(), getName());
                         }
                         properties.remove(entry.getKey());
                     }
@@ -542,24 +542,24 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                         if (mismatch) {
                             log.warn("Effective NodeType {} defines multiple properties named {} for its corresponding property of type {} in ContentType {}. "
                                     + "Other NodeType properties will be hidden."
-                                    , new String[]{ent.getName(), entry.getKey(), cti.getItemType(), getName()});
+                                    , ent.getName(), entry.getKey(), cti.getItemType(), getName());
                         }
                         if (matchingProperty.isAutoCreated() && !cti.isAutoCreated()) {
                             log.warn("Effective NodeType {} property named {} is autoCreated while its corresponding property in ContentType {} is not. "
                                     + "ContentType property is corrected to be autoCreated."
-                                    , new String[]{ent.getName(), entry.getKey(), getName()});
+                                    , ent.getName(), entry.getKey(), getName());
                             cti.setAutoCreated(true);
                         }
                         if (matchingProperty.isMandatory() && !cti.isMandatory()) {
                             log.warn("Effective NodeType {} property named {} is mandatory while its corresponding property in ContentType {} is not. "
                                     + "ContentType property is corrected to be mandatory."
-                                    , new String[]{ent.getName(), entry.getKey(), getName()});
+                                    , ent.getName(), entry.getKey(), getName());
                             cti.setMandatory(true);
                         }
                         if (matchingProperty.isProtected() && !cti.isProtected()) {
                             log.warn("Effective NodeType {} property named {} is protected while its corresponding property in ContentType {} is not. "
                                     + "ContentType property is corrected to be protected."
-                                    , new String[]{ent.getName(), entry.getKey(), getName()});
+                                    , ent.getName(), entry.getKey(), getName());
                             cti.setProtected(true);
                         }
                         cti.setEffectiveNodeTypeItem(matchingProperty);
@@ -569,9 +569,9 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         }
     }
 
-    private void resolveUnmappedItems(ContentTypesCache ctCache) {
-        for (Iterator<String> itemNameIterator = children.keySet().iterator(); itemNameIterator.hasNext(); ) {
-            ContentTypeChildImpl cti = (ContentTypeChildImpl)children.get(itemNameIterator.next());
+    private void resolveUnmappedItems(final ContentTypesCache ctCache) {
+        for (final Iterator<String> itemNameIterator = children.keySet().iterator(); itemNameIterator.hasNext(); ) {
+            final ContentTypeChildImpl cti = (ContentTypeChildImpl)children.get(itemNameIterator.next());
             if (cti.isSealed()) {
                 // skip already processed inherited children
                 continue;
@@ -586,16 +586,16 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 if (ct == null) {
                     log.error("ContentType {} defines child named {} with unresolved type {}. "
                             + "Child is removed.",
-                            new String[]{getName(), cti.getName(), cti.getEffectiveType()});
+                            getName(), cti.getName(), cti.getEffectiveType());
                     itemNameIterator.remove();
                 }
                 else {
-                    List<EffectiveNodeTypeChild> children = ent.getChildren().get("*");
+                    final List<EffectiveNodeTypeChild> children = ent.getChildren().get("*");
                     if (children != null) {
-                        for (EffectiveNodeTypeChild c : children) {
+                        for (final EffectiveNodeTypeChild c : children) {
                             if (!cti.isMultiple() || c.isMultiple()) {
                                 boolean match = true;
-                                for (String requiredType : c.getRequiredPrimaryTypes()) {
+                                for (final String requiredType : c.getRequiredPrimaryTypes()) {
                                     if (!ct.isContentType(requiredType)) {
                                         match = false;
                                         break;
@@ -605,19 +605,19 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                                     if (c.isAutoCreated() && !cti.isAutoCreated()) {
                                         log.warn("Matching residual Effective NodeType {} child named {} is autoCreated while its corresponding child in ContentType {} is not. "
                                                 + "ContentType child is corrected to be autoCreated."
-                                                , new String[]{ent.getName(), cti.getName(), getName()});
+                                                , ent.getName(), cti.getName(), getName());
                                         cti.setAutoCreated(true);
                                     }
                                     if (c.isMandatory() && !cti.isMandatory()) {
                                         log.warn("Matching residual Effective NodeType {} child named {} is mandatory while its corresponding child in ContentType {} is not. "
                                                 + "ContentType child is corrected to be autoCreated."
-                                                , new String[]{ent.getName(), cti.getName(), getName()});
+                                                , ent.getName(), cti.getName(), getName());
                                         cti.setMandatory(true);
                                     }
                                     if (c.isProtected() && !cti.isProtected()) {
                                         log.warn("Matching residual Effective NodeType {} child named {} is protected while its corresponding child in ContentType {} is not. "
                                                 + "ContentType child is corrected to be autoCreated."
-                                                , new String[]{ent.getName(), cti.getName(), getName()});
+                                                , ent.getName(), cti.getName(), getName());
                                         cti.setProtected(true);
                                     }
                                     cti.setEffectiveNodeTypeItem(c);
@@ -629,41 +629,41 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                     if (cti.getEffectiveNodeTypeItem() == null) {
                         log.error("ContentType {} defines child named {} without matching named or residual child in its Effective NodeType {}. "
                                 + "ContentType child is removed.",
-                                new String[]{getName(), cti.getName(), ent.getName()});
+                                getName(), cti.getName(), ent.getName());
                         itemNameIterator.remove();
                     }
                 }
             }
         }
 
-        for (Iterator<String> itemNameIterator = properties.keySet().iterator(); itemNameIterator.hasNext(); ) {
-            ContentTypePropertyImpl cti = (ContentTypePropertyImpl)properties.get(itemNameIterator.next());
+        for (final Iterator<String> itemNameIterator = properties.keySet().iterator(); itemNameIterator.hasNext(); ) {
+            final ContentTypePropertyImpl cti = (ContentTypePropertyImpl)properties.get(itemNameIterator.next());
             if (cti.isSealed()) {
                 // skip already processed inherited properties
                 continue;
             }
             if (cti.getEffectiveNodeTypeItem() == null) {
-                List<EffectiveNodeTypeProperty> props = ent.getProperties().get("*");
+                final List<EffectiveNodeTypeProperty> props = ent.getProperties().get("*");
                 if (props != null) {
-                    for (EffectiveNodeTypeProperty p : props) {
+                    for (final EffectiveNodeTypeProperty p : props) {
                         if (p.getType().equals(cti.getEffectiveType()) && p.isMultiple() == cti.isMultiple()) {
                             cti.setEffectiveNodeTypeItem(p);
                             if (p.isAutoCreated() && !cti.isAutoCreated()) {
                                 log.warn("Matching residual Effective NodeType {} property named {} is autoCreated while its corresponding property in ContentType {} is not. "
                                         + "ContentType property is corrected to be autoCreated."
-                                        , new String[]{ent.getName(), cti.getName(), getName()});
+                                        , ent.getName(), cti.getName(), getName());
                                 cti.setAutoCreated(true);
                             }
                             if (p.isMandatory() && !cti.isMandatory()) {
                                 log.warn("Matching residual Effective NodeType {} property named {} is mandatory while its corresponding property in ContentType {} is not. "
                                         + "ContentType property is corrected to be mandatory."
-                                        , new String[]{ent.getName(), cti.getName(), getName()});
+                                        , ent.getName(), cti.getName(), getName());
                                 cti.setMandatory(true);
                             }
                             if (p.isProtected() && !cti.isProtected()) {
                                 log.warn("Matching residual Effective NodeType {} property named {} is protected while its corresponding property in ContentType {} is not. "
                                         + "ContentType property is corrected to be protected."
-                                        , new String[]{ent.getName(), cti.getName(), getName()});
+                                        , ent.getName(), cti.getName(), getName());
                                 cti.setProtected(true);
                             }
                             break;
@@ -673,7 +673,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 if (cti.getEffectiveNodeTypeItem() == null) {
                     log.error("ContentType {} defines property named {} without matching named or residual property in its Effective NodeType {}. "
                             + "ContentType property is removed."
-                            , new String[]{getName(), cti.getName(), ent.getName()});
+                            , getName(), cti.getName(), ent.getName());
                     itemNameIterator.remove();
                 }
             }
