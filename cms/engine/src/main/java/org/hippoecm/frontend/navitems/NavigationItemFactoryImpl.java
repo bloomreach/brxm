@@ -17,20 +17,21 @@
 
 package org.hippoecm.frontend.navitems;
 
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
-
+import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 
 public class NavigationItemFactoryImpl implements NavigationItemFactory {
 
     @Override
-    public NavigationItem newInstance(String perspectiveClassName, String appIframeUrl) {
+    public NavigationItem newInstance(String perspectiveClassName, String appIframeUrl, Locale locale) {
         final NavigationItem navigationItem = new NavigationItem();
         navigationItem.setId(getId(perspectiveClassName));
         navigationItem.setAppIframeUrl(appIframeUrl);
         navigationItem.setAppPath(getId(perspectiveClassName));
-        navigationItem.setDisplayName(getDisplayName(perspectiveClassName));
+        navigationItem.setDisplayName(getDisplayName(perspectiveClassName, locale));
         return navigationItem;
     }
 
@@ -40,13 +41,13 @@ public class NavigationItemFactoryImpl implements NavigationItemFactory {
         return String.format("hippo-perspective-%s", perspectiveName.toLowerCase());
     }
 
-    private String getDisplayName(String perspectiveClassName) {
+    private String getDisplayName(String perspectiveClassName, Locale locale) {
         try {
-            java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle(perspectiveClassName, Session.get().getLocale());
+            final ResourceBundle bundle = ResourceBundle.getBundle(perspectiveClassName, locale);
             if (bundle != null && bundle.containsKey(Perspective.TITLE_KEY)) {
                 return bundle.getString(Perspective.TITLE_KEY);
             }
-        } catch(MissingResourceException ignored) {
+        } catch (MissingResourceException ignored) {
             // perspective-title and resource bundle are optional. Ignore if the resource bundle doesn't exist
         }
         return null;

@@ -19,6 +19,7 @@ package org.hippoecm.frontend.navitems;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -44,12 +45,12 @@ final class NavigationItemServiceImpl implements NavigationItemService {
     }
 
     @Override
-    public List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl) {
+    public List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl, Locale locale) {
         try {
             return perspectiveStore
                     .getPerspectiveClassNames(userSession)
                     .stream()
-                    .map(name -> navigationItemFactory.newInstance(name, appIframeUrl))
+                    .map(name -> navigationItemFactory.newInstance(name, appIframeUrl, locale))
                     .collect(toList());
         } catch (RepositoryException e) {
             log.error("Failed to get perspectives for user with id '{}'", userSession.getUserID(), e);

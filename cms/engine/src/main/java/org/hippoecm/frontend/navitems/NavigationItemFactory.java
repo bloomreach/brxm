@@ -17,6 +17,8 @@
 
 package org.hippoecm.frontend.navitems;
 
+import java.util.Locale;
+
 /**
  * Factory interface for creating instances of Navigation Items
  */
@@ -27,8 +29,9 @@ public interface NavigationItemFactory {
      *
      * @param perspectiveClassName fully qualified class name of a perspective
      * @param appIframeUrl         the url of the iframe that the navigation items must belong to.
+     * @param locale               the locale to use for localizing the displayName of a navigation item.
      * @return a new instance
      */
-    NavigationItem newInstance(String perspectiveClassName, String appIframeUrl);
+    NavigationItem newInstance(String perspectiveClassName, String appIframeUrl, Locale locale);
 
 }

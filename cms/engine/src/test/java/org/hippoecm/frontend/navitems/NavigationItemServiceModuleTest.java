@@ -19,6 +19,7 @@ package org.hippoecm.frontend.navitems;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
@@ -26,8 +27,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wicket.mock.MockApplication;
-import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.junit.Before;
@@ -92,13 +91,12 @@ public class NavigationItemServiceModuleTest {
 
         expect(sessionRequestProvider.getJcrSession(request)).andReturn(mockNode.getSession());
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
+        expect(sessionRequestProvider.getLocale(request)).andReturn(Locale.getDefault());
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
         expect(request.getContextPath()).andReturn("/context-path");
         replay(request);
-
-        new WicketTester(new MockApplication());
 
         final List<NavigationItem> navigationItems = resource.getNavigationItems(request);
         assertThat(navigationItems.size(), is(3));
@@ -133,6 +131,7 @@ public class NavigationItemServiceModuleTest {
 
         expect(sessionRequestProvider.getJcrSession(request)).andReturn(mockNode.getSession());
         expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
+        expect(sessionRequestProvider.getLocale(request)).andReturn(Locale.getDefault());
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
