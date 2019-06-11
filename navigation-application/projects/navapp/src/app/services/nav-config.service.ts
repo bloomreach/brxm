@@ -14,57 +14,73 @@
  * limitations under the License.
  */
 
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import {
-  ChildConnectConfig,
+  ChildConnectConfig, ChildPromisedApi,
   connectToChild,
 } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { NavConfigResource, NavItem } from '../models';
+import { ConfigResource, NavItem, Site } from '../models';
 
-import { NavAppSettingsService } from './navapp-settings.service';
+import { SettingsService } from './settings.service';
+
+const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavConfigService {
-  private readonly hostElement: HTMLElement;
   private readonly renderer: Renderer2;
 
   private navItems = new BehaviorSubject<NavItem[]>([]);
+  private sites = new BehaviorSubject<Site[]>([]);
 
   constructor(
     private http: HttpClient,
-    private navAppSettings: NavAppSettingsService,
+    private navAppSettings: SettingsService,
     private rendererFactory: RendererFactory2,
+    @Inject(DOCUMENT) private document,
   ) {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
-    this.hostElement = document.body;
   }
 
   get navItems$(): Observable<NavItem[]> {
-    return this.navItems.asObservable().pipe(filter(items => items.length > 0));
+    return this.navItems.asObservable().pipe(filter(filterOutEmpty));
+  }
+
+  get sites$(): Observable<Site[]> {
+    return this.sites.asObservable().pipe(filter(filterOutEmpty));
   }
 
   init(): Promise<void> {
-    const resourcePromises = this.navAppSettings.appSettings.navConfigResources.map(
+    const navConfigsPromises = this.navAppSettings.appSettings.navConfigResources.map(
       resource => this.fetchNavItems(resource),
     );
 
-    return Promise.all(resourcePromises)
-      .then(navItemArrays => [].concat(...navItemArrays))
-      .then(navItems => this.navItems.next(navItems));
+    const mergedNavConfigPromise = Promise.all(navConfigsPromises)
+      .then(navItemArrays => [].concat(...navItemArrays));
+
+    const sitesPromise = this.navAppSettings.appSettings.sitesResource ?
+      this.fetchSites(this.navAppSettings.appSettings.sitesResource) :
+      Promise.resolve([]);
+
+    return Promise.all([mergedNavConfigPromise, sitesPromise])
+      .then(([navItems, sites]) => {
+        this.navItems.next(navItems);
+        this.sites.next(sites);
+      });
   }
 
-  private fetchNavItems(resource: NavConfigResource): Promise<NavItem[]> {
+  private fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {
     switch (resource.resourceType) {
       case 'IFRAME':
-        return this.getItemsFromIframe(resource.url);
+        return this.fetchFromIframe(resource.url, child => child.getNavItems());
       case 'REST':
-        return this.getItemsFromREST(resource.url);
+        return this.fetchFromREST(resource.url);
       default:
         return Promise.reject(
           new Error(`Resource type ${resource.resourceType} is not supported`),
@@ -72,23 +88,27 @@ export class NavConfigService {
     }
   }
 
-  private getItemsFromREST(url: string): Promise<NavItem[]> {
-    return this.http.get<NavItem[]>(url).toPromise();
+  private fetchSites(resource: ConfigResource): Promise<Site[]> {
+    return this.fetchFromIframe(resource.url, child => child.getSites());
   }
 
-  private getItemsFromIframe(url: string): Promise<NavItem[]> {
+  private fetchFromIframe<T>(url: string, fetcher: (child: ChildPromisedApi) => Promise<T>): Promise<T> {
     const iframe = document.createElement('iframe');
     iframe.src = url;
     iframe.style.visibility = 'hidden';
     iframe.style.position = 'absolute';
-    this.renderer.appendChild(this.hostElement, iframe);
+    this.renderer.appendChild(this.document.body, iframe);
 
     const config: ChildConnectConfig = {
       iframe,
     };
 
     return connectToChild(config)
-      .then(child => child.getNavItems())
-      .finally(() => this.renderer.removeChild(this.hostElement, iframe));
+      .then(fetcher)
+      .finally(() => this.renderer.removeChild(this.document.body, iframe));
+  }
+
+  private fetchFromREST<T>(url: string): Promise<T> {
+    return this.http.get<T>(url).toPromise();
   }
 }

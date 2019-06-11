@@ -10,6 +10,11 @@
   position: relative;
 }
 
+header {
+  grid-area: toolbar;
+  z-index: 1;
+}
+
 nav {
   display: grid;
   grid-area: nav;

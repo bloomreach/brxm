@@ -1,0 +1,61 @@
+@import 'variables';
+
+:host {
+  background-color: $site-selection-side-panel-bg;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  right: 0;
+  min-width: $site-selection-side-panel-width;
+  position: absolute;
+  top: 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.search-form {
+  display: grid;
+  grid-template: 'icon input';
+  grid-template-columns: 50px 1fr;
+  grid-template-rows: 50px;
+  grid-column-gap: 3px;
+  position: relative;
+  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .25);
+  width: 100%;
+  z-index: 1;
+
+  > .mat-icon {
+    grid-area: icon;
+    place-self: center end;
+    color: $site-selection-text-color;
+  }
+
+  > .search-input {
+    grid-area: input;
+    border: none;
+    outline: none;
+    padding-right: 10px;
+  }
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+
+  > .mat-icon {
+    vertical-align: middle;
+  }
+}
+
+.leaf-node {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  > .mat-icon {
+    width: 40px;
+  }
+}

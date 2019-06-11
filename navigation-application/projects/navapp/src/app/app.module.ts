@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
 import { SharedModule } from './shared';
+import { TopPanelModule } from './top-panel';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { SharedModule } from './shared';
     ClientAppModule,
     HttpClientModule,
     MainMenuModule,
+    TopPanelModule,
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

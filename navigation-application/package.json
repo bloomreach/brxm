@@ -34,6 +34,7 @@
     "@bloomreach/navapp-communication": "^1.0.0-7",
     "core-js": "^2.5.4",
     "ng-click-outside": "~4.0.0",
+    "ngx-perfect-scrollbar": "^8.0.0",
     "normalize.css": "~8.0.1",
     "open-sans-fontface": "^1.4.0",
     "penpal": "^4.0.0",

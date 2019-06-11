@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-export * from './navapp-settings.dto';
-export * from './nav-config-resource.dto';
-export * from './nav-item.dto';
-export * from './site.dto';
+export * from './top-panel.module';
