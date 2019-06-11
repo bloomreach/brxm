@@ -42,8 +42,13 @@
         return Promise.resolve();
       }
       return Promise.reject(new Error(`${perspectiveClassName} not found`));
-    }
+    },
 
+    logout: function () {
+      // The jqXHR objects returned by jQuery.ajax() as of jQuery 1.5 implements the Promise interface
+      // See http://api.jquery.com/jquery.ajax/
+      return jQuery.ajax('${logoutCallbackUrl}');
+    }
   };
 
   // Receiver object for the implementation of the Parent API
@@ -56,10 +61,9 @@
   };
 
   // Establish the connection
-  window.bloomreach['navapp-communication'].connectToParent(parentConnectionConfig)
-    .then(parentApi =>
-      Object.assign(Hippo.AppToNavApp, parentApi))
-    .catch(error =>
-      console.error(error));
+  window.bloomreach['navapp-communication']
+    .connectToParent(parentConnectionConfig)
+    .then(parentApi =>  Object.assign(Hippo.AppToNavApp, parentApi))
+    .catch(error => console.error(error));
 
 }());
