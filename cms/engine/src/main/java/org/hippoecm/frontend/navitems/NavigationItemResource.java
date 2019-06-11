@@ -18,6 +18,7 @@
 package org.hippoecm.frontend.navitems;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public final class NavigationItemResource {
 
     @GET
     public List<NavigationItem> getNavigationItems(@Context HttpServletRequest request) {
-        return navigationItemService.getNavigationItems(getUserSession(request), getAppIframeUrl(request));
+        return navigationItemService.getNavigationItems(getUserSession(request), getAppIframeUrl(request), getLocale(request));
     }
 
     private Session getUserSession(HttpServletRequest request) {
@@ -60,5 +61,9 @@ public final class NavigationItemResource {
         final String requestHost = sessionRequestContextProvider.getFarthestRequestHost(request);
         final String contextPath = request.getContextPath();
         return String.format("%s://%s%s/?%s", scheme, requestHost, contextPath, Main.CMS_AS_IFRAME_QUERY_PARAMETER);
+    }
+
+    private Locale getLocale(final HttpServletRequest request) {
+        return sessionRequestContextProvider.getLocale(request);
     }
 }
