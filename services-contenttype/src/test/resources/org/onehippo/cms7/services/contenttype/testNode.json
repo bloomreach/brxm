@@ -172,6 +172,7 @@
       "protected" : false
     }
   },
+  "validators" : [ ],
   "effectiveNodeType" : {
     "name" : "hippostd:relaxed,testnamespace:test",
     "prefix" : null,

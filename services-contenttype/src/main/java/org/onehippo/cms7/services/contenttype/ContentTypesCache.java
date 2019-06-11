@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +29,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -232,6 +232,8 @@ class ContentTypesCache extends Sealable implements ContentTypes {
         // TODO: the default 'true' below is conforming to current CMS behavior, but a false interpretation of an absent property would make more sense
         ct.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, true));
 
+        appendValidators(typeNode, ct.getValidators());
+
         if (typeNode.hasNodes()) {
             for (Node field : new NodeIterable(typeNode.getNodes())) {
 
@@ -269,21 +271,25 @@ class ContentTypesCache extends Sealable implements ContentTypes {
                     cti.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
                     cti.setPrimaryItem(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
 
-                    if (field.hasProperty(HippoNodeType.HIPPO_VALIDATORS)) {
-                        Value[] values = field.getProperty(HippoNodeType.HIPPO_VALIDATORS).getValues();
-                        for (Value value : values) {
-                            String validator = value.getString();
-                            if (validator.length() > 0) {
-                                cti.getValidators().add(validator);
-                            }
-                        }
-                    }
+                    appendValidators(field, cti.getValidators());
                     if (cti.isProperty()) {
                         ct.getProperties().put(cti.getName(), (ContentTypeProperty)cti);
                     }
                     else {
                         ct.getChildren().put(cti.getName(), (ContentTypeChild)cti);
                     }
+                }
+            }
+        }
+    }
+
+    private static void appendValidators(final Node node, final Collection<String> validators) throws RepositoryException {
+        if (node.hasProperty(HippoNodeType.HIPPO_VALIDATORS)) {
+            final Value[] values = node.getProperty(HippoNodeType.HIPPO_VALIDATORS).getValues();
+            for (final Value value : values) {
+                final String validator = value.getString();
+                if (validator.length() > 0) {
+                    validators.add(validator);
                 }
             }
         }

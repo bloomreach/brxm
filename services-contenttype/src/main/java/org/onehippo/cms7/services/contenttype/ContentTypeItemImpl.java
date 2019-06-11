@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,22 +40,22 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
     private boolean multiTyped;
     private List<EffectiveNodeTypeItem> multiTypes = Collections.emptyList();
 
-    private List<String> validators = new ArrayList<String>();
-    private Map<String, List<String>> itemProperties = new HashMap<String, List<String>>();
+    private List<String> validators = new ArrayList<>();
+    private Map<String, List<String>> itemProperties = new HashMap<>();
 
     @Override
     protected void doSeal() {
         validators = Collections.unmodifiableList(validators);
-        for (Map.Entry<String,List<String>> entry : itemProperties.entrySet()) {
+        for (final Map.Entry<String,List<String>> entry : itemProperties.entrySet()) {
             entry.setValue(Collections.unmodifiableList(entry.getValue()));
         }
-        for (EffectiveNodeTypeItem item : multiTypes) {
+        for (final EffectiveNodeTypeItem item : multiTypes) {
             ((Sealable)item).seal();
         }
         itemProperties = Collections.unmodifiableMap(itemProperties);
     }
 
-    protected ContentTypeItemImpl(String definingType, String name, String itemType, String effectiveType) {
+    protected ContentTypeItemImpl(final String definingType, final String name, final String itemType, final String effectiveType) {
         this.definingType = definingType;
         this.name = name;
         this.itemType = itemType;
@@ -63,7 +63,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         this.property = true;
     }
 
-    protected ContentTypeItemImpl(String definingType, String name, String itemType) {
+    protected ContentTypeItemImpl(final String definingType, final String name, final String itemType) {
         this.definingType = definingType;
         this.name = name;
         this.itemType = itemType;
@@ -71,7 +71,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         this.property = false;
     }
 
-    protected ContentTypeItemImpl(EffectiveNodeTypeProperty property) {
+    protected ContentTypeItemImpl(final EffectiveNodeTypeProperty property) {
         this.definingType = property.getDefiningType();
         this.nti = property;
         this.primaryItem = false;
@@ -87,7 +87,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         this.ordered = false;
     }
 
-    protected ContentTypeItemImpl(EffectiveNodeTypeChild child) {
+    protected ContentTypeItemImpl(final EffectiveNodeTypeChild child) {
         this.definingType = child.getDefiningType();
         this.nti = child;
         this.primaryItem = false;
@@ -103,7 +103,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         this.ordered = false;
     }
 
-    protected ContentTypeItemImpl(ContentTypeItemImpl other) {
+    protected ContentTypeItemImpl(final ContentTypeItemImpl other) {
         this.definingType = other.definingType;
         this.nti = other.nti;
         this.primaryItem = other.primaryItem;
@@ -126,7 +126,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return nti;
     }
 
-    public void setEffectiveNodeTypeItem(EffectiveNodeTypeItem nti) {
+    public void setEffectiveNodeTypeItem(final EffectiveNodeTypeItem nti) {
         checkSealed();
         this.nti = nti;
     }
@@ -166,7 +166,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return primaryItem;
     }
 
-    public void setPrimaryItem(boolean primaryItem) {
+    public void setPrimaryItem(final boolean primaryItem) {
         checkSealed();
         this.primaryItem = primaryItem;
     }
@@ -176,7 +176,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return multiple;
     }
 
-    public void setMultiple(boolean multiple) {
+    public void setMultiple(final boolean multiple) {
         checkSealed();
         this.multiple = multiple;
     }
@@ -186,7 +186,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return mandatory;
     }
 
-    public void setMandatory(boolean mandatory) {
+    public void setMandatory(final boolean mandatory) {
         checkSealed();
         this.mandatory = mandatory;
     }
@@ -196,7 +196,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return autoCreated;
     }
 
-    public void setAutoCreated(boolean autoCreated) {
+    public void setAutoCreated(final boolean autoCreated) {
         checkSealed();
         this.autoCreated = autoCreated;
     }
@@ -206,7 +206,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return protect;
     }
 
-    public void setProtected(boolean protect) {
+    public void setProtected(final boolean protect) {
         checkSealed();
         this.protect = protect;
     }
@@ -216,7 +216,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return ordered;
     }
 
-    public void setOrdered(boolean ordered) {
+    public void setOrdered(final boolean ordered) {
         checkSealed();
         this.ordered = ordered;
     }
@@ -240,7 +240,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         return multiTypes;
     }
 
-    public void setMultiPropertyTypes(List<EffectiveNodeTypeProperty> types) {
+    public void setMultiPropertyTypes(final List<EffectiveNodeTypeProperty> types) {
         checkSealed();
         if (types != null) {
             multiTypes = Collections.unmodifiableList(new ArrayList<EffectiveNodeTypeItem>(types));
@@ -251,7 +251,7 @@ public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
         multiTyped = !multiTypes.isEmpty();
     }
 
-    public void setMultiChildTypes(List<EffectiveNodeTypeChild> types) {
+    public void setMultiChildTypes(final List<EffectiveNodeTypeChild> types) {
         checkSealed();
         if (types != null) {
             multiTypes = Collections.unmodifiableList(new ArrayList<EffectiveNodeTypeItem>(types));
