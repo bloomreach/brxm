@@ -24,6 +24,7 @@ import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.time.Duration;
+import org.hippoecm.frontend.NavAppToAppHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -53,13 +54,7 @@ public class ActiveLogoutPlugin extends Component {
         this.maxInactiveIntervalMinutes = maxInactiveIntervalMinutes;
         logoutBehavior = new LogoutBehavior(logoutService);
 
-        if (isActive()) {
-            log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
-            add(logoutBehavior);
-        } else {
-            log.info("Inactive user sessions will not be logged out automatically");
-        }
-
+        add(logoutBehavior);
         setRenderBodyOnly(true);
     }
 
@@ -71,9 +66,14 @@ public class ActiveLogoutPlugin extends Component {
     public void internalRenderHead(final HtmlHeaderContainer container) {
         super.internalRenderHead(container);
 
+        final IHeaderResponse header = container.getHeaderResponse();
+        header.render(new NavAppToAppHeaderItem(getLogoutCallbackUrl()));
+
         if (isActive()) {
-            final IHeaderResponse header = container.getHeaderResponse();
+            log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
             header.render(OnLoadHeaderItem.forScript(createActiveLogoutScript()));
+        } else {
+            log.info("Inactive user sessions will not be logged out automatically");
         }
     }
 
@@ -84,10 +84,14 @@ public class ActiveLogoutPlugin extends Component {
 
     private String createActiveLogoutScript() {
         final Map<String, String> scriptParams = new TreeMap<>();
-        scriptParams.put("logoutCallbackUrl", logoutBehavior.getCallbackUrl().toString());
+        scriptParams.put("logoutCallbackUrl", getLogoutCallbackUrl());
 
         final PackageTextTemplate activeLogoutJs = new PackageTextTemplate(ActiveLogoutPlugin.class, ACTIVE_LOGOUT_JS);
         return activeLogoutJs.asString(scriptParams);
+    }
+
+    private String getLogoutCallbackUrl() {
+        return logoutBehavior.getCallbackUrl().toString();
     }
 
 }
