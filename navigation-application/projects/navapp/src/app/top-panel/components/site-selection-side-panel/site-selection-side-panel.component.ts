@@ -53,19 +53,27 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   }
 
   private applyFilter(sites: Site[], searchText: string): Site[] {
-    const predicate = site => {
-      if (site.name.toLowerCase().includes(searchText.toLowerCase())) {
-        return true;
+    if (!sites || !sites.length) {
+      return [];
+    }
+
+    searchText = searchText.toLowerCase();
+
+    return sites.reduce((result, site) => {
+      site = { ...site };
+
+      if (site.name.toLowerCase().includes(searchText)) {
+        result.push(site);
+        return result;
       }
 
-      if (site.subGroups) {
-        site.subGroups = site.subGroups.slice().filter(predicate);
-        return site.subGroups.length;
+      site.subGroups = this.applyFilter(site.subGroups, searchText);
+
+      if (site.subGroups.length) {
+        result.push(site);
       }
 
-      return false;
-    };
-
-    return sites.filter(predicate);
+      return result;
+    }, []);
   }
 }
