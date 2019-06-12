@@ -28,6 +28,8 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   @Output()
   siteSelected = new EventEmitter<Site>();
 
+  searchText = '';
+
   treeControl = new NestedTreeControl<Site>(node => node.subGroups);
   dataSource = new MatTreeNestedDataSource<Site>();
 
@@ -35,7 +37,7 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   animate = true;
 
   ngOnChanges(changes): void {
-    this.dataSource.data = this.sites;
+    this.dataSource.data = this.applyFilter(this.sites, this.searchText);
   }
 
   hasChild(index: number, node: Site): boolean {
@@ -44,5 +46,26 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
 
   onLeafNodeClicked(site: Site): void {
     this.siteSelected.emit(site);
+  }
+
+  onSearchInputKeyUp(): void {
+    this.dataSource.data = this.applyFilter(this.sites, this.searchText);
+  }
+
+  private applyFilter(sites: Site[], searchText: string): Site[] {
+    const predicate = site => {
+      if (site.name.toLowerCase().includes(searchText.toLowerCase())) {
+        return true;
+      }
+
+      if (site.subGroups) {
+        site.subGroups = site.subGroups.slice().filter(predicate);
+        return site.subGroups.length;
+      }
+
+      return false;
+    };
+
+    return sites.filter(predicate);
   }
 }

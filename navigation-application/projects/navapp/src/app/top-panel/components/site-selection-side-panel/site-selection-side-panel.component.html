@@ -1,6 +1,12 @@
 <form class="search-form">
   <mat-icon svgIcon="search"></mat-icon>
-  <input type="text" placeholder="Search" class="search-input">
+  <input [(ngModel)]="searchText"
+         (keyup)="onSearchInputKeyUp()"
+         type="text"
+         name="searchText"
+         placeholder="Search"
+         autocomplete="off"
+         class="search-input">
 </form>
 <perfect-scrollbar [config]="{ suppressScrollX: true }" class="sites-tree-wrapper">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
@@ -25,4 +31,5 @@
       </li>
     </mat-nested-tree-node>
   </mat-tree>
+  <div *ngIf="!dataSource.data?.length && searchText" class="not-found-info">There is no sites found.</div>
 </perfect-scrollbar>

@@ -16,6 +16,7 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
@@ -31,6 +32,7 @@ import { SiteSelectionSidePanelService } from './services';
     BrowserAnimationsModule,
     SharedModule,
     PerfectScrollbarModule,
+    FormsModule,
   ],
   declarations: [
     TopPanelComponent,
