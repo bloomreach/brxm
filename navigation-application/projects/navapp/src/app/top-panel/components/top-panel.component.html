@@ -1,3 +1,4 @@
+<div class="breadcrumbs"></div>
 <div matRipple (click)="onSiteSelectorClicked()" class="site-selector-value">
   <ng-container *ngIf="selectedSite; else pleaseSelectSite">
     {{ selectedSite.name }}
@@ -11,5 +12,5 @@
 <div *ngIf="isSidePanelOpened" (click)="onBackdropClicked()" class="backdrop"></div>
 <brna-site-selection-side-panel *ngIf="isSidePanelOpened"
                                 [sites]="sites$ | async"
-                                (siteSelected)="onSiteSelected($event)">
+                                [(selectedSite)]="selectedSite">
 </brna-site-selection-side-panel>

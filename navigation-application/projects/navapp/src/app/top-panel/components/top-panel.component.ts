@@ -11,12 +11,21 @@ import { SiteSelectionSidePanelService } from '../services';
   styleUrls: ['top-panel.component.scss'],
 })
 export class TopPanelComponent {
-  selectedSite: Site;
+  private site: Site;
 
   constructor(
     private navConfigService: NavConfigService,
     private siteSelectionPanelService: SiteSelectionSidePanelService,
   ) {}
+
+  get selectedSite(): Site {
+    return this.site;
+  }
+
+  set selectedSite(site: Site) {
+    this.site = site;
+    this.siteSelectionPanelService.close();
+  }
 
   get sites$(): Observable<Site[]> {
     return this.navConfigService.sites$;
@@ -28,11 +37,6 @@ export class TopPanelComponent {
 
   onSiteSelectorClicked(): void {
     this.siteSelectionPanelService.toggle();
-  }
-
-  onSiteSelected(site: Site): void {
-    this.selectedSite = site;
-    this.siteSelectionPanelService.close();
   }
 
   onBackdropClicked(): void {

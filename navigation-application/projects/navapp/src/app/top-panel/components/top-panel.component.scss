@@ -5,17 +5,17 @@
   background-color: $top-panel-bg;
   border-bottom: 1px solid $top-panel-border-color;
   display: grid;
-  grid-template: 'site-selector-value';
+  grid-template-columns: 3fr 1fr;
   height: $top-panel-height;
-  justify-items: end;
+  justify-items: stretch;
 }
 
 .site-selector-value {
   align-items: center;
   cursor: pointer;
   display: grid;
-  grid-area: site-selector-value;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr auto;
+  justify-items: end;
   padding-right: 20px;
 }
 
