@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -211,19 +210,20 @@ public class ChoiceFieldUtils {
                                                        final String choiceId) {
         if (contentType.isCompoundType()) {
             final CompoundFieldType compound = new CompoundFieldType();
+            contentType.getValidators().forEach(compound::addValidatorName);
             compound.initListBasedChoice(choiceContext, choiceId);
             return compound;
         }
 
         final FieldTypeContext fieldContext = new FieldTypeContext(
-            choiceId,                // the ID of a list-based choice is the JCR name
-            choiceId,                // and the JCR type
-            choiceId,                // and the type
-            false,                   // a choice is always stored in a node
-            false,                   // a choice itself is never multiple
-            Collections.emptyList(), // a choice does not have any validators itself
-            choiceContext,           // the parent is the choice field
-            null                     // a choice does not have its own editor config node but uses the one from the type
+            choiceId,                   // the ID of a list-based choice is the JCR name
+            choiceId,                   // and the JCR type
+            choiceId,                   // and the type
+            false,                      // a choice is always stored in a node
+            false,                      // a choice itself is never multiple
+            contentType.getValidators(),// a choice executes the validators of its type
+            choiceContext,              // the parent is the choice field
+            null                        // a choice does not have its own editor config node but uses the one from the type
         );
 
         if (contentType.isContentType(HippoStdNodeType.NT_HTML)) {
