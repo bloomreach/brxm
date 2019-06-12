@@ -78,7 +78,7 @@ export class MaterialModule {
 
     menuItemIconsList.concat(serviceIconsList).forEach(icon => iconRegistry.addSvgIcon(
       icon,
-      donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/menu-icons/${icon}.svg`)),
+      donSanitizer.bypassSecurityTrustResourceUrl(`assets/menu-icons/${icon}.svg`)),
     );
   }
 }
