@@ -32,6 +32,7 @@ public class DynamicBeanUtils {
     public static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
     public static final Pattern DOT_PATTERN = Pattern.compile("\\.");
     public static final Pattern PATTERN_SPACES = Pattern.compile("\\s");
+    public static final Pattern PATTERN_ALPHANUMERIC = Pattern.compile("[^A-Za-z0-9:]");
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
 
     public static String createJavaClassName(String name) {
@@ -41,7 +42,7 @@ public class DynamicBeanUtils {
         return createClassName(name);
     }
 
-    public static String createClassName(final String input) {
+    private static String createClassName(final String input) {
         if (Strings.isNullOrEmpty(input) || input.trim().equals(":")) {
             return INVALID_CLASS_NAME;
         }
@@ -65,7 +66,8 @@ public class DynamicBeanUtils {
         if (Strings.isNullOrEmpty(myName) || myName.trim().equals(":")) {
             throw new IllegalArgumentException(String.format("Unable to construct method name from: %s", name));
         }
-        myName = CharMatcher.whitespace().removeFrom(myName).replaceAll("[^A-Za-z0-9:]", "");
+        myName = CharMatcher.whitespace().removeFrom(myName);
+        myName = PATTERN_ALPHANUMERIC.matcher(myName).replaceAll("");
         // replace all whitespaces and non-alphanumeric characters except colon:
         final int index = myName.indexOf(':');
         if (index == -1 || index == myName.length() - 1) {
