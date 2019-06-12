@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -152,7 +153,9 @@ public interface ContentType {
 
     /**
      * @return The set of validators for this ContentType, may be empty but never null.
+     * @since 13.3
      */
-    List<String> getValidators();
-
+    default List<String> getValidators() {
+        return Collections.emptyList();
+    }
 }
