@@ -4,6 +4,7 @@
   </span>
   <ng-template #pleaseSelectSite>Please select a site...</ng-template>
 </div>
+<div *ngIf="isSidePanelOpened" (click)="onBackdropClicked()" class="backdrop"></div>
 <brna-site-selection-side-panel *ngIf="isSidePanelOpened"
                                 [sites]="sites$ | async"
                                 (siteSelected)="onSiteSelected($event)">

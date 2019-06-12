@@ -34,4 +34,8 @@ export class TopPanelComponent {
     this.selectedSite = site;
     this.siteSelectionPanelService.close();
   }
+
+  onBackdropClicked(): void {
+    this.siteSelectionPanelService.close();
+  }
 }
