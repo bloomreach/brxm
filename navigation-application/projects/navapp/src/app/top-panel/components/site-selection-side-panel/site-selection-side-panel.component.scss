@@ -40,18 +40,12 @@
 }
 
 .sites-tree-wrapper {
-  ul,
-  li {
-    list-style-type: none;
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
   .caption {
     align-items: center;
     cursor: pointer;
     display: flex;
     height: 40px;
+    width: 100%;
 
     > .mat-icon {
       width: 40px;
@@ -60,11 +54,24 @@
 
   .children-container {
     margin: 0;
-    padding: 0 0 0 30px;
+    padding: 0;
+
+    > .mat-tree-node > li,
+    > .mat-nested-tree-node > li {
+      padding-left: 30px;
+    }
+  }
+
+  .leaf:hover {
+    background-color: $site-selection-hover-bg;
+  }
+
+  .leaf.active {
+    background-color: $site-selection-active-bg;
   }
 }
 
-.invisible {
+.hidden {
   display: none;
 }
 

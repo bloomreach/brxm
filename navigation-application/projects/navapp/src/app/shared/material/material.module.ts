@@ -7,7 +7,6 @@ import {
   MatIconModule,
   MatIconRegistry,
   MatRippleModule,
-  MatTreeModule,
 } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -15,7 +14,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   exports: [
     MatRippleModule,
     MatIconModule,
-    MatTreeModule,
     MatButtonModule,
     HttpClientModule,
   ],
