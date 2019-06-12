@@ -40,7 +40,7 @@ export class MenuStructureService {
 
     const experienceManager = new MenuItemLink(
       'hippo-perspective-channelmanagerperspective',
-      'Experience Manager',
+      'Experience manager',
       'experience-manager',
     );
 
@@ -67,21 +67,21 @@ export class MenuStructureService {
 
     const documentSearch = new MenuItemLink(
       'hippo-perspective-searchperspective',
-      'Document Search',
+      'Document search',
       'document-search',
     );
 
     const categories = new MenuItemContainer(
       'Categories',
       [
-        new MenuItemLink('category-ranking', 'Category Ranking'),
-        new MenuItemLink('all-category-pages', 'All Category Pages'),
+        new MenuItemLink('category-ranking', 'Category ranking'),
+        new MenuItemLink('all-category-pages', 'All category pages'),
         new MenuItemLink(
           'category-ranking-diagnostics',
           'Category Ranking Diagnostics',
         ),
         new MenuItemLink('category-facets-ranking', 'Category Facets'),
-        new MenuItemLink('category-banners', 'Category Banners'),
+        new MenuItemLink('category-banners', 'Category banners'),
       ],
       'categories',
     );
@@ -95,21 +95,21 @@ export class MenuStructureService {
       'Insights',
       [
         new MenuItemContainer('Opportunities', [
-          new MenuItemLink('top-opportunities', 'Top Opportunities'),
+          new MenuItemLink('top-opportunities', 'Top opportunities'),
           new MenuItemLink(
             'improve-category-navigation',
-            'Improve Category Navigation',
+            'Improve category navigation',
           ),
-          new MenuItemLink('improve-site-search', 'Improve Site Search'),
+          new MenuItemLink('improve-site-search', 'Improve site search'),
         ]),
         new MenuItemLink('activities', 'Activities'),
         new MenuItemLink('playbooks', 'Playbooks'),
         new MenuItemContainer('Collections', [
-          new MenuItemLink('product-collections', 'Product Collections'),
-          new MenuItemLink('category-collections', 'Category Collections'),
-          new MenuItemLink('page-collections', 'Page Collections'),
-          new MenuItemLink('query-collections', 'Query Collections'),
-          new MenuItemLink('brand-collections', 'Brand Collections'),
+          new MenuItemLink('product-collections', 'Product collections'),
+          new MenuItemLink('category-collections', 'Category collections'),
+          new MenuItemLink('page-collections', 'Page collections'),
+          new MenuItemLink('query-collections', 'Query collections'),
+          new MenuItemLink('brand-collections', 'Brand collections'),
         ]),
         new MenuItemContainer('Library', [
           new MenuItemLink(
