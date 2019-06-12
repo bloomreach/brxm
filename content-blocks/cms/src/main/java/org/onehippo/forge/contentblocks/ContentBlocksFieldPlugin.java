@@ -398,7 +398,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     @Override
     protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
-        populateViewItem(item, newModel);
+        populateViewItem(item, (newModel != null) ? newModel : oldModel);
     }
 
     private void addItem(final String type, final AjaxRequestTarget target) {
