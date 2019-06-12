@@ -1,8 +1,12 @@
-<div (click)="onSiteSelectorClicked()" class="site-selector-value">
-  <span *ngIf="selectedSite; else pleaseSelectSite">
+<div matRipple (click)="onSiteSelectorClicked()" class="site-selector-value">
+  <ng-container *ngIf="selectedSite; else pleaseSelectSite">
     {{ selectedSite.name }}
-  </span>
-  <ng-template #pleaseSelectSite>Please select a site...</ng-template>
+    <mat-icon svgIcon="arrow_drop_down"></mat-icon>
+  </ng-container>
+  <ng-template #pleaseSelectSite>
+    Please select a site...
+    <mat-icon svgIcon="arrow_drop_down"></mat-icon>
+  </ng-template>
 </div>
 <div *ngIf="isSidePanelOpened" (click)="onBackdropClicked()" class="backdrop"></div>
 <brna-site-selection-side-panel *ngIf="isSidePanelOpened"

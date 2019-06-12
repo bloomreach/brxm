@@ -67,6 +67,7 @@ export class MaterialModule {
         'remove',
         'chevron_right',
         'search',
+        'arrow_drop_down',
       ],
     };
 
