@@ -38,7 +38,6 @@ export class NavConfigService {
 
   private navItems = new BehaviorSubject<NavItem[]>([]);
   private sites = new BehaviorSubject<Site[]>([]);
-  private selectedSite = new BehaviorSubject<Site>(undefined);
 
   constructor(
     private http: HttpClient,
@@ -55,10 +54,6 @@ export class NavConfigService {
 
   get sites$(): Observable<Site[]> {
     return this.sites.asObservable().pipe(filter(filterOutEmpty));
-  }
-
-  get selectedSite$(): Observable<Site> {
-    return this.selectedSite.asObservable();
   }
 
   init(): Promise<void> {
@@ -78,10 +73,6 @@ export class NavConfigService {
         this.navItems.next(navItems);
         this.sites.next(sites);
       });
-  }
-
-  setSelectedSite(site: Site): void {
-    this.selectedSite.next(site);
   }
 
   private fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {

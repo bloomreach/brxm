@@ -1,7 +1,10 @@
 <div (click)="onSiteSelectorClicked()" class="site-selector-value">
-  <span *ngIf="selectedSite$ | async as site; else pleaseSelectSite">
-    {{ site }}
+  <span *ngIf="selectedSite; else pleaseSelectSite">
+    {{ selectedSite.name }}
   </span>
   <ng-template #pleaseSelectSite>Please select a site...</ng-template>
 </div>
-<brna-site-selection-side-panel *ngIf="isSidePanelOpened"></brna-site-selection-side-panel>
+<brna-site-selection-side-panel *ngIf="isSidePanelOpened"
+                                [sites]="sites$ | async"
+                                (siteSelected)="onSiteSelected($event)">
+</brna-site-selection-side-panel>

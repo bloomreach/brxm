@@ -1,11 +1,9 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { Component, HostBinding } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnChanges, Output } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material';
 
 import { Site } from '../../../models';
-import { NavConfigService } from '../../../services';
-import { SiteSelectionSidePanelService } from '../../services';
 
 @Component({
   selector: 'brna-site-selection-side-panel',
@@ -23,18 +21,21 @@ import { SiteSelectionSidePanelService } from '../../services';
     ]),
   ],
 })
-export class SiteSelectionSidePanelComponent {
-  @HostBinding('@slideInOut')
-  animate = true;
+export class SiteSelectionSidePanelComponent implements OnChanges {
+  @Input()
+  sites: Site[];
+
+  @Output()
+  siteSelected = new EventEmitter<Site>();
 
   treeControl = new NestedTreeControl<Site>(node => node.subGroups);
   dataSource = new MatTreeNestedDataSource<Site>();
 
-  constructor(
-    private navConfigService: NavConfigService,
-    private siteSelectionPanelService: SiteSelectionSidePanelService,
-  ) {
-    navConfigService.sites$.subscribe(sites => this.dataSource.data = sites);
+  @HostBinding('@slideInOut')
+  animate = true;
+
+  ngOnChanges(changes): void {
+    this.dataSource.data = this.sites;
   }
 
   hasChild(index: number, node: Site): boolean {
@@ -42,7 +43,6 @@ export class SiteSelectionSidePanelComponent {
   }
 
   onLeafNodeClicked(site: Site): void {
-    this.navConfigService.setSelectedSite(site);
-    this.siteSelectionPanelService.close();
+    this.siteSelected.emit(site);
   }
 }
