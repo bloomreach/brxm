@@ -17,6 +17,7 @@
 package org.onehippo.cms.services.validation.validator;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.jcr.Node;
@@ -104,7 +105,17 @@ public class TestValidationContext implements ValidationContext {
     }
 
     @Override
+    public Violation createViolation(final Map<String, String> parameters) {
+        return createViolation();
+    }
+
+    @Override
     public Violation createViolation(final String subKey) {
+        return createViolation();
+    }
+
+    @Override
+    public Violation createViolation(final String subKey, final Map<String, String> parameters) {
         return createViolation();
     }
 

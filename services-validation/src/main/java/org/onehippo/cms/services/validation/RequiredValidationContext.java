@@ -16,6 +16,7 @@
 package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.jcr.Node;
@@ -70,22 +71,38 @@ public class RequiredValidationContext implements ValidationContext {
 
     @Override
     public Violation createViolation() {
+        return createViolation((Map<String, String>) null);
+    }
+
+    @Override
+    public Violation createViolation(final Map<String, String> parameters) {
         final String typeKey = translationKey(context.getType());
         final String jcrTypeKey = translationKey(context.getJcrType());
-        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        final TranslatedViolation violation = 
+                new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        violation.setParameters(parameters);
+        return violation;
     }
 
     @Override
     public Violation createViolation(final String subKey) {
+        return createViolation(subKey, null);
+    }
+
+    @Override
+    public Violation createViolation(final String subKey, final Map<String, String> parameters) {
         final String typeKey = translationKey(context.getType()) + "#" + subKey;
         final String jcrTypeKey = translationKey(context.getJcrType()) + "#" + subKey;
-        return new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        final TranslatedViolation violation = 
+                new TranslatedViolation(getLocale(), typeKey, jcrTypeKey, REQUIRED_MESSAGE_PREFIX);
+        violation.setParameters(parameters);
+        return violation;
     }
 
     private String translationKey(final String typeName) {
-        // A resource bundle key must be a valid JCR property name. In "{@code resource#hippo:mirror}" the part before the
-        // colon would be used as a namespace prefix. Prefixes cannot contain characters like # or _. Replacing the colon
-        // with a dash avoids this problem.
+        // A resource bundle key must be a valid JCR property name. In "{@code resource#hippo:mirror}" the part before
+        // the colon would be used as a namespace prefix. Prefixes cannot contain characters like # or _. Replacing the
+        // colon with a dash avoids this problem.
         final String cleanTypeName = StringUtils.replace(typeName, ":", "-");
 
         return REQUIRED_MESSAGE_PREFIX + "#" + cleanTypeName;

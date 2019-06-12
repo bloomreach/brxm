@@ -17,6 +17,7 @@
 package org.onehippo.cms.services.validation;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -104,12 +105,26 @@ class ValidatorInstanceImpl implements ValidatorInstance {
 
     @Override
     public Violation createViolation() {
-        return new TranslatedViolation(getLocale(), config.getName());
+        return createViolation((Map<String, String>) null);
+    }
+
+    @Override
+    public Violation createViolation(final Map<String,String> parameters) {
+        final TranslatedViolation violation = new TranslatedViolation(getLocale(), config.getName());
+        violation.setParameters(parameters);
+        return violation;
     }
 
     @Override
     public Violation createViolation(final String subKey) {
+        return createViolation(subKey, null);
+    }
+
+    @Override
+    public Violation createViolation(final String subKey, final Map<String,String> parameters) {
         final String key = config.getName() + "#" + subKey;
-        return new TranslatedViolation(getLocale(), key);
+        final TranslatedViolation violation = new TranslatedViolation(getLocale(), key);
+        violation.setParameters(parameters);
+        return violation;
     }
 }

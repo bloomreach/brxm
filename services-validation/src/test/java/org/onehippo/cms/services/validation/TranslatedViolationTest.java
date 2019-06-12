@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms.services.validation;
 
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +74,7 @@ public class TranslatedViolationTest {
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
-        expect(bundle.getString("my-key")).andReturn(null);
+        expect(bundle.getString("my-key", null)).andReturn(null);
         replayAll();
 
         final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
@@ -86,8 +88,8 @@ public class TranslatedViolationTest {
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
-        expect(bundle.getString("my-key")).andReturn(null);
-        expect(bundle.getString("fallback-key")).andReturn(null);
+        expect(bundle.getString("my-key", null)).andReturn(null);
+        expect(bundle.getString("fallback-key", null)).andReturn(null);
         replayAll();
 
         final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key", "fallback-key");
@@ -101,7 +103,7 @@ public class TranslatedViolationTest {
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
-        expect(bundle.getString("my-key")).andReturn("my-message");
+        expect(bundle.getString("my-key", null)).andReturn("my-message");
         replayAll();
 
         final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
@@ -115,12 +117,28 @@ public class TranslatedViolationTest {
         final ResourceBundle bundle = createMock(ResourceBundle.class);
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
-        expect(bundle.getString("my-key")).andReturn(null);
-        expect(bundle.getString("fallback-key")).andReturn("Fallback message");
+        expect(bundle.getString("my-key", null)).andReturn(null);
+        expect(bundle.getString("fallback-key", null)).andReturn("Fallback message");
         replayAll();
 
         final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key", "fallback-key");
         assertEquals("Fallback message", violation.getMessage());
+        verifyAll();
+    }
+    
+    @Test
+    public void returnsTranslatedMessageWithParameters() {
+        final LocalizationService localizationService = createMock(LocalizationService.class);
+        final ResourceBundle bundle = createMock(ResourceBundle.class);
+        expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
+        expect(localizationService.getResourceBundle("hippo:cms.validators", Locale.getDefault())).andReturn(bundle);
+        final Map<String, String> parameters = Collections.singletonMap("variable", "replacement");
+        expect(bundle.getString("my-key", parameters)).andReturn("my-message replacement");
+        replayAll();
+
+        final TranslatedViolation violation = new TranslatedViolation(Locale.getDefault(), "my-key");
+        violation.setParameters(parameters);
+        assertEquals("my-message replacement", violation.getMessage());
         verifyAll();
     }
 }

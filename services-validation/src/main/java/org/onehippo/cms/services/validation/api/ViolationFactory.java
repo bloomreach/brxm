@@ -16,20 +16,43 @@
 
 package org.onehippo.cms.services.validation.api;
 
+import java.util.Map;
+
 public interface ViolationFactory {
 
     /**
-     * Creates a translated violation, using the name of the current validator as the translation key.
+     * Creates a translated violation, using the name of the current validator as the translation key. Variables in the
+     * message can be replaced by parameters.
+     *
      * @return the violation
      */
     Violation createViolation();
 
     /**
-     * Creates a translated violation, using the name of the current validator
-     * plus the provided sub-key as the translation key.
+     * Creates a translated violation, using the name of the current validator as the translation key.
+     *
+     * @param parameters a map of parameter names and values for variable substitution.
+     * @return the violation
+     */
+    Violation createViolation(Map<String, String> parameters);
+
+    /**
+     * Creates a translated violation, using the name of the current validator plus the provided sub-key as the
+     * translation key.
+     *
      * @param subKey the additional key for the violation.
      * @return the violation
      */
     Violation createViolation(String subKey);
+
+    /**
+     * Creates a translated violation, using the name of the current validator plus the provided sub-key as the
+     * translation key. Variables in the message can be replaced by parameters.
+     *
+     * @param subKey     the additional key for the violation.
+     * @param parameters a map of parameter names and values for variable substitution.
+     * @return the violation
+     */
+    Violation createViolation(String subKey, Map<String, String> parameters);
 
 }

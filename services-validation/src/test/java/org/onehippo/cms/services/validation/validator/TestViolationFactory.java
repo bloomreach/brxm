@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.services.validation.validator;
 
+import java.util.Map;
+
 import org.onehippo.cms.services.validation.api.Violation;
 import org.onehippo.cms.services.validation.api.ViolationFactory;
 
@@ -34,7 +36,17 @@ public class TestViolationFactory implements ViolationFactory {
     }
 
     @Override
+    public Violation createViolation(final Map<String, String> parameters) {
+        return null;
+    }
+
+    @Override
     public Violation createViolation(final String subKey) {
         return new TestViolation();
+    }
+
+    @Override
+    public Violation createViolation(final String subKey, final Map<String, String> parameters) {
+        return null;
     }
 }
