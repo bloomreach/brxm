@@ -143,12 +143,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     private BeanInfo generateBeanDefinition(final BeanInfo parentBeanInfo, final ContentType contentType) {
         final HippoContentBean contentBean = new HippoContentBean("", contentType);
 
-        if (hasContentBlocks(contentBean)) {
-            // do not generate the bean if it has a content blocks
-            log.info("The dynamic bean is not generated for '{}', since it has content blocks.", contentBean.getName());
-            return parentBeanInfo;
-        }
-
         final DynamicBeanBuilder builder = new DynamicBeanBuilder(
                 DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
 

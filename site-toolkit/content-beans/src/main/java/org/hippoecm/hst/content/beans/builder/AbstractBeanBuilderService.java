@@ -16,7 +16,6 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
@@ -29,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractBeanBuilderService {
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
     private static final String DOCBASE = "Docbase";
-    private static final String CONTENT_BLOCKS_VALIDATOR = "contentblocks-validator";
 
     private enum DocumentType {
         STRING("String"), //
@@ -170,22 +168,6 @@ public abstract class AbstractBeanBuilderService {
                 break;
             }
         }
-    }
-
-    /**
-     * checks whether the content bean has a content blocks or not
-     * 
-     * @param bean {@link HippoContentBean}
-     * @return true if the content bean has a content blocks
-     */
-    protected boolean hasContentBlocks(final HippoContentBean bean) {
-        for (final HippoContentChildNode child : bean.getChildren()) {
-            List<String> validators = child.getContentType().getValidators();
-            if (validators != null && validators.contains(CONTENT_BLOCKS_VALIDATOR)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
