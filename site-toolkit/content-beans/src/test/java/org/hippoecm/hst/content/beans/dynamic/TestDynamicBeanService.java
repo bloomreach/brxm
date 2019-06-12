@@ -28,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -41,11 +42,23 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamiccontent/dynamiccontent";
 
     private static final String BOOLEAN_TYPE_METHOD_NAME = "getBooleanTypeField";
-    private static final String CALENDER_DATE_TYPE_METHOD_NAME = "getCalendardateTypeField";
+    private static final String MULTIPLE_BOOLEAN_TYPE_METHOD_NAME = "getMultipleBooleanTypeField";
+    private static final String SINGLE_VALUE_MULTIPLE_BOOLEAN_TYPE_METHOD_NAME = "getSingleValueMultipleBooleanTypeField";
+    private static final String MULTIPLE_VALUE_SINGLE_BOOLEAN_TYPE_METHOD_NAME = "getMultipleValueSingleBooleanTypeField";
+    private static final String CALENDAR_DATE_TYPE_METHOD_NAME = "getCalendarDateTypeField";
     private static final String DATE_TYPE_METHOD_NAME = "getDateTypeField";
-    private static final String DECIMAL_NUMBER_TYPE_METHOD_NAME = "getDoubleTypeField";
+    private static final String MULTIPLE_DATE_TYPE_METHOD_NAME = "getMultipleDateTypeField";
+    private static final String SINGLE_VALUE_MULTIPLE_DATE_TYPE_METHOD_NAME = "getSingleValueMultipleDateTypeField";
+    private static final String MULTIPLE_VALUE_SINGLE_DATE_TYPE_METHOD_NAME = "getMultipleValueSingleDateTypeField";
+    private static final String DOUBLE_TYPE_METHOD_NAME = "getDoubleTypeField";
+    private static final String MULTIPLE_DOUBLE_TYPE_METHOD_NAME = "getMultipleDoubleTypeField";
+    private static final String SINGLE_VALUE_MULTIPLE_DOUBLE_TYPE_METHOD_NAME = "getSingleValueMultipleDoubleTypeField";
+    private static final String MULTIPLE_VALUE_SINGLE_DOUBLE_TYPE_METHOD_NAME = "getMultipleValueSingleDoubleTypeField";
     private static final String DOCBASE_TYPE_METHOD_NAME = "getDocbaseTypeField";
-    private static final String INTEGER_NUMBER_TYPE_METHOD_NAME = "getLongTypeField";
+    private static final String LONG_TYPE_METHOD_NAME = "getLongTypeField";
+    private static final String MULTIPLE_LONG_TYPE_METHOD_NAME = "getMultipleLongTypeField";
+    private static final String SINGLE_VALUE_MULTIPLE_LONG_TYPE_METHOD_NAME = "getSingleValueMultipleLongTypeField";
+    private static final String MULTIPLE_VALUE_SINGLE_LONG_TYPE_METHOD_NAME = "getMultipleValueSingleLongTypeField";
     private static final String HTML_TYPE_METHOD_NAME = "getHtmlTypeField";
     private static final String STRING_TYPE_METHOD_NAME = "getStringTypeField";
     private static final String TEXT_TYPE_METHOD_NAME = "getTextTypeField";
@@ -85,24 +98,90 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     }
 
     @Test
-    public void testGetValueOfIntegerNumberTypeFieldWithoutContentBean() throws Exception {
+    public void testGetValueOfLongTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
 
-        Long value = callContentBeanMethod(generatedBean, INTEGER_NUMBER_TYPE_METHOD_NAME, Long.class);
+        Long value = callContentBeanMethod(generatedBean, LONG_TYPE_METHOD_NAME, Long.class);
 
-        assertNotNull("The method '" + INTEGER_NUMBER_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertNotNull("The method '" + LONG_TYPE_METHOD_NAME + "' didn't return any value", value);
         assertEquals(new Long(50), value);
     }
 
     @Test
-    public void testGetValueOfDecimalNumberTypeFieldWithoutContentBean() throws Exception {
+    public void testGetValueOfMultipleLongTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
 
-        Double value = callContentBeanMethod(generatedBean, DECIMAL_NUMBER_TYPE_METHOD_NAME, Double.class);
+        Long[] value = callContentBeanMethod(generatedBean, MULTIPLE_LONG_TYPE_METHOD_NAME, Long[].class);
 
-        assertNotNull("The method '" + DECIMAL_NUMBER_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertNotNull("The method '" + MULTIPLE_LONG_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(2));
+    }
+
+    @Test
+    public void testGetValueOfSingleValueMultipleLongTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Long[] value = callContentBeanMethod(generatedBean, SINGLE_VALUE_MULTIPLE_LONG_TYPE_METHOD_NAME, Long[].class);
+
+        assertNotNull("The method '" + SINGLE_VALUE_MULTIPLE_LONG_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(1));
+    }
+
+    @Test
+    public void testGetValueOfMultipleValueSingleLongTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Long value = callContentBeanMethod(generatedBean, MULTIPLE_VALUE_SINGLE_LONG_TYPE_METHOD_NAME, Long.class);
+
+        assertNotNull("The method '" + MULTIPLE_VALUE_SINGLE_LONG_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals(new Long(50), value);
+    }
+
+    @Test
+    public void testGetValueOfDoubleTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Double value = callContentBeanMethod(generatedBean, DOUBLE_TYPE_METHOD_NAME, Double.class);
+
+        assertNotNull("The method '" + DOUBLE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals(new Double(100), value);
+    }
+
+    @Test
+    public void testGetValueOfMultipleDoubleTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Double[] value = callContentBeanMethod(generatedBean, MULTIPLE_DOUBLE_TYPE_METHOD_NAME, Double[].class);
+
+        assertNotNull("The method '" + MULTIPLE_DOUBLE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(2));
+    }
+
+    @Test
+    public void testGetValueOfSingleValueMultipleDoubleTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Double[] value = callContentBeanMethod(generatedBean, SINGLE_VALUE_MULTIPLE_DOUBLE_TYPE_METHOD_NAME, Double[].class);
+
+        assertNotNull("The method '" + SINGLE_VALUE_MULTIPLE_DOUBLE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(1));
+    }
+
+    @Test
+    public void testGetValueOfMultipleValueSingleDoubleTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Double value = callContentBeanMethod(generatedBean, MULTIPLE_VALUE_SINGLE_DOUBLE_TYPE_METHOD_NAME, Double.class);
+
+        assertNotNull("The method '" + MULTIPLE_VALUE_SINGLE_DOUBLE_TYPE_METHOD_NAME + "' didn't return any value", value);
         assertEquals(new Double(100), value);
     }
 
@@ -114,6 +193,39 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         Boolean value = callContentBeanMethod(generatedBean, BOOLEAN_TYPE_METHOD_NAME, Boolean.class);
 
         assertNotNull("The method '" + BOOLEAN_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertFalse(value);
+    }
+
+    @Test
+    public void testGetValueOfMultipleBooleanTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Boolean[] value = callContentBeanMethod(generatedBean, MULTIPLE_BOOLEAN_TYPE_METHOD_NAME, Boolean[].class);
+
+        assertNotNull("The method '" + MULTIPLE_BOOLEAN_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(2));
+    }
+
+    @Test
+    public void testGetValueOfSingleValueMultipleBooleanTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Boolean[] value = callContentBeanMethod(generatedBean, SINGLE_VALUE_MULTIPLE_BOOLEAN_TYPE_METHOD_NAME, Boolean[].class);
+
+        assertNotNull("The method '" + SINGLE_VALUE_MULTIPLE_BOOLEAN_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(1));
+    }
+
+    @Test
+    public void testGetValueOfMultipleValueSingleBooleanTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Boolean value = callContentBeanMethod(generatedBean, MULTIPLE_VALUE_SINGLE_BOOLEAN_TYPE_METHOD_NAME, Boolean.class);
+
+        assertNotNull("The method '" + MULTIPLE_VALUE_SINGLE_BOOLEAN_TYPE_METHOD_NAME + "' didn't return any value", value);
         assertFalse(value);
     }
 
@@ -130,15 +242,50 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertTrue(DateUtils.isSameDay(result, value.getTime()));
     }
 
+    @Test
+    public void testGetValueOfMultipleDateTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Calendar[] value = callContentBeanMethod(generatedBean, MULTIPLE_DATE_TYPE_METHOD_NAME, Calendar[].class) ;
+
+        assertNotNull("The method '" + MULTIPLE_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(2));
+    }
+
+    @Test
+    public void testGetValueOfSingleValueMultipleDateTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Calendar[] value = callContentBeanMethod(generatedBean, SINGLE_VALUE_MULTIPLE_DATE_TYPE_METHOD_NAME, Calendar[].class);
+
+        assertNotNull("The method '" + SINGLE_VALUE_MULTIPLE_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertThat(value.length, equalTo(1));
+    }
+
+    @Test
+    public void testGetValueOfMultipleValueSingleDateTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        Calendar value = callContentBeanMethod(generatedBean, MULTIPLE_VALUE_SINGLE_DATE_TYPE_METHOD_NAME, Calendar.class);
+
+        assertNotNull("The method '" + MULTIPLE_VALUE_SINGLE_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
+
+        Date result = dateParser.parse("25/03/2019");
+        assertTrue(DateUtils.isSameDay(result, value.getTime())); 
+    }
+
     @Ignore // This test belongs to the improvement of CMS-11933
     @Test
     public void testGetValueOfCalendarDateTypeFieldWithoutContentBean() throws Exception {
 
         Object generatedBean = getContentBean();
 
-        Calendar value = callContentBeanMethod(generatedBean, CALENDER_DATE_TYPE_METHOD_NAME, Calendar.class);
+        Calendar value = callContentBeanMethod(generatedBean, CALENDAR_DATE_TYPE_METHOD_NAME, Calendar.class);
 
-        assertNotNull("The method '" + CALENDER_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertNotNull("The method '" + CALENDAR_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
         assertTrue(DateUtils.isSameDay(result, value.getTime()));

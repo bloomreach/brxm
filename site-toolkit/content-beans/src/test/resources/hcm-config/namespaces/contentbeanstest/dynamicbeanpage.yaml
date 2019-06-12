@@ -28,12 +28,60 @@ definitions:
             hipposysedit:path: contentbeanstest:booleanTypeField
             hipposysedit:primary: false
             hipposysedit:type: Boolean
+          /multipleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /singleValueMultipleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:singleValueMultipleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
+          /multipleValueSingleBooleanTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleValueSingleBooleanTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Boolean
           /doubleTypeField:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
             hipposysedit:multiple: false
             hipposysedit:ordered: false
             hipposysedit:path: contentbeanstest:doubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /multipleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleDoubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /singleValueMultipleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:singleValueMultipleDoubleTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Double
+          /multipleValueSingleDoubleTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleValueSingleDoubleTypeField
             hipposysedit:primary: false
             hipposysedit:type: Double
           /longTypeField:
@@ -44,12 +92,60 @@ definitions:
             hipposysedit:path: contentbeanstest:longTypeField
             hipposysedit:primary: false
             hipposysedit:type: Long
+          /multipleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /singleValueMultipleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:singleValueMultipleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
+          /multipleValueSingleLongTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleValueSingleLongTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Long
           /dateTypeField:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
             hipposysedit:multiple: false
             hipposysedit:ordered: false
             hipposysedit:path: contentbeanstest:dateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /multipleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleDateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /singleValueMultipleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:singleValueMultipleDateTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: Date
+          /multipleValueSingleDateTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:multipleValueSingleDateTypeField
             hipposysedit:primary: false
             hipposysedit:type: Date
 #          /calendardateTypeField:
