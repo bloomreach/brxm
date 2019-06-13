@@ -21,7 +21,7 @@
   },
   {
     "id": "hippo-perspective-experienceoptimizerperspective",
-    "appIframeUrl": "https://marketplace.bloomreach.com",
+    "appIframeUrl": "http://localhost:4201",
     "appPath": "hippo-perspective-experienceoptimizerperspective"
   },
   {
