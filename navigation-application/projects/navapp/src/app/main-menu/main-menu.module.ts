@@ -25,8 +25,8 @@ import { ExpandableMenuItemComponent } from './components/expandable-menu-item/e
 import { MainMenuComponent } from './components/main-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
-import { UserToolbarDrawerComponent } from './components/user-toolbar-drawer/user-toolbar-drawer.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
+import { UserToolbarDrawerComponent } from './components/user-toolbar-drawer/user-toolbar-drawer.component';
 import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
 
 @NgModule({
