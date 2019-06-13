@@ -33,7 +33,7 @@ const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 @Injectable({
   providedIn: 'root',
 })
-export class NavConfigService {
+export class NavConfigResourcesService {
   private readonly renderer: Renderer2;
 
   private navItems = new BehaviorSubject<NavItem[]>([]);

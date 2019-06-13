@@ -20,7 +20,7 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
-import { NavConfigService } from '../../services/nav-config.service';
+import { NavConfigResourcesService } from '../../services/nav-config-resources.service';
 import { ClientApp } from '../models/client-app.model';
 
 @Injectable()
@@ -41,10 +41,10 @@ export class ClientAppService {
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connectionsEstablished = new Subject<boolean>();
 
-  constructor(private navConfigService: NavConfigService) {}
+  constructor(private navConfigResourcesService: NavConfigResourcesService) {}
 
   init(): void {
-    this.navConfigService.navItems$
+    this.navConfigResourcesService.navItems$
       .pipe(
         map(navItems => this.filterUniqueURLs(navItems)),
         map(uniqueURLs => uniqueURLs.map(url => new ClientApp(url))),

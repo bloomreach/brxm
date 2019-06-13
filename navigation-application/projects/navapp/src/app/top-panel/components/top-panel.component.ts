@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Site } from '../../models/dto';
-import { NavConfigService } from '../../services';
+import { NavConfigResourcesService } from '../../services';
 import { SiteSelectionSidePanelService } from '../services';
 
 @Component({
@@ -14,7 +14,7 @@ export class TopPanelComponent {
   private site: Site;
 
   constructor(
-    private navConfigService: NavConfigService,
+    private navConfigResourcesService: NavConfigResourcesService,
     private siteSelectionPanelService: SiteSelectionSidePanelService,
   ) {}
 
@@ -28,7 +28,7 @@ export class TopPanelComponent {
   }
 
   get sites$(): Observable<Site[]> {
-    return this.navConfigService.sites$;
+    return this.navConfigResourcesService.sites$;
   }
 
   get isSidePanelOpened(): boolean {

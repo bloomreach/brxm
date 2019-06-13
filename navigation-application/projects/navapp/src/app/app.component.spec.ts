@@ -22,7 +22,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
-import { NavConfigService } from './services';
+import { NavConfigResourcesService } from './services';
 import { SharedModule } from './shared';
 import { TopPanelModule } from './top-panel';
 
@@ -42,7 +42,7 @@ describe('AppComponent', () => {
         SharedModule,
       ],
       declarations: [AppComponent],
-      providers: [NavConfigService],
+      providers: [NavConfigResourcesService],
     }).createComponent(AppComponent);
 
     fixture = TestBed.createComponent(AppComponent);

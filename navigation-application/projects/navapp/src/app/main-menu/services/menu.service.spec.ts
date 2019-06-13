@@ -17,7 +17,7 @@
 import { async, fakeAsync, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { NavConfigService } from '../../services';
+import { NavConfigResourcesService } from '../../services';
 import { menuStructureMock, navConfig } from '../../test-mocks';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
@@ -25,7 +25,7 @@ import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
 
 describe('MenuBuilderService', () => {
-  const navConfigServiceMock: NavConfigService = {
+  const navConfigResourcesServiceMock: NavConfigResourcesService = {
     navItems$: of(navConfig),
   } as any;
 
@@ -36,7 +36,7 @@ describe('MenuBuilderService', () => {
   let service: MenuBuilderService;
 
   beforeEach(async(() => {
-    service = new MenuBuilderService(navConfigServiceMock, structureMock);
+    service = new MenuBuilderService(navConfigResourcesServiceMock, structureMock);
   }));
 
   it('should get the filtered menu populated with app paths', fakeAsync(() => {
