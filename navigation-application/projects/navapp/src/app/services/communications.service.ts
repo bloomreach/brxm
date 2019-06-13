@@ -28,14 +28,6 @@ import { OverlayService } from './overlay.service';
   providedIn: 'root',
 })
 export class CommunicationsService {
-
-  get parentApiMethods(): ParentApi {
-    return {
-      showMask: () => this.overlay.enable(),
-      hideMask: () => this.overlay.disable(),
-    };
-  }
-
   private static async resolveAlways<T>(p: Promise<T>): Promise<any> {
     try {
       return await p;
@@ -43,10 +35,18 @@ export class CommunicationsService {
       return err;
     }
   }
+
   constructor(
     private clientAppService: ClientAppService,
     private overlay: OverlayService,
-  ) { }
+  ) {}
+
+  get parentApiMethods(): ParentApi {
+    return {
+      showMask: () => this.overlay.enable(),
+      hideMask: () => this.overlay.disable(),
+    };
+  }
 
   navigate(clientAppId: string, path: string): void {
     this.clientAppService
@@ -68,5 +68,4 @@ export class CommunicationsService {
       .filter(app => app.api.logout)
       .map(app => CommunicationsService.resolveAlways(app.api.logout()));
   }
-
 }
