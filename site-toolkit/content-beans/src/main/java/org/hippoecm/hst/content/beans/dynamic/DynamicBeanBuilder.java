@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoItem;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,6 @@ import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.MethodCall;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.Super;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
@@ -55,7 +54,8 @@ public class DynamicBeanBuilder {
      * The method names below belong to the HippoBean and are used to generate dynamic bean
      * definitions by using byte buddy.
      */
-    private static final String METHOD_GET_PROPERTY = "getProperty";
+    private static final String METHOD_GET_SINGLE_PROPERTY = "getSingleValueProperty";
+    private static final String METHOD_GET_MULTIPLE_PROPERTY = "getMultipleValueProperty";
     private static final String METHOD_GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
     private static final String METHOD_GET_HIPPO_HTML = "getHippoHtml";
     private static final String METHOD_GET_LINKED_BEANS = "getLinkedBeans";
@@ -127,94 +127,6 @@ public class DynamicBeanBuilder {
     }
 
     /**
-     * If a document field is defined as a multiple primitive field, in a case that a string value
-     * is assigned to this document field, instead of returning an array, JCR returns a primitive type
-     * and this breaks getter method invocation. To solve this problem, a custom interceptor is used.
-     */
-    @SuppressWarnings("unchecked")
-    public static class MultipleValueInterceptor<T> {
-
-        private final String propertyName;
-        private final Class<T> clazz;
-
-        MultipleValueInterceptor(final String propertyName, final Class<T> clazz) {
-            this.propertyName = propertyName;
-            this.clazz = clazz;
-        }
-
-        @RuntimeType
-        public T[] intercept(@Super(proxyType = TargetType.class) Object superObject) {
-            final HippoBean superBean = (HippoBean) superObject;
-
-            final Object object = superBean.getProperty(propertyName);
-            if (object != null && !(object.getClass().isArray())) {
-                final T[] array = (T[]) Array.newInstance(clazz, 1);
-                array[0] = (T) object;
-                return array;
-            } else {
-                return (T[]) object;
-            }
-        }
-    }
-
-    /**
-     * If a document field is defined as a single primitive field, in a case that a multiple value
-     * is assigned to this document field, instead of returning a primitive type, JCR returns an array
-     * and this breaks getter method invocation. To solve this problem, a custom interceptor is used.
-     */
-    @SuppressWarnings("unchecked")
-    public static class SingleValueInterceptor<T> {
-
-        private final String propertyName;
-
-        SingleValueInterceptor(final String propertyName) {
-            this.propertyName = propertyName;
-        }
-
-        @RuntimeType
-        public T intercept(@Super(proxyType = TargetType.class) Object superObject) {
-            final HippoBean superBean = (HippoBean) superObject;
-
-            final Object object = superBean.getProperty(propertyName);
-            if (object != null && object.getClass().isArray()) {
-                final T[] items = (T[]) object;
-                if (items.length == 1) {
-                    return (T) items[0];
-                } else {
-                    return null;
-                }
-            } else {
-                return (T) object;
-            }
-        }
-    }
-
-    class ValueInterceptorFactory<T> {
-
-        private final String propertyName;
-        private final boolean multiple;
-        private final Class<T> clazz;
-
-        public ValueInterceptorFactory(final String propertyName, final boolean multiple, final Class<T> clazz) {
-            this.propertyName = propertyName;
-            this.multiple = multiple;
-            this.clazz = clazz;
-        }
-
-        public boolean isMultiple() {
-            return this.multiple;
-        }
-
-        public MultipleValueInterceptor<T> createMultipleValueInterceptor() {
-            return new MultipleValueInterceptor<T>(propertyName, clazz);
-        }
-
-        public SingleValueInterceptor<T> createSingleValueInterceptor() {
-            return new SingleValueInterceptor<T>(propertyName);
-        }
-    }
-
-    /**
      * Creates a class definition regarding of a given name and a parent bean. The created
      * bean is extended from the parent bean.
      * 
@@ -228,32 +140,27 @@ public class DynamicBeanBuilder {
 
     void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? String[].class : String.class;
-        addBeanMethodPrimitive(methodName, returnType, propertyName,
-                new ValueInterceptorFactory<String>(propertyName, multiple, String.class));
+        addBeanMethodPrimitive(methodName, returnType, propertyName, multiple);
     }
 
     void addBeanMethodCalendar(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Calendar[].class : Calendar.class;
-        addBeanMethodPrimitive(methodName, returnType, propertyName,
-                new ValueInterceptorFactory<Calendar>(propertyName, multiple, Calendar.class));
+        addBeanMethodPrimitive(methodName, returnType, propertyName, multiple);
     }
 
     void addBeanMethodBoolean(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Boolean[].class : Boolean.class;
-        addBeanMethodPrimitive(methodName, returnType, propertyName,
-                new ValueInterceptorFactory<Boolean>(propertyName, multiple, Boolean.class));
+        addBeanMethodPrimitive(methodName, returnType, propertyName, multiple);
     }
 
     void addBeanMethodLong(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Long[].class : Long.class;
-        addBeanMethodPrimitive(methodName, returnType, propertyName,
-                new ValueInterceptorFactory<Long>(propertyName, multiple, Long.class));
+        addBeanMethodPrimitive(methodName, returnType, propertyName, multiple);
     }
 
     void addBeanMethodDouble(final String methodName, final String propertyName, final boolean multiple) {
         final Class<?> returnType = multiple ? Double[].class : Double.class;
-        addBeanMethodPrimitive(methodName, returnType, propertyName,
-                new ValueInterceptorFactory<Double>(propertyName, multiple, Double.class));
+        addBeanMethodPrimitive(methodName, returnType, propertyName, multiple);
     }
 
     void addBeanMethodDocbase(final String methodName, final String propertyName, final boolean multiple) {
@@ -272,23 +179,7 @@ public class DynamicBeanBuilder {
         if (multiple) {
             addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoHtml.class, propertyName);
         } else {
-            final Class<?> delegateeClass = (parentBean.isAssignableFrom(HippoCompound.class)
-                    || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) ? HippoCompound.class
-                            : HippoDocument.class;
-            try {
-                builder = builder
-                            .defineMethod(methodName, HippoHtml.class, Modifier.PUBLIC)
-                            .intercept(
-                                MethodCall
-                                    .invoke(delegateeClass.getDeclaredMethod(METHOD_GET_HIPPO_HTML, String.class))
-                                    .onSuper()
-                                    .with(propertyName)
-                                    .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
-                methodAdded = true;
-            } catch (NoSuchMethodException | IllegalArgumentException e) {
-                log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName,
-                        METHOD_GET_HIPPO_HTML, HippoHtml.class, e);
-            }
+            addSimpleGetMethod(methodName, HippoHtml.class, METHOD_GET_HIPPO_HTML, propertyName);
         }
     }
 
@@ -340,14 +231,13 @@ public class DynamicBeanBuilder {
         }
     }
 
-    @SuppressWarnings("rawtypes") 
-    private void addBeanMethodPrimitive(final String methodName, final Class<?> returnType, final String propertyName,
-            final ValueInterceptorFactory valueInterceptorFactory) {
-        addSimpleGetMethod(methodName, returnType, METHOD_GET_PROPERTY, propertyName, valueInterceptorFactory);
+    private void addBeanMethodPrimitive(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {
+        final String superMethodName = multiple ? METHOD_GET_MULTIPLE_PROPERTY : METHOD_GET_SINGLE_PROPERTY; 
+        addSimpleGetMethod(methodName, returnType, superMethodName, propertyName);
     }
 
     /**
-     * Invokes the super method from the parent bean with the given property name as a parameter.
+     * Invokes the super method of the parent bean with the given property name as a parameter.
      * 
      * <pre>
      * public returnType methodName() {  
@@ -355,17 +245,22 @@ public class DynamicBeanBuilder {
      * }
      * </pre>
      */
-    @SuppressWarnings("rawtypes") 
-    private void addSimpleGetMethod(final String methodName, final Class<?> returnType, final String superMethodName,
-            final String propertyName, final ValueInterceptorFactory valueInterceptorFactory) {
+    private void addSimpleGetMethod(final String methodName, final Class<?> returnType, final String superMethodName, final String propertyName) {
         try {
+            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(superMethodName))
+                    ? ((parentBean.isAssignableFrom(HippoCompound.class) || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) ? HippoCompound.class : HippoDocument.class)
+                    : HippoItem.class;
+
             builder = builder
                         .defineMethod(methodName, returnType, Modifier.PUBLIC)
-                        .intercept(MethodDelegation.to(
-                                valueInterceptorFactory.isMultiple() ? valueInterceptorFactory.createMultipleValueInterceptor()
-                                        : valueInterceptorFactory.createSingleValueInterceptor()));
+                        .intercept(
+                            MethodCall
+                                .invoke(delegateeClass.getDeclaredMethod(superMethodName, String.class))
+                                .onSuper()
+                                .with(propertyName)
+                                .withAssigner(Assigner.DEFAULT, Assigner.Typing.DYNAMIC));
             methodAdded = true;
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, returnType, e);
         }
     }

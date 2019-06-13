@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -198,6 +199,32 @@ public class HippoItem implements HippoBean {
         return (T)getProperties().get(name);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getSingleValueProperty(String name) {
+        final Object object =  (T)getProperties().get(name);
+        if (object != null && object.getClass().isArray()) {
+            final T[] items = (T[]) object;
+            if (items.length == 0) {
+                return null;
+            } else {
+                return (T) items[0];                
+            }
+        } else {
+            return (T) object;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] getMultipleValueProperty(String name) {
+        final Object object = (T)getProperties().get(name);
+        if (object != null && !(object.getClass().isArray())) {
+            final T[] array = (T[]) Array.newInstance(object.getClass(), 1);
+            array[0] = (T) object;
+            return array;
+        } else {
+            return (T[]) object;
+        }
+    }
 
     @Override
     public <T> T getProperty(String name, T defaultValue) {
