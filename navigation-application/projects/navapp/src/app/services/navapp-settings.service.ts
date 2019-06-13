@@ -1,24 +1,14 @@
 import { Injectable } from '@angular/core';
 
-import { NavAppSettings, NavConfigResource } from '../models';
-
-import { environment } from '../../environments/environment';
+import { GlobalSettings } from '../models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NavAppSettingsService implements NavAppSettings {
-  userSettings: {
-    userName: '';
-    language: '';
-    timeZone: '';
-  };
-
-  appSettings: {
-    navConfigResources: NavConfigResource[];
-  };
-
+export class NavAppSettingsService extends GlobalSettings {
   constructor() {
+    super();
+
     const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
   }

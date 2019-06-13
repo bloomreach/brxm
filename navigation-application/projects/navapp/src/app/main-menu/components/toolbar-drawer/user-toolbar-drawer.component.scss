@@ -2,13 +2,13 @@
 
 :host {
   background-color: $menu-drawer-bg;
+  bottom: 0;
   color: $menu-text-color;
   display: block;
   height: 20%;
   left: 100%;
   min-width: $menu-drawer-width;
   position: absolute;
-  top: 0;
   z-index: -1;
 }
 
@@ -32,4 +32,9 @@
   right: 0;
   top: 0;
   z-index: -1;
+}
+
+.logout-link {
+  color: white;
+  text-decoration: none;
 }

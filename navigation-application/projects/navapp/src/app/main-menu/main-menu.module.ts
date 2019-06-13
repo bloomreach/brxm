@@ -25,7 +25,7 @@ import { ExpandableMenuItemComponent } from './components/expandable-menu-item/e
 import { MainMenuComponent } from './components/main-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
-import { ToolbarDrawerComponent } from './components/toolbar-drawer/toolbar-drawer.component';
+import { UserToolbarDrawerComponent } from './components/toolbar-drawer/user-toolbar-drawer.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
 import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
 
@@ -42,7 +42,7 @@ import { MenuBuilderService, MenuStateService, MenuStructureService } from './se
     MenuDrawerComponent,
     ExpandableMenuItemComponent,
     MenuItemLinkComponent,
-    ToolbarDrawerComponent,
+    UserToolbarDrawerComponent,
   ],
   providers: [MenuStructureService, MenuBuilderService, MenuStateService],
   exports: [MainMenuComponent],

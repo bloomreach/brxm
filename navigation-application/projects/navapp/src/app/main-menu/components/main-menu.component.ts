@@ -31,7 +31,8 @@ import { MenuStateService } from '../services';
 })
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
-  currentUserSettings: UserSettings;
+  userSettings: UserSettings;
+  isUserToolbarOpened = false;
 
   private homeMenuItem: MenuItemLink;
   private unsubscribe = new Subject();
@@ -49,10 +50,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   get isDrawerOpen(): boolean {
     return this.menuStateService.isDrawerOpened;
-  }
-
-  get isUserSettingsDrawerOpen(): boolean {
-    return !!this.currentUserSettings;
   }
 
   get drawerMenuItem(): MenuItemContainer {
@@ -78,6 +75,8 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       switchMap(() => this.menuStateService.menu$),
       takeUntil(this.unsubscribe),
     ).subscribe(() => this.selectMenuItem(this.homeMenuItem));
+
+    this.userSettings = this.navAppSettingsService.userSettings;
   }
 
   ngOnDestroy(): void {
@@ -104,8 +103,12 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.selectUserMenuItem();
   }
 
+  onClickedOutsideUserToolbar(): void {
+    this.isUserToolbarOpened = false;
+  }
+
   selectMenuItem(item: MenuItem): void {
-    this.currentUserSettings = undefined;
+    this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
       return;
@@ -117,7 +120,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   selectUserMenuItem(): void {
-    this.currentUserSettings = this.navAppSettingsService.userSettings;
+    this.isUserToolbarOpened = true;
   }
 
   isMenuItemActive(item: MenuItem): boolean {
