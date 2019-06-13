@@ -26,7 +26,7 @@ import { filter } from 'rxjs/operators';
 
 import { ConfigResource, NavItem, Site } from '../models';
 
-import { SettingsService } from './settings.service';
+import { GlobalSettingsService } from './global-settings.service';
 
 const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 
@@ -41,7 +41,7 @@ export class NavConfigService {
 
   constructor(
     private http: HttpClient,
-    private navAppSettings: SettingsService,
+    private settingsService: GlobalSettingsService,
     private rendererFactory: RendererFactory2,
     @Inject(DOCUMENT) private document,
   ) {
@@ -57,15 +57,15 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
-    const navConfigsPromises = this.navAppSettings.appSettings.navConfigResources.map(
+    const navConfigsPromises = this.settingsService.appSettings.navConfigResources.map(
       resource => this.fetchNavItems(resource),
     );
 
     const mergedNavConfigPromise = Promise.all(navConfigsPromises)
       .then(navItemArrays => [].concat(...navItemArrays));
 
-    const sitesPromise = this.navAppSettings.appSettings.sitesResource ?
-      this.fetchSites(this.navAppSettings.appSettings.sitesResource) :
+    const sitesPromise = this.settingsService.appSettings.sitesResource ?
+      this.fetchSites(this.settingsService.appSettings.sitesResource) :
       Promise.resolve([]);
 
     return Promise.all([mergedNavConfigPromise, sitesPromise])

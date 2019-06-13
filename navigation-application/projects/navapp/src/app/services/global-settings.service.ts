@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+import { Injectable } from '@angular/core';
 
-html,
-body {
-  height: 100vh;
-}
+import { GlobalSettings } from '../models';
 
-body {
-  display: grid;
-  overflow: hidden;
-}
+@Injectable({
+  providedIn: 'root',
+})
+export class GlobalSettingsService extends GlobalSettings {
+  constructor() {
+    super();
 
-.hidden {
-  display: none !important;
+    const settings = (window as any).NavAppSettings;
+    Object.assign(this, settings);
+  }
 }

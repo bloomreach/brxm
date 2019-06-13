@@ -40,7 +40,7 @@ export class MenuStructureService {
 
     const experienceManager = new MenuItemLink(
       'hippo-perspective-channelmanagerperspective',
-      'Experience Manager',
+      'Experience manager',
       'experience-manager',
     );
 
@@ -56,52 +56,60 @@ export class MenuStructureService {
       'documents',
     );
 
-    const settings = new MenuItemLink(
-      'hippo-perspective-adminperspective',
-      'Settings',
+    const setup = new MenuItemContainer(
+      'Setup',
+      [
+        new MenuItemLink('hippo-perspective-adminperspective', 'System'),
+        new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
+      ],
       'settings',
     );
 
     const documentSearch = new MenuItemLink(
+      'hippo-perspective-searchperspective',
+      'Document search',
       'document-search',
-      'Document Search',
-      'documents',
     );
 
     const categories = new MenuItemContainer(
       'Categories',
       [
-        new MenuItemLink('category-ranking', 'Category Ranking'),
-        new MenuItemLink('all-category-pages', 'All Category Pages'),
+        new MenuItemLink('category-ranking', 'Category ranking'),
+        new MenuItemLink('all-category-pages', 'All category pages'),
         new MenuItemLink(
           'category-ranking-diagnostics',
           'Category Ranking Diagnostics',
         ),
         new MenuItemLink('category-facets-ranking', 'Category Facets'),
-        new MenuItemLink('category-banners', 'Category Banners'),
+        new MenuItemLink('category-banners', 'Category banners'),
       ],
       'categories',
     );
 
+    const seo = new MenuItemLink(
+      'seo',
+      'SEO',
+      'seo',
+    );
     const insights = new MenuItemContainer(
       'Insights',
       [
         new MenuItemContainer('Opportunities', [
-          new MenuItemLink('top-opportunities', 'Top Opportunities'),
+          new MenuItemLink('top-opportunities', 'Top opportunities'),
           new MenuItemLink(
             'improve-category-navigation',
-            'Improve Category Navigation',
+            'Improve category navigation',
           ),
-          new MenuItemLink('improve-site-search', 'Improve Site Search'),
+          new MenuItemLink('improve-site-search', 'Improve site search'),
         ]),
         new MenuItemLink('activities', 'Activities'),
         new MenuItemLink('playbooks', 'Playbooks'),
         new MenuItemContainer('Collections', [
-          new MenuItemLink('product-collections', 'Product Collections'),
-          new MenuItemLink('category-collections', 'Category Collections'),
-          new MenuItemLink('page-collections', 'Page Collections'),
-          new MenuItemLink('query-collections', 'Query Collections'),
-          new MenuItemLink('brand-collections', 'Brand Collections'),
+          new MenuItemLink('product-collections', 'Product collections'),
+          new MenuItemLink('category-collections', 'Category collections'),
+          new MenuItemLink('page-collections', 'Page collections'),
+          new MenuItemLink('query-collections', 'Query collections'),
+          new MenuItemLink('brand-collections', 'Brand collections'),
         ]),
         new MenuItemContainer('Library', [
           new MenuItemLink(
@@ -112,6 +120,15 @@ export class MenuStructureService {
         new MenuItemLink('product-a-b-testing', 'Product A/B testing'),
       ],
       'insights',
+    );
+
+    const audiences = new MenuItemContainer(
+      'Audiences',
+      [
+        new MenuItemLink('hippo-perspective-experienceoptimizerperspective', 'Content audiences'),
+        new MenuItemLink('merchandising-audiences', 'Merchandising audiences'),
+      ],
+      'audiences',
     );
 
     const experienceManager2 = new MenuItemLink(
@@ -127,9 +144,11 @@ export class MenuStructureService {
       content,
       documentSearch,
       categories,
+      seo,
       insights,
+      audiences,
       this.extensions,
-      settings,
+      setup,
       experienceManager2,
     ];
   }

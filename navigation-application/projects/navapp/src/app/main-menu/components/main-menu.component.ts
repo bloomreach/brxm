@@ -15,11 +15,12 @@
  */
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
-import { QaHelperService } from '../../services';
+import { UserSettings } from '../../models/dto';
+import { GlobalSettingsService, QaHelperService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
@@ -30,6 +31,8 @@ import { MenuStateService } from '../services';
 })
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
+  userSettings: UserSettings;
+  isUserToolbarOpened = false;
 
   private homeMenuItem: MenuItemLink;
   private unsubscribe = new Subject();
@@ -38,6 +41,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
     private clientAppService: ClientAppService,
+    private settingsService: GlobalSettingsService,
   ) {}
 
   get collapsed(): boolean {
@@ -71,6 +75,8 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       switchMap(() => this.menuStateService.menu$),
       takeUntil(this.unsubscribe),
     ).subscribe(() => this.selectMenuItem(this.homeMenuItem));
+
+    this.userSettings = this.settingsService.userSettings;
   }
 
   ngOnDestroy(): void {
@@ -92,7 +98,17 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.selectMenuItem(item);
   }
 
+  onUserMenuItemClick(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    this.selectUserMenuItem();
+  }
+
+  onClickedOutsideUserToolbar(): void {
+    this.isUserToolbarOpened = false;
+  }
+
   selectMenuItem(item: MenuItem): void {
+    this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
       this.menuStateService.setActiveItem(item);
       return;
@@ -101,6 +117,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
+  }
+
+  selectUserMenuItem(): void {
+    this.isUserToolbarOpened = true;
   }
 
   isMenuItemActive(item: MenuItem): boolean {

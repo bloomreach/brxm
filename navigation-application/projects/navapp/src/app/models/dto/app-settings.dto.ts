@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+import { ConfigResource } from './config-resource.dto';
 
-html,
-body {
-  height: 100vh;
-}
-
-body {
-  display: grid;
-  overflow: hidden;
-}
-
-.hidden {
-  display: none !important;
+export interface AppSettings {
+  navConfigResources: ConfigResource[];
+  sitesResource: ConfigResource;
 }

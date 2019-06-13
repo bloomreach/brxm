@@ -14,22 +14,43 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+@import 'variables';
+
+:host {
+  background-color: $menu-drawer-bg;
+  bottom: 0;
+  color: $menu-text-color;
+  display: block;
+  height: 20%;
+  left: 100%;
+  min-width: $menu-drawer-width;
+  position: absolute;
+  z-index: -1;
 }
 
-html,
-body {
-  height: 100vh;
+.header {
+  color: $white;
+  font-size: 20px;
+  font-weight: $font-weight-semibold;
+  margin: 0;
+  padding: 16px 16px 8px 0;
 }
 
-body {
-  display: grid;
-  overflow: hidden;
+.content-wrapper {
+  height: 100%;
+  padding-left: 16px;
 }
 
-.hidden {
-  display: none !important;
+.window-content-cover {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.logout-link {
+  color: white;
+  text-decoration: none;
 }

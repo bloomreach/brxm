@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+import { AppSettings, UserSettings } from './dto';
 
-html,
-body {
-  height: 100vh;
-}
-
-body {
-  display: grid;
-  overflow: hidden;
-}
-
-.hidden {
-  display: none !important;
+export class GlobalSettings {
+  userSettings: UserSettings;
+  appSettings: AppSettings;
 }
