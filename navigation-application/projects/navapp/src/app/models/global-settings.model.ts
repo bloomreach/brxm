@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-import { NavConfigResource } from './nav-config-resource.dto';
+import { AppSettings, UserSettings } from './dto';
 
-export interface NavAppSettings {
-  userSettings: {
-    userName: string;
-    language: string;
-    timeZone: string;
-  };
-
-  appSettings: {
-    navConfigResources: NavConfigResource[];
-  };
+export class GlobalSettings {
+  userSettings: UserSettings;
+  appSettings: AppSettings;
 }

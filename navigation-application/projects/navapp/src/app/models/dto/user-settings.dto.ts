@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-
-import { GlobalSettings } from '../models';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class NavAppSettingsService extends GlobalSettings {
-  constructor() {
-    super();
-
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
-  }
+export interface UserSettings {
+  userName: string;
+  email?: string;
+  language: string;
+  timeZone: string;
 }

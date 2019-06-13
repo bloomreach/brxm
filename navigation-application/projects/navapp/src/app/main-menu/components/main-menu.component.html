@@ -47,8 +47,10 @@
     <brna-top-level-menu-item caption="User account"
                               icon="user"
                               [collapsed]="collapsed"
+                              [pressed]="isUserToolbarOpened"
                               [small]="true"
-                              [ngClass]="getQaClass('user')">
+                              [ngClass]="getQaClass('user')"
+                              (click)="onUserMenuItemClick($event)">
     </brna-top-level-menu-item>
 
     <div class="trigger qa-menu-trigger" (click)="toggle()">
@@ -58,3 +60,7 @@
   </div>
 </div>
 <brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem"></brna-menu-drawer>
+<brna-user-toolbar-drawer *ngIf="isUserToolbarOpened"
+                          [config]="userSettings"
+                          (clickOutside)="onClickedOutsideUserToolbar()">
+</brna-user-toolbar-drawer>

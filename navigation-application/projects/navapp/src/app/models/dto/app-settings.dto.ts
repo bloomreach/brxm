@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { NavConfigResource } from './nav-config-resource.dto';
 
-import { GlobalSettings } from '../models';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class NavAppSettingsService extends GlobalSettings {
-  constructor() {
-    super();
-
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
-  }
+export interface AppSettings {
+  navConfigResources: NavConfigResource[];
 }

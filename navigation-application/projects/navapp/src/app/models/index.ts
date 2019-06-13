@@ -15,3 +15,4 @@
  */
 
 export * from './dto';
+export * from './global-settings.model';
