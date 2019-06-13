@@ -155,7 +155,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
             
         }
 
-        // check wether there is an _index_ sitemap item:
+        // check whether there is an _index_ sitemap item:
         InternalHstSiteMapItem index = (InternalHstSiteMapItem) matchedSiteMapItem.getChild(INDEX);
         if (index != null) {
             log.info("Found an '{}' sitemap item below '{}'. Check if the relative content path points to an existing folder/document.",

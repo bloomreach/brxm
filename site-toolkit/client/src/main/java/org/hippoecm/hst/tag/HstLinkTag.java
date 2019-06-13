@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
@@ -39,6 +38,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.QueryStringBuilder;
@@ -46,6 +46,7 @@ import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.INDEX;
 import static org.hippoecm.hst.utils.TagUtils.getQueryString;
 import static org.hippoecm.hst.utils.TagUtils.writeOrSetVar;
 
@@ -181,7 +182,15 @@ public class HstLinkTag extends ParamContainerTag {
             } else {
                 // hst link for current URL requested
                 if(reqContext != null && reqContext.getResolvedSiteMapItem() != null) {
-                    path = reqContext.getResolvedSiteMapItem().getPathInfo();
+                    final ResolvedSiteMapItem r = reqContext.getResolvedSiteMapItem();
+
+                    if (INDEX.equals(r.getHstSiteMapItem().getValue())) {
+                        // _index_ sitemap item : The _index_ is never visible in the URL if there is a parent sitemap
+                        // item
+                        path = StringUtils.substringBeforeLast(r.getPathInfo(), "/" + INDEX);
+                    } else {
+                        path = r.getPathInfo();
+                    }
                 }
             }
 

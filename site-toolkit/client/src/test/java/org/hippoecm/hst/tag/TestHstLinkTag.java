@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -27,6 +28,7 @@ import org.hippoecm.hst.core.container.HstContainerURLImpl;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
@@ -48,6 +50,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestHstLinkTag {
 
+    private MockHstRequestContext mockHstRequestContext;
     private MockPageContext pageContext;
     private HstLinkTag linkTag;
     private HstLinkCreator linkCreator;
@@ -55,7 +58,7 @@ public class TestHstLinkTag {
     private HstLink hstLink;
     private ResolvedMount resolvedMount;
 
-    private void init(final String testPath) {
+    private void init() {
         MockServletContext servletContext = new MockServletContext();
         HstRequest hstRequest = new MockHstRequest();
         HstResponse hstResponse = new MockHstResponse();
@@ -63,7 +66,7 @@ public class TestHstLinkTag {
         HttpServletResponse response = new MockHttpServletResponse();
         request.setAttribute(ContainerConstants.HST_REQUEST, hstRequest);
         request.setAttribute(ContainerConstants.HST_RESPONSE, hstResponse);
-        final MockHstRequestContext mockHstRequestContext = new MockHstRequestContext();
+        mockHstRequestContext = new MockHstRequestContext();
         resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);
         final HstContainerURLImpl baseURL = new HstContainerURLImpl();
         baseURL.setCharacterEncoding("utf-8");
@@ -77,14 +80,18 @@ public class TestHstLinkTag {
 
         hstLink = EasyMock.createNiceMock(HstLink.class);
 
-        expect(hstLink.toUrlForm(anyObject(), anyBoolean())).andStubReturn(StringUtils.substringBefore(testPath, "?"));
-        replay(hstLink);
-
         pageContext = new MockPageContext(servletContext, request, response);
         linkTag = new HstLinkTag();
         linkTag.setVar("result");
-        linkTag.setPath(testPath);
         linkTag.setPageContext(pageContext);
+
+    }
+
+    private void init(final String testPath) {
+        init();
+        expect(hstLink.toUrlForm(anyObject(), anyBoolean())).andStubReturn(StringUtils.substringBefore(testPath, "?"));
+        replay(hstLink);
+        linkTag.setPath(testPath);
 
     }
 
@@ -100,6 +107,81 @@ public class TestHstLinkTag {
         String link = (String) pageContext.getAttribute("result");
         final String escapedExpectedResult = HstRequestUtils.escapeXml(testPath);
         assertEquals("query string should be XML escaped in the result", escapedExpectedResult, link);
+        verify(linkCreator);
+    }
+
+    @Test
+    public void test_hst_link_to_self() throws Exception {
+
+        init();
+
+        expect(linkCreator.create(eq("/css/style.css"), isNull())).andReturn(hstLink).once();
+
+        expect(hstLink.toUrlForm(anyObject(), anyBoolean())).andStubReturn("/css/style.css");
+
+        expect(hstLink.getPath()).andStubReturn("/css/style.css");
+        replay(hstLink);
+
+        HstSiteMapItem hstSiteMapItem = EasyMock.createNiceMock(HstSiteMapItem.class);
+        expect(hstSiteMapItem.getValue()).andStubReturn("_any_");
+
+        ResolvedSiteMapItem resolvedSiteMapItem = EasyMock.createNiceMock(ResolvedSiteMapItem.class);
+
+        expect(resolvedSiteMapItem.getResolvedMount()).andStubReturn(resolvedMount);
+        expect(resolvedSiteMapItem.getHstSiteMapItem()).andStubReturn(hstSiteMapItem);
+        expect(resolvedSiteMapItem.getPathInfo()).andStubReturn("/css/style.css");
+
+        mockHstRequestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        mockHstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, linkCreator, resolvedSiteMapItem, hstSiteMapItem);
+
+        linkTag.doEndTag();
+        String link = (String) pageContext.getAttribute("result");
+
+        assertEquals("/css/style.css", link);
+        // verify that linkCreator.create("/css/style.css", null) was invoked
+        verify(linkCreator);
+    }
+
+
+    @Test
+    public void test_hst_link_to_self_index_page() throws Exception {
+        init();
+
+        // EXPECTATION is "/css" although the current request is "/css/style.css" but the "/css" is expected
+        // because we mark the currently resolved sitemap item to be an _INDEX_ sitemap item
+        expect(linkCreator.create(eq("/documents/common"), isNull())).andReturn(hstLink).once();
+
+        expect(hstLink.toUrlForm(anyObject(), anyBoolean())).andStubReturn("/documents/common");
+
+        expect(hstLink.getPath()).andStubReturn("/documents/common");
+        replay(hstLink);
+
+        HstSiteMapItem hstSiteMapItem = EasyMock.createNiceMock(HstSiteMapItem.class);
+        HstSiteMapItem parentSiteMapItem = EasyMock.createNiceMock(HstSiteMapItem.class);
+        expect(hstSiteMapItem.getValue()).andStubReturn("_index_");
+        expect(parentSiteMapItem.getValue()).andStubReturn("_default_");
+
+        expect(hstSiteMapItem.getParentItem()).andStubReturn(parentSiteMapItem);
+
+        ResolvedSiteMapItem resolvedSiteMapItem = EasyMock.createNiceMock(ResolvedSiteMapItem.class);
+
+        expect(resolvedSiteMapItem.getResolvedMount()).andStubReturn(resolvedMount);
+        expect(resolvedSiteMapItem.getHstSiteMapItem()).andStubReturn(hstSiteMapItem);
+        expect(resolvedSiteMapItem.getPathInfo()).andStubReturn("/documents/common/_index_");
+
+
+        mockHstRequestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
+        mockHstRequestContext.setResolvedMount(resolvedMount);
+
+        replay(resolvedMount, linkCreator, resolvedSiteMapItem, hstSiteMapItem, parentSiteMapItem);
+
+        linkTag.doEndTag();
+        String link = (String) pageContext.getAttribute("result");
+
+        assertEquals("/documents/common", link);
+        // verify that linkCreator.create("/css/style.css", null) was invoked
         verify(linkCreator);
     }
 
