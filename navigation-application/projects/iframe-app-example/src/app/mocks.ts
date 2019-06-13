@@ -28,6 +28,16 @@ export const navigationConfiguration: NavItem[] = [
     appPath: 'all-category-pages',
   },
   {
+    id: 'seo',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'seo',
+  },
+  {
+    id: 'merchandising-audiences',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'merchandising-audiences',
+  },
+  {
     id: 'top-opportunities',
     appIframeUrl: 'http://localhost:4201',
     appPath: 'top-opportunities',

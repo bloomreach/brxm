@@ -149,10 +149,10 @@
               <excludes combine.children="append">
                 <exclude>.*</exclude>
                 <exclude>projects/navapp/**/*.svg</exclude>
-                <exclude>projects/navapp/**</exclude>  <!-- TODO Remove this exclude-->
                 <exclude>**/browserslist</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
+                <exclude>**/node/**/*</exclude>
                 <exclude>dist/**</exclude>
               </excludes>
             </configuration>
