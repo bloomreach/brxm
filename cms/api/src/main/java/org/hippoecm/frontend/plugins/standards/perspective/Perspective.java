@@ -192,10 +192,28 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
      * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
+        notifyParentIframe();
         if (StringUtils.isNotEmpty(eventId) && cmsEventNamesList.contains(eventId)) {
             final String event = EVENT_PARAM_CMS + StringUtils.capitalize(eventId);
             publishEvent(event);
         }
+    }
+
+    private void notifyParentIframe() {
+        final ParentApi parentApi = new ParentApiCaller();
+        parentApi.updateNavLocation(new NavLocation() {
+            @SuppressWarnings("unused")
+            @Override
+            public String getPath() {
+                return getTitleCssClass();
+            }
+
+            @SuppressWarnings("unused")
+            @Override
+            public String getBreadcrumbLabel() {
+                return null;
+            }
+        });
     }
 
     /**
