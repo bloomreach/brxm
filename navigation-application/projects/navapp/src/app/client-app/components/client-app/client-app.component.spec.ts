@@ -16,6 +16,7 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { AppToNavAppService } from '../../../services/app-to-nav-app.service';
 import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services';
 
@@ -26,10 +27,14 @@ describe('ClientAppComponent', () => {
   let fixture: ComponentFixture<ClientAppComponent>;
 
   const clientAppService = jasmine.createSpyObj(['addConnection']);
+  const appToNavAppService = jasmine.createSpyObj('AppToNavAppService', ['parentApiMethods']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: ClientAppService, useValue: clientAppService }],
+      providers: [
+        { provide: ClientAppService, useValue: clientAppService },
+        { provide: AppToNavAppService, useValue: appToNavAppService},
+        ],
       declarations: [ClientAppComponent],
     }).compileComponents();
   }));

@@ -25,7 +25,7 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { connectToChild } from '@bloomreach/navapp-communication';
 
-import { CommunicationsService } from '../../../services';
+import { AppToNavAppService } from '../../../services/app-to-nav-app.service';
 import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services';
 
@@ -46,7 +46,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   constructor(
     private domSanitizer: DomSanitizer,
     private clientAppService: ClientAppService,
-    private communicationsService: CommunicationsService,
+    private appToNavAppService: AppToNavAppService,
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +56,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     connectToChild({
       iframe: this.iframe.nativeElement,
-      methods: this.communicationsService.parentApiMethods,
+      methods: this.appToNavAppService.parentApiMethods,
     }).then(childApi =>
       this.clientAppService.addConnection(this.app.id, childApi),
     );

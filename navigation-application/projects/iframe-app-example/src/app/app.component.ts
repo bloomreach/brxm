@@ -83,4 +83,10 @@ export class AppComponent implements OnInit {
       });
     }
   }
+
+  navigateToSeo(): void {
+    this.parent.navigate({ path: 'seo' }).then(() => {
+      console.log('Successfully navigated to SEO page.');
+    });
+  }
 }

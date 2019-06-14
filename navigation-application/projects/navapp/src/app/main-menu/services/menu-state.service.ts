@@ -72,6 +72,10 @@ export class MenuStateService implements OnDestroy {
   setActiveItem(item: MenuItemLink): void {
     this.closeDrawer();
     this.breadcrumbs = this.buildBreadcrumbs(this.currentMenu, item);
+  }
+
+  setActiveItemAndNavigate(item: MenuItemLink): void {
+    this.setActiveItem(item);
     this.communicationsService.navigate(item.appId, item.appPath);
   }
 
