@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,16 +58,21 @@ class ContainerService {
     return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
-  addComponent(catalogComponent, containerOverlayElement) {
-    const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
+  async addComponent(catalogComponent, container) {
+    try {
+      const newComponentId = await this.PageStructureService.addComponentToContainer(catalogComponent, container);
+      if (!this._reloadSpa()) {
+        await this._renderNewComponent(newComponentId, container);
+      }
 
-    this.PageStructureService.addComponentToContainer(catalogComponent, container)
-      .then(newComponentId => this._reloadSpa() || this._renderNewComponent(newComponentId, container))
-      .catch(() => {
-        this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
-          component: catalogComponent.label,
-        });
+      return newComponentId;
+    } catch (error) {
+      this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
+        component: catalogComponent.label,
       });
+
+      throw error;
+    }
   }
 
   _renderNewComponent(componentId, container) {
@@ -75,12 +80,14 @@ class ContainerService {
   }
 
   _reloadSpa() {
-    if (this.SpaService.detectedSpa()) {
-      // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
-      this.HippoIframeService.reload();
-      return true;
+    if (!this.SpaService.detectedSpa()) {
+      return false;
     }
-    return false;
+
+    // we don't provide fine-grained reloading of containers ATM, so reload the whole SPA instead
+    this.HippoIframeService.reload();
+
+    return true;
   }
 
   moveComponent(component, targetContainer, targetContainerNextComponent) {
