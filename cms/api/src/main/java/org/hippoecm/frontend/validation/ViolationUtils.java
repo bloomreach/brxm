@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -30,6 +31,49 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class ViolationUtils {
 
     private ViolationUtils() {}
+
+    public static String getResetScript(final String selector) {
+        return String.format(
+                "const editor = %s;" +
+                "editor.find('.validation-message, .compound-validation-message').remove();" +
+                "editor.find('.invalid').removeClass('invalid');" +
+                "editor.find('.compound-validation-border').removeClass('compound-validation-border');",
+                selector);
+    }
+
+    public static String getFieldViolationScript(final String selector, final ViolationMessage violation) {
+        final String message = violation.getMessage();
+        final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+        return String.format(
+                "%s.addClass('invalid').append('<span class=\"validation-message\">%s</span>');",
+                selector,
+                StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
+    }
+
+    public static String getViolationPerCompoundScript(final String selector, final IFieldDescriptor field, final IModel<IValidationResult> validationModel) {
+        final StringBuilder script = new StringBuilder();
+
+        getViolationPerCompound(field, validationModel).forEach(violation -> {
+            final String message = violation.getMessage();
+            final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+            final String messageElement = String.format(
+                "<div class=\"validation-message compound-validation-message\">%s</div>",
+                htmlEscapedMessage);
+
+            script.append(String.format(
+                "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
+                violation.getIndex(),
+                StringEscapeUtils.escapeJavaScript(messageElement))
+            );
+        });
+
+        if (script.length() > 0) {
+            script.insert(0, String.format("const subfields = %s;", selector));
+            return script.toString();
+        }
+
+        return null;
+    }
 
     public static Optional<ViolationMessage> getFirstFieldViolation(final IFieldDescriptor field,
                                                                     final IModel<IValidationResult> validationModel) {
