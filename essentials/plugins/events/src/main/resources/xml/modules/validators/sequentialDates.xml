@@ -14,17 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="sequentialDates">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="{{namespace}}-events-sequential-dates">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:moduleconfig</sv:value>
   </sv:property>
-  <sv:property sv:name="firstDateProperty" sv:type="String">
-    <sv:value>{{namespace}}:date</sv:value>
+  <sv:property sv:name="datePropertyNames" sv:type="String">
+    <sv:value>{{namespace}}:date,{{namespace}}:enddate</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:className" sv:type="String">
-    <sv:value>{{projectPackage}}.validators.SequentialDatesValidator</sv:value>
-  </sv:property>
-  <sv:property sv:name="secondDateProperty" sv:type="String">
-    <sv:value>{{namespace}}:enddate</sv:value>
+    <sv:value>org.onehippo.cms.services.validation.validator.SequentialDatesValidator</sv:value>
   </sv:property>
 </sv:node>

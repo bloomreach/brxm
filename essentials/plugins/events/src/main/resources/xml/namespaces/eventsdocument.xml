@@ -50,7 +50,7 @@
         <sv:value>http://www.{{namespace}}.com/{{namespace}}/nt/1.0</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
-        <sv:value>sequentialDates</sv:value>
+        <sv:value>{{namespace}}-events-sequential-dates</sv:value>
       </sv:property>
       <sv:node sv:name="title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
