@@ -142,16 +142,44 @@ public class ViolationUtils {
     private static ViolationMessage toViolationMessage(final IFieldDescriptor field, final Violation violation) {
         final Set<ModelPath> dependentPaths = violation.getDependentPaths();
         for (final ModelPath path : dependentPaths) {
-            if (path.getElements().length > 0) {
-                final ModelPathElement first = path.getElements()[0];
-                if (first.getField().equals(field)) {
+            final ModelPathElement[] elements = path.getElements();
+            if (elements.length > 0) {
+                final ModelPathElement last = elements[elements.length - 1];
+                if (last.getField().equals(field)) {
                     final String message = violation.getMessage().getObject();
-                    final int index = first.getIndex();
+                    final int index = last.getIndex();
                     return new ViolationMessage(message, index);
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Replace the provided violations by new violations that have the path element of the provided fieldDescriptor
+     * in them, prepending the existing path element(s).
+     */
+    public static Set<Violation> prependFieldPathToViolations(final Set<Violation> violations, final ModelPathElement modelPathElement) {
+        violations.forEach(violation -> violation.getDependentPaths().forEach(modelPath -> {
+            if (shouldReplace(modelPath, modelPathElement)) {
+                modelPath.replaceLastElement(modelPathElement);
+            } else {
+                modelPath.prependElement(modelPathElement);
+            }
+        }));
+
+        return violations;
+    }
+
+    private static boolean shouldReplace(final ModelPath modelPath, final ModelPathElement modelPathElement) {
+        final ModelPathElement[] elements = modelPath.getElements();
+        if (elements.length != 1) {
+            return false;
+        }
+
+        final ModelPathElement lastElement  = elements[0];
+        return lastElement.getName().equals(modelPathElement.getName()) &&
+                lastElement.getIndex() == modelPathElement.getIndex();
     }
 
     public static class ViolationMessage {
