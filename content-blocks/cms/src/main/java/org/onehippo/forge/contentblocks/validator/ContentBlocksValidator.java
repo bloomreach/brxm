@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
-import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.editor.validator.JcrTypeValidator;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.editor.validator.plugins.AbstractCmsValidator;
@@ -35,8 +34,10 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.validation.IFieldValidator;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,8 +98,9 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
             // Correct the paths of the violations, that are based on the type only, by prepending with the content
             // blocks compound path.
             final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
-            return JcrFieldValidator.prependFieldPathToViolations(violations, fieldDescriptor,
-                    fieldDescriptor.getPath(), index);
+            final ModelPathElement modelPathElement = new ModelPathElement(fieldDescriptor, fieldDescriptor.getPath(),
+                    index);
+            return ViolationUtils.prependFieldPathToViolations(violations, modelPathElement);
         } finally {
             jcrTypeLocator.detach();
         }
