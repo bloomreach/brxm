@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services';
@@ -28,15 +29,18 @@ describe('CommunicationsService', () => {
       activateApplication: jasmine.createSpy(),
     });
 
-    const communicationsService = new CommunicationsService(
-      clientAppService,
-      overlayService,
-    );
+    TestBed.configureTestingModule({
+      providers: [
+        CommunicationsService,
+        { provide: OverlayService, useValue: overlayService },
+        { provide: ClientAppService, useValue: clientAppService },
+      ],
+    });
 
     return {
-      communicationsService,
-      overlayService,
-      clientAppService,
+      communicationsService: TestBed.get(CommunicationsService),
+      overlayService: TestBed.get(OverlayService),
+      clientAppService: TestBed.get(ClientAppService),
       api,
     };
   }

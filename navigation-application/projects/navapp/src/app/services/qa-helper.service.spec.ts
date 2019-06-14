@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+
 import { MenuItemContainer } from '../main-menu/models';
 
 import { QaHelperService } from './qa-helper.service';
@@ -6,10 +8,12 @@ describe('QaHelperService', () => {
   function setup(): {
     qaHelperService: QaHelperService;
   } {
-    const qaHelperService = new QaHelperService();
+    TestBed.configureTestingModule({
+      providers: [QaHelperService],
+    });
 
     return {
-      qaHelperService,
+      qaHelperService: TestBed.get(QaHelperService),
     };
   }
 

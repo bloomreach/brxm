@@ -1,13 +1,17 @@
+import { TestBed } from '@angular/core/testing';
+
 import { OverlayService } from './overlay.service';
 
 describe('OverlayService', () => {
   function setup(): {
     overlayService: OverlayService;
   } {
-    const overlayService = new OverlayService();
+    TestBed.configureTestingModule({
+      providers: [OverlayService],
+    });
 
     return {
-      overlayService,
+      overlayService: TestBed.get(OverlayService),
     };
   }
 
