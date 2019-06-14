@@ -44,6 +44,7 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,30 +201,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             throw new ValidationException("Could not resolve path for invalid value", e);
         }
 
-        violations.addAll(prependFieldPathToViolations(typeViolations, field, name, index));
-    }
-
-    /**
-     * Replace the provided violations by new violations that have the path element of the provided fieldDescriptor
-     * in them, prepending the existing path element(s).
-     */
-    public static Set<Violation> prependFieldPathToViolations(final Set<Violation> violations,
-                                                              final IFieldDescriptor fieldDescriptor,
-                                                              final String name,
-                                                              final int index) {
-        final Set<Violation> newViolations = new HashSet<>(violations.size());
-        for (final Violation violation : violations) {
-            final Set<ModelPath> childPaths = violation.getDependentPaths();
-            final Set<ModelPath> paths = new HashSet<>();
-            for (final ModelPath childPath : childPaths) {
-                final ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
-                System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
-                elements[0] = new ModelPathElement(fieldDescriptor, name, index);
-                paths.add(new ModelPath(elements));
-            }
-            newViolations.add(new Violation(paths, violation.getMessage(), violation.getFeedbackScope()));
-        }
-        return newViolations;
+        final ModelPathElement modelPathElement = new ModelPathElement(field, name, index);
+        violations.addAll(ViolationUtils.prependFieldPathToViolations(typeViolations, modelPathElement));
     }
 
     private ModelPathElement getElement(final IModel childModel) throws ValidationException {
