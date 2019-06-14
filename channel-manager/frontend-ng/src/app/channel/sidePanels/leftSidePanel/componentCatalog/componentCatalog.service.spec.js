@@ -19,6 +19,7 @@ describe('ComponentCatalogService', () => {
   let $q;
   let $rootScope;
   let ComponentCatalogService;
+  let ConfigService;
   let ContainerService;
   let EditComponentService;
   let HippoIframeService;
@@ -36,6 +37,7 @@ describe('ComponentCatalogService', () => {
       _$q_,
       _$rootScope_,
       _ComponentCatalogService_,
+      _ConfigService_,
       _ContainerService_,
       _EditComponentService_,
       _HippoIframeService_,
@@ -49,6 +51,7 @@ describe('ComponentCatalogService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ComponentCatalogService = _ComponentCatalogService_;
+      ConfigService = _ConfigService_;
       ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
       HippoIframeService = _HippoIframeService_;
@@ -133,6 +136,7 @@ describe('ComponentCatalogService', () => {
 
       spyOn($log, 'info');
       spyOn(ContainerService, 'addComponent');
+      spyOn(EditComponentService, 'startEditing');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'getContainers').and.returnValue([mockContainer, { getId: () => 456 }]);
       spyOn(RightSidePanelService, 'close');
@@ -141,7 +145,6 @@ describe('ComponentCatalogService', () => {
     it('adds component to a container', () => {
       ContainerService.addComponent.and.returnValue('789');
       RightSidePanelService.close.and.returnValue($q.resolve());
-      spyOn(EditComponentService, 'startEditing');
       spyOn(PageStructureService, 'getComponentById').and.returnValue({ id: 789 });
 
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
@@ -150,6 +153,17 @@ describe('ComponentCatalogService', () => {
       expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer);
       expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 789 });
       expect(RightSidePanelService.close).toHaveBeenCalled();
+    });
+
+    it('does not open the component editor when relevance feature is present', () => {
+      ConfigService.relevancePresent = true;
+
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+      $rootScope.$digest();
+
+      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer);
+      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
+      expect(RightSidePanelService.close).not.toHaveBeenCalled();
     });
 
     it('ignores component add if the right side panel was not closed', () => {

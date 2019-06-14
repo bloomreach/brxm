@@ -17,6 +17,7 @@
 class ComponentCatalogService {
   constructor(
     $log,
+    ConfigService,
     ContainerService,
     EditComponentService,
     FeedbackService,
@@ -31,6 +32,7 @@ class ComponentCatalogService {
 
     this.$log = $log;
 
+    this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
     this.ContainerService = ContainerService;
     this.FeedbackService = FeedbackService;
@@ -97,14 +99,19 @@ class ComponentCatalogService {
   }
 
   async _addComponent(containerId) {
-    await this.RightSidePanelService.close();
+    if (!this.ConfigService.relevancePresent) {
+      await this.RightSidePanelService.close();
+    }
 
     const container = this.PageStructureService.getContainers()
       .find(item => item.getId() === containerId);
     const componentId = await this.ContainerService.addComponent(this.selectedComponent, container);
-    const component = this.PageStructureService.getComponentById(componentId);
-    this.EditComponentService.startEditing(component);
     delete this.selectedComponent;
+
+    if (!this.ConfigService.relevancePresent) {
+      const component = this.PageStructureService.getComponentById(componentId);
+      this.EditComponentService.startEditing(component);
+    }
   }
 }
 
