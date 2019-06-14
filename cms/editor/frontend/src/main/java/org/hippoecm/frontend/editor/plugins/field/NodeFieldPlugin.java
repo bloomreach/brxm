@@ -54,7 +54,7 @@ import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getViolationPerCompound;
+import static org.hippoecm.frontend.validation.ViolationUtils.getViolationPerCompound;
 
 public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 

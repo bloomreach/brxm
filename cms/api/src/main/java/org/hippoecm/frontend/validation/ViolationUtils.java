@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins.field.violation;
+package org.hippoecm.frontend.validation;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -25,11 +25,6 @@ import java.util.stream.Stream;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViolationUtils {

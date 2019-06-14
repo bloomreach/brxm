@@ -43,7 +43,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
-import org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.ViolationMessage;
+import org.hippoecm.frontend.validation.ViolationUtils.ViolationMessage;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -70,7 +70,7 @@ import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getFirstFieldViolation;
+import static org.hippoecm.frontend.validation.ViolationUtils.getFirstFieldViolation;
 import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
