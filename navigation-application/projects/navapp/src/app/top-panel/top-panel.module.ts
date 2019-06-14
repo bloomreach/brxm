@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { ClientAppModule } from './client-app';
-import { MainMenuModule } from './main-menu';
-import { SharedModule } from './shared';
-import { TopPanelModule } from './top-panel';
+import { TopPanelComponent } from './components/top-panel.component';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    SharedModule,
-    AppRoutingModule,
-    BrowserModule,
-    ClientAppModule,
-    HttpClientModule,
-    MainMenuModule,
-    TopPanelModule,
+  declarations: [
+    TopPanelComponent,
   ],
-  declarations: [AppComponent],
-  bootstrap: [AppComponent],
+  exports: [TopPanelComponent],
 })
-export class AppModule {}
+export class TopPanelModule {}
