@@ -87,7 +87,7 @@ import org.onehippo.forge.contentblocks.validator.ContentBlocksValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getViolationPerCompound;
+import static org.hippoecm.frontend.validation.ViolationUtils.getViolationPerCompound;
 
 /**
  * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with
