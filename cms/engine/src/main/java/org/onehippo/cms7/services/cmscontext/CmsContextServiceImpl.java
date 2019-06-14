@@ -37,23 +37,23 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         private final String id = UUID.randomUUID().toString();
 
         private CmsContextServiceImpl service;
-        private CmsSessionContextImpl cmsCtx;
         private Map<String, CmsSessionContextImpl> sharedContextsMap;
         private Map<String, Object> dataMap;
 
         private HttpSession session;
+        private boolean root;
 
         private CmsSessionContextImpl(CmsContextServiceImpl service) {
+            root = true;
             this.service = service;
-            cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
             dataMap.put(CMS_SESSION_CONTEXT_PAYLOAD_KEY, new ConcurrentHashMap<>());
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
+            root = false;
             this.service = service;
-            cmsCtx = ctx.cmsCtx;
             dataMap = ctx.dataMap;
             sharedContextsMap = ctx.sharedContextsMap;
             sharedContextsMap.put(id, this);
@@ -77,7 +77,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         private synchronized void detach() {
             if (service != null) {
 
-                if (this == cmsCtx) {
+                if (root) {
                     // remove from service contexts
                     service.contextsMap.remove(id);
                     // detach all attached contexts
@@ -85,7 +85,8 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                     while (iter.hasNext()) {
                         CmsSessionContextImpl ctx = iter.next();
                         iter.remove();
-                        ctx.detach();
+                        // below will trigger #valueUnbound triggering #detach in turn
+                        ctx.session.invalidate();
                     }
                 } else {
                     // will already be removed in case cmsCtx itself is being detached
@@ -94,16 +95,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 }
 
                 service = null;
-                HttpSession tmpSession = session;
-                session = null;
-                if (tmpSession != null) {
-                    try {
-                        tmpSession.removeAttribute(SESSION_KEY);
-                    } catch (IllegalStateException e) {
-                        // ignore session already invalidated exception
-                    }
-                }
-                cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
                 dataMap = Collections.emptyMap();
             }
@@ -185,7 +176,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             try {
                 session.setAttribute(SESSION_KEY, ctx);
             } catch (IllegalStateException e) {
-                // session just happened to be invalidated, make sure to cleaup ctx
+                // session just happened to be invalidated, make sure to cleanup ctx
                 ctx.detach();
                 throw e;
             }
