@@ -25,7 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -79,6 +78,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.contentblocks.model.ContentBlockComparer;
 import org.onehippo.forge.contentblocks.model.DropDownOption;
@@ -86,8 +86,6 @@ import org.onehippo.forge.contentblocks.sort.SortHelper;
 import org.onehippo.forge.contentblocks.validator.ContentBlocksValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.validation.ViolationUtils.getViolationPerCompound;
 
 /**
  * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with
@@ -184,32 +182,16 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     @Override
     public void render(final PluginRequestTarget target) {
         if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
-
-            // clear previous validation messages and styling
-            final String markupId = getMarkupId();
-            final StringBuilder script = new StringBuilder(String.format(
-                "const subfields = $('#%s > .hippo-editor-compound-field > .hippo-editor-field > .hippo-editor-field-subfield');" +
-                "subfields.find('> .compound-validation-message').remove();" +
-                "subfields.filter('.compound-validation-border').removeClass('compound-validation-border');",
-                markupId));
-
+            final String selector = String.format(
+                    "$('#%s > .hippo-editor-compound-field > .hippo-editor-field > .hippo-editor-field-subfield')",
+                    getMarkupId());
             final FieldPluginHelper fieldHelper = getFieldHelper();
             final IFieldDescriptor field = fieldHelper.getField();
             final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
-            getViolationPerCompound(field, validationModel).forEach(violation -> {
-                final String message = violation.getMessage();
-                final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
-                final String messageElement = String.format(
-                        "<div class=\"validation-message compound-validation-message\">%s</div>",
-                        htmlEscapedMessage);
-
-                script.append(String.format(
-                        "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
-                        violation.getIndex(), StringEscapeUtils.escapeJavaScript(messageElement))
-                );
-            });
-
-            target.appendJavaScript(script.toString());
+            final String violationPerCompoundScript = ViolationUtils.getViolationPerCompoundScript(selector, field, validationModel);
+            if (violationPerCompoundScript != null) {
+                target.appendJavaScript(violationPerCompoundScript);
+            }
         }
         super.render(target);
     }
