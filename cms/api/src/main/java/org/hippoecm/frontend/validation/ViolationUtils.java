@@ -32,21 +32,32 @@ public class ViolationUtils {
 
     private ViolationUtils() {}
 
+    private static final String VALIDATION_MESSAGE_CLASS = "validation-message";
+    private static final String INVALID_CLASS = "invalid";
+    private static final String COMPOUND_VALIDATION_BORDER_CLASS = "compound-validation-border";
+
     public static String getResetScript(final String selector) {
         return String.format(
                 "const editor = %s;" +
-                "editor.find('.validation-message, .compound-validation-message').remove();" +
-                "editor.find('.invalid').removeClass('invalid');" +
-                "editor.find('.compound-validation-border').removeClass('compound-validation-border');",
-                selector);
+                "editor.find('.%s').remove();" +
+                "editor.find('.%s').removeClass('%s');" +
+                "editor.find('.%s').removeClass('%s');",
+                selector,
+                VALIDATION_MESSAGE_CLASS,
+                INVALID_CLASS,
+                INVALID_CLASS,
+                COMPOUND_VALIDATION_BORDER_CLASS,
+                COMPOUND_VALIDATION_BORDER_CLASS);
     }
 
     public static String getFieldViolationScript(final String selector, final ViolationMessage violation) {
         final String message = violation.getMessage();
         final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
         return String.format(
-                "%s.addClass('invalid').append('<span class=\"validation-message\">%s</span>');",
+                "%s.addClass('%s').append('<span class=\"%s\">%s</span>');",
                 selector,
+                INVALID_CLASS,
+                VALIDATION_MESSAGE_CLASS,
                 StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
     }
 
@@ -57,12 +68,14 @@ public class ViolationUtils {
             final String message = violation.getMessage();
             final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
             final String messageElement = String.format(
-                "<div class=\"validation-message compound-validation-message\">%s</div>",
+                "<div class=\"%s compound-validation-message\">%s</div>",
+                VALIDATION_MESSAGE_CLASS,
                 htmlEscapedMessage);
 
             script.append(String.format(
-                "subfields.eq(%d).addClass('compound-validation-border').prepend('%s');",
+                "subfields.eq(%d).addClass('%s').prepend('%s');",
                 violation.getIndex(),
+                COMPOUND_VALIDATION_BORDER_CLASS,
                 StringEscapeUtils.escapeJavaScript(messageElement))
             );
         });
