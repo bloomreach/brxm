@@ -141,10 +141,11 @@ public class CmsValidatorAdapter implements ICmsValidator {
     }
 
     private static FeedbackScope getScope(final IFieldValidator fieldValidator) {
-        if (fieldValidator.getFieldDescriptor().getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND)) {
-            return FeedbackScope.COMPOUND;
-        }
-        return FeedbackScope.FIELD;
+        final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+        final ITypeDescriptor typeDescriptor = fieldDescriptor.getTypeDescriptor();
+        return typeDescriptor.isType(HippoNodeType.NT_COMPOUND)
+                ? FeedbackScope.COMPOUND
+                : FeedbackScope.FIELD;
     }
 
 }
