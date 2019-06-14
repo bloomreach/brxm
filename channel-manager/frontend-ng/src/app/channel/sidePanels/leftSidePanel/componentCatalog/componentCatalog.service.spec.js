@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,15 @@
 describe('ComponentCatalogService', () => {
   let $log;
   let $q;
+  let $rootScope;
   let ComponentCatalogService;
   let ContainerService;
+  let EditComponentService;
   let HippoIframeService;
   let MaskService;
   let OverlayService;
   let PageStructureService;
+  let RightSidePanelService;
   let SidePanelService;
 
   beforeEach(() => {
@@ -31,22 +34,28 @@ describe('ComponentCatalogService', () => {
     inject((
       _$log_,
       _$q_,
+      _$rootScope_,
       _ComponentCatalogService_,
       _ContainerService_,
+      _EditComponentService_,
       _HippoIframeService_,
       _MaskService_,
       _OverlayService_,
       _PageStructureService_,
+      _RightSidePanelService_,
       _SidePanelService_,
     ) => {
       $log = _$log_;
       $q = _$q_;
+      $rootScope = _$rootScope_;
       ComponentCatalogService = _ComponentCatalogService_;
       ContainerService = _ContainerService_;
+      EditComponentService = _EditComponentService_;
       HippoIframeService = _HippoIframeService_;
       MaskService = _MaskService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
+      RightSidePanelService = _RightSidePanelService_;
       SidePanelService = _SidePanelService_;
     });
   });
@@ -103,36 +112,59 @@ describe('ComponentCatalogService', () => {
   });
 
   describe('adding a component to container', () => {
-    beforeEach(() => {
-      spyOn($log, 'info');
-      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getContainerByOverlayElement');
-    });
+    let isDisabled;
+    let mockContainer;
+    let mockEvent;
+    const selectedComponent = {};
 
-    it('handles container clicks', () => {
-      let isDisabled = false;
-      const mockContainer = {
+    beforeEach(() => {
+      isDisabled = false;
+      mockEvent = jasmine.createSpyObj('mockEvent', ['stopPropagation']);
+      mockContainer = {
         isDisabled() {
           return isDisabled;
         },
+        getId() {
+          return 123;
+        },
       };
-      const mockEvent = jasmine.createSpyObj('mockEvent', ['target', 'stopPropagation']);
+
+      ComponentCatalogService.selectedComponent = selectedComponent;
+
+      spyOn($log, 'info');
       spyOn(ContainerService, 'addComponent');
-
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
-
-      expect(ContainerService.addComponent).toHaveBeenCalled();
-
-      isDisabled = true;
-
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
-
-      expect(ContainerService.addComponent).toHaveBeenCalled();
-      expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'getContainers').and.returnValue([mockContainer, { getId: () => 456 }]);
+      spyOn(RightSidePanelService, 'close');
     });
 
-    it('delegates to the ContainerService', () => {
+    it('adds component to a container', () => {
+      ContainerService.addComponent.and.returnValue('789');
+      RightSidePanelService.close.and.returnValue($q.resolve());
+      spyOn(EditComponentService, 'startEditing');
+      spyOn(PageStructureService, 'getComponentById').and.returnValue({ id: 789 });
 
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+      $rootScope.$digest();
+
+      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer);
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 789 });
+      expect(RightSidePanelService.close).toHaveBeenCalled();
+    });
+
+    it('ignores component add if the right side panel was not closed', () => {
+      RightSidePanelService.close.and.returnValue($q.reject());
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+
+      expect(ContainerService.addComponent).not.toHaveBeenCalled();
+    });
+
+    it('ignores component add to a disabled container', () => {
+      isDisabled = true;
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+
+      expect(ContainerService.addComponent).not.toHaveBeenCalled();
+      expect(mockEvent.stopPropagation).toHaveBeenCalled();
     });
   });
 
