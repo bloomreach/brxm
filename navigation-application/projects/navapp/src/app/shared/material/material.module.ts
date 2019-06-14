@@ -17,7 +17,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {
-  MatButtonModule,
   MatIconModule,
   MatIconRegistry,
   MatRippleModule,
@@ -28,7 +27,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   exports: [
     MatRippleModule,
     MatIconModule,
-    MatButtonModule,
     HttpClientModule,
   ],
 })
