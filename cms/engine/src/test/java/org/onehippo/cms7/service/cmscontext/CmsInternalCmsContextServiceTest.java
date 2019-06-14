@@ -24,9 +24,12 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.springframework.mock.web.MockHttpSession;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CmsInternalCmsContextServiceTest {
 
@@ -127,17 +130,71 @@ public class CmsInternalCmsContextServiceTest {
     }
 
     @Test
-    public void testInvalidateAttachedSessionContext() {
+    public void root_session_invalidation_invalidates_secondary_sessions() {
         CmsContextServiceImpl service = new CmsContextServiceImpl();
         MockHttpSession session1 = new MockHttpSession();
         CmsSessionContext ctx1 = service.create(session1);
         service.setData(ctx1, "foo", "bar");
 
         MockHttpSession session2 = new MockHttpSession();
+        service.attachSessionContext(ctx1.getId(), session2);
+
+        MockHttpSession session3 = new MockHttpSession();
+        service.attachSessionContext(ctx1.getId(), session3);
+
+        assertFalse(session2.isInvalid());
+
         CmsSessionContext ctx2 = service.attachSessionContext(ctx1.getId(), session2);
+        CmsSessionContext ctx3 = service.attachSessionContext(ctx1.getId(), session3);
 
         session1.invalidate();
+
+        assertTrue(session2.isInvalid());
+        assertTrue(session3.isInvalid());
+
+        assertNull(ctx1.getCmsContextServiceId());
+        assertNull(ctx1.get("foo"));
+
         assertNull(ctx2.getCmsContextServiceId());
-        assertNull(ctx2.get("bar"));
+        assertNull(ctx2.get("foo"));
+
+        assertNull(ctx3.getCmsContextServiceId());
+        assertNull(ctx3.get("foo"));
     }
+
+    @Test
+    public void secondary_session_invalidation_does_not_invalidate_other_sessions() {
+        CmsContextServiceImpl service = new CmsContextServiceImpl();
+        MockHttpSession session1 = new MockHttpSession();
+        CmsSessionContext ctx1 = service.create(session1);
+        service.setData(ctx1, "foo", "bar");
+
+        MockHttpSession session2 = new MockHttpSession();
+        service.attachSessionContext(ctx1.getId(), session2);
+
+        MockHttpSession session3 = new MockHttpSession();
+        service.attachSessionContext(ctx1.getId(), session3);
+
+        assertFalse(session2.isInvalid());
+
+        CmsSessionContext ctx2 = service.attachSessionContext(ctx1.getId(), session2);
+        CmsSessionContext ctx3 = service.attachSessionContext(ctx1.getId(), session3);
+
+        session2.invalidate();
+
+        assertTrue(session2.isInvalid());
+
+        assertFalse("root session should still be valid ", session1.isInvalid());
+        assertFalse("secondary session3 should still be valid ", session3.isInvalid());
+
+        assertNotNull(ctx1.getCmsContextServiceId());
+        assertNotNull(ctx1.get("foo"));
+
+        assertNotNull(ctx3.getCmsContextServiceId());
+        assertNotNull(ctx3.get("foo"));
+
+        assertNull(ctx2.getCmsContextServiceId());
+        assertNull(ctx2.get("foo"));
+    }
+
 }
