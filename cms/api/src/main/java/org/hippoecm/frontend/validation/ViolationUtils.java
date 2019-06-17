@@ -155,15 +155,6 @@ public class ViolationUtils {
         return null;
     }
 
-    /**
-     * Prepend all ModelPathElements of the provided Violations with the provided ModelPathElement
-     */
-    public static void prependModelPathElementToViolations(final Set<Violation> violations,
-                                                           final ModelPathElement modelPathElement) {
-        violations.forEach(violation -> violation.getDependentPaths().forEach(
-                modelPath -> modelPath.prependElement(modelPathElement)));
-    }
-
     public static class ViolationMessage {
 
         private final String message;

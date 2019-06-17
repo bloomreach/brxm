@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -33,7 +34,6 @@ import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
@@ -77,51 +77,56 @@ public class JcrTypeValidator implements ITypeValidator {
     @Override
     public Set<Violation> validate(final IModel<Node> model) throws ValidationException {
         final Set<Violation> violations = new LinkedHashSet<>();
-        validateFields(model, violations);
-        validateType(model, violations);
+        violations.addAll(validateFields(model));
+        violations.addAll(validateType(model));
         return violations;
     }
 
-    private void validateFields(final IModel<Node> model, final Set<Violation> violations) throws ValidationException {
+    private Set<Violation> validateFields(final IModel<Node> model) throws ValidationException {
         final Set<Violation> fieldsViolations = new LinkedHashSet<>();
         for (final JcrFieldValidator fieldValidator : fieldValidators) {
             fieldsViolations.addAll(fieldValidator.validate(model));
         }
 
         if (type.isType(HippoNodeType.NT_COMPOUND)) {
-            final Node node = model.getObject();
-            String name = field.getPath();
-            if ("*".equals(name)) {
-                try {
-                    name = node.getName();
-                } catch (final RepositoryException e) {
-                    throw new ValidationException("Could not resolve path for invalid value", e);
-                }
-            }
-            final int index;
+            final ModelPathElement modelPathElement = getModelPathElement(model, field);
+            fieldsViolations.forEach(violation -> violation.getDependentPaths().forEach(
+                    modelPath -> modelPath.prependElement(modelPathElement)));
+        }
+
+        return fieldsViolations;
+    }
+
+    private static ModelPathElement getModelPathElement(final IModel<Node> model, final IFieldDescriptor field) throws ValidationException {
+        final Node node = model.getObject();
+        String name = field.getPath();
+        if ("*".equals(name)) {
             try {
-                index = node.getIndex() - 1;
+                name = node.getName();
             } catch (final RepositoryException e) {
                 throw new ValidationException("Could not resolve path for invalid value", e);
             }
-
-            final ModelPathElement modelPathElement = new ModelPathElement(field, name, index);
-            ViolationUtils.prependModelPathElementToViolations(fieldsViolations, modelPathElement);
+        }
+        final int index;
+        try {
+            index = node.getIndex() - 1;
+        } catch (final RepositoryException e) {
+            throw new ValidationException("Could not resolve path for invalid value", e);
         }
 
-        violations.addAll(fieldsViolations);
+        return new ModelPathElement(field, name, index);
     }
 
-    private void validateType(final IModel<Node> model, final Set<Violation> violations) {
+    private Set<Violation> validateType(final IModel<Node> model) {
         final Set<String> validators = type.getValidators();
         if (validators.isEmpty()) {
-            return;
+            return Collections.emptySet();
         }
 
         final ValidationService service = HippoServiceRegistry.getService(ValidationService.class);
         if (service == null) {
             log.error("Failed to get ValidationService, cannot validate type '{}'", type.getName());
-            return;
+            return Collections.emptySet();
         }
 
         final Node node = model.getObject();
@@ -131,19 +136,22 @@ public class JcrTypeValidator implements ITypeValidator {
         } catch (RepositoryException e) {
             log.warn("Cannot create validation context for node '{}', cannot validate type '{}'",
                     JcrUtils.getNodePathQuietly(node), type.getName(), e);
-            return;
+            return Collections.emptySet();
         }
 
-        for (String validatorName : validators) {
+        final Set<Violation> typeViolations = new LinkedHashSet<>();
+        for (final String validatorName : validators) {
             final ValidatorInstance validator = service.getValidator(validatorName);
             if (validator == null) {
                 log.warn("Ignoring unknown validator '{}'", validatorName);
             } else {
                 validator.validate(context, node)
                            .map(violation -> this.convertViolation(violation, model))
-                           .ifPresent(violations::add);
+                           .ifPresent(typeViolations::add);
             }
         }
+
+        return typeViolations;
     }
 
     private ValueContext createTypeContext(final Node node) throws RepositoryException {

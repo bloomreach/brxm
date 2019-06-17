@@ -37,6 +37,10 @@ public final class ModelPath implements IDetachable {
         return elements;
     }
 
+    public void prependElement(final ModelPathElement modelPathElement) {
+        elements = ArrayUtils.insert(0, elements, modelPathElement);
+    }
+
     @Override
     public String toString() {
         return Arrays.stream(elements)
@@ -64,9 +68,4 @@ public final class ModelPath implements IDetachable {
     public int hashCode() {
         return Arrays.hashCode(getElements());
     }
-
-    void prependElement(final ModelPathElement modelPathElement) {
-        elements = ArrayUtils.insert(0, elements, modelPathElement);
-    }
-
 }
