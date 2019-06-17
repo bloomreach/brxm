@@ -85,7 +85,8 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
             }
 
             // delegate to the actual content block's validator
-            final JcrTypeValidator validator = getTypeValidator(contentBlockDescriptor, validatorService);
+            final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+            final JcrTypeValidator validator = getTypeValidator(fieldDescriptor, contentBlockDescriptor, validatorService);
             if (validator == null) {
                 return Collections.emptySet();
             }
@@ -129,10 +130,11 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
         return null;
     }
 
-    private static JcrTypeValidator getTypeValidator(final ITypeDescriptor contentBlockDescriptor,
+    private static JcrTypeValidator getTypeValidator(final IFieldDescriptor fieldDescriptor,
+                                                     final ITypeDescriptor contentBlockDescriptor,
                                                      final ValidatorService validatorService) {
         try {
-            return new JcrTypeValidator(contentBlockDescriptor, validatorService);
+            return new JcrTypeValidator(fieldDescriptor, contentBlockDescriptor, validatorService);
         } catch (final StoreException e) {
             log.warn("StoreException occurred during locating the correct jcr type", e);
         }
