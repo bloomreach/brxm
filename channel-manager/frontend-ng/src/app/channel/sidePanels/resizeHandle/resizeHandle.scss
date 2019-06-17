@@ -17,28 +17,33 @@
 @import 'variables';
 
 resize-handle {
+  border-color: $grey-200;
   height: 100%;
   position: absolute;
+  transition: border-color ease .2s;
   z-index: 20000;
 
   &:hover {
     cursor: col-resize;
   }
 
+  &:active, // keeps the highlighted border while dragging the handle
+  &:hover {
+    border-color: $grey-600;
+  }
+
   &.left {
-    width: 20px;
+    border-left-style: solid;
+    border-left-width: $side-panel-border-width;
+    left: 0;
+    width: 10px;
   }
 
   &.right {
-    border-right: $left-sidepanel-right-border-width solid $grey-200;
+    border-right-style: solid;
+    border-right-width: $side-panel-border-width;
     right: 0;
-    transition: border-color ease .2s;
     width: 3px;
-
-    &:active, // keeps the blue border while dragging the handle
-    &:hover {
-      border-color: $blue-500;
-    }
   }
 }
 

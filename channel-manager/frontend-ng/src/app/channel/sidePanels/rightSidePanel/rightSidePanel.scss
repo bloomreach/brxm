@@ -14,20 +14,9 @@
 @import 'variables';
 
 right-side-panel {
-  &.side-panel-open {
-    md-sidenav {
-      border-left: 1px solid $grey-200;
-      margin-left: auto;
-    }
-
-    &.side-panel-full-screen md-sidenav {
-      border-left: 0;
-    }
-
-    &.side-panel-full-screen-add-active md-sidenav,
-    &.side-panel-full-screen-remove-active md-sidenav {
-      border-left: 1px solid $grey-200;
-    }
+  &.side-panel-open md-sidenav {
+    margin-left: auto;
+    padding-left: $side-panel-border-width;
   }
 
   .btn-full-screen,
