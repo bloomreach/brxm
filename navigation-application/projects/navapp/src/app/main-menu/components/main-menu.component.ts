@@ -110,7 +110,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   selectMenuItem(item: MenuItem): void {
     this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
-      this.menuStateService.setActiveItemAndNavigate(item);
+      this.menuStateService.activateMenuItem(item.appId, item.appPath);
       return;
     }
 

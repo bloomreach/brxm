@@ -37,6 +37,7 @@ describe('AppComponent', () => {
         AppRoutingModule,
         MainMenuModule,
         ClientAppModule,
+        TopPanelModule,
         HttpClientModule,
         SharedModule,
         TopPanelModule,
