@@ -35,6 +35,8 @@ public interface AppSettings {
 
     String getContextPath();
 
+    NavConfigResource getSitesResource();
+
     List<NavConfigResource> getNavConfigResources();
 
 }

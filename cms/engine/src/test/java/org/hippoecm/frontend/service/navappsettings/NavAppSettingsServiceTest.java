@@ -51,6 +51,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.repository.security.User;
 
+import static java.util.Collections.emptySet;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
@@ -113,8 +114,9 @@ public class NavAppSettingsServiceTest {
         replay(user);
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.SITE_CONFIG_RESOURCE)).andReturn(null);
         expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
-        expect(config.getPluginConfigSet()).andReturn(Collections.emptySet());
+        expect(config.getPluginConfigSet()).andReturn(emptySet());
         replay(config);
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
@@ -164,6 +166,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.SITE_CONFIG_RESOURCE)).andReturn(null);
         expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
         expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1, cfg2).collect(Collectors.toSet()));
         expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
@@ -182,12 +185,31 @@ public class NavAppSettingsServiceTest {
 
     }
 
+    @Test
+    public void loads_sites_resource_from_config() {
+
+        reset(config);
+        expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
+        expect(config.getPluginConfigSet()).andReturn(emptySet());
+        expect(config.getPluginConfig(NavAppSettingsService.SITE_CONFIG_RESOURCE)).andReturn(config);
+        expect(config.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
+        expect(config.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("sites-url");
+        replay(config, cfg1, cfg2);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        final NavConfigResource sitesResource = navAppSettings.getAppSettings().getSitesResource();
+        assertThat(sitesResource.getResourceType(), is(ResourceType.IFRAME));
+        assertThat(sitesResource.getUrl(), is(URI.create("sites-url")));
+
+    }
 
     @Test
     public void throws_on_invalid_navcfg_resource_uri() {
 
         reset(config);
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.SITE_CONFIG_RESOURCE)).andReturn(null);
         expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
         expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(Collectors.toSet()));
         expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
@@ -208,6 +230,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
+        expect(config.getPluginConfig(NavAppSettingsService.SITE_CONFIG_RESOURCE)).andReturn(null);
         expect(config.getPluginConfig(NavAppSettingsService.NAV_CONFIG_RESOURCES)).andReturn(config);
         expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(Collectors.toSet()));
         expect(cfg1.getName()).andStubReturn("cfg1");
