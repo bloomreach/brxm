@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.validator;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.validation.FeedbackPriority;
-import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ValidationScope;
 
 public interface IFeedbackLogger {
 
@@ -27,7 +27,7 @@ public interface IFeedbackLogger {
      * @param message description of the warning
      * @param scope   the level this warning applies to
      */
-    void warn(IModel<String> message, FeedbackScope scope);
+    void warn(IModel<String> message, ValidationScope scope);
 
     /**
      * Log a scoped Feedback error.
@@ -35,7 +35,7 @@ public interface IFeedbackLogger {
      * @param message description of the error
      * @param scope   the level this error applies to
      */
-    void error(IModel<String> message, FeedbackScope scope);
+    void error(IModel<String> message, ValidationScope scope);
 
     /**
      * Log a scoped Feedback error with priority.
@@ -44,6 +44,6 @@ public interface IFeedbackLogger {
      * @param scope    the level this error applies to
      * @param priority the {@link FeedbackPriority} of the error
      */
-    void error(IModel<String> message, FeedbackScope scope, FeedbackPriority priority);
+    void error(IModel<String> message, ValidationScope scope, FeedbackPriority priority);
 
 }

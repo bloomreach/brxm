@@ -30,7 +30,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -140,12 +140,12 @@ public class CmsValidatorAdapter implements ICmsValidator {
         return Sets.newHashSet(fieldValidator.newValueViolation(valueModel, message, getScope(fieldValidator)));
     }
 
-    private static FeedbackScope getScope(final IFieldValidator fieldValidator) {
+    private static ValidationScope getScope(final IFieldValidator fieldValidator) {
         final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
         final ITypeDescriptor typeDescriptor = fieldDescriptor.getTypeDescriptor();
         return typeDescriptor.isType(HippoNodeType.NT_COMPOUND)
-                ? FeedbackScope.COMPOUND
-                : FeedbackScope.FIELD;
+                ? ValidationScope.COMPOUND
+                : ValidationScope.FIELD;
     }
 
 }

@@ -71,11 +71,11 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
             final HtmlProcessorService htmlProcessorService = HippoServiceRegistry.getService(HtmlProcessorService.class);
             if (!htmlProcessorService.isVisible(value)) {
                 final ClassResourceModel message = new ClassResourceModel(ValidatorMessages.HTML_IS_EMPTY, ValidatorMessages.class);
-                violations.add(fieldValidator.newValueViolation(childModel, message, getFeedbackScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, message, getValidationScope()));
             }
         } else {
             if (StringUtils.isBlank(value)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
             }
         }
         return violations;
