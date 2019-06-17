@@ -44,6 +44,7 @@ public final class ModelPath implements IDetachable {
                 .collect(Collectors.joining("/"));
     }
 
+    @Override
     public void detach() {
         Arrays.stream(elements).forEach(ModelPathElement::detach);
     }
@@ -68,7 +69,4 @@ public final class ModelPath implements IDetachable {
         elements = ArrayUtils.insert(0, elements, modelPathElement);
     }
 
-    void replaceLastElement(final ModelPathElement modelPathElement) {
-        elements[elements.length -1] = modelPathElement;
-    }
 }
