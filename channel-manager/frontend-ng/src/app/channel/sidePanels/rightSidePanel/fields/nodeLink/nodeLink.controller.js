@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class nodeLinkController {
+export default class NodeLinkController {
   constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
@@ -61,18 +61,18 @@ class nodeLinkController {
   // of the link picker to flicker while tabbing; it *can* trigger a blur event, followed by
   // a immediate focus event, in which case the blue bottom border will be removed and added
   // again, resulting in annoying flickering of the UI.
-  blur($event) {
+  onBlur($event) {
     if (this.mdInputContainer) {
       this.mdInputContainer.setFocused(false);
     }
 
     this.blurPromise = this.$timeout(() => {
       this.hasFocus = false;
-      this.onBlur($event);
+      this.$element.triggerHandler($event);
     }, 10);
   }
 
-  focus($event) {
+  onFocus($event) {
     if (this.mdInputContainer) {
       this.mdInputContainer.setFocused(true);
     }
@@ -81,7 +81,7 @@ class nodeLinkController {
       this.$timeout.cancel(this.blurPromise);
     }
     this.hasFocus = true;
-    this.onFocus($event);
+    this.$element.triggerHandler($event);
   }
 
   openLinkPicker() {
@@ -112,5 +112,3 @@ class nodeLinkController {
     this._focusSelectButton();
   }
 }
-
-export default nodeLinkController;

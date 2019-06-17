@@ -116,7 +116,7 @@
     display-name="componentField.displayValue"
     ng-required="::componentField.required"
     name="{{ ::componentField.name }}"
-    on-blur="$ctrl.blur(componentField)"
+    ng-blur="$ctrl.blur(componentField)"
     ng-change="$ctrl.valueChanged()"
     ng-model="componentField.value"
   >

@@ -206,8 +206,8 @@
                name="{{::$ctrl.getFieldName($index)}}"
                ng-model="fieldValue.value"
                ng-change="$ctrl.valueChanged()"
-               on-focus="$ctrl.focusPrimitive($event)"
-               on-blur="$ctrl.blurPrimitive($event)">
+               ng-focus="$ctrl.focusPrimitive($event)"
+               ng-blur="$ctrl.blurPrimitive($event)">
     </node-link>
 
     <openui-string-field ng-switch-when="OPEN_UI"

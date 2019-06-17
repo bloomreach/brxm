@@ -24,8 +24,6 @@ describe('nodeLinkController', () => {
   let config;
   let mdInputContainer;
   let ngModel;
-  let onBlur;
-  let onFocus;
 
   const $element = angular.element('<div></div>');
 
@@ -56,9 +54,6 @@ describe('nodeLinkController', () => {
       linkpicker: 'link-picker-config',
     };
 
-    onBlur = jasmine.createSpy('onBlur');
-    onFocus = jasmine.createSpy('onFocus');
-
     mdInputContainer = jasmine.createSpyObj('mdInputContainer', [
       'setFocused',
       'setInvalid',
@@ -76,8 +71,6 @@ describe('nodeLinkController', () => {
       mdInputContainer,
       name: 'TestField',
       ngModel,
-      onBlur,
-      onFocus,
     });
   });
 
@@ -166,40 +159,42 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on parent container', () => {
-      $ctrl.focus('event');
+      $ctrl.onFocus('event');
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
     });
 
     it('emits focus event and set hasFocus to true', () => {
+      spyOn($element, 'triggerHandler');
       const event = {};
-      $ctrl.focus(event);
+      $ctrl.onFocus(event);
 
       expect($ctrl.hasFocus).toBe(true);
-      expect(onFocus).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
     });
 
     it('blurs parent container', () => {
-      $ctrl.blur('event');
+      $ctrl.onBlur('event');
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
 
     it('emits blur event and set hasFocus to false after timeout', () => {
+      spyOn($element, 'triggerHandler');
       $ctrl.hasFocus = true;
       const event = {};
-      $ctrl.blur(event);
+      $ctrl.onBlur(event);
 
       expect($ctrl.hasFocus).toBe(true);
 
       $timeout.flush();
-      expect(onBlur).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
       expect($ctrl.hasFocus).toBe(false);
     });
 
     it('cancels the timeout if a focus event is fired right after the blur event', () => {
       spyOn($timeout, 'cancel').and.callThrough();
       $ctrl.hasFocus = true;
-      $ctrl.blur();
-      $ctrl.focus();
+      $ctrl.onBlur('blur');
+      $ctrl.onFocus('focus');
       $timeout.flush();
 
       expect($timeout.cancel).toHaveBeenCalled();
