@@ -19,16 +19,26 @@
 resize-handle {
   height: 100%;
   position: absolute;
-  width: 20px;
   z-index: 20000;
 
   &:hover {
     cursor: col-resize;
   }
 
+  &.left {
+    width: 20px;
+  }
+
   &.right {
+    border-right: $left-sidepanel-right-border-width solid $grey-200;
     right: 0;
-    width: 5px;
+    transition: border-color ease .2s;
+    width: 3px;
+
+    &:active, // keeps the blue border while dragging the handle
+    &:hover {
+      border-color: $blue-500;
+    }
   }
 }
 
