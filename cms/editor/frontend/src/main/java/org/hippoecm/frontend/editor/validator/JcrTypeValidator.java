@@ -88,7 +88,7 @@ public class JcrTypeValidator implements ITypeValidator {
             fieldsViolations.addAll(fieldValidator.validate(model));
         }
 
-        if (type.isType(HippoNodeType.NT_COMPOUND)) {
+        if (!type.isType(HippoNodeType.NT_DOCUMENT)) {
             final ModelPathElement modelPathElement = getModelPathElement(model, field);
             fieldsViolations.forEach(violation -> violation.getDependentPaths().forEach(
                     modelPath -> modelPath.prependElement(modelPathElement)));

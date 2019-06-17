@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 
@@ -97,7 +99,7 @@ public class ValidationPluginTest extends PluginTest {
         start(config);
         start(validator);
         start(registry);
-        
+
         Node content = root.getNode("test").addNode("content", "test:validator");
         validate(content);
 
@@ -159,15 +161,15 @@ public class ValidationPluginTest extends PluginTest {
             assertEquals(1, paths.size());
 
             ModelPathElement[] elements = paths.iterator().next().getElements();
-            assertEquals(2, elements.length);
-            jcrPaths.add(elements[0].getName() + '[' + (elements[0].getIndex() + 1) + ']' + '/' + elements[1].getName()
-                    + '[' + (elements[1].getIndex() + 1) + ']');
+            jcrPaths.add(Arrays.stream(elements).map(element -> element.getName() + "[" + (element.getIndex() + 1) + "]").collect(
+                    Collectors.joining("/")));
+            assertEquals(3, elements.length);
         }
 
-        assertTrue(jcrPaths.contains("test:single[1]/test:mandatory[1]"));
-        assertTrue(jcrPaths.contains("test:single[1]/test:multiple[1]"));
-        assertTrue(jcrPaths.contains("test:multiple[1]/test:mandatory[1]"));
-        assertTrue(jcrPaths.contains("test:multiple[1]/test:multiple[1]"));
+        assertTrue(jcrPaths.contains("content[1]/test:single[1]/test:mandatory[1]"));
+        assertTrue(jcrPaths.contains("content[1]/test:single[1]/test:multiple[1]"));
+        assertTrue(jcrPaths.contains("content[1]/test:multiple[1]/test:mandatory[1]"));
+        assertTrue(jcrPaths.contains("content[1]/test:multiple[1]/test:multiple[1]"));
     }
 
     @Test
