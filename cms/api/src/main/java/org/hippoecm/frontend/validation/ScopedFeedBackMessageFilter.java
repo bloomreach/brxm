@@ -24,16 +24,16 @@ import org.apache.wicket.feedback.FeedbackMessage;
  */
 public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter {
 
-    private FeedbackScope feedbackScope;
+    private ValidationScope validationScope;
 
     /**
-     * Constructor with default scope of {@code FeedbackScope.DOCUMENT}
+     * Constructor with default scope of {@code ValidationScope.DOCUMENT}
      *
      * @param container The container that message reporters must be a child of
      */
     public ScopedFeedBackMessageFilter(final MarkupContainer container) {
         super(container);
-        feedbackScope = FeedbackScope.DOCUMENT;
+        validationScope = ValidationScope.DOCUMENT;
     }
 
     /**
@@ -42,9 +42,9 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
      * @param container The container that message reporters must be a child of
      * @param scope     The scope to filter feedback messages by.
      */
-    public ScopedFeedBackMessageFilter(final MarkupContainer container, final FeedbackScope scope) {
+    public ScopedFeedBackMessageFilter(final MarkupContainer container, final ValidationScope scope) {
         this(container);
-        feedbackScope = scope;
+        validationScope = scope;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
         final boolean isInContainer = super.accept(message);
         if (isInContainer && message instanceof ScopedFeedBackMessage) {
             ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(this.feedbackScope);
+            return scopedMessage.getScope().equals(this.validationScope);
         }
         return isInContainer;
     }

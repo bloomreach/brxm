@@ -22,28 +22,28 @@ import org.apache.wicket.feedback.FeedbackMessage;
 
 public class ScopedFeedBackMessage extends FeedbackMessage {
 
-    private FeedbackScope scope;
+    private ValidationScope scope;
     private FeedbackPriority feedbackPriority = FeedbackPriority.NORMAL;
 
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level) {
         super(reporter, message, level);
-        this.scope = FeedbackScope.DOCUMENT;
+        this.scope = ValidationScope.DOCUMENT;
     }
 
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
-                                 final FeedbackScope scope) {
+                                 final ValidationScope scope) {
         super(reporter, message, level);
         this.scope = scope;
     }
 
-    public FeedbackScope getScope() {
+    public ValidationScope getScope() {
         return scope;
     }
 
     public FeedbackPriority getFeedbackPriority() {
         return feedbackPriority;
     }
-    
+
     public void setFeedbackPriority(final FeedbackPriority feedbackPriority) {
         this.feedbackPriority = feedbackPriority;
     }

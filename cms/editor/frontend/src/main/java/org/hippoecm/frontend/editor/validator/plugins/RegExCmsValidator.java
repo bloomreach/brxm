@@ -30,7 +30,7 @@ import org.onehippo.cms.services.validation.validator.RegExpValidator;
 
 /**
  * Validator that validates if the given value matches the configured regular expression.
- * 
+ *
  * @deprecated Use the {@link RegExpValidator} instead.
  */
 @Deprecated
@@ -66,7 +66,7 @@ public class RegExCmsValidator extends AbstractCmsValidator {
         final Set<Violation> violations = new HashSet<>();
         final String value = (String) childModel.getObject();
         if (!pattern.matcher(value).find()) {
-            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
+            violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
         }
         return violations;
     }

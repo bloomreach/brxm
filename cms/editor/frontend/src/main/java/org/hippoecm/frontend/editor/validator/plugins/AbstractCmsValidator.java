@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
-import java.util.Locale;
-
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
@@ -25,7 +22,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.ICmsValidator;
-import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
@@ -33,7 +30,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
     private final static String SCOPE = "scope";
 
     private final String name;
-    private FeedbackScope feedbackScope = FeedbackScope.DOCUMENT;
+    private ValidationScope validationScope = ValidationScope.DOCUMENT;
 
     public AbstractCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -42,7 +39,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
 
         if (config.containsKey(SCOPE)) {
-            feedbackScope = (ValidatorUtils.getFeedbackScope(config.getString(SCOPE)));
+            validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
         }
     }
 
@@ -50,8 +47,8 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return name;
     }
 
-    protected FeedbackScope getFeedbackScope() {
-        return feedbackScope;
+    protected ValidationScope getValidationScope() {
+        return validationScope;
     }
 
     /**

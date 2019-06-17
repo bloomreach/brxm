@@ -36,7 +36,7 @@ public interface IFieldValidator extends IClusterable {
      * @param childModel
      * @param key
      * @throws ValidationException
-     * @deprecated : use the {@link #newValueViolation(IModel, IModel, FeedbackScope)} signature instead
+     * @deprecated : use the {@link #newValueViolation(IModel, IModel, ValidationScope)} signature instead
      */
     @Deprecated
     Violation newValueViolation(IModel childModel, String key) throws ValidationException;
@@ -47,7 +47,7 @@ public interface IFieldValidator extends IClusterable {
      * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
      * @param message    model containing the message to be shown to the user
      * @throws ValidationException when information to validate is not available
-     * @deprecated use {@link #newValueViolation(IModel, IModel, FeedbackScope)} instead
+     * @deprecated use {@link #newValueViolation(IModel, IModel, ValidationScope)} instead
      */
     @Deprecated
     Violation newValueViolation(IModel childModel, IModel<String> message) throws ValidationException;
@@ -60,10 +60,10 @@ public interface IFieldValidator extends IClusterable {
      * @param scope      to indicate the level the validation applies to
      * @throws ValidationException when information to validate is not available
      */
-    default Violation newValueViolation(IModel childModel, IModel<String> message, FeedbackScope scope)
+    default Violation newValueViolation(IModel childModel, IModel<String> message, ValidationScope scope)
             throws ValidationException {
         final Violation violation = newValueViolation(childModel, message);
-        violation.setFeedbackScope(scope);
+        violation.setValidationScope(scope);
         return violation;
     }
 }

@@ -36,7 +36,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
@@ -149,7 +149,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         }
         final Violation defaultViolation = newViolation(new ModelPathElement(field, field.getPath(), 0),
                 getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                FeedbackScope.FIELD);
+                ValidationScope.FIELD);
         return Collections.singleton(defaultViolation);
     }
 
@@ -173,12 +173,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message)
             throws ValidationException {
-        return newValueViolation(childModel, message, FeedbackScope.FIELD);
+        return newValueViolation(childModel, message, ValidationScope.FIELD);
     }
 
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message,
-                                       final FeedbackScope scope) throws ValidationException {
+                                       final ValidationScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
     }
 
@@ -215,13 +215,13 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     }
 
     public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters,
-                                  final FeedbackScope scope) {
+                                  final ValidationScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, getMessage(message, parameters), scope);
     }
 
     public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
-                                  final FeedbackScope scope) {
+                                  final ValidationScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, messageModel, scope);
     }
