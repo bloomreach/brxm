@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.validator;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -64,16 +63,16 @@ public class ValidationPluginTest extends PluginTest {
     IPluginConfig validator;
     IPluginConfig registry;
 
-    private ModelReference modelRef;
+    private ModelReference<Node> modelRef;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        build(session, content);
+        build(content, session);
 
-        JcrNodeModel nodeModel = new JcrNodeModel("/test/content");
-        modelRef = new ModelReference("service.model", nodeModel);
+        final JcrNodeModel nodeModel = new JcrNodeModel("/test/content");
+        modelRef = new ModelReference<>("service.model", nodeModel);
         modelRef.init(context);
 
         config = new JcrPluginConfig(new JcrNodeModel("/test/plugin"));
@@ -100,10 +99,10 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
 
-        Node content = root.getNode("test").addNode("content", "test:validator");
+        final Node content = root.getNode("test").addNode("content", "test:validator");
         validate(content);
 
-        Set<Violation> violations = getViolations();
+        final Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
     }
 
@@ -113,28 +112,26 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
 
-        Node content = root.getNode("test").addNode("content", "test:container");
+        final Node content = root.getNode("test").addNode("content", "test:container");
         validate(content);
 
-        Set<Violation> violations = getViolations();
+        final Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
 
-        Set<String> jcrPaths = getJcrPaths(violations);
+        final Set<String> jcrPaths = getJcrPaths(violations);
         assertTrue(jcrPaths.contains("test:single"));
         assertTrue(jcrPaths.contains("test:multiple"));
     }
 
-    private Set<String> getJcrPaths(Set<Violation> violations) {
-        Set<String> jcrPaths = new TreeSet<String>();
-        Iterator<Violation> iter = violations.iterator();
-        while (iter.hasNext()) {
-            Violation violation = iter.next();
-            Set<ModelPath> paths = violation.getDependentPaths();
+    private Set<String> getJcrPaths(final Set<Violation> violations) {
+        final Set<String> jcrPaths = new TreeSet<>();
+        for (final Violation violation : violations) {
+            final Set<ModelPath> paths = violation.getDependentPaths();
             assertEquals(1, paths.size());
 
-            ModelPathElement[] elements = paths.iterator().next().getElements();
-            assertEquals(1, elements.length);
-            jcrPaths.add(elements[0].getField().getPath());
+            final ModelPathElement[] elements = paths.iterator().next().getElements();
+            assertEquals(2, elements.length);
+            jcrPaths.add(elements[1].getField().getPath());
         }
         return jcrPaths;
     }
@@ -145,23 +142,22 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
 
-        Node content = root.getNode("test").addNode("content", "test:container");
+        final Node content = root.getNode("test").addNode("content", "test:container");
         content.addNode("test:single", "test:validator");
         content.addNode("test:multiple", "test:validator");
         validate(content);
 
-        Set<Violation> violations = getViolations();
+        final Set<Violation> violations = getViolations();
         assertEquals(4, violations.size());
 
-        Set<String> jcrPaths = new TreeSet<String>();
-        Iterator<Violation> iter = violations.iterator();
-        while (iter.hasNext()) {
-            Violation violation = iter.next();
-            Set<ModelPath> paths = violation.getDependentPaths();
+        final Set<String> jcrPaths = new TreeSet<>();
+        for (final Violation violation : violations) {
+            final Set<ModelPath> paths = violation.getDependentPaths();
             assertEquals(1, paths.size());
 
-            ModelPathElement[] elements = paths.iterator().next().getElements();
-            jcrPaths.add(Arrays.stream(elements).map(element -> element.getName() + "[" + (element.getIndex() + 1) + "]").collect(
+            final ModelPathElement[] elements = paths.iterator().next().getElements();
+            jcrPaths.add(Arrays.stream(elements).map(
+                    element -> element.getName() + "[" + (element.getIndex() + 1) + "]").collect(
                     Collectors.joining("/")));
             assertEquals(3, elements.length);
         }
@@ -178,12 +174,12 @@ public class ValidationPluginTest extends PluginTest {
         start(validator);
         start(registry);
 
-        Node content = root.getNode("test").addNode("content", "test:container");
-        Node uncascaded = content.addNode("test:uncascaded", "test:uncascaded");
+        final Node content = root.getNode("test").addNode("content", "test:container");
+        final Node uncascaded = content.addNode("test:uncascaded", "test:uncascaded");
         uncascaded.setProperty("test:property", "");
         validate(content);
 
-        Set<Violation> violations = getViolations();
+        final Set<Violation> violations = getViolations();
         assertEquals(2, violations.size());
     }
 }
