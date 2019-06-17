@@ -67,7 +67,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         if (fieldType.isNode()) {
             typeValidator = fieldType.equals(container.getType())
                     ? container
-                    : new JcrTypeValidator(fieldType, validatorService);
+                    : new JcrTypeValidator(field, fieldType, validatorService);
         }
 
         if (validatorService != null) {

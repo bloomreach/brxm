@@ -51,15 +51,17 @@ public class JcrTypeValidator implements ITypeValidator {
     private static final Logger log = LoggerFactory.getLogger(JcrTypeValidator.class);
 
     private final Set<JcrFieldValidator> fieldValidators = new LinkedHashSet<>();
+    private final IFieldDescriptor field;
     private final ITypeDescriptor type;
     private final ValidatorService validatorService;
 
-    public JcrTypeValidator(final ITypeDescriptor type, final ValidatorService validatorService) throws StoreException {
+    public JcrTypeValidator(final IFieldDescriptor field, final ITypeDescriptor type, final ValidatorService validatorService) throws StoreException {
+        this.field = field;
         this.type = type;
         this.validatorService = validatorService;
 
-        for (final IFieldDescriptor field : type.getFields().values()) {
-            fieldValidators.add(new JcrFieldValidator(field, this));
+        for (final IFieldDescriptor fieldDescriptor : type.getFields().values()) {
+            fieldValidators.add(new JcrFieldValidator(fieldDescriptor, this));
         }
     }
 
@@ -140,10 +142,9 @@ public class JcrTypeValidator implements ITypeValidator {
         final Node node = model.getObject();
 
         try {
-            IFieldDescriptor fieldDescriptor = new JavaFieldDescriptor(type, node.getName());
-            JcrFieldValidator fieldValidator = new JcrFieldValidator(fieldDescriptor, this);
+            final JcrFieldValidator fieldValidator = new JcrFieldValidator(field, this);
             return fieldValidator.newValueViolation(model, messageModel, feedbackScope);
-        } catch (RepositoryException | StoreException | ValidationException e) {
+        } catch (StoreException | ValidationException e) {
             log.warn("Failed to create violation after validating node '{}'", JcrUtils.getNodePathQuietly(node), e);
             return null;
         }
