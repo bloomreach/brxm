@@ -202,4 +202,8 @@ public interface ContainerConstants {
 
 
     String FORWARD_RECURSION_ERROR = ContainerConstants.class.getName() + ".forwardRecursionError";
+
+    String CMSSESSIONCONTEXT_BINDING_PATH = "_cmssessioncontext";
+
+
 }

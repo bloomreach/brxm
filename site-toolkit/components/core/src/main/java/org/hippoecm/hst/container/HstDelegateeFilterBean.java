@@ -74,6 +74,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
@@ -218,12 +221,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final String renderingHost = getRenderingHost(containerRequest);
 
-            if (requestComesFromCms(vHosts, renderingHost, req)) {
-                if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
-                    if (!CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
-                        return;
-                    }
+            if (isCmsSessionContextBindingRequest(req)) {
+                if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
+                    log.info("Already authenticated");
+                    ((HttpServletResponse) response).setStatus(SC_NO_CONTENT);
+                    return;
                 }
+
+                CmsSSOAuthenticationHandler.authenticate(containerRequest, res);
+                return;
+
             }
 
 
@@ -324,7 +331,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, renderingHost, req)) {
-
+                            if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
+                                ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
+                                log.warn("Attempted Channel Manager preview request without being authenticated");
+                                return;
+                            }
                             requestContext.setChannelManagerPreviewRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
@@ -634,6 +645,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return false;
     }
 
+
+    private boolean isCmsSessionContextBindingRequest(final HttpServletRequest req) {
+        if (req.getServletPath().isEmpty()) {
+            return false;
+        }
+        if(req.getServletPath().substring(1).equals(CMSSESSIONCONTEXT_BINDING_PATH)) {
+            return true;
+        }
+        return false;
+    }
+
     // returns true if the request comes from cms
     private boolean requestComesFromCms(VirtualHosts vHosts, final String renderingHost, final HttpServletRequest req) {
         if (renderingHost == null) {
@@ -649,7 +671,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             return true;
         }
         return false;
-
     }
 
     /**
