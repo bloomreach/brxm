@@ -15,7 +15,7 @@
  */
 
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+import { Injectable, RendererFactory2 } from '@angular/core';
 import {
   ChildConnectConfig,
   connectToChild,
@@ -31,8 +31,8 @@ import { NavAppSettingsService } from './navapp-settings.service';
   providedIn: 'root',
 })
 export class NavConfigService {
-  private readonly hostElement: HTMLElement;
-  private readonly renderer: Renderer2;
+  private hostElement = document.body;
+  private renderer = this.rendererFactory.createRenderer(undefined, undefined);
 
   private navItems = new BehaviorSubject<NavItem[]>([]);
 
@@ -40,10 +40,7 @@ export class NavConfigService {
     private http: HttpClient,
     private navAppSettings: NavAppSettingsService,
     private rendererFactory: RendererFactory2,
-  ) {
-    this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
-    this.hostElement = document.body;
-  }
+  ) {}
 
   get navItems$(): Observable<NavItem[]> {
     return this.navItems.asObservable().pipe(filter(items => items.length > 0));
