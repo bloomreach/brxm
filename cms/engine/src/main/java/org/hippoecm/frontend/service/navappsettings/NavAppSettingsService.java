@@ -49,6 +49,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
+    static final String SITE_CONFIG_RESOURCE = "siteConfigResource";
+
     static final String NAV_CONFIG_RESOURCES = "navConfigResources";
     static final String RESOURCE_URL = "resource.url";
     static final String RESOURCE_TYPE = "resource.type";
@@ -141,6 +143,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final URI brXmLocation = URI.create(cmsLocation);
         final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
+
+        final NavConfigResource siteConfigResource = readSiteConfigResource();
         final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation);
 
         return new AppSettings() {
@@ -148,6 +152,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public URI getBrXmLocation() {
                 return brXmLocation;
+            }
+
+            @Override
+            public NavConfigResource getSitesResource() {
+                return siteConfigResource;
             }
 
             @Override
@@ -165,6 +174,15 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
                 return navConfigResources;
             }
         };
+    }
+
+    private NavConfigResource readSiteConfigResource() {
+        final IPluginConfig pluginConfig = getPluginConfig();
+        final IPluginConfig siteConfigResource = pluginConfig.getPluginConfig(SITE_CONFIG_RESOURCE);
+        if (siteConfigResource != null) {
+            return readResource(siteConfigResource);
+        }
+        return null;
     }
 
     private List<NavConfigResource> readNavConfigResources(String cmsLocation) {
