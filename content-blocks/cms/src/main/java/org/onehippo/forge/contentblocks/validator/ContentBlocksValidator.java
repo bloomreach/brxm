@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
-import org.hippoecm.frontend.editor.validator.JcrFieldValidator;
 import org.hippoecm.frontend.editor.validator.JcrTypeValidator;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.editor.validator.plugins.AbstractCmsValidator;
@@ -84,31 +83,15 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
             }
 
             // delegate to the actual content block's validator
-            final JcrTypeValidator validator = getTypeValidator(contentBlockDescriptor, validatorService);
+            final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
+            final JcrTypeValidator validator = getTypeValidator(fieldDescriptor, contentBlockDescriptor, validatorService);
             if (validator == null) {
                 return Collections.emptySet();
             }
 
-            final Set<Violation> violations = validator.validate(nodeModel);
-
-            // correct node index on behalf of multiples (which content blocks are)
-            final int index = getModelPathIndex(contentBlockNode);
-
-            // Correct the paths of the violations, that are based on the type only, by prepending with the content
-            // blocks compound path.
-            final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
-            return JcrFieldValidator.prependFieldPathToViolations(violations, fieldDescriptor,
-                    fieldDescriptor.getPath(), index);
+            return validator.validate(nodeModel);
         } finally {
             jcrTypeLocator.detach();
-        }
-    }
-
-    private int getModelPathIndex(final Node contentBlockNode) throws ValidationException {
-        try {
-            return contentBlockNode.getIndex() - 1;
-        } catch (final RepositoryException e) {
-            throw new ValidationException("Could not get index for node", e);
         }
     }
 
@@ -127,10 +110,11 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
         return null;
     }
 
-    private static JcrTypeValidator getTypeValidator(final ITypeDescriptor contentBlockDescriptor,
+    private static JcrTypeValidator getTypeValidator(final IFieldDescriptor fieldDescriptor,
+                                                     final ITypeDescriptor contentBlockDescriptor,
                                                      final ValidatorService validatorService) {
         try {
-            return new JcrTypeValidator(contentBlockDescriptor, validatorService);
+            return new JcrTypeValidator(fieldDescriptor, contentBlockDescriptor, validatorService);
         } catch (final StoreException e) {
             log.warn("StoreException occurred during locating the correct jcr type", e);
         }
