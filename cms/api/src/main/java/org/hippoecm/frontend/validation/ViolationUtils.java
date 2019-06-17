@@ -156,30 +156,12 @@ public class ViolationUtils {
     }
 
     /**
-     * Replace the provided violations by new violations that have the path element of the provided fieldDescriptor
-     * in them, prepending the existing path element(s).
+     * Prepend all ModelPathElements of the provided Violations with the provided ModelPathElement
      */
-    public static Set<Violation> prependFieldPathToViolations(final Set<Violation> violations, final ModelPathElement modelPathElement) {
-        violations.forEach(violation -> violation.getDependentPaths().forEach(modelPath -> {
-            if (shouldReplace(modelPath, modelPathElement)) {
-                modelPath.replaceLastElement(modelPathElement);
-            } else {
-                modelPath.prependElement(modelPathElement);
-            }
-        }));
-
-        return violations;
-    }
-
-    private static boolean shouldReplace(final ModelPath modelPath, final ModelPathElement modelPathElement) {
-        final ModelPathElement[] elements = modelPath.getElements();
-        if (elements.length != 1) {
-            return false;
-        }
-
-        final ModelPathElement lastElement  = elements[0];
-        return lastElement.getName().equals(modelPathElement.getName()) &&
-                lastElement.getIndex() == modelPathElement.getIndex();
+    public static void prependModelPathElementToViolations(final Set<Violation> violations,
+                                                           final ModelPathElement modelPathElement) {
+        violations.forEach(violation -> violation.getDependentPaths().forEach(
+                modelPath -> modelPath.prependElement(modelPathElement)));
     }
 
     public static class ViolationMessage {

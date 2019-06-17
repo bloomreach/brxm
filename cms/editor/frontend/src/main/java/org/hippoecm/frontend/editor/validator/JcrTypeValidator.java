@@ -29,10 +29,11 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.services.validation.api.ValueContext;
@@ -82,10 +83,33 @@ public class JcrTypeValidator implements ITypeValidator {
     }
 
     private void validateFields(final IModel<Node> model, final Set<Violation> violations) throws ValidationException {
+        final Set<Violation> fieldsViolations = new LinkedHashSet<>();
         for (final JcrFieldValidator fieldValidator : fieldValidators) {
-            final Set<Violation> fieldViolations = fieldValidator.validate(model);
-            violations.addAll(fieldViolations);
+            fieldsViolations.addAll(fieldValidator.validate(model));
         }
+
+        if (type.isType(HippoNodeType.NT_COMPOUND)) {
+            final Node node = model.getObject();
+            String name = field.getPath();
+            if ("*".equals(name)) {
+                try {
+                    name = node.getName();
+                } catch (final RepositoryException e) {
+                    throw new ValidationException("Could not resolve path for invalid value", e);
+                }
+            }
+            final int index;
+            try {
+                index = node.getIndex() - 1;
+            } catch (final RepositoryException e) {
+                throw new ValidationException("Could not resolve path for invalid value", e);
+            }
+
+            final ModelPathElement modelPathElement = new ModelPathElement(field, name, index);
+            ViolationUtils.prependModelPathElementToViolations(fieldsViolations, modelPathElement);
+        }
+
+        violations.addAll(fieldsViolations);
     }
 
     private void validateType(final IModel<Node> model, final Set<Violation> violations) {

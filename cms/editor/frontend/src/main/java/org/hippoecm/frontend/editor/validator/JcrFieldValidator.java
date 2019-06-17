@@ -44,7 +44,6 @@ import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.frontend.validation.ViolationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,8 +118,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 final IModel childModel = iter.next();
                 if (fieldType.isNode() && field.getTypeDescriptor().isValidationCascaded()) {
                     final Set<Violation> typeViolations = typeValidator.validate(childModel);
-                    if (typeViolations.size() > 0) {
-                        addTypeViolations(violations, childModel, typeViolations);
+                    if (!typeViolations.isEmpty()) {
+                        violations.addAll(typeViolations);
                     }
                 }
 
@@ -181,28 +180,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     public Violation newValueViolation(final IModel childModel, final IModel<String> message,
                                        final FeedbackScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
-    }
-
-    private void addTypeViolations(final Set<Violation> violations, final IModel childModel, final Set<Violation> typeViolations)
-            throws ValidationException {
-        final JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
-        String name = field.getPath();
-        if ("*".equals(name)) {
-            try {
-                name = childNodeModel.getNode().getName();
-            } catch (final RepositoryException e) {
-                throw new ValidationException("Could not resolve path for invalid value", e);
-            }
-        }
-        final int index;
-        try {
-            index = childNodeModel.getNode().getIndex() - 1;
-        } catch (final RepositoryException e) {
-            throw new ValidationException("Could not resolve path for invalid value", e);
-        }
-
-        final ModelPathElement modelPathElement = new ModelPathElement(field, name, index);
-        violations.addAll(ViolationUtils.prependFieldPathToViolations(typeViolations, modelPathElement));
     }
 
     private ModelPathElement getElement(final IModel childModel) throws ValidationException {
