@@ -29,6 +29,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -55,6 +56,14 @@ public class JcrTypeValidator implements ITypeValidator {
     private final IFieldDescriptor field;
     private final ITypeDescriptor type;
     private final ValidatorService validatorService;
+
+    /**
+     * @deprecated Use {@link JcrTypeValidator(IFieldDescriptor, ITypeDescriptor, ValidatorService)} instead
+     */
+    @Deprecated
+    public JcrTypeValidator(final ITypeDescriptor type, final ValidatorService validatorService) throws StoreException {
+        this(null, type, validatorService);
+    }
 
     public JcrTypeValidator(final IFieldDescriptor field, final ITypeDescriptor type, final ValidatorService validatorService) throws StoreException {
         this.field = field;
@@ -166,11 +175,23 @@ public class JcrTypeValidator implements ITypeValidator {
         final Node node = model.getObject();
 
         try {
-            final JcrFieldValidator fieldValidator = new JcrFieldValidator(field, this);
+            final IFieldDescriptor fieldDescriptor = getFieldDescriptor(model);
+            final JcrFieldValidator fieldValidator = new JcrFieldValidator(fieldDescriptor, this);
             return fieldValidator.newValueViolation(model, messageModel, feedbackScope);
-        } catch (StoreException | ValidationException e) {
+        } catch (StoreException | ValidationException | RepositoryException e) {
             log.warn("Failed to create violation after validating node '{}'", JcrUtils.getNodePathQuietly(node), e);
             return null;
         }
+    }
+
+    /**
+     * Can be removed once deprecated constructor is removed.
+     */
+    private IFieldDescriptor getFieldDescriptor(final IModel<Node> model) throws RepositoryException {
+        if (field != null){
+            return field;
+        }
+        final Node node = model.getObject();
+        return new JavaFieldDescriptor(type, node.getName());
     }
 }
