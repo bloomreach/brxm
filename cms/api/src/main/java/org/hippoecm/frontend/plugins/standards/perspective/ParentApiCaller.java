@@ -62,7 +62,7 @@ public class ParentApiCaller implements ParentApi {
     }
 
 
-    private void apply(String method, NavLocation location){
+    private void apply(String method, NavLocation location) {
         final IPartialPageRequestHandler target = targetSupplier.get();
         if (target != null) {
             try {
@@ -74,6 +74,6 @@ public class ParentApiCaller implements ParentApi {
     }
 
     private String getJavaScript(String method, NavLocation location) throws JsonProcessingException {
-            return String.format("Hippo.AppToNavApp.%s(%s)",method, mapper.writeValueAsString(location));
+        return String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.%s(%s)", method, mapper.writeValueAsString(location));
     }
 }

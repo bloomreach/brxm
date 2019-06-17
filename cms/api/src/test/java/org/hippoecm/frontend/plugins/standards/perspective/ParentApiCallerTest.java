@@ -18,10 +18,12 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
-import org.easymock.TestSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.json.Json;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -31,15 +33,14 @@ public class ParentApiCallerTest {
 
     @SuppressWarnings("unused")
     @Mock
-    private IPartialPageRequestHandler target;
+    private IPartialPageRequestHandler handler;
 
-    @TestSubject
-    private final
-    ParentApi parentApi = new ParentApiCaller().setTargetSupplier(() -> target);
+    private final ParentApi parentApi = new ParentApiCaller().setTargetSupplier(() -> handler);
     private NavLocation location;
+    private String locationString;
 
     @Before
-    public void setUp() {
+    public void setUp() throws JsonProcessingException {
         location = new NavLocation() {
 
             @SuppressWarnings("unused")
@@ -54,23 +55,24 @@ public class ParentApiCallerTest {
                 return "breadcrumbLabel";
             }
         };
+        locationString = Json.getMapper().writeValueAsString(location);
     }
 
     @Test
     public void updateNavLocation() {
-        final String javascript = "Hippo.AppToNavApp.updateNavLocation({path:\"path\",breadcrumbLabel:\"breadcrumbLabel\"})";
-        target.appendJavaScript(javascript);
-        replay(target);
+        final String javascript = String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.updateNavLocation(%s)", locationString);
+        handler.appendJavaScript(javascript);
+        replay(handler);
         parentApi.updateNavLocation(location);
-        verify(target);
+        verify(handler);
     }
 
     @Test
     public void navigate() {
-        final String javascript = "Hippo.AppToNavApp.navigate({path:\"path\",breadcrumbLabel:\"breadcrumbLabel\"})";
-        target.appendJavaScript(javascript);
-        replay(target);
+        final String javascript = String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.navigate(%s)", locationString);
+        handler.appendJavaScript(javascript);
+        replay(handler);
         parentApi.navigate(location);
-        verify(target);
+        verify(handler);
     }
 }
