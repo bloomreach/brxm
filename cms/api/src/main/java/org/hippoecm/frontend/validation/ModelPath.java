@@ -18,6 +18,7 @@ package org.hippoecm.frontend.validation;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 
@@ -26,7 +27,7 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
  */
 public final class ModelPath implements IDetachable {
 
-    private final ModelPathElement[] elements;
+    private ModelPathElement[] elements;
 
     public ModelPath(final ModelPathElement[] elements) {
         this.elements = elements;
@@ -36,6 +37,10 @@ public final class ModelPath implements IDetachable {
         return elements;
     }
 
+    public void prependElement(final ModelPathElement modelPathElement) {
+        elements = ArrayUtils.insert(0, elements, modelPathElement);
+    }
+
     @Override
     public String toString() {
         return Arrays.stream(elements)
@@ -43,6 +48,7 @@ public final class ModelPath implements IDetachable {
                 .collect(Collectors.joining("/"));
     }
 
+    @Override
     public void detach() {
         Arrays.stream(elements).forEach(ModelPathElement::detach);
     }
