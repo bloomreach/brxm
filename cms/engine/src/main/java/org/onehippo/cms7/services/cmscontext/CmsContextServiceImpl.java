@@ -28,9 +28,14 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.onehippo.cms7.services.cmscontext.CmsSessionContext.SESSION_KEY;
 
 public class CmsContextServiceImpl implements CmsInternalCmsContextService {
+
+    private static final Logger log = LoggerFactory.getLogger(CmsContextServiceImpl.class);
 
     private static class CmsSessionContextImpl implements CmsSessionContext, HttpSessionBindingListener, HttpSessionActivationListener {
 
@@ -86,7 +91,12 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                         CmsSessionContextImpl ctx = iter.next();
                         iter.remove();
                         // below will trigger #valueUnbound triggering #detach in turn
-                        ctx.session.invalidate();
+                        try {
+                            ctx.session.invalidate();
+                        } catch (IllegalStateException e) {
+                            log.info("(Website) Session '{}' has already been invalidated, most likely by the webapp or " +
+                                    "user itself.", ctx.session.getId());
+                        }
                     }
                 } else {
                     // will already be removed in case cmsCtx itself is being detached
