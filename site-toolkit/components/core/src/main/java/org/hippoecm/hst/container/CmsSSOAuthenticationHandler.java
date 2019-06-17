@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -94,18 +94,7 @@ public class CmsSSOAuthenticationHandler {
         }
 
 
-        HttpSession httpSession = containerRequest.getSession(false);
-
-        // if the (HST) http session already exists, it might be because the user logged out from cms and logged in with
-        // different user or logged in with same user again but the authorization rules for example changed (that is
-        // why the user for example logged out and in). However, now it can happen that we have stale jcr sessions
-        // still on the HttpSessionBoundJcrSessionHolder attribute of the HST http session. We need to clear these
-        // now actively
-        if (httpSession != null) {
-            HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions(HTTP_SESSION_ATTRIBUTE_NAME_PREFIX_CMS_PREVIEW_SESSION, httpSession);
-        } else {
-            httpSession = containerRequest.getSession(true);
-        }
+        final HttpSession httpSession = containerRequest.getSession();
 
         final CmsSessionContext cmsSessionContext = cmsContextService.attachSessionContext(cmsSessionContextId, httpSession);
         if (cmsSessionContext == null) {
