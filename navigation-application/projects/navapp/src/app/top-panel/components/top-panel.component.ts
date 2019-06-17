@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { Site } from '../../models/dto';
 import { NavConfigResourcesService } from '../../services';
@@ -26,8 +27,9 @@ import { SiteSelectionSidePanelService } from '../services';
   templateUrl: 'top-panel.component.html',
   styleUrls: ['top-panel.component.scss'],
 })
-export class TopPanelComponent {
+export class TopPanelComponent implements OnInit, OnDestroy {
   private site: Site;
+  private unsibscribe = new Subject();
 
   constructor(
     private navConfigResourcesService: NavConfigResourcesService,
@@ -49,6 +51,18 @@ export class TopPanelComponent {
 
   get isSidePanelOpened(): boolean {
     return this.siteSelectionPanelService.isOpened;
+  }
+
+  ngOnInit(): void {
+    this.navConfigResourcesService.sites$.pipe(
+      map(sites => sites.length ? sites[0] : undefined),
+      takeUntil(this.unsibscribe),
+    ).subscribe(firstNode => this.site = firstNode);
+  }
+
+  ngOnDestroy(): void {
+    this.unsibscribe.next();
+    this.unsibscribe.complete();
   }
 
   onSiteSelectorClicked(): void {
