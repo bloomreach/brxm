@@ -34,10 +34,8 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.validation.IFieldValidator;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,27 +89,9 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
                 return Collections.emptySet();
             }
 
-            final Set<Violation> violations = validator.validate(nodeModel);
-
-            // correct node index on behalf of multiples (which content blocks are)
-            final int index = getModelPathIndex(contentBlockNode);
-
-            // Correct the paths of the violations, that are based on the type only, by prepending with the content
-            // blocks compound path.
-            final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
-            final ModelPathElement modelPathElement = new ModelPathElement(fieldDescriptor, fieldDescriptor.getPath(),
-                    index);
-            return ViolationUtils.prependFieldPathToViolations(violations, modelPathElement);
+            return validator.validate(nodeModel);
         } finally {
             jcrTypeLocator.detach();
-        }
-    }
-
-    private int getModelPathIndex(final Node contentBlockNode) throws ValidationException {
-        try {
-            return contentBlockNode.getIndex() - 1;
-        } catch (final RepositoryException e) {
-            throw new ValidationException("Could not get index for node", e);
         }
     }
 
