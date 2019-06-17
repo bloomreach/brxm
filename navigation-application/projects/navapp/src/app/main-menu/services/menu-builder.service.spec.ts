@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, tick } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { async } from '@angular/core/testing';
 
-import { NavConfigService } from '../../services';
 import { menuStructureMock, navConfig } from '../../test-mocks';
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
+import { MenuItemContainer, MenuItemLink } from '../models';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
 
 describe('MenuBuilderService', () => {
-  const navConfigServiceMock: NavConfigService = {
-    navItems$: of(navConfig),
-  } as any;
-
   const structureMock: MenuStructureService = {
     getMenuStructure: () => menuStructureMock,
   } as any;
@@ -36,11 +30,10 @@ describe('MenuBuilderService', () => {
   let service: MenuBuilderService;
 
   beforeEach(async(() => {
-    service = new MenuBuilderService(navConfigServiceMock, structureMock);
+    service = new MenuBuilderService(structureMock);
   }));
 
-  it('should get the filtered menu populated with app paths', fakeAsync(() => {
-    let actual: MenuItem[];
+  it('should get the filtered menu populated with app paths', () => {
     const expected = (() => {
       const subsubitem1 = new MenuItemLink('subsubitem1', 'Sub sub item 1');
       subsubitem1.appId = 'iframe1-url';
@@ -58,10 +51,8 @@ describe('MenuBuilderService', () => {
       ];
     })();
 
-    service.buildMenu().subscribe(menu => (actual = menu));
-
-    tick();
+    const actual = service.buildMenu(navConfig);
 
     expect(actual).toEqual(expected);
-  }));
+  });
 });

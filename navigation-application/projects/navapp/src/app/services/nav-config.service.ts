@@ -56,6 +56,12 @@ export class NavConfigService {
       .then(navItems => this.navItems.next(navItems));
   }
 
+  findNavItem(iframeUrl: string, path: string): NavItem {
+    const navItems = this.navItems.value;
+
+    return navItems.find(x => x.appIframeUrl === iframeUrl && x.appPath === path);
+  }
+
   private fetchNavItems(resource: NavConfigResource): Promise<NavItem[]> {
     switch (resource.resourceType) {
       case 'IFRAME':
