@@ -188,11 +188,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public void detach(final HttpSession session) {
-        CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
-        if (ctx == null) {
-            return;
-        }
-        ctx.detach();
+        session.removeAttribute(SESSION_KEY);
     }
 
     @Override
