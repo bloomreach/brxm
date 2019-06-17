@@ -38,14 +38,11 @@ public class SequentialDatesValidatorTest {
 
     static {
         now = Calendar.getInstance();
-        now.setTime(new Date());
 
         tomorrow = Calendar.getInstance();
-        tomorrow.setTime(new Date());
         tomorrow.add(Calendar.DAY_OF_YEAR, 1);
 
         nextWeek = Calendar.getInstance();
-        nextWeek.setTime(new Date());
         nextWeek.add(Calendar.DAY_OF_YEAR, 7);
 
         empty = Calendar.getInstance();
@@ -60,7 +57,8 @@ public class SequentialDatesValidatorTest {
             final Validator<Node> validator = new SequentialDatesValidator(config);
 
             assertFalse(validator.validate(context, null).isPresent());
-            assertTrue(interceptor.messages().anyMatch(m -> m.endsWith("Failed to read validator configuration.")));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m -> m.startsWith("Incorrect configuration of SequentialDatesValidator at")));
         }
     }
 
@@ -73,15 +71,15 @@ public class SequentialDatesValidatorTest {
             final Validator<Node> validator = new SequentialDatesValidator(config);
 
             assertFalse(validator.validate(context, MockNode.root()).isPresent());
-            assertTrue(interceptor.messages().anyMatch(m -> m.endsWith(
-                    "Invalid value ',nonsense,' for validator configuration property 'datePropertyNames' on node '/'. Need at least 2 properties.")));
+            assertTrue(interceptor.messages()
+                    .anyMatch(m -> m.startsWith( "Incorrect configuration of SequentialDatesValidator at")));
         }
     }
 
     @Test
     public void testRightOrder() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate"});
 
         final Node document = MockNode.root();
         final Calendar now = Calendar.getInstance();
@@ -99,7 +97,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void testWrongOrder() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate"});
 
         final Node document = MockNode.root();
         final Calendar now = Calendar.getInstance();
@@ -117,7 +115,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void testSameDate() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate"});
 
         final Node document = MockNode.root();
         document.setProperty("firstDate", now);
@@ -130,7 +128,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void wrongDateFormat() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate"});
 
         final Node document = MockNode.root();
         document.setProperty("firstDate", "not-a-date");
@@ -147,7 +145,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void datePropertiesMissing() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate"});
 
         final Validator<Node> validator = new SequentialDatesValidator(config);
 
@@ -157,7 +155,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void moreThanTwoDates() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate, thirdDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate", "thirdDate"});
 
         final Node document = MockNode.root();
         document.setProperty("firstDate", now);
@@ -172,7 +170,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void moreThanTwoDatesWrongOrder() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate, thirdDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate", "thirdDate"});
 
         final Node document = MockNode.root();
         document.setProperty("firstDate", now);
@@ -187,7 +185,7 @@ public class SequentialDatesValidatorTest {
     @Test
     public void skipEmptyDateProperties() throws RepositoryException {
         final Node config = MockNode.root();
-        config.setProperty("datePropertyNames", "firstDate, secondDate, thirdDate");
+        config.setProperty("datePropertyNames", new String[]{"firstDate", "secondDate", "thirdDate"});
 
         final Node document = MockNode.root();
         document.setProperty("firstDate", now);
