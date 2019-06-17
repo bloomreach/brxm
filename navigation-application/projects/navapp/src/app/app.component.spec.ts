@@ -24,6 +24,7 @@ import { ClientAppModule } from './client-app';
 import { MainMenuModule } from './main-menu';
 import { NavConfigService } from './services';
 import { SharedModule } from './shared';
+import { TopPanelModule } from './top-panel';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -38,6 +39,7 @@ describe('AppComponent', () => {
         ClientAppModule,
         HttpClientModule,
         SharedModule,
+        TopPanelModule,
       ],
       declarations: [AppComponent],
       providers: [NavConfigService],
