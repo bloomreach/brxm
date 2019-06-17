@@ -130,6 +130,7 @@ public class IncludeLocalesMojo extends AbstractMojo {
                             if (resolvableLocaleArtifact == null) {
                                 getLog().warn("Could not resolve localization module '" + localeArtifact + "' and also no fallback to lower micro version");
                             } else {
+                                resolvableLocaleArtifact.setScope(Artifact.SCOPE_COMPILE);
                                 project.getDependencyArtifacts().add(resolvableLocaleArtifact);
                                 getLog().info("Include localization module '" + resolvableLocaleArtifact + "'.");
                                 if (getLog().isDebugEnabled() && !localeArtifact.getVersion().equals(resolvableLocaleArtifact.getVersion())) {
