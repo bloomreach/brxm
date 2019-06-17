@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-import { MenuItem } from '../../../../main-menu/models';
-import { MenuStateService } from '../../../../main-menu/services';
+import { MenuStateService } from '../../main-menu/services';
 
-@Component({
-  selector: 'brna-breadcrumbs',
-  templateUrl: 'breadcrumbs.component.html',
-  styleUrls: ['breadcrumbs.component.scss'],
-})
-export class BreadcrumbsComponent {
+@Injectable()
+export class BreadcrumbsService {
+  suffix: string;
+
   constructor(
     private menuStateService: MenuStateService,
   ) {}
 
-  get breadcrumbs$(): Observable<MenuItem[]> {
-    return this.menuStateService.breadcrumbs$;
-  }
-
-  onLastBreadcrumbClicked(): void {
-    console.log('onLastBreadcrumbClicked');
+  get breadcrumbs$(): Observable<string[]> {
+    return this.menuStateService.breadcrumbs$.pipe(
+      map(breadcrumbs => breadcrumbs.map(x => x.caption)),
+      filter(breadcrumbs => !!breadcrumbs.length),
+    );
   }
 }
