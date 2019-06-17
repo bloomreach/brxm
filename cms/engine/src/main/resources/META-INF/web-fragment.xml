@@ -36,9 +36,29 @@
     </init-param>
   </servlet>
 
+  <servlet>
+    <servlet-name>NavAppAssetsResourceServlet</servlet-name>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <init-param>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/navapp/navapp-assets</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowedResourcePaths</param-name>
+      <param-value>
+        ^/.*\..*
+      </param-value>
+    </init-param>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>NavAppResourceServlet</servlet-name>
     <url-pattern>/navapp/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>NavAppAssetsResourceServlet</servlet-name>
+    <url-pattern>/navapp-assets/*</url-pattern>
   </servlet-mapping>
 
 </web-fragment>
