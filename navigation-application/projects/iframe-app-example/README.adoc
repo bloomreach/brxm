@@ -1,0 +1,38 @@
+= Use the example app locally and use it on another server
+
+One case is to demo the example app when using bloomreach cloud.
+
+
+. Under https://hap-uui-eng.onehippo.io/cms/console/?1&path=/hippo:configuration/hippo:frontend/cms/cms-services/navAppSettingsService/navConfigResources[/hippo:configuration/hippo:frontend/cms/cms-services/navAppSettingsService/navConfigResources]
+add example-app.yaml
+
+. Start the example-app
+. Change the resource url ( if different ) in app/mock.ts
+
+.example-app.yaml
+[source,json]
+----
+/brsm:
+  jcr:primaryType: frontend:pluginconfig
+  resource.type: IFRAME
+  resource.url: [resource.url]
+----
+
+== Use ngrok
+
+Use https://ngrok.com/[ngrok] to tunnel your webpack server to an externally accessible url.
+
+In that case after starting the example app:
+
+. ngrok http [resource.url]
+. get the external url and use that as resource.url in the cms config and mock.ts
+
+
+
+CAUTION: With the free plan after a restart the external url changes.
+
+
+
+
+
+

@@ -16,40 +16,41 @@
 
 import { NavItem, Site } from '@bloomreach/navapp-communication';
 
+const appIframeUrl = 'http://localhost:4201';
 export const navigationConfiguration: NavItem[] = [
   {
     id: 'category-ranking',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'category-ranking',
   },
   {
     id: 'all-category-pages',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'all-category-pages',
   },
   {
     id: 'seo',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'seo',
   },
   {
     id: 'merchandising-audiences',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'merchandising-audiences',
   },
   {
     id: 'top-opportunities',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'top-opportunities',
   },
   {
     id: 'improve-category-navigation',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'improve-category-navigation',
   },
   {
     id: 'product-a-b-testing',
-    appIframeUrl: 'http://localhost:4201',
+    appIframeUrl,
     appPath: 'product-a-b-testing',
   },
 ];

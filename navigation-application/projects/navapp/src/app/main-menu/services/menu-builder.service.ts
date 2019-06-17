@@ -15,11 +15,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
 
 import { NavItem } from '../../models/dto';
-import { NavConfigResourcesService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 
 import { MenuStructureService } from './menu-structure.service';
@@ -27,20 +24,14 @@ import { MenuStructureService } from './menu-structure.service';
 @Injectable()
 export class MenuBuilderService {
   constructor(
-    private navConfigResourcesService: NavConfigResourcesService,
     private menuStructureService: MenuStructureService,
   ) {}
 
-  buildMenu(): Observable<MenuItem[]> {
-    return this.navConfigResourcesService.navItems$.pipe(
-      map(navItems => {
-        const menu = this.menuStructureService.getMenuStructure();
+  buildMenu(navItems: NavItem[]): MenuItem[] {
+      const menu = this.menuStructureService.getMenuStructure();
 
-        this.applyNavItems(menu, navItems);
-        return this.removeEmptyLeaves(menu);
-      }),
-      shareReplay(),
-    );
+      this.applyNavItems(menu, navItems);
+      return this.removeEmptyLeaves(menu);
   }
 
   private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {

@@ -33,7 +33,7 @@ const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 @Injectable({
   providedIn: 'root',
 })
-export class NavConfigResourcesService {
+export class NavConfigService {
   private readonly renderer: Renderer2;
 
   private navItems = new BehaviorSubject<NavItem[]>([]);
@@ -73,6 +73,12 @@ export class NavConfigResourcesService {
         this.navItems.next(navItems);
         this.sites.next(sites);
       });
+  }
+
+  findNavItem(iframeUrl: string, path: string): NavItem {
+    const navItems = this.navItems.value;
+
+    return navItems.find(x => x.appIframeUrl === iframeUrl && x.appPath === path);
   }
 
   private fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {

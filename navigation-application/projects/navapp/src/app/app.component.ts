@@ -18,7 +18,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ClientAppService } from './client-app/services';
-import { NavConfigResourcesService, OverlayService } from './services';
+import { NavConfigService, OverlayService } from './services';
 
 @Component({
   selector: 'brna-root',
@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   typography = true;
 
   constructor(
-    private navConfigResourcesService: NavConfigResourcesService,
+    private navConfigResourcesService: NavConfigService,
     private clientAppService: ClientAppService,
     private overlayService: OverlayService,
   ) {}

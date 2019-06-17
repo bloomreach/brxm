@@ -19,7 +19,7 @@ import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 import { Site } from '../../models/dto';
-import { NavConfigResourcesService } from '../../services';
+import { NavConfigService } from '../../services';
 import { SiteSelectionSidePanelService } from '../services';
 
 @Component({
@@ -32,7 +32,7 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   private unsibscribe = new Subject();
 
   constructor(
-    private navConfigResourcesService: NavConfigResourcesService,
+    private navConfigResourcesService: NavConfigService,
     private siteSelectionPanelService: SiteSelectionSidePanelService,
   ) {}
 

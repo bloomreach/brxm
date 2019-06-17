@@ -19,5 +19,6 @@
 <h3>The button was clicked {{ buttonClicked }} times.</h3>
 <ul>
   <li><button (click)="onButtonClicked()">Simple button</button></li>
-  <li><button (click)="toggleOverlay()">Mask Navapp</button></li>
+  <li><button (click)="toggleOverlay()">{{ overlayed ? 'Unmask Navapp' : 'Mask Navapp' }}</button></li>
+  <li><button (click)="navigateToSeo()">Navigate to SEO</button></li>
 </ul>

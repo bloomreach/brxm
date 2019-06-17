@@ -1,9 +1,9 @@
 {
   "name": "@bloomreach/navapp",
-  "version": "1.0.0-25",
+  "version": "1.0.0-26",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve navapp",
+    "start": "ng serve navapp --public-host http://127.0.0.1:4200",
     "start:example-app": "ng serve iframe-app-example",
     "sprites": "svg-sprite --config sprite-config.json src/assets/menu-icons/*.svg",
     "build": "ng build",

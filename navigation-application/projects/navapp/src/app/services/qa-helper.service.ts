@@ -25,10 +25,6 @@ const prefix = 'qa';
 })
 export class QaHelperService {
   getMenuItemClass(item: MenuItem | string): string {
-    if (!item) {
-      return '';
-    }
-
     if (typeof item === 'string') {
       return `${prefix}-menu-item-${item}`;
     }
@@ -41,6 +37,9 @@ export class QaHelperService {
   }
 
   private hyphenate(value: string): string {
-    return value.toLowerCase().split(' ').join('-');
+    return value
+      .toLowerCase()
+      .split(' ')
+      .join('-');
   }
 }
