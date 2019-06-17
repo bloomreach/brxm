@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 /**
  * This interface is the java alternative of the NavLocation typescript interface
  * defined in the bloomreach navigation application.
- *
+ * <p>
  * See projects/navapp-communication/src/lib/parent-api.ts of the @bloomreach/navapp-communication dependency
  * in the package.json of the engine module.
  */
 public interface ParentApi {
-      void updateNavLocation(NavLocation location);
-      void navigate( NavLocation location);
+
+    void updateNavLocation(NavLocation location);
+
+    void navigate(NavLocation location);
 }
