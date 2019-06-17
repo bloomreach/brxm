@@ -63,6 +63,14 @@
     height: 40px;
     width: 100%;
 
+    &:hover {
+      background-color: $site-selection-hover-bg;
+    }
+
+    &.active {
+      background-color: $site-selection-active-bg;
+    }
+
     > .mat-icon {
       width: 40px;
     }
@@ -76,14 +84,6 @@
     > .mat-nested-tree-node > li {
       padding-left: 30px;
     }
-  }
-
-  .leaf:hover {
-    background-color: $site-selection-hover-bg;
-  }
-
-  .leaf.active {
-    background-color: $site-selection-active-bg;
   }
 }
 

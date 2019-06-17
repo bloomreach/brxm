@@ -83,12 +83,12 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     return node.expandable;
   }
 
-  onParentNodeClicked(node: SiteFlatNode): void {
+  onExpandCollapseIconClicked(node: SiteFlatNode): void {
     node.isExpanded = !node.isExpanded;
   }
 
-  onLeafNodeClicked(site: SiteFlatNode): void {
-    this.selectedSiteChange.emit({ id: site.id, name: site.name });
+  onNodeClicked(node: SiteFlatNode): void {
+    this.selectedSiteChange.emit({ id: node.id, name: node.name });
   }
 
   isActive(node: Site): boolean {

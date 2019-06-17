@@ -29,10 +29,10 @@
     <cdk-tree-node *cdkTreeNodeDef="let node"
                    matRipple
                    cdkTreeNodePadding
-                   (click)="onLeafNodeClicked(node)"
+                   (click)="onNodeClicked(node)"
                    [class.hidden]="shouldNotRender(node)"
                    [class.active]="isActive(node)"
-                   class="caption leaf">
+                   class="caption">
       <mat-icon svgIcon="remove"></mat-icon>
       {{ node.name }}
     </cdk-tree-node>
@@ -40,10 +40,16 @@
                    matRipple
                    cdkTreeNodeToggle
                    cdkTreeNodePadding
-                   (click)="onParentNodeClicked(node)"
+                   (click)="onNodeClicked(node)"
+                   [class.active]="isActive(node)"
                    [class.hidden]="shouldNotRender(node)"
                    class="caption">
-      <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'"></mat-icon>
+      <button mat-icon-button
+              cdkTreeNodeToggle
+              [attr.aria-label]="'toggle ' + node.name"
+              (click)="onExpandCollapseIconClicked(node)">
+        <mat-icon [svgIcon]="node.isExpanded ? 'expand_more' : 'chevron_right'"></mat-icon>
+      </button>
       {{ node.name }}
     </cdk-tree-node>
   </cdk-tree>
