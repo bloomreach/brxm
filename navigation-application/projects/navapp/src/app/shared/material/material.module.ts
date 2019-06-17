@@ -24,17 +24,10 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
-  exports: [
-    MatRippleModule,
-    MatIconModule,
-    HttpClientModule,
-  ],
+  exports: [MatRippleModule, MatIconModule, HttpClientModule],
 })
 export class MaterialModule {
-  constructor(
-    iconRegistry: MatIconRegistry,
-    donSanitizer: DomSanitizer,
-  ) {
+  constructor(iconRegistry: MatIconRegistry, donSanitizer: DomSanitizer) {
     const menuItemIconsList = [
       'br-logo',
       'audiences',
@@ -76,9 +69,15 @@ export class MaterialModule {
       'baseline-expand_more',
     ];
 
-    menuItemIconsList.concat(serviceIconsList).forEach(icon => iconRegistry.addSvgIcon(
-      icon,
-      donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/menu-icons/${icon}.svg`)),
-    );
+    menuItemIconsList
+      .concat(serviceIconsList)
+      .forEach(icon =>
+        iconRegistry.addSvgIcon(
+          icon,
+          donSanitizer.bypassSecurityTrustResourceUrl(
+            `navapp-assets/menu-icons/${icon}.svg`,
+          ),
+        ),
+      );
   }
 }
