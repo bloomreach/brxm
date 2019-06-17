@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
+import { SharedModule } from '../shared';
+
+import { BreadcrumbsComponent } from './components/components/breadcrumbs/breadcrumbs.component';
 import { TopPanelComponent } from './components/top-panel.component';
 
 @NgModule({
+  imports: [
+    CommonModule,
+    SharedModule,
+  ],
   declarations: [
     TopPanelComponent,
+    BreadcrumbsComponent,
   ],
-  exports: [TopPanelComponent],
+  exports: [
+    TopPanelComponent,
+    BreadcrumbsComponent,
+  ],
 })
 export class TopPanelModule {}

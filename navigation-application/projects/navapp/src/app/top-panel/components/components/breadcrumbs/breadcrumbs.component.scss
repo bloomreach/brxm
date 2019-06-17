@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-@import 'variables';
-
 :host {
-  align-items: stretch;
-  background-color: $top-panel-bg;
-  border-bottom: 1px solid $top-panel-border-color;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  height: $top-panel-height;
-  justify-items: stretch;
+  align-items: center;
+  display: flex;
+  padding-left: 18px;
 }
 
-.site-selector-value {
+.entry {
   align-items: center;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  justify-items: end;
-  padding-right: 20px;
+  display: flex;
+  height: 100%;
+  opacity: .5;
+  padding-left: 8px;
+
+  &.last {
+    cursor: pointer;
+    opacity: 1;
+  }
+}
+
+.mat-icon {
+  margin-left: 8px;
 }

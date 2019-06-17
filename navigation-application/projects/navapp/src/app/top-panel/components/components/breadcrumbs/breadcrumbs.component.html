@@ -14,16 +14,13 @@
   limitations under the License.
   -->
 
-<h2 class="header" (click)="toggle()">
-  {{ config?.caption }}
-  <mat-icon svgIcon="expand_more" class="icon" [class.hidden]="isOpened"></mat-icon>
-  <mat-icon svgIcon="expand_less" class="icon" [class.hidden]="!isOpened"></mat-icon>
-</h2>
-<div [class.opened]="isOpened" [@slideInOut]="isOpened" class="items-wrapper">
-  <brna-menu-item-link *ngFor="let item of config.children"
-                       [config]="item"
-                       [active]="isChildMenuItemActive(item)"
-                       class="item"
-                       [ngClass]="getQaClass(item)">
-  </brna-menu-item-link>
-</div>
+<ng-template ngFor let-breadcrumb [ngForOf]="breadcrumbs$ | async" let-last="last">
+  <div *ngIf="!last" class="entry">
+    <span>{{ breadcrumb.caption }}</span>
+    <mat-icon svgIcon="chevron_right"></mat-icon>
+  </div>
+  <div *ngIf="last" (click)="onLastBreadcrumbClicked()" matRipple class="entry last">
+    <span>{{ breadcrumb.caption }}</span>
+    <mat-icon *ngIf="last" svgIcon="arrow_drop_down"></mat-icon>
+  </div>
+</ng-template>

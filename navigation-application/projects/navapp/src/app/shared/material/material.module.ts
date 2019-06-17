@@ -35,50 +35,60 @@ export class MaterialModule {
     iconRegistry: MatIconRegistry,
     donSanitizer: DomSanitizer,
   ) {
-    const menuItemIconsList = [
-      'br-logo',
-      'audiences',
-      'audiences.active',
-      'categories',
-      'categories.active',
-      'default',
-      'default.active',
-      'documents',
-      'documents.active',
-      'document-search',
-      'document-search.active',
-      'experience-manager',
-      'experience-manager.active',
-      'fast-travel',
-      'fast-travel.active',
-      'insights',
-      'insights.active',
-      'projects',
-      'projects.active',
-      'seo',
-      'seo.active',
-      'settings',
-      'settings.active',
-      'site-search',
-      'site-search.active',
-      'widget',
-      'widget.active',
-      'extensions',
-      'extensions.active',
-      'help',
-      'user',
-    ];
+    const pathToIconsMap = {
+      'icons/menu': [
+        'br-logo',
+        'audiences',
+        'audiences.active',
+        'categories',
+        'categories.active',
+        'default',
+        'default.active',
+        'documents',
+        'documents.active',
+        'document-search',
+        'document-search.active',
+        'experience-manager',
+        'experience-manager.active',
+        'fast-travel',
+        'fast-travel.active',
+        'insights',
+        'insights.active',
+        'projects',
+        'projects.active',
+        'seo',
+        'seo.active',
+        'settings',
+        'settings.active',
+        'site-search',
+        'site-search.active',
+        'widget',
+        'widget.active',
+        'extensions',
+        'extensions.active',
+        'help',
+        'user',
+      ],
+      icons: [
+        'nav-collapse',
+        'nav-expand',
+        'expand_less',
+        'expand_more',
+        'remove',
+        'chevron_right',
+        'search',
+        'arrow_drop_down',
+      ],
+    };
 
-    const serviceIconsList = [
-      'nav-collapse',
-      'nav-expand',
-      'baseline-expand_less',
-      'baseline-expand_more',
-    ];
+    Object.keys(pathToIconsMap).forEach(path => {
+      const icons = pathToIconsMap[path];
 
-    menuItemIconsList.concat(serviceIconsList).forEach(icon => iconRegistry.addSvgIcon(
-      icon,
-      donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/menu-icons/${icon}.svg`)),
-    );
+      icons.forEach(icon => iconRegistry.addSvgIcon(
+        icon,
+        donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/${path}/${icon}.svg`)),
+      );
+    });
+
   }
 }

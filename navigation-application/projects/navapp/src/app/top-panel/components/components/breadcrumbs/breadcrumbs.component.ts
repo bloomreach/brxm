@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 
-:host {
-  align-items: stretch;
-  background-color: $top-panel-bg;
-  border-bottom: 1px solid $top-panel-border-color;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  height: $top-panel-height;
-  justify-items: stretch;
-}
+import { MenuItem } from '../../../../main-menu/models';
+import { MenuStateService } from '../../../../main-menu/services';
 
-.site-selector-value {
-  align-items: center;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  justify-items: end;
-  padding-right: 20px;
+@Component({
+  selector: 'brna-breadcrumbs',
+  templateUrl: 'breadcrumbs.component.html',
+  styleUrls: ['breadcrumbs.component.scss'],
+})
+export class BreadcrumbsComponent {
+  constructor(
+    private menuStateService: MenuStateService,
+  ) {}
+
+  get breadcrumbs$(): Observable<MenuItem[]> {
+    return this.menuStateService.breadcrumbs$;
+  }
+
+  onLastBreadcrumbClicked(): void {
+    console.log('onLastBreadcrumbClicked');
+  }
 }

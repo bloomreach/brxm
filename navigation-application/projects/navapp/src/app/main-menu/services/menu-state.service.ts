@@ -70,6 +70,10 @@ export class MenuStateService implements OnDestroy {
     );
   }
 
+  get breadcrumbs$(): Observable<MenuItem[]> {
+    return this.breadcrumbs.asObservable();
+  }
+
   get isMenuCollapsed(): boolean {
     return this.collapsed;
   }
