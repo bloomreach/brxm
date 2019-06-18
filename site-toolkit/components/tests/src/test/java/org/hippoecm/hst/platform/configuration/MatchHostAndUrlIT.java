@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.platform.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -23,6 +26,8 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -67,6 +72,13 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         final MockHstRequestContext requestContext = new MockHstRequestContext();
         requestContextSession = createSession();
         requestContext.setSession(requestContextSession);
+
+        final ObjectBeanManagerImpl objectBeanManager = new ObjectBeanManagerImpl(requestContextSession, getObjectConverter());
+
+        final Map<Session, ObjectBeanManager> objectBeanManagerMap = new HashMap<>();
+        objectBeanManagerMap.put(requestContextSession, objectBeanManager);
+        requestContext.setNonDefaultObjectBeanManagers(objectBeanManagerMap);
+
         ModifiableRequestContextProvider.set(requestContext);
     }
 
