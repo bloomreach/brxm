@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,6 +66,13 @@ public class MatchHostAndUrlIT extends AbstractTestConfigurations {
         final MockHstRequestContext requestContext = new MockHstRequestContext();
         requestContextSession = createSession();
         requestContext.setSession(requestContextSession);
+
+        final ObjectBeanManagerImpl objectBeanManager = new ObjectBeanManagerImpl(requestContextSession, getObjectConverter());
+
+        final Map<Session, ObjectBeanManager> objectBeanManagerMap = new HashMap<>();
+        objectBeanManagerMap.put(requestContextSession, objectBeanManager);
+        requestContext.setNonDefaultObjectBeanManagers(objectBeanManagerMap);
+
         ModifiableRequestContextProvider.set(requestContext);
     }
 
