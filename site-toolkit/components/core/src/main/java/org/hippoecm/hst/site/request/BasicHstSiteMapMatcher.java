@@ -26,7 +26,6 @@ import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
@@ -57,7 +56,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         this.linkProcessor = linkProcessor;
     }
 
-    
+
     public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedMount) throws NotFoundException {
 
         final Mount mount = resolvedMount.getMount();
@@ -165,7 +164,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 // check whether the folder/document being referred to by the indexResolvedSiteMapItem exists : If so, use _index_ item as match
                 String absolutePath = mount.getContentPath() + "/" + indexResolvedSiteMapItem.getRelativeContentPath();
                 try {
-                    if (RequestContextProvider.get() != null && RequestContextProvider.get().getSession().itemExists(absolutePath)) {
+                    final HstRequestContext ctx = RequestContextProvider.get();
+                    if (ctx != null && ctx.getObjectBeanManager(ctx.getSession()).getObject(absolutePath) != null) {
                         log.info("Use '{}' sitemap item below '{}' because content path '{}' for the '{}' item exists.",
                                 INDEX, getSiteMapItemPath(matchedSiteMapItem), absolutePath, INDEX);
                         logMatchedItem(pathInfo, params, matchedSiteMapItem);
@@ -177,6 +177,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 } catch (RepositoryException e) {
                     log.warn("Unable to get JCR session needed to check existing of the document belonging to the _index_ " +
                             "sitemap item.", e);
+                } catch (ObjectBeanManagerException e){
+                    log.warn("ObjectBeanManager exception while trying to fetch bean for  '{}'", absolutePath , e);
                 }
             }
         }
@@ -209,13 +211,13 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
     private HstSiteMapItem traverseInToSiteMapItem(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements, List<HstSiteMapItem> checkedSiteMapItems) {
         HstSiteMapItemService hstSiteMapItemService = (HstSiteMapItemService)hstSiteMapItem;
-        
+
         checkedSiteMapItems.add(hstSiteMapItemService);
         if(position == elements.length) {
            // we are ready
            return hstSiteMapItemService;
        }
-       HstSiteMapItem s; 
+       HstSiteMapItem s;
        if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s) && !s.isMarkedDeleted()) {
            if (s.isAny() || s.isWildCard()) {
                // this can happen when the pathInfo to match contains _default_ or _any_  : It is a corner case
@@ -258,7 +260,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         if(hstSiteMapItem == null) {
            return null;
        }
-       HstSiteMapItem s; 
+       HstSiteMapItem s;
        if(hstSiteMapItem.isWildCard()) {
            if( (s = hstSiteMapItem.getChild(WILDCARD)) != null && !checkedSiteMapItems.contains(s)){
                return traverseInToSiteMapItem(hstSiteMapItem, params, position, elements, checkedSiteMapItems);
