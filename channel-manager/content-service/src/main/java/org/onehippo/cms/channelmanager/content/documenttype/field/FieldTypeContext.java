@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 
+import org.apache.commons.collections4.ListUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.JcrBooleanReader;
@@ -89,12 +90,28 @@ public class FieldTypeContext {
         return item != null ? new FieldTypeContext(item, context, editorFieldConfigNode) : null;
     }
 
-    public FieldTypeContext(final ContentTypeItem contentTypeItem,
-                            final ContentTypeContext parentContext,
-                            final Node editorConfigNode) {
+    private FieldTypeContext(final ContentTypeItem contentTypeItem,
+                             final ContentTypeContext parentContext,
+                             final Node editorConfigNode) {
         this(contentTypeItem.getName(), contentTypeItem.getEffectiveType(), contentTypeItem.getItemType(),
                 contentTypeItem.isProperty(), contentTypeItem.isMultiple(),
-                contentTypeItem.getValidators(), parentContext, editorConfigNode);
+                getValidators(contentTypeItem), parentContext, editorConfigNode);
+    }
+
+    private static List<String> getValidators(final ContentTypeItem contentTypeItem) {
+        // Validators defined on the contentType have a higher priority than those defined on the field.
+        final List<String> contentTypeItemValidators = contentTypeItem.getValidators();
+        return getValidatorsForType(contentTypeItem)
+                .map(contentTypeValidators -> ListUtils.union(contentTypeValidators, contentTypeItemValidators))
+                .orElse(contentTypeItemValidators);
+    }
+
+    private static Optional<List<String>> getValidatorsForType(final ContentTypeItem contentTypeItem) {
+        final String jcrType = contentTypeItem.getEffectiveType();
+        return ContentTypeContext.getContentType(jcrType)
+                .flatMap(contentType -> contentType.isCompoundType()
+                        ? Optional.of(contentType.getValidators())
+                        : Optional.empty());
     }
 
     public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext) {
@@ -152,7 +169,7 @@ public class FieldTypeContext {
     }
 
     public Optional<ContentTypeContext> createContextForCompound() {
-        return ContentTypeContext.createFromParent(this.type, getParentContext());
+        return ContentTypeContext.createFromParent(type, getParentContext());
     }
 
     public Optional<Boolean> getBooleanConfig(final String propertyName) {

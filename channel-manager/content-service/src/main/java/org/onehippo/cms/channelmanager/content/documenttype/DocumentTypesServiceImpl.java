@@ -24,9 +24,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,8 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userContext, docType)
                 .orElseThrow(NotFoundException::new);
 
-        if (!context.getContentType().isDocumentType()) {
+        final ContentType contentType = context.getContentType();
+        if (!contentType.isDocumentType()) {
             log.debug("Requested type '{}' is not document type", id);
             throw new NotFoundException();
         }
@@ -87,7 +88,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
         docType.setUnsupportedFieldTypes(fieldsInformation.getUnsupportedFieldTypes());
         docType.setUnsupportedRequiredFieldTypes(fieldsInformation.getUnsupportedRequiredFieldTypes());
 
-        NamespaceUtils.getNodeTypeValidatorNames(context.getContentTypeRoot())
+        contentType.getValidators()
                 .forEach(docType::addValidatorName);
 
         return docType;

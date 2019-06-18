@@ -19,12 +19,8 @@ package org.onehippo.cms.channelmanager.content.documenttype;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
-import javax.jcr.Node;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +32,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldsInformation;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.repository.l10n.ResourceBundle;
@@ -66,7 +61,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.management.*")
 @PrepareForTest({ContentTypeContext.class, DocumentTypesServiceImpl.class, FieldTypeUtils.class,
-        LocalizationUtils.class, NamespaceUtils.class})
+        LocalizationUtils.class})
 public class DocumentTypesServiceImplTest {
 
     private final DocumentTypesService documentTypesService = DocumentTypesService.get();
@@ -76,7 +71,6 @@ public class DocumentTypesServiceImplTest {
         mockStatic(ContentTypeContext.class);
         mockStatic(FieldTypeUtils.class);
         mockStatic(LocalizationUtils.class);
-        mockStatic(NamespaceUtils.class);
 
         // clear document type cache
         documentTypesService.invalidateCache();
@@ -137,7 +131,6 @@ public class DocumentTypesServiceImplTest {
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
 
@@ -152,9 +145,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
+        expect(contentType.getValidators()).andReturn(Collections.emptyList());
 
         docType.setAllFieldsIncluded(true);
         expectLastCall();
@@ -167,8 +160,6 @@ public class DocumentTypesServiceImplTest {
 
         docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
-
-        expect(NamespaceUtils.getNodeTypeValidatorNames(contentTypeRoot)).andReturn(Collections.emptySet());
 
         replayAll();
 
@@ -184,7 +175,6 @@ public class DocumentTypesServiceImplTest {
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInformation = FieldsInformation.allSupported();
@@ -216,11 +206,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
         expect(context.getResourceBundle()).andReturn(Optional.of(resourceBundle));
         expect(contentType.isDocumentType()).andReturn(true);
-
-        expect(NamespaceUtils.getNodeTypeValidatorNames(contentTypeRoot)).andReturn(Collections.emptySet());
+        expect(contentType.getValidators()).andReturn(Collections.emptyList());
 
         replayAll();
 
@@ -236,7 +224,6 @@ public class DocumentTypesServiceImplTest {
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
         final List<FieldType> fields = new ArrayList<>();
         final FieldsInformation fieldsInfo = new FieldsInformation();
         fieldsInfo.setAllFieldsIncluded(false);
@@ -255,9 +242,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
+        expect(contentType.getValidators()).andReturn(Collections.emptyList());
 
         docType.setAllFieldsIncluded(false);
         expectLastCall();
@@ -270,8 +257,6 @@ public class DocumentTypesServiceImplTest {
 
         docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
-
-        expect(NamespaceUtils.getNodeTypeValidatorNames(contentTypeRoot)).andReturn(Collections.emptySet());
 
         replayAll();
 
@@ -287,7 +272,6 @@ public class DocumentTypesServiceImplTest {
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
         final List<FieldType> fields = new ArrayList<>();
 
         expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
@@ -306,9 +290,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
+        expect(contentType.getValidators()).andReturn(Collections.emptyList());
 
         docType.setAllFieldsIncluded(false);
         expectLastCall();
@@ -321,8 +305,6 @@ public class DocumentTypesServiceImplTest {
 
         docType.setUnsupportedRequiredFieldTypes(Collections.singleton("Custom"));
         expectLastCall();
-
-        expect(NamespaceUtils.getNodeTypeValidatorNames(contentTypeRoot)).andReturn(Collections.emptySet());
 
         replayAll();
 
@@ -338,9 +320,8 @@ public class DocumentTypesServiceImplTest {
         final DocumentType docType = PowerMock.createMockAndExpectNew(DocumentType.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
         final List<FieldType> fields = new ArrayList<>();
-        final Set<String> validatorNames = new LinkedHashSet<>(Arrays.asList("validator1", "validator2"));
+        final List<String> validatorNames = Arrays.asList("validator1", "validator2");
 
         expect(ContentTypeContext.createForDocumentType(id, userContext, docType)).andReturn(Optional.of(context));
         expect(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty())).andReturn(Optional.empty());
@@ -356,9 +337,9 @@ public class DocumentTypesServiceImplTest {
         expectLastCall();
 
         expect(context.getContentType()).andReturn(contentType);
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
         expect(context.getResourceBundle()).andReturn(Optional.empty());
         expect(contentType.isDocumentType()).andReturn(true);
+        expect(contentType.getValidators()).andReturn(validatorNames);
 
         docType.setAllFieldsIncluded(true);
         expectLastCall();
@@ -372,7 +353,6 @@ public class DocumentTypesServiceImplTest {
         docType.setUnsupportedRequiredFieldTypes(Collections.emptySet());
         expectLastCall();
 
-        expect(NamespaceUtils.getNodeTypeValidatorNames(contentTypeRoot)).andReturn(validatorNames);
         docType.addValidatorName("validator1");
         expectLastCall();
         docType.addValidatorName("validator2");

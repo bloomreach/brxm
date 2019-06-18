@@ -14,17 +14,8 @@
 @import 'variables';
 
 left-side-panel {
-  &.side-panel-open {
-    border-right: 1px solid $grey-200;
-
-    &.ng-hide {
-      border-right: 0 !important;
-    }
-
-    &.ng-hide-add-active,
-    &.ng-hide-remove-active {
-      border-right: 1px solid $grey-200 !important;
-    }
+  md-sidenav {
+    padding-right: $side-panel-border-width;
   }
 
   md-list {

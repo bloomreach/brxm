@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -236,6 +236,7 @@ public class ChoiceFieldUtilsTest {
         expect(choice.isMultiple()).andReturn(false);
         expect(choice.getValidators()).andReturn(Collections.emptyList());
         expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
+        expect(ContentTypeContext.getContentType("String")).andReturn(Optional.empty());
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
@@ -404,6 +405,7 @@ public class ChoiceFieldUtilsTest {
         expect(ContentTypeContext.createFromParent("prefixed:choice", parentContext)).andReturn(Optional.of(childContext));
         expect(childContext.getContentType()).andReturn(compound).anyTimes();
         expect(compound.getName()).andReturn("NonCompound");
+        expect(compound.getValidators()).andReturn(Collections.emptyList());
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(false);
         expect(compound.isContentType("hippogallerypicker:imagelink")).andReturn(false);
@@ -439,10 +441,13 @@ public class ChoiceFieldUtilsTest {
         expect(childContext.getContentType()).andReturn(compound).anyTimes();
         expect(compound.isCompoundType()).andReturn(true);
         expect(compound.getName()).andReturn("compound:id");
+        expect(compound.getValidators()).andReturn(Collections.singletonList("compound-validator"));
 
         compoundField.initListBasedChoice(childContext, "compound:id");
         expectLastCall();
         expect(compoundField.getDisplayName()).andReturn("bla");
+        compoundField.addValidatorName("compound-validator");
+        expectLastCall();
 
         replayAll();
 
@@ -478,6 +483,7 @@ public class ChoiceFieldUtilsTest {
         expectLastCall();
         expect(compoundField.getId()).andReturn("compound:id");
         expect(compoundField.getDisplayName()).andReturn(null);
+        expect(compound.getValidators()).andReturn(Collections.emptyList());
         expect(childContext.getResourceBundle()).andReturn(Optional.empty());
         expect(LocalizationUtils.determineDocumentDisplayName("compound:id", Optional.empty()))
                 .andReturn(Optional.of("Patched Display Name"));
@@ -516,6 +522,7 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(false);
         expect(compound.isContentType("hippostd:html")).andReturn(true);
         expect(compound.getName()).andReturn("hippostd:html");
+        expect(compound.getValidators()).andReturn(Collections.emptyList());
 
         expect(richTextField.init(richTextFieldContext)).andReturn(FieldsInformation.allSupported());
         expect(richTextField.getDisplayName()).andReturn("bla");

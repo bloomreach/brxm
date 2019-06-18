@@ -61,6 +61,7 @@ class EditComponentService {
   }
 
   startEditing(componentElement) {
+    this.readyForUser = false;
     if (!componentElement) {
       this.$log.warn('Problem opening the component properties editor: no component provided.');
       return;
@@ -104,6 +105,10 @@ class EditComponentService {
     this.stopEditing();
   }
 
+  isReadyForUser() {
+    return this.readyForUser;
+  }
+
   _loadComponent(properties) {
     this._showDefaultTitle();
     this.RightSidePanelService.startLoading();
@@ -111,6 +116,7 @@ class EditComponentService {
       .then(() => {
         this._showComponentTitle();
         this.RightSidePanelService.stopLoading();
+        this.readyForUser = true;
       })
       .catch(() => this.stopEditing());
   }

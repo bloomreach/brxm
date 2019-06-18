@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -88,7 +89,17 @@ public class TestValidatorInstance implements ValidatorInstance {
     }
 
     @Override
+    public Violation createViolation(final Map<String, String> map) {
+        return null;
+    }
+
+    @Override
     public Violation createViolation(final String subKey) {
+        return null;
+    }
+
+    @Override
+    public Violation createViolation(final String s, final Map<String, String> map) {
         return null;
     }
 }
