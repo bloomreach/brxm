@@ -29,7 +29,7 @@ export class BreadcrumbsService {
   ) {}
 
   get breadcrumbs$(): Observable<string[]> {
-    return this.menuStateService.breadcrumbs$.pipe(
+    return this.menuStateService.activePath$.pipe(
       map(breadcrumbs => breadcrumbs.map(x => x.caption)),
       filter(breadcrumbs => !!breadcrumbs.length),
     );

@@ -27,7 +27,7 @@ import { MenuBuilderService } from './menu-builder.service';
 export class MenuStateService implements OnDestroy {
   private readonly menusStream$: Observable<MenuItem[]>;
   private menu: MenuItem[];
-  private breadcrumbs = new BehaviorSubject<MenuItem[]>([]);
+  private activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
   private unsubscribe = new Subject();
@@ -58,20 +58,20 @@ export class MenuStateService implements OnDestroy {
   }
 
   get activeMenuItem$(): Observable<MenuItemLink> {
-    return this.breadcrumbs.pipe(
-      map(breadcrumbs => {
-        if (breadcrumbs.length === 0) {
+    return this.activePath.pipe(
+      map(path => {
+        if (path.length === 0) {
           return undefined;
         }
 
-        return breadcrumbs[breadcrumbs.length - 1] as MenuItemLink;
+        return path[path.length - 1] as MenuItemLink;
       }),
       filter(breadcrumbs => !!breadcrumbs),
     );
   }
 
-  get breadcrumbs$(): Observable<MenuItem[]> {
-    return this.breadcrumbs.asObservable();
+  get activePath$(): Observable<MenuItem[]> {
+    return this.activePath.asObservable();
   }
 
   get isMenuCollapsed(): boolean {
@@ -102,7 +102,7 @@ export class MenuStateService implements OnDestroy {
   }
 
   isMenuItemActive(item: MenuItem): boolean {
-    const currentBreadcrumbs = this.breadcrumbs.value;
+    const currentBreadcrumbs = this.activePath.value;
 
     return currentBreadcrumbs.some(x => x === item);
   }
@@ -121,23 +121,25 @@ export class MenuStateService implements OnDestroy {
 
   private setActiveItem(activeItemId: string): void {
     this.closeDrawer();
-    this.breadcrumbs.next(this.buildBreadcrumbs(this.menu, activeItemId));
+
+    const activePath = this.buildActivePath(this.menu, activeItemId);
+    this.activePath.next(activePath);
   }
 
-  private buildBreadcrumbs(menu: MenuItem[], activeMenuItemId: string): MenuItem[] {
-    return menu.reduce((breadcrumbs, item) => {
+  private buildActivePath(menu: MenuItem[], activeMenuItemId: string): MenuItem[] {
+    return menu.reduce((activePath, item) => {
       if (item instanceof MenuItemContainer) {
-        const subBreadcrumbs = this.buildBreadcrumbs(item.children, activeMenuItemId);
+        const subActivePath = this.buildActivePath(item.children, activeMenuItemId);
 
-        if (subBreadcrumbs.length > 0) {
-          subBreadcrumbs.unshift(item);
-          breadcrumbs = breadcrumbs.concat(subBreadcrumbs);
+        if (subActivePath.length > 0) {
+          subActivePath.unshift(item);
+          activePath = activePath.concat(subActivePath);
         }
       } else if (item.id === activeMenuItemId) {
-        breadcrumbs.push(item);
+        activePath.push(item);
       }
 
-      return breadcrumbs;
+      return activePath;
     }, []);
   }
 }
