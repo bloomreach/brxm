@@ -18,5 +18,4 @@ import { ConfigResource } from './config-resource.dto';
 
 export interface AppSettings {
   navConfigResources: ConfigResource[];
-  sitesResource: ConfigResource;
 }

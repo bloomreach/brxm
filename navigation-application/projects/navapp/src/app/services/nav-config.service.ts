@@ -30,6 +30,11 @@ import { GlobalSettingsService } from './global-settings.service';
 
 const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 
+interface Configuration {
+  navItems: NavItem[];
+  sites: Site[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,22 +62,21 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
-    const navConfigsPromises = this.settingsService.appSettings.navConfigResources.map(
-      resource => this.fetchNavItems(resource),
+    const configurationPromises = this.settingsService.appSettings.navConfigResources.map(
+      resource => this.fetchConfiguration(resource),
     );
 
-    const mergedNavConfigPromise = Promise.all(navConfigsPromises)
-      .then(navItemArrays => [].concat(...navItemArrays));
+    return Promise.all(configurationPromises).then(configurations => {
+      const { mergedNavItems, mergedSites } = configurations.reduce((result, { navItems, sites }) => {
+        result.mergedNavItems = result.mergedNavItems.concat(navItems);
+        result.mergedSites = result.mergedSites.concat(sites);
 
-    const sitesPromise = this.settingsService.appSettings.sitesResource ?
-      this.fetchSites(this.settingsService.appSettings.sitesResource) :
-      Promise.resolve([]);
+        return result;
+      }, { mergedNavItems: [], mergedSites: [] });
 
-    return Promise.all([mergedNavConfigPromise, sitesPromise])
-      .then(([navItems, sites]) => {
-        this.navItems.next(navItems);
-        this.sites.next(sites);
-      });
+      this.navItems.next(mergedNavItems);
+      this.sites.next(mergedSites);
+    });
   }
 
   findNavItem(iframeUrl: string, path: string): NavItem {
@@ -81,21 +85,20 @@ export class NavConfigService {
     return navItems.find(x => x.appIframeUrl === iframeUrl && x.appPath === path);
   }
 
-  private fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {
+  private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
     switch (resource.resourceType) {
       case 'IFRAME':
-        return this.fetchFromIframe(resource.url, child => child.getNavItems());
+        return this.fetchFromIframe(resource.url, child => Promise.all([
+          child.getNavItems(),
+          child.getSites ? child.getSites() : Promise.resolve([]),
+        ]).then(([navItems, sites]) => ({ navItems, sites })));
       case 'REST':
-        return this.fetchFromREST(resource.url);
+        return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({ navItems, sites: [] }));
       default:
         return Promise.reject(
           new Error(`Resource type ${resource.resourceType} is not supported`),
         );
     }
-  }
-
-  private fetchSites(resource: ConfigResource): Promise<Site[]> {
-    return this.fetchFromIframe(resource.url, child => child.getSites());
   }
 
   private fetchFromIframe<T>(url: string, fetcher: (child: ChildPromisedApi) => Promise<T>): Promise<T> {
