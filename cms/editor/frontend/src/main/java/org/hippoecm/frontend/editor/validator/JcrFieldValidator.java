@@ -42,6 +42,7 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -178,6 +179,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message,
+                                       final ValidationScope scope) throws ValidationException {
+        return newViolation(getElement(childModel), message, scope.toFeedbackScope());
+    }
+
+    @Override
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message,
                                        final FeedbackScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
     }
@@ -214,14 +221,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         return new ClassResourceModel(key, ValidatorMessages.class, parameters);
     }
 
-    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters,
-                                  final FeedbackScope scope) {
-        final Set<ModelPath> paths = getModelPaths(child);
-        return new Violation(paths, getMessage(message, parameters), scope);
-    }
-
-    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
-                                  final FeedbackScope scope) {
+    private Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
+                                   final FeedbackScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, messageModel, scope);
     }

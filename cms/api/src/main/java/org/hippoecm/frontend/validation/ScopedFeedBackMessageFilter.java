@@ -27,13 +27,12 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
     private FeedbackScope feedbackScope;
 
     /**
-     * Constructor with default scope of {@code FeedbackScope.DOCUMENT}
+     * Constructor with default scope of {@code ValidationScope.DOCUMENT}
      *
      * @param container The container that message reporters must be a child of
      */
     public ScopedFeedBackMessageFilter(final MarkupContainer container) {
-        super(container);
-        feedbackScope = FeedbackScope.DOCUMENT;
+        this(container, FeedbackScope.DOCUMENT);
     }
 
     /**
@@ -43,16 +42,28 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
      * @param scope     The scope to filter feedback messages by.
      */
     public ScopedFeedBackMessageFilter(final MarkupContainer container, final FeedbackScope scope) {
-        this(container);
+        super(container);
         feedbackScope = scope;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param container The container that message reporters must be a child of
+     * @param scope     The scope to filter feedback messages by.
+     * @deprecated Use {@link ScopedFeedBackMessageFilter(MarkupContainer, FeedbackScope)} instead
+     */
+    @Deprecated
+    public ScopedFeedBackMessageFilter(final MarkupContainer container, final ValidationScope scope) {
+        this(container, scope.toFeedbackScope());
     }
 
     @Override
     public boolean accept(final FeedbackMessage message) {
         final boolean isInContainer = super.accept(message);
         if (isInContainer && message instanceof ScopedFeedBackMessage) {
-            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(this.feedbackScope);
+            final ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getFeedbackScope().equals(feedbackScope);
         }
         return isInContainer;
     }

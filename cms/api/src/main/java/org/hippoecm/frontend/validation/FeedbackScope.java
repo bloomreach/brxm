@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.validation;
 
+/**
+ * Identifies on which level validation feedback should be reported
+ */
 public enum FeedbackScope {
+    FIELD,
     COMPOUND,
-    DOCUMENT,
-    FIELD
+    DOCUMENT
 }

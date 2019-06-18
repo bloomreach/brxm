@@ -15,22 +15,25 @@
  */
 package org.hippoecm.frontend.editor.validator.plugins;
 
-import java.util.Locale;
-
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.FeedbackScope;
+import org.hippoecm.frontend.validation.ICmsValidator;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.onehippo.cms.services.validation.api.Validator;
 
-abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
+/**
+ * @deprecated Implement {@link Validator} instead. Make sure to adjust your repository bootstrap configuration too.
+ */
+@Deprecated
+public abstract class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
-    private final static String SCOPE = "scope";
+    private static final String SCOPE = "scope";
 
     private final String name;
     private FeedbackScope feedbackScope = FeedbackScope.DOCUMENT;
@@ -42,12 +45,20 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
 
         if (config.containsKey(SCOPE)) {
-            feedbackScope = (ValidatorUtils.getFeedbackScope(config.getString(SCOPE)));
+            feedbackScope = ValidatorUtils.getFeedbackScope(config.getString(SCOPE));
         }
     }
 
     public String getName() {
         return name;
+    }
+
+    /**
+     * @deprecated Use {@link #getFeedbackScope()} instead
+     */
+    @Deprecated
+    protected ValidationScope getValidationScope() {
+        return ValidationScope.from(feedbackScope);
     }
 
     protected FeedbackScope getFeedbackScope() {

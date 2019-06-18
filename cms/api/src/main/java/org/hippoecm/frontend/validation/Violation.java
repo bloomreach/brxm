@@ -34,15 +34,13 @@ public final class Violation implements IDetachable {
 
     /**
      * Create a new violation with the specified message. The scope of this violation will be {@code
-     * FeedbackScope.DOCUMENT}
+     * ValidationScope.DOCUMENT}
      *
-     * @param paths        list of {@link ModelPath}s that led up to the violation
+     * @param fieldPaths list of {@link ModelPath}s that led up to the violation
      * @param messageModel a model of the message to be shown to the user
      */
-    public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
-        this.fieldPaths = paths;
-        this.message = messageModel;
-        this.feedbackScope = FeedbackScope.DOCUMENT;
+    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> messageModel) {
+        this(fieldPaths, messageModel, FeedbackScope.DOCUMENT);
     }
 
     public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message,
@@ -50,6 +48,15 @@ public final class Violation implements IDetachable {
         this.fieldPaths = fieldPaths;
         this.message = message;
         this.feedbackScope = feedbackScope;
+    }
+
+    /**
+     * @deprecated Use {@link #Violation(Set, IModel, FeedbackScope)} instead
+     */
+    @Deprecated
+    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message,
+                     final ValidationScope validationScope) {
+        this(fieldPaths, message, validationScope.toFeedbackScope());
     }
 
     public IModel<String> getMessage() {
@@ -68,6 +75,22 @@ public final class Violation implements IDetachable {
         this.feedbackScope = feedbackScope;
     }
 
+    /**
+     * @deprecated Use {@link #getFeedbackScope()} instead
+     */
+    @Deprecated
+    public ValidationScope getValidationScope() {
+        return ValidationScope.from(feedbackScope);
+    }
+
+    /**
+     * @deprecated Use {@link #setFeedbackScope(FeedbackScope)} instead
+     */
+    @Deprecated
+    public void setValidationScope(final ValidationScope validationScope) {
+        this.feedbackScope = validationScope.toFeedbackScope();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -75,6 +98,8 @@ public final class Violation implements IDetachable {
         sb.append(fieldPaths.toString());
         sb.append(", message: ");
         sb.append(getMessage().getObject());
+        sb.append(", scope: ");
+        sb.append(feedbackScope);
         return sb.toString();
     }
 
