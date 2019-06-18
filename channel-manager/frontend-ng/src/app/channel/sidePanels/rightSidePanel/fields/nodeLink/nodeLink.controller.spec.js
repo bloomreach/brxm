@@ -192,6 +192,17 @@ describe('nodeLinkController', () => {
       expect($ctrl.hasFocus).toBe(false);
     });
 
+    it('prevents blur event if the picker is open', () => {
+      spyOn($element, 'triggerHandler');
+      PickerService.pickLink.and.returnValue($q.defer().promise);
+
+      $ctrl.open();
+      $ctrl.onBlur('blur');
+      $timeout.flush();
+
+      expect($element.triggerHandler).not.toHaveBeenCalled();
+    });
+
     it('cancels the timeout if a focus event is fired right after the blur event', () => {
       spyOn($timeout, 'cancel').and.callThrough();
       $ctrl.hasFocus = true;
