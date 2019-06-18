@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
@@ -26,8 +27,10 @@ import org.slf4j.LoggerFactory;
  * Logic for creating a bean based on document types.
  */
 public abstract class AbstractBeanBuilderService {
+
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
     private static final String DOCBASE = "Docbase";
+    private static final String CONTENT_BLOCKS_VALIDATOR = "contentblocks-validator";
 
     private enum DocumentType {
         STRING("String"), //
@@ -42,7 +45,8 @@ public abstract class AbstractBeanBuilderService {
         HIPPO_HTML("hippostd:html"), //
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
-        HIPPO_RESOURCE("hippo:resource"),
+        HIPPO_RESOURCE("hippo:resource"), //
+        CONTENT_BLOCKS("content:blocks"), //
         UNKNOWN("Unknown");
 
         private String type;
@@ -129,10 +133,10 @@ public abstract class AbstractBeanBuilderService {
      * @param bean {@link HippoContentBean}
      * @param builder {@link DynamicBeanBuilder}
      */
-    protected void generateMethodsByNodes(final HippoContentBean bean, final DynamicBeanBuilder builder) {
-        for (final HippoContentChildNode child : bean.getChildren()) {
-            final String propertyName = child.getName();
-            final boolean multiple = child.isMultiple();
+    protected void generateMethodsByChildNodes(final HippoContentBean bean, final DynamicBeanBuilder builder) {
+        for (final HippoContentChildNode childNode : bean.getChildren()) {
+            final String propertyName = childNode.getName();
+            final boolean multiple = childNode.isMultiple();
 
             final String methodName = DynamicBeanUtils.createMethodName(propertyName);
             final boolean hasChange = hasChange(methodName, multiple, builder);
@@ -140,15 +144,19 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final String type = child.getType();
-            log.trace("Adding property {} to the bean {}.", child.getName(), bean.getName());
+            final String type = childNode.getType();
+            log.trace("Adding property {} to the bean {}.", childNode.getName(), bean.getName());
 
             if (type == null) {
-                log.error("Missing type for node, cannot create method {} on bean {}.", child.getName(), bean.getName());
+                log.error("Missing type for node, cannot create method {} on bean {}.", childNode.getName(), bean.getName());
                 continue;
             }
 
-            final DocumentType documentType = DocumentType.getDocumentType(type);
+            DocumentType documentType = DocumentType.getDocumentType(type);
+
+            if (DocumentType.UNKNOWN == documentType && hasContentBlocks(childNode)) {
+                documentType = DocumentType.CONTENT_BLOCKS;
+            }
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -163,11 +171,28 @@ public abstract class AbstractBeanBuilderService {
             case HIPPO_RESOURCE:
                 addBeanMethodHippoResource(propertyName, methodName, multiple, builder);
                 break;
+            case CONTENT_BLOCKS:
+                addBeanMethodContentBlocks(propertyName, methodName, multiple, builder);
+                break;
             default:
                 addCustomNodeType(propertyName, methodName, multiple, type, builder);
                 break;
             }
         }
+    }
+
+    /**
+     * checks whether a content bean child has a content blocks
+     * 
+     * @param bean {@link HippoContentBean}
+     * @return true if the content bean child has a content blocks
+     */
+    protected boolean hasContentBlocks(final HippoContentChildNode childNode) {
+        final List<String> validators = childNode.getContentType().getValidators();
+        if (validators != null && validators.contains(CONTENT_BLOCKS_VALIDATOR)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -300,6 +325,16 @@ public abstract class AbstractBeanBuilderService {
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
     protected abstract void addBeanMethodHippoResource(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder);
+
+    /**
+     * Adds a method to the bean which returns {@link org.onehippo.cms7.essentials.plugins.contentblocks.model.ContentBlocksField} object type
+     * 
+     * @param propertyName of the property type
+     * @param methodName of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
+     */
+    protected abstract void addBeanMethodContentBlocks(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder);
 
     /**
      * Adds a custom implementation if there isn't any matching object type for the child node

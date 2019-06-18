@@ -147,7 +147,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                 DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
 
         generateMethodsByProperties(contentBean, builder);
-        generateMethodsByNodes(contentBean, builder);
+        generateMethodsByChildNodes(contentBean, builder);
         
         if(!builder.isMethodAdded() && !parentBeanInfo.isUpdated()) {
             return parentBeanInfo;
@@ -257,6 +257,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     @Override
     protected void addBeanMethodHippoResource(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoResource(methodName, propertyName, multiple);
+    }
+
+    @Override
+    protected void addBeanMethodContentBlocks(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodContentBlocks(methodName, propertyName, multiple);
     }
 
     @Override
