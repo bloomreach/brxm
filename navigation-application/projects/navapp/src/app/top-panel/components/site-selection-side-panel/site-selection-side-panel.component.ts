@@ -17,7 +17,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ArrayDataSource } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, EventEmitter, HostBinding, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnChanges, Output } from '@angular/core';
 import { MatTreeFlattener } from '@angular/material';
 
 import { Site } from '../../../models';
@@ -45,6 +45,7 @@ interface SiteFlatNode {
       ]),
     ]),
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SiteSelectionSidePanelComponent implements OnChanges {
   @Input()
