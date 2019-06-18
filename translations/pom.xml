@@ -19,8 +19,8 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>30.3.0-SNAPSHOT</version>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>13.3.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Community Translations</name>
@@ -72,6 +72,17 @@
         <updatePolicy>never</updatePolicy>
         <checksumPolicy>fail</checksumPolicy>
       </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>hippo-maven2-enterprise-snapshots</id>
+      <name>Hippo Maven 2 Enterprise Snapshots</name>
+      <url>https://maven.onehippo.com/maven2-enterprise-snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </pluginRepository>
   </pluginRepositories>
   
@@ -166,6 +177,27 @@
             </execution>
           </executions>
         </plugin>
+        <!-- Restore remote-resources disabled in the release pom to add L&N files -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles>
+                  <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+                </resourceBundles>
+                <properties>
+                  <projectName>${notice.project.name}</projectName>
+                </properties>
+              </configuration>
+
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -190,6 +222,25 @@
             <phase>prepare-package</phase>
             <goals>
               <goal>generate-yaml</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${maven.plugin.flatten.version}</version>
+        <configuration>
+          <flattenMode>clean</flattenMode>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <flattenedPomFilename>${project.artifactId}-${project.version}.pom</flattenedPomFilename>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
             </goals>
           </execution>
         </executions>
