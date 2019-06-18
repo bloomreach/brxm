@@ -28,7 +28,9 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -165,7 +167,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
                 // check whether the folder/document being referred to by the indexResolvedSiteMapItem exists : If so, use _index_ item as match
                 String absolutePath = mount.getContentPath() + "/" + indexResolvedSiteMapItem.getRelativeContentPath();
                 try {
-                    if (RequestContextProvider.get() != null && RequestContextProvider.get().getSession().itemExists(absolutePath)) {
+                    final HstRequestContext ctx = RequestContextProvider.get();
+                    if (ctx != null && ctx.getObjectBeanManager(ctx.getSession()).getObject(absolutePath) != null) {
                         log.info("Use '{}' sitemap item below '{}' because content path '{}' for the '{}' item exists.",
                                 INDEX, getSiteMapItemPath(matchedSiteMapItem), absolutePath, INDEX);
                         logMatchedItem(pathInfo, params, matchedSiteMapItem);
@@ -177,6 +180,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher {
                 } catch (RepositoryException e) {
                     log.warn("Unable to get JCR session needed to check existing of the document belonging to the _index_ " +
                             "sitemap item.", e);
+                } catch (ObjectBeanManagerException e){
+                    log.warn("ObjectBeanManager exception while trying to fetch bean for  '{}'", absolutePath , e);
                 }
             }
         }
