@@ -30,7 +30,7 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
@@ -169,13 +169,13 @@ public class JcrTypeValidator implements ITypeValidator {
         final Model<String> messageModel = Model.of(violation.getMessage());
 
         final boolean isCompound = type.isType(HippoNodeType.NT_COMPOUND);
-        final ValidationScope validationScope = isCompound ? ValidationScope.COMPOUND : ValidationScope.DOCUMENT;
+        final FeedbackScope feedbackScope = isCompound ? FeedbackScope.COMPOUND : FeedbackScope.DOCUMENT;
 
         final Node node = model.getObject();
 
         try {
             final JcrFieldValidator fieldValidator = new JcrFieldValidator(field, this);
-            return fieldValidator.newValueViolation(model, messageModel, validationScope);
+            return fieldValidator.newValueViolation(model, messageModel, feedbackScope);
         } catch (StoreException | ValidationException e) {
             log.warn("Failed to create violation after validating node '{}'", JcrUtils.getNodePathQuietly(node), e);
             return null;

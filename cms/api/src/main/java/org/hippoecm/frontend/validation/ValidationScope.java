@@ -15,8 +15,36 @@
  */
 package org.hippoecm.frontend.validation;
 
+/**
+ * @deprecated Use {@link FeedbackScope} instead
+ */
+@Deprecated
 public enum ValidationScope {
     COMPOUND,
     DOCUMENT,
-    FIELD
+    FIELD;
+
+    public static ValidationScope from(final FeedbackScope feedbackScope) {
+        switch (feedbackScope) {
+            case COMPOUND:
+                return ValidationScope.COMPOUND;
+            case FIELD:
+                return ValidationScope.FIELD;
+            case DOCUMENT:
+            default:
+                return ValidationScope.DOCUMENT;
+        }
+    }
+
+    public FeedbackScope toFeedbackScope() {
+        switch (this) {
+            case COMPOUND:
+                return FeedbackScope.COMPOUND;
+            case FIELD:
+                return FeedbackScope.FIELD;
+            case DOCUMENT:
+            default:
+                return FeedbackScope.DOCUMENT;
+        }
+    }
 }

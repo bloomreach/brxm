@@ -45,10 +45,10 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.FeedbackPriority;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ScopedFeedBackMessage;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,8 +154,8 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
             return false;
         }
         if (message instanceof ScopedFeedBackMessage) {
-            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(ValidationScope.DOCUMENT);
+            final ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getFeedbackScope().equals(FeedbackScope.DOCUMENT);
         }
         return false;
     }
@@ -178,20 +178,20 @@ public class EditorForm extends HippoForm<Node> implements IFeedbackMessageFilte
 
     @Override
     // the same logic as in org.apache.wicket.Component.warn
-    public void warn(final IModel<String> message, final ValidationScope scope) {
+    public void warn(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.WARNING, scope));
         addStateChange();
     }
 
     @Override
     // the same logic as in org.apache.wicket.Component.error
-    public void error(final IModel<String> message, final ValidationScope scope) {
+    public void error(final IModel<String> message, final FeedbackScope scope) {
         getFeedbackMessages().add(new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope));
         addStateChange();
     }
 
     @Override
-    public void error(final IModel<String> message, final ValidationScope scope, final FeedbackPriority priority) {
+    public void error(final IModel<String> message, final FeedbackScope scope, final FeedbackPriority priority) {
         // the same logic as in org.apache.wicket.Component.error
         final ScopedFeedBackMessage feedback =
                 new ScopedFeedBackMessage(this, message.getObject(), FeedbackMessage.ERROR, scope);

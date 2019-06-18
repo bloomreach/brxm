@@ -96,20 +96,20 @@ public class ViolationUtils {
             return Optional.empty();
         }
 
-        return getViolationMessages(field, validationModel, ValidationScope.FIELD)
+        return getViolationMessages(field, validationModel, FeedbackScope.FIELD)
                 .findFirst();
     }
 
     public static Stream<ViolationMessage> getViolationPerCompound(final IFieldDescriptor field,
                                                                    final IModel<IValidationResult> validationModel) {
 
-        return getViolationMessages(field, validationModel, ValidationScope.COMPOUND)
+        return getViolationMessages(field, validationModel, FeedbackScope.COMPOUND)
                 .filter(distinctByKey(ViolationMessage::getIndex));
     }
 
     private static Stream<ViolationMessage> getViolationMessages(final IFieldDescriptor field,
                                                                  final IModel<IValidationResult> validationModel,
-                                                                 final ValidationScope scope) {
+                                                                 final FeedbackScope scope) {
         if (field == null) {
             return Stream.empty();
         }
@@ -129,7 +129,7 @@ public class ViolationUtils {
         }
 
         return violations.stream()
-                .filter(violation -> violation.getValidationScope().equals(scope))
+                .filter(violation -> violation.getFeedbackScope().equals(scope))
                 .map(violation -> toViolationMessage(field, violation))
                 .filter(Objects::nonNull);
     }
