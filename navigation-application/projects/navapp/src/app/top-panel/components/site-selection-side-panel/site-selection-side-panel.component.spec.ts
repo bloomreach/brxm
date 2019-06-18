@@ -92,6 +92,25 @@ describe('SiteSelectionSidePanelComponent', () => {
     fixture.detectChanges();
   });
 
+  it('should show the tree of sites', () => {
+    const sites = de.queryAll(By.css('.caption'));
+
+    expect(sites.length).toBe(2);
+    expect(sites[0].nativeElement.textContent.trim()).toBe('www.company.com');
+    expect(sites[1].nativeElement.textContent.trim()).toBe('An example company that has a very long name and a subgroup with many items');
+  });
+
+  it('should show filter out sites', () => {
+    component.searchText = 'Sub company';
+    component.ngOnChanges({ searchText: new SimpleChange(undefined, component.searchText, true) });
+    fixture.detectChanges();
+
+    const sites = de.queryAll(By.css('.caption'));
+
+    expect(sites.length).toBe(1);
+    expect(sites[0].nativeElement.textContent.trim()).toBe('An example company that has a very long name and a subgroup with many items');
+  });
+
   describe('the active node', () => {
     beforeEach(() => {
       component.selectedSite = { id: 4, name: 'Office DE' };
