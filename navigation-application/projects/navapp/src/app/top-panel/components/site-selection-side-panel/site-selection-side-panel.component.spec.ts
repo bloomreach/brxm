@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { CdkTreeModule } from '@angular/cdk/tree';
 import { DebugElement, SimpleChange } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material';
+import { MatIconModule, MatTreeModule } from '@angular/material';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
@@ -74,7 +73,7 @@ describe('SiteSelectionSidePanelComponent', () => {
       imports: [
         PerfectScrollbarModule,
         FormsModule,
-        CdkTreeModule,
+        MatTreeModule,
         MatIconModule,
         NoopAnimationsModule,
       ],
@@ -93,69 +92,12 @@ describe('SiteSelectionSidePanelComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should init data source', fakeAsync(() => {
-    const expected = [
-      { id: 1, expandable: true, name: 'www.company.com', level: 0 },
-      { id: 2, expandable: true, name: 'UK & Germany', level: 1 },
-      { id: 3, expandable: false, name: 'Office UK', level: 2 },
-      { id: 4, expandable: false, name: 'Office DE', level: 2 },
-      { id: 5, expandable: true, name: 'An example company that has a very long name and a subgroup with many items', level: 0 },
-      { id: 6, expandable: false, name: 'Sub company 001', level: 1 },
-      { id: 7, expandable: false, name: 'Sub company 002', level: 1 },
-    ];
-    let actual: any;
-
-    component.dataSource.connect().subscribe(data => actual = data);
-
-    tick();
-
-    expect(actual).toEqual(actual);
-  }));
-
-  it('should show filter out sites', fakeAsync(() => {
-    const expected = [
-      { id: 5, expandable: true, name: 'An example company that has a very long name and a subgroup with many items', level: 0 },
-      { id: 6, expandable: false, name: 'Sub company 001', level: 1 },
-      { id: 7, expandable: false, name: 'Sub company 002', level: 1 },
-    ];
-    let actual: any;
-
-    component.searchText = 'Sub company';
-    component.ngOnChanges({ searchText: new SimpleChange(undefined, component.searchText, true) });
-    fixture.detectChanges();
-
-    component.dataSource.connect().subscribe(data => actual = data);
-
-    tick();
-
-    expect(actual).toEqual(expected);
-  }));
-
   describe('the active node', () => {
     beforeEach(() => {
       component.selectedSite = { id: 4, name: 'Office DE' };
       component.ngOnChanges({ selectedSite: new SimpleChange(undefined, component.selectedSite, true) });
       fixture.detectChanges();
     });
-
-    it('should be marked by "isExpanded: true" in the data', fakeAsync(() => {
-      const expected = [
-        { id: 1, expandable: true, name: 'www.company.com', level: 0, isExpanded: true },
-        { id: 2, expandable: true, name: 'UK & Germany', level: 1, isExpanded: true },
-        { id: 3, expandable: false, name: 'Office UK', level: 2 },
-        { id: 4, expandable: false, name: 'Office DE', level: 2, isExpanded: true },
-        { id: 5, expandable: true, name: 'An example company that has a very long name and a subgroup with many items', level: 0 },
-        { id: 6, expandable: false, name: 'Sub company 001', level: 1 },
-        { id: 7, expandable: false, name: 'Sub company 002', level: 1 },
-      ];
-      let actual: any;
-
-      component.dataSource.connect().subscribe(data => actual = data);
-
-      tick();
-
-      expect(actual).toEqual(expected);
-    }));
 
     it('should be marked with ".active" class in the DOM', () => {
       const expected = 'Office DE';
