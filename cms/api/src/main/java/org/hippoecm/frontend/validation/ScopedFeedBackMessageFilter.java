@@ -24,7 +24,7 @@ import org.apache.wicket.feedback.FeedbackMessage;
  */
 public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter {
 
-    private ValidationScope validationScope;
+    private FeedbackScope feedbackScope;
 
     /**
      * Constructor with default scope of {@code ValidationScope.DOCUMENT}
@@ -32,8 +32,7 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
      * @param container The container that message reporters must be a child of
      */
     public ScopedFeedBackMessageFilter(final MarkupContainer container) {
-        super(container);
-        validationScope = ValidationScope.DOCUMENT;
+        this(container, FeedbackScope.DOCUMENT);
     }
 
     /**
@@ -42,17 +41,29 @@ public class ScopedFeedBackMessageFilter extends ContainerFeedbackMessageFilter 
      * @param container The container that message reporters must be a child of
      * @param scope     The scope to filter feedback messages by.
      */
+    public ScopedFeedBackMessageFilter(final MarkupContainer container, final FeedbackScope scope) {
+        super(container);
+        feedbackScope = scope;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param container The container that message reporters must be a child of
+     * @param scope     The scope to filter feedback messages by.
+     * @deprecated Use {@link ScopedFeedBackMessageFilter(MarkupContainer, FeedbackScope)} instead
+     */
+    @Deprecated
     public ScopedFeedBackMessageFilter(final MarkupContainer container, final ValidationScope scope) {
-        this(container);
-        validationScope = scope;
+        this(container, scope.toFeedbackScope());
     }
 
     @Override
     public boolean accept(final FeedbackMessage message) {
         final boolean isInContainer = super.accept(message);
         if (isInContainer && message instanceof ScopedFeedBackMessage) {
-            ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
-            return scopedMessage.getScope().equals(this.validationScope);
+            final ScopedFeedBackMessage scopedMessage = (ScopedFeedBackMessage) message;
+            return scopedMessage.getFeedbackScope().equals(feedbackScope);
         }
         return isInContainer;
     }

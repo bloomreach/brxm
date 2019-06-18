@@ -35,7 +35,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.validation.FeedbackPriority;
-import org.hippoecm.frontend.validation.ValidationScope;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationListener;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
@@ -134,7 +134,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 listener.onValidation(result);
             }
             for (final Violation violation : result.getViolations()) {
-                logger.error(violation.getMessage(), violation.getValidationScope());
+                logger.error(violation.getMessage(), violation.getFeedbackScope());
             }
             addSummaryMessage(result, logger);
         } catch (final RepositoryException e) {
@@ -148,12 +148,12 @@ public class JcrValidationService implements IValidationService, IDetachable {
 
     private void addSummaryMessage(final ValidationResult result, final IFeedbackLogger logger) {
         if (result.getAffectedFields() == 1) {
-            logger.error(getResourceBundleModel("summarySingle", null), ValidationScope.DOCUMENT, FeedbackPriority.HIGH);
+            logger.error(getResourceBundleModel("summarySingle", null), FeedbackScope.DOCUMENT, FeedbackPriority.HIGH);
         }
         if (result.getAffectedFields() > 1) {
             final IModel<String> resourceBundleModel = getResourceBundleModel("summaryMultiple",
                     Collections.singletonMap("numberOfErrors", Integer.toString(result.getAffectedFields())));
-            logger.error(resourceBundleModel, ValidationScope.DOCUMENT, FeedbackPriority.HIGH);
+            logger.error(resourceBundleModel, FeedbackScope.DOCUMENT, FeedbackPriority.HIGH);
         }
     }
 

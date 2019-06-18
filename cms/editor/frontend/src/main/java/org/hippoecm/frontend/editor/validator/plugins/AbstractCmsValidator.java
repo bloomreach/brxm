@@ -21,16 +21,17 @@ import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 
-abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator {
+public abstract class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
-    private final static String SCOPE = "scope";
+    private static final String SCOPE = "scope";
 
     private final String name;
-    private ValidationScope validationScope = ValidationScope.DOCUMENT;
+    private FeedbackScope feedbackScope = FeedbackScope.DOCUMENT;
 
     public AbstractCmsValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -39,7 +40,7 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
 
         if (config.containsKey(SCOPE)) {
-            validationScope = (ValidatorUtils.getValidationScope(config.getString(SCOPE)));
+            feedbackScope = ValidatorUtils.getFeedbackScope(config.getString(SCOPE));
         }
     }
 
@@ -47,8 +48,16 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return name;
     }
 
+    /**
+     * @deprecated Use {@link #getFeedbackScope()} instead
+     */
+    @Deprecated
     protected ValidationScope getValidationScope() {
-        return validationScope;
+        return ValidationScope.from(feedbackScope);
+    }
+
+    protected FeedbackScope getFeedbackScope() {
+        return feedbackScope;
     }
 
     /**
