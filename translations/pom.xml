@@ -31,7 +31,7 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <hippo.maven.plugin.l10n>2.2.2</hippo.maven.plugin.l10n>
+    <maven.plugin.flatten.version>1.0.1</maven.plugin.flatten.version>
     <locales>fr,nl,de,zh,es</locales>
     <locale />
     <format>excel</format>
@@ -62,6 +62,18 @@
       </releases>
     </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>hippo-maven2-enterprise</id>
+      <name>Hippo Enterprise Maven 2</name>
+      <url>https://maven.onehippo.com/maven2-enterprise</url>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
   
   <modules>
     <module>hippo-cms</module>
