@@ -25,7 +25,12 @@ import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.onehippo.cms.services.validation.api.Validator;
 
+/**
+ * @deprecated Implement {@link Validator} instead. Make sure to adjust your repository bootstrap configuration too.
+ */
+@Deprecated
 public abstract class AbstractCmsValidator extends Plugin implements ICmsValidator {
 
     private static final String SCOPE = "scope";
