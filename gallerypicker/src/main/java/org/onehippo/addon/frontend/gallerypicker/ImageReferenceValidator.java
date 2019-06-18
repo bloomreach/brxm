@@ -80,7 +80,7 @@ public class ImageReferenceValidator extends AbstractCmsValidator {
             if (StringUtils.isEmpty(ref)
                     || ref.equals(JcrConstants.ROOT_NODE_ID)
                     || ref.equals(contentGalleryIdentifier)) {
-                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getValidationScope()));
+                violations.add(fieldValidator.newValueViolation(childModel, getTranslation(), getFeedbackScope()));
             }
         } catch (final RepositoryException repositoryException) {
             log.error("Error validating image reference field: " + fieldValidator.getFieldDescriptor(),
