@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 
-:host {
-  align-items: stretch;
-  background-color: $top-panel-bg;
-  border-bottom: 1px solid $top-panel-border-color;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-  height: $top-panel-height;
-  justify-items: stretch;
-}
+import { MenuStateService } from '../../main-menu/services';
 
-.site-selector-value {
-  align-items: center;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  justify-items: end;
-  padding-right: 20px;
+@Injectable()
+export class BreadcrumbsService {
+  suffix: string;
+
+  constructor(
+    private menuStateService: MenuStateService,
+  ) {}
+
+  get breadcrumbs$(): Observable<string[]> {
+    return this.menuStateService.activePath$.pipe(
+      map(breadcrumbs => breadcrumbs.map(x => x.caption)),
+      filter(breadcrumbs => !!breadcrumbs.length),
+    );
+  }
 }
