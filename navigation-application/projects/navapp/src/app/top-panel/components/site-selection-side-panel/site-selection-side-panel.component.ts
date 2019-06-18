@@ -96,8 +96,9 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   }
 
   shouldNotRender(node: SiteFlatNode): boolean {
-    const parent = this.getParentNode(node);
-    return parent && !parent.isExpanded;
+    const path = this.buildPath(node);
+
+    return path.some(x => !x.isExpanded);
   }
 
   onSearchInputKeyUp(): void {
@@ -121,6 +122,24 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     }
 
     return undefined;
+  }
+
+  private buildPath(node: SiteFlatNode): SiteFlatNode[] {
+    const parents: SiteFlatNode[] = [];
+    let currentNode = node;
+
+    while (true) {
+      const parent = this.getParentNode(currentNode);
+
+      if (!parent) {
+        break;
+      }
+
+      parents.push(parent);
+      currentNode = parent;
+    }
+
+    return parents;
   }
 
   private expandActiveNode(): void {

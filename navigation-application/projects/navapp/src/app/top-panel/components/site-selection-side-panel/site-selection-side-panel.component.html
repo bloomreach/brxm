@@ -48,7 +48,7 @@
               cdkTreeNodeToggle
               [attr.aria-label]="'toggle ' + node.name"
               (click)="onExpandCollapseIconClicked(node)">
-        <mat-icon [svgIcon]="node.isExpanded ? 'expand_more' : 'chevron_right'"></mat-icon>
+        <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'"></mat-icon>
       </button>
       {{ node.name }}
     </cdk-tree-node>
