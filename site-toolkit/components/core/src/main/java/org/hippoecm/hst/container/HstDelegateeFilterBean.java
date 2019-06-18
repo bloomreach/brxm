@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -647,13 +648,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
 
     private boolean isCmsSessionContextBindingRequest(final HttpServletRequest req) {
-        if (req.getServletPath().isEmpty()) {
-            return false;
-        }
-        if(req.getServletPath().substring(1).equals(CMSSESSIONCONTEXT_BINDING_PATH)) {
-            return true;
-        }
-        return false;
+        return StringUtils.substring(req.getServletPath(), 1).equals(CMSSESSIONCONTEXT_BINDING_PATH);
     }
 
     // returns true if the request comes from cms
