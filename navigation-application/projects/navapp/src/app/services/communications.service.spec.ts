@@ -61,7 +61,7 @@ describe('CommunicationsService', () => {
     };
   }
 
-  it('should navigate', () => {
+  xit('should navigate', () => {
     const { communicationsService, clientAppService, api } = setup();
     const url = 'url';
     const path = 'test/test';

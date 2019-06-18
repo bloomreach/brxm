@@ -24,11 +24,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
-  exports: [
-    MatRippleModule,
-    MatIconModule,
-    HttpClientModule,
-  ],
+  exports: [MatRippleModule, MatIconModule, HttpClientModule],
 })
 export class MaterialModule {
   constructor(
@@ -86,9 +82,8 @@ export class MaterialModule {
 
       icons.forEach(icon => iconRegistry.addSvgIcon(
         icon,
-        donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/${path}/${icon}.svg`)),
+        donSanitizer.bypassSecurityTrustResourceUrl(`navapp-assets/${path}/${icon}.svg`)),
       );
     });
-
   }
 }
