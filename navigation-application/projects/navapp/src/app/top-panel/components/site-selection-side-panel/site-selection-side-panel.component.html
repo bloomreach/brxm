@@ -25,7 +25,7 @@
          class="search-input">
 </form>
 <perfect-scrollbar [config]="{ suppressScrollX: true }" class="sites-tree-wrapper">
-  <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl" [trackBy]="trackByFn">
+  <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
     <cdk-tree-node *cdkTreeNodeDef="let node"
                    matRipple
                    cdkTreeNodePadding

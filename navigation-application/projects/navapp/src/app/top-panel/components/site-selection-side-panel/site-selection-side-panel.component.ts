@@ -104,10 +104,6 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     this.updateDataSource();
   }
 
-  trackByFn(index: number, node: SiteFlatNode): number {
-    return node.id;
-  }
-
   private updateDataSource(): void {
     const filteredSites = this.filterSites(this.sites, this.searchText);
     this.flatSites = this.treeFlattener.flattenNodes(filteredSites);
