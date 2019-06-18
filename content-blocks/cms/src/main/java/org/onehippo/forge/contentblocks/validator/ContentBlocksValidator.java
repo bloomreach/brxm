@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * Validator for the Content Blocks. The validator delegates to the correct validators based on the content block
  * document type.
  */
+@SuppressWarnings("deprecation")
 public class ContentBlocksValidator extends AbstractCmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(ContentBlocksValidator.class);
