@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ describe('pathLinkController', () => {
 
     beforeEach(() => {
       spyOn($scope, '$on');
-      spyOn($ctrl, 'openLinkPicker');
+      spyOn($ctrl, 'open');
 
       $ctrl.$onInit();
       [, onSelectDocument] = $scope.$on.calls.mostRecent().args;
@@ -93,42 +93,30 @@ describe('pathLinkController', () => {
     it('opens the link picker when the parameter name matches', () => {
       onSelectDocument('event', 'TestField');
       expect(ngModel.$setTouched).toHaveBeenCalled();
-      expect($ctrl.openLinkPicker).toHaveBeenCalled();
+      expect($ctrl.open).toHaveBeenCalled();
     });
 
     it('does not open the link picker when the parameter name does not match', () => {
       onSelectDocument('event', 'AnotherField');
-      expect($ctrl.openLinkPicker).not.toHaveBeenCalled();
+      expect($ctrl.open).not.toHaveBeenCalled();
     });
   });
 
-  describe('openLinkPicker', () => {
+  describe('open', () => {
     it('picks a path', () => {
       PickerService.pickPath.and.returnValue($q.resolve());
 
-      $ctrl.openLinkPicker();
+      $ctrl.open();
 
       expect(PickerService.pickPath).toHaveBeenCalledWith(config.linkpicker, ngModel.$modelValue);
     });
 
     it('updates the view when a path has been picked', (done) => {
       PickerService.pickPath.and.returnValue($q.resolve({ path: 'some/path', displayName: 'path pretty name' }));
-      spyOn($ctrl, '_focusSelectButton');
 
-      $ctrl.openLinkPicker().then(() => {
+      $ctrl.open().then(() => {
         expect(ngModel.$setViewValue).toHaveBeenCalledWith('some/path');
         expect($ctrl.displayName).toEqual('path pretty name');
-        done();
-      });
-      $scope.$digest();
-    });
-
-    it('focuses the select button when picked a path has been canceled', (done) => {
-      PickerService.pickPath.and.returnValue($q.reject());
-      spyOn($ctrl, '_focusSelectButton');
-
-      $ctrl.openLinkPicker().finally(() => {
-        expect($ctrl._focusSelectButton).toHaveBeenCalled();
         done();
       });
       $scope.$digest();

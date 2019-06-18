@@ -19,7 +19,7 @@
   name="{{::$ctrl.name}}"
   ng-blur="$ctrl.onBlur($event)"
   ng-class="{'has-focus': $ctrl.hasFocus}"
-  ng-click="$ctrl.openLinkPicker()"
+  ng-click="$ctrl.open()"
   ng-disabled="$ctrl.disabled"
   ng-focus="$ctrl.onFocus($event)"
   ng-value="$ctrl.displayName"
@@ -41,9 +41,9 @@
   </md-button>
   <md-button
     class="md-icon-button hippo-node-link-select"
-    focus-if="$ctrl.linkPicked"
+    focus-if="$ctrl.isPicked"
     ng-blur="$ctrl.onBlur($event)"
-    ng-click="$ctrl.openLinkPicker()"
+    ng-click="$ctrl.open()"
     ng-disabled="$ctrl.disabled"
     ng-focus="$ctrl.onFocus($event)"
   >

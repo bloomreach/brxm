@@ -138,14 +138,14 @@ describe('nodeLinkController', () => {
       expect(preventDefault).toHaveBeenCalled();
     });
 
-    it('opens the linkPicker if model is empty', () => {
-      spyOn($ctrl, 'openLinkPicker');
+    it('opens the picker if model is empty', () => {
+      spyOn($ctrl, 'open');
       ngModel.$modelValue = '';
       init();
 
       $ctrl.onFocusFromParent({ preventDefault });
 
-      expect($ctrl.openLinkPicker).toHaveBeenCalled();
+      expect($ctrl.open).toHaveBeenCalled();
     });
 
     it('puts focus on the "clear" button if model is not empty', () => {
@@ -202,7 +202,7 @@ describe('nodeLinkController', () => {
     });
   });
 
-  describe('openLinkPicker', () => {
+  describe('open', () => {
     beforeEach(() => {
       init();
       spyOn($ctrl, '_focusSelectButton');
@@ -210,7 +210,7 @@ describe('nodeLinkController', () => {
 
     it('picks a link', (done) => {
       PickerService.pickLink.and.returnValue($q.resolve());
-      $ctrl.openLinkPicker().then(() => {
+      $ctrl.open().then(() => {
         expect(PickerService.pickLink).toHaveBeenCalledWith('link-picker-config', { uuid: 'model-value' });
         done();
       });
@@ -223,8 +223,8 @@ describe('nodeLinkController', () => {
         uuid: 'new-uuid',
       }));
 
-      $ctrl.openLinkPicker().then(() => {
-        expect($ctrl.linkPicked).toBe(true);
+      $ctrl.open().then(() => {
+        expect($ctrl.isPicked).toBe(true);
         expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
         expect($ctrl.displayName).toEqual('new-display-name');
         expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
@@ -234,14 +234,14 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on the select-button if a link was previously picked', (done) => {
-      $ctrl.linkPicked = true;
+      $ctrl.isPicked = true;
 
       PickerService.pickLink.and.returnValue($q.resolve({
         displayName: 'new-display-name',
         uuid: 'new-uuid',
       }));
 
-      $ctrl.openLinkPicker().then(() => {
+      $ctrl.open().then(() => {
         expect($ctrl._focusSelectButton).toHaveBeenCalled();
         done();
       });
@@ -251,7 +251,7 @@ describe('nodeLinkController', () => {
     it('sets focus on the select button when the picker is cancelled and a link was previously picked', (done) => {
       PickerService.pickLink.and.returnValue($q.reject());
 
-      $ctrl.openLinkPicker().finally(() => {
+      $ctrl.open().finally(() => {
         expect($ctrl._focusSelectButton).toHaveBeenCalled();
         done();
       });
@@ -262,14 +262,14 @@ describe('nodeLinkController', () => {
       const deferred = $q.defer();
       PickerService.pickLink.and.returnValue(deferred.promise);
 
-      $ctrl.openLinkPicker();
-      $ctrl.openLinkPicker();
+      $ctrl.open();
+      $ctrl.open();
       expect(PickerService.pickLink.calls.count()).toBe(1);
 
       deferred.resolve();
       $scope.$digest();
 
-      $ctrl.openLinkPicker();
+      $ctrl.open();
       expect(PickerService.pickLink.calls.count()).toBe(2);
     });
   });
@@ -280,7 +280,7 @@ describe('nodeLinkController', () => {
       $ctrl.clear();
 
       expect($ctrl.displayName).toEqual('');
-      expect($ctrl.linkPicked).toBe(false);
+      expect($ctrl.isPicked).toBe(false);
       expect(ngModel.$setTouched).toHaveBeenCalled();
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('');
     });

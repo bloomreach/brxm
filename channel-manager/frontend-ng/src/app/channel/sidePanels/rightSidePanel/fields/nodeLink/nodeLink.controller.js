@@ -43,7 +43,7 @@ export default class NodeLinkController {
     focusEvent.preventDefault();
 
     if (this.ngModel.$modelValue === '') {
-      this.openLinkPicker();
+      this.open();
     } else {
       this._focusClearButton();
     }
@@ -84,28 +84,41 @@ export default class NodeLinkController {
     this.$element.triggerHandler($event);
   }
 
-  openLinkPicker() {
-    if (!this._linkPickerPromise) {
-      const uuid = this.ngModel.$modelValue;
-      this._linkPickerPromise = this.PickerService.pickLink(this.config.linkpicker, { uuid })
-        .then(link => this._onLinkPicked(link))
-        .catch(() => this._focusSelectButton())
-        .finally(() => delete this._linkPickerPromise);
-    }
-    return this._linkPickerPromise;
+  open() {
+    this._pickerPromise = this._pickerPromise || (async () => {
+      try {
+        const data = await this._showPicker();
+        await this._onPick(data);
+      } catch (e) {
+        this._focusSelectButton();
+      } finally {
+        delete this._pickerPromise;
+      }
+    })();
+
+    return this._pickerPromise;
   }
 
-  _onLinkPicked(link) {
-    if (this.linkPicked) {
+  async _showPicker() {
+    const { uuid: value, displayName } = await this.PickerService.pickLink(
+      this.config.linkpicker,
+      { uuid: this.ngModel.$modelValue },
+    );
+
+    return { value, displayName };
+  }
+
+  _onPick({ value, displayName }) {
+    if (this.isPicked) {
       this._focusSelectButton();
     }
-    this.linkPicked = true;
-    this.displayName = link.displayName;
-    this.ngModel.$setViewValue(link.uuid);
+    this.isPicked = true;
+    this.displayName = displayName;
+    this.ngModel.$setViewValue(value);
   }
 
   clear() {
-    this.linkPicked = false;
+    this.isPicked = false;
     this.displayName = '';
     this.ngModel.$setTouched();
     this.ngModel.$setViewValue('');

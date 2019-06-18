@@ -16,7 +16,7 @@
 
 import NodeLinkController from '../nodeLink/nodeLink.controller';
 
-class PathLinkController extends NodeLinkController {
+export default class PathLinkController extends NodeLinkController {
   $onInit() {
     super.$onInit();
 
@@ -26,24 +26,16 @@ class PathLinkController extends NodeLinkController {
   _onSelectDocument(parameterName) {
     if (this.name === parameterName) {
       this.ngModel.$setTouched();
-      this.openLinkPicker();
+      this.open();
     }
   }
 
-  openLinkPicker() {
-    return this.PickerService.pickPath(this.config.linkpicker, this.ngModel.$modelValue)
-      .then(({ path, displayName }) => this._onPathPicked(path, displayName))
-      .catch(() => this._focusSelectButton());
-  }
+  async _showPicker() {
+    const { path: value, displayName } = await this.PickerService.pickPath(
+      this.config.linkpicker,
+      this.ngModel.$modelValue,
+    );
 
-  _onPathPicked(path, displayName) {
-    if (this.linkPicked) {
-      this._focusSelectButton();
-    }
-    this.linkPicked = true;
-    this.displayName = displayName;
-    this.ngModel.$setViewValue(path);
+    return { value, displayName };
   }
 }
-
-export default PathLinkController;
