@@ -174,6 +174,8 @@ describe('nodeLinkController', () => {
 
     it('blurs parent container', () => {
       $ctrl.onBlur('event');
+      $timeout.flush();
+
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
 

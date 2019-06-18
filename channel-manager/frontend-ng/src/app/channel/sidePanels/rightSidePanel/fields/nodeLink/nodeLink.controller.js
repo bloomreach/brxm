@@ -62,11 +62,15 @@ export default class NodeLinkController {
   // a immediate focus event, in which case the blue bottom border will be removed and added
   // again, resulting in annoying flickering of the UI.
   onBlur($event) {
-    if (this.mdInputContainer) {
-      this.mdInputContainer.setFocused(false);
-    }
-
     this.blurPromise = this.$timeout(() => {
+      if (this._pickerPromise) {
+        return;
+      }
+
+      if (this.mdInputContainer) {
+        this.mdInputContainer.setFocused(false);
+      }
+
       this.hasFocus = false;
       this.$element.triggerHandler($event);
     }, 10);
