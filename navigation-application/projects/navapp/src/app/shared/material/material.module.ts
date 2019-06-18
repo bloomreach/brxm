@@ -20,7 +20,7 @@ import {
   MatButtonModule,
   MatIconModule,
   MatIconRegistry,
-  MatRippleModule,
+  MatRippleModule, MatTreeModule,
 } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -29,6 +29,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     MatRippleModule,
     MatIconModule,
     MatButtonModule,
+    MatTreeModule,
     HttpClientModule,
   ],
 })

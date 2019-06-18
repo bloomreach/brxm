@@ -15,10 +15,9 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ArrayDataSource } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnChanges, Output } from '@angular/core';
-import { MatTreeFlattener } from '@angular/material';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
 
 import { Site } from '../../../models';
 
@@ -27,7 +26,6 @@ interface SiteFlatNode {
   expandable: boolean;
   name: string;
   level: number;
-  isExpanded?: boolean;
 }
 
 @Component({
@@ -68,12 +66,10 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     node => node.expandable,
     node => node.subGroups,
   );
-  dataSource: ArrayDataSource<SiteFlatNode>;
-
-  private flatSites: SiteFlatNode[];
+  dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
   get isNotFoundPanelVisible(): boolean {
-    return this.flatSites && this.flatSites.length === 0 && !!this.searchText;
+    return this.dataSource.data && this.dataSource.data.length === 0 && !!this.searchText;
   }
 
   ngOnChanges(changes): void {
@@ -84,10 +80,6 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     return node.expandable;
   }
 
-  onExpandCollapseIconClicked(node: SiteFlatNode): void {
-    node.isExpanded = !node.isExpanded;
-  }
-
   onNodeClicked(node: SiteFlatNode): void {
     this.selectedSiteChange.emit({ id: node.id, name: node.name });
   }
@@ -96,51 +88,13 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     return this.selectedSite ? node.id === this.selectedSite.id : false;
   }
 
-  shouldNotRender(node: SiteFlatNode): boolean {
-    const path = this.buildPath(node);
-
-    return path.some(x => !x.isExpanded);
-  }
-
   onSearchInputKeyUp(): void {
     this.updateDataSource();
   }
 
   private updateDataSource(): void {
-    const filteredSites = this.filterSites(this.sites, this.searchText);
-    this.flatSites = this.treeFlattener.flattenNodes(filteredSites);
+    this.dataSource.data = this.filterSites(this.sites, this.searchText);
     this.expandActiveNode();
-    this.dataSource = new ArrayDataSource(this.flatSites);
-  }
-
-  private getParentNode(node: SiteFlatNode): SiteFlatNode {
-    const nodeIndex = this.flatSites.indexOf(node);
-
-    for (let i = nodeIndex - 1; i >= 0; i--) {
-      if (this.flatSites[i].level === node.level - 1) {
-        return this.flatSites[i];
-      }
-    }
-
-    return undefined;
-  }
-
-  private buildPath(node: SiteFlatNode): SiteFlatNode[] {
-    const parents: SiteFlatNode[] = [];
-    let currentNode = node;
-
-    while (true) {
-      const parent = this.getParentNode(currentNode);
-
-      if (!parent) {
-        break;
-      }
-
-      parents.push(parent);
-      currentNode = parent;
-    }
-
-    return parents;
   }
 
   private expandActiveNode(): void {
@@ -149,17 +103,16 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
       return;
     }
 
-    const node = this.flatSites.find(x => x.id === this.selectedSite.id);
-    if (!node) {
+    const selectedNode = this.treeControl.dataNodes.find(x => x.id === this.selectedSite.id);
+
+    if (!selectedNode) {
+      this.treeControl.collapseAll();
       return;
     }
 
-    let parent: SiteFlatNode = node;
+    const path = this.buildPath(this.treeControl.dataNodes, selectedNode);
 
-    do {
-      parent.isExpanded = true;
-      parent = this.getParentNode(parent);
-    } while (parent);
+    path.forEach(node => this.treeControl.expand(node));
   }
 
   private filterSites(sites: Site[], searchText: string): Site[] {
@@ -194,5 +147,35 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
       name: node.name,
       level,
     };
+  }
+
+  private buildPath(nodes: SiteFlatNode[], node: SiteFlatNode): SiteFlatNode[] {
+    const parents: SiteFlatNode[] = [];
+    let currentNode = node;
+
+    while (true) {
+      const parent = this.getParentNode(nodes, currentNode);
+
+      if (!parent) {
+        break;
+      }
+
+      parents.unshift(parent);
+      currentNode = parent;
+    }
+
+    return parents;
+  }
+
+  private getParentNode(nodes: SiteFlatNode[], node: SiteFlatNode): SiteFlatNode {
+    const nodeIndex = nodes.indexOf(node);
+
+    for (let i = nodeIndex - 1; i >= 0; i--) {
+      if (nodes[i].level === node.level - 1) {
+        return nodes[i];
+      }
+    }
+
+    return undefined;
   }
 }

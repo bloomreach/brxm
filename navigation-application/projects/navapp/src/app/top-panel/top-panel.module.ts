@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CdkTreeModule } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,7 +35,6 @@ import { BreadcrumbsService } from './services/breadcrumbs.service';
     SharedModule,
     PerfectScrollbarModule,
     FormsModule,
-    CdkTreeModule,
   ],
   declarations: [
     TopPanelComponent,

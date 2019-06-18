@@ -25,33 +25,29 @@
          class="search-input">
 </form>
 <perfect-scrollbar [config]="{ suppressScrollX: true }" class="sites-tree-wrapper">
-  <cdk-tree [dataSource]="dataSource" [treeControl]="treeControl">
-    <cdk-tree-node *cdkTreeNodeDef="let node"
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <mat-tree-node *matTreeNodeDef="let node"
                    matRipple
-                   cdkTreeNodePadding
+                   matTreeNodePadding
                    (click)="onNodeClicked(node)"
-                   [class.hidden]="shouldNotRender(node)"
                    [class.active]="isActive(node)"
                    class="caption">
       <mat-icon svgIcon="remove"></mat-icon>
       {{ node.name }}
-    </cdk-tree-node>
-    <cdk-tree-node *cdkTreeNodeDef="let node; when: hasChild"
+    </mat-tree-node>
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
                    matRipple
-                   cdkTreeNodeToggle
-                   cdkTreeNodePadding
+                   matTreeNodePadding
                    (click)="onNodeClicked(node)"
                    [class.active]="isActive(node)"
-                   [class.hidden]="shouldNotRender(node)"
                    class="caption">
       <button mat-icon-button
-              cdkTreeNodeToggle
-              [attr.aria-label]="'toggle ' + node.name"
-              (click)="onExpandCollapseIconClicked(node)">
+              matTreeNodeToggle
+              [attr.aria-label]="'toggle ' + node.name">
         <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'"></mat-icon>
       </button>
       {{ node.name }}
-    </cdk-tree-node>
-  </cdk-tree>
+    </mat-tree-node>
+  </mat-tree>
   <div *ngIf="isNotFoundPanelVisible" class="not-found-info">There is no sites found.</div>
 </perfect-scrollbar>
