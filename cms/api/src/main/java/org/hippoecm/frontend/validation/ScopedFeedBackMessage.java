@@ -26,8 +26,7 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
     private FeedbackPriority feedbackPriority = FeedbackPriority.NORMAL;
 
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level) {
-        super(reporter, message, level);
-        this.scope = FeedbackScope.DOCUMENT;
+        this(reporter, message, level, FeedbackScope.DOCUMENT);
     }
 
     public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
@@ -36,14 +35,31 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
         this.scope = scope;
     }
 
-    public FeedbackScope getScope() {
+    /**
+     * @deprecated Use {@link #ScopedFeedBackMessage(Component, Serializable, int, FeedbackScope)} instead
+     */
+    @Deprecated
+    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
+                                 final ValidationScope scope) {
+        this(reporter, message, level, scope.toFeedbackScope());
+    }
+
+    /**
+     * @deprecated Use {@link #getFeedbackScope()} instead
+     */
+    @Deprecated
+    public ValidationScope getScope() {
+        return ValidationScope.from(scope);
+    }
+
+    public FeedbackScope getFeedbackScope() {
         return scope;
     }
 
     public FeedbackPriority getFeedbackPriority() {
         return feedbackPriority;
     }
-    
+
     public void setFeedbackPriority(final FeedbackPriority feedbackPriority) {
         this.feedbackPriority = feedbackPriority;
     }
