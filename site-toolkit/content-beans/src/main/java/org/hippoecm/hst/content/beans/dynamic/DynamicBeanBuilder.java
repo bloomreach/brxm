@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,9 +32,8 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
-import org.hippoecm.hst.platform.model.HstModel;
-import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.site.HstServices;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
@@ -74,6 +72,7 @@ public class DynamicBeanBuilder {
 
     private Builder<? extends HippoBean> builder;
     private final Class<? extends HippoBean> parentBean;
+    private final HippoWebappContext.Type webappType;
     private boolean methodAdded = false;
 
     boolean isMethodAdded() {
@@ -145,6 +144,10 @@ public class DynamicBeanBuilder {
     DynamicBeanBuilder(final String className, final Class<? extends HippoBean> parentBean) {
         builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
         this.parentBean = parentBean;
+
+        final HstModelProvider hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModelProvider.getContextPath());
+        webappType = context.getType();
     }
 
     void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
@@ -327,11 +330,12 @@ public class DynamicBeanBuilder {
                 // TODO otherwise can a wrong SPA page model api, we have extra check to only add the JsonIgnore for the
                 // TODO cms/platform webapp
 
-                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-                final HstModel model = hstModelRegistry.getHstModel(DynamicBeanBuilder.class.getClassLoader());
-                final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(model.getVirtualHosts().getContextPath());
+                // TODO we can also opt for injecting our OWN annotations, similar to the annotations we already have,
+                // TODO for example org.hippoecm.hst.content.beans.index.Indexable : After that, we can use custom
+                // TODO Jackson serialization to skip getters that have for example @Indexable(false) (OR some other
+                // TODO annotation
 
-                if (context.getType() == HippoWebappContext.Type.CMS || context.getType() == HippoWebappContext.Type.PLATFORM) {
+                if (webappType == HippoWebappContext.Type.CMS || webappType == HippoWebappContext.Type.PLATFORM) {
                     builder = intercept.annotateMethod(AnnotationDescription.Builder.ofType(JsonIgnore.class).build());
                 } else {
                     builder = intercept;
