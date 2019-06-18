@@ -88,7 +88,7 @@ export class MaterialModule {
 
       icons.forEach(icon => iconRegistry.addSvgIcon(
         icon,
-        donSanitizer.bypassSecurityTrustResourceUrl(`navapp/assets/${path}/${icon}.svg`)),
+        donSanitizer.bypassSecurityTrustResourceUrl(`navapp-assets/${path}/${icon}.svg`)),
       );
     });
   }

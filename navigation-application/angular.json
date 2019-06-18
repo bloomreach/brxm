@@ -32,8 +32,8 @@
               "projects/navapp/src/favicon.ico",
               {
                 "glob": "**/**/*",
-                "input": "projects/navapp/src/navapp/assets/",
-                "output": "/navapp/assets/"
+                "input": "projects/navapp/src/navapp-assets/",
+                "output": "/navapp-assets/"
               }
             ],
             "styles": [
