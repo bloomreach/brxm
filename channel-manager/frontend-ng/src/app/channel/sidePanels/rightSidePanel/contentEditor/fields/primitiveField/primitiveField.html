@@ -221,7 +221,7 @@
                          ng-required="::$ctrl.fieldType.required">
     </openui-string-field>
 
-    <div ng-if="::$last"
+    <div ng-if="$last && !$ctrl.isValid()"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       <div ng-message="server">{{ ::$ctrl.firstServerError }}</div>

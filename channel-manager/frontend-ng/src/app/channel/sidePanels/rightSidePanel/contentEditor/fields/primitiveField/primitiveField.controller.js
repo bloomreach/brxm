@@ -68,7 +68,7 @@ class PrimitiveFieldCtrl {
     return !this.fieldValues.some((fieldValue, index) => {
       const fieldName = this.getFieldName(index);
       const field = this.form[fieldName];
-      return field && field.$invalid;
+      return field && field.$invalid && field.$touched;
     });
   }
 

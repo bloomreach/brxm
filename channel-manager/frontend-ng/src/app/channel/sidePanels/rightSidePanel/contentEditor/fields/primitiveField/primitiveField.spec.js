@@ -140,6 +140,7 @@ describe('PrimitiveField', () => {
     $ctrl.form = {
       'test-name/field:type': {
         $invalid: true,
+        $touched: true,
       },
     };
     expect($ctrl.isValid()).toBe(false);
@@ -149,9 +150,11 @@ describe('PrimitiveField', () => {
     $ctrl.form = {
       'test-name/field:type': {
         $invalid: false,
+        $touched: true,
       },
       'test-name/field:type[2]': {
-        $invalid: false,
+        $invalid: true,
+        $touched: false,
       },
     };
     expect($ctrl.isValid()).toBe(true);
@@ -161,9 +164,11 @@ describe('PrimitiveField', () => {
     $ctrl.form = {
       'test-name/field:type': {
         $invalid: false,
+        $touched: false,
       },
       'test-name/field:type[2]': {
         $invalid: true,
+        $touched: true,
       },
     };
     expect($ctrl.isValid()).toBe(false);
