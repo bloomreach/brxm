@@ -16,14 +16,10 @@
 
 <brna-breadcrumbs class="breadcrumbs"></brna-breadcrumbs>
 <div matRipple (click)="onSiteSelectorClicked()" class="site-selector-value">
-  <ng-container *ngIf="selectedSite; else pleaseSelectSite">
+  <ng-container *ngIf="selectedSite">
     {{ selectedSite.name }}
     <mat-icon svgIcon="arrow_drop_down"></mat-icon>
   </ng-container>
-  <ng-template #pleaseSelectSite>
-    Please select a site...
-    <mat-icon svgIcon="arrow_drop_down"></mat-icon>
-  </ng-template>
 </div>
 <div *ngIf="isSidePanelOpened" (click)="onBackdropClicked()" class="backdrop"></div>
 <brna-site-selection-side-panel *ngIf="isSidePanelOpened"
