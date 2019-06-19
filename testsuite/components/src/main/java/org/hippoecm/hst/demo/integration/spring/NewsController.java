@@ -35,16 +35,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
 @RequestMapping("/news")
 public class NewsController {
 
     private static Logger log = LoggerFactory.getLogger(NewsController.class);
 
-    @RequestMapping(value={"", "/"})
+    @RequestMapping(value = {"", "/"}, method = GET)
     public ModelAndView listHandler(
-            @RequestParam(value = "pi", defaultValue="1") String pageIndexParam,
-            @RequestParam(value = "ps", defaultValue="10") String pageSizeParam,
+            @RequestParam(value = "pi", defaultValue = "1") String pageIndexParam,
+            @RequestParam(value = "ps", defaultValue = "10") String pageSizeParam,
             HttpServletRequest request) {
 
         HstRequestContext requestContext = RequestContextProvider.get();
@@ -94,7 +96,7 @@ public class NewsController {
         return mav;
     }
 
-    @RequestMapping("/**")
+    @RequestMapping(value = "/**", method = GET)
     public ModelAndView itemHandler() {
         ModelAndView mav = new ModelAndView("news/item");
         mav.addObject("document", RequestContextProvider.get().getContentBean());
