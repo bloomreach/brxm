@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -75,9 +76,6 @@ public class LayoutProvider implements ILayoutProvider {
         this.classLoaderModel = loaderModel;
 
         layouts = new LinkedHashMap<>();
-        final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        documentBuilderFactory.setValidating(false);
 
         final ClassLoader loader = classLoaderModel.getObject();
         if (loader == null) {
@@ -86,6 +84,12 @@ public class LayoutProvider implements ILayoutProvider {
         }
 
         try {
+
+            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            documentBuilderFactory.setNamespaceAware(true);
+            documentBuilderFactory.setValidating(false);
+
             for (Enumeration<URL> iter = loader.getResources("hippoecm-layouts.xml"); iter.hasMoreElements();) {
                 final URL configurationURL = iter.nextElement();
                 final InputStream stream = configurationURL.openStream();

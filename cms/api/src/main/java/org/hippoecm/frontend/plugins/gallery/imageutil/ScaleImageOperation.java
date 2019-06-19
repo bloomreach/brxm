@@ -31,6 +31,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -194,6 +195,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     private Document readSvgDocument(final File tmpFile) throws ParserConfigurationException, SAXException, IOException {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         // disable validation to speed up SVG parsing (without it parsing a tiny SVG file can take up to 15 seconds)
         disableValidation(factory);
@@ -204,7 +206,9 @@ public class ScaleImageOperation extends AbstractImageOperation {
 
     private void writeSvgDocument(final File file, final Document svgDocument) {
         try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            final Transformer transformer = factory.newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, svgDocument.getInputEncoding());
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
