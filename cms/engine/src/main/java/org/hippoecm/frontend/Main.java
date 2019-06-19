@@ -129,7 +129,10 @@ public class Main extends PluginApplication {
     public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public final static String REPOSITORY_DIRECTORY_PARAM = "repository-directory";
     public final static String REPOSITORY_USERNAME_PARAM = "repository-username";
+
+    @SuppressWarnings("squid:S2068")
     public final static String REPOSITORY_PASSWORD_PARAM = "repository-password";
+
     public final static String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String ENCRYPT_URLS = "encrypt-urls";
