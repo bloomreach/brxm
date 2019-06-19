@@ -136,6 +136,8 @@ public class LoginServlet extends HttpServlet {
 
     public static final String DESTINATION = "destination";
     public static final String USERNAME = "username";
+    // This is not a password but a suffix for a password attribute in an http session
+    @SuppressWarnings("squid:S2068")
     public static final String PASSWORD = "password";
 
     public static final String BASE_NAME = LoginServlet.class.getPackage().getName();
