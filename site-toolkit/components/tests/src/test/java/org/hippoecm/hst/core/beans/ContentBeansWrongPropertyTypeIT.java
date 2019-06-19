@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ContentBeansWrongPropertyTypeIT extends AbstractBeanTestCase {
 
@@ -37,20 +39,17 @@ public class ContentBeansWrongPropertyTypeIT extends AbstractBeanTestCase {
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
         TextBeanEnhanced homeBean = (TextBeanEnhanced)obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
 
-        assertNull(homeBean.getTitleWrong());
+        assertNotNull(homeBean.getTitleWrong());
 
-        assertFalse(homeBean.getTitleWrong2());
+        assertTrue(homeBean.getTitleWrong().length == 1);
 
+        assertTrue(homeBean.getTitleWrong()[0].equals(homeBean.getTitle()));
     }
 
     public static class TextBeanEnhanced extends TextBean {
 
         public String[] getTitleWrong() {
-            return getProperty("unittestproject:title");
-        }
-
-        public boolean getTitleWrong2() {
-            return getProperty("unittestproject:title");
+            return getMultipleValueProperty("unittestproject:title");
         }
 
     }
