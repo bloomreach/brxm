@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { NavConfigResource } from './nav-config-resource.dto';
+import { ConfigResource } from './config-resource.dto';
 
 export interface AppSettings {
-  navConfigResources: NavConfigResource[];
+  navConfigResources: ConfigResource[];
 }

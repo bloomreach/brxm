@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+import { Injectable } from '@angular/core';
 
-html,
-body {
-  height: 100vh;
-}
+@Injectable()
+export class SiteSelectionSidePanelService {
+  private opened = false;
 
-body {
-  display: grid;
-  overflow: hidden;
-}
+  get isOpened(): boolean {
+    return this.opened;
+  }
 
-.hidden {
-  display: none !important;
+  toggle(): void {
+    this.opened = !this.opened;
+  }
+
+  close(): void {
+    this.opened = false;
+  }
 }

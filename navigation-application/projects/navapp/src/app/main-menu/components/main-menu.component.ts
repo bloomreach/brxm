@@ -20,7 +20,7 @@ import { first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
 import { UserSettings } from '../../models/dto';
-import { NavAppSettingsService, QaHelperService } from '../../services';
+import { GlobalSettingsService, QaHelperService } from '../../services';
 import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
 import { MenuStateService } from '../services';
 
@@ -41,7 +41,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
     private clientAppService: ClientAppService,
-    private navAppSettingsService: NavAppSettingsService,
+    private settingsService: GlobalSettingsService,
   ) {}
 
   get collapsed(): boolean {
@@ -76,7 +76,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe),
     ).subscribe(() => this.selectMenuItem(this.homeMenuItem));
 
-    this.userSettings = this.navAppSettingsService.userSettings;
+    this.userSettings = this.settingsService.userSettings;
   }
 
   ngOnDestroy(): void {

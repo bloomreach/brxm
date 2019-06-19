@@ -16,11 +16,11 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { NavAppSettingsService } from './navapp-settings.service';
+import { GlobalSettingsService } from './global-settings.service';
 
-describe('NavappSettingService', () => {
+describe('GlobalSettingService', () => {
   function setup(): {
-    navAppSettingsService: NavAppSettingsService;
+    navAppSettingsService: GlobalSettingsService;
     userName: string;
   } {
     const userName = 'Frank Zappa';
@@ -46,11 +46,11 @@ describe('NavappSettingService', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [NavAppSettingsService],
+      providers: [GlobalSettingsService],
     });
 
     return {
-      navAppSettingsService: TestBed.get(NavAppSettingsService),
+      navAppSettingsService: TestBed.get(GlobalSettingsService),
       userName,
     };
   }

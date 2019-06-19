@@ -16,28 +16,37 @@
 
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
 import { SharedModule } from '../shared';
 
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
+import { SiteSelectionSidePanelComponent } from './components/site-selection-side-panel/site-selection-side-panel.component';
 import { TopPanelComponent } from './components/top-panel.component';
+import { SiteSelectionSidePanelService } from './services';
 import { BreadcrumbsService } from './services/breadcrumbs.service';
 
 @NgModule({
   imports: [
     CommonModule,
+    BrowserAnimationsModule,
     SharedModule,
+    PerfectScrollbarModule,
+    FormsModule,
   ],
   declarations: [
     TopPanelComponent,
     BreadcrumbsComponent,
+    SiteSelectionSidePanelComponent,
   ],
   providers: [
     BreadcrumbsService,
+    SiteSelectionSidePanelService,
   ],
   exports: [
     TopPanelComponent,
-    BreadcrumbsComponent,
   ],
 })
 export class TopPanelModule {}

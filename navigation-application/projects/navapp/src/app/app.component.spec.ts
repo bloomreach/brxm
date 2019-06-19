@@ -36,6 +36,7 @@ describe('AppComponent', () => {
         RouterTestingModule,
         AppRoutingModule,
         MainMenuModule,
+        TopPanelModule,
         ClientAppModule,
         TopPanelModule,
         HttpClientModule,

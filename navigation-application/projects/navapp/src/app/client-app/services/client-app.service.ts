@@ -41,10 +41,10 @@ export class ClientAppService {
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connectionsEstablished = new Subject<boolean>();
 
-  constructor(private navConfigService: NavConfigService) {}
+  constructor(private navConfigResourcesService: NavConfigService) {}
 
   init(): void {
-    this.navConfigService.navItems$
+    this.navConfigResourcesService.navItems$
       .pipe(
         map(navItems => this.filterUniqueURLs(navItems)),
         map(uniqueURLs => uniqueURLs.map(url => new ClientApp(url))),

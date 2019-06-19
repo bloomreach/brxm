@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100vh;
-}
-
-body {
-  display: grid;
-  overflow: hidden;
-}
-
-.hidden {
-  display: none !important;
+export interface Site {
+  id: number;
+  name: string;
+  subGroups?: Site[];
 }

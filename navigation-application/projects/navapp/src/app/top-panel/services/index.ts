@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-export interface NavConfigResource {
-  resourceType: 'IFRAME' | 'REST';
-  url: string;
-}
+export * from './site-selection-side-panel.service';

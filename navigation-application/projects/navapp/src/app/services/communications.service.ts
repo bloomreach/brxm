@@ -44,8 +44,8 @@ export class CommunicationsService implements OnDestroy {
 
   constructor(
     private clientAppService: ClientAppService,
-    private overlay: OverlayService,
     private menuStateService: MenuStateService,
+    private overlay: OverlayService,
     private navConfigService: NavConfigService,
   ) {
     clientAppService.apps$.pipe(

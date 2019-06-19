@@ -21,7 +21,7 @@ import { GlobalSettings } from '../models';
 @Injectable({
   providedIn: 'root',
 })
-export class NavAppSettingsService extends GlobalSettings {
+export class GlobalSettingsService extends GlobalSettings {
   constructor() {
     super();
 

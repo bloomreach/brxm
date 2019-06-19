@@ -34,3 +34,13 @@
   justify-items: end;
   padding-right: 20px;
 }
+
+.backdrop {
+  background-color: rgba(0, 0, 0, .12);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}

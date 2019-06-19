@@ -15,7 +15,7 @@
  */
 
 export * from './nav-config.service';
-export * from './navapp-settings.service';
+export * from './global-settings.service';
 export * from './communications.service';
 export * from './qa-helper.service';
 export * from './overlay.service';

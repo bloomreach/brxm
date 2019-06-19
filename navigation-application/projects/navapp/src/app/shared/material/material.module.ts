@@ -17,14 +17,21 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {
+  MatButtonModule,
   MatIconModule,
   MatIconRegistry,
-  MatRippleModule,
+  MatRippleModule, MatTreeModule,
 } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @NgModule({
-  exports: [MatRippleModule, MatIconModule, HttpClientModule],
+  exports: [
+    MatRippleModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTreeModule,
+    HttpClientModule,
+  ],
 })
 export class MaterialModule {
   constructor(
