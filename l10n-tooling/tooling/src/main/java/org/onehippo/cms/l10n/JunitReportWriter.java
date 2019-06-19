@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.Transformer;
@@ -50,7 +51,9 @@ public class JunitReportWriter {
     public void write(File file) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
             JAXBContext context = JAXBContext.newInstance(Report.class);
-            TransformerHandler handler = ((SAXTransformerFactory)SAXTransformerFactory.newInstance()).newTransformerHandler();
+            final SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            TransformerHandler handler = factory.newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty("method", "xml");
             transformer.setOutputProperty("encoding", "UTF-8");
