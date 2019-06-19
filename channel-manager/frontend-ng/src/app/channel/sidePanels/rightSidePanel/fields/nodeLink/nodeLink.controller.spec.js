@@ -159,7 +159,7 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on parent container', () => {
-      $ctrl.onFocus('event');
+      $ctrl.onFocus();
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
     });
 
@@ -173,7 +173,7 @@ describe('nodeLinkController', () => {
     });
 
     it('blurs parent container', () => {
-      $ctrl.onBlur('event');
+      $ctrl.onBlur();
       $timeout.flush();
 
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
@@ -193,21 +193,20 @@ describe('nodeLinkController', () => {
     });
 
     it('prevents blur event if the picker is open', () => {
-      spyOn($element, 'triggerHandler');
       PickerService.pickLink.and.returnValue($q.defer().promise);
 
       $ctrl.open();
-      $ctrl.onBlur('blur');
+      $ctrl.onBlur();
       $timeout.flush();
 
-      expect($element.triggerHandler).not.toHaveBeenCalled();
+      expect($ctrl.hasFocus).toBe(true);
     });
 
     it('cancels the timeout if a focus event is fired right after the blur event', () => {
       spyOn($timeout, 'cancel').and.callThrough();
       $ctrl.hasFocus = true;
-      $ctrl.onBlur('blur');
-      $ctrl.onFocus('focus');
+      $ctrl.onBlur();
+      $ctrl.onFocus();
       $timeout.flush();
 
       expect($timeout.cancel).toHaveBeenCalled();

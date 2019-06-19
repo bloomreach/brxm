@@ -72,7 +72,7 @@ export default class NodeLinkController {
       }
 
       this.hasFocus = false;
-      this.$element.triggerHandler($event);
+      this.$element.triggerHandler($event || 'blur');
     }, 10);
   }
 
@@ -84,11 +84,13 @@ export default class NodeLinkController {
     if (this._blurPromise) {
       this.$timeout.cancel(this._blurPromise);
     }
+
     this.hasFocus = true;
-    this.$element.triggerHandler($event);
+    this.$element.triggerHandler($event || 'focus');
   }
 
   open() {
+    this.onFocus();
     this._pickerPromise = this._pickerPromise || (async () => {
       try {
         const data = await this._showPicker();
