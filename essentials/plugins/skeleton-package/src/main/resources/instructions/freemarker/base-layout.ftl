@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="<@hst.webfile  path="/css/bootstrap.css"/>" type="text/css"/>
-    <#if hstRequest.requestContext.cmsRequest>
+    <#if hstRequest.requestContext.channelManagerPreviewRequest>
       <link rel="stylesheet" href="<@hst.webfile  path="/css/cms-request.css"/>" type="text/css"/>
     </#if>
     <@hst.headContributions categoryExcludes="htmlBodyEnd, scripts" xhtml=true/>

@@ -43,22 +43,16 @@ public class AutoHostTemplateInstruction implements Instruction {
     private static final String PLATFORM_PATH = "/hst:platform" + LOCALHOST_GROUP;
 
     @Inject private JcrService jcrService;
-    @Inject private SettingsService settingsService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
-        final String hstRoot = settingsService.getSettings().getHstRoot();
-        final String sitePath = hstRoot + LOCALHOST_GROUP;
-
         final Session session = jcrService.createSession();
         if (session == null) {
             return Status.FAILED;
         }
 
         try {
-            final Node siteNode = session.getNode(sitePath);
             final Node platformNode = session.getNode(PLATFORM_PATH);
-            siteNode.setProperty(HST_AUTOHOSTTEMPLATE_PROPERTY, new String[] {BRC_CLUSTER_HOST_PATTERN});
             platformNode.setProperty(HST_AUTOHOSTTEMPLATE_PROPERTY, new String[] {BRC_CLUSTER_HOST_PATTERN});
             session.save();
         } catch (RepositoryException e) {
@@ -73,6 +67,6 @@ public class AutoHostTemplateInstruction implements Instruction {
 
     @Override
     public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
-        changeMessageQueue.accept(Type.EXECUTE, "Add " + HST_AUTOHOSTTEMPLATE_PROPERTY + " property to dev-localhost group");
+        changeMessageQueue.accept(Type.EXECUTE, "Add " + HST_AUTOHOSTTEMPLATE_PROPERTY + " property to dev-localhost group in hst:platform");
     }
 }
