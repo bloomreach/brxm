@@ -38,11 +38,12 @@ export class MenuStateService implements OnDestroy {
   ) {
     this.menusStream$ = navConfigService.navItems$.pipe(
       map(navItems => this.menuBuilderService.buildMenu(navItems)),
-      takeUntil(this.unsubscribe),
-      shareReplay(),
+      shareReplay(1),
     );
 
-    this.menusStream$.subscribe(menu => {
+    this.menusStream$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(menu => {
       if (this.menu && this.menu.length) {
         throw new Error(
           'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.',
