@@ -52,6 +52,7 @@ import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -605,6 +606,7 @@ public class SessionDecorator implements XASession, HippoSession {
     private ContentHandler getExportContentHandler(final OutputStream stream) throws RepositoryException {
         try {
             final SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            stf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             final TransformerHandler handler = stf.newTransformerHandler();
 
             final Transformer transformer = handler.getTransformer();
