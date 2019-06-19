@@ -1,12 +1,12 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.onehippo.forge.sitemap.generator;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -131,7 +132,9 @@ public class NewsSitemapGenerator extends SitemapGenerator {
             Marshaller m = jc.createMarshaller();
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            TransformerHandler handler = ((SAXTransformerFactory)SAXTransformerFactory.newInstance()).newTransformerHandler();
+            final SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            TransformerHandler handler = factory.newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
