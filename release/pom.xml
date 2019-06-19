@@ -39,7 +39,7 @@
   </scm>
 
   <properties>
-    <hippo.release.version>12.6.4-SNAPSHOT</hippo.release.version>
+    <hippo.release.version>12.6.5-SNAPSHOT</hippo.release.version>
 
     <hippo.jackrabbit.version>2.16.2-h3</hippo.jackrabbit.version>
 
