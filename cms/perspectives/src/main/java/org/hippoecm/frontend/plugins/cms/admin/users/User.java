@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -88,11 +88,19 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_FIRSTNAME = "hipposys:firstname";
     public static final String PROP_LASTNAME = "hipposys:lastname";
     public static final String PROP_EMAIL = "hipposys:email";
+
+    @SuppressWarnings("squid:S2068")
     public static final String PROP_PASSWORD = HippoNodeType.HIPPO_PASSWORD;
+
     public static final String PROP_PASSKEY = HippoNodeType.HIPPO_PASSKEY;
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
+
+    @SuppressWarnings("squid:S2068")
     public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
+
+    @SuppressWarnings("squid:S2068")
     public static final String PROP_PASSWORDLASTMODIFIED = HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
+
     public static final String PROP_SYSTEM = HippoNodeType.HIPPO_SYSTEM;
 
     private static final String QUERY_USER = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
