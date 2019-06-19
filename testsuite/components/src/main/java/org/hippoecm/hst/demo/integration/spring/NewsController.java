@@ -31,11 +31,10 @@ import org.hippoecm.hst.demo.beans.NewsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/news")
@@ -43,7 +42,7 @@ public class NewsController {
 
     private static Logger log = LoggerFactory.getLogger(NewsController.class);
 
-    @RequestMapping(value = {"", "/"}, method = GET)
+    @GetMapping(value = {"", "/"})
     public ModelAndView listHandler(
             @RequestParam(value = "pi", defaultValue = "1") String pageIndexParam,
             @RequestParam(value = "ps", defaultValue = "10") String pageSizeParam,
@@ -52,7 +51,7 @@ public class NewsController {
         HstRequestContext requestContext = RequestContextProvider.get();
         ModelAndView mav = new ModelAndView("news/list");
 
-        List<HippoBean> documents = new ArrayList<HippoBean>();
+        List<HippoBean> documents = new ArrayList<>();
         int pageIndex = NumberUtils.toInt(pageIndexParam, 1);
         int pageSize = NumberUtils.toInt(pageSizeParam, 10);
         int totalSize = 0;
@@ -85,7 +84,7 @@ public class NewsController {
         mav.addObject("totalSize", Integer.valueOf(totalSize));
 
         int pageCount = (totalSize % pageSize == 0 ? (totalSize / pageSize) : (totalSize / pageSize + 1));
-        List<Integer> pageNums = new ArrayList<Integer>();
+        List<Integer> pageNums = new ArrayList<>();
 
         for (int i = 1; i <= pageCount; i++) {
             pageNums.add(i);
@@ -96,7 +95,7 @@ public class NewsController {
         return mav;
     }
 
-    @RequestMapping(value = "/**", method = GET)
+    @GetMapping(value = "/**")
     public ModelAndView itemHandler() {
         ModelAndView mav = new ModelAndView("news/item");
         mav.addObject("document", RequestContextProvider.get().getContentBean());
