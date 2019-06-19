@@ -20,6 +20,7 @@ import java.io.StringReader;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -67,6 +68,7 @@ public class SetWrapperElementTag extends BodyTagSupport {
                     }
 
                     DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                    dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                     DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
                     Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
                     element = doc.getDocumentElement();

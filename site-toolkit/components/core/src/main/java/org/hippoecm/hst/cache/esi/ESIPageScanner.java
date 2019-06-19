@@ -23,6 +23,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -214,6 +215,7 @@ public class ESIPageScanner {
 
         if (type == ESIFragmentType.INCLUDE_TAG) {
             DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.parse(new InputSource(new StringReader(fragmentSource)));
             Element element = doc.getDocumentElement();

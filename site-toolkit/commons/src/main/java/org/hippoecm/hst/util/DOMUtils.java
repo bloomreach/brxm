@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.util;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +37,7 @@ public class DOMUtils {
         DocumentBuilder docBuilder;
 
         try {
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createComment(comment);

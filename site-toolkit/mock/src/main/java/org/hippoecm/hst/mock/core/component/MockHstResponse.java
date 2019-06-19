@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -148,6 +149,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         DocumentBuilder docBuilder;
         
         try {
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createElement(tagName);
@@ -161,6 +163,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         DocumentBuilder docBuilder;
         
         try {
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createComment(comment);

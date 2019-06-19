@@ -40,6 +40,7 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -152,6 +153,7 @@ public class HstServletResponseState implements HstResponseState {
 
         try
         {
+            dbfac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             docBuilder = dbfac.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
             return doc.createElement(tagName);
