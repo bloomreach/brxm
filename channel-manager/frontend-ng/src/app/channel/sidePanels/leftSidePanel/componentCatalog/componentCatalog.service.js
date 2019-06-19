@@ -103,8 +103,7 @@ class ComponentCatalogService {
       await this.RightSidePanelService.close();
     }
 
-    const container = this.PageStructureService.getContainers()
-      .find(item => item.getId() === containerId);
+    const container = this.PageStructureService.getContainerById(containerId);
     const componentId = await this.ContainerService.addComponent(this.selectedComponent, container);
     delete this.selectedComponent;
 

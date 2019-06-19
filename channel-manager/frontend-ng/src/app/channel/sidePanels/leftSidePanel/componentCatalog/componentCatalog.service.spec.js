@@ -138,7 +138,7 @@ describe('ComponentCatalogService', () => {
       spyOn(ContainerService, 'addComponent');
       spyOn(EditComponentService, 'startEditing');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getContainers').and.returnValue([mockContainer, { getId: () => 456 }]);
+      spyOn(PageStructureService, 'getContainerById').and.returnValue(mockContainer);
       spyOn(RightSidePanelService, 'close');
     });
 
