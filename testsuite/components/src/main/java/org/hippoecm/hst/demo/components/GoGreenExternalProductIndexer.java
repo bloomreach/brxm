@@ -40,7 +40,7 @@ import org.hippoecm.hst.demo.beans.GoGreenProductBean;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.solr.HippoSolrClient;
 
-public class GoGreenExternalProductIndexer extends BaseHstComponent{
+public class GoGreenExternalProductIndexer extends BaseHstComponent {
 
 
     public static final String SOLR_MODULE_NAME = "org.hippoecm.hst.solr";
@@ -61,11 +61,12 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
             is = url.openConnection().getInputStream();
 
             XMLInputFactory factory = XMLInputFactory.newFactory();
+            factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
             XMLEventReader xmlEventReader = factory.createXMLEventReader(is);
 
             boolean record = false;
             List<String> docURLs = new ArrayList<String>();
-            while(xmlEventReader.hasNext()){
+            while (xmlEventReader.hasNext()) {
                 XMLEvent event = xmlEventReader.nextEvent();
                 if (event.isStartElement()) {
                     if (event.asStartElement().getName().getLocalPart().equals("documents")) {
@@ -85,7 +86,7 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
                             QName name = new QName("href");
                             Attribute attr = startElement.getAttributeByName(name);
                             if (attr != null) {
-                              docURLs.add(attr.getValue()+"?_type=xml");
+                                docURLs.add(attr.getValue() + "?_type=xml");
                             }
                         }
                     }
@@ -93,15 +94,16 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
 
             }
 
-            for (String docUrl: docURLs) {
+            for (String docUrl : docURLs) {
                 is.close();
                 url = new URL(docUrl);
                 is = url.openConnection().getInputStream();
                 factory = XMLInputFactory.newFactory();
+                factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
                 xmlEventReader = factory.createXMLEventReader(is);
 
                 GoGreenProductBean gogreenBean = new GoGreenProductBean();
-                while(xmlEventReader.hasNext()){
+                while (xmlEventReader.hasNext()) {
                     XMLEvent event = xmlEventReader.nextEvent();
                     if (event.isStartElement()) {
                         StartElement element = event.asStartElement();
@@ -113,7 +115,7 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
                             XMLEvent next = xmlEventReader.nextTag();
                             while (!second) {
                                 // TODO this is very brittle quick and dirty . Good enough for testsuite now
-                                if(next.isStartElement() && next.asStartElement().getName().getLocalPart().equals("link")) {
+                                if (next.isStartElement() && next.asStartElement().getName().getLocalPart().equals("link")) {
                                     element = next.asStartElement();
                                     count++;
                                     if (count == 2) {
@@ -136,23 +138,23 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
                             }
                         }
                         if (element.getName().getLocalPart().equals("title")) {
-                            if(xmlEventReader.peek().isCharacters()) {
+                            if (xmlEventReader.peek().isCharacters()) {
                                 gogreenBean.setTitle(xmlEventReader.nextEvent().asCharacters().getData());
                             }
-                        } else if(element.getName().getLocalPart().equals("summary")) {
-                            if(xmlEventReader.peek().isCharacters()) {
+                        } else if (element.getName().getLocalPart().equals("summary")) {
+                            if (xmlEventReader.peek().isCharacters()) {
                                 gogreenBean.setSummary(xmlEventReader.nextEvent().asCharacters().getData());
                             }
                         } else if (element.getName().getLocalPart().equals("price")) {
-                            if(xmlEventReader.peek().isCharacters()) {
+                            if (xmlEventReader.peek().isCharacters()) {
                                 try {
                                     gogreenBean.setPrice(Double.valueOf(xmlEventReader.nextEvent().asCharacters().getData()));
-                                } catch (NumberFormatException e ) {
+                                } catch (NumberFormatException e) {
                                     gogreenBean.setPrice(0.0);
                                 }
                             }
                         } else if (element.getName().getLocalPart().equals("description")) {
-                            if(xmlEventReader.peek().isCharacters()) {
+                            if (xmlEventReader.peek().isCharacters()) {
                                 gogreenBean.setDescription(xmlEventReader.nextEvent().asCharacters().getData());
                             }
                         } else if (element.getName().getLocalPart().equals("categories")) {
@@ -184,7 +186,7 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
             HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
             try {
                 solrClient.getSolrServer().addBeans(gogreenBeans);
-                UpdateResponse commit =  solrClient.getSolrServer().commit();
+                UpdateResponse commit = solrClient.getSolrServer().commit();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (SolrServerException e) {

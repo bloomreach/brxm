@@ -45,6 +45,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -161,6 +162,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
             try {
                 SAXParserFactory factory = SAXParserFactory.newInstance();
+                factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                 factory.setNamespaceAware(true);
                 factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
                 parser = factory.newSAXParser();
