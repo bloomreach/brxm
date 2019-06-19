@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
         }
     }
 
-    private void processSvg(final InputStream data) throws IOException {
+    private void processSvg(final InputStream data) throws IOException, GalleryException {
         // Save the image data in a temporary file so we can reuse the original data as-is
         // without putting it all into memory
         final File tmpFile = writeToTmpFile(data);
@@ -149,12 +149,18 @@ public class ScaleImageOperation extends AbstractImageOperation {
         scaledWidth = width;
         scaledHeight = height;
 
-        if (!isOriginalVariant()) {
-            try {
-                scaleSvg(tmpFile);
-            } catch (ParserConfigurationException | SAXException e) {
-                log.info("Could not read dimensions of SVG image, using the bounding box dimensions instead", e);
+        try {
+            final Document svgDocument = readSvgDocument(tmpFile);
+            final Element svg = svgDocument.getDocumentElement();
+            if (svg.hasAttribute("width") && svg.hasAttribute("height")) {
+                scaleSvg(svg);
             }
+            writeSvgDocument(tmpFile, svgDocument);
+        } catch (ParserConfigurationException | SAXException e) {
+            scaledData = null;
+            scaledWidth = 0;
+            scaledHeight = 0;
+            throw new GalleryException("Cannot parse SVG", e);
         }
     }
 
@@ -162,34 +168,27 @@ public class ScaleImageOperation extends AbstractImageOperation {
         return width <= 0 && height <= 0;
     }
 
-    private void scaleSvg(final File tmpFile) throws ParserConfigurationException, SAXException, IOException {
-        final Document svgDocument = readSvgDocument(tmpFile);
-        final Element svg = svgDocument.getDocumentElement();
+    private void scaleSvg(final Element svg) {
+        final String svgWidth = svg.getAttribute("width");
+        final String svgHeight = svg.getAttribute("height");
 
-        if (svg.hasAttribute("width") && svg.hasAttribute("height")) {
-            final String svgWidth = svg.getAttribute("width");
-            final String svgHeight = svg.getAttribute("height");
+        log.info("SVG size: {} x {}", svgWidth, svgHeight);
 
-            log.info("SVG size: {} x {}", svgWidth, svgHeight);
+        final double originalWidth = readDoubleFromStart(svgWidth);
+        final double originalHeight = readDoubleFromStart(svgHeight);
 
-            final double originalWidth = readDoubleFromStart(svgWidth);
-            final double originalHeight = readDoubleFromStart(svgHeight);
+        final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
 
-            final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
+        scaledWidth = (int) Math.max(originalWidth * resizeRatio, 1);
+        scaledHeight = (int) Math.max(originalHeight * resizeRatio, 1);
 
-            scaledWidth = (int) Math.max(originalWidth * resizeRatio, 1);
-            scaledHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+        // save variant with scaled dimensions
+        svg.setAttribute("width", Integer.toString(scaledWidth));
+        svg.setAttribute("height", Integer.toString(scaledHeight));
 
-            // save variant with scaled dimensions
-            svg.setAttribute("width", Integer.toString(scaledWidth));
-            svg.setAttribute("height", Integer.toString(scaledHeight));
-
-            // add a viewbox when not present, so scaled variants still show the full image
-            if (!svg.hasAttribute("viewBox")) {
-                svg.setAttribute("viewBox", "0 0 " + originalWidth + " " + originalHeight);
-            }
-
-            writeSvgDocument(tmpFile, svgDocument);
+        // add a viewbox when not present, so scaled variants still show the full image
+        if (!svg.hasAttribute("viewBox")) {
+            svg.setAttribute("viewBox", "0 0 " + originalWidth + " " + originalHeight);
         }
     }
 
@@ -201,6 +200,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
         disableValidation(factory);
 
         final DocumentBuilder builder = factory.newDocumentBuilder();
+        builder.setErrorHandler(new Log4jErrorHandler());
         return builder.parse(tmpFile);
     }
 

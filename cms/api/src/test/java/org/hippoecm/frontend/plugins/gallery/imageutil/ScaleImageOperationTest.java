@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.gallery.imageutil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -26,12 +28,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -138,7 +144,7 @@ public class ScaleImageOperationTest {
     }
 
     @Test
-    public void scaleSvg() throws GalleryException, IOException {
+    public void scaleSvg() throws GalleryException {
         InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/svg+xml");
@@ -148,7 +154,7 @@ public class ScaleImageOperationTest {
     }
 
     @Test
-    public void scaleSvgWithoutDimensionsInBoundingBox() throws GalleryException, IOException {
+    public void scaleSvgWithoutDimensionsInBoundingBox() throws GalleryException {
         InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/svg+xml");
@@ -158,7 +164,7 @@ public class ScaleImageOperationTest {
     }
 
     @Test
-    public void scaleSvgWithoutDimensionsAsOriginal() throws GalleryException, IOException {
+    public void scaleSvgWithoutDimensionsAsOriginal() throws GalleryException {
         InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
         ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.execute(data, "image/svg+xml");
@@ -189,6 +195,47 @@ public class ScaleImageOperationTest {
 
         assertEquals("SVG without a 'viewBox' attribute should have gotten one set to the original image size",
                 "0 0 178.0 145.0", svgElement.getAttribute("viewBox"));
+    }
+
+    @Test
+    public void scaleSvgRemovesDoctypeFromScaledImage() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
+
+        scaleOp.execute(data, "image/svg+xml");
+
+        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
+        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
+    }
+
+    @Test
+    public void scaleSvgRemovesDoctypeFromOriginalImage() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+
+        scaleOp.execute(data, "image/svg+xml");
+
+        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
+        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
+    }
+
+    @Test
+    public void scaleSvgRemovesDoctypeFromInvalidSvg() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG-invalid.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+
+        scaleOp.execute(data, "image/svg+xml");
+
+        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
+        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
+    }
+
+    @Test(expected = GalleryException.class)
+    public void scaleSvgRefusedInvalidDoctype() throws GalleryException {
+        InputStream data = getClass().getResourceAsStream("/test-SVG-invalid-doctype.svg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+
+        scaleOp.execute(data, "image/svg+xml");
     }
 
     @Test
