@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,13 +24,15 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PIPELINE_NAME;
+
 /**
  * HstRequestProcessorImpl
  * 
  * @version $Id$
  */
 public class HstRequestProcessorImpl implements HstRequestProcessor {
-    
+
     protected final static Logger log = LoggerFactory.getLogger(HstRequestProcessorImpl.class);
 
     private static ThreadLocal<HstContainerConfig> tlCurrentRequestContainerConfig = new ThreadLocal<HstContainerConfig>();
@@ -67,7 +69,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         try {
             if (HDC.isStarted()) {
                 pipelineTask = HDC.getCurrentTask().startSubtask("Pipeline processing");
-                pipelineTask.setAttribute("pipeline", (namedPipeline == null) ? "DefaultSitePipeline" : namedPipeline);
+                pipelineTask.setAttribute("pipeline", (namedPipeline == null) ? DEFAULT_SITE_PIPELINE_NAME : namedPipeline);
             }
 
             tlCurrentRequestContainerConfig.set(requestContainerConfig);

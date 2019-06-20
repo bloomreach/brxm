@@ -169,6 +169,8 @@ public interface ContainerConstants {
     String FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL = "classpath:";
 
 
+    String DEFAULT_SITE_PIPELINE_NAME = "DefaultSitePipeline";
+
     String PAGE_MODEL_PIPELINE_NAME = "PageModelPipeline";
 
     /**

@@ -71,9 +71,11 @@ import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
+import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
@@ -157,6 +159,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         final HttpServletRequest req = (HttpServletRequest)request;
+
         final HttpServletResponse res = (HttpServletResponse)response;
 
         HttpSession session = req.getSession(false);
@@ -756,7 +759,22 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         log.info("Start processing request for pipeline '{}' for {}", resolvedSiteMapItem.getNamedPipeline(), containerRequest);
         writeDefaultResponseHeaders(requestContext, res);
-        requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedSiteMapItem.getNamedPipeline());
+
+
+        final String namedPipeline = resolvedSiteMapItem.getNamedPipeline();
+
+        if ((namedPipeline == null || DEFAULT_SITE_PIPELINE_NAME.equals(namedPipeline))
+                && HttpMethod.OPTIONS.matches(containerRequest.getMethod())) {
+            try {
+                res.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method OPTIONS has not " +
+                        "been implemented for the default site pipeline");
+                return;
+            } catch (IOException e) {
+                throw new ContainerException(e);
+            }
+        }
+
+        requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, namedPipeline);
 
         // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
         if (containerRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
