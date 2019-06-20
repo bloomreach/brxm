@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,10 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_VIRTUALHO
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP;
 import static org.hippoecm.hst.environment.EnvironmentParameters.HST_HOSTS;
 import static org.onehippo.cms7.services.HippoServiceRegistry.getService;
-
+/**
+ * @deprecated sinec 13.3.0 : no replacement, will be dropped in 14.0.0
+ */
+@Deprecated
 public class HostConfigPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(HostConfigPublisher.class);

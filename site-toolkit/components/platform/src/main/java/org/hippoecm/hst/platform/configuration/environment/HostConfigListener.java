@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,10 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 
 import static org.hippoecm.hst.platform.configuration.environment.EnvironmentUtils.getActiveHostGroupPath;
-
+/**
+ * @deprecated sinec 13.3.0 : no replacement, will be dropped in 14.0.0
+ */
+@Deprecated
 public class HostConfigListener extends GenericEventListener {
 
     private HostConfigPublisher hostConfigPublisher;
