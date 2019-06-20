@@ -75,6 +75,8 @@ public abstract class RepositoryTestCase {
     private static final String KEEPSERVER_SYSPROP = "org.onehippo.repository.test.keepserver";
 
     protected static final String SYSTEMUSER_ID = "admin";
+    // This is a dummy password that is only used in unit- and integration tests.
+    @SuppressWarnings("squid:S2089")
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
     protected static final Credentials CREDENTIALS = new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 

@@ -107,6 +107,8 @@ public class PingServlet extends HttpServlet {
      */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     private static final String USERNAME_PARAM = "check-username";
+    // This is not a password but the name of a password parameter
+    @SuppressWarnings("squid:S2068")
     private static final String PASSWORD_PARAM = "check-password";
     private static final String NODE_PARAM = "check-node";
     private static final String WRITE_ENABLE_PARAM = "write-check-enable";
