@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public abstract class RepositoryTestCase {
 
     protected static final String SYSTEMUSER_ID = "admin";
     // This is a dummy password that is only used in unit- and integration tests.
-    @SuppressWarnings("squid:S2089")
+    @SuppressWarnings("squid:S2068")
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
     protected static final Credentials CREDENTIALS = new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
