@@ -24,12 +24,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 public class JunitReportWriter {
-    
+
     final Report report;
 
     public JunitReportWriter(final String moduleName) {
@@ -39,11 +40,11 @@ public class JunitReportWriter {
     public void startTestCase(final String name) {
         report.addTestCase(name);
     }
-    
+
     public void failure(final String message) {
         report.failure(message);
     }
-    
+
     public void error(final String message) {
         report.error(message);
     }
@@ -51,9 +52,9 @@ public class JunitReportWriter {
     public void write(File file) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
             JAXBContext context = JAXBContext.newInstance(Report.class);
-            final SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+            final TransformerFactory factory = SAXTransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            TransformerHandler handler = factory.newTransformerHandler();
+            TransformerHandler handler = ((SAXTransformerFactory) factory).newTransformerHandler();
             Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty("method", "xml");
             transformer.setOutputProperty("encoding", "UTF-8");
@@ -65,5 +66,5 @@ public class JunitReportWriter {
             throw new IOException("Failed to serialize the report.", var9);
         }
     }
-    
+
 }
