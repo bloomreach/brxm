@@ -51,11 +51,14 @@ public class JunitReportWriter {
 
     public void write(File file) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
-            JAXBContext context = JAXBContext.newInstance(Report.class);
-            final TransformerFactory factory = SAXTransformerFactory.newInstance();
+            final JAXBContext context = JAXBContext.newInstance(Report.class);
+            final TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            TransformerHandler handler = ((SAXTransformerFactory) factory).newTransformerHandler();
-            Transformer transformer = handler.getTransformer();
+            if (!factory.getFeature(SAXTransformerFactory.FEATURE)){
+                throw new IOException("Factory does not support " + SAXTransformerFactory.FEATURE);
+            }
+            final TransformerHandler handler = ((SAXTransformerFactory) factory).newTransformerHandler();
+            final Transformer transformer = handler.getTransformer();
             transformer.setOutputProperty("method", "xml");
             transformer.setOutputProperty("encoding", "UTF-8");
             transformer.setOutputProperty("indent", "yes");
