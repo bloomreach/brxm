@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,18 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Disable cache for Essentials resources
- * @version "$Id$"
  */
 public class NoCacheFilter implements Filter {
 
-
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-
+        // no initialization needed
     }
 
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) 
+            throws IOException, ServletException {
+        
         final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         httpServletResponse.setDateHeader("Expires", 0L);
@@ -49,6 +49,6 @@ public class NoCacheFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        // nothing to destroy
     }
 }

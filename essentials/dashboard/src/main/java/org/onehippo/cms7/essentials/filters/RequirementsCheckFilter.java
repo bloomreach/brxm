@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,24 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Check if essentials can run properly,
- * e.g if all required settings like project.basedir are set properly.
+ * Check if Essentials can run properly, e.g if all required settings like project.basedir are set properly.
  */
 public class RequirementsCheckFilter implements Filter {
     private static final Logger log = LoggerFactory.getLogger(RequirementsCheckFilter.class);
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-
+        // no initialization needed
     }
 
     @Override
-    public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
+    public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) 
+            throws IOException, ServletException {
         try {
             /*
              * IllegalStateException exception will be thrown
@@ -47,7 +48,8 @@ public class RequirementsCheckFilter implements Filter {
             final String directory = ProjectUtils.getBaseProjectDirectory();
             final File file = new File(directory);
             if (!file.exists()) {
-                sendRedirect(req, res, "Directory: " + directory + " does not exist or is not accessible by java process");
+                sendRedirect(req, res, "Directory: " + directory 
+                        + " does not exist or is not accessible by java process");
                 return;
             }
             if (!file.isDirectory()) {
@@ -64,7 +66,9 @@ public class RequirementsCheckFilter implements Filter {
         chain.doFilter(req, res);
     }
 
-    private void sendRedirect(final ServletRequest req, final ServletResponse resp, final String error) throws IOException {
+    private void sendRedirect(final ServletRequest req, final ServletResponse resp, final String error) 
+            throws IOException {
+        
         final HttpServletResponse response = (HttpServletResponse) resp;
         log.error(error);
         req.setAttribute("error", error);
@@ -73,6 +77,6 @@ public class RequirementsCheckFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        // nothing to destroy
     }
 }
