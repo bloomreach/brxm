@@ -133,11 +133,11 @@ public class PluginUserSession extends UserSession {
             protected WorkflowManager load() {
                 Session jcrSession = getJcrSessionInternal();
                 if (jcrSession != null) {
+                    HippoWorkspace workspace = (HippoWorkspace)jcrSession.getWorkspace();
                     try {
-                        HippoWorkspace workspace = (HippoWorkspace)jcrSession.getWorkspace();
                         return workspace.getWorkflowManager();
                     } catch (RepositoryException ex) {
-                        ex.printStackTrace();
+                        log.error("Unable to get workflow manager for workspace:{}", workspace.getName(), ex);
                     }
                 }
                 return null;

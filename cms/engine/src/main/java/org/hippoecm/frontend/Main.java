@@ -250,8 +250,7 @@ public class Main extends PluginApplication {
                                 resources.add(resourceEnum.nextElement());
                             }
                         } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            log.error("Failed loading resources for name {}", name, e);
                         }
                     }
                 }
