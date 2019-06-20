@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,12 @@ public final class JavaSourceUtils {
     public static final String UNCHECKED = "unchecked";
     public static final String RAWTYPES = "rawtypes";
     public static final String TAB_SIZE = "4";
+    private static final String GET_LINKED_BEANS = "getLinkedBeans";
+    private static final String HIPPO_BEAN = "HippoBean";
+    private static final String GET_LINKED_BEAN = "getLinkedBean";
+    private static final String GET_BEAN = "getBean";
+    private static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
+    private static final String ANNOTATION_ALREADY_EXISTS = "Annotation already exists: {}";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -545,10 +551,10 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoBean", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_BEAN, path, GET_LINKED_BEANS, propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_BEAN, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoBean");
 
@@ -569,7 +575,7 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoGalleryImageBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, "HippoGalleryImageBean", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
 
@@ -582,17 +588,17 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoResourceBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, "HippoResourceBean", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoResourceBean");
     }
 
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
@@ -602,17 +608,17 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", className, path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, className, path, methodName, propertyName);
         }
         addImport(path, importPath);
     }
 
     public static void addBeanMethodInternalImageSet(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", className, path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", className, path, GET_LINKED_BEANS, propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", className, path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, className, path, methodName, propertyName);
         }
         addImport(path, importPath);
     }
@@ -629,9 +635,9 @@ public final class JavaSourceUtils {
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, GET_LINKED_BEANS, propertyName);
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
@@ -1189,7 +1195,7 @@ public final class JavaSourceUtils {
                 final NormalAnnotation newOne = (NormalAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
                 if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    log.debug(ANNOTATION_ALREADY_EXISTS, fullyQualifiedName);
                     return true;
                 }
             } else if (modifier instanceof SingleMemberAnnotation && annotation instanceof SingleMemberAnnotation) {
@@ -1197,7 +1203,7 @@ public final class JavaSourceUtils {
                 final SingleMemberAnnotation newOne = (SingleMemberAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
                 if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    log.debug(ANNOTATION_ALREADY_EXISTS, fullyQualifiedName);
                     return true;
                 }
             } else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
@@ -1205,7 +1211,7 @@ public final class JavaSourceUtils {
                 final MarkerAnnotation newOne = (MarkerAnnotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
                 if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    log.debug(ANNOTATION_ALREADY_EXISTS, fullyQualifiedName);
                     return true;
                 }
             }
@@ -1271,7 +1277,7 @@ public final class JavaSourceUtils {
         final MethodDeclaration methodDeclaration = ast.newMethodDeclaration();
         methodDeclaration.setName(ast.newSimpleName(methodName));
         final ParameterizedType type = ast.newParameterizedType(ast.newSimpleType(ast.newName("List")));
-        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName("HippoBean")));
+        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName(HIPPO_BEAN)));
         methodDeclaration.setReturnType2(type);
         methodDeclaration.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
         methodDeclaration.setConstructor(false);
@@ -1281,7 +1287,7 @@ public final class JavaSourceUtils {
         final VariableDeclarationFragment relatedFragment = ast.newVariableDeclarationFragment();
         relatedFragment.setName(ast.newSimpleName("documents"));
         final MethodInvocation relatedInvocation = ast.newMethodInvocation();
-        relatedInvocation.setName(ast.newSimpleName("getBean"));
+        relatedInvocation.setName(ast.newSimpleName(GET_BEAN));
         final StringLiteral stringArg = ast.newStringLiteral();
         stringArg.setLiteralValue(EssentialConst.RELATEDDOCS_DOCS);
         relatedInvocation.arguments().add(stringArg);
