@@ -159,11 +159,11 @@ public final class GalleryUtils {
         originalImage.setProperty(HIPPOGALLERY_IMAGE_WIDTH, 0L);
         originalImage.setProperty(HIPPOGALLERY_IMAGE_HEIGHT, 0L);
         // change translation nodes:
-        final NodeIterator translationNodes = imageNode.getNodes("hippo:translation");
+        final NodeIterator translationNodes = imageNode.getNodes(HIPPO_TRANSLATION);
         while(translationNodes.hasNext()){
             final Node translation = translationNodes.nextNode();
             // skip normal properties
-            if(translation.hasProperty("hippo:property")){
+            if(translation.hasProperty(HIPPO_PROPERTY)){
                 continue;
             }
             translation.setProperty("hippo:message", name);
@@ -200,14 +200,12 @@ public final class GalleryUtils {
             final NodeIterator nodes = rootNode.getNodes();
             while (nodes.hasNext()) {
                 final Node myNode = nodes.nextNode();
-                final boolean hasProperty = myNode.hasProperty(HIPPO_PROPERTY);
+                final boolean hasProperties = myNode.hasProperty(HIPPO_PROPERTY) && myNode.hasProperty(HIPPO_LANGUAGE);
                 if (myNode.getName().equals(HIPPO_TRANSLATION)
-                        && hasProperty
+                        && hasProperties
                         && myNode.getProperty(HIPPO_PROPERTY).getString().equals(oldSysPath)) {
                     // add translation:
-                    if(myNode.hasProperty(HIPPO_LANGUAGE)){
-                        translations.put(myNode.getProperty(HIPPO_LANGUAGE).getString(), variantName);
-                    }
+                    translations.put(myNode.getProperty(HIPPO_LANGUAGE).getString(), variantName);
                 }
             }
             final String variantPath = prefix + ':' + variantName;
