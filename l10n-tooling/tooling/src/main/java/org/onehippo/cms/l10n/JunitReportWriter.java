@@ -52,6 +52,8 @@ public class JunitReportWriter {
     public void write(File file) throws IOException {
         try (FileWriter writer = new FileWriter(file)) {
             final JAXBContext context = JAXBContext.newInstance(Report.class);
+            // This is a compliant solution but it is still marked as an vulnerability issue by Sonar
+            @SuppressWarnings("squid:S4435")
             final TransformerFactory factory = TransformerFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             if (!factory.getFeature(SAXTransformerFactory.FEATURE)){
