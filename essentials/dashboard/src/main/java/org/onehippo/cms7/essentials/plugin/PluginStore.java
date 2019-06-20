@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,15 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
@@ -62,6 +56,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
+
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Created by tjeger on 10/11/14.
@@ -98,7 +97,7 @@ public class PluginStore {
             .recordStats()
             .build(new CacheLoader<String, List<PluginDescriptor>>() {
                 @Override
-                public List<PluginDescriptor> load(final String url) throws Exception {
+                public List<PluginDescriptor> load(final String url) {
                     String pluginJson = null;
 
                     if (url.startsWith("http")) {
@@ -110,7 +109,7 @@ public class PluginStore {
                             final File file = ResourceUtils.getFile(resourceUri);
                             pluginJson = GlobalUtils.readStreamAsText(new FileInputStream(file));
                         } catch (Exception e) {
-                            log.error(MessageFormat.format("Error loading plugins from repository '{0}'", url), e);
+                            log.error(MessageFormat.format("Error loading plugins from repository ''{0}''", url), e);
                         }
                     }
 
@@ -144,7 +143,7 @@ public class PluginStore {
                     descriptors.forEach(pluginSet::add);
                 }
             } catch (Exception e) {
-                log.error(MessageFormat.format("Error loading plugins from repository '{0}'", pluginRepository), e);
+                log.error(MessageFormat.format("Error loading plugins from repository ''{0}''", pluginRepository), e);
             }
         }
 
@@ -160,13 +159,13 @@ public class PluginStore {
         final List<PluginDescriptor> descriptors = new ArrayList<>();
         final Collection<PluginDescriptor> values = EssentialsContextListener.getPluginCache().asMap().values();
         descriptors.addAll(values);
-        descriptors.addAll(loadPluginDescriptorsFromResource("/project_plugin_descriptor.json"));
+        descriptors.addAll(loadPluginDescriptorsFromResource());
 
         return descriptors;
     }
 
-    private List<PluginDescriptor> loadPluginDescriptorsFromResource(final String resource) {
-        final InputStream stream = PluginStore.class.getResourceAsStream(resource);
+    private List<PluginDescriptor> loadPluginDescriptorsFromResource() {
+        final InputStream stream = PluginStore.class.getResourceAsStream("/project_plugin_descriptor.json");
         final String json = GlobalUtils.readStreamAsText(stream);
 
         return parsePlugins(json);
@@ -237,26 +236,27 @@ public class PluginStore {
     }
 
     private String makeDependencySummary(final PluginDescriptor plugin, final PluginSet pluginSet) {
-        final List<PluginDescriptor.Dependency> deps = plugin.getPluginDependencies();
-        if (deps != null) {
-            final List<String> dependentPluginIds = new ArrayList<>();
-
-            for (PluginDescriptor.Dependency dep : deps) {
-                final String pluginId = dep.getPluginId();
-                if (StringUtils.isNotBlank(pluginId)) {
-                    final PluginDescriptor p = pluginSet.getPlugin(pluginId);
-                    if (p != null) {
-                        dependentPluginIds.add(p.getName());
-                    } else {
-                        dependentPluginIds.add(pluginId + " (missing)");
-                    }
+        final List<PluginDescriptor.Dependency> dependencies = plugin.getPluginDependencies();
+        if (dependencies == null) {
+            return null;
+        }
+        
+        final List<String> dependentPluginIds = new ArrayList<>();
+        for (PluginDescriptor.Dependency dependency : dependencies) {
+            final String pluginId = dependency.getPluginId();
+            if (StringUtils.isNotBlank(pluginId)) {
+                final PluginDescriptor pluginDescriptor = pluginSet.getPlugin(pluginId);
+                if (pluginDescriptor != null) {
+                    dependentPluginIds.add(pluginDescriptor.getName());
+                } else {
+                    dependentPluginIds.add(pluginId + " (missing)");
                 }
             }
+        }
 
-            if (!dependentPluginIds.isEmpty()) {
-                final String csv = dependentPluginIds.stream().collect(Collectors.joining(", "));
-                return String.format("Depends on feature%s: %s.", dependentPluginIds.size() > 1 ? "s" : "", csv);
-            }
+        if (!dependentPluginIds.isEmpty()) {
+            final String csv = String.join(", ", dependentPluginIds);
+            return String.format("Depends on feature%s: %s.", dependentPluginIds.size() > 1 ? "s" : "", csv);
         }
 
         return null;
