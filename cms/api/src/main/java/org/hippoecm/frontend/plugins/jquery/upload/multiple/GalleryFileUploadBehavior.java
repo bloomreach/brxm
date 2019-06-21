@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -43,7 +40,6 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
 
     private static final String MAX_FILESIZE_MESSAGE = "max.filesize.message";
     private static final String INVALID_EXTENSION_MESSAGE = "invalid.extension.message";
-    private static final String MAX_NUMBER_OF_FILES_EXCEEDED = "max.number.of.files.exceeded";
     private static final String MAX_NUMBER_OF_FILES_EXCEEDED_WIDGET = "max.number.of.files.exceeded.widget";
 
     public GalleryFileUploadBehavior(final FileUploadWidgetSettings settings) {
@@ -66,9 +62,6 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
         //the url to be notified when uploading has done
         variables.put("fileUploadDoneUrl", settings.getUploadDoneNotificationUrl());
         variables.put("selectionChangeUrl", settings.getSelectionChangeNotificationUrl());
-
-        final List<String> allowedExtensions = Arrays.asList(ArrayUtils.nullToEmpty(settings.getAllowedExtensions()));
-
         variables.put("acceptFileTypes", getAcceptFileTypesPattern("|"));
 
         // Localized error messages
@@ -96,6 +89,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
 
     @Override
     protected void renderWidgetConfig(final IHeaderResponse response, final Map<String, Object> variables) {
+        @SuppressWarnings("squid:S2095")
         PackageTextTemplate jsTmpl = new PackageTextTemplate(GalleryFileUploadBehavior.class, CONFIG_JS);
         String s = jsTmpl.asString(variables);
         response.render(OnDomReadyHeaderItem.forScript(s));

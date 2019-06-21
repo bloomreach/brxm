@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,11 +57,9 @@ public class CropBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext context)  {
         context.addModule(YahooNamespace.NS, "imagecropper");
-        context.addOnDomLoad(new AbstractReadOnlyModel() {
-            private static final long serialVersionUID = 1L;
-
+        context.addOnDomLoad(new AbstractReadOnlyModel<String>() {
             @Override
-            public Object getObject() {
+            public String getObject() {
                 return getInitString();
             }
         });
@@ -72,8 +70,9 @@ public class CropBehavior extends AbstractYuiBehavior {
 
 
     private String getInitString() {
+        @SuppressWarnings("squid:S2095")
         PackageTextTemplate cropperJsTemplate = new PackageTextTemplate(CropBehavior.class, "Hippo.ImageCropper.js");
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("originalImageMarkupId", getComponent().getMarkupId());
         parameters.put("imagePreviewContainerMarkupId", imagePreviewContainerId);
         parameters.put("regionInputMarkupId", regionInputId);
