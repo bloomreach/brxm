@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
@@ -96,6 +97,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
     }
 
     @Override
+    @SuppressWarnings("squid:S1301")
     public Status execute(final Map<String, Object> parameters) {
         if (action == null) {
             log.warn("DirectoryInstruction: action was empty");
@@ -184,31 +186,20 @@ public class DirectoryInstruction extends BuiltinInstruction {
         this.source = source;
     }
 
-
     @XmlAttribute
     public boolean isOverwrite() {
         return overwrite;
     }
 
-
     public void setOverwrite(final boolean overwrite) {
         this.overwrite = overwrite;
     }
-    //############################################
-    //
-    //############################################
 
     private Status copyResources(final String source, final File targetDirectory,
                                  final Map<String, Object> placeholderData, final Map<String, Object> parameters) {
 
-        if (!targetDirectory.exists()) {
-            log.info("Directory {} doesn't exist, creating new one", targetDirectory);
-            try {
-                EssentialsFileUtils.createParentDirectories(targetDirectory);
-            } catch (IOException e) {
-                log.error("Error creating directory", e);
-                return Status.FAILED;
-            }
+        if (!checkTargetDirectories(targetDirectory)) {
+            return Status.FAILED;
         }
 
         try {
@@ -217,39 +208,62 @@ public class DirectoryInstruction extends BuiltinInstruction {
                 log.warn("Couldn't process jar source: {}", source);
                 return Status.FAILED;
             }
-            final String entryPrefix = normalizeRelativeDirectoryPath(source);
-            final JarFile jarFile = connection.getJarFile();
-            final Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                final JarEntry jarEntry = entries.nextElement();
-                final String entryName = jarEntry.getName();
-                if (!entryName.startsWith(entryPrefix)) {
-                    continue;
-                }
-                final String fileName = entryName.substring(entryPrefix.length());
-                final File file = new File(targetDirectory, fileName);
-                if (file.exists()) {
-                    if (overwrite) {
-                        final boolean delete = file.delete();
-                        log.info("Deleted existing file: {},{}", file, delete);
-                    } else {
-                        log.info("File already exists, skipping copy: {}", file);
-                        continue;
-                    }
-                }
-                if (jarEntry.isDirectory()) {
-                    final boolean created = file.mkdirs();
-                    log.debug("Created directory:{},  {}", file, created);
-                } else {
-                    copyJarFile(placeholderData, jarFile, jarEntry, file);
-                }
-            }
+
+            copyJarEntries(source, targetDirectory, placeholderData, connection);
+
         } catch (IOException e) {
             log.error("Error extracting files", e);
             return Status.FAILED;
         }
 
         return Status.SUCCESS;
+    }
+
+    private boolean checkTargetDirectories(final File targetDirectory) {
+        if (!targetDirectory.exists()) {
+            log.info("Directory {} doesn't exist, creating new one", targetDirectory);
+            try {
+                EssentialsFileUtils.createParentDirectories(targetDirectory);
+            } catch (IOException e) {
+                log.error("Error creating directory", e);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void copyJarEntries(final String source, final File targetDirectory,
+                                final Map<String, Object> placeholderData, final JarURLConnection connection)
+            throws IOException {
+        
+        final String entryPrefix = normalizeRelativeDirectoryPath(source);
+        final JarFile jarFile = connection.getJarFile();
+        final Enumeration<JarEntry> entries = jarFile.entries();
+        
+        while (entries.hasMoreElements()) {
+            final JarEntry jarEntry = entries.nextElement();
+            final String entryName = jarEntry.getName();
+            if (!entryName.startsWith(entryPrefix)) {
+                continue;
+            }
+            final String fileName = entryName.substring(entryPrefix.length());
+            final File file = new File(targetDirectory, fileName);
+            if (file.exists()) {
+                if (overwrite) {
+                    Files.delete(file.toPath());
+                    log.info("Deleted existing file: {}", file);
+                } else {
+                    log.info("File already exists, skipping copy: {}", file);
+                    continue;
+                }
+            }
+            if (jarEntry.isDirectory()) {
+                final boolean created = file.mkdirs();
+                log.debug("Created directory:{},  {}", file, created);
+            } else {
+                copyJarFile(placeholderData, jarFile, jarEntry, file);
+            }
+        }
     }
 
     private void copyJarFile(final Map<String, Object> placeholderData, final JarFile jarFile, 
