@@ -194,29 +194,61 @@ public class HippoItem implements HippoBean {
         return properties;
     }
 
+    /**
+     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String)} for single fields
+     *   or {@link #getMultipleProperty(String)} for multiple fields.
+     */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public <T> T getProperty(String name) {
-        return (T)getProperties().get(name);
+        return (T) getProperties().get(name);
+    }
+
+    /**
+     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String, T)} for single fields
+     *   or {@link #getMultipleProperty(String, T)} for multiple fields.
+     */
+    @Deprecated
+    @Override
+    public <T> T getProperty(String name, T defaultValue) {
+
+        @SuppressWarnings("unchecked")
+        T val = (T) getProperties().get(name);
+        if (val == null) {
+            return defaultValue;
+        }
+        return val;
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getSingleValueProperty(String name) {
-        final Object object =  (T)getProperties().get(name);
+    @Override
+    public <T> T getSingleProperty(String name) {
+        final Object object = (T) getProperties().get(name);
         if (object != null && object.getClass().isArray()) {
             final T[] items = (T[]) object;
             if (items.length == 0) {
                 return null;
             } else {
-                return (T) items[0];                
+                return (T) items[0];
             }
         } else {
             return (T) object;
         }
     }
 
+    @Override
+    public <T> T getSingleProperty(String name, T defaultValue) {
+        final T val = getSingleProperty(name);
+        if (val == null) {
+            return defaultValue;
+        }
+        return val;
+    }
+
     @SuppressWarnings("unchecked")
-    public <T> T[] getMultipleValueProperty(String name) {
-        final Object object = (T)getProperties().get(name);
+    @Override
+    public <T> T[] getMultipleProperty(String name) {
+        final Object object = (T) getProperties().get(name);
         if (object != null && !(object.getClass().isArray())) {
             final T[] array = (T[]) Array.newInstance(object.getClass(), 1);
             array[0] = (T) object;
@@ -227,10 +259,8 @@ public class HippoItem implements HippoBean {
     }
 
     @Override
-    public <T> T getProperty(String name, T defaultValue) {
-
-        @SuppressWarnings("unchecked")
-        T val = (T)getProperties().get(name);
+    public <T> T[] getMultipleProperty(String name, T[] defaultValue) {
+        final T[] val = getMultipleProperty(name);
         if (val == null) {
             return defaultValue;
         }

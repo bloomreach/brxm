@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 @Node(jcrType = "contentbeanstest:contentdocument")
 public class ContentDocument extends BaseDocument {
   public String getIntroduction() {
-    return getProperty("contentbeanstest:introduction");
+    return getSingleProperty("contentbeanstest:introduction");
   }
 
   public String getTitle() {
-    return getProperty("contentbeanstest:title");
+    return getSingleProperty("contentbeanstest:title");
   }
 
   public HippoHtml getContent() {
@@ -35,7 +35,7 @@ public class ContentDocument extends BaseDocument {
   }
 
   public Calendar getPublicationDate() {
-    return getProperty("contentbeanstest:publicationdate");
+    return getSingleProperty("contentbeanstest:publicationdate");
   }
 
   public HippoBean getHippo_mirror() {

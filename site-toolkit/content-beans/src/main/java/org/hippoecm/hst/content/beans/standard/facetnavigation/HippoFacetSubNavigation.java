@@ -52,7 +52,7 @@ public class HippoFacetSubNavigation extends AbstractHippoFacetChildNavigation {
     @Override
     public boolean isLeaf() {
         if(getValueProvider().hasProperty("hippofacnav:leaf")) {
-           return ((Boolean)getProperty("hippofacnav:leaf")).booleanValue();
+           return ((Boolean) getSingleProperty("hippofacnav:leaf")).booleanValue();
         } 
         else {
            return false;

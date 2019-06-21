@@ -44,12 +44,12 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
 
     @Override
     public String getMimeType() {
-        return getProperty("jcr:mimeType");
+        return getSingleProperty("jcr:mimeType");
     }
 
     @Override
     public String getFilename() {
-        return getProperty(HippoNodeType.HIPPO_FILENAME);
+        return getSingleProperty(HippoNodeType.HIPPO_FILENAME);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
      */
     @Override
     public boolean isBlank() {
-        return getProperty("jcr:mimeType").equals(MIME_TYPE_HIPPO_BLANK);
+        return getSingleProperty("jcr:mimeType").equals(MIME_TYPE_HIPPO_BLANK);
     }
 
 }

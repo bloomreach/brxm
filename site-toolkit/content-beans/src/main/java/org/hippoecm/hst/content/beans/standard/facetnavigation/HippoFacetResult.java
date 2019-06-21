@@ -28,7 +28,7 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 public class HippoFacetResult extends HippoFolder implements HippoResultSetBean {
 
     public Long getCount() {
-        return this.getProperty(HippoNodeType.HIPPO_COUNT);
+        return this.getSingleProperty(HippoNodeType.HIPPO_COUNT);
     }
 
     @Override

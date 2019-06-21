@@ -28,7 +28,6 @@ import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
-import org.hippoecm.hst.content.beans.standard.HippoItem;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +53,8 @@ public class DynamicBeanBuilder {
      * The method names below belong to the HippoBean and are used to generate dynamic bean
      * definitions by using byte buddy.
      */
-    private static final String METHOD_GET_SINGLE_PROPERTY = "getSingleValueProperty";
-    private static final String METHOD_GET_MULTIPLE_PROPERTY = "getMultipleValueProperty";
+    private static final String METHOD_GET_SINGLE_PROPERTY = "getSingleProperty";
+    private static final String METHOD_GET_MULTIPLE_PROPERTY = "getMultipleProperty";
     private static final String METHOD_GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
     private static final String METHOD_GET_HIPPO_HTML = "getHippoHtml";
     private static final String METHOD_GET_LINKED_BEANS = "getLinkedBeans";
@@ -88,7 +87,7 @@ public class DynamicBeanBuilder {
         public HippoBean getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) {
             final HippoBean superBean = (HippoBean) superObject;
 
-            final String item = superBean.getProperty(propertyName);
+            final String item = superBean.getSingleProperty(propertyName);
             if (item == null) {
                 return null;
             }
@@ -114,7 +113,7 @@ public class DynamicBeanBuilder {
         public List<HippoBean> getDocbaseItem(@Super(proxyType = TargetType.class) Object superObject) {
             final HippoBean superBean = (HippoBean) superObject;
 
-            final String[] items = superBean.getProperty(propertyName);
+            final String[] items = superBean.getMultipleProperty(propertyName);
             if (items == null) {
                 return Collections.emptyList();
             }
@@ -247,9 +246,7 @@ public class DynamicBeanBuilder {
      */
     private void addSimpleGetMethod(final String methodName, final Class<?> returnType, final String superMethodName, final String propertyName) {
         try {
-            final Class<?> delegateeClass = (METHOD_GET_HIPPO_HTML.equals(superMethodName))
-                    ? ((parentBean.isAssignableFrom(HippoCompound.class) || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) ? HippoCompound.class : HippoDocument.class)
-                    : HippoItem.class;
+            final Class<?> delegateeClass = getDelegateeClass(superMethodName);
 
             builder = builder
                         .defineMethod(methodName, returnType, Modifier.PUBLIC)
@@ -262,6 +259,18 @@ public class DynamicBeanBuilder {
             methodAdded = true;
         } catch (NoSuchMethodException | IllegalArgumentException e) {
             log.error("Can't define method {} with delegate method {} with return type {} : {}", methodName, superMethodName, returnType, e);
+        }
+    }
+
+    private Class<?> getDelegateeClass(final String superMethodName) {
+        if (METHOD_GET_HIPPO_HTML.equals(superMethodName)) {
+            if (parentBean.isAssignableFrom(HippoCompound.class) || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) {
+                return HippoCompound.class;
+            } else {
+                return HippoDocument.class;
+            }
+        } else {
+            return HippoBean.class;
         }
     }
 

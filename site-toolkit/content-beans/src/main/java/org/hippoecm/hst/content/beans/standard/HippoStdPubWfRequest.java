@@ -34,7 +34,7 @@ public class HippoStdPubWfRequest extends HippoItem implements HippoRequestBean 
     private HippoBean document;
     
     public String getType() {
-        return getProperty("hippostdpubwf:type");
+        return getSingleProperty("hippostdpubwf:type");
     }
     
     public HippoBean getDocument() {
@@ -60,15 +60,15 @@ public class HippoStdPubWfRequest extends HippoItem implements HippoRequestBean 
     }
     
     public String getRequestUsername() {
-        return getProperty("hippostdpubwf:username");
+        return getSingleProperty("hippostdpubwf:username");
     }
     
     public String getReason() {
-        return getProperty("hippostdpubwf:reason");
+        return getSingleProperty("hippostdpubwf:reason");
     }
 
     public Calendar getRequestDate() {
-        return getProperty("hippostdpubwf:reqdate");
+        return getSingleProperty("hippostdpubwf:reqdate");
     }
 
 }

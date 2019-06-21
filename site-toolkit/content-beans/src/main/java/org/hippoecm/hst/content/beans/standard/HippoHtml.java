@@ -25,6 +25,6 @@ public class HippoHtml extends HippoItem implements HippoHtmlBean {
 
     @IndexField(name="hippostdContent")
     public String getContent(){
-        return getProperty("hippostd:content");
+        return getSingleProperty("hippostd:content");
     }
 }

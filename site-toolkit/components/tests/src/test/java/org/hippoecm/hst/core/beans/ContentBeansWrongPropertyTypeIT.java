@@ -25,9 +25,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ContentBeansWrongPropertyTypeIT extends AbstractBeanTestCase {
@@ -49,7 +47,7 @@ public class ContentBeansWrongPropertyTypeIT extends AbstractBeanTestCase {
     public static class TextBeanEnhanced extends TextBean {
 
         public String[] getTitleWrong() {
-            return getMultipleValueProperty("unittestproject:title");
+            return getMultipleProperty("unittestproject:title");
         }
 
     }
