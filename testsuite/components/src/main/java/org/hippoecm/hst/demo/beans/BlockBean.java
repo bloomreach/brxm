@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class BlockBean extends HippoCompound {
     private String image;
 
     public String getHeader() {
-        return header == null ? (String) getProperty("demosite:header") : header;
+        return header == null ? getSingleProperty("demosite:header") : header;
     }
 
     public void setHeader(String header) {
@@ -33,7 +33,7 @@ public class BlockBean extends HippoCompound {
     }
 
     public String getImage() {
-        return image == null ? (String) getProperty("demosite:country") : image;
+        return image == null ? getSingleProperty("demosite:country") : image;
     }
 
     public void setImage(String image) {

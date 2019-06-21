@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
 
     @IndexField
     public String getTitle() {
-        return title == null ? (String)getProperty("demosite:title"): title ;
+        return title == null ? getSingleProperty("demosite:title"): title ;
     }
     
     public void setTitle(String title) { 
@@ -53,7 +53,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
 
     @IndexField(name="summary")
     public String getSummary() {
-        return summary == null ? (String)getProperty("demosite:summary"): summary ;
+        return summary == null ? getSingleProperty("demosite:summary"): summary ;
     }
     
     public void setSummary(String summary) {
@@ -84,7 +84,7 @@ public class BaseBean extends HippoDocument implements ContentNodeBinder{
     }
     
     public boolean isPublished() {
-        String[] availability = getProperty("hippo:availability");
+        String[] availability = getMultipleProperty("hippo:availability");
         return ArrayUtils.contains(availability, "live");
     }
     

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class PlaceBean extends HippoItem {
     private String country;
 
     public String getCity() {
-        return city == null ? (String) getProperty("demosite:city") : city;
+        return city == null ? getSingleProperty("demosite:city") : city;
     }
 
     public void setCity(String city) {
@@ -32,7 +32,7 @@ public class PlaceBean extends HippoItem {
     }
 
     public String getCountry() {
-        return country == null ? (String) getProperty("demosite:country") : country;
+        return country == null ? getSingleProperty("demosite:country") : country;
     }
 
     public void setCountry(String country) {

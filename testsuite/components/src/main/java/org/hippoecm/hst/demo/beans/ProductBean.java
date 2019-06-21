@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     @IndexField
     public String getBrand() {
         if (brand == null) {
-            brand = getProperty("demosite:brand");
+            brand = getSingleProperty("demosite:brand");
         }
         return brand;
     }
@@ -57,7 +57,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     @IndexField
     public String getProduct() {
         if (product == null) {
-            product = getProperty("demosite:product");
+            product = getSingleProperty("demosite:product");
         }
         return product;
     }
@@ -69,7 +69,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     @IndexField
     public String getColor() {
         if (color == null) {
-            color = getProperty("demosite:color");
+            color = getSingleProperty("demosite:color");
         }
         return color;
     }
@@ -81,7 +81,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     @IndexField
     public String getType() {
         if (type == null) {
-            type = getProperty("demosite:type");
+            type = getSingleProperty("demosite:type");
         }
         return type;
     }
@@ -92,7 +92,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     
     public Double getPrice() {
         if (price == null) {
-            price = getProperty("demosite:price");
+            price = getSingleProperty("demosite:price");
         }
         return price;
     }
@@ -104,7 +104,7 @@ public class ProductBean extends TextBean implements ContentNodeBinder {
     @IndexField
     public String[] getTags() {
         if (tags == null) {
-            tags = getProperty("hippostd:tags");
+            tags = getMultipleProperty("hippostd:tags");
         }
         return tags;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 public class NewsDocument extends BaseDocument{
 
     public String getTitle() {
-        return getProperty("intranet:title");
+        return getSingleProperty("intranet:title");
     }
     
     public String getSummary() {
-        return getProperty("intranet:summary");
+        return getSingleProperty("intranet:summary");
     }
     
     public Calendar getDate() {
-        return getProperty("intranet:date");
+        return getSingleProperty("intranet:date");
     }
 
     public HippoHtml getHtml(){
