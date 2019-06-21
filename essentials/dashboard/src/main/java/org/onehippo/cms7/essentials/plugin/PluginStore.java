@@ -109,7 +109,7 @@ public class PluginStore {
                             final File file = ResourceUtils.getFile(resourceUri);
                             pluginJson = GlobalUtils.readStreamAsText(new FileInputStream(file));
                         } catch (Exception e) {
-                            log.error(MessageFormat.format("Error loading plugins from repository ''{0}''", url), e);
+                            log.error("Error loading plugins from repository '{}'", url, e);
                         }
                     }
 
@@ -143,7 +143,7 @@ public class PluginStore {
                     descriptors.forEach(pluginSet::add);
                 }
             } catch (Exception e) {
-                log.error(MessageFormat.format("Error loading plugins from repository ''{0}''", pluginRepository), e);
+                log.error("Error loading plugins from repository '{}'", pluginRepository, e);
             }
         }
 
