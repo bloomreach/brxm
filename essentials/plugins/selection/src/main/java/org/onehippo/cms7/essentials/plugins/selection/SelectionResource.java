@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.plugins.selection;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -393,21 +394,9 @@ public class SelectionResource {
 
     private Document readSpringConfiguration() {
         final File springFile = getSpringFile();
-        InputStream is = null;
-        if (springFile != null && springFile.exists() && springFile.isFile()) {
-            try (InputStream fis = new FileInputStream(springFile))  {
-                is = fis;
-            } catch (IOException ex) {
-                log.error("Problem reading Spring configuration file.", ex);
-            }
-        } else {
-            // no Spring configuration present yet, use template.
-            final String path = "/xml/valuelistmanager.xml";
-            is = getClass().getResourceAsStream(path);
-        }
 
-        if (is != null) {
-            try {
+        try (InputStream is = openSpringConfiguration(springFile)) {
+            if (is != null) {
                 Map<String, String> namespaceUris = new HashMap<>();
                 namespaceUris.put("beans", "http://www.springframework.org/schema/beans");
 
@@ -417,11 +406,26 @@ public class SelectionResource {
                 SAXReader reader = new SAXReader();
                 reader.setDocumentFactory(factory);
                 return reader.read(is);
-            } catch (DocumentException ex) {
-                log.error("Problem parsing Spring configuration file.", ex);
             }
+        } catch (DocumentException | IOException e) {
+            log.error("Problem parsing Spring configuration file.", e);
         }
         return null;
+    }
+
+    private InputStream openSpringConfiguration(final File springFile) {
+        if (springFile != null && springFile.exists() && springFile.isFile()) {
+            try {
+                return new FileInputStream(springFile);
+            } catch (FileNotFoundException ex) {
+                log.error("Problem reading Spring configuration file.", ex);
+                return null;
+            }
+        } else {
+            // no Spring configuration present yet, use template.
+            final String path = "/xml/valuelistmanager.xml";
+            return getClass().getResourceAsStream(path);
+        }
     }
 
     private File getSpringFile() {
