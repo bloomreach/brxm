@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public class UserActivityHeaderItem extends HippoHeaderItem {
         scriptParams.put("maxInactiveIntervalMinutes", Integer.toString(maxInactiveIntervalMinutes));
         scriptParams.put("ajaxAttrSystemActivity", AJAX_ATTR_SYSTEM_ACTIVITY);
 
+        @SuppressWarnings("squid:S2095")
         final PackageTextTemplate javaScript = new PackageTextTemplate(UserActivityHeaderItem.class, USER_ACTIVITY_API_JS);
         return javaScript.asString(scriptParams);
     }

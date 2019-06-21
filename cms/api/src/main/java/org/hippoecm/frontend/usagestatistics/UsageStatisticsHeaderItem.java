@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ public class UsageStatisticsHeaderItem extends HippoHeaderItem {
 
         log.info("Including external script for reporting usage statistics: {}", url);
 
+        @SuppressWarnings("squid:S2095")
         final PackageTextTemplate usageStatistics = new PackageTextTemplate(UsageStatisticsHeaderItem.class, USAGE_STATISTICS_JS);
         final String javaScript = usageStatistics.asString(scriptParams);
         return OnLoadHeaderItem.forScript(javaScript);
