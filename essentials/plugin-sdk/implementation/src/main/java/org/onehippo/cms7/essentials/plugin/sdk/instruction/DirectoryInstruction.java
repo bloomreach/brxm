@@ -241,10 +241,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
                     final boolean created = file.mkdirs();
                     log.debug("Created directory:{},  {}", file, created);
                 } else {
-                    final boolean copied = copyJarFile(placeholderData, jarFile, jarEntry, file);
-                    if (!copied) {
-                        return Status.FAILED;
-                    }
+                    copyJarFile(placeholderData, jarFile, jarEntry, file);
                 }
             }
         } catch (IOException e) {
@@ -255,8 +252,8 @@ public class DirectoryInstruction extends BuiltinInstruction {
         return Status.SUCCESS;
     }
 
-    private boolean copyJarFile(final Map<String, Object> placeholderData, final JarFile jarFile, 
-                                final JarEntry jarEntry, final File file) {
+    private void copyJarFile(final Map<String, Object> placeholderData, final JarFile jarFile, 
+                                final JarEntry jarEntry, final File file) throws IOException {
 
         try (
                 final InputStream is = jarFile.getInputStream(jarEntry);
@@ -271,11 +268,7 @@ public class DirectoryInstruction extends BuiltinInstruction {
             } else {
                 log.debug("Skipping processing of template placeholders: {}", ext);
             }
-        } catch (IOException e) {
-            log.error("Error copying JAR file", e);
-            return false;
         }
-        return true;
     }
 
     private String normalizeRelativeDirectoryPath(String resourcePath) {
