@@ -99,7 +99,7 @@
         <include>**/*.xml</include>
       </includes>
       <excludes>
-        <exclude>**/configuration/</exclude>
+        <exclude>**/configuration/config.yaml</exclude>
         <exclude>**/security/</exclude>
       </excludes>
     </fileSet>
