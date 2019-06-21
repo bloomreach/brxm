@@ -325,6 +325,7 @@ public class LoginPanel extends Panel {
     protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
         final Cookie localeCookie = new Cookie(cookieName, cookieValue);
         localeCookie.setMaxAge(maxAge);
+        localeCookie.setHttpOnly(true);
         WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
     }
 
