@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlaceholderServiceImpl implements PlaceholderService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PlaceholderServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(PlaceholderServiceImpl.class);
+    private static final String WEB_INF = "WEB-INF";
+    private static final String HCM_CONFIG = "hcm-config";
+    private static final String HCM_CONTENT = "hcm-content";
 
     private final SettingsService settingsService;
     private final ProjectService projectService;
@@ -107,7 +110,7 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         try {
             return ValueFactoryImpl.getInstance().createValue(date).getString();
         } catch (RepositoryException e) {
-            LOG.error("Failed creating jcrDate for placeholder.", e);
+            log.error("Failed creating jcrDate for placeholder.", e);
         }
         return "1970-01-01T01:00:00.000+01:00";
     }
@@ -116,7 +119,8 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         final Path siteWebRoot = projectService.getWebApplicationRootPathForModule(Module.SITE_WEBAPP);
         final Path siteResourcesRoot = projectService.getResourcesRootPathForModule(Module.SITE_COMPONENTS);
         final Path cmsWebRoot = projectService.getWebApplicationRootPathForModule(Module.CMS);
-        final Path webFilesResourcesRoot = projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_WEB_FILES);
+        final Path webFilesResourcesRoot = projectService
+                .getResourcesRootPathForModule(Module.REPOSITORY_DATA_WEB_FILES);
         final Path webFilesRoot = webFilesResourcesRoot.resolve(settingsService.getSettings().getWebfileBundleName());
 
         // project
@@ -129,10 +133,13 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         data.put(JAVASCRIPT_ROOT, siteWebRoot.resolve("js"));
         data.put(IMAGES_ROOT, siteWebRoot.resolve("images"));
         data.put(CSS_ROOT, siteWebRoot.resolve("css"));
-        data.put(SITE_WEB_INF_ROOT, siteWebRoot.resolve("WEB-INF"));
-        data.put(JSP_ROOT, siteWebRoot.resolve("WEB-INF").resolve("jsp"));
+        data.put(SITE_WEB_INF_ROOT, siteWebRoot.resolve(WEB_INF));
+        data.put(JSP_ROOT, siteWebRoot.resolve(WEB_INF).resolve("jsp"));
         data.put(SITE_RESOURCES, siteResourcesRoot);
-        data.put(SITE_OVERRIDE_FOLDER, siteResourcesRoot.resolve("META-INF").resolve("hst-assembly").resolve("overrides"));
+        data.put(SITE_OVERRIDE_FOLDER, siteResourcesRoot
+                .resolve("META-INF")
+                .resolve("hst-assembly")
+                .resolve("overrides"));
         data.put(BEANS_FOLDER, projectService.getBeansPackagePath());
         data.put(REST_FOLDER, projectService.getRestPackagePath());
         data.put(COMPONENTS_FOLDER, projectService.getComponentsPackagePath());
@@ -140,7 +147,7 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         // cms
         data.put(CMS_ROOT, projectService.getBasePathForModule(Module.CMS));
         data.put(CMS_WEB_ROOT, cmsWebRoot);
-        data.put(CMS_WEB_INF_ROOT, cmsWebRoot.resolve("WEB-INF"));
+        data.put(CMS_WEB_INF_ROOT, cmsWebRoot.resolve(WEB_INF));
         data.put(CMS_RESOURCES, projectService.getResourcesRootPathForModule(Module.CMS).toString());
 
         // webfiles
@@ -156,15 +163,21 @@ public class PlaceholderServiceImpl implements PlaceholderService {
         data.put(ESSENTIALS_ROOT, projectService.getBasePathForModule(Module.ESSENTIALS));
 
         // application
-        data.put(APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-config"));
-        data.put(APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION).resolve("hcm-content"));
+        data.put(APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION)
+                .resolve(HCM_CONFIG));
+        data.put(APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_APPLICATION)
+                .resolve(HCM_CONTENT));
 
         // development
-        data.put(DEVELOPMENT_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-config"));
-        data.put(DEVELOPMENT_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT).resolve("hcm-content"));
+        data.put(DEVELOPMENT_CONFIG, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT)
+                .resolve(HCM_CONFIG));
+        data.put(DEVELOPMENT_CONTENT, projectService.getResourcesRootPathForModule(Module.REPOSITORY_DATA_DEVELOPMENT)
+                .resolve(HCM_CONTENT));
 
         // site application
-        data.put(SITE_APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.SITE_DATA).resolve("hcm-config"));
-        data.put(SITE_APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.SITE_DATA).resolve("hcm-content"));
+        data.put(SITE_APPLICATION_CONFIG, projectService.getResourcesRootPathForModule(Module.SITE_DATA)
+                .resolve(HCM_CONFIG));
+        data.put(SITE_APPLICATION_CONTENT, projectService.getResourcesRootPathForModule(Module.SITE_DATA)
+                .resolve(HCM_CONTENT));
     }
 }

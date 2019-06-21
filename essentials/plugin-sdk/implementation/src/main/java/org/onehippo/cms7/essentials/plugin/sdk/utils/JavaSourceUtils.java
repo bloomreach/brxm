@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,12 @@ public final class JavaSourceUtils {
     public static final String UNCHECKED = "unchecked";
     public static final String RAWTYPES = "rawtypes";
     public static final String TAB_SIZE = "4";
+    private static final String GET_LINKED_BEANS = "getLinkedBeans";
+    private static final String HIPPO_BEAN = "HippoBean";
+    private static final String GET_LINKED_BEAN = "getLinkedBean";
+    private static final String GET_BEAN = "getBean";
+    private static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
+    private static final String ANNOTATION_ALREADY_EXISTS = "Annotation already exists: {}";
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -352,7 +358,6 @@ public final class JavaSourceUtils {
      * @param text text to add
      * @return rewritten source (with text node added to the javadoc)
      */
-    @SuppressWarnings("unchecked")
     public static void addClassJavaDoc(final Path path, final String text) {
         final CompilationUnit unit = getCompilationUnit(path);
         final String code = addClassJavaDoc(unit.toString(), text);
@@ -366,48 +371,67 @@ public final class JavaSourceUtils {
      * @param text    text to add
      * @return rewritten source (with text node added to the javadoc)
      */
-    @SuppressWarnings("unchecked")
     public static String addClassJavaDoc(final String content, final String text) {
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(content);
         final AST ast = unit.getAST();
         final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
         Javadoc javadoc = classType.getJavadoc();
+        
         if (javadoc == null) {
-            javadoc = ast.newJavadoc();
-            TextElement element = ast.newTextElement();
-            element.setText(text);
-            TagElement tag = ast.newTagElement();
-            tag.fragments().add(element);
-            javadoc.tags().add(tag);
-            classType.setJavadoc(javadoc);
-            return JavaSourceUtils.rewrite(unit, ast);
-        } else {
-            // check if text exists
-            final List<TagElement> tags = javadoc.tags();
-            for (TagElement tag : tags) {
-                @SuppressWarnings("rawtypes")
-                final List fragments = tag.fragments();
-                if (fragments != null) {
-                    for (Object fragment : fragments) {
-                        if (fragment instanceof TextElement) {
-                            final TextElement textNode = (TextElement) fragment;
-                            final String existingText = textNode.getText();
-                            if (existingText.equals(text)) {
-                                log.debug("Comment already in there: {}", existingText);
-                                return content;
-                            }
+            return createNewJavadoc(text, unit, ast, classType);
+        } 
+        
+        if (checkIfTextExists(text, javadoc)) {
+            return content;
+        }
+
+        return addToExistingJavadoc(text, unit, ast, javadoc);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String createNewJavadoc(final String text, final CompilationUnit unit, final AST ast, final TypeDeclaration classType) {
+        final Javadoc javadoc;
+        javadoc = ast.newJavadoc();
+        TextElement element = ast.newTextElement();
+        element.setText(text);
+        TagElement tag = ast.newTagElement();
+        tag.fragments().add(element);
+        javadoc.tags().add(tag);
+        classType.setJavadoc(javadoc);
+        return JavaSourceUtils.rewrite(unit, ast);
+    }
+
+    private static boolean checkIfTextExists(final String text, final Javadoc javadoc) {
+        @SuppressWarnings("unchecked")
+        final List<TagElement> tags = javadoc.tags();
+        for (TagElement tag : tags) {
+            @SuppressWarnings("rawtypes")
+            final List fragments = tag.fragments();
+            if (fragments != null) {
+                for (Object fragment : fragments) {
+                    if (fragment instanceof TextElement) {
+                        final TextElement textNode = (TextElement) fragment;
+                        final String existingText = textNode.getText();
+                        if (existingText.equals(text)) {
+                            log.debug("Comment already in there: {}", existingText);
+                            return true;
                         }
                     }
                 }
             }
-            final TextElement element = ast.newTextElement();
-            element.setText(text);
-            final TagElement tag = ast.newTagElement();
-            tag.fragments().add(element);
-            javadoc.tags().add(tag);
-            return JavaSourceUtils.rewrite(unit, ast);
         }
+        return false;
+    }
 
+    @SuppressWarnings("unchecked")
+    private static String addToExistingJavadoc(final String text, final CompilationUnit unit, final AST ast, final Javadoc javadoc) {
+        final TextElement element = ast.newTextElement();
+        element.setText(text);
+        final TagElement tag = ast.newTagElement();
+        tag.fragments().add(element);
+        javadoc.tags().add(tag);
+
+        return JavaSourceUtils.rewrite(unit, ast);
     }
 
     /**
@@ -545,10 +569,10 @@ public final class JavaSourceUtils {
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoBean", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_BEAN, path, GET_LINKED_BEANS, propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_BEAN, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoBean");
 
@@ -569,7 +593,7 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoGalleryImageBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, "HippoGalleryImageBean", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
 
@@ -582,17 +606,17 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", "HippoResourceBean", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, "HippoResourceBean", path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoResourceBean");
     }
 
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
@@ -602,17 +626,17 @@ public final class JavaSourceUtils {
             addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getBean", className, path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_BEAN, className, path, methodName, propertyName);
         }
         addImport(path, importPath);
     }
 
     public static void addBeanMethodInternalImageSet(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", className, path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", className, path, GET_LINKED_BEANS, propertyName);
             addImport(path, List.class.getName());
         } else {
-            addTwoArgumentsMethod("getLinkedBean", className, path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, className, path, methodName, propertyName);
         }
         addImport(path, importPath);
     }
@@ -629,9 +653,9 @@ public final class JavaSourceUtils {
     public static void addBeanMethodImageLink(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getLinkedBeans", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, GET_LINKED_BEANS, propertyName);
         } else {
-            addTwoArgumentsMethod("getLinkedBean", "HippoGalleryImageSet", path, methodName, propertyName);
+            addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
         }
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet");
     }
@@ -839,52 +863,52 @@ public final class JavaSourceUtils {
      * @see EssentialConst#NODE_ANNOTATION_NAME
      */
     public static String getNodeJcrType(final Path path) {
-        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        @SuppressWarnings(RAWTYPES)
         final List modifiers = getClassAnnotations(path);
         String jcrType = null;
+        
         for (Object modifier : modifiers) {
-            if (modifier instanceof NormalAnnotation) {
-                final NormalAnnotation annotation = (NormalAnnotation) modifier;
-                final Name typeName = annotation.getTypeName();
-                final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                // check Node & HippoGenerated annotations
-                if (
-                        (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME))
-                                &&
-                                (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getName()) && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName()))
+            if (!(modifier instanceof NormalAnnotation)) {
+                continue;
+            }
 
-                        ) {
-                    continue;
-                }
-                @SuppressWarnings(RAWTYPES)
-                final List values = annotation.values();
-                if (values != null) {
-                    for (Object value : values) {
-                        if (value instanceof MemberValuePair) {
-                            final MemberValuePair pair = (MemberValuePair) value;
-                            final SimpleName name = pair.getName();
+            final NormalAnnotation annotation = (NormalAnnotation) modifier;
+            final Name typeName = annotation.getTypeName();
+            final String fullyQualifiedName = typeName.getFullyQualifiedName();
+            
+            if (checkNodeAndHippoGeneratedAnnotations(fullyQualifiedName)) {
+                continue;
+            }
+            
+            @SuppressWarnings(RAWTYPES)
+            final List values = annotation.values();
+            if (values == null) {
+                continue;
+            }
+            
+            for (Object value : values) {
+                if (value instanceof MemberValuePair) {
+                    final MemberValuePair pair = (MemberValuePair) value;
+                    final SimpleName name = pair.getName();
 
-                            final String identifier = name.getIdentifier();
-                            if (identifier.equals("jcrType")) {
-                                final Expression literalValue = pair.getValue();
-                                if (literalValue instanceof StringLiteral) {
-                                    final StringLiteral ex = (StringLiteral) literalValue;
-                                    jcrType = ex.getLiteralValue();
-                                } else {
-
-
-                                    log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", literalValue);
-                                }
-                            }
-                            if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
-                                final Expression literalValue = pair.getValue();
-                                if (literalValue instanceof StringLiteral) {
-                                    final StringLiteral ex = (StringLiteral) literalValue;
-                                    jcrType = ex.getLiteralValue();
-                                } else {
-                                    log.warn("Couldn't resolve value for internalName: {}", literalValue);
-                                }
-                            }
+                    final String identifier = name.getIdentifier();
+                    if (identifier.equals("jcrType")) {
+                        final Expression literalValue = pair.getValue();
+                        if (literalValue instanceof StringLiteral) {
+                            final StringLiteral ex = (StringLiteral) literalValue;
+                            jcrType = ex.getLiteralValue();
+                        } else {
+                            log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", 
+                                    literalValue);
+                        }
+                    }
+                    if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
+                        final Expression literalValue = pair.getValue();
+                        if (literalValue instanceof StringLiteral) {
+                            final StringLiteral ex = (StringLiteral) literalValue;
+                            jcrType = ex.getLiteralValue();
+                        } else {
+                            log.warn("Couldn't resolve value for internalName: {}", literalValue);
                         }
                     }
                 }
@@ -895,16 +919,22 @@ public final class JavaSourceUtils {
         return jcrType;
     }
 
+    private static boolean checkNodeAndHippoGeneratedAnnotations(final String fullyQualifiedName) {
+        return 
+                (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) 
+                    && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME))
+                &&
+                (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getName()) 
+                    && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName()));
+    }
+
     public static boolean hasHippoEssentialsAnnotation(final Path path) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
-                final Name typeName = annotation.getTypeName();
-                final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
-                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
+                if (notAnEssentialsAnnotation(annotation)) {
                     continue;
                 }
                 return true;
@@ -922,44 +952,53 @@ public final class JavaSourceUtils {
         return getGeneratedObject(modifiers, beanPath);
     }
 
-    public static String  getHippoEssentialsAnnotation(final MethodDeclaration node) {
-        @SuppressWarnings({UNCHECKED, RAWTYPES})
+    public static String getHippoEssentialsAnnotation(final MethodDeclaration node) {
+        @SuppressWarnings(RAWTYPES)
         final List modifiers = node.modifiers();
         if (modifiers == null) {
             return null;
         }
+        
         for (Object modifier : modifiers) {
-            if (modifier instanceof NormalAnnotation) {
-                final NormalAnnotation annotation = (NormalAnnotation) modifier;
-                final Name typeName = annotation.getTypeName();
-                final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
-                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
-                    continue;
-                }
-                final List<?> values = annotation.values();
-                for (Object value : values) {
-                    if (value instanceof MemberValuePair) {
-                        final MemberValuePair mvp = (MemberValuePair) value;
-                        final String n = mvp.getName().getIdentifier();
-                        final Expression myValue = mvp.getValue();
-                        if (myValue instanceof StringLiteral) {
-                            final StringLiteral lit = (StringLiteral) myValue;
-                            final String v = lit.getLiteralValue();
-                            if ("internalName".equals(n)) {
-                                return v;
-                            }
+            if (!(modifier instanceof NormalAnnotation)) {
+                continue;
+            }
+            final NormalAnnotation annotation = (NormalAnnotation) modifier;
+            if (notAnEssentialsAnnotation(annotation)) {
+                continue;
+            }
+            
+            final List<?> values = annotation.values();
+            for (Object value : values) {
+                if (value instanceof MemberValuePair) {
+                    final MemberValuePair mvp = (MemberValuePair) value;
+                    final String identifier = mvp.getName().getIdentifier();
+                    final Expression myValue = mvp.getValue();
+                    if (myValue instanceof StringLiteral) {
+                        final StringLiteral literal = (StringLiteral) myValue;
+                        final String literalValue = literal.getLiteralValue();
+                        if ("internalName".equals(identifier)) {
+                            return literalValue;
                         }
                     }
                 }
-
             }
         }
         return null;
     }
 
+    private static boolean notAnEssentialsAnnotation(final NormalAnnotation annotation) {
+        final Name typeName = annotation.getTypeName();
+        final String fullyQualifiedName = typeName.getFullyQualifiedName();
+        if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
+                && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
+            return true;
+        }
+        return false;
+    }
+
     public static HippoEssentialsGeneratedObject getHippoGeneratedAnnotation(final Path path) {
-        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        @SuppressWarnings({RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         return getGeneratedObject(modifiers, path);
     }
@@ -968,10 +1007,7 @@ public final class JavaSourceUtils {
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
-                final Name typeName = annotation.getTypeName();
-                final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
-                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
+                if (notAnEssentialsAnnotation(annotation)) {
                     continue;
                 }
                 return populateGeneratedObject(path, annotation);
@@ -1159,7 +1195,7 @@ public final class JavaSourceUtils {
         // add annotation at first position:
         if (node instanceof TypeDeclaration) {
             TypeDeclaration type = (TypeDeclaration) node;
-            if (!hasAnnotation(type.modifiers(), annotation)) {
+            if (hasNotAnnotation(type.modifiers(), annotation)) {
                 type.modifiers().add(0, annotation);
             }
         } else if (node instanceof VariableDeclarationStatement) {
@@ -1170,7 +1206,7 @@ public final class JavaSourceUtils {
             variable.modifiers().add(0, annotation);
         } else if (node instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) node;
-            if (!hasAnnotation(method.modifiers(), annotation)) {
+            if (hasNotAnnotation(method.modifiers(), annotation)) {
                 method.modifiers().add(0, annotation);
             }
         } else if (node instanceof FieldDeclaration) {
@@ -1182,36 +1218,25 @@ public final class JavaSourceUtils {
     }
 
     @SuppressWarnings(RAWTYPES)
-    private static boolean hasAnnotation(final List modifiers, final IExtendedModifier annotation) {
+    private static boolean hasNotAnnotation(final List modifiers, final IExtendedModifier annotation) {
         for (Object modifier : modifiers) {
-            if (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) {
-                final NormalAnnotation existing = (NormalAnnotation) modifier;
-                final NormalAnnotation newOne = (NormalAnnotation) annotation;
+            if (isCorrectType(modifier, annotation)) {
+                final Annotation existing = (Annotation) modifier;
+                final Annotation newOne = (Annotation) annotation;
                 final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
                 if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
-                    return true;
-                }
-            } else if (modifier instanceof SingleMemberAnnotation && annotation instanceof SingleMemberAnnotation) {
-                final SingleMemberAnnotation existing = (SingleMemberAnnotation) modifier;
-                final SingleMemberAnnotation newOne = (SingleMemberAnnotation) annotation;
-                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
-                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
-                    return true;
-                }
-            } else if (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation) {
-                final MarkerAnnotation existing = (MarkerAnnotation) modifier;
-                final MarkerAnnotation newOne = (MarkerAnnotation) annotation;
-                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
-                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
-                    log.debug("Annotation already exists: {}", fullyQualifiedName);
-                    return true;
+                    log.debug(ANNOTATION_ALREADY_EXISTS, fullyQualifiedName);
+                    return false;
                 }
             }
         }
+        return true;
+    }
 
-        return false;
+    private static boolean isCorrectType(final Object modifier, final IExtendedModifier annotation) {
+        return (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) 
+                || (modifier instanceof SingleMemberAnnotation && annotation instanceof SingleMemberAnnotation)
+                || (modifier instanceof MarkerAnnotation && annotation instanceof MarkerAnnotation);
     }
 
     private static Path createJavaSourcePath(final String sourceRoot, final String className, final CharSequence packageName, final String fileExtension) throws IOException {
@@ -1271,7 +1296,7 @@ public final class JavaSourceUtils {
         final MethodDeclaration methodDeclaration = ast.newMethodDeclaration();
         methodDeclaration.setName(ast.newSimpleName(methodName));
         final ParameterizedType type = ast.newParameterizedType(ast.newSimpleType(ast.newName("List")));
-        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName("HippoBean")));
+        type.typeArguments().add(ast.newSimpleType(ast.newSimpleName(HIPPO_BEAN)));
         methodDeclaration.setReturnType2(type);
         methodDeclaration.modifiers().add(ast.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
         methodDeclaration.setConstructor(false);
@@ -1281,7 +1306,7 @@ public final class JavaSourceUtils {
         final VariableDeclarationFragment relatedFragment = ast.newVariableDeclarationFragment();
         relatedFragment.setName(ast.newSimpleName("documents"));
         final MethodInvocation relatedInvocation = ast.newMethodInvocation();
-        relatedInvocation.setName(ast.newSimpleName("getBean"));
+        relatedInvocation.setName(ast.newSimpleName(GET_BEAN));
         final StringLiteral stringArg = ast.newStringLiteral();
         stringArg.setLiteralValue(EssentialConst.RELATEDDOCS_DOCS);
         relatedInvocation.arguments().add(stringArg);

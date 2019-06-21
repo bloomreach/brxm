@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * @version "$Id$"
- */
 public class TemplateUtilsTest extends BaseTest {
 
     private static final String BEAN_REF = "com.test.MyBean";
@@ -63,14 +60,6 @@ public class TemplateUtilsTest extends BaseTest {
         final String result = TemplateUtils.replaceTemplateData(template, data);
         log.info("result {}", result);
         assertTrue(result.length() > 20);
-    }
-
-    @Test
-    public void testReplaceTemplateDataHttl() throws Exception {
-        final Map<String, Object> data = new HashMap<>();
-        data.put("beanReference", "com.foo.bar");
-        final String result = TemplateUtils.replaceTemplateData("test_template_httl.ftl", data);
-        log.info("result {}", result);
     }
 
     @Test

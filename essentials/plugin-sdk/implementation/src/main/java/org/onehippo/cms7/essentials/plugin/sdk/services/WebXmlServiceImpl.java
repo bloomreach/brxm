@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WebXmlServiceImpl implements WebXmlService {
-    private static final Logger LOG = LoggerFactory.getLogger(WebXmlServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(WebXmlServiceImpl.class);
+    
     private static final String HST_BEANS_ANNOTATED_CLASSES = "hst-beans-annotated-classes";
+    private static final String WEB_APP = "/web-app";
 
     private final ProjectService projectService;
 
@@ -62,7 +64,7 @@ public class WebXmlServiceImpl implements WebXmlService {
                 final String[] mappings = value.trim().split("\\s*,\\s*");
                 for (String mapping : mappings) {
                     if (mapping.equals(pattern)) {
-                        LOG.debug("HST bean class pattern '{}' already in place.", pattern);
+                        log.debug("HST bean class pattern '{}' already in place.", pattern);
                         return;
                     }
                 }
@@ -98,7 +100,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     private void createContextParameter(final Document doc, final String name, final String value) {
-        final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+        final Element webApp = (Element) doc.getRootElement().selectSingleNode(WEB_APP);
         final Element contextParam = Dom4JUtils.addIndentedSameNameSibling(webApp, "context-param", null);
         Dom4JUtils.addIndentedElement(contextParam, "param-name", name);
         Dom4JUtils.addIndentedElement(contextParam, "param-value", value);
@@ -117,14 +119,14 @@ public class WebXmlServiceImpl implements WebXmlService {
 
     private void createFilter(final Document doc, final String filterName, final String filterClass,
                               final Map<String, String> initParams) {
-        final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+        final Element webApp = (Element) doc.getRootElement().selectSingleNode(WEB_APP);
         final Element filter = Dom4JUtils.addIndentedSameNameSibling(webApp, "filter", null);
         Dom4JUtils.addIndentedElement(filter, "filter-name", filterName);
         Dom4JUtils.addIndentedElement(filter, "filter-class", filterClass);
-        for (String initParamName : initParams.keySet()) {
+        for (Map.Entry<String, String> entry : initParams.entrySet()) {
             final Element initParam = Dom4JUtils.addIndentedElement(filter, "init-param", null);
-            Dom4JUtils.addIndentedElement(initParam, "param-name", initParamName);
-            Dom4JUtils.addIndentedElement(initParam, "param-value", initParams.get(initParamName));
+            Dom4JUtils.addIndentedElement(initParam, "param-name", entry.getKey());
+            Dom4JUtils.addIndentedElement(initParam, "param-value", entry.getValue());
         }
     }
 
@@ -141,7 +143,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     @Override
     public boolean addFilterMapping(final Module module, final String filterName, final List<String> urlPatterns) {
         return update(module, doc -> {
-            final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+            final Element webApp = (Element) doc.getRootElement().selectSingleNode(WEB_APP);
             final Element filterMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "filter-mapping", null);
             addNameAndPatternsToFilterMapping(filterMapping, filterName, urlPatterns);
         });
@@ -151,7 +153,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     public boolean insertFilterMapping(final Module module, final String filterName, final List<String> urlPatterns,
                                        final String insertBefore) {
         return update(module, doc -> {
-            final Element webApp = (Element) doc.getRootElement().selectSingleNode("/web-app");
+            final Element webApp = (Element) doc.getRootElement().selectSingleNode(WEB_APP);
             final String locationSelector = filterMappingSelectorFor(insertBefore);
             final Element filterMapping = Dom4JUtils.insertIndentedElement(webApp, "filter-mapping", locationSelector);
             addNameAndPatternsToFilterMapping(filterMapping, filterName, urlPatterns);
@@ -212,7 +214,7 @@ public class WebXmlServiceImpl implements WebXmlService {
 
     private void createServlet(final Document doc, final String name, final String servletClass,
                                final Integer loadOnStartup) {
-        final Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
+        final Element webApp = (Element)doc.getRootElement().selectSingleNode(WEB_APP);
 
         final Element servlet = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet", null);
         Dom4JUtils.addIndentedElement(servlet, "servlet-name", name);
@@ -240,7 +242,7 @@ public class WebXmlServiceImpl implements WebXmlService {
     }
 
     private Element createServletMapping(final Document doc, final String servletName) {
-        final Element webApp = (Element)doc.getRootElement().selectSingleNode("/web-app");
+        final Element webApp = (Element)doc.getRootElement().selectSingleNode(WEB_APP);
         final Element servletMapping = Dom4JUtils.addIndentedSameNameSibling(webApp, "servlet-mapping", null);
         Dom4JUtils.addIndentedElement(servletMapping, "servlet-name", servletName);
         return servletMapping;

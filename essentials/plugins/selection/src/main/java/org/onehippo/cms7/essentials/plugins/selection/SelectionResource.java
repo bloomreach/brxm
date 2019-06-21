@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,9 @@ public class SelectionResource {
     private static final String VALUELIST_MANAGER_ID = "org.onehippo.forge.selection.hst.manager.ValueListManager";
     private static final String VALUELIST_XPATH = "/beans/beans:bean[@id=\""
             + VALUELIST_MANAGER_ID + "\"]/beans:constructor-arg/beans:map";
+    private static final String PLUGIN_CLASS = "plugin.class";
+    private static final String CLUSTER_OPTIONS = "cluster.options";
+    private static final String SOURCE = "source";
 
     private final RebuildService rebuildService;
     private final ProjectService projectService;
@@ -132,16 +135,18 @@ public class SelectionResource {
         List<ProvisionedValueList> pvlList = new ArrayList<>();
         final Document document = readSpringConfiguration();
 
-        String xPath = VALUELIST_XPATH + "/beans:entry";
-        List valueLists = document.selectNodes(xPath);
-        Iterator iter = valueLists.iterator();
+        if (document != null) {
+            String xPath = VALUELIST_XPATH + "/beans:entry";
+            List valueLists = document.selectNodes(xPath);
+            Iterator iter = valueLists.iterator();
 
-        while (iter.hasNext()) {
-            Element valueList = (Element)iter.next();
-            ProvisionedValueList pvl = new ProvisionedValueList();
-            pvl.setId(valueList.attributeValue("key"));
-            pvl.setPath(valueList.attributeValue("value"));
-            pvlList.add(pvl);
+            while (iter.hasNext()) {
+                Element valueList = (Element) iter.next();
+                ProvisionedValueList pvl = new ProvisionedValueList();
+                pvl.setId(valueList.attributeValue("key"));
+                pvl.setPath(valueList.attributeValue("value"));
+                pvlList.add(pvl);
+            }
         }
         return pvlList;
     }
@@ -240,15 +245,15 @@ public class SelectionResource {
                 String type = child.getProperty("hipposysedit:type").getString();
                 if ("DynamicDropdown".equals(type) || "selection:RadioGroup".equals(type)) {
                     final Node editorField = findCorrespondingEditorTemplateField(child, editorTemplate);
-                    if (editorField != null && editorField.hasProperty("plugin.class")
-                            && pluginClass.equals(editorField.getProperty("plugin.class").getString())) {
+                    if (editorField != null && editorField.hasProperty(PLUGIN_CLASS)
+                            && pluginClass.equals(editorField.getProperty(PLUGIN_CLASS).getString())) {
 
                         final SelectionField field = new SelectionField();
                         field.setType("single");
                         field.setNameSpace(namespace);
                         field.setDocumentName(shortName);
                         field.setName(editorField.getProperty("caption").getString());
-                        field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
+                        field.setValueList(editorField.getNode(CLUSTER_OPTIONS).getProperty(SOURCE).getString());
                         fields.add(field);
                     }
                 }
@@ -292,14 +297,14 @@ public class SelectionResource {
         final NodeIterator editorFields = editorTemplate.getNodes();
         while (editorFields.hasNext()) {
             final Node editorField = editorFields.nextNode();
-            if (editorField.hasNode("cluster.options") && editorField.getNode("cluster.options").hasProperty("source") &&
-                    editorField.hasProperty("plugin.class") && MULTISELECT_PLUGIN_CLASS.equals(editorField.getProperty("plugin.class").getString())) {
+            if (editorField.hasNode(CLUSTER_OPTIONS) && editorField.getNode(CLUSTER_OPTIONS).hasProperty(SOURCE) &&
+                    editorField.hasProperty(PLUGIN_CLASS) && MULTISELECT_PLUGIN_CLASS.equals(editorField.getProperty(PLUGIN_CLASS).getString())) {
                 final SelectionField field = new SelectionField();
                 field.setType("multiple");
                 field.setNameSpace(namespace);
                 field.setDocumentName(shortName);
                 field.setName(editorField.getProperty("caption").getString());
-                field.setValueList(editorField.getNode("cluster.options").getProperty("source").getString());
+                field.setValueList(editorField.getNode(CLUSTER_OPTIONS).getProperty(SOURCE).getString());
                 fields.add(field);
             }
         }
@@ -389,21 +394,9 @@ public class SelectionResource {
 
     private Document readSpringConfiguration() {
         final File springFile = getSpringFile();
-        InputStream is = null;
-        if (springFile !=null && springFile.exists() && springFile.isFile()) {
-            try {
-                is = new FileInputStream(springFile);
-            } catch (FileNotFoundException ex) {
-                log.error("Problem reading Spring configuration file.", ex);
-            }
-        } else {
-            // no Spring configuration present yet, use template.
-            final String path = "/xml/valuelistmanager.xml";
-            is = getClass().getResourceAsStream(path);
-        }
 
-        if (is != null) {
-            try {
+        try (InputStream is = openSpringConfiguration(springFile)) {
+            if (is != null) {
                 Map<String, String> namespaceUris = new HashMap<>();
                 namespaceUris.put("beans", "http://www.springframework.org/schema/beans");
 
@@ -413,11 +406,26 @@ public class SelectionResource {
                 SAXReader reader = new SAXReader();
                 reader.setDocumentFactory(factory);
                 return reader.read(is);
-            } catch (DocumentException ex) {
-                log.error("Problem parsing Spring configuration file.", ex);
             }
+        } catch (DocumentException | IOException e) {
+            log.error("Problem parsing Spring configuration file.", e);
         }
         return null;
+    }
+
+    private InputStream openSpringConfiguration(final File springFile) {
+        if (springFile != null && springFile.exists() && springFile.isFile()) {
+            try {
+                return new FileInputStream(springFile);
+            } catch (FileNotFoundException ex) {
+                log.error("Problem reading Spring configuration file.", ex);
+                return null;
+            }
+        } else {
+            // no Spring configuration present yet, use template.
+            final String path = "/xml/valuelistmanager.xml";
+            return getClass().getResourceAsStream(path);
+        }
     }
 
     private File getSpringFile() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MavenDependency {
+    // statics representing XML element names
     public static final String GROUP_ID = "groupId";
     public static final String ARTIFACT_ID = "artifactId";
     public static final String VERSION = "version";
@@ -28,8 +29,11 @@ public class MavenDependency {
 
     private String groupId;
     private String artifactId;
+    @SuppressWarnings("squid:S1845")
     private String version;
+    @SuppressWarnings("squid:S1845")
     private String type;
+    @SuppressWarnings("squid:S1845")
     private String scope;
 
     public MavenDependency() {}

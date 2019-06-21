@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,17 @@ import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * @version "$Id$"
- */
 public class RestServletListener implements ServletContextListener {
 
     private static Logger log = LoggerFactory.getLogger(RestServletListener.class);
 
     @Override
     public void contextInitialized(final ServletContextEvent servletContextEvent) {
-
         log.info("#####  ESSENTIALS LISTENER #############");
-
     }
 
     @Override
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
-
+        // nothing to destroy
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,13 +74,9 @@ public class InstallStateMachine {
      */
     private void promote(final PluginDescriptor plugin) {
         final InstallState state = plugin.getState();
-        if (state == installService.readInstallStateFromWar(plugin)) {
-            switch (state) {
-                case INSTALLING:
-                    plugin.setState(InstallState.INSTALLED);
-                    installService.storeInstallStateToFileSystem(plugin);
-                    break;
-            }
+        if (state == installService.readInstallStateFromWar(plugin) && state.equals(InstallState.INSTALLING)) {
+            plugin.setState(InstallState.INSTALLED);
+            installService.storeInstallStateToFileSystem(plugin);
         }
     }
 
@@ -192,23 +188,21 @@ public class InstallStateMachine {
     private void installWithDependencies(final PluginDescriptor plugin, final PluginSet pluginSet,
                                          final Map<String, Object> parameters, final UserFeedback feedback,
                                          final List<PluginDescriptor> limitingPlugins) {
-        switch (plugin.getState()) {
-            case DISCOVERED:
-            case INSTALLATION_PENDING:
-                if (!advanceDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins)) {
-                    break;
-                }
+        final InstallState state = plugin.getState();
+        if (state == InstallState.DISCOVERED || state == InstallState.INSTALLATION_PENDING) {
+            if (!advanceDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins)) {
+                return;
+            }
 
-                if (!installService.canAutoInstall(plugin)) {
-                    plugin.setState(InstallState.AWAITING_USER_INPUT);
-                    installService.storeInstallStateToFileSystem(plugin);
-                    final String message = String.format("Plugin '%s' requires user input for installation.", plugin.getName());
-                    feedback.addSuccess(message);
-                    break;
-                }
+            if (!installService.canAutoInstall(plugin)) {
+                plugin.setState(InstallState.AWAITING_USER_INPUT);
+                installService.storeInstallStateToFileSystem(plugin);
+                final String message = String.format("Plugin '%s' requires user input for installation.", plugin.getName());
+                feedback.addSuccess(message);
+                return;
+            }
 
-                installWithParameters(plugin, parameters, feedback);
-                break;
+            installWithParameters(plugin, parameters, feedback);
         }
     }
 
@@ -240,23 +234,8 @@ public class InstallStateMachine {
     private boolean advanceDependencies(final PluginDescriptor plugin, final PluginSet pluginSet,
                                         final Map<String, Object> parameters, final UserFeedback feedback,
                                         final List<PluginDescriptor> limitingPlugins) {
-        final List<PluginDescriptor.Dependency> dependencies = plugin.getPluginDependencies();
-        if (dependencies != null) {
-            for (PluginDescriptor.Dependency dependency : dependencies) {
-                final String depId = dependency.getPluginId();
-                final PluginDescriptor p = pluginSet.getPlugin(depId);
-                if (mustAdvanceDependency(dependency, p)) {
-                    if (p.getState() == InstallState.DISCOVERED) {
-                        final String message = String.format("Installing dependent plugin '%s'...", p.getName());
-                        feedback.addSuccess(message);
-                    }
-                    installWithDependencies(p, pluginSet, parameters, feedback, limitingPlugins);
-                }
-                if (mustAdvanceDependency(dependency, p)) {
-                    limitingPlugins.add(p); // dependency is still in a state that keeps this plugin from advancing
-                }
-            }
-        }
+        
+        advancePluginDependencies(plugin, pluginSet, parameters, feedback, limitingPlugins);
 
         if (!limitingPlugins.isEmpty()) {
             if (plugin.getState() != InstallState.INSTALLATION_PENDING) {
@@ -268,6 +247,31 @@ public class InstallStateMachine {
         }
 
         return true;
+    }
+
+    private void advancePluginDependencies(final PluginDescriptor plugin, final PluginSet pluginSet, 
+                                           final Map<String, Object> parameters, final UserFeedback feedback, 
+                                           final List<PluginDescriptor> limitingPlugins) {
+
+        final List<PluginDescriptor.Dependency> dependencies = plugin.getPluginDependencies();
+        if (dependencies == null) {
+            return;
+        }
+
+        for (PluginDescriptor.Dependency dependency : dependencies) {
+            final String depId = dependency.getPluginId();
+            final PluginDescriptor p = pluginSet.getPlugin(depId);
+            if (mustAdvanceDependency(dependency, p)) {
+                if (p.getState() == InstallState.DISCOVERED) {
+                    final String message = String.format("Installing dependent plugin '%s'...", p.getName());
+                    feedback.addSuccess(message);
+                }
+                installWithDependencies(p, pluginSet, parameters, feedback, limitingPlugins);
+            }
+            if (mustAdvanceDependency(dependency, p)) {
+                limitingPlugins.add(p); // dependency is still in a state that keeps this plugin from advancing
+            }
+        }
     }
 
     private boolean mustAdvanceDependency(final PluginDescriptor.Dependency dependency,

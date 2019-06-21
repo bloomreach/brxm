@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -209,7 +209,6 @@ public class DirectoryInstruction extends BuiltinInstruction {
                 log.error("Error creating directory", e);
                 return Status.FAILED;
             }
-
         }
 
         try {
@@ -224,35 +223,25 @@ public class DirectoryInstruction extends BuiltinInstruction {
             while (entries.hasMoreElements()) {
                 final JarEntry jarEntry = entries.nextElement();
                 final String entryName = jarEntry.getName();
-                if (entryName.startsWith(entryPrefix)) {
-                    final String fileName = entryName.substring(entryPrefix.length());
-                    final File file = new File(targetDirectory, fileName);
-                    if (file.exists()) {
-                        if (overwrite) {
-                            final boolean delete = file.delete();
-                            log.info("Deleted existing file: {},{}", file, delete);
-                        } else {
-                            log.info("File already exists, skipping copy: {}", file);
-                            continue;
-                        }
-                    }
-                    if (jarEntry.isDirectory()) {
-                        final boolean created = file.mkdirs();
-                        log.debug("Created directory:{},  {}", file, created);
+                if (!entryName.startsWith(entryPrefix)) {
+                    continue;
+                }
+                final String fileName = entryName.substring(entryPrefix.length());
+                final File file = new File(targetDirectory, fileName);
+                if (file.exists()) {
+                    if (overwrite) {
+                        final boolean delete = file.delete();
+                        log.info("Deleted existing file: {},{}", file, delete);
                     } else {
-                        final InputStream is = jarFile.getInputStream(jarEntry);
-                        final OutputStream out = org.apache.commons.io.FileUtils.openOutputStream(file);
-                        IOUtils.copy(is, out);
-                        IOUtils.closeQuietly(is);
-                        IOUtils.closeQuietly(out);
-                        log.info("Copied file {}", file);
-                        final String ext = FilenameUtils.getExtension(file.getAbsolutePath());
-                        if (SUPPORTED_PLACEHOLDER_EXTENSIONS.contains(ext.toLowerCase())) {
-                            TemplateUtils.replaceFileTemplateData(file.toPath(), placeholderData);
-                        } else {
-                            log.debug("Skipping processing of template placeholders: {}", ext);
-                        }
+                        log.info("File already exists, skipping copy: {}", file);
+                        continue;
                     }
+                }
+                if (jarEntry.isDirectory()) {
+                    final boolean created = file.mkdirs();
+                    log.debug("Created directory:{},  {}", file, created);
+                } else {
+                    copyJarFile(placeholderData, jarFile, jarEntry, file);
                 }
             }
         } catch (IOException e) {
@@ -261,6 +250,25 @@ public class DirectoryInstruction extends BuiltinInstruction {
         }
 
         return Status.SUCCESS;
+    }
+
+    private void copyJarFile(final Map<String, Object> placeholderData, final JarFile jarFile, 
+                                final JarEntry jarEntry, final File file) throws IOException {
+
+        try (
+                final InputStream is = jarFile.getInputStream(jarEntry);
+                final OutputStream out = org.apache.commons.io.FileUtils.openOutputStream(file)
+        ) {
+
+            IOUtils.copy(is, out);
+            log.info("Copied file {}", file);
+            final String ext = FilenameUtils.getExtension(file.getAbsolutePath());
+            if (SUPPORTED_PLACEHOLDER_EXTENSIONS.contains(ext.toLowerCase())) {
+                TemplateUtils.replaceFileTemplateData(file.toPath(), placeholderData);
+            } else {
+                log.debug("Skipping processing of template placeholders: {}", ext);
+            }
+        }
     }
 
     private String normalizeRelativeDirectoryPath(String resourcePath) {
