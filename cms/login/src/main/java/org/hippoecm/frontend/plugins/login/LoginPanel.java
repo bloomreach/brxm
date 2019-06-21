@@ -63,7 +63,7 @@ public class LoginPanel extends Panel {
     private static final String CONSOLE_LOCALE = "en";
     private static final String LOCALE_COOKIE = "loc";
     private static final int LOCALE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
-    private final static String DEFAULT_KEY = "invalid.login";
+    private static final String DEFAULT_KEY = "invalid.login";
 
     private final LoginHandler handler;
 
@@ -79,7 +79,8 @@ public class LoginPanel extends Panel {
 
         add(CssClass.append("login-panel-center"));
 
-        add(form = new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers()));
+        form = new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers());
+        add(form);
     }
 
     protected void login() throws LoginException {
@@ -91,8 +92,8 @@ public class LoginPanel extends Panel {
         } else {
             final String alreadyAuthorizedUser = userSession.getUserName();
             if (alreadyAuthorizedUser.equals(username) || isDevMode()) {
-                log.debug("User is already authenticated to /cms or /cms/console and now logs in into second app. Hence we " +
-                        "should not invalidate the user session.");
+                log.debug("User is already authenticated to /cms or /cms/console and now logs in into second app. " +
+                        "Hence we should not invalidate the user session.");
             } else {
                 log.info("Invalidating http session because attempt to login to different app with different user name");
                 userSession.replaceSession();
@@ -136,6 +137,7 @@ public class LoginPanel extends Panel {
                     return reason;
                 }
             } catch (final MissingResourceException ignore) {
+                // ignored
             }
         }
         return getString(DEFAULT_KEY);
@@ -167,10 +169,11 @@ public class LoginPanel extends Panel {
 
             add(new AttributeModifier("autocomplete", autoComplete ? "on" : "off"));
 
-            add(feedback = new FeedbackPanel("feedback"));
+            feedback = new FeedbackPanel("feedback");
             feedback.setOutputMarkupId(true);
             feedback.setEscapeModelStrings(false);
             feedback.setFilter(message -> !message.isRendered());
+            add(feedback);
 
             browserSupport = new Label("browser-support", new LoginResourceModel("browser.unsupported.warning"));
             browserSupport.setVisible(false);
@@ -181,39 +184,24 @@ public class LoginPanel extends Panel {
                 browserSupport.add(new BrowserCheckBehavior(supportedBrowsers));
             }
 
-            add(usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username")));
+            usernameTextField = new RequiredTextField<>("username", PropertyModel.of(LoginPanel.this, "username"));
             usernamePlaceholder = new LoginResourceModel("username-label");
             addAjaxAttributeModifier(usernameTextField, "placeholder", usernamePlaceholder);
             usernameTextField.setOutputMarkupId(true);
+            add(usernameTextField);
 
-            add(passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password")));
+            passwordTextField = new PasswordTextField("password", PropertyModel.of(LoginPanel.this, "password"));
             passwordPlaceholder = new LoginResourceModel("password-label");
             addAjaxAttributeModifier(passwordTextField, "placeholder", (passwordPlaceholder));
             passwordTextField.setResetPassword(true);
             passwordTextField.setOutputMarkupId(true);
+            add(passwordTextField);
 
             final String defaultLocale = locales.get(0);
-
-            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(
-                    Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
-
-            if (consoleLogin) {
-                // forced language (en) selection for console app
-                selectedLocale = CONSOLE_LOCALE;
-            } else {
-                final String cookieLocale = getCookieValue(LOCALE_COOKIE);
-                final String sessionLocale = getSession().getLocale().getLanguage();
-                if (cookieLocale != null && locales.contains(cookieLocale)) {
-                    selectedLocale = cookieLocale;
-                } else if (sessionLocale != null && locales.contains(sessionLocale)) {
-                    selectedLocale = sessionLocale;
-                } else {
-                    selectedLocale = defaultLocale;
-                }
-            }
+            initSelectedLocale(locales, defaultLocale);
             getSession().setLocale(getSelectedLocale());
 
-            add(locale = new DropDownChoice<>("locale",
+            locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(LoginPanel.this, "selectedLocale") {
                         @Override
                         public void setObject(final String object) {
@@ -224,8 +212,8 @@ public class LoginPanel extends Panel {
                     // Display the language name from i18n properties
                     new IChoiceRenderer<String>() {
                         public String getDisplayValue(final String key) {
-                            final Locale locale = new Locale(key);
-                            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
+                            final Locale localeFromKey = new Locale(key);
+                            return StringUtils.capitalize(localeFromKey.getDisplayLanguage(localeFromKey));
                         }
 
                         public String getIdValue(final String object, final int index) {
@@ -238,7 +226,7 @@ public class LoginPanel extends Panel {
                             return choices.contains(id) ? id : null;
                         }
                     }
-            ));
+            );
             locale.add(new OnChangeAjaxBehavior() {
                 protected void onUpdate(final AjaxRequestTarget target) {
                     // Store locale in cookie
@@ -257,6 +245,7 @@ public class LoginPanel extends Panel {
                     }
                 }
             });
+            add(locale);
 
             final IModel<String> localeTooltip = new LoginResourceModel("locale-label");
             addAjaxAttributeModifier(locale, "title", localeTooltip);
@@ -268,8 +257,25 @@ public class LoginPanel extends Panel {
             submitButton.add(submitLabel);
 
             // hide language selection for console app and when there is only one choice
-            if (consoleLogin || locales.size() == 1) {
+            if (isConsole() || locales.size() == 1) {
                 locale.setVisible(false);
+            }
+        }
+
+        private void initSelectedLocale(final List<String> locales, final String defaultLocale) {
+            if (isConsole()) {
+                // forced language (en) selection for console app
+                selectedLocale = CONSOLE_LOCALE;
+            } else {
+                final String cookieLocale = getCookieValue(LOCALE_COOKIE);
+                final String sessionLocale = getSession().getLocale().getLanguage();
+                if (cookieLocale != null && locales.contains(cookieLocale)) {
+                    selectedLocale = cookieLocale;
+                } else if (sessionLocale != null && locales.contains(sessionLocale)) {
+                    selectedLocale = sessionLocale;
+                } else {
+                    selectedLocale = defaultLocale;
+                }
             }
         }
 
@@ -320,6 +326,10 @@ public class LoginPanel extends Panel {
             attributes.add(modifier);
             component.add(modifier);
         }
+    }
+
+    protected static boolean isConsole() {
+        return WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
     }
 
     protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
