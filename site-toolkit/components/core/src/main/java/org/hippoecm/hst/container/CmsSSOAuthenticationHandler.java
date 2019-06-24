@@ -54,11 +54,12 @@ public class CmsSSOAuthenticationHandler {
 
 
     /**
-     * @return {@code true} if the {@code containerRequest} contains the information to create an SSO handshake with the
-     * CMS and it returns {@code false} if the {@code containerRequest} does not contain the required info: When {@core
-     * false} is returned, the {@code servletResponse} gets committed already with a redirect or an error
+     * If the {@code containerRequest} contains the right information to exchange the site http session
+     * information with the CMS session context the response gets committed with a {@link HttpServletResponse#SC_NO_CONTENT}
+     * status and if the {@code containerRequest} does not contain the required info the {@code servletResponse} gets
+     * committed already with a redirect or an error
      */
-    static boolean authenticate(final HstContainerRequest containerRequest,
+    static void authenticate(final HstContainerRequest containerRequest,
                               final HttpServletResponse servletResponse) throws ContainerException {
 
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", containerRequest.getRequestURL());
@@ -68,7 +69,7 @@ public class CmsSSOAuthenticationHandler {
         if (cmsContextService == null) {
             log.debug("No CmsContextService available");
             sendError(servletResponse, HttpServletResponse.SC_BAD_REQUEST);
-            return false;
+            return;
         }
 
         final String cmsContextServiceId = containerRequest.getParameter("cmsCSID");
@@ -80,17 +81,17 @@ public class CmsSSOAuthenticationHandler {
                 log.warn("Invalid request to redirect for authentication because request method is '{}' and only" +
                         " 'GET' or 'HEAD' are allowed", method);
                 sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
-                return false;
+                return;
             }
             log.debug("No CmsSessionContext and/or CmsContextService IDs found. Redirect to the CMS");
             redirectToCms(containerRequest, servletResponse, cmsContextService.getId());
-            return false;
+            return;
         }
 
         if (!cmsContextServiceId.equals(cmsContextService.getId())) {
             log.warn("Cannot authorize request: not coming from this CMS HOST. Redirecting to cms authentication URL to retry.");
             redirectToCms(containerRequest, servletResponse, cmsContextService.getId());
-            return false;
+            return;
         }
 
 
@@ -101,14 +102,14 @@ public class CmsSSOAuthenticationHandler {
             httpSession.invalidate();
             log.warn("Cannot authorize request: CmsSessionContext not found");
             sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            return;
         }
 
         log.debug("Authenticated '{}' successfully", cmsSessionContext.getRepositoryCredentials().getUserID());
 
-        setRequestAttributes(containerRequest, cmsSessionContext);
+        servletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        return true;
+        return;
     }
 
     private static void setRequestAttributes(final HstContainerRequest containerRequest, final CmsSessionContext cmsSessionContext) {
