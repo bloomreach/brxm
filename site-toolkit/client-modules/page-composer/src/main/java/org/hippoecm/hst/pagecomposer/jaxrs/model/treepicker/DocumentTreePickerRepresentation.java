@@ -190,7 +190,9 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
 
         final Mount editingMount = pageComposerContextService.getEditingMount();
         final HstLink hstLink = linkCreator.create(node, editingMount);
-        if (isFolder(node) && ((HstSiteMapItemService)hstLink.getHstSiteMapItem()).getExtension() != null ) {
+        if (hstLink == null) {
+            setSelectable(false);
+        } else if (isFolder(node) && hasSiteMapItemWithExtension(hstLink)) {
             // The hstLink is for a wildcard/any matcher *with* an extension while 'node' represents a folder:
             // In general folder can be returned as a link with extension, eg, /news/2014.html if there is only a **.html
             // matcher but not a ** matcher. However the URL /news/2014.html most of the time results in an error page
@@ -259,6 +261,11 @@ public class DocumentTreePickerRepresentation extends AbstractTreePickerRepresen
         }
 
         return this;
+    }
+
+    private static boolean hasSiteMapItemWithExtension(final HstLink hstLink) {
+        final HstSiteMapItem siteMapItem = hstLink.getHstSiteMapItem();
+        return siteMapItem != null && ((HstSiteMapItemService) siteMapItem).getExtension() != null;
     }
 
     private boolean isFolder(final Node node) throws RepositoryException {
