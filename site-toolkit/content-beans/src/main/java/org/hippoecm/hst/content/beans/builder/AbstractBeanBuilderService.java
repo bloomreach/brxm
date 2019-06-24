@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
+import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,10 +94,7 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            DocumentType documentType = DocumentType.getDocumentType(type);
-            if (documentType == DocumentType.STRING && DOCBASE.equals(cmsType)) {
-                documentType = DocumentType.DOCBASE;
-            }
+            final DocumentType documentType = getPropertyDocumentType(type, cmsType);
 
             switch (documentType) {
             case STRING:
@@ -152,11 +150,7 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            DocumentType documentType = DocumentType.getDocumentType(type);
-
-            if (DocumentType.UNKNOWN == documentType && hasContentBlocks(childNode)) {
-                documentType = DocumentType.CONTENT_BLOCKS;
-            }
+            final DocumentType documentType = getChildNodeDocumentType(type, childNode.getContentType());
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -182,13 +176,54 @@ public abstract class AbstractBeanBuilderService {
     }
 
     /**
+     * Gets the corresponding document type enum value of a given document type by checking
+     * a possible docbase definition
+     * 
+     * @param type of the document
+     * @param cmsType itemType of the {@link org.onehippo.cms7.services.contenttype.ContentTypeProperty}
+     * @return the corresponding document type
+     */
+    private DocumentType getPropertyDocumentType(final String type, final String cmsType) {
+        final DocumentType documentType = DocumentType.getDocumentType(type);
+
+        // if a document type is a string type, then the cms/item type check
+        // must be made to figure out whether the document type is a docbase
+        if (documentType == DocumentType.STRING && DOCBASE.equals(cmsType)) {
+            return DocumentType.DOCBASE;
+        }
+
+        return documentType;
+    }
+
+    /**
+     * Gets the corresponding document type enum value of a given document type by checking
+     * a possible content block definition
+     * 
+     * @param type of the document
+     * @param contentTypeChild child element of the corresponding contentType of the document type
+     * @return the corresponding document type
+     */
+    private DocumentType getChildNodeDocumentType(final String type, final ContentTypeChild contentTypeChild) {
+        final DocumentType documentType = DocumentType.getDocumentType(type);
+
+        // if a document type doesn't match with any predefined document type, then
+        // a content block definition check must be made to figure out whether the
+        // document type is a content block
+        if (DocumentType.UNKNOWN == documentType && hasContentBlocks(contentTypeChild)) {
+            return DocumentType.CONTENT_BLOCKS;
+        }
+
+        return documentType;
+    }
+
+    /**
      * checks whether a content bean child has a content blocks
      * 
      * @param bean {@link HippoContentBean}
      * @return true if the content bean child has a content blocks
      */
-    protected boolean hasContentBlocks(final HippoContentChildNode childNode) {
-        final List<String> validators = childNode.getContentType().getValidators();
+    private boolean hasContentBlocks(final ContentTypeChild contentTypeChild) {
+        final List<String> validators = contentTypeChild.getValidators();
         if (validators != null && validators.contains(CONTENT_BLOCKS_VALIDATOR)) {
             return true;
         }
