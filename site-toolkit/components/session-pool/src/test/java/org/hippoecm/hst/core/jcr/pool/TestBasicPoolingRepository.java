@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,6 +79,7 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
             long end = System.currentTimeMillis();
             assertTrue("The waiting time is smaller than the maxWait configuration.", 
                     (end - start) >= this.poolingRepository.getMaxWait());
+            assertEquals("No session is available now for session pool 'testPool' since max active '25' has been reached.", e.getMessage());
         }
 
         for (int i = 0; i < maxActive; i++) {

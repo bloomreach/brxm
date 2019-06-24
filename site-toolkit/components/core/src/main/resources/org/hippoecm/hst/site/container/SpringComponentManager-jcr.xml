@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
   
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -119,6 +119,7 @@
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
+            <property name="poolName" value="default"/>
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${default.repository.address}"/>
             <property name="defaultCredentialsUserID" value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
@@ -148,6 +149,7 @@
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
+            <property name="poolName" value="preview"/>
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${preview.repository.address}"/>
             <property name="defaultCredentialsUserID" value="${preview.repository.user.name}${repository.pool.user.name.separator}${preview.repository.pool.name}"/>
@@ -178,6 +180,7 @@
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
+            <property name="poolName" value="writable"/>
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${writable.repository.address}"/>
             <property name="defaultCredentialsUserID" value="${writable.repository.user.name}${repository.pool.user.name.separator}${writable.repository.pool.name}"/>
@@ -208,6 +211,7 @@
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
+            <property name="poolName" value="hstconfigreader"/>
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${hstconfigreader.repository.address}"/>
             <property name="defaultCredentialsUserID" value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
@@ -238,6 +242,7 @@
           <bean class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository"
             init-method="initialize" destroy-method="close">
             <!-- delegated JCR repository -->
+            <property name="poolName" value="binaries"/>
             <property name="repositoryProviderClassName" value="${repositoryProviderClassName}" />
             <property name="repositoryAddress" value="${binaries.repository.address}"/>
             <property name="defaultCredentialsUserID" value="${binaries.repository.user.name}${repository.pool.user.name.separator}${binaries.repository.pool.name}"/>

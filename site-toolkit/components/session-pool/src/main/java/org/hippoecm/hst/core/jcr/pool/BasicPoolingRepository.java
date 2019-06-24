@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -81,6 +81,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private MultipleRepository multipleRepository;
     
     private PoolingCounter poolingCounter;
+    private String poolName;
 
     public void setLogger(Logger log) {
         this.log = log;
@@ -89,7 +90,11 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public Logger getLogger() {
         return log;
     }
-    
+
+    public void setPoolName(final String poolName) {
+        this.poolName = poolName;
+    }
+
     public void setRepositoryProviderClassName(String repositoryProviderClassName) {
         this.repositoryProviderClassName = repositoryProviderClassName;
     }
@@ -345,7 +350,13 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 poolingCounter.sessionObtained();
             }
         } catch (NoSuchElementException e) {
-            throw new NoAvailableSessionException("No session is available now. Probably the session pool was exhausted.");
+            if (sessionPool.getMaxActive() == sessionPool.getNumActive()) {
+                throw new NoAvailableSessionException(String.format("No session is available now for session pool '%s' since max active '%s'" +
+                        " has been reached.", poolName, sessionPool.getMaxActive()));
+            } else {
+                throw new NoAvailableSessionException(String.format("No session is available now for session pool '%s'", poolName));
+            }
+
         } catch (Exception e) {
             throw new LoginException("Failed to borrow session from the pool. " + e, e);
         }
