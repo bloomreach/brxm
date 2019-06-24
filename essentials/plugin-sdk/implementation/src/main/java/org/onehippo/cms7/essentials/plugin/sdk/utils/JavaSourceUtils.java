@@ -125,9 +125,6 @@ public final class JavaSourceUtils {
         return deletedSize > 0;
     }
 
-
-
-
     public static EssentialsGeneratedMethod extractMethod(final String methodName, final Iterable<EssentialsGeneratedMethod> generatedMethods) {
         for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
             if (generatedMethod.getMethodName().equals(methodName)) {
@@ -350,7 +347,6 @@ public final class JavaSourceUtils {
         return classType.getName().getIdentifier();
     }
 
-
     /**
      * Add text to class comment (javadoc) node. If text already exists it will not be added
      *
@@ -532,7 +528,7 @@ public final class JavaSourceUtils {
      */
     public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "Calendar[]" : "Calendar";
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
+        addBeanMethodProperty(path, methodName, propertyName, returnType, multiple);
         final String importName = Calendar.class.getName();
         addImport(path, importName);
 
@@ -546,7 +542,6 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
@@ -557,7 +552,6 @@ public final class JavaSourceUtils {
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoHtml");
     }
 
-
     /**
      * Adds {@code getBean(namespace, HippoBean.class)} method
      *
@@ -566,7 +560,6 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     is multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoMirror(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addParameterizedMethod(methodName, "List", HIPPO_BEAN, path, GET_LINKED_BEANS, propertyName);
@@ -587,7 +580,6 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     is multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodHippoImage(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageBean", path, "getBeans", propertyName);
@@ -599,7 +591,6 @@ public final class JavaSourceUtils {
 
 
     }
-
 
     public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
@@ -641,7 +632,6 @@ public final class JavaSourceUtils {
         addImport(path, importPath);
     }
 
-
     /**
      * Adds {@code getLinkedBean(namespace, HippoGalleryImageSet.class)} method
      *
@@ -668,10 +658,9 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodString(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "String[]" : "String";
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
+        addBeanMethodProperty(path, methodName, propertyName, returnType, multiple);
     }
 
     /**
@@ -682,11 +671,10 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodBoolean(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         // TODO add null checks and return Boolean.FALSE
         final String returnType = multiple ? "Boolean[]" : "Boolean";
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
+        addBeanMethodProperty(path, methodName, propertyName, returnType, multiple);
     }
 
     /**
@@ -697,13 +685,10 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodDouble(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "Double[]" : "Double";
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
+        addBeanMethodProperty(path, methodName, propertyName, returnType, multiple);
     }
-
-
 
     @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodDocbase(final Path path, final String methodName, final String propertyName, final boolean multiple) {
@@ -742,7 +727,6 @@ public final class JavaSourceUtils {
         return retValue;
     }
 
-
     /**
      * Adds Long property method (getProperty)
      *
@@ -751,10 +735,9 @@ public final class JavaSourceUtils {
      * @param propertyName name of the property
      * @param multiple     indicates multiple property
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addBeanMethodLong(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         final String returnType = multiple ? "Long[]" : "Long";
-        addBeanMethodProperty(path, methodName, propertyName, returnType);
+        addBeanMethodProperty(path, methodName, propertyName, returnType, multiple);
     }
 
     public static ExistingMethodsVisitor getMethodCollection(final CompilationUnit unit) {
@@ -848,7 +831,6 @@ public final class JavaSourceUtils {
     /**
      * @see #formatCode(String)
      */
-    @SuppressWarnings({RAWTYPES, UNCHECKED})
     public static String formatCode(final IDocument document) {
         final String source = document.get();
         return formatCode(source);
@@ -929,7 +911,7 @@ public final class JavaSourceUtils {
     }
 
     public static boolean hasHippoEssentialsAnnotation(final Path path) {
-        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        @SuppressWarnings({RAWTYPES})
         final List modifiers = getClassAnnotations(path);
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
@@ -944,7 +926,7 @@ public final class JavaSourceUtils {
     }
 
     public static HippoEssentialsGeneratedObject getHippoEssentialsAnnotation(final Path beanPath, final MethodDeclaration node) {
-        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        @SuppressWarnings({RAWTYPES})
         final List modifiers = node.modifiers();
         if (modifiers == null) {
             return null;
@@ -1061,7 +1043,6 @@ public final class JavaSourceUtils {
      * @param path       path of the java source class
      * @param importName name of the import e.g {@code java.util.List}
      */
-    @SuppressWarnings(UNCHECKED)
     public static void addImport(final Path path, final CharSequence importName) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
@@ -1070,7 +1051,6 @@ public final class JavaSourceUtils {
         replaceFile(path, unit, ast);
     }
 
-    @SuppressWarnings(UNCHECKED)
     public static void addImport(final CompilationUnit unit, final CharSequence importName) {
         final AST ast = unit.getAST();
         addImport(unit, ast, importName);
@@ -1084,7 +1064,6 @@ public final class JavaSourceUtils {
         addImport(unit, ast, importName);
         return rewrite(unit, ast);
     }
-
 
     //############################################
     // LOCAL UTILITY METHODS
@@ -1151,9 +1130,9 @@ public final class JavaSourceUtils {
         imports.add(essentialsImportDeclaration);
     }
 
-    @SuppressWarnings(UNCHECKED)
-    private static void addBeanMethodProperty(final Path path, final String methodName, final String propertyName, final String returnType) {
-        addSimpleMethod("getProperty", path, methodName, propertyName, returnType);
+    private static void addBeanMethodProperty(final Path path, final String methodName, final String propertyName, final String returnType, final boolean multiple) {
+        final String superMethodName = multiple ? "getMultipleProperty" : "getSingleProperty";
+        addSimpleMethod(superMethodName, path, methodName, propertyName, returnType);
     }
 
     @SuppressWarnings(UNCHECKED)
@@ -1285,7 +1264,6 @@ public final class JavaSourceUtils {
         return null;
     }
 
-
     @SuppressWarnings(UNCHECKED)
     public static void addRelatedDocsMethod(final String methodName, final Path path) {
 
@@ -1338,7 +1316,6 @@ public final class JavaSourceUtils {
         addImport(path, List.class.getName());
 
     }
-
 
     @SuppressWarnings(UNCHECKED)
     private static VariableDeclarationStatement createListType(final AST ast, final VariableDeclarationFragment varFragment, final String type) {
@@ -1423,6 +1400,5 @@ public final class JavaSourceUtils {
         addHippoGeneratedAnnotation(propertyName, unit, methodDeclaration, ast);
         replaceFile(path, unit, ast);
     }
-
 
 }
