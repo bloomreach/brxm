@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.jcr.Node;
@@ -98,9 +99,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     }
 
     private Fragment createResourceFragment(String id, IModel<Node> model) {
-        final JcrResourceStream stream = new JcrResourceStream(model);
         Fragment fragment = new Fragment(id, "unknown", this);
-        try {
+        try(JcrResourceStream stream = new JcrResourceStream(model)) {
             if (stream.length().bytes() < 0) {
                 return fragment;
             }
@@ -113,7 +113,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             if (stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK)) {
                 fragment.setVisible(false);
             }
-        } catch (RepositoryException ex) {
+        } catch (IOException | RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return fragment;

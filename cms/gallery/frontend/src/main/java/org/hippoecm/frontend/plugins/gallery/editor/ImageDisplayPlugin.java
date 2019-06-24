@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.editor;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.jcr.Node;
@@ -97,9 +98,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     }
 
     private Fragment createResourceFragment(String id, IModel<Node> model, IPluginConfig config) {
-        final JcrResourceStream resource = new JcrResourceStream(model);
         Fragment fragment = new Fragment(id, "unknown", this);
-        try {
+        try(JcrResourceStream resource = new JcrResourceStream(model)) {
             Node node = getModelObject();
             final String filename;
             if (node.getParent().hasProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME)) {
@@ -118,7 +118,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
                     fragment = createEmbedFragment(id, resource, filename);
                 }
             }
-        } catch (RepositoryException ex) {
+        } catch (IOException | RepositoryException ex) {
             log.error(ex.getMessage());
         }
         return fragment;
