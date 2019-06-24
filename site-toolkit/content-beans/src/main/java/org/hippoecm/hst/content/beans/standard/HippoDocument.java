@@ -125,7 +125,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
     }
     
     public String getLocaleString() {
-        return getProperty(HippoTranslationNodeType.LOCALE);
+        return getSingleProperty(HippoTranslationNodeType.LOCALE);
     }
     
     public Locale getLocale() {

@@ -219,7 +219,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             return HippoGalleryImageSet.class;
         }
 
-        final String[] galleryTypes = gallery.getProperty(HIPPOSTD_GALLERYTYPE);
+        final String[] galleryTypes = gallery.getMultipleProperty(HIPPOSTD_GALLERYTYPE);
         if (galleryTypes == null || galleryTypes[0].equals(GALLERY_IMAGESET_NODETYPE) || galleryTypes.length > 1) {
             if (galleryTypes != null && galleryTypes.length > 1) {
                 log.warn("More than one gallery type is defined, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");

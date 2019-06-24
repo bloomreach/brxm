@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -129,6 +129,22 @@ public class MockHippoBean implements HippoBean {
     }
     
     public <T> T getProperty(String name, T defaultValue) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+
+    public <T> T getSingleProperty(String name) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+    
+    public <T> T getSingleProperty(String name, T defaultValue) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+
+    public <T> T[] getMultipleProperty(String name) {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+    
+    public <T> T[] getMultipleProperty(String name, T[] defaultValue) {
         throw new UnsupportedOperationException("Not supported yet");
     }
 

@@ -83,7 +83,7 @@ public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavig
     }
     
     public Long getCount() {
-        return this.getProperty(HippoNodeType.HIPPO_COUNT);
+        return this.getSingleProperty(HippoNodeType.HIPPO_COUNT);
     }
 
     public HippoResultSetBean getResultSet() {

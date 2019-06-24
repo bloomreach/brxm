@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -110,9 +110,12 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     /**
      * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
      * @param <T>
-      * @param name the name of the property
+     * @param name the name of the property
      * @return The value of the property and <code>null</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String)} for single value fields
+     *   or {@link #getMultipleProperty(String)} for multiple value fields.
      */
+    @Deprecated
     <T> T getProperty(String name);
     
     /**
@@ -121,9 +124,58 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @param <T>
      * @param name the name of the property
      * @return The value of the property and <code>defaultValue</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
+     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String, T)} for single value fields
+     *   or {@link #getMultipleProperty(String, T)} for multiple value fields.
      * 
      */
+    @Deprecated
     <T> T getProperty(String name, T defaultValue);
+
+    /**
+     * Returns the value of a document field which is marked as <code>single</code>.
+     * If the value is an array, then returns the first element.
+     * @param <T>
+     * @param name the name of the property
+     * @return The value of the property or <code>null</code> if it doesn't exist. Return types are String, Boolean, Long, Double or Calendar
+     */
+    default <T> T getSingleProperty(String name) {
+        return getProperty(name);
+    }
+
+    /**
+     * Returns the value of a document field which is marked as <code>single</code>.
+     * If the value is an array, then returns the first element.
+     * @param <T>
+     * @param name the name of the property
+     * @return The value of the property and <code>defaultValue</code> if it doesn't exist. Allowed return types are String, Boolean, Long, Double or Calendar
+     * 
+     */
+    default <T> T getSingleProperty(String name, T defaultValue) {
+        return getProperty(name, defaultValue);
+    }
+
+    /**
+     * Returns the value of a document field which is marked as <code>multiple</code>.
+     * If the value is not an array, then returns the value by creating an array.
+     * @param <T>
+     * @param name the name of the property
+     * @return The value of the property and <code>null</code> if it doesn't exist. Allowed return types are String[], Boolean[], Long[], Double[] or Calendar[]
+     */
+    default <T> T[] getMultipleProperty(String name) {
+        return getProperty(name);
+    }
+
+    /**
+     * Returns the value of a document field which is marked as <code>multiple</code>.
+     * If the value is not an array, then returns the value by creating an array.
+     * @param <T>
+     * @param name the name of the property
+     * @return The value of the property and <code>defaultValue</code> if it doesn't exist. Allowed return types are String[], Boolean[], Long[], Double[] or Calendar[]
+     * 
+     */
+    default <T> T[] getMultipleProperty(String name, T[] defaultValue) {
+        return getProperty(name, defaultValue);
+    }
 
     /**
      * @return Map of all properties, where the values can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]

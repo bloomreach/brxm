@@ -22,12 +22,12 @@ public class DynamicBeanPage extends HippoDocument {
 
     public Double getDoubleTypeFieldMultipleByFive() {
 
-        Double doubleTypeFieldValue = (Double) getProperty("contentbeanstest:doubleTypeField");
+        Double doubleTypeFieldValue = getSingleProperty("contentbeanstest:doubleTypeField");
         return doubleTypeFieldValue * 5;
     }
 
     public Long getLongTypeField2() {
-        return ((Long) getProperty("contentbeanstest:longTypeField2")) * 4;
+        return ((Long) getSingleProperty("contentbeanstest:longTypeField2")) * 4;
     }
 
 }

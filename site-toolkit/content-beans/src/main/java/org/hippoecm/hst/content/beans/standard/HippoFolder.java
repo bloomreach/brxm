@@ -41,7 +41,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     protected ArrayList<HippoDocumentBean> hippoDocuments;
 
     public String getLocaleString() {
-        return getProperty(HippoTranslationNodeType.LOCALE);
+        return getSingleProperty(HippoTranslationNodeType.LOCALE);
     }
     
     public Locale getLocale() {
