@@ -64,7 +64,7 @@ export interface ChildApi {
   onUserActivity?: () => void;
   logout?: () => void;
   navigate?: (location: NavLocation) => void;
-  selectSite?: (site?: Site) => void;
+  updateSite?: (siteId?: number) => void;
 }
 
 export interface ChildPromisedApi {
@@ -75,7 +75,7 @@ export interface ChildPromisedApi {
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
   navigate?: (location: NavLocation) => Promise<void>;
-  selectSite?: (site?: Site) => Promise<void>;
+  updateSite?: (siteId?: number) => Promise<void>;
 }
 
 export interface NavItem {
