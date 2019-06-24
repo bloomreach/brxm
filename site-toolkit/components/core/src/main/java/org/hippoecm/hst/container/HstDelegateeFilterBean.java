@@ -225,8 +225,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final String renderingHost = getRenderingHost(containerRequest);
 
+            final boolean authenticated = CmsSSOAuthenticationHandler.isAuthenticated(containerRequest);
             if (isCmsSessionContextBindingRequest(req)) {
-                if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
+                if (authenticated) {
                     log.info("Already authenticated");
                     ((HttpServletResponse) response).setStatus(SC_NO_CONTENT);
                     return;
@@ -329,13 +330,22 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             if (resolvedMount == null) {
                 resolvedMount = resolvedVirtualHost.matchMount(containerRequest.getPathInfo());
+
+                if (resolvedMount.getMatchingIgnoredPrefix() != null && !authenticated) {
+                    // eg _cmsinternal request but not authenticated, hence should return 404 (just page not found,
+                    // not even an unauthorized since for example http://www.example.org/_cmsinternal just doesn't exist
+                    // over the host of the site
+                    res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+
                 if (resolvedMount != null) {
                     request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
                     requestContext.setResolvedMount(resolvedMount);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
                         if (requestComesFromCms(vHosts, renderingHost, req)) {
-                            if (!CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
+                            if (!authenticated) {
                                 ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
                                 log.warn("Attempted Channel Manager preview request without being authenticated");
                                 return;
