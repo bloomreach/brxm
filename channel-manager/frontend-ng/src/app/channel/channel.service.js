@@ -60,8 +60,10 @@ class ChannelService {
    */
   async initializeChannel(channelId, contextPath, hostGroup, branchId) {
     try {
+      await this.SessionService.initializeContext(contextPath);
+
       const channel = await this.HstService.getChannel(channelId, contextPath, hostGroup);
-      await this.SessionService.initialize(channel);
+      await this.SessionService.initializeState(channel);
 
       const previewChannel = await this._ensurePreviewHstConfigExists(channel);
       await this._loadProject(channel, branchId || this.ProjectService.selectedProject.id);
@@ -69,7 +71,7 @@ class ChannelService {
     } catch (error) {
       if (this.hasChannel()) {
         // restore the session for the previous channel, but still reject the promise chain
-        await this.SessionService.initialize(this.channel);
+        await this.SessionService.initializeState(this.channel);
       }
 
       throw error;

@@ -96,7 +96,8 @@ describe('ChannelService', () => {
     spyOn(HstService, 'doPut');
     spyOn(HstService, 'doDelete');
     spyOn(HstService, 'getChannel').and.returnValue($q.when(channelMock));
-    spyOn(SessionService, 'initialize').and.returnValue($q.when());
+    spyOn(SessionService, 'initializeContext').and.returnValue($q.when());
+    spyOn(SessionService, 'initializeState').and.returnValue($q.when());
     spyOn(SessionService, 'hasWriteAccess').and.returnValue(true);
     spyOn(SiteMapService, 'load');
     ProjectService.selectedProject = projectMock;
@@ -125,7 +126,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
   });
 
@@ -158,7 +159,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(testChannel);
   });
 
   it('should use the live channel when no -preview channel exists and the user is not allowed to create it', () => {
@@ -183,7 +184,7 @@ describe('ChannelService', () => {
 
     expect(HstService.getChannel).toHaveBeenCalledWith(id, contextPath, hostGroup);
     expect(HstService.getChannel).not.toHaveBeenCalledWith(`${id}-preview`, contextPath, hostGroup);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(testChannel);
     expect(HstService.doPost).not.toHaveBeenCalled();
     expect(ChannelService.getChannel()).toEqual(testChannel);
   });
@@ -208,7 +209,7 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id, testChannel.contextPath, testChannel.hostGroup);
-    expect(SessionService.initialize).toHaveBeenCalledWith(testChannel);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
     expect($log.error).toHaveBeenCalledWith(
@@ -241,11 +242,11 @@ describe('ChannelService', () => {
     HstService.getChannel.and.returnValue($q.reject());
     loadChannel(id, contextPath, hostGroup);
     expect(HstService.getChannel).toHaveBeenCalledWith(id, contextPath, hostGroup);
-    expect(SessionService.initialize).not.toHaveBeenCalled();
+    expect(SessionService.initializeState).not.toHaveBeenCalled();
   });
 
   it('should not save a reference to the channel when load fails', () => {
-    SessionService.initialize.and.returnValue($q.reject());
+    SessionService.initializeState.and.returnValue($q.reject());
     loadChannel();
     expect(ChannelService.getChannel()).toEqual({});
   });
@@ -253,12 +254,12 @@ describe('ChannelService', () => {
   it('should restore the session of the old channel when initialization of the new channel fails', () => {
     loadChannel('testChannelId', 'testContextPath');
 
-    SessionService.initialize.calls.reset();
+    SessionService.initializeState.calls.reset();
     HstService.getChannel.and.returnValue($q.reject());
 
     loadChannel('anotherChannel', 'anotherContextPath');
 
-    expect(SessionService.initialize).toHaveBeenCalledWith(channelMock);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(channelMock);
   });
 
   it('should not fetch pagemodel when session does not have write permission', () => {
@@ -390,7 +391,7 @@ describe('ChannelService', () => {
 
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);
-    expect(SessionService.initialize).toHaveBeenCalledWith(channelB);
+    expect(SessionService.initializeState).toHaveBeenCalledWith(channelB);
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
