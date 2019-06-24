@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
-    private final static double MB = 1024 * 1024;
+    private final static double MB = (double) 1024 * 1024;
 
     public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
 
