@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private static final CssResourceReference MIRROR_TEMPLATE_PLUGIN =
             new CssResourceReference(MirrorTemplatePlugin.class, MirrorTemplatePlugin.class.getSimpleName()+".css");
-    public static final String ROOT_NODE_ID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
     private Fragment fragment;
 
@@ -74,15 +74,13 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     private void init(final IPluginConfig config) {
         final Mode mode = Mode.fromString(config.getString(ITemplateEngine.MODE), Mode.VIEW);
-        switch (mode) {
-            case EDIT:
-                fragment = new Fragment("fragment", "edit", this);
-                addOpenLinkPickerLink();
-                addButtons();
-                break;
-            default:
-                fragment = new Fragment("fragment", "viewCompare", this);
-                addOpenLink();
+        if (mode == Mode.EDIT) {
+            fragment = new Fragment("fragment", "edit", this);
+            addOpenLinkPickerLink();
+            addButtons();
+        } else {
+            fragment = new Fragment("fragment", "viewCompare", this);
+            addOpenLink();
         }
         add(fragment);
     }
@@ -236,32 +234,26 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         return StringUtils.EMPTY;
     }
 
-    private String getPath(final String docbaseUUID) {
+    private String getPath(final String docbaseUuid) {
         String path = StringUtils.EMPTY;
         try {
-            if (!(docbaseUUID == null || docbaseUUID.equals("") || docbaseUUID.equals(ROOT_NODE_ID))) {
-                path = getJCRSession().getNodeByIdentifier(docbaseUUID).getPath();
+            if (StringUtils.isNotEmpty(docbaseUuid) && !docbaseUuid.equals(JcrConstants.ROOT_NODE_ID)) {
+                path = getJcrSession().getNodeByIdentifier(docbaseUuid).getPath();
             }
         } catch (RepositoryException e) {
-            log.error("Invalid docbase " + e.getMessage(), e);
+            log.error("Invalid docbase: '{}'", docbaseUuid, e);
         }
         return path;
     }
 
-    private Session getJCRSession() {
-        Session session = null;
-        Node node = this.getModelObject();
-        try {
-            session = node.getSession();
-        } catch (RepositoryException e) {
-            log.error("Invalid docbase " + e.getMessage(), e);
-        }
-        return session;
+    private Session getJcrSession() throws RepositoryException {
+        final Node node = this.getModelObject();
+        return node.getSession();
     }
 
     private String getDisplaydName(final String identifier) {
         try {
-            Node nodeByIdentifier = getJCRSession().getNodeByIdentifier(identifier);
+            Node nodeByIdentifier = getJcrSession().getNodeByIdentifier(identifier);
             HippoNode nodeByIdentifier1 = (HippoNode) nodeByIdentifier;
             return nodeByIdentifier1.getDisplayName();
         } catch (RepositoryException e) {
