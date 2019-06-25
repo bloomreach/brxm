@@ -119,23 +119,22 @@
     <!-- Extra JVM arguments to pass to brXM Docker container-->
     <docker.brxm.jvm.args/>
 
+    <!-- Default connection details -->
+    <docker.db.schema>${project.artifactId}</docker.db.schema>
+    <docker.db.username>admin</docker.db.username>
+    <docker.db.password>admin</docker.db.password>
+
     <!-- Docker-related properties defined here only to DRY up multiple profiles -->
     <docker.brxm.envRun.MYSQL_DB_USER>${docker.db.username}</docker.brxm.envRun.MYSQL_DB_USER>
     <docker.brxm.envRun.MYSQL_DB_PASSWORD>${docker.db.password}</docker.brxm.envRun.MYSQL_DB_PASSWORD>
     <docker.brxm.envRun.MYSQL_DB_NAME>${docker.db.schema}</docker.brxm.envRun.MYSQL_DB_NAME>
-    <docker.brxm.envRun.MYSQL_DB_DRIVER>com.mysql.jdbc.Driver</docker.brxm.envRun.MYSQL_DB_DRIVER>
 
     <docker.brxm.envRun.POSTGRES_DB_USER>${docker.db.username}</docker.brxm.envRun.POSTGRES_DB_USER>
     <docker.brxm.envRun.POSTGRES_DB_PASSWORD>${docker.db.password}</docker.brxm.envRun.POSTGRES_DB_PASSWORD>
     <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
-    <docker.brxm.envRun.POSTGRES_DB_DRIVER>org.postgresql.Driver</docker.brxm.envRun.POSTGRES_DB_DRIVER>
 
     <!-- Jackrabbit cluster node id can be set externally. -->
     <docker.brxm.envRun.REPO_CLUSTER_NODE_ID/>
-
-    <!-- Default repository workspace and versioning bundle cache sizes -->
-    <docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>256</docker.brxm.envRun.REPO_WORKSPACE_BUNDLE_CACHE>
-    <docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>64</docker.brxm.envRun.REPO_VERSIONING_BUNDLE_CACHE>
 
     <docker.brxm.envRun.JAVA_OPTS>
       -Dproject.basedir=${docker.brxm.project.path}
@@ -1304,11 +1303,6 @@
         <docker.db.profile>h2</docker.db.profile>
         <docker.db.run.skip>true</docker.db.run.skip>
 
-        <!-- Default connection details -->
-        <docker.db.schema>${project.artifactId}</docker.db.schema>
-        <docker.db.username>admin</docker.db.username>
-        <docker.db.password>admin</docker.db.password>
-
         <!-- COPY development artifacts for DEV image. Should be empty -->
         <docker.brxm.copy.dev.libs.cmd></docker.brxm.copy.dev.libs.cmd>
 
@@ -1435,8 +1429,6 @@
 
         <docker.brxm.envRun.MYSQL_DB_HOST>${docker.db.host}</docker.brxm.envRun.MYSQL_DB_HOST>
         <docker.brxm.envRun.MYSQL_DB_PORT>${docker.db.port}</docker.brxm.envRun.MYSQL_DB_PORT>
-
-        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1459,10 +1451,6 @@
         <docker.db.envRun.MYSQL_DATABASE>${docker.db.schema}</docker.db.envRun.MYSQL_DATABASE>
         <docker.db.envRun.MYSQL_USER>${docker.db.username}</docker.db.envRun.MYSQL_USER>
         <docker.db.envRun.MYSQL_PASSWORD>${docker.db.password}</docker.db.envRun.MYSQL_PASSWORD>
-
-        <docker.brxm.envRun.MYSQL_DB_PORT>3306</docker.brxm.envRun.MYSQL_DB_PORT>
-
-        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1474,8 +1462,6 @@
 
         <docker.brxm.envRun.POSTGRES_DB_HOST>${docker.db.host}</docker.brxm.envRun.POSTGRES_DB_HOST>
         <docker.brxm.envRun.POSTGRES_DB_PORT>${docker.db.port}</docker.brxm.envRun.POSTGRES_DB_PORT>
-
-        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
 
@@ -1497,10 +1483,6 @@
         <docker.db.envRun.POSTGRES_DB>${docker.db.schema}</docker.db.envRun.POSTGRES_DB>
         <docker.db.envRun.POSTGRES_USER>${docker.db.username}</docker.db.envRun.POSTGRES_USER>
         <docker.db.envRun.POSTGRES_PASSWORD>${docker.db.password}</docker.db.envRun.POSTGRES_PASSWORD>
-
-        <docker.brxm.envRun.POSTGRES_DB_PORT>5432</docker.brxm.envRun.POSTGRES_DB_PORT>
-
-        <docker.brxm.envRun.REPO_CONFIG>file:/usr/local/tomcat/conf/repository-${docker.db.profile}.xml</docker.brxm.envRun.REPO_CONFIG>
       </properties>
     </profile>
   </profiles>
