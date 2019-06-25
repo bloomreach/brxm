@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,25 +25,29 @@ import org.onehippo.cms7.essentials.plugin.sdk.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialConst;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
-/**
- * @version "$Id$"
- */
 public class DefaultInstructionPackageTest extends BaseTest {
 
     @Test
-    public void testInstructionPackageNoInjection() throws Exception {
-        DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
-        instructionPackage.execute(new HashMap<>());
+    public void testInstructionPackageNoInjection() {
+        try {
+            DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
+            instructionPackage.execute(new HashMap<>());
+        } catch (RuntimeException e) {
+            fail("No RuntimeException should occur.");
+        }
     }
 
     @Test
-    public void testInstructionPackage() throws Exception {
+    public void testInstructionPackage() {
         DefaultInstructionPackage instructionPackage = injector.createBean(DefaultInstructionPackage.class);
         injector.autowireBean(instructionPackage);
         final String instructionPath = instructionPackage.getInstructionPath();
-        Assert.assertEquals("Expected default path", instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
+        assertEquals(instructionPath, EssentialConst.DEFAULT_INSTRUCTIONS_PATH);
+        
         final PluginInstructions instructions = instructionPackage.getInstructions();
-        assertEquals("Expected no instructions", null, instructions);
+        assertNull(instructions);
     }
 }
