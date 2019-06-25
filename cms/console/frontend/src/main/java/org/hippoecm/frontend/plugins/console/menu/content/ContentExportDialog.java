@@ -19,6 +19,7 @@ import java.io.StringWriter;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -90,6 +91,7 @@ public class ContentExportDialog extends Dialog<Node> {
                 String export;
                 try {
                     SAXTransformerFactory stf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+                    stf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
                     TransformerHandler handler = stf.newTransformerHandler();
                     StringWriter exportWriter = new StringWriter();
                     Transformer transformer = handler.getTransformer();

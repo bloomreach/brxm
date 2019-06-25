@@ -1,6 +1,6 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,29 +15,33 @@
  */
 package org.hippoecm.editor;
 
+import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.version.VersionException;
-import java.util.Calendar;
-
 /**
  * A commons utils class for the CMS editor component
  */
 public class EditorUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(EditorUtils.class);
+
+    private static final String PATH_DELIMITER = "/";
+
+    private EditorUtils() {}
 
     /**
      * Create mandatory properties specified by the given {@link NodeType} and its super-types inclusively on the
@@ -50,24 +54,17 @@ public class EditorUtils {
      *
      * @param node The {@link Node} on which to create the mandatory properties
      * @param nodeType The {@link NodeType} from which to check for which mandatory properties need to be created if any
-     * @throws RepositoryException
-     * @throws ValueFormatException
-     * @throws VersionException
-     * @throws LockException
-     * @throws ConstraintViolationException
+     * @throws RepositoryException in case of an error
      */
-    public static void createMandatoryProperties(Node node, NodeType nodeType) throws RepositoryException,
-            ValueFormatException, VersionException, LockException, ConstraintViolationException {
-        final Logger log = LoggerFactory.getLogger(EditorUtils.class);
-
-        NodeType[] supers = nodeType.getSupertypes();
-        NodeType[] all = new NodeType[supers.length + 1];
+    public static void createMandatoryProperties(final Node node, final NodeType nodeType) throws RepositoryException {
+        final NodeType[] supers = nodeType.getSupertypes();
+        final NodeType[] all = new NodeType[supers.length + 1];
         System.arraycopy(supers, 0, all, 0, supers.length);
         all[supers.length] = nodeType;
-        for (NodeType type : all) {
+        for (final NodeType type : all) {
             final Node prototypeNode = getPrototypeNode(type.getName(), node.getSession());
 
-            for (PropertyDefinition propertyDefinition : type.getDeclaredPropertyDefinitions()) {
+            for (final PropertyDefinition propertyDefinition : type.getDeclaredPropertyDefinitions()) {
                 if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())){
                     log.debug("Add the mandatory property  '{}' of '{}' to the node '{}'",
                             propertyDefinition.getName(), nodeType.getName(), node.getPath());
@@ -93,11 +90,11 @@ public class EditorUtils {
             return null;
         }
 
-        String prefix;
+        final String prefix;
         String typeName = "";
 
         // Set prefix and type name values
-        String[] values = nodeTypeName.split(":");
+        final String[] values = nodeTypeName.split(":");
 
         if (values.length > 1) {
             typeName = values[1];
@@ -105,53 +102,41 @@ public class EditorUtils {
         prefix = values[0];
 
         // Build the prototype node path
-        String prototypeNodePath = "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/";
+        String prototypeNodePath = PATH_DELIMITER + HippoNodeType.NAMESPACES_PATH + PATH_DELIMITER + prefix + PATH_DELIMITER;
         if (!"".equals(typeName)) {
-            prototypeNodePath += typeName + "/";
+            prototypeNodePath += typeName + PATH_DELIMITER;
         }
-        prototypeNodePath += HippoNodeType.HIPPO_PROTOTYPES + "/" + HippoNodeType.HIPPO_PROTOTYPE;
+        prototypeNodePath += HippoNodeType.HIPPO_PROTOTYPES + PATH_DELIMITER + HippoNodeType.HIPPO_PROTOTYPE;
 
         // Get the prototype node if any
         if (session.nodeExists(prototypeNodePath)) {
             return session.getNode(prototypeNodePath);
         }
 
-        final Logger log = LoggerFactory.getLogger(EditorUtils.class);
-        log.info("Could not find the prototype node for type '{}'", nodeTypeName);
-        log.debug("Cloud not find the prototype node for type '{}' in this location '{}'", nodeTypeName, prototypeNodePath);
+        if (log.isDebugEnabled()) {
+            log.debug("Could not find the prototype node for type '{}' in this location '{}'", nodeTypeName, prototypeNodePath);
+        } else {
+            log.info("Could not find the prototype node for type '{}'", nodeTypeName);
+        }
         return null;
     }
 
     private static void setProperty(final Node node, final PropertyDefinition propertyDefinition, final Node prototypeNode)
-            throws RepositoryException, ValueFormatException, VersionException, LockException, ConstraintViolationException {
-        final String propertyName = propertyDefinition.getName();
-        final Logger log = LoggerFactory.getLogger(EditorUtils.class);
+            throws RepositoryException {
 
         if (prototypeNode == null) {
             setPropertyFromDefaultValues(node, propertyDefinition);
         } else {
             try {
-                if (propertyDefinition.isMultiple()) {
-                    Value[] propValues = prototypeNode.getProperty(propertyName).getValues();
-                    if (node.hasProperty(propertyName)){
-                        node.getProperty(propertyName).remove();
-                    }
-                    node.setProperty(propertyName, propValues);
-                } else {
-                    Value propValue = prototypeNode.getProperty(propertyName).getValue();
-                    if (node.hasProperty(propertyName)){
-                        node.getProperty(propertyName).remove();
-                    }
-                    node.setProperty(propertyName, propValue);
-                    log.debug("Set '{}' to the property '{}' at the node '{}'", propValue.getString(), propertyName, node.getPath());
-                }
+                setPropertyFromPrototypeValues(node, propertyDefinition, prototypeNode);
             } catch (PathNotFoundException ex) {
                 // Use the defaults values as a fallback
+                final String propertyName = propertyDefinition.getName();
+                final String prototypeNodePath = prototypeNode.getPath();
                 if (log.isDebugEnabled()) {
-                    log.warn("Could not get property '" + propertyName + "' from '" + prototypeNode.getPath() + "'", ex);
+                    log.warn("Could not get property '{}' from '{}'", propertyName, prototypeNodePath, ex);
                 } else {
-                    log.warn("Could not get property '{}' from '{}'. {}", new Object[] {propertyName,
-                            prototypeNode.getPath(), ex.toString()});
+                    log.warn("Could not get property '{}' from '{}'. {}", propertyName, prototypeNodePath, ex);
                 }
 
                 setPropertyFromDefaultValues(node, propertyDefinition);
@@ -159,10 +144,29 @@ public class EditorUtils {
         }
     }
 
-    private static void setPropertyFromDefaultValues(final Node node, final PropertyDefinition propertyDefinition)
-            throws RepositoryException, ValueFormatException, VersionException, LockException, ConstraintViolationException {
+    private static void setPropertyFromPrototypeValues(final Node node,
+                                                       final PropertyDefinition propertyDefinition,
+                                                       final Node prototypeNode) throws RepositoryException {
+        final String propertyName = propertyDefinition.getName();
+        final Property prototypeNodeProperty = prototypeNode.getProperty(propertyName);
 
-        String propertyName = propertyDefinition.getName();
+        if (node.hasProperty(propertyName)){
+            node.getProperty(propertyName).remove();
+        }
+
+        if (propertyDefinition.isMultiple()) {
+            final Value[] propValues = prototypeNodeProperty.getValues();
+            node.setProperty(propertyName, propValues);
+        } else {
+            final Value propValue = prototypeNodeProperty.getValue();
+            node.setProperty(propertyName, propValue);
+        }
+    }
+
+    private static void setPropertyFromDefaultValues(final Node node, final PropertyDefinition propertyDefinition)
+            throws RepositoryException {
+
+        final String propertyName = propertyDefinition.getName();
         if (propertyDefinition.isMultiple()) {
             node.setProperty(propertyName, new Value[0]);
         } else {
@@ -180,11 +184,13 @@ public class EditorUtils {
                     node.setProperty(propertyName, node.getSession().getRootNode());
                     break;
                 case PropertyType.STRING:
-                    String[] constraints = propertyDefinition.getValueConstraints();
+                    final String[] constraints = propertyDefinition.getValueConstraints();
                     if (constraints != null && constraints.length > 0) {
                         node.setProperty(propertyName, constraints[0]);
-                        break;
+                    } else {
+                        node.setProperty(propertyName, "");
                     }
+                    break;
                 default:
                     node.setProperty(propertyName, "");
             }

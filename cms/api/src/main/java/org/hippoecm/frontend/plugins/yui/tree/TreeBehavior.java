@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,8 @@
 package org.hippoecm.frontend.plugins.yui.tree;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.io.IClusterable;
@@ -36,21 +38,19 @@ import net.sf.json.JSONObject;
  */
 public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
 
-    private static final long serialVersionUID = 1L;
-
     static final Logger log = LoggerFactory.getLogger(TreeBehavior.class);
 
     //Provide a more generic approach by making the function call variable as well
-    private final PackageTextTemplate INIT_TREE = new PackageTextTemplate(TreeBehavior.class, "init_tree.js");
+    private static final String YAHOO_HIPPO_HIPPO_TREE = "YAHOO.hippo.HippoTree";
 
+    private final HippoTextTemplate template;
     protected final TreeSettings settings;
-    private HippoTextTemplate template;
 
-    public TreeBehavior(TreeSettings settings) {
+    public TreeBehavior(final TreeSettings settings) {
         super(settings);
         this.settings = settings;
-        this.template = new HippoTextTemplate(INIT_TREE, getClientClassname()) {
-            private static final long serialVersionUID = 1L;
+        final PackageTextTemplate initTreeTemplate = new PackageTextTemplate(TreeBehavior.class, "init_tree.js");
+        this.template = new HippoTextTemplate(initTreeTemplate, getClientClassname()) {
 
             @Override
             public String getId() {
@@ -67,11 +67,13 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
     }
 
     @Override
-    protected void respond(AjaxRequestTarget target) {
+    protected void respond(final AjaxRequestTarget target) {
         final RequestCycle requestCycle = RequestCycle.get();
 
-        StringValue action = requestCycle.getRequest().getRequestParameters().getParameterValue("action");
-        StringValue uuid = requestCycle.getRequest().getRequestParameters().getParameterValue("UUID");
+        final Request request = requestCycle.getRequest();
+        final IRequestParameters requestParameters = request.getRequestParameters();
+        final StringValue action = requestParameters.getParameterValue("action");
+        final StringValue uuid = requestParameters.getParameterValue("UUID");
 
         if (action.isNull() || uuid.isNull() || uuid.toString().length() == 0) {
             return;
@@ -84,21 +86,19 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
         }
     }
 
-    protected void onDblClick(AjaxRequestTarget target, String uuid) {
+    protected void onDblClick(final AjaxRequestTarget target, final String uuid) {
     }
 
-    protected void onClick(AjaxRequestTarget target, String uuid) {
+    protected void onClick(final AjaxRequestTarget target, final String uuid) {
     }
 
     /**
      * Return a JSON object representing the full tree using the TreeItem class
-     * 
-     * @return JSON object representing tree
      */
     private void loadTreeData() {
-        TreeItem root = getRootNode();
+        final TreeItem root = getRootNode();
         if (root != null) {
-            JSONObject results = JSONObject.fromObject(root);
+            final JSONObject results = JSONObject.fromObject(root);
             if (results != null) {
                 this.settings.setTreeData(results.toString());
             } else {
@@ -116,7 +116,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
     }
 
     @Override
-    public void addHeaderContribution(IYuiContext context) {
+    public void addHeaderContribution(final IYuiContext context) {
         context.addCssReference(new CssResourceReference(TreeBehavior.class, "mytree.css"));
         context.addModule(TreeNamespace.NS, "treemanager");
         context.addTemplate(template);
@@ -127,26 +127,24 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
      * Determines which javascript class is used
      */
     protected String getClientClassname() {
-        return "YAHOO.hippo.HippoTree";
+        return YAHOO_HIPPO_HIPPO_TREE;
     }
 
     public static class DefaultTreeItem extends TreeItem {
-        private static final long serialVersionUID = 1L;
 
-        private static final String TYPE = "Text";
+        private static final String ITEM_TYPE = "Text";
 
-        public DefaultTreeItem(String label, int numOfChilds) {
-            super(label, TYPE, numOfChilds);
+        public DefaultTreeItem(final String label, final int numOfChilds) {
+            super(label, ITEM_TYPE, numOfChilds);
         }
 
-        public DefaultTreeItem(String label, String uuid, int numOfChilds) {
-            super(label, uuid, TYPE, numOfChilds);
+        public DefaultTreeItem(final String label, final String uuid, final int numOfChilds) {
+            super(label, uuid, ITEM_TYPE, numOfChilds);
         }
 
     }
 
     public static class TreeItem implements IClusterable {
-        private static final long serialVersionUID = 1L;
 
         String label;
         String type;
@@ -155,15 +153,15 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
 
         TreeItem[] children;
         int index;
-        
-        public TreeItem(String label, String type, int numOfChilds) {
+
+        public TreeItem(final String label, final String type, final int numOfChilds) {
             this.label = label;
             this.type = type;
             children = new TreeItem[numOfChilds];
             index = 0;
         }
 
-        public TreeItem(String label, String uuid, String type, int numOfChilds) {
+        public TreeItem(final String label, final String uuid, final String type, final int numOfChilds) {
             this.label = label;
             this.type = type;
             this.uuid = uuid;
@@ -175,7 +173,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             return uuid;
         }
 
-        public void setUuid(String uuid) {
+        public void setUuid(final String uuid) {
             this.uuid = uuid;
         }
 
@@ -183,7 +181,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             return label;
         }
 
-        public void setLabel(String label) {
+        public void setLabel(final String label) {
             this.label = label;
         }
 
@@ -191,7 +189,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             return type;
         }
 
-        public void setType(String type) {
+        public void setType(final String type) {
             this.type = type;
         }
 
@@ -199,7 +197,7 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             return children;
         }
 
-        public void setChildren(TreeItem[] children) {
+        public void setChildren(final TreeItem[] children) {
             this.children = children;
         }
 
@@ -207,11 +205,11 @@ public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
             return expanded;
         }
 
-        public void setExpanded(boolean expanded) {
+        public void setExpanded(final boolean expanded) {
             this.expanded = expanded;
         }
-        
-        public void addChild(TreeItem item) {
+
+        public void addChild(final TreeItem item) {
             children[index++] = item;
         }
     }

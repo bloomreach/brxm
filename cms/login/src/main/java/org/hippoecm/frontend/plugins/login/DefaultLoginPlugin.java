@@ -33,28 +33,28 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.template.TextTemplate;
-import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 
 public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
     private static final TextTemplate INIT_JS = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
     // jstz.min.js is fetched by npm
-    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
+    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class,
+            "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
     public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable.timezones";
-    public static final List<String> SUPPORTED_JAVA_TIMEZONES = excludeEtcTimeZones(Arrays.asList(TimeZone.getAvailableIDs()));
+    public static final List<String> SUPPORTED_JAVA_TIMEZONES = Collections.unmodifiableList(
+            getSupportedJavaTimeZones());
 
     /**
      * Exclude POSIX compatible timezones because they may cause confusions
      */
-    private static List<String> excludeEtcTimeZones(final List<String> timezones) {
-        return timezones.stream()
-                .filter((tz) -> !tz.startsWith("Etc/"))
+    private static List<String> getSupportedJavaTimeZones() {
+        return Arrays.stream(TimeZone.getAvailableIDs())
+                .filter(tz -> !tz.startsWith("Etc/"))
                 .collect(Collectors.toList());
     }
 
@@ -80,11 +80,11 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             super(id, config, handler);
 
             final IPluginConfig pluginConfig = getPluginConfig();
-            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
-            final boolean isTimeZoneVisible = !consoleLogin && pluginConfig.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
+            final boolean isTimeZoneVisible = !isConsole() && pluginConfig.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
 
             if (isTimeZoneVisible) {
-                availableTimeZones = getSelectableTimezones(pluginConfig.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
+                final String[] configuredTimezones = pluginConfig.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM);
+                availableTimeZones = getSelectableTimezones(configuredTimezones);
 
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);

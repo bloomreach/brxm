@@ -33,6 +33,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
+import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.validation.FeedbackPriority;
 import org.hippoecm.frontend.validation.FeedbackScope;
 import org.hippoecm.frontend.validation.IValidationListener;
@@ -115,14 +116,16 @@ public class JcrValidationService implements IValidationService, IDetachable {
         }
 
         try {
-            final String nodeType = model.getObject().getPrimaryNodeType().getName();
+            final Node node = model.getObject();
+            final String nodeType = node.getPrimaryNodeType().getName();
             final ITypeValidator validator;
             if (HippoNodeType.NT_TEMPLATETYPE.equals(nodeType)) {
                 validator = new TemplateTypeValidator();
             } else {
                 final ITypeDescriptor descriptor = locator.locate(nodeType);
                 final ValidatorService validatorService = context.getService(ValidatorService.DEFAULT_FIELD_VALIDATOR_SERVICE, ValidatorService.class);
-                validator = new JcrTypeValidator(descriptor, validatorService);
+                final JavaFieldDescriptor documentFieldDescriptor = new JavaFieldDescriptor(descriptor, node.getName());
+                validator = new JcrTypeValidator(documentFieldDescriptor, descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));
             final List<IValidationListener> listeners = context.getServices(config.getString(IValidationService.VALIDATE_ID),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * Create an unique instance of jquery-file-upload widget. It does not work for multiple instances jquery-file-upload
  */
 public class SingleFileUploadBar extends Panel {
-    static private final Logger log = LoggerFactory.getLogger(SingleFileUploadBar.class);
+    private static final Logger log = LoggerFactory.getLogger(SingleFileUploadBar.class);
 
     private static final String JQUERY_FILEUPLOAD_SINGLE_JS = "jquery.fileupload-single.js";
     private static final String CONFIG_JS = "fileupload-single-config.js";
@@ -89,6 +89,7 @@ public class SingleFileUploadBar extends Panel {
 
             @Override
             protected void renderWidgetConfig(final IHeaderResponse response, final Map<String, Object> variables) {
+                @SuppressWarnings("squid:S2095")
                 PackageTextTemplate jsTmpl = new PackageTextTemplate(SingleFileUploadBar.class, CONFIG_JS);
                 String s = jsTmpl.asString(variables);
                 // call the configuration after all DOM elements are loaded
