@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.onehippo.cms7.essentials.sdk.api.model.Module;
  *
  * It can be @Inject-ed into an Essentials plugin's REST resource or custom {@code Instruction}.
  */
+@SuppressWarnings("squid:S1214")
 public interface ProjectService {
     String GROUP_ID_COMMUNITY = "org.onehippo.cms7";
     String GROUP_ID_ENTERPRISE = "com.onehippo.cms7";
