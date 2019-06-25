@@ -346,8 +346,7 @@
 /* NOTE: IE6 will only pickup the yui-default specifier from the multiple class specifier */
 .hippo-root .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default {
     border:1px solid #304369;
-    background-color: #426fd9;
-    background: url(sprite.png) repeat-x 0 -1400px;
+    background: #426fd9 url(sprite.png) repeat-x 0 -1400px;
 }
 
 .hippo-root .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default button {
