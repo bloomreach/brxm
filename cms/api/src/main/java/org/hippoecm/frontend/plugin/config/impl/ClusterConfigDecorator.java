@@ -161,16 +161,6 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             };
         }
 
-        private Set<String> getClusterKeys() {
-            final TreeSet<String> properties = new TreeSet<>(decoratedValues.keySet());
-            for (final Entry<String, Object> entry : super.entrySet()) {
-                if (!(entry.getValue() instanceof IPluginConfig)) {
-                    properties.add(entry.getKey());
-                }
-            }
-            return properties;
-        }
-
         @Override
         protected Object decorate(final Object object) {
             return ClusterConfigDecorator.this.decorate(object);
