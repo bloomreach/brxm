@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -64,6 +64,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -79,9 +80,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderShortcutPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
 
-    static Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
     private static final String SLASH = "/";
 
     private String defaultDropLocation = "/content";
@@ -90,26 +90,24 @@ public class FolderShortcutPlugin extends RenderPlugin {
         super(context, config);
 
         AjaxLink link = new AjaxLink("link") {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IDialogService dialogService = getDialogService();
-                JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getDefaultModel();
-                Node node = model != null ? model.getNode() : null;
+            public void onClick(final AjaxRequestTarget target) {
+                final IDialogService dialogService = getDialogService();
+                final JcrNodeModel model = (JcrNodeModel) FolderShortcutPlugin.this.getDefaultModel();
+                final Node node = model != null ? model.getNode() : null;
                 dialogService.show(new FolderShortcutPlugin.AddRootFolderDialog(context, config, node, defaultDropLocation));
             }
         };
         add(link);
 
-        String path = config.getString("option.location");
+        final String path = config.getString("option.location");
         if (path != null && !path.equals("")) {
             defaultDropLocation = path;
         }
 
         if (!defaultDropLocation.equals("")) {
             try {
-                Session jcrSession = UserSession.get().getJcrSession();
+                final Session jcrSession = UserSession.get().getJcrSession();
                 while (defaultDropLocation.startsWith(SLASH)) {
                     defaultDropLocation = defaultDropLocation.substring(1);
                 }
@@ -144,54 +142,66 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
     // FIXME: pure duplication of logic in FolderWorkflowPlugin
     @SuppressWarnings("unchecked")
-    public static void select(JcrNodeModel nodeModel, IServiceReference<IBrowseService> browseServiceRef,
-                              IServiceReference<IEditorManager> editServiceRef) {
-        IBrowseService browser = (browseServiceRef != null ? browseServiceRef.getService() : null);
-        IEditorManager editorMgr = (editServiceRef != null ? editServiceRef.getService() : null);
+    public static void select(final JcrNodeModel nodeModel,
+                              final IServiceReference<IBrowseService> browseServiceRef,
+                              final IServiceReference<IEditorManager> editServiceRef) {
         try {
-            if (nodeModel.getNode() != null
-                    && (nodeModel.getNode().isNodeType(HippoNodeType.NT_DOCUMENT) || nodeModel.getNode().isNodeType(
-                    HippoNodeType.NT_HANDLE))) {
+            final Node node = nodeModel.getNode();
+            if (node == null) {
+                return;
+            }
+
+            if (node.isNodeType(HippoNodeType.NT_DOCUMENT) || node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final IBrowseService browser = (browseServiceRef != null ? browseServiceRef.getService() : null);
                 if (browser != null) {
                     browser.browse(nodeModel);
                 }
-                if (!nodeModel.getNode().isNodeType("hippostd:folder")
-                        && !nodeModel.getNode().isNodeType("hippostd:directory")) {
-                    if (editorMgr != null) {
-                        JcrNodeModel editNodeModel = nodeModel;
-                        Node editNodeModelNode = nodeModel.getNode();
-                        if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                            editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
-                        }
-                        WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
-                        Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
-                        try {
-                            if (workflow instanceof EditableWorkflow) {
-                                EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
-                                Document editableDocument = editableWorkflow.obtainEditableInstance();
-                                if (editableDocument != null) {
-                                    Session jcrSession = UserSession.get().getJcrSession();
-                                    jcrSession.refresh(true);
-                                    final String id = editableDocument.getIdentity();
-                                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByIdentifier(id));
-                                } else {
-                                    editNodeModel = null;
-                                }
-                            }
-                            if (editNodeModel != null) {
-                                IEditor editor = editorMgr.getEditor(editNodeModel);
-                                if (editor == null) {
-                                    editorMgr.openEditor(editNodeModel);
-                                }
-                            }
-                        } catch (WorkflowException | ServiceException | RepositoryException | RemoteException ex) {
-                            log.error("Cannot auto-edit document", ex);
-                        }
-                    }
+                if (!node.isNodeType(HippoStdNodeType.NT_FOLDER) && !node.isNodeType(HippoStdNodeType.NT_DIRECTORY)) {
+                    openEditor(nodeModel, editServiceRef);
                 }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+        }
+    }
+
+    private static void openEditor(final JcrNodeModel nodeModel,
+                                   final IServiceReference<IEditorManager> editServiceRef) throws RepositoryException {
+        final IEditorManager editorMgr = (editServiceRef != null ? editServiceRef.getService() : null);
+        if (editorMgr == null) {
+            return;
+        }
+
+        JcrNodeModel editNodeModel = nodeModel;
+        Node editNodeModelNode = nodeModel.getNode();
+        if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
+        }
+
+        final WorkflowManager workflowManager = UserSession.get().getWorkflowManager();
+        final Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
+
+        try {
+            if (workflow instanceof EditableWorkflow) {
+                final EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
+                final Document editableDocument = editableWorkflow.obtainEditableInstance();
+                if (editableDocument != null) {
+                    final Session jcrSession = UserSession.get().getJcrSession();
+                    jcrSession.refresh(true);
+                    final String id = editableDocument.getIdentity();
+                    editNodeModel = new JcrNodeModel(jcrSession.getNodeByIdentifier(id));
+                } else {
+                    editNodeModel = null;
+                }
+            }
+            if (editNodeModel != null) {
+                final IEditor editor = editorMgr.getEditor(editNodeModel);
+                if (editor == null) {
+                    editorMgr.openEditor(editNodeModel);
+                }
+            }
+        } catch (WorkflowException | ServiceException | RepositoryException | RemoteException ex) {
+            log.error("Cannot auto-edit document", ex);
         }
     }
 
@@ -218,13 +228,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
         private final DropDownChoice<String> prototypeChoice;
         private final DropDownChoice<String> templateChoice;
 
-        private String optionSelectOnly = null;
-        private boolean optionSelectFirst = false;
-
-        private NameUriField nameUriContainer;
-        private WebMarkupContainer prototypeContainer;
-        private WebMarkupContainer templateContainer;
-        private LanguageField languageContainer;
+        private final NameUriField nameUriContainer;
+        private final WebMarkupContainer prototypeContainer;
+        private final WebMarkupContainer templateContainer;
+        private final LanguageField languageContainer;
 
         public AddRootFolderDialog(IPluginContext context, IPluginConfig config, Node folder, String defaultFolder) {
             super();
@@ -232,9 +239,12 @@ public class FolderShortcutPlugin extends RenderPlugin {
             setSize(DialogConstants.MEDIUM_AUTO);
             setCssClass("add-root-folder-dialog");
 
+            boolean optionSelectFirst = false;
             if (config.containsKey("option.first")) {
                 optionSelectFirst = config.getBoolean("option.first");
             }
+
+            String optionSelectOnly = null;
             if (config.containsKey("option.only")) {
                 optionSelectOnly = config.getString("option.only");
             }
@@ -305,7 +315,8 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 }
             };
 
-            add(nameUriContainer = new NameUriField("name-url", codecModel));
+            nameUriContainer = new NameUriField("name-url", codecModel);
+            add(nameUriContainer);
 
             // The dialog produces ajax requests in NameUriField and OK/Cancel dialog buttons, which may cause Wicket
             // exceptions when typing very fast. Thus it needs to use a dedicated ajax channel with ACTIVE behavior when
@@ -317,26 +328,23 @@ public class FolderShortcutPlugin extends RenderPlugin {
             List<String> emptyList = new LinkedList<>();
             emptyList.add("");
 
-            prototypeContainer = new WebMarkupContainer("prototype");
-            prototypeContainer.add(prototypeChoice = new DropDownChoice<>("select", new PropertyModel<>(this, "prototype"),
-                    emptyList));
+            prototypeChoice = new DropDownChoice<>("select", new PropertyModel<>(this, "prototype"), emptyList);
+            prototypeChoice.setNullValid(false);
+            prototypeChoice.setRequired(true);
             prototypeChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     evaluateChoices();
                 }
             });
-            prototypeChoice.setNullValid(false);
-            prototypeChoice.setRequired(true);
+
+            prototypeContainer = new WebMarkupContainer("prototype");
             prototypeContainer.setOutputMarkupPlaceholderTag(true);
+            prototypeContainer.add(prototypeChoice);
             add(prototypeContainer);
 
-            templateContainer = new WebMarkupContainer("template");
-            templateContainer.add(templateChoice = new DropDownChoice<>("select", new PropertyModel<>(this,
-                    "templateCategory"), emptyList, new IChoiceRenderer<String>() {
-                private static final long serialVersionUID = 1L;
+            final PropertyModel<String> templateCategoryModel = new PropertyModel<>(this, "templateCategory");
+            templateChoice = new DropDownChoice<>("select", templateCategoryModel, emptyList, new IChoiceRenderer<String>() {
 
                 public Object getDisplayValue(String object) {
                     return getString(object);
@@ -351,10 +359,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     final List<? extends String> choices = choicesModel.getObject();
                     return choices.contains(id) ? id : null;
                 }
-            }));
+            });
+            templateChoice.setNullValid(false);
+            templateChoice.setRequired(true);
             templateChoice.add(new AjaxFormComponentUpdatingBehavior("change") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     prototype = null;
@@ -364,9 +372,10 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     nameUriContainer.onCodecModelDetached();
                 }
             });
-            templateChoice.setNullValid(false);
-            templateChoice.setRequired(true);
+
+            templateContainer = new WebMarkupContainer("template");
             templateContainer.setOutputMarkupPlaceholderTag(true);
+            templateContainer.add(templateChoice);
             templateContainer.add(new Label("typelabel", new StringResourceModel("document-type", this)));
             add(templateContainer);
 
@@ -383,7 +392,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             setModel(folderWorkflowDescriptorModel);
             setOkEnabled(folder != null);
 
-            if (templates != null && templates.keySet().size() >= 1) {
+            if (templates != null && !templates.isEmpty()) {
                 // pre-select the first item in the template category
                 templateCategory = templates.keySet().iterator().next();
             }
@@ -398,17 +407,17 @@ public class FolderShortcutPlugin extends RenderPlugin {
         }
 
         private void evaluateChoices() {
-            if (templates == null || templates.keySet().size() == 0) {
+            if (templates == null || templates.isEmpty()) {
                 templateContainer.setVisible(false);
             } else if (templates.keySet().size() == 1) {
                 templateChoice.setChoices(new LinkedList<>(templates.keySet()));
                 templateContainer.setVisible(false);
-            } else if (templates.keySet().size() > 1) {
+            } else {
                 templateChoice.setChoices(new LinkedList<>(templates.keySet()));
                 templateContainer.setVisible(true);
             }
             boolean languageVisible = false;
-            if (templateCategory != null) {
+            if (templates != null && templateCategory != null) {
                 final List<String> prototypesList = new LinkedList<>(templates.get(templateCategory));
                 prototypeChoice.setChoices(prototypesList);
                 prototypeChoice.setChoiceRenderer(new TypeChoiceRenderer(this));
@@ -463,6 +472,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
         }
 
+        @Override
         public IModel<String> getTitle() {
             return new StringResourceModel("new-document-label", this);
         }
@@ -476,7 +486,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             try {
                 IModel model = getModel();
-                if (model != null && model instanceof WorkflowDescriptorModel) {
+                if (model instanceof WorkflowDescriptorModel) {
                     Session jcrSession = UserSession.get().getJcrSession();
                     WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
                     FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow(((WorkflowDescriptorModel) model)
@@ -487,7 +497,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     }
                     if (workflow != null) {
                         if (!templates.get(templateCategory).contains(prototype)) {
-                            log.error("unknown folder type " + prototype);
+                            log.error("unknown folder type {}", prototype);
                             error("Unknown folder type " + prototype);
                             return;
                         }
