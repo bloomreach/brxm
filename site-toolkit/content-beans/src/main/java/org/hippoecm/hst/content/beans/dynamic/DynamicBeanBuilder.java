@@ -145,9 +145,14 @@ public class DynamicBeanBuilder {
         builder = new ByteBuddy().with(new NamingStrategy.SuffixingRandom(className)).subclass(parentBean);
         this.parentBean = parentBean;
 
-        final HstModelProvider hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
-        final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModelProvider.getContextPath());
-        webappType = context.getType();
+        HstModelProvider hstModelProvider;
+        if (HstServices.getComponentManager() != null &&
+                (hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class)) != null) {
+            final HippoWebappContext context = HippoWebappContextRegistry.get().getContext(hstModelProvider.getContextPath());
+            webappType = context.getType();
+        } else {
+            webappType = HippoWebappContext.Type.OTHER;
+        }
     }
 
     void addBeanMethodString(final String methodName, final String propertyName, final boolean multiple) {
