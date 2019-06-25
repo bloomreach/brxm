@@ -7,6 +7,6 @@
     "npm": "6"
   },
   "dependencies": {
-    "penpal": "3.1.2"
+    "penpal": "4.0.0"
   }
 }
