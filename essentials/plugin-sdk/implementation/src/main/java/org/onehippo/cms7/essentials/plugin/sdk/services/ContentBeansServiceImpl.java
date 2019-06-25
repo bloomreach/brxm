@@ -770,7 +770,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
             }
         });
         
-        if (deletedMethods.size() > 0) {
+        if (!deletedMethods.isEmpty()) {
             deleteMethods(path, newReturnType, importStatement, feedback, deleteUnit, deletedMethods);
         }
     }

@@ -287,23 +287,22 @@ public class GalleryPluginResource {
         }
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        boolean created = false;
         if (imageModel != null) {
-            created = GalleryUtils.createImagesetVariant(jcrService, ourModel.getPrefix(), 
+            boolean created = GalleryUtils.createImagesetVariant(jcrService, ourModel.getPrefix(), 
                     ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
-        }
-        if (created) {
-            // add processor node:
-            final Session session = jcrService.createSession();
-            try {
-                createProcessingNode(session, ourModel.getPrefix() + ':' + imageVariantName);
-                session.save();
-            } catch (RepositoryException e) {
-                log.error("Error creating processing node", e);
-            } finally {
-                jcrService.destroySession(session);
+            if (created) {
+                // add processor node:
+                final Session session = jcrService.createSession();
+                try {
+                    createProcessingNode(session, ourModel.getPrefix() + ':' + imageVariantName);
+                    session.save();
+                } catch (RepositoryException e) {
+                    log.error("Error creating processing node", e);
+                } finally {
+                    jcrService.destroySession(session);
+                }
+                return new UserFeedback().addSuccess("Image variant:  " + imageVariantName + " successfully created");
             }
-            return new UserFeedback().addSuccess("Image variant:  " + imageVariantName + " successfully created");
         }
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return new UserFeedback().addError("Failed to create image variant: " + imageVariantName);
