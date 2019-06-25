@@ -79,24 +79,25 @@ OpenUi = new class {
     const iframe = document.createElement('iframe');
 
     iframe.classList.add('openui-iframe');
+    iframe.src = iframeUrl;
 
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
     iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
 
+    iframeParentElement.appendChild(iframe);
+
     const emitter = new Emitter();
     const connection = Penpal.connectToChild({
-      url: iframeUrl,
       iframe: iframe,
-      appendTo: iframeParentElement,
       methods: Object.assign({
         emitEvent: emitter.emit.bind(emitter),
         getProperties: this._getProperties.bind(this, parameters),
         openDialog: this.openDialog.bind(this, parameters),
       }, methods)
     });
-    Object.assign(connection, { emitter });
+    Object.assign(connection, { emitter, iframe });
     return connection;
   }
 
