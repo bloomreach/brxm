@@ -47,7 +47,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.springframework.mock.web.MockHttpServletRequest;

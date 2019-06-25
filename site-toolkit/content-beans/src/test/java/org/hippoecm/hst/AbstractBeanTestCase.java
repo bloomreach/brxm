@@ -26,7 +26,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractBeanTestCase extends RepositoryTestCase {
