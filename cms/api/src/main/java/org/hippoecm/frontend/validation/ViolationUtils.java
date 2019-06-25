@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.editor.plugins.field.violation;
+package org.hippoecm.frontend.validation;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,18 +23,70 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
-import org.hippoecm.frontend.validation.FeedbackScope;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class ViolationUtils {
 
     private ViolationUtils() {}
+
+    private static final String VALIDATION_MESSAGE_CLASS = "validation-message";
+    private static final String INVALID_CLASS = "invalid";
+    private static final String COMPOUND_VALIDATION_BORDER_CLASS = "compound-validation-border";
+
+    public static String getResetScript(final String selector) {
+        return String.format(
+                "const editor = %s;" +
+                "editor.find('.%s').remove();" +
+                "editor.find('.%s').removeClass('%s');" +
+                "editor.find('.%s').removeClass('%s');",
+                selector,
+                VALIDATION_MESSAGE_CLASS,
+                INVALID_CLASS,
+                INVALID_CLASS,
+                COMPOUND_VALIDATION_BORDER_CLASS,
+                COMPOUND_VALIDATION_BORDER_CLASS);
+    }
+
+    public static String getFieldViolationScript(final String selector, final ViolationMessage violation) {
+        final String message = violation.getMessage();
+        final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+        return String.format(
+                "%s.addClass('%s').append('<span class=\"%s\">%s</span>');",
+                selector,
+                INVALID_CLASS,
+                VALIDATION_MESSAGE_CLASS,
+                StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
+    }
+
+    public static String getViolationPerCompoundScript(final String selector, final IFieldDescriptor field, final IModel<IValidationResult> validationModel) {
+        final StringBuilder script = new StringBuilder();
+
+        getViolationPerCompound(field, validationModel).forEach(violation -> {
+            final String message = violation.getMessage();
+            final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+            final String messageElement = String.format(
+                "<div class=\"%s compound-validation-message\">%s</div>",
+                VALIDATION_MESSAGE_CLASS,
+                htmlEscapedMessage);
+
+            script.append(String.format(
+                "subfields.eq(%d).addClass('%s').prepend('%s');",
+                violation.getIndex(),
+                COMPOUND_VALIDATION_BORDER_CLASS,
+                StringEscapeUtils.escapeJavaScript(messageElement))
+            );
+        });
+
+        if (script.length() > 0) {
+            script.insert(0, String.format("const subfields = %s;", selector));
+            return script.toString();
+        }
+
+        return null;
+    }
 
     public static Optional<ViolationMessage> getFirstFieldViolation(final IFieldDescriptor field,
                                                                     final IModel<IValidationResult> validationModel) {
@@ -90,11 +142,12 @@ public class ViolationUtils {
     private static ViolationMessage toViolationMessage(final IFieldDescriptor field, final Violation violation) {
         final Set<ModelPath> dependentPaths = violation.getDependentPaths();
         for (final ModelPath path : dependentPaths) {
-            if (path.getElements().length > 0) {
-                final ModelPathElement first = path.getElements()[0];
-                if (first.getField().equals(field)) {
+            final ModelPathElement[] elements = path.getElements();
+            if (elements.length > 0) {
+                final ModelPathElement last = elements[elements.length - 1];
+                if (last.getField().equals(field)) {
                     final String message = violation.getMessage().getObject();
-                    final int index = first.getIndex();
+                    final int index = last.getIndex();
                     return new ViolationMessage(message, index);
                 }
             }

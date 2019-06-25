@@ -42,6 +42,7 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         if (fieldType.isNode()) {
             typeValidator = fieldType.equals(container.getType())
                     ? container
-                    : new JcrTypeValidator(fieldType, validatorService);
+                    : new JcrTypeValidator(field, fieldType, validatorService);
         }
 
         if (validatorService != null) {
@@ -118,8 +119,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 final IModel childModel = iter.next();
                 if (fieldType.isNode() && field.getTypeDescriptor().isValidationCascaded()) {
                     final Set<Violation> typeViolations = typeValidator.validate(childModel);
-                    if (typeViolations.size() > 0) {
-                        addTypeViolations(violations, childModel, typeViolations);
+                    if (!typeViolations.isEmpty()) {
+                        violations.addAll(typeViolations);
                     }
                 }
 
@@ -178,52 +179,14 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     @Override
     public Violation newValueViolation(final IModel childModel, final IModel<String> message,
+                                       final ValidationScope scope) throws ValidationException {
+        return newViolation(getElement(childModel), message, scope.toFeedbackScope());
+    }
+
+    @Override
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message,
                                        final FeedbackScope scope) throws ValidationException {
         return newViolation(getElement(childModel), message, scope);
-    }
-
-    private void addTypeViolations(final Set<Violation> violations, final IModel childModel, final Set<Violation> typeViolations)
-            throws ValidationException {
-        final JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
-        String name = field.getPath();
-        if ("*".equals(name)) {
-            try {
-                name = childNodeModel.getNode().getName();
-            } catch (final RepositoryException e) {
-                throw new ValidationException("Could not resolve path for invalid value", e);
-            }
-        }
-        final int index;
-        try {
-            index = childNodeModel.getNode().getIndex() - 1;
-        } catch (final RepositoryException e) {
-            throw new ValidationException("Could not resolve path for invalid value", e);
-        }
-
-        violations.addAll(prependFieldPathToViolations(typeViolations, field, name, index));
-    }
-
-    /**
-     * Replace the provided violations by new violations that have the path element of the provided fieldDescriptor
-     * in them, prepending the existing path element(s).
-     */
-    public static Set<Violation> prependFieldPathToViolations(final Set<Violation> violations,
-                                                              final IFieldDescriptor fieldDescriptor,
-                                                              final String name,
-                                                              final int index) {
-        final Set<Violation> newViolations = new HashSet<>(violations.size());
-        for (final Violation violation : violations) {
-            final Set<ModelPath> childPaths = violation.getDependentPaths();
-            final Set<ModelPath> paths = new HashSet<>();
-            for (final ModelPath childPath : childPaths) {
-                final ModelPathElement[] elements = new ModelPathElement[childPath.getElements().length + 1];
-                System.arraycopy(childPath.getElements(), 0, elements, 1, childPath.getElements().length);
-                elements[0] = new ModelPathElement(fieldDescriptor, name, index);
-                paths.add(new ModelPath(elements));
-            }
-            newViolations.add(new Violation(paths, violation.getMessage(), violation.getFeedbackScope()));
-        }
-        return newViolations;
     }
 
     private ModelPathElement getElement(final IModel childModel) throws ValidationException {
@@ -258,14 +221,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         return new ClassResourceModel(key, ValidatorMessages.class, parameters);
     }
 
-    public Violation newViolation(final ModelPathElement child, final String message, final Object[] parameters,
-                                  final FeedbackScope scope) {
-        final Set<ModelPath> paths = getModelPaths(child);
-        return new Violation(paths, getMessage(message, parameters), scope);
-    }
-
-    public Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
-                                  final FeedbackScope scope) {
+    private Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
+                                   final FeedbackScope scope) {
         final Set<ModelPath> paths = getModelPaths(child);
         return new Violation(paths, messageModel, scope);
     }

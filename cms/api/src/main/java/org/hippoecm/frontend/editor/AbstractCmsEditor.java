@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.usagestatistics.UsageEvent;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
     private class EditorWrapper extends RenderService {
 
-        public EditorWrapper(final IPluginContext context, final IPluginConfig properties) {
+        EditorWrapper(final IPluginContext context, final IPluginConfig properties) {
             super(new ServiceContext(context), properties);
 
             addExtensionPoint("editor");
@@ -96,6 +97,12 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
                 if (!isActivated) {
                     isActivated = true;
                     onActivated();
+                }
+                if (target != null) {
+                    // reset client-side validation state
+                    final String selector = String.format("$('#%s')", getMarkupId());
+                    final String resetScript = ViolationUtils.getResetScript(selector);
+                    target.prependJavaScript(resetScript);
                 }
             } else {
                 if (isActivated) {
@@ -168,7 +175,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     private IFocusListener focusListener;
     private final String editorId;
     private final String wicketId;
-    private Mode mode;
+    private Mode editorMode;
     private boolean isActivated;
 
     public AbstractCmsEditor(final IEditorContext editorContext, final IPluginContext context, final IPluginConfig parameters,
@@ -177,7 +184,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         this.model = model;
         this.context = context;
         this.parameters = parameters;
-        this.mode = mode;
+        this.editorMode = mode;
 
         final String name = getMyName(getClass());
         editorId = name + "." + (editorCount++);
@@ -199,16 +206,16 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
     }
 
     public Mode getMode() {
-        return mode;
+        return editorMode;
     }
 
     public void setMode(final Mode mode) throws EditorException {
-        if (mode != this.mode && cluster != null) {
+        if (mode != this.editorMode && cluster != null) {
             stop();
-            this.mode = mode;
+            this.editorMode = mode;
             start();
         } else {
-            this.mode = mode;
+            this.editorMode = mode;
         }
     }
 
@@ -337,7 +344,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
     public void start() throws EditorException {
         final String clusterName;
-        switch (mode) {
+        switch (editorMode) {
             case EDIT:
                 clusterName = "cms-editor";
                 break;
@@ -349,7 +356,7 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
         final JavaPluginConfig editorConfig = new JavaPluginConfig(parameters);
         editorConfig.put("wicket.id", editorId);
-        editorConfig.put("mode", mode.toString());
+        editorConfig.put("mode", editorMode.toString());
 
         final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
@@ -365,24 +372,24 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         modelService = new ModelReference<>(modelId, getEditorModel());
         modelService.init(context);
 
-        if (mode == Mode.COMPARE || mode == Mode.VIEW) {
+        if (editorMode == Mode.COMPARE || editorMode == Mode.VIEW) {
             final String baseId = decorated.getString("model.compareTo");
             baseService = new ModelReference<>(baseId, getBaseModel());
             baseService.init(context);
         }
 
-        final String editorId = decorated.getString("editor.id");
-        context.registerService(this, editorId);
-        context.registerService(editorContext.getEditorManager(), editorId);
+        final String decoratedEditorId = decorated.getString("editor.id");
+        context.registerService(this, decoratedEditorId);
+        context.registerService(editorContext.getEditorManager(), decoratedEditorId);
 
         cluster.start();
 
-        final IRenderService renderer = context
+        final IRenderService decoratedRenderer = context
                 .getService(decorated.getString(RenderService.WICKET_ID), IRenderService.class);
-        if (renderer == null) {
+        if (decoratedRenderer == null) {
             cluster.stop();
-            context.unregisterService(this, editorId);
-            context.unregisterService(editorContext.getEditorManager(), editorId);
+            context.unregisterService(this, decoratedEditorId);
+            context.unregisterService(editorContext.getEditorManager(), decoratedEditorId);
             modelService.destroy();
             throw new EditorException("No IRenderService found");
         }
@@ -404,9 +411,9 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
         cluster.stop();
 
-        final String editorId = cluster.getClusterConfig().getString("editor.id");
-        context.unregisterService(editorContext.getEditorManager(), editorId);
-        context.unregisterService(this, editorId);
+        final String decoratedEditorId = cluster.getClusterConfig().getString("editor.id");
+        context.unregisterService(editorContext.getEditorManager(), decoratedEditorId);
+        context.unregisterService(this, decoratedEditorId);
 
         if (baseService != null) {
             baseService.destroy();

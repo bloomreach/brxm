@@ -179,6 +179,7 @@ public abstract class MockPluginTest {
         }
 
         @Override
+        @SuppressWarnings("squid:S2068")
         protected void initializeFallBackCredentials() {
             repositoryFallbackUsername = "admin";
             repositoryFallbackPassword = "admin";

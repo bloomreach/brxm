@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -190,6 +190,7 @@ public class CodeMirrorEditor extends TextArea<String> {
         scriptParams.put("readOnly", Boolean.toString(isReadOnly()));
         scriptParams.put("changeEventTriggerEnabled", Boolean.toString(isChangeEventTriggeringEnabled()));
 
+        @SuppressWarnings("squid:S2095")
         final PackageTextTemplate script = new PackageTextTemplate(CodeMirrorEditor.class, CREATE_EDITOR_SCRIPT);
         return script.asString(scriptParams);
     }

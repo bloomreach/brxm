@@ -27,7 +27,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeTypeManager;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -43,7 +42,6 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
-import org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.ViolationMessage;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -67,11 +65,13 @@ import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
+import org.hippoecm.frontend.validation.ViolationUtils.ViolationMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.editor.plugins.field.violation.ViolationUtils.getFirstFieldViolation;
 import static org.hippoecm.frontend.validation.ValidatorUtils.OPTIONAL_VALIDATOR;
+import static org.hippoecm.frontend.validation.ViolationUtils.getFirstFieldViolation;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
@@ -216,22 +216,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
             filter.setValid(!violation.isPresent());
 
-            if (target != null) {
-                String javascript = String.format(
-                    "const fieldElement = $('#%s');" +
-                    "fieldElement.find('> .validation-message').remove();" + // clear previous validation messages
-                    "fieldElement.toggleClass('%s', %b);",
-                    getMarkupId(), ValidationFilter.INVALID, violation.isPresent());
-
-                if (violation.isPresent()) {
-                    final String message = violation.get().getMessage();
-                    final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
-                    javascript += String.format(
-                            "fieldElement.append('<span class=\"validation-message\">%s</span>');",
-                            StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
-                }
-
-                target.appendJavaScript(javascript);
+            if (target != null && violation.isPresent()) {
+                final String selector = String.format("$('#%s')", getMarkupId());
+                target.appendJavaScript(ViolationUtils.getFieldViolationScript(selector, violation.get()));
             }
         }
         super.render(target);

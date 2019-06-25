@@ -51,6 +51,24 @@ public class ValidatorUtils {
         return validators.contains(REQUIRED_VALIDATOR);
     }
 
+    /**
+     * @deprecated Use {@link #getFeedbackScope(String) instead}
+     */
+    @Deprecated
+    public static ValidationScope getValidationScope(final String scope) {
+        try {
+            if (StringUtils.isNotBlank(scope)) {
+                return ValidationScope.valueOf(scope.toUpperCase());
+            }
+        } catch (IllegalArgumentException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Invalid scope '{}'. Must be one of {}. Using DOCUMENT scope as default.", scope,
+                        StringUtils.join(ValidationScope.values(), ", "), e);
+            }
+        }
+        return ValidationScope.DOCUMENT;
+    }
+
     public static FeedbackScope getFeedbackScope(final String scope) {
         try {
             if (StringUtils.isNotBlank(scope)) {
@@ -64,6 +82,7 @@ public class ValidatorUtils {
         }
         return FeedbackScope.DOCUMENT;
     }
+
 
     private ValidatorUtils() {}
 }

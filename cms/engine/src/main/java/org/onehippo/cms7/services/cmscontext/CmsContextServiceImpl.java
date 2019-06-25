@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,32 +27,37 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import javax.servlet.http.HttpSessionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.onehippo.cms7.services.cmscontext.CmsSessionContext.SESSION_KEY;
 
 public class CmsContextServiceImpl implements CmsInternalCmsContextService {
+
+    private static final Logger log = LoggerFactory.getLogger(CmsContextServiceImpl.class);
 
     private static class CmsSessionContextImpl implements CmsSessionContext, HttpSessionBindingListener, HttpSessionActivationListener {
 
         private final String id = UUID.randomUUID().toString();
 
         private CmsContextServiceImpl service;
-        private CmsSessionContextImpl cmsCtx;
         private Map<String, CmsSessionContextImpl> sharedContextsMap;
         private Map<String, Object> dataMap;
 
         private HttpSession session;
+        private boolean root;
 
         private CmsSessionContextImpl(CmsContextServiceImpl service) {
+            root = true;
             this.service = service;
-            cmsCtx = this;
             sharedContextsMap = new ConcurrentHashMap<>();
             dataMap = new ConcurrentHashMap<>();
             dataMap.put(CMS_SESSION_CONTEXT_PAYLOAD_KEY, new ConcurrentHashMap<>());
         }
 
         private CmsSessionContextImpl(CmsContextServiceImpl service, CmsSessionContextImpl ctx) {
+            root = false;
             this.service = service;
-            cmsCtx = ctx.cmsCtx;
             dataMap = ctx.dataMap;
             sharedContextsMap = ctx.sharedContextsMap;
             sharedContextsMap.put(id, this);
@@ -76,7 +81,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         private synchronized void detach() {
             if (service != null) {
 
-                if (this == cmsCtx) {
+                if (root) {
                     // remove from service contexts
                     service.contextsMap.remove(id);
                     // detach all attached contexts
@@ -84,7 +89,13 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                     while (iter.hasNext()) {
                         CmsSessionContextImpl ctx = iter.next();
                         iter.remove();
-                        ctx.detach();
+                        // below will trigger #valueUnbound triggering #detach in turn
+                        try {
+                            ctx.session.invalidate();
+                        } catch (IllegalStateException e) {
+                            log.info("(Website) Session '{}' has already been invalidated, most likely by the webapp or " +
+                                    "user itself.", ctx.session.getId());
+                        }
                     }
                 } else {
                     // will already be removed in case cmsCtx itself is being detached
@@ -92,16 +103,6 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 }
 
                 service = null;
-                HttpSession tmpSession = session;
-                session = null;
-                if (tmpSession != null) {
-                    try {
-                        tmpSession.removeAttribute(SESSION_KEY);
-                    } catch (IllegalStateException e) {
-                        // ignore session already invalidated exception
-                    }
-                }
-                cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
                 dataMap = Collections.emptyMap();
             }
@@ -160,7 +161,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
             try {
                 session.setAttribute(SESSION_KEY, ctx);
             } catch (IllegalStateException e) {
-                // session just happened to be invalidated, make sure to cleaup ctx
+                // session just happened to be invalidated, make sure to cleanup ctx
                 ctx.detach();
                 throw e;
             }
@@ -187,11 +188,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
 
     @Override
     public void detach(final HttpSession session) {
-        CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
-        if (ctx == null) {
-            return;
-        }
-        ctx.detach();
+        session.removeAttribute(SESSION_KEY);
     }
 
     @Override

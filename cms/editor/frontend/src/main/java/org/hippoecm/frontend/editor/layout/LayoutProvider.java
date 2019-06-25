@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -75,9 +76,6 @@ public class LayoutProvider implements ILayoutProvider {
         this.classLoaderModel = loaderModel;
 
         layouts = new LinkedHashMap<>();
-        final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        documentBuilderFactory.setValidating(false);
 
         final ClassLoader loader = classLoaderModel.getObject();
         if (loader == null) {
@@ -86,47 +84,61 @@ public class LayoutProvider implements ILayoutProvider {
         }
 
         try {
+
+            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            documentBuilderFactory.setNamespaceAware(true);
+            documentBuilderFactory.setValidating(false);
+
             for (Enumeration<URL> iter = loader.getResources("hippoecm-layouts.xml"); iter.hasMoreElements();) {
                 final URL configurationURL = iter.nextElement();
-                final InputStream stream = configurationURL.openStream();
-                final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-                final Document document = documentBuilder.parse(stream);
-
-                final Element element = document.getDocumentElement();
-                if (!"layouts".equals(element.getNodeName())) {
-                    throw new RuntimeException("unable to parse layout: no layout node found");
-                }
-
-               final NodeList nodes = element.getElementsByTagName("layout");
-                for (int i = 0; i < nodes.getLength(); i++) {
-                    final Element padElement = (Element) nodes.item(i);
-
-                    final NodeList plugins = padElement.getElementsByTagName("plugin");
-                    if (plugins.getLength() != 1) {
-                        throw new RuntimeException("Invalid layout, 0 or more than 1 plugin child nodes found at " + 
-                                configurationURL);
-                    }
-
-                    final Element pluginElement = (Element) plugins.item(0);
-                    final Node childNode = pluginElement.getFirstChild();
-                    final String plugin = childNode.getNodeValue();
-                    addLayoutEntry(plugin, null);
-
-                    final NodeList variants = padElement.getElementsByTagName("variant");
-                    for (int j = 0; j < variants.getLength(); j++) {
-                        final Element variantElement = (Element) variants.item(j);
-                        final Node variantNode = variantElement.getFirstChild();
-                        final String variant = variantNode.getNodeValue();
-                        addLayoutEntry(plugin, variant);
-                    }
-                }
+                loadLayouts(documentBuilderFactory, configurationURL);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error while reading layouts extension", e);
+            throw new IllegalStateException("Error while reading layouts extension", e);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("Parser configuration error:", e);
+            throw new IllegalStateException("Parser configuration error:", e);
         } catch (SAXException e) {
-            throw new RuntimeException("SAX error:", e);
+            throw new IllegalStateException("SAX error:", e);
+        }
+    }
+
+    private void loadLayouts(final DocumentBuilderFactory documentBuilderFactory, final URL configurationURL) throws IOException, ParserConfigurationException, SAXException {
+        try (InputStream stream = configurationURL.openStream()) {
+            final DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            final Document document = documentBuilder.parse(stream);
+
+            final Element element = document.getDocumentElement();
+            if (!"layouts".equals(element.getNodeName())) {
+                throw new IllegalStateException("unable to parse layout: no layout node found");
+            }
+
+            final NodeList nodes = element.getElementsByTagName("layout");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                final Element padElement = (Element) nodes.item(i);
+                loadLayoutEntries(configurationURL, padElement);
+            }
+        }
+    }
+
+    private void loadLayoutEntries(final URL configurationURL, final Element padElement) {
+        final NodeList plugins = padElement.getElementsByTagName("plugin");
+        if (plugins.getLength() != 1) {
+            throw new IllegalStateException("Invalid layout, 0 or more than 1 plugin child nodes found at " +
+                    configurationURL);
+        }
+
+        final Element pluginElement = (Element) plugins.item(0);
+        final Node childNode = pluginElement.getFirstChild();
+        final String plugin = childNode.getNodeValue();
+        addLayoutEntry(plugin, null);
+
+        final NodeList variants = padElement.getElementsByTagName("variant");
+        for (int j = 0; j < variants.getLength(); j++) {
+            final Element variantElement = (Element) variants.item(j);
+            final Node variantNode = variantElement.getFirstChild();
+            final String variant = variantNode.getNodeValue();
+            addLayoutEntry(plugin, variant);
         }
     }
 
