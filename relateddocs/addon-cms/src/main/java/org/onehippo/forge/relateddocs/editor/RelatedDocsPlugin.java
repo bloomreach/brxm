@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,19 @@
  */
 package org.onehippo.forge.relateddocs.editor;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -52,10 +56,9 @@ import static org.hippoecm.frontend.service.IEditor.Mode;
 import static org.onehippo.forge.relateddocs.RelatedDocsNodeType.NT_RELATEDDOCS;
 
 /**
- * The RelatedDocsPlugin renders the chosen related documents
+ * The RelatedDocsPlugin renders the chosen related documents.
  */
 public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RelatedDocsPlugin.class);
 
@@ -65,7 +68,6 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
 
     public RelatedDocsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
 
         if (mode == Mode.COMPARE) {
             if (config.containsKey("model.compareTo")) {
@@ -116,8 +118,6 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
 
         return new RefreshingView<RelatedDoc>("view") {
 
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected Iterator<IModel<RelatedDoc>> getItemModels() {
                 final Iterator<RelatedDoc> base = relatedDocCollection.iterator(0, 0);
@@ -139,12 +139,12 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             protected void populateItem(Item item) {
+                final List<RelatedDoc> relatedDocs = IteratorUtils.toList(relatedDocCollection.iterator());
                 final RelatedDoc relatedDoc = (RelatedDoc) item.getModelObject();
-                AjaxLink link = new AjaxLink("link") {
 
-                    private static final long serialVersionUID = 1L;
-
+                final AjaxLink link = new AjaxLink("link") {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         if (relatedDoc.exists()) {
@@ -168,23 +168,91 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                 }
 
                 AjaxLink deleteLink = new AjaxLink("delete") {
-
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         relatedDocCollection.remove(relatedDoc);
                     }
                 };
 
-                if (Mode.EDIT != mode) {
-                    deleteLink.setVisible(false);
-                }
-
                 deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.TIMES));
                 item.add(deleteLink);
+
+                boolean isFirst = (item.getIndex() == 0);
+                MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final int i = relatedDocs.indexOf(relatedDoc);
+                        Collections.swap(relatedDocs, i, 0);
+                        rebuildRelatedDocsCollection(relatedDocs, relatedDocCollection);
+                    }
+                };
+                upToTopLink.setEnabled(!isFirst);
+                item.add(upToTopLink);
+
+                final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
+                upToTopLink.add(upToTopIcon);
+
+                MarkupContainer upLink = new AjaxLink("up") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final int i = relatedDocs.indexOf(relatedDoc);
+                        Collections.swap(relatedDocs, i, i - 1);
+                        rebuildRelatedDocsCollection(relatedDocs, relatedDocCollection);
+                    }
+                };
+
+                upLink.setEnabled(!isFirst);
+                item.add(upLink);
+                final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
+                upLink.add(upIcon);
+
+                MarkupContainer downLink = new AjaxLink("down") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final int i = relatedDocs.indexOf(relatedDoc);
+                        Collections.swap(relatedDocs, i, i + 1);
+                        rebuildRelatedDocsCollection(relatedDocs, relatedDocCollection);
+                    }
+                };
+                boolean isLast = (item.getIndex() == relatedDocs.size() - 1);
+                downLink.setEnabled(!isLast);
+                item.add(downLink);
+                final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
+                downLink.add(downIcon);
+
+                MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final int i = relatedDocs.indexOf(relatedDoc);
+                        Collections.swap(relatedDocs, i, relatedDocs.size() - 1);
+                        rebuildRelatedDocsCollection(relatedDocs, relatedDocCollection);
+                    }
+                };
+                downToBottomLink.setEnabled(!isLast);
+                item.add(downToBottomLink);
+
+                final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
+                downToBottomLink.add(downToBottomIcon);
+
+                if (Mode.EDIT != mode) {
+                    deleteLink.setVisible(false);
+                    upToTopLink.setVisible(false);
+                    upLink.setVisible(false);
+                    downLink.setVisible(false);
+                    downToBottomLink.setVisible(false);
+                }
             }
         };
+    }
+
+    private void rebuildRelatedDocsCollection(final List<RelatedDoc> relatedDocs, 
+                                              final RelatedDocCollection relatedDocCollection) {
+        for (RelatedDoc relatedDoc : relatedDocs) {
+            relatedDocCollection.remove(relatedDoc);
+        }
+        for (RelatedDoc relatedDoc : relatedDocs) {
+            relatedDocCollection.add(relatedDoc);
+        }
     }
 
     private RefreshingView createCompareView(final RelatedDocCollection relatedDocCollection,
@@ -224,14 +292,13 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             protected void populateItem(Item<Change<RelatedDoc>> item) {
                 Change<RelatedDoc> change = item.getModelObject();
                 final RelatedDoc relatedDoc = change.getValue();
 
                 //This link opens the document through the IBrowseService
                 AjaxLink link = new AjaxLink("link") {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
                         if (relatedDoc.exists()) {
@@ -259,18 +326,31 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                     item.add(new AttributeAppender("class", Model.of("last"), " "));
                 }
 
-                AjaxLink deleteLink = new AjaxLink("delete") {
-
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                    }
-                };
-
+                // dummy components needed for the wicket component tree
+                MarkupContainer deleteLink = new WebMarkupContainer("delete"); 
                 deleteLink.setVisible(false);
-                deleteLink.add(HippoIcon.fromSprite("deleteIcon", Icon.TIMES));
+                deleteLink.add(new WebMarkupContainer("deleteIcon"));
                 item.add(deleteLink);
+
+                MarkupContainer upToTopLink = new WebMarkupContainer("upToTop"); 
+                upToTopLink.setVisible(false);
+                upToTopLink.add(new WebMarkupContainer("up-top-icon"));
+                item.add(upToTopLink);
+
+                MarkupContainer upLink = new WebMarkupContainer("up"); 
+                upLink.setVisible(false);
+                upLink.add(new WebMarkupContainer("up-icon"));
+                item.add(upLink);
+
+                MarkupContainer downLink = new WebMarkupContainer("down");
+                downLink.setVisible(false);
+                downLink.add(new WebMarkupContainer("down-icon"));
+                item.add(downLink);
+
+                MarkupContainer downToBottomLink = new WebMarkupContainer("downToBottom");
+                downToBottomLink.setVisible(false);
+                downToBottomLink.add(new WebMarkupContainer("down-bottom-icon"));
+                item.add(downToBottomLink);
             }
         };
     }
