@@ -13,7 +13,14 @@ then
     then
         repo_cluster_id="$(hostname -f)"
     fi
-sed --in-place 's/@cluster.node.id@/'"$repo_cluster_id"'/' /usr/local/tomcat/conf/repository-$profile.xml
+    sed --in-place 's/@cluster.node.id@/'"$repo_cluster_id"'/' /usr/local/tomcat/conf/repository-$profile.xml
+
+	# set REPO_CONFIG variable if it is not set
+    repo_config=$REPO_CONFIG
+    if [ -z "$repo_config" ]
+    then
+        export REPO_CONFIG=file:/usr/local/tomcat/conf/repository-$profile.xml
+    fi
 fi
 
 # update tomcat http max threads variable

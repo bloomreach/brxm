@@ -3,20 +3,38 @@ FROM ${docker.brxm.base.image}
 LABEL PROJECT=${project.artifactId}
 
 # Default JVM heap size variables
-ENV JAVA_MINHEAP "256m"
-ENV JAVA_MAXHEAP "512m"
+ENV JAVA_MINHEAP 256m
+ENV JAVA_MAXHEAP 512m
 
 # Default tomcat http max threads variable
-ENV TOMCAT_MAXTHREADS "200"
+ENV TOMCAT_MAXTHREADS 200
 
 # Default repository settings 
-ENV REPO_PATH "${docker.brxm.project.path}/target/storage"
+ENV REPO_PATH ${docker.brxm.project.path}/target/storage
 ENV REPO_CONFIG ""
-ENV REPO_BOOTSTRAP "false"
-ENV REPO_AUTOEXPORT_ALLOWED "false"
+ENV REPO_BOOTSTRAP false
+ENV REPO_AUTOEXPORT_ALLOWED false
+ENV REPO_WORKSPACE_BUNDLE_CACHE 256
+ENV REPO_VERSIONING_BUNDLE_CACHE 64
 
 # Default database profile
-ENV profile "h2"
+ENV profile h2
+
+# Default mysql variables
+ENV MYSQL_DB_HOST mysql
+ENV MYSQL_DB_PORT 3306
+ENV MYSQL_DB_USER ${docker.db.username}
+ENV MYSQL_DB_PASSWORD ${docker.db.password}
+ENV MYSQL_DB_NAME ${docker.db.schema}
+ENV MYSQL_DB_DRIVER com.mysql.jdbc.Driver
+
+# Default postgres variables
+ENV POSTGRES_DB_HOST postgres
+ENV POSTGRES_DB_PORT 5432
+ENV POSTGRES_DB_USER ${docker.db.username}
+ENV POSTGRES_DB_PASSWORD ${docker.db.password}
+ENV POSTGRES_DB_NAME ${docker.db.schema}
+ENV POSTGRES_DB_DRIVER org.postgresql.Driver
 
 # Prepare dirs
 # Delete default & unused war files
