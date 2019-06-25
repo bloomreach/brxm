@@ -48,6 +48,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -70,6 +71,8 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         this.hstSitesManager = getComponent(HstManager.class.getName());
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
         final MockHstRequestContext requestContext = new MockHstRequestContext();
+
+        requestContext.setContentTypes(HippoServiceRegistry.getService(ContentTypeService.class).getContentTypes());
         requestContextSession = createSession();
         requestContext.setSession(requestContextSession);
 
