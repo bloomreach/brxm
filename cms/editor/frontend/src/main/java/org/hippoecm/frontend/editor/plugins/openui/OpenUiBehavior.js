@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-OpenUi = new class {
+window.OpenUi = new class {
 
   constructor() {
     this.cmsOrigin = window.location.origin;
