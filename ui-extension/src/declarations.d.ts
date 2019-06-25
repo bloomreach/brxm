@@ -20,3 +20,45 @@ type Callable<T = unknown, U extends unknown[] = unknown[]> = (...args: U) => T;
 declare module 'MutationObserver' {
   export default MutationObserver;
 }
+
+declare module 'penpal' {
+  type ERR_CONNECTION_DESTROYED = 'ConnectionDestroyed';
+  type ERR_NOT_IN_IFRAME = 'NotInIframe';
+
+  export type ConnectionMethods<T = {}> = { [P in keyof T]: () => Promise<any> };
+
+  export type AsyncMethodReturns<T, K extends keyof T = keyof T> = {
+    [KK in K]: T[KK] extends (...args: any[]) => PromiseLike<any>
+      ? T[KK]
+      : T[KK] extends (...args: infer A) => infer R
+      ? (...args: A) => Promise<R>
+      : T[KK]
+  };
+
+  export interface IConnectionObject<Methods extends ConnectionMethods> {
+    promise: Promise<AsyncMethodReturns<Methods>>;
+    destroy: () => {};
+  }
+
+  export interface IConnectionOptions {
+    methods?: ConnectionMethods;
+    timeout?: number;
+  }
+
+  export interface IParentConnectionOptions extends IConnectionOptions {
+    parentOrigin?: string;
+  }
+
+  export interface PenpalStatic {
+    connectToParent<Methods extends ConnectionMethods = any>(
+      options?: IParentConnectionOptions,
+    ): // tslint:disable-next-line: no-unnecessary-generics
+    IConnectionObject<Methods>;
+
+    ERR_CONNECTION_DESTROYED: ERR_CONNECTION_DESTROYED;
+    ERR_NOT_IN_IFRAME: ERR_NOT_IN_IFRAME;
+  }
+
+  const Penpal: PenpalStatic;
+  export default Penpal;
+}
