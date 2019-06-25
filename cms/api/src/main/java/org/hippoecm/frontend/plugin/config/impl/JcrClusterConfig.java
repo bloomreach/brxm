@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -42,7 +42,6 @@ import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.JcrEventListener;
-import org.hippoecm.frontend.model.map.JcrMap;
 import org.hippoecm.frontend.model.map.JcrValueList;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.config.ClusterConfigEvent;
@@ -53,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig {
-    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(JcrClusterConfig.class);
 
     private static final int DEFAULT_TYPE = PropertyType.STRING;
@@ -92,7 +91,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                 next = null;
                 return result;
             }
-            throw new IllegalArgumentException("No more entries in set");
+            throw new NoSuchElementException("No more entries in set");
         }
 
         public void remove() {
@@ -102,7 +101,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     class PluginList extends AbstractList<IPluginConfig> implements Serializable {
-        private static final long serialVersionUID = 1L;
 
         private List<String> plugins;
 
@@ -111,11 +109,11 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         }
 
         List<String> loadPlugins() {
-            List<String> plugins = new LinkedList<String>();
+            final List<String> plugins = new LinkedList<>();
             try {
-                NodeIterator nodes = getNode().getNodes();
+                final NodeIterator nodes = getNode().getNodes();
                 while (nodes.hasNext()) {
-                    Node node = nodes.nextNode();
+                    final Node node = nodes.nextNode();
                     if (node.isNodeType(FrontendNodeType.NT_PLUGIN)) {
                         plugins.add(getPluginName(node));
                     }
@@ -150,22 +148,22 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         public void add(int index, IPluginConfig element) {
             if (index <= size()) {
                 try {
-                    Node node = getNode();
+                    final Node node = getNode();
                     String name = element.getName();
-                    if (name.indexOf('[') > 0) {
-                        name = name.substring(0, name.indexOf('['));
-                    }
-                    Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
-                    JcrMap map = new JcrMap(new JcrNodeModel(child));
-                    for (Map.Entry<String, Object> entry : element.entrySet()) {
-                        Object value = unwrap(entry.getValue());
-                        map.put(entry.getKey(), value);
+
+                    final int snsIndex = name.indexOf('[');
+                    if (snsIndex > 0) {
+                        name = name.substring(0, snsIndex);
                     }
 
+                    final Node child = node.addNode(name, FrontendNodeType.NT_PLUGIN);
+
                     if (node.getPrimaryNodeType().hasOrderableChildNodes() && (index < (size() - 1))) {
-                        Node previous = getNode(index);
-                        node.orderBefore(child.getName() + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""),
-                                previous.getName() + (previous.getIndex() > 1 ? "[" + previous.getIndex() + "]" : ""));
+                        final Node previous = getNode(index);
+                        if (previous != null) {
+                            node.orderBefore(child.getName() + (child.getIndex() > 1 ? "[" + child.getIndex() + "]" : ""),
+                                    previous.getName() + (previous.getIndex() > 1 ? "[" + previous.getIndex() + "]" : ""));
+                        }
                     }
 
                     notifyObservers();
@@ -215,7 +213,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
 
         @SuppressWarnings("unchecked")
         void notifyObservers() {
-            EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<IEvent<IClusterConfig>>();
+            final EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<>();
             processChanges(coll);
             if (coll.size() > 0) {
                 IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
@@ -292,16 +290,16 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     public void setPlugins(List<IPluginConfig> plugins) {
-        Set<String> newNames = new TreeSet<String>();
+        final Set<String> newNames = new TreeSet<>();
         for (IPluginConfig config : plugins) {
             newNames.add(config.getName());
         }
 
         // clean up
-        Set<String> oldNames = new TreeSet<String>();
-        Iterator<IPluginConfig> iter = configs.iterator();
+        final Set<String> oldNames = new TreeSet<>();
+        final Iterator<IPluginConfig> iter = configs.iterator();
         while (iter.hasNext()) {
-            IPluginConfig config = iter.next();
+            final IPluginConfig config = iter.next();
             if (!newNames.contains(config.getName())) {
                 iter.remove();
             } else {
@@ -319,7 +317,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         // reorder
         if (plugins.size() >= 2) {
             try {
-                Node node = getNodeModel().getNode();
+                final Node node = getNodeModel().getNode();
                 for (int i = plugins.size() - 2; i >= 0; i--) {
                     node.orderBefore(plugins.get(i).getName(), plugins.get(i + 1).getName());
                 }
@@ -366,21 +364,21 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     }
 
     private List<String> getList(String key) {
-        return new JcrValueList<String>(new JcrPropertyModel<String>(getNodeModel().getItemModel().getPath() + "/"
-                + key), PropertyType.STRING);
+        return new JcrValueList<>(new JcrPropertyModel<String>(getNodeModel().getItemModel().getPath() + "/" + key),
+                PropertyType.STRING);
     }
 
     @Override
     public List<PropertyDescriptor> getPropertyDescriptors() {
-        Node node = getNodeModel().getObject();
-        List<String> properties = getList(FrontendNodeType.FRONTEND_PROPERTIES);
-        List<PropertyDescriptor> descriptors = new ArrayList<>(properties.size());
+        final Node node = getNodeModel().getObject();
+        final List<String> properties = getList(FrontendNodeType.FRONTEND_PROPERTIES);
+        final List<PropertyDescriptor> descriptors = new ArrayList<>(properties.size());
         for (String name : properties) {
             int type = DEFAULT_TYPE;
             boolean multiple = DEFAULT_MULTIPLICITY;
             try {
                 if (node.hasProperty(name)) {
-                    Property prototype = node.getProperty(name);
+                    final Property prototype = node.getProperty(name);
                     type = prototype.getType();
                     multiple = prototype.isMultiple();
                 }
@@ -392,7 +390,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
         return descriptors;
     }
 
-    String getPluginName(Node node) throws RepositoryException {
+    String getPluginName(Node node) {
         return wrapConfig(node).getName();
     }
 
@@ -412,17 +410,15 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
     @SuppressWarnings("unchecked")
     @Override
     public void startObservation() {
-        IObservationContext obContext = getObservationContext();
-        String path = getNodeModel().getItemModel().getPath();
-        int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
+        final IObservationContext obContext = getObservationContext();
+        final String path = getNodeModel().getItemModel().getPath();
+        final int events = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED
                 | Event.PROPERTY_REMOVED;
         listener = new JcrEventListener(obContext, events, path, true, null, null) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onEvent(EventIterator events) {
-                IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
-                EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<IEvent<IClusterConfig>>();
+                final IObservationContext<IClusterConfig> obContext = (IObservationContext<IClusterConfig>) getObservationContext();
+                final EventCollection<IEvent<IClusterConfig>> coll = new EventCollection<>();
                 while (events.hasNext()) {
                     configs.process(events.nextEvent(), coll);
                 }
