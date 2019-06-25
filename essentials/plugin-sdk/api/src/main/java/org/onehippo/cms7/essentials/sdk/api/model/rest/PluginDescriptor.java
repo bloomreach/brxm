@@ -242,7 +242,7 @@ public class PluginDescriptor implements Serializable {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Vendor {
+    public static class Vendor implements Serializable {
         private String name;
         private String url;
         private String logo;
@@ -273,7 +273,7 @@ public class PluginDescriptor implements Serializable {
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Dependency {
+    public static class Dependency implements Serializable{
         private String pluginId;
         @JsonIgnore private InstallState minStateForInstalling = InstallState.INSTALLING;
 
