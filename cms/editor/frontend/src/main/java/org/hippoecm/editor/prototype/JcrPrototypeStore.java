@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -33,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(JcrPrototypeStore.class);
 
@@ -46,12 +45,12 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
             return null;
         }
         if (prototypes == null) {
-            prototypes = new HashMap<String, JcrNodeModel>();
+            prototypes = new HashMap<>();
         }
         JcrNodeModel result = prototypes.get(name);
         if (result == null) {
             try {
-                Node node = lookupConfigNode(name, draft);
+                final Node node = lookupConfigNode(name, draft);
                 if (node != null) {
                     result = new JcrNodeModel(node);
                     prototypes.put(name, result);
@@ -70,11 +69,11 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
         }
 
         try {
-            String path = getLocation(name);
-            Session session = getJcrSession();
+            final String path = getLocation(name);
+            final Session session = getJcrSession();
             Node handle;
-            String parentPath = path.substring(0, path.lastIndexOf('/'));
-            Node parent = session.getRootNode().getNode(parentPath.substring(1));
+            final String parentPath = path.substring(0, path.lastIndexOf('/'));
+            final Node parent = session.getRootNode().getNode(parentPath.substring(1));
             if (!session.itemExists(path)) {
                 handle = parent.addNode(HippoNodeType.HIPPO_PROTOTYPES, HippoNodeType.NT_PROTOTYPESET);
             } else {
@@ -107,12 +106,11 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
             return "internal";
         }
         try {
-            NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
+            final NamespaceRegistry nsReg = getJcrSession().getWorkspace().getNamespaceRegistry();
             return nsReg.getURI(prefix);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } catch (RepositoryException e) {
+            throw new IllegalStateException(e);
         }
-        return null;
     }
 
     private Session getJcrSession() {
@@ -122,16 +120,21 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
     private String getLocation(String type) {
         String prefix = "system";
         String subType = type;
-        if (type.indexOf(':') > 0) {
-            prefix = type.substring(0, type.indexOf(':'));
-            subType = type.substring(type.indexOf(':') + 1);
+
+        final int separatorIndex = type.indexOf(':');
+        if (separatorIndex > 0) {
+            prefix = type.substring(0, separatorIndex);
+            subType = type.substring(separatorIndex + 1);
         }
 
-        String uri = getUri(prefix);
-        String nsVersion = "_" + uri.substring(uri.lastIndexOf("/") + 1);
-        if (prefix.length() > nsVersion.length()
-                && nsVersion.equals(prefix.substring(prefix.length() - nsVersion.length()))) {
-            prefix = prefix.substring(0, prefix.length() - nsVersion.length());
+        final String uri = getUri(prefix);
+        final String nsVersion = "_" + uri.substring(uri.lastIndexOf('/') + 1);
+
+        final int prefixLength = prefix.length();
+        final int nsVersionLength = nsVersion.length();
+
+        if (prefixLength > nsVersionLength && nsVersion.equals(prefix.substring(prefixLength - nsVersionLength))) {
+            prefix = prefix.substring(0, prefixLength - nsVersionLength);
         }
 
         return "/" + HippoNodeType.NAMESPACES_PATH + "/" + prefix + "/" + subType + "/"
@@ -139,21 +142,21 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
     }
 
     private Node lookupConfigNode(String type, boolean draft) throws RepositoryException {
-        HippoSession session = (HippoSession) getJcrSession();
-        String path = getLocation(type);
+        final HippoSession session = (HippoSession) getJcrSession();
+        final String path = getLocation(type);
         if (!session.itemExists(path) || !session.getItem(path).isNode()) {
             return null;
         }
-        NodeIterator iter = ((Node) session.getItem(path)).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
+        final NodeIterator iter = ((Node) session.getItem(path)).getNodes(HippoNodeType.HIPPO_PROTOTYPE);
 
         while (iter.hasNext()) {
-            Node node = iter.nextNode();
+            final Node node = iter.nextNode();
             if (draft) {
-                if (node.isNodeType("nt:unstructured")) {
+                if (node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
                     return node;
                 }
             } else {
-                if (!node.isNodeType("nt:unstructured")) {
+                if (!node.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
                     return node;
                 }
             }
