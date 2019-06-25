@@ -71,6 +71,8 @@
     <!-- end clustering support properties -->
     
     <buildNumber>${maven.build.timestamp}</buildNumber>
+
+    <sonar.skip>true</sonar.skip>
   </properties>
 
   <repositories>
