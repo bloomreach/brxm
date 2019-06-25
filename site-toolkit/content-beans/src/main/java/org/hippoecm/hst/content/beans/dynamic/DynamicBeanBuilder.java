@@ -268,7 +268,7 @@ public class DynamicBeanBuilder {
 
     private Class<?> getDelegateeClass(final String superMethodName) {
         if (METHOD_GET_HIPPO_HTML.equals(superMethodName)) {
-            if (parentBean.isAssignableFrom(HippoCompound.class) || parentBean.getSuperclass().isAssignableFrom(HippoCompound.class)) {
+            if (HippoCompound.class.isAssignableFrom(parentBean)) {
                 return HippoCompound.class;
             } else {
                 return HippoDocument.class;
