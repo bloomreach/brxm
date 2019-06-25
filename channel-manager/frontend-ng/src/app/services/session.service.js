@@ -15,10 +15,12 @@
  */
 
 class SessionService {
-  constructor(HstService) {
+  constructor($http, HstService, PathService) {
     'ngInject';
 
+    this.$http = $http;
     this.HstService = HstService;
+    this.PathService = PathService;
 
     this._canWrite = false;
     this._canManageChanges = false;
@@ -27,7 +29,12 @@ class SessionService {
     this._initCallbacks = {};
   }
 
-  initialize(channel) {
+  initializeContext(channelContextPath) {
+    const url = this.PathService.concatPaths(channelContextPath, '_cmssessioncontext');
+    return this.$http.get(url);
+  }
+
+  initializeState(channel) {
     return this.HstService.initializeSession(channel)
       .then((privileges) => {
         if (privileges) {

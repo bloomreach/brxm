@@ -20,7 +20,6 @@ class RightSidePanelCtrl {
   constructor(
     $element,
     $mdConstant,
-    $state,
     $transitions,
     $window,
     SidePanelService,
@@ -30,7 +29,6 @@ class RightSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
-    this.$state = $state;
     this.$transitions = $transitions;
     this.$window = $window;
 
@@ -64,7 +62,7 @@ class RightSidePanelCtrl {
   }
 
   close() {
-    this.$state.go('hippo-cm.channel');
+    this.RightSidePanelService.close();
   }
 
   onResize(newWidth) {

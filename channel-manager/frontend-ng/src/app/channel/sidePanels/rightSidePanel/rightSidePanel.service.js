@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,20 @@
 const LOADING_TIMEOUT_MS = 1000;
 
 class RightSidePanelService {
-  constructor($timeout) {
+  constructor($state, $timeout) {
     'ngInject';
 
+    this.$state = $state;
     this.$timeout = $timeout;
     this.loadingPromise = null;
 
     this.stopLoading();
     this.clearTitle();
     this.clearContext();
+  }
+
+  close() {
+    return this.$state.go('hippo-cm.channel');
   }
 
   isLoading() {

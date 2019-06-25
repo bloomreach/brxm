@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,11 +86,11 @@ describe('RightSidePanel', () => {
     expect($ctrl.isLoading()).toBe(false);
   });
 
-  it('goes to state hippo-cm.channel when closed', () => {
-    spyOn($state, 'go');
+  it('closes right side panel', () => {
+    spyOn(RightSidePanelService, 'close');
     $ctrl.close();
 
-    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
+    expect(RightSidePanelService.close).toHaveBeenCalled();
   });
 
   it('knows the title', () => {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,30 @@
 class ComponentCatalogService {
   constructor(
     $log,
+    ConfigService,
     ContainerService,
+    EditComponentService,
     FeedbackService,
     HippoIframeService,
     MaskService,
     OverlayService,
     PageStructureService,
+    RightSidePanelService,
     SidePanelService,
   ) {
     'ngInject';
 
     this.$log = $log;
 
+    this.ConfigService = ConfigService;
+    this.EditComponentService = EditComponentService;
     this.ContainerService = ContainerService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
+    this.RightSidePanelService = RightSidePanelService;
     this.SidePanelService = SidePanelService;
   }
 
@@ -84,14 +90,26 @@ class ComponentCatalogService {
   }
 
   _handleContainerClick(event, container) {
-    const containerOverlayElement = event.target;
-
-    if (!container.isDisabled()) {
-      this.ContainerService.addComponent(this.selectedComponent, containerOverlayElement);
-      delete this.selectedComponent;
-    } else {
-      // If container is disabled dont do anything
+    if (container.isDisabled()) {
       event.stopPropagation();
+      return;
+    }
+
+    this._addComponent(container.getId());
+  }
+
+  async _addComponent(containerId) {
+    if (!this.ConfigService.relevancePresent) {
+      await this.RightSidePanelService.close();
+    }
+
+    const container = this.PageStructureService.getContainerById(containerId);
+    const componentId = await this.ContainerService.addComponent(this.selectedComponent, container);
+    delete this.selectedComponent;
+
+    if (!this.ConfigService.relevancePresent) {
+      const component = this.PageStructureService.getComponentById(componentId);
+      this.EditComponentService.startEditing(component);
     }
   }
 }

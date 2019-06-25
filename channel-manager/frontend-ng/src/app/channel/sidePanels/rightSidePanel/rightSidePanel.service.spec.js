@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
  */
 
 describe('RightSidePanelService', () => {
+  let $state;
   let $timeout;
   let RightSidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel');
 
-    inject((_$timeout_, _RightSidePanelService_) => {
+    inject((_$state_, _$timeout_, _RightSidePanelService_) => {
+      $state = _$state_;
       $timeout = _$timeout_;
       RightSidePanelService = _RightSidePanelService_;
     });
@@ -99,5 +101,12 @@ describe('RightSidePanelService', () => {
 
     RightSidePanelService.clearContext();
     expect(RightSidePanelService.getContext()).toEqual('');
+  });
+
+  it('goes to state hippo-cm.channel when closed', () => {
+    spyOn($state, 'go');
+    RightSidePanelService.close();
+
+    expect($state.go).toHaveBeenCalledWith('hippo-cm.channel');
   });
 });

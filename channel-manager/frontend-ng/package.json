@@ -67,7 +67,7 @@
     "angular-ui-tree": "2.22.6",
     "emittery": "0.4.1",
     "es6-shim": "0.35.3",
-    "jquery": "3.3.1",
+    "jquery": "3.4.1",
     "moment-timezone": "0.5.14",
     "mutation-summary": "0.1.1",
     "ng-device-detector": "4.0.3",
@@ -77,7 +77,7 @@
     "throttle-debounce": "2.0.1"
   },
   "devDependencies": {
-    "@bloomreach/frontend-build": "10.0.1",
+    "@bloomreach/frontend-build": "10.0.3",
     "angular-mocks": "1.6.9",
     "babel-plugin-transform-async-to-promises": "0.8.8",
     "string-replace-loader": "2.1.1"
