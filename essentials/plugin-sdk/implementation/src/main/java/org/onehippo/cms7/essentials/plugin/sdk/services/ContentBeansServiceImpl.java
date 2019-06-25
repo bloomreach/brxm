@@ -168,38 +168,46 @@ public class ContentBeansServiceImpl implements ContentBeansService {
             final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
 
             for (EssentialsGeneratedMethod method : generatedMethods) {
-                final String internalName = method.getInternalName();
-                if (properties.contains(internalName)) {
-                    continue;
-                }
-                if (internalName.equals(EssentialConst.RELATEDDOCS_DOCS)) {
-                    // check if we have mixin:
-                    if (bean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
-                        log.info("Skipping deletion of {}, mixin type", internalName);
-                        continue;
-                    }
-                }
-                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path, method.getMethodDeclaration());
-                final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
-                final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-                final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
-                final String methodName = method.getMethodName();
-                if (!allowClassUpdate) {
-                    logClassModificationDisabled(path, methodName, feedback);
-                } else if (allowMethodUpdate) {
-                    log.info("@Missing declaration for: {}. Method will be deleted", internalName);
-                    final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
-                    if (deleted) {
-                        logMethodDeleted(path, methodName, feedback);
-                    } else {
-                        final String message = String.format("Failed to delete method '%s' from bean '%s'.", methodName,
-                                path);
-                        feedback.addError(message);
-                    }
-                } else {
-                    logMethodModificationDisabled(path, methodName, feedback);
-                }
+                cleanupMethod(feedback, bean, path, properties, method);
             }
+        }
+    }
+
+    private void cleanupMethod(final UserFeedback feedback, final HippoContentBean bean, final Path path, 
+                               final Set<String> properties, final EssentialsGeneratedMethod method) {
+        
+        final String internalName = method.getInternalName();
+        if (properties.contains(internalName)) {
+            return;
+        }
+        if (internalName.equals(EssentialConst.RELATEDDOCS_DOCS)) {
+            // check if we have mixin:
+            if (bean.getContentType().getAggregatedTypes().contains(RELATED_MIXIN)) {
+                log.info("Skipping deletion of {}, mixin type", internalName);
+                return;
+            }
+        }
+        final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path,
+                method.getMethodDeclaration());
+        final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+        final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+        final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
+        final String methodName = method.getMethodName();
+        
+        if (!allowClassUpdate) {
+            logClassModificationDisabled(path, methodName, feedback);
+        } else if (allowMethodUpdate) {
+            log.info("@Missing declaration for: {}. Method will be deleted", internalName);
+            final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
+            if (deleted) {
+                logMethodDeleted(path, methodName, feedback);
+            } else {
+                final String message = String.format("Failed to delete method '%s' from bean '%s'.", methodName,
+                        path);
+                feedback.addError(message);
+            }
+        } else {
+            logMethodModificationDisabled(path, methodName, feedback);
         }
     }
 
@@ -403,7 +411,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         final List<HippoContentProperty> properties = bean.getProperties();
         for (HippoContentProperty property : properties) {
             final String name = property.getName();
-            if (!hasChange(name, existing, beanPath, property.isMultiple(), feedback)) {
+            if (!hasMethodChange(name, existing, beanPath, property.isMultiple(), feedback)) {
                 continue;
             }
             String type = property.getType();
@@ -478,9 +486,10 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
         final Path imageSetBeanPath = getBeanPathForImageSet(imageSetClassName);
         final List<HippoContentChildNode> children = bean.getChildren();
+        
         for (HippoContentChildNode child : children) {
             final String name = child.getName();
-            if (!hasChange(name, existing, beanPath, child.isMultiple(), feedback)) {
+            if (!hasMethodChange(name, existing, beanPath, child.isMultiple(), feedback)) {
                 continue;
             }
             final String type = child.getType();
@@ -490,6 +499,7 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                 log.error("Missing type for node, cannot create method {}", child.getName());
                 continue;
             }
+            
             final boolean multiple = child.isMultiple();
             String methodName;
             switch (type) {
@@ -534,32 +544,42 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                     logMethodCreated(beanPath, methodName, feedback);
                     break;
                 default:
-                    // check if project type is used:
-                    final String prefix = child.getPrefix();
-                    if (prefix.equals(settingsService.getSettings().getProjectNamespace())) {
-                        final Map<String, Path> existingBeans = findBeans();
-                        for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
-                            final Path myBeanPath = entry.getValue();
-                            final HippoEssentialsGeneratedObject a =
-                                    JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
-                            if (a != null && a.getInternalName().equals(type)) {
-                                final String className = JavaSourceUtils.getClassName(myBeanPath);
-                                methodName = GlobalUtils.createMethodName(name);
-                                final String importPath = JavaSourceUtils.getImportName(myBeanPath);
-                                JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName,
-                                        name, multiple);
-                                logMethodCreated(beanPath, methodName, feedback);
-                                return;
-                            }
-                        }
+                    if (otherType(beanPath, feedback, child, name, type, multiple)) {
+                        return;
                     }
-                    final String message = String.format("TODO: Beanwriter: Failed to create getter for node type: %s",
-                            type);
-                    JavaSourceUtils.addClassJavaDoc(beanPath, message);
-                    log.warn(message);
                     break;
             }
         }
+    }
+
+    private boolean otherType(final Path beanPath, final UserFeedback feedback, final HippoContentChildNode child, 
+                              final String name, final String type, final boolean multiple) {
+        
+        final String methodName;
+        // check if project type is used:
+        final String prefix = child.getPrefix();
+        if (prefix.equals(settingsService.getSettings().getProjectNamespace())) {
+            final Map<String, Path> existingBeans = findBeans();
+            for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
+                final Path myBeanPath = entry.getValue();
+                final HippoEssentialsGeneratedObject a =
+                        JavaSourceUtils.getHippoGeneratedAnnotation(myBeanPath);
+                if (a != null && a.getInternalName().equals(type)) {
+                    final String className = JavaSourceUtils.getClassName(myBeanPath);
+                    methodName = GlobalUtils.createMethodName(name);
+                    final String importPath = JavaSourceUtils.getImportName(myBeanPath);
+                    JavaSourceUtils.addBeanMethodInternalType(beanPath, className, importPath, methodName,
+                            name, multiple);
+                    logMethodCreated(beanPath, methodName, feedback);
+                    return true;
+                }
+            }
+        }
+        final String message = String.format("TODO: Beanwriter: Failed to create getter for node type: %s",
+                type);
+        JavaSourceUtils.addClassJavaDoc(beanPath, message);
+        log.warn(message);
+        return false;
     }
 
     @Override
@@ -655,53 +675,62 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
         log.info("Converting existing image beans to new type: {}", newReturnType);
         for (Map.Entry<String, Path> entry : existingBeans.entrySet()) {
-            // check if image type and skip if so:
-            final Path path = entry.getValue();
-            if (imageTypePaths.contains(path)) {
-                continue;
-            }
+            convertImageBeans(feedback, imageTypes, imageTypePaths, newReturnType, entry);
+        }
+    }
 
-            final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
-            final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
-            final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
+    private void convertImageBeans(final UserFeedback feedback, final Map<String, String> imageTypes, 
+                                   final Set<Path> imageTypePaths, final String newReturnType, 
+                                   final Map.Entry<String, Path> entry) {
+        
+        // check if image type and skip if so:
+        final Path path = entry.getValue();
+        if (imageTypePaths.contains(path)) {
+            return;
+        }
 
-            for (EssentialsGeneratedMethod m : generatedMethods) {
-                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path, m.getMethodDeclaration());
-                final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+        final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
+        final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
+        final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+        final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
 
-                final Type type = m.getMethodDeclaration().getReturnType2();
-                if (type.isSimpleType()) {
-                    final SimpleType simpleType = (SimpleType) type;
-                    final String returnType = simpleType.getName().getFullyQualifiedName();
-                    // check if image type and different than new return type
-                    if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
-                        log.info("Found image type: {}", returnType);
-                        if (!allowClassUpdate) {
-                            logClassModificationDisabled(path, m.getMethodName(), feedback);
-                        } else if (allowMethodUpdate) {
-                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
-                        } else {
-                            logMethodModificationDisabled(path, m.getMethodName(), feedback);
-                        }
+        for (EssentialsGeneratedMethod m : generatedMethods) {
+            final HippoEssentialsGeneratedObject annotation = 
+                    JavaSourceUtils.getHippoEssentialsAnnotation(path, m.getMethodDeclaration());
+            final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+
+            final Type type = m.getMethodDeclaration().getReturnType2();
+            if (type.isSimpleType()) {
+                final SimpleType simpleType = (SimpleType) type;
+                final String returnType = simpleType.getName().getFullyQualifiedName();
+                // check if image type and different than new return type
+                if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
+                    log.info("Found image type: {}", returnType);
+                    if (!allowClassUpdate) {
+                        logClassModificationDisabled(path, m.getMethodName(), feedback);
+                    } else if (allowMethodUpdate) {
+                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
+                    } else {
+                        logMethodModificationDisabled(path, m.getMethodName(), feedback);
                     }
-                } else if (JavaSourceUtils.getParameterizedType(type) != null) {
-                    final String returnType = JavaSourceUtils.getParameterizedType(type);
-                    if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
-                        log.info("Found image type: {}", returnType);
-                        if (!allowClassUpdate) {
-                            logClassModificationDisabled(path, m.getMethodName(), feedback);
-                        } else if (allowMethodUpdate) {
-                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
-                        }
+                }
+            } else if (JavaSourceUtils.getParameterizedType(type) != null) {
+                final String returnType = JavaSourceUtils.getParameterizedType(type);
+                if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
+                    log.info("Found image type: {}", returnType);
+                    if (!allowClassUpdate) {
+                        logClassModificationDisabled(path, m.getMethodName(), feedback);
+                    } else if (allowMethodUpdate) {
+                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
                     }
                 }
             }
         }
     }
 
-
-    private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, final String importStatement, final UserFeedback feedback) {
+    private void updateImageMethod(final Path path, final String oldReturnType, final String newReturnType, 
+                                   final String importStatement, final UserFeedback feedback) {
+        
         final CompilationUnit deleteUnit = JavaSourceUtils.getCompilationUnit(path);
         final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(path);
         final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
@@ -715,51 +744,60 @@ public class ContentBeansServiceImpl implements ContentBeansService {
                 if (type.isSimpleType()) {
                     final SimpleType simpleType = (SimpleType) type;
                     final String returnTypeName = simpleType.getName().getFullyQualifiedName();
-                    final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
-                    if (method == null) {
-                        return super.visit(node);
-                    }
-                    if (returnTypeName.equals(oldReturnType)) {
-                        node.delete();
-                        deletedMethods.put(method.getMethodName(), method);
+                    if (processMethod(node, methodName, returnTypeName)) {
                         return super.visit(node);
                     }
                 } else if (JavaSourceUtils.getParameterizedType(type) != null) {
                     final String returnTypeName = JavaSourceUtils.getParameterizedType(type);
-                    final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
-                    if (method == null) {
+                    if (processMethod(node, methodName, returnTypeName)) {
                         return super.visit(node);
                     }
-                    if (returnTypeName == null) {
-                        return super.visit(node);
-                    }
-                    if (returnTypeName.equals(oldReturnType)) {
-                        node.delete();
-                        deletedMethods.put(method.getMethodName(), method);
-                        return super.visit(node);
-                    }
-
                 }
                 return super.visit(node);
             }
-        });
-        if (deletedMethods.size() > 0) {
-            final AST deleteAst = deleteUnit.getAST();
-            final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
-            GlobalUtils.writeToFile(deletedSource, path);
-            for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
-                final EssentialsGeneratedMethod oldMethod = entry.getValue();
-                // Add replacement methods:
-                if (newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_CLASS) || newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)) {
-                    JavaSourceUtils.addBeanMethodHippoImageSet(path, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
-                } else {
-                    JavaSourceUtils.addBeanMethodInternalImageSet(path, newReturnType, importStatement, oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+
+            private boolean processMethod(final MethodDeclaration node, final String methodName, final String returnTypeName) {
+                final EssentialsGeneratedMethod method = JavaSourceUtils.extractMethod(methodName, generatedMethods);
+                if (method == null) {
+                    return true;
                 }
-                logMethodModified(path, oldMethod.getMethodName(), feedback);
+                if (returnTypeName.equals(oldReturnType)) {
+                    node.delete();
+                    deletedMethods.put(method.getMethodName(), method);
+                    return true;
+                }
+                return false;
             }
+        });
+        
+        if (!deletedMethods.isEmpty()) {
+            deleteMethods(path, newReturnType, importStatement, feedback, deleteUnit, deletedMethods);
         }
     }
 
+    private void deleteMethods(final Path path, final String newReturnType, final String importStatement, 
+                               final UserFeedback feedback, final CompilationUnit deleteUnit, 
+                               final Map<String, EssentialsGeneratedMethod> deletedMethods) {
+        
+        final AST deleteAst = deleteUnit.getAST();
+        final String deletedSource = JavaSourceUtils.rewrite(deleteUnit, deleteAst);
+        GlobalUtils.writeToFile(deletedSource, path);
+        
+        for (Map.Entry<String, EssentialsGeneratedMethod> entry : deletedMethods.entrySet()) {
+            final EssentialsGeneratedMethod oldMethod = entry.getValue();
+            // Add replacement methods:
+            if (newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_CLASS) 
+                    || newReturnType.equals(HIPPO_GALLERY_IMAGE_SET_BEAN)) {
+                JavaSourceUtils.addBeanMethodHippoImageSet(path, oldMethod.getMethodName(), oldMethod.getInternalName(), 
+                        oldMethod.isMultiType());
+            } else {
+                JavaSourceUtils.addBeanMethodInternalImageSet(path, newReturnType, importStatement, 
+                        oldMethod.getMethodName(), oldMethod.getInternalName(), oldMethod.isMultiType());
+            }
+            
+            logMethodModified(path, oldMethod.getMethodName(), feedback);
+        }
+    }
 
     /**
      * Create a bean for giving parent bean path
@@ -789,7 +827,9 @@ public class ContentBeansServiceImpl implements ContentBeansService {
     }
 
 
-    private boolean hasChange(final String name, final Collection<String> existing, final Path beanPath, final boolean multiple, final UserFeedback feedback) {
+    private boolean hasMethodChange(final String name, final Collection<String> existing, final Path beanPath,
+                                    final boolean multiple, final UserFeedback feedback) {
+        
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
@@ -798,32 +838,41 @@ public class ContentBeansServiceImpl implements ContentBeansService {
 
             final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
             for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
-                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(beanPath, generatedMethod.getMethodDeclaration());
+                final HippoEssentialsGeneratedObject annotation = 
+                        JavaSourceUtils.getHippoEssentialsAnnotation(beanPath, generatedMethod.getMethodDeclaration());
                 final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
                 final String internalName = generatedMethod.getInternalName();
                 if (name.equals(internalName)) {
                     // check if single/multiple  changed:
                     if (generatedMethod.isMultiType() != multiple) {
-                        log.debug("Property changed (single/multiple): trying to update method '{}' of bean '{}'.",
-                                generatedMethod.getMethodName(), beanPath);
-                        if (!allowClassUpdate) {
-                            logClassModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
-                            return false;
-                        }
-                        if (allowMethodUpdate) {
-                            log.info("Property changed (single/multiple): {}", internalName);
-                            return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
-                        } else {
-                            logMethodModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
-                            return false;
-                        }
+                        return checkGeneratedMethod(beanPath, feedback, allowClassUpdate, generatedMethod, allowMethodUpdate, internalName);
                     }
-                    // TODO: check check if signature changed:
                 }
             }
             return false;
         }
+
         return true;
+    }
+
+    private boolean checkGeneratedMethod(final Path beanPath, final UserFeedback feedback, final boolean allowClassUpdate, 
+                          final EssentialsGeneratedMethod generatedMethod, final boolean allowMethodUpdate, 
+                          final String internalName) {
+        
+        log.debug("Property changed (single/multiple): trying to update method '{}' of bean '{}'.",
+                generatedMethod.getMethodName(), beanPath);
+        if (!allowClassUpdate) {
+            logClassModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
+            return false;
+        }
+        if (allowMethodUpdate) {
+            log.info("Property changed (single/multiple): {}", internalName);
+            return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
+        } else {
+            logMethodModificationDisabled(beanPath, generatedMethod.getMethodName(), feedback);
+            return false;
+        }
+        // TODO: check check if signature changed
     }
 
     private String getBaseSupertype() {

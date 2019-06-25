@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -47,27 +46,27 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.cms7.essentials.sdk.api.model.rest.UserFeedback;
 import org.onehippo.cms7.essentials.sdk.api.service.ContentTypeService;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("taxonomyplugin")
 public class TaxonomyResource {
 
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
+    
     private static final String HIPPOTAXONOMY_TAXONOMY = "hippotaxonomy:taxonomy";
     private static final String HIPPOTAXONOMY_LOCALES = "hippotaxonomy:locales";
     private static final String HIPPOTAXONOMY_MIXIN = "hippotaxonomy:classifiable";
     private static final String TAXONOMY_FIELD_MARKER = "essentials-taxonomy-name";
+    private static final String TAXONOMIES_PATH = "/content/taxonomies";
+    
     private static final StringCodec codec = new StringCodecFactory.NameEncoding();
-    private static final Logger log = LoggerFactory.getLogger(TaxonomyResource.class);
 
     private final JcrService jcrService;
     private final ContentTypeService contentTypeService;
@@ -226,7 +225,7 @@ public class TaxonomyResource {
 
         final String message = changedDocuments.isEmpty()
                 ? "No taxonomy fields were added"
-                : "Added field(s) to following documents: " + changedDocuments.stream().collect(Collectors.joining(", "));
+                : "Added field(s) to following documents: " + String.join(", ", changedDocuments);
         return feedback.addSuccess(message);
     }
 
@@ -248,7 +247,7 @@ public class TaxonomyResource {
         Node taxonomiesNode = null;
         try {
             if (hasTaxonomyContainer(session)) {
-                taxonomiesNode = session.getNode("/content/taxonomies");
+                taxonomiesNode = session.getNode(TAXONOMIES_PATH);
             } else if (session.itemExists("/content")) {
                 final Node contentNode = session.getNode("/content");
                 taxonomiesNode = contentNode.addNode("taxonomies", "hippotaxonomy:container");
@@ -282,10 +281,10 @@ public class TaxonomyResource {
 
     private boolean hasTaxonomyContainer(final Session session) {
         try {
-            return session.itemExists("/content/taxonomies")
-                    && session.getNode("/content/taxonomies").getPrimaryNodeType().getName().equals("hippotaxonomy:container");
+            return session.itemExists(TAXONOMIES_PATH)
+                    && session.getNode(TAXONOMIES_PATH).getPrimaryNodeType().getName().equals("hippotaxonomy:container");
         } catch (RepositoryException e) {
-            log.error("Error: {}", e);
+            log.error("Error: ", e);
         }
         return false;
     }
