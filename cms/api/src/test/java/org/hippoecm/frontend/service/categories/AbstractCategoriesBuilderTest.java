@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,44 @@
 
 package org.hippoecm.frontend.service.categories;
 
-import org.hippoecm.repository.HippoStdNodeType;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.util.JcrConstants.NT_FROZEN_NODE;
+
 public class AbstractCategoriesBuilderTest {
 
-    @Test()
-    public void node() throws Exception {
-        MockNode folder = new MockNode("test");
-        folder.setPrimaryType(HippoStdNodeType.NT_FOLDER);
-        AbstractCategoriesBuilder builder = new AbstractCategoriesBuilder() {
+    private AbstractCategoriesBuilder categoriesBuilder;
+
+    @Before
+    public void setUp() {
+        categoriesBuilder = new AbstractCategoriesBuilder() {
             @Override
             public String[] build() {
                 return new String[0];
             }
         };
-        builder.node(folder);
+    }
+
+    @Test()
+    public void testFrozenNode() {
+        final MockNode notFrozenNode = new MockNode("not-frozen");
+        final MockNode frozenNode = new MockNode("frozen", NT_FROZEN_NODE);
+
+        assertTrue(categoriesBuilder.isFrozenNode(frozenNode));
+        assertFalse(categoriesBuilder.isFrozenNode(notFrozenNode));
+    }
+
+    @Test()
+    public void testHandleNode() {
+        final MockNode notHandleNode = new MockNode("not-handle");
+        final MockNode handleNode = new MockNode("handle", NT_HANDLE);
+
+        assertTrue(categoriesBuilder.isHandle(handleNode));
+        assertFalse(categoriesBuilder.isHandle(notHandleNode));
     }
 }
