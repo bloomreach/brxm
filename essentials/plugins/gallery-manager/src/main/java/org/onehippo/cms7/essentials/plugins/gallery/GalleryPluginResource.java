@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -374,6 +374,7 @@ public class GalleryPluginResource {
         processingNode.setProperty("height", payload.getHeight());
         processingNode.setProperty("width", payload.getWidth());
         processingNode.setProperty("upscaling", payload.isUpscaling());
+        processingNode.setProperty("cropping", payload.isCropping());
         processingNode.setProperty("optimize", payload.getOptimize());
         processingNode.setProperty("compression", payload.getCompression());
     }
@@ -455,6 +456,7 @@ public class GalleryPluginResource {
                     model.setHeight(HippoNodeUtils.getLongProperty(processorVariant, "height", 0L).intValue());
                     model.setWidth(HippoNodeUtils.getLongProperty(processorVariant, "width", 0L).intValue());
                     model.setUpscaling(HippoNodeUtils.getBooleanProperty(processorVariant, "upscaling"));
+                    model.setCropping(HippoNodeUtils.getBooleanProperty(processorVariant, "cropping"));
                     model.setOptimize(HippoNodeUtils.getStringProperty(processorVariant, "optimize", "quality"));
                     model.setCompression(HippoNodeUtils.getDoubleProperty(processorVariant, "compression", 1D));
                 }
