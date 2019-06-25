@@ -86,7 +86,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                     log.warn("The 'content/gallery' node is not found, the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
                     galleryTypes = new String[]{GALLERY_IMAGESET_NODETYPE};
                 } else {
-                    galleryTypes = gallery.getProperty(HIPPOSTD_GALLERYTYPE);
+                    galleryTypes = gallery.getMultipleProperty(HIPPOSTD_GALLERYTYPE);
                 }
             } catch (ObjectBeanManagerException e) {
                 log.warn("Failed to get the gallery type(s), the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
@@ -283,6 +283,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     @Override
     protected void addBeanMethodHippoResource(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoResource(methodName, propertyName, multiple);
+    }
+
+    @Override
+    protected void addBeanMethodContentBlocks(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+        builder.addBeanMethodContentBlocks(methodName, propertyName, multiple);
     }
 
     @Override
