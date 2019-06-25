@@ -60,6 +60,7 @@ export interface ChildApi {
   getConfig?: () => ChildConfig;
   getNavItems?: () => NavItem[];
   getSites?: () => Site[];
+  getSelectedSite?: () => number;
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
@@ -71,6 +72,7 @@ export interface ChildPromisedApi {
   getConfig?: () => Promise<ChildConfig>;
   getNavItems?: () => Promise<NavItem[]>;
   getSites?: () => Promise<Site[]>;
+  getSelectedSite?: () => Promise<number>;
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
