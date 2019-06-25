@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,14 +56,13 @@ import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
  */
 public class ListDataTable<T> extends DataTable<T, String> {
 
-    private static final long serialVersionUID = 1L;
+    private final TableDefinition definition;
+    private final IDataProvider<T> provider;
+    private final TableSelectionListener<T> selectionListener;
 
     private IPluginContext context;
     private Map<Item<T>, IObserver> observers;
     private Set<Item<T>> dirty;
-    private TableDefinition definition;
-    private TableSelectionListener<T> selectionListener;
-    private final IDataProvider<T> provider;
     private boolean scrollSelectedIntoView = false;
     private boolean scrollSelectedTopAlign = false;
 
@@ -116,8 +115,6 @@ public class ListDataTable<T> extends DataTable<T, String> {
         addBottomToolbar(new ListNavigationToolBar(this, pagingDefinition));
 
         setItemReuseStrategy(new ManagedReuseStrategy() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void destroyItem(Item item) {
                 ListDataTable.this.destroyItem(item);
@@ -195,7 +192,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
                 IModel<T> model = provider.model(iter.next());
                 visibleModels.add(model);
             }
-            for (Item item : dirty) {
+            for (Item<T> item : dirty) {
                 if (!visibleModels.contains(item.getModel())) {
                     target.add(this);
                     break;
@@ -241,8 +238,6 @@ public class ListDataTable<T> extends DataTable<T, String> {
         item.setOutputMarkupId(true);
 
         item.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String load() {
                 IModel selected = ListDataTable.this.getDefaultModel();
@@ -276,8 +271,6 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
     protected IObserver newObserver(final Item<T> item, final IModel<T> model) {
         return new IObserver<IObservable>() {
-            private static final long serialVersionUID = 1L;
-
             public IObservable getObservable() {
                 return (IObservable) model;
             }
@@ -289,11 +282,9 @@ public class ListDataTable<T> extends DataTable<T, String> {
     }
 
     protected void destroyItem(Item item) {
-        if (context != null) {
-            if (observers.containsKey(item)) {
-                IObserver observer = observers.remove(item);
-                context.unregisterService(observer, IObserver.class.getName());
-            }
+        if (context != null && observers.containsKey(item)) {
+            IObserver observer = observers.remove(item);
+            context.unregisterService(observer, IObserver.class.getName());
         }
     }
 
