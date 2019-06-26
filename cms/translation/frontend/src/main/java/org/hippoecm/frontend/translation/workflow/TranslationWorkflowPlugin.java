@@ -98,14 +98,10 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public final class TranslationWorkflowPlugin extends RenderPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     private static Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
     private final IModel<Boolean> canTranslateModel;
 
     private final class LanguageModel extends LoadableDetachableModel<String> {
-        private static final long serialVersionUID = 1L;
-
         @Override
         protected String load() {
             WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
@@ -156,7 +152,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             try {
                 return ((TranslatedFolder) obj).node.isSame(node);
             } catch (RepositoryException e) {
-                throw new RuntimeException("could not determine whether nodes are equivalent", e);
+                throw new IllegalStateException("could not determine whether nodes are equivalent", e);
             }
         }
 
@@ -165,14 +161,13 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             try {
                 return node.getPath().hashCode();
             } catch (RepositoryException e) {
-                throw new RuntimeException("could not determine path of node", e);
+                throw new IllegalStateException("could not determine path of node", e);
             }
         }
     }
 
     private final class AvailableLocaleProvider implements IDataProvider<HippoLocale> {
         private final ILocaleProvider localeProvider;
-        private static final long serialVersionUID = 1L;
         private transient List<HippoLocale> availableLocales;
 
         private AvailableLocaleProvider(ILocaleProvider localeProvider) {
@@ -184,12 +179,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             for (String language : getAvailableLanguages()) {
                 availableLocales.add(localeProvider.getLocale(language));
             }
-            Collections.sort(availableLocales, new Comparator<HippoLocale>() {
-                @Override
-                public int compare(HippoLocale o1, HippoLocale o2) {
-                    return o1.getDisplayName(getLocale()).compareTo(o2.getDisplayName(getLocale()));
-                }
-            });
+            availableLocales.sort(Comparator.comparing(o -> o.getDisplayName(getLocale())));
         }
 
         @Override
@@ -228,17 +218,16 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
     }
 
     private final class TranslationAction extends StdWorkflow<TranslationWorkflow> {
-        private static final long serialVersionUID = 1L;
 
         private final String language;
         private final IModel<String> languageModel;
         private final IModel<HippoLocale> localeModel;
 
-        public String name;
-        public String url;
+        private String name;
+        private String url;
         boolean autoTranslateContent;
 
-        public List<FolderTranslation> folders;
+        private List<FolderTranslation> folders;
         private final IModel<String> title;
 
         private TranslationAction(String id, IModel<String> name, IModel<HippoLocale> localeModel, String language, IModel<String> languageModel) {
@@ -286,10 +275,10 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             }
         }
 
-        private String executeAvailableTransaction() throws Exception {
-            IBrowseService<JcrNodeModel> browser = getBrowserService();
+        private String executeAvailableTransaction() {
+            final IBrowseService<IModel<Node>> browser = getBrowserService();
             if (browser != null) {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
+                final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
                 if (wdm != null) {
                     Node node;
                     try {
@@ -314,16 +303,17 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             return null;
         }
 
-        protected String executeNonAvailableTranslation(TranslationWorkflow workflow) throws Exception {
+        protected String executeNonAvailableTranslation(TranslationWorkflow workflow)
+                throws WorkflowException, RepositoryException, RemoteException {
             javax.jcr.Session session = UserSession.get().getJcrSession();
 
             // Find the index of the deepest translated folder.
             // The caller is to guarantee that at least the root node is translated (hence starting i at 1),
             // and that there is a document handle node at the end of the list (representing the to-be-translated document).
             final int indexOfDeepestFolder = folders.size() - 1;
-            int i;
-            for (i = 1; i < indexOfDeepestFolder && !folders.get(i).isEditable(); i++) {
-                // do nothing
+            int i = 1;
+            while(i < indexOfDeepestFolder && !folders.get(i).isEditable()) {
+                i++;
             }
 
             int indexOfDeepestTranslatedFolder = i - 1;
@@ -365,7 +355,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     defaultWorkflow.setDisplayName(displayName);
                 }
             } finally {
-                IBrowseService<JcrNodeModel> browser = getBrowserService();
+                final IBrowseService<IModel<Node>> browser = getBrowserService();
                 if (browser != null) {
                     browser.browse(new JcrNodeModel(session.getNodeByIdentifier(translatedDocument.getIdentity())));
                 } else {
@@ -385,9 +375,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
          *   2) the case where the deepest existing folder already has a child node with the same localized name
          *
          * An exception of type {@link WorkflowSNSException} will be thrown if there is an SNS issue.
-         *
-         * @param session
-         * @param indexOfDeepestTranslatedFolder
          */
         private void avoidSameNameSiblings(final Session session, final int indexOfDeepestTranslatedFolder)
                 throws WorkflowSNSException, RepositoryException {
@@ -459,7 +446,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     final Serializable available = workflow.hints().get("translate");
                     if (available != null && (Boolean) available) {
                         autoTranslateModel = new PropertyModel<>(TranslationAction.this, "autoTranslateContent");
-                        autoTranslateContent = false; // default when translation is available
                     }
                 }
 
@@ -539,7 +525,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 if (sourceTranslatedFolder == null) {
                     break;
                 }
-                assert sourceSibling != null;
 
                 // walk up the target tree until a translated ancestor is found
                 targetTranslatedFolder = targetTranslatedFolder.getParent();
@@ -586,12 +571,11 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 }
                 return true;
             } catch (RepositoryException e) {
-                log.error("Could not persist folder translation for " + id + " due to " + e.getMessage());
+                log.error("Could not persist folder translation for {}", id, e);
             } catch (RemoteException e) {
-                log.error(
-                        "Could not contact repository when storing folder translation for " + id + " due to " + e.getMessage());
+                log.error("Could not contact repository when storing folder translation for {}", id, e);
             } catch (WorkflowException e) {
-                log.error("Workflow prevented storing translation for " + id + " due to " + e.getMessage());
+                log.error("Workflow prevented storing translation for {}", id, e);
             }
             return false;
         }
@@ -602,9 +586,9 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    final static String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
+    private static final String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
 
-    private final DocumentTranslationProvider translationProvider;
+    private DocumentTranslationProvider translationProvider;
 
     public TranslationWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -659,8 +643,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         add(new EmptyPanel("content"));
 
         add(new MenuDescription() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public Component getLabel() {
                 Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
@@ -675,7 +657,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             public MarkupContainer getContent() {
                 Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
                 fragment.add(new DataView<HippoLocale>("languages", new AvailableLocaleProvider(localeProvider)) {
-                    private static final long serialVersionUID = 1L;
 
                     {
                         onPopulate();
@@ -756,9 +737,10 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 ILocaleProvider.class);
     }
 
-    protected IBrowseService getBrowserService() {
-        return getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse"),
-                IBrowseService.class);
+    @SuppressWarnings("unchecked")
+    protected IBrowseService<IModel<Node>> getBrowserService() {
+        final String serviceId = getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse");
+        return getPluginContext().getService(serviceId, IBrowseService.class);
     }
 
     protected StringCodec getLocalizeCodec() {
@@ -774,26 +756,26 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         super.onDetach();
     }
 
-    private static void collectFields(String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) throws StoreException {
+    private static void collectFields(String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) {
         try {
-            JcrTypeStore jcrTypeStore = new JcrTypeStore();
-            ITypeDescriptor type = jcrTypeStore.load(nodeType);
+            final JcrTypeStore jcrTypeStore = new JcrTypeStore();
+            final ITypeDescriptor type = jcrTypeStore.load(nodeType);
             for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
-                IFieldDescriptor fieldDescriptor = field.getValue();
+                final IFieldDescriptor fieldDescriptor = field.getValue();
                 if ("*".equals(fieldDescriptor.getPath())) {
                     continue;
                 }
-                ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
+                final ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
+                final String fieldPath = fieldPath(relPath, fieldDescriptor);
                 if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
-                    richTextFields.add(
-                            (relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath() + "/" + HippoStdNodeType.HIPPOSTD_CONTENT);
+                    final String propertyPath = fieldPath + '/' + HippoStdNodeType.HIPPOSTD_CONTENT;
+                    richTextFields.add(propertyPath);
                 } else if (fieldType.getName().equals("Text")) {
-                    plainTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                    plainTextFields.add(fieldPath);
                 } else if (fieldType.getName().equals("Html")) {
-                    richTextFields.add((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath());
+                    richTextFields.add(fieldPath);
                 } else if (fieldType.isNode()) {
-                    collectFields((relPath != null ? relPath + "/" : "") + fieldDescriptor.getPath(),
-                            fieldType.getType(), plainTextFields, richTextFields);
+                    collectFields(fieldPath, fieldType.getType(), plainTextFields, richTextFields);
                 }
             }
         } catch (StoreException ex) {
@@ -801,4 +783,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    private static String fieldPath(final String basePath, final IFieldDescriptor fieldDescriptor) {
+        return (basePath != null ? basePath + '/' : "") + fieldDescriptor.getPath();
+    }
 }
