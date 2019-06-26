@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class SubDirectoriesWatcher implements FileSystemListener {
     private static final Logger log = LoggerFactory.getLogger(SubDirectoriesWatcher.class);
 
     private static final DirectoryStream.Filter<Path> DIRECTORY_FILTER = path ->
-            Files.isDirectory(path) && !(path.endsWith(Constants.HCM_CONFIG_FOLDER) || path.endsWith(Constants.HCM_CONTENT_FOLDER));
+            path.toFile().isDirectory() && !(path.endsWith(Constants.HCM_CONFIG_FOLDER) || path.endsWith(Constants.HCM_CONTENT_FOLDER));
 
     private final Path rootDirectory;
     private final PathChangesListener listener;
@@ -171,7 +171,7 @@ class SubDirectoriesWatcher implements FileSystemListener {
             if (log.isDebugEnabled()) {
                 log.warn("Exception by listener '{}' while processing paths {}", listener, changedPaths, e);
             } else {
-                log.warn("Exception by listener '{}' while processing paths {} : {}", listener, changedPaths, e.toString());
+                log.warn("Exception by listener '{}' while processing paths {} : {}", listener, changedPaths, e.getMessage());
             }
         }
     }
@@ -185,7 +185,7 @@ class SubDirectoriesWatcher implements FileSystemListener {
         }
     }
 
-    static interface PathChangesListener {
+    interface PathChangesListener {
 
         /**
          * Called when one or more directories in one of the watched subdirectories start changing.
