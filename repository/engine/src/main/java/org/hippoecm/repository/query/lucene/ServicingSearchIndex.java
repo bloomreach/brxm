@@ -330,43 +330,20 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         if (indexingConfiguration != null) {
             return indexingConfiguration;
         }
-        String configName = getIndexingConfiguration();
-        if (configName == null) {
+
+        final InputStream configInputStream = getIndexingConfigurationInputStream();
+        if (configInputStream == null) {
             return null;
-        }
-        InputStream configInputStream;
-        if (configName.startsWith("file:/")) {
-            configName = RepoUtils.stripFileProtocol(configName);
-            File config = new File(configName);
-            log.info("Using indexing configuration: " + configName);
-            if (!config.exists()) {
-                log.warn("File does not exist: " + this.getIndexingConfiguration());
-                return null;
-            } else if (!config.canRead()) {
-                log.warn("Cannot read file: " + this.getIndexingConfiguration());
-                return null;
-            }
-            try {
-                configInputStream = new FileInputStream(config);
-            } catch (FileNotFoundException ex) {
-                log.warn("indexing configuration not found: " + configName);
-                return null;
-            }
-        } else {
-            log.info("Using resource repository indexing_configuration: " + configName);
-            configInputStream = ServicingSearchIndex.class.getResourceAsStream(configName);
-            if (configInputStream == null) {
-                log.warn("indexing configuration not found: " + getClass().getName() + "/" + configName);
-                return null;
-            }
         }
 
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            final DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new IndexingConfigurationEntityResolver());
-            InputSource configurationInputSource = new InputSource(configInputStream);
+
+            final InputSource configurationInputSource = new InputSource(configInputStream);
             indexingConfiguration = builder.parse(configurationInputSource).getDocumentElement();
         } catch (ParserConfigurationException e) {
             log.warn("Unable to create XML parser", e);
@@ -374,6 +351,40 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
         }
         return indexingConfiguration;
+    }
+
+    private InputStream getIndexingConfigurationInputStream() {
+        String configName = getIndexingConfiguration();
+        if (configName == null) {
+            return null;
+        }
+
+        if (configName.startsWith("file:/")) {
+            configName = RepoUtils.stripFileProtocol(configName);
+            File config = new File(configName);
+            log.info("Using indexing configuration: {}", configName);
+            if (!config.exists()) {
+                log.warn("File does not exist: {}", this.getIndexingConfiguration());
+                return null;
+            } else if (!config.canRead()) {
+                log.warn("Cannot read file: {}", this.getIndexingConfiguration());
+                return null;
+            }
+            try {
+                return new FileInputStream(config);
+            } catch (FileNotFoundException ex) {
+                log.warn("indexing configuration not found: {}", configName);
+                return null;
+            }
+        } else {
+            log.info("Using resource repository indexing_configuration: {}", configName);
+            final InputStream configInputStream = ServicingSearchIndex.class.getResourceAsStream(configName);
+            if (configInputStream == null) {
+                log.warn("indexing configuration not found: {}/{}", getClass().getName(), configName);
+                return null;
+            }
+        }
+        return null;
     }
 
     @Override
