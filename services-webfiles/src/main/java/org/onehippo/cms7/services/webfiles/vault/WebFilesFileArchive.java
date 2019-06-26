@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -31,8 +32,6 @@ import org.apache.jackrabbit.vault.fs.config.MetaInf;
 import org.apache.jackrabbit.vault.fs.config.VaultSettings;
 import org.apache.jackrabbit.vault.util.Constants;
 import org.apache.jackrabbit.vault.util.FileInputSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.onehippo.cms7.services.webfiles.vault.FileNameComparatorUtils.FILE_BASE_NAME_COMPARATOR;
 
@@ -166,16 +165,16 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
         public Collection<Entry> getChildren() {
             final File[] files = file.listFiles(includedFiles);
             if (files == null || files.length == 0) {
-                return null;
+                return Collections.emptyList();
             }
             Arrays.sort(files, FILE_BASE_NAME_COMPARATOR);
             final List<Entry> children = new ArrayList<>(files.length);
-            for (File file: files) {
-                if (file.isFile() && file.length() > maxFileLengthBytes) {
-                    logSizeExceededWarning(file, maxFileLengthBytes);
+            for (File child : files) {
+                if (child.isFile() && child.length() > maxFileLengthBytes) {
+                    logSizeExceededWarning(child, maxFileLengthBytes);
                     continue;
                 }
-                children.add(new FileEntry(file, includedFiles, maxFileLengthBytes));
+                children.add(new FileEntry(child, includedFiles, maxFileLengthBytes));
             }
             return children;
         }
