@@ -42,7 +42,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
 
       iconClass = 'hippo-translated-folder-without-flag';
       countryClass = '';
-      if ((locale === null || locale === undefined) && path[i].lang !== undefined) {
+      if (locale === null && path[i].lang !== undefined) {
         candidate = this.locales[path[i].lang];
         if (candidate !== null && candidate !== undefined) {
           locale = candidate;
@@ -59,7 +59,7 @@ Hippo.Translation.PathRenderer = Ext.extend(Ext.util.Observable, {
       text += Ext.util.Format.htmlEncode(path[i].name);
     }
     text += '</div>';
-    if (locale !== null && locale !== undefined) {
+    if (locale !== null) {
       text += '<div class="hippo-translation-language">'
         + this.resources.language + ': ' + locale.name
         + '</div>';
