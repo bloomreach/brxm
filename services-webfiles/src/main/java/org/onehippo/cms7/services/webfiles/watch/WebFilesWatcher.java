@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,16 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.services.autoreload.AutoReloadService;
@@ -50,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWatcher.PathChangesListener {
 
-    public static Logger log = LoggerFactory.getLogger(WebFilesWatcher.class);
+    static Logger log = LoggerFactory.getLogger(WebFilesWatcher.class);
 
     private final WebFilesWatcherConfig config;
     private WebFilesService service;
@@ -81,7 +73,7 @@ public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWa
                     if (log.isDebugEnabled()) {
                         log.warn("Failed to import directory '{}'", webFilesRootDirectory, e);
                     } else {
-                        log.warn("Failed to import directory '{}' : '{}'", webFilesRootDirectory, e.toString());
+                        log.warn("Failed to import directory '{}' : '{}'", webFilesRootDirectory, e.getMessage());
                     }
                     resetSilently(session);
                 }
@@ -94,7 +86,7 @@ public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWa
         if (projectBaseDir == null) {
             return null;
         }
-        if (config.getWatchedModules().size() > 0) {
+        if (!config.getWatchedModules().isEmpty()) {
             return observeFileSystem(projectBaseDir);
         } else {
             log.info("Watching web files is disabled: no web file modules configured to watch");
@@ -196,7 +188,7 @@ public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWa
                         changedPaths, e);
             } else {
                 log.info("Failed to reload web files from '{}' : '{}', resetting session and trying to reimport whole bundle(s)",
-                        changedPaths, e.toString());
+                        changedPaths, e.getMessage());
             }
             resetSilently(session);
             tryReimportBundles(watchedRootDir, changedPaths);
@@ -258,7 +250,7 @@ public class WebFilesWatcher implements WebFilesWatcherService, SubDirectoriesWa
         }
     }
 
-    public void shutdown() throws InterruptedException {
+    public void shutdown() {
         if (fileSystemObserver != null) {
             fileSystemObserver.shutdown();
         }
