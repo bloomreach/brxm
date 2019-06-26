@@ -112,7 +112,10 @@ public class WebFilesFileArchive extends AbstractWebFilesArchive {
         } else {
             File file = ((FileEntry) entry).file;
             if (file == null || !includedFiles.accept(file) || !file.isFile() || !file.canRead() || !file.exists()) {
-                throw new IOException(String.format("Can't read file '%s'", file.getPath()));
+                final String message = file == null
+                        ? "Can't read null file"
+                        : String.format("Can't read file '%s'", file.getPath());
+                throw new IOException(message);
             }
             return FileUtils.openInputStream(file);
         }
