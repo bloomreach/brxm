@@ -119,10 +119,11 @@ public class FileSystemWatcher implements FileSystemObserver, Runnable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2189")
     public void run() {
         try {
             log.info("Watch started");
-            while(true) {
+            while (true) {
                 processChanges();
             }
         } catch (ClosedWatchServiceException e) {
