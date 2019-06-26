@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.cms7.services.webfiles.util;
 
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.onehippo.cms7.services.webfiles.watch.WebFilesWatcherConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class WatchFilesUtils {
 
     private static final Logger log = LoggerFactory.getLogger(WatchFilesUtils.class);
@@ -33,11 +31,14 @@ public class WatchFilesUtils {
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
     public static final String WEB_FILES_LOCATION_IN_MODULE = "src/main/resources";
 
+    private WatchFilesUtils() {
+    }
+
     public static Path getProjectBaseDir() {
         final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
         if (projectBaseDir != null && !projectBaseDir.isEmpty()) {
             final Path baseDir = FileSystems.getDefault().getPath(projectBaseDir);
-            if (Files.isDirectory(baseDir)) {
+            if (baseDir.toFile().isDirectory()) {
                 return baseDir;
             } else {
                 log.warn("Watching web files is disabled: environment variable '{}' does not point to a directory", PROJECT_BASEDIR_PROPERTY);
@@ -55,7 +56,7 @@ public class WatchFilesUtils {
         for (String watchedModule : config.getWatchedModules()) {
             final Path webFilesModule = projectBaseDir.resolve(watchedModule);
             final Path webFilesDirectory = webFilesModule.resolve(WEB_FILES_LOCATION_IN_MODULE);
-            if (Files.isDirectory(webFilesDirectory)) {
+            if (webFilesDirectory.toFile().isDirectory()) {
                 webFilesDirectories.add(webFilesDirectory);
             } else {
                 log.warn("Cannot watch web files in module '{}': it does not contain directory '{}'",
