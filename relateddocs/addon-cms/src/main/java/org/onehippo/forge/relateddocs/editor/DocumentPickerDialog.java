@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,11 +27,9 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.editor.plugins.linkpicker.LinkPickerDialog;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -52,13 +50,12 @@ import org.slf4j.LoggerFactory;
 /**
  * @author vijaykiran
  */
-public class DocumentPickerDialog extends AbstractDialog<Node> {
-    private static final long serialVersionUID = 1L;
+public class DocumentPickerDialog extends Dialog<Node> {
 
-    private static final Logger log = LoggerFactory.getLogger(LinkPickerDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentPickerDialog.class);
     protected static final String CLUSTER_OPTIONS = "cluster.options";
 
-    private List<String> nodetypes = new ArrayList<String>();
+    private List<String> nodetypes = new ArrayList<>();
 
     protected final IPluginContext context;
     protected final IPluginConfig config;
@@ -74,8 +71,11 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
     private IModelReference<Node> folderModelReference;
     private IObserver folderModelObserver;
 
-    public DocumentPickerDialog(IPluginContext context, IPluginConfig config, IModel<Node> model, RelatedDocCollection collection) {
+    public DocumentPickerDialog(final IPluginContext context, final IPluginConfig config, final IModel<Node> model,
+                                final RelatedDocCollection collection) {
         super(model);
+        setTitle(new StringResourceModel("document.picker.dialog.title", this, null));
+        setSize(DialogConstants.LARGE);
 
         this.collection = collection;
 
@@ -94,6 +94,7 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
         }
 
         setOkEnabled(false);
+
         try {
             uuid = model.getObject().getIdentifier();
             if (uuid != null && !"".equals(uuid)) {
@@ -109,11 +110,7 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
         add(createContentPanel("content"));
     }
 
-    public IModel getTitle() {
-        return new StringResourceModel("document.picker.dialog.title", this, null);
-    }
-
-    protected boolean isValidSelection(IModel targetModel) {
+    protected boolean isValidSelection(final IModel targetModel) {
         boolean isLinkable;
         boolean validType = false;
 
@@ -122,7 +119,7 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
         }
 
         try {
-            Node targetNode = (Node) targetModel.getObject();
+            final Node targetNode = (Node) targetModel.getObject();
 
             Node testNode = targetNode;
             if (targetNode.isNodeType(HippoNodeType.NT_HANDLE) && targetNode.hasNode(targetNode.getName())) {
@@ -133,8 +130,8 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
                 validType = true;
             }
             if (nodetypes != null) {
-                for (int i = 0; i < nodetypes.size(); i++) {
-                    if (testNode.isNodeType(nodetypes.get(i))) {
+                for (String nodetype : nodetypes) {
+                    if (testNode.isNodeType(nodetype)) {
                         validType = true;
                         break;
                     }
@@ -143,8 +140,9 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
 
             isLinkable = targetNode.isNodeType("mix:referenceable");
             isLinkable = isLinkable
-                    && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT) && targetNode.getParent().isNodeType(
-                    HippoNodeType.NT_HANDLE));
+                    && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT)
+                    && targetNode.getParent().isNodeType(HippoNodeType.NT_HANDLE));
+
         } catch (RepositoryException e) {
             log.error(e.getMessage());
             error("Failed to determine validity of selection");
@@ -154,28 +152,27 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
         return validType && isLinkable;
     }
 
-    protected Component createContentPanel(String contentId) {
-        IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+    protected Component createContentPanel(final String contentId) {
+        final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        IClusterConfig template = pluginConfigService.getCluster("cms-pickers/documents");
+        final IClusterConfig template = pluginConfigService.getCluster("cms-pickers/documents");
         //TODO: is this ok? IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
         control = context.newCluster(template, null);
 
         control.start();
 
-        IClusterConfig clusterConfig = control.getClusterConfig();
-
+        final IClusterConfig clusterConfig = control.getClusterConfig();
         final String selectionModelServiceId = clusterConfig.getString("wicket.model");
         selectionModelReference = context.getService(selectionModelServiceId, IModelReference.class);
+
         context.registerService(selectionModelObserver = new IObserver() {
-            private static final long serialVersionUID = 1L;
 
             public IObservable getObservable() {
                 return selectionModelReference;
             }
 
             public void onEvent(Iterator events) {
-                setSelectedModel((JcrNodeModel) selectionModelReference.getModel());
+                setSelectedModel(selectionModelReference.getModel());
             }
 
         }, IObserver.class.getName());
@@ -251,7 +248,6 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
             log.error("Unable to get the UUID for the selected document", re);
         }
 
-
         collection.add(new RelatedDoc(selectedNodeModel));
 
     }
@@ -264,11 +260,5 @@ public class DocumentPickerDialog extends AbstractDialog<Node> {
             selectedNode.detach();
         }
     }
-
-    @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=850,height=445");
-    }
-
 }
 
