@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,24 @@ import java.util.Comparator;
 
 import org.apache.commons.io.FilenameUtils;
 
-public class FileNameComparatorUtils {
+class FileNameComparatorUtils {
 
     private FileNameComparatorUtils() {
-
     }
 
-    static final Comparator<File> FILE_BASE_NAME_COMPARATOR = new Comparator<File>() {
-        @Override
-        public int compare(final File f1, final File f2) {
-            final String fileName1 = f1.getName();
-            final String fileName2 = f2.getName();
-            return BASE_NAME_COMPARATOR.compare(fileName1, fileName2);
-
+    static final Comparator<String> BASE_NAME_COMPARATOR = (fileName1, fileName2) -> {
+        final String baseName1 = FilenameUtils.getBaseName(fileName1);
+        final String baseName2 = FilenameUtils.getBaseName(fileName2);
+        int compare = baseName1.compareTo(baseName2);
+        if (compare != 0) {
+            return compare;
         }
+        return FilenameUtils.getExtension(fileName1).compareTo(FilenameUtils.getExtension(fileName2));
     };
 
-    static final Comparator<String> BASE_NAME_COMPARATOR = new Comparator<String>() {
-        @Override
-        public int compare(final String fileName1, final String fileName2) {
-            final String baseName1 = FilenameUtils.getBaseName(fileName1);
-            final String baseName2 = FilenameUtils.getBaseName(fileName2);
-            int compare = baseName1.compareTo(baseName2);
-            if (compare != 0) {
-                return compare;
-            }
-            return FilenameUtils.getExtension(fileName1).compareTo(FilenameUtils.getExtension(fileName2));
-        }
+    static final Comparator<File> FILE_BASE_NAME_COMPARATOR = (file1, file2) -> {
+        final String fileName1 = file1.getName();
+        final String fileName2 = file2.getName();
+        return BASE_NAME_COMPARATOR.compare(fileName1, fileName2);
     };
-
-
 }
