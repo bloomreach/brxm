@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
     }
 
     @Override
-    protected void doInitialize(final Session session) throws RepositoryException {
+    protected void doInitialize(final Session session) {
         final GlobFileNameMatcher watchedFiles = new GlobFileNameMatcher();
         watchedFiles.includeFiles(config.getIncludedFiles());
         watchedFiles.excludeDirectories(config.getExcludedDirectories());
@@ -76,11 +76,7 @@ public class WebFilesServiceModule extends AbstractReconfigurableDaemonModule {
             HippoServiceRegistry.unregister(service, WebFilesService.class);
         }
         if (watcher != null) {
-            try {
-                watcher.shutdown();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            watcher.shutdown();
             HippoServiceRegistry.unregister(watcher, WebFilesWatcherService.class);
         }
     }
