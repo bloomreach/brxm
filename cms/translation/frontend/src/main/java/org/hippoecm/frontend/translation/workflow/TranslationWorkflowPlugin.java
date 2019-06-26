@@ -345,7 +345,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
             try {
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-                if (autoTranslateContent) {
+                if (autoTranslateContent && translatedVariant != null) {
                     Workflow translateWorkflow = manager.getWorkflow("translate", translatedVariant);
                     if (translateWorkflow instanceof TranslateWorkflow) {
                         Set<String> plainTextFields = new TreeSet<>();
