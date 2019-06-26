@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,17 +31,17 @@ public interface FileSystemObserver {
      * @param listener the listener to call when files or directories below the directory changes
      * @throws IOException when an I/O error occurs while registering the directory for observation
      */
-    public void registerDirectory(Path directory, FileSystemListener listener) throws IOException;
+    void registerDirectory(Path directory, FileSystemListener listener) throws IOException;
 
     /**
      * @return the root {@link java.nio.file.Path} directories which are registered via
      * {@link #registerDirectory(java.nio.file.Path, FileSystemListener)}
      */
-    public List<Path> getObservedRootDirectories();
+    List<Path> getObservedRootDirectories();
 
     /**
      * Closes resources used by this observer.
      */
-    public void shutdown();
+    void shutdown();
 
 }
