@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,13 @@ import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 
-/**
- * @version "$Id: EssentialsGeneratedMethod.java 173277 2013-08-09 10:06:29Z mmilicevic $"
- */
 public class EssentialsGeneratedMethod implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     private String methodName;
-    private Type returnType;
+    private transient Type returnType;
     private String internalName;
     private boolean multiType;
-    private MethodDeclaration methodDeclaration;
+    private transient MethodDeclaration methodDeclaration;
 
     public EssentialsGeneratedMethod(final MethodDeclaration methodDeclaration, final String methodName, final String internalName) {
         this.methodDeclaration = methodDeclaration;
@@ -51,12 +47,10 @@ public class EssentialsGeneratedMethod implements Serializable {
             } else if (type.isArrayType()) {
                 this.multiType = true;
             }
-
         }
     }
 
     public EssentialsGeneratedMethod() {
-
     }
 
     public MethodDeclaration getMethodDeclaration() {
