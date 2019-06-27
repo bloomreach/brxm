@@ -362,4 +362,3 @@ public final class AnnotationUtils {
     private AnnotationUtils() {
     }
 }
-
