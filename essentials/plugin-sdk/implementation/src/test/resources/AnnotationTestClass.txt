@@ -1,6 +1,6 @@
 package org.example.beans;
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@ package org.example.beans;
  */
 import java.util.Calendar;
 
-
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
-
 
 @Node(jcrType="myproject:newsdocument")
 public class NewsDocument extends HippoDocument {
@@ -49,7 +47,7 @@ public class NewsDocument extends HippoDocument {
 
     @HippoEssentialsGenerated(internalName = "myproject:title")
     public String getTitle() {
-        return getProperty(TITLE);
+        return getSingleProperty(TITLE);
     }
 
     /**
@@ -59,7 +57,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "myproject:date")
     public Calendar getDate() {
-        return getProperty(DATE);
+        return getSingleProperty(DATE);
     }
 
     /**
@@ -69,7 +67,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "myproject:introduction")
     public String getIntroduction() {
-        return getProperty(INTRODUCTION);
+        return getSingleProperty(INTRODUCTION);
     }
 
     /**
@@ -99,7 +97,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "myproject:location")
     public String getLocation() {
-        return getProperty(LOCATION);
+        return getSingleProperty(LOCATION);
     }
 
     /**
@@ -109,7 +107,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "myproject:author")
     public String getAuthor() {
-        return getProperty(AUTHOR);
+        return getSingleProperty(AUTHOR);
     }
 
     /**
@@ -119,13 +117,10 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "myproject:source")
     public String getSource() {
-        return getProperty(SOURCE);
+        return getSingleProperty(SOURCE);
     }
 
-
-      public void getMySource() {
-            // do nothing
-      }
-
+    public void getMySource() {
+          // do nothing
+    }
 }
-
