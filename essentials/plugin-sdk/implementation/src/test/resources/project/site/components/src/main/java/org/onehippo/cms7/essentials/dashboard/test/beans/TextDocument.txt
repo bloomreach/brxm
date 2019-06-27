@@ -19,7 +19,6 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType="hippoplugins:textdocument")
 public class TextDocument extends BaseDocument{
-    
 
     public String getSummary() {
         return getSingleProperty("hippoplugins:summary");
@@ -28,5 +27,4 @@ public class TextDocument extends BaseDocument{
     public HippoHtml getHtml(){
         return getHippoHtml("hippoplugins:body");    
     }
-
 }

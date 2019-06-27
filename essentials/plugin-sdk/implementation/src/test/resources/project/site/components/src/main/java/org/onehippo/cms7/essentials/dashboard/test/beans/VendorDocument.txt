@@ -19,9 +19,6 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
-/**
- * @version "$Id: VendorDocument.txt 173014 2013-08-07 09:50:50Z mmilicevic $"
- */
 @org.hippoecm.hst.content.beans.Node(jcrType = "hippoplugins:vendor")
 public class VendorDocument extends BaseDocument {
 
@@ -36,6 +33,4 @@ public class VendorDocument extends BaseDocument {
     public HippoGalleryImageSetBean getLogo() {
         return getLinkedBean("hippoplugins:logo", HippoGalleryImageSet.class);
     }
-
-
 }

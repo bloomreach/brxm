@@ -60,6 +60,4 @@ public class NewsDocument extends BaseDocument{
     public HippoGalleryImageSetBean getImage() {
         return getLinkedBean("hippoplugins:image", HippoGalleryImageSetBean.class);
     }
-
-
 }

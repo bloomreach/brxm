@@ -38,7 +38,6 @@ public class Blogpost extends HippoDocument implements Authors {
     public static final String AUTHORS = "{{namespace}}:authors";
     public static final String TAGS = "hippostd:tags";
 
-
    @HippoEssentialsGenerated(internalName = "{{namespace}}:publicationdate")
     public Calendar getPublicationDate() {
         return getSingleProperty(PUBLICATION_DATE);
@@ -56,7 +55,6 @@ public class Blogpost extends HippoDocument implements Authors {
         }
         return null;
     }
-
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getTitle() {

@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType = "hippoplugins:dependency")
 public class DependencyCompound extends BaseDocument {
 
-    private static Logger log = LoggerFactory.getLogger(DependencyCompound.class);
-
     public String getArtifactId() {
         return getSingleProperty("hippoplugins:artifactid");
     }
@@ -48,7 +46,6 @@ public class DependencyCompound extends BaseDocument {
     public String getDependencyType() {
         return getSingleProperty("hippoplugins:dependencytype");
     }
-
 
     public String getVersion() {
         return getSingleProperty("hippoplugins:version");
