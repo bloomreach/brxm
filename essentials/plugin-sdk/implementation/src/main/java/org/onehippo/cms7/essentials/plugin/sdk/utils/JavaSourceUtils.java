@@ -109,6 +109,8 @@ public final class JavaSourceUtils {
     private static final String GET_BEAN = "getBean";
     private static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
     private static final String ANNOTATION_ALREADY_EXISTS = "Annotation already exists: {}";
+    private static final String GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
+    
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -576,7 +578,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "HippoHtml", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoHtml", path, GET_CHILD_BEANS_BY_NAME, propertyName);
         } else {
             addSimpleMethod("getHippoHtml", path, methodName, propertyName, "HippoHtml");
         }
@@ -625,7 +627,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_BEAN, "HippoResourceBean", path, methodName, propertyName);
@@ -635,7 +637,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
@@ -645,7 +647,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodInternalType(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", className, path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_BEAN, className, path, methodName, propertyName);
