@@ -22,7 +22,7 @@ public class TextDocument extends BaseDocument{
     
 
     public String getSummary() {
-        return getProperty("hippoplugins:summary");
+        return getSingleProperty("hippoplugins:summary");
     }
     
     public HippoHtml getHtml(){

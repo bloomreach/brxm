@@ -24,15 +24,15 @@ public class BaseDocument extends HippoDocument {
     /*
     private static final String TITLE = "hippoplugins:title2";
     public String getTitle2() {
-            return getProperty(TITLE);
+        return getSingleProperty(TITLE);
     }
     */
 
     public String getTitle() {
-        return getProperty("hippoplugins:title");
+        return getSingleProperty("hippoplugins:title");
     }
 
     public String getDescription() {
-        return getProperty("hippoplugins:description");
+        return getSingleProperty("hippoplugins:description");
     }
 }

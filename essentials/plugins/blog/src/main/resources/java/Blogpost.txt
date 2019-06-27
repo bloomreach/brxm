@@ -41,12 +41,12 @@ public class Blogpost extends HippoDocument implements Authors {
 
    @HippoEssentialsGenerated(internalName = "{{namespace}}:publicationdate")
     public Calendar getPublicationDate() {
-        return getProperty(PUBLICATION_DATE);
+        return getSingleProperty(PUBLICATION_DATE);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:authornames")
     public String[] getAuthorNames() {
-        return getProperty(AUTHOR_NAMES);
+        return getMultipleProperty(AUTHOR_NAMES);
     }
 
     public String getAuthor() {
@@ -60,7 +60,7 @@ public class Blogpost extends HippoDocument implements Authors {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getTitle() {
-        return getProperty(TITLE);
+        return getSingleProperty(TITLE);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:content")
@@ -70,12 +70,12 @@ public class Blogpost extends HippoDocument implements Authors {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:introduction")
     public String getIntroduction() {
-        return getProperty(INTRODUCTION);
+        return getSingleProperty(INTRODUCTION);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:categories")
     public String[] getCategories() {
-        return getProperty(CATEGORIES);
+        return getMultipleProperty(CATEGORIES);
     }
 
     @Override

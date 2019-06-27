@@ -28,7 +28,7 @@ public class VersionDocument extends BaseDocument {
 
 
     public String getVersion() {
-        return getProperty("hippoplugins:version");
+        return getSingleProperty("hippoplugins:version");
     }
 
 

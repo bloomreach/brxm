@@ -27,12 +27,12 @@ public class Account extends HippoCompound {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:type")
     public String getType() {
-        return getProperty(TYPE);
+        return getSingleProperty(TYPE);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:link")
     public String getLink() {
-        return getProperty(LINK);
+        return getSingleProperty(LINK);
     }
 
 }

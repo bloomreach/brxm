@@ -41,11 +41,11 @@ public class NewsDocument extends BaseDocument{
     }
 
     public String getSummary() {
-        return getProperty("hippoplugins:summary");
+        return getSingleProperty("hippoplugins:summary");
     }
 
     public Calendar getDate() {
-        return getProperty("hippoplugins:date");
+        return getSingleProperty("hippoplugins:date");
     }
 
     public HippoHtml getHtml(){

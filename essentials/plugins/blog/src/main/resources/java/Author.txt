@@ -38,7 +38,7 @@ public class Author extends HippoDocument implements AuthorEntry {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:fullname")
     public String getFullName() {
-        return  getProperty(FULL_NAME);
+        return getSingleProperty(FULL_NAME);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:content")
@@ -48,7 +48,7 @@ public class Author extends HippoDocument implements AuthorEntry {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:role")
     public String getRole() {
-        return getProperty(ROLE);
+        return getSingleProperty(ROLE);
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:image")

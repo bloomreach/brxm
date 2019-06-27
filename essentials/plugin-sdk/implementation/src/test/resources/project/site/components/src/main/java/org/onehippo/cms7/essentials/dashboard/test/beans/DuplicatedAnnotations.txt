@@ -31,12 +31,12 @@ public class DuplicatedAnnotations extends HippoDocument {
 
 	@HippoEssentialsGenerated(internalName = "myproject:summary")
 	public String getSummary() {
-		return getProperty("myproject:summary");
+		return getSingleProperty("myproject:summary");
 	}
 
 	@HippoEssentialsGenerated(internalName = "myproject:title")
 	public String getTitle() {
-		return getProperty("myproject:title");
+		return getSingleProperty("myproject:title");
 	}
 
 	@HippoEssentialsGenerated(internalName = "myproject:body")

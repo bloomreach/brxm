@@ -25,7 +25,7 @@ public class FaqItem extends BaseDocument {
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:question")
     public String getQuestion() {
-        return getProperty("{{namespace}}:question");
+        return getSingleProperty("{{namespace}}:question");
     }
 
     @HippoEssentialsGenerated(internalName = "{{namespace}}:answer")

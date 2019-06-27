@@ -26,12 +26,11 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 public class VendorDocument extends BaseDocument {
 
     public String getUrl() {
-        return getProperty("hippoplugins:url");
-
+        return getSingleProperty("hippoplugins:url");
     }
 
     public String getVendorName() {
-        return getProperty("hippoplugins:name");
+        return getSingleProperty("hippoplugins:name");
     }
 
     public HippoGalleryImageSetBean getLogo() {

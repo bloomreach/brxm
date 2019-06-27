@@ -22,7 +22,7 @@ public final class SourceCodeTemplates {
             "  @HippoEssentialsGenerated(internalName = \"$internalName$\")\n" +
             "    public List<HippoBean> $methodName$() {\n" +
             "        final List<HippoBean> beans = new ArrayList<>();\n" +
-            "        final String[] items = getProperty(\"$internalName$\");\n" +
+            "        final String[] items = getMultipleProperty(\"$internalName$\");\n" +
             "        if (items == null) {\n" +
             "            return beans;\n" +
             "        }\n" +
@@ -38,7 +38,7 @@ public final class SourceCodeTemplates {
     public static final String TEMPLATE_DOCBASE = "class Docbase{ " +
             "  @HippoEssentialsGenerated(internalName = \"$internalName$\")\n" +
             "    public HippoBean $methodName$() {\n" +
-            "        final String item = getProperty(\"$internalName$\");\n" +
+            "        final String item = getSingleProperty(\"$internalName$\");\n" +
             "        if (item == null) {\n" +
             "            return null;\n" +
             "        }\n" +

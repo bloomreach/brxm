@@ -30,28 +30,28 @@ public class DependencyCompound extends BaseDocument {
     private static Logger log = LoggerFactory.getLogger(DependencyCompound.class);
 
     public String getArtifactId() {
-        return getProperty("hippoplugins:artifactid");
+        return getSingleProperty("hippoplugins:artifactid");
     }
 
     public String getGroupId() {
-        return getProperty("hippoplugins:groupid");
+        return getSingleProperty("hippoplugins:groupid");
     }
 
     public String getScope() {
-        return getProperty("hippoplugins:scope");
+        return getSingleProperty("hippoplugins:scope");
     }
 
     public String getProjectType() {
-        return getProperty("hippoplugins:projecttype");
+        return getSingleProperty("hippoplugins:projecttype");
     }
 
     public String getDependencyType() {
-        return getProperty("hippoplugins:dependencytype");
+        return getSingleProperty("hippoplugins:dependencytype");
     }
 
 
     public String getVersion() {
-        return getProperty("hippoplugins:version");
+        return getSingleProperty("hippoplugins:version");
     }
 
 }
