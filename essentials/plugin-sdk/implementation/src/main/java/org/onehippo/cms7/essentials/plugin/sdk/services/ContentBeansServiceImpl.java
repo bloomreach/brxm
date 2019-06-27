@@ -694,36 +694,54 @@ public class ContentBeansServiceImpl implements ContentBeansService {
         final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
         final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
 
-        for (EssentialsGeneratedMethod m : generatedMethods) {
+        for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
             final HippoEssentialsGeneratedObject annotation = 
-                    JavaSourceUtils.getHippoEssentialsAnnotation(path, m.getMethodDeclaration());
+                    JavaSourceUtils.getHippoEssentialsAnnotation(path, generatedMethod.getMethodDeclaration());
             final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
 
-            final Type type = m.getMethodDeclaration().getReturnType2();
+            final Type type = generatedMethod.getMethodDeclaration().getReturnType2();
             if (type.isSimpleType()) {
-                final SimpleType simpleType = (SimpleType) type;
-                final String returnType = simpleType.getName().getFullyQualifiedName();
-                // check if image type and different than new return type
-                if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
-                    log.info("Found image type: {}", returnType);
-                    if (!allowClassUpdate) {
-                        logClassModificationDisabled(path, m.getMethodName(), feedback);
-                    } else if (allowMethodUpdate) {
-                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
-                    } else {
-                        logMethodModificationDisabled(path, m.getMethodName(), feedback);
-                    }
-                }
+                convertSimpleTypeImageMethod(feedback, imageTypes, newReturnType, path, allowClassUpdate, 
+                        generatedMethod, allowMethodUpdate, (SimpleType) type);
             } else if (JavaSourceUtils.getParameterizedType(type) != null) {
-                final String returnType = JavaSourceUtils.getParameterizedType(type);
-                if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
-                    log.info("Found image type: {}", returnType);
-                    if (!allowClassUpdate) {
-                        logClassModificationDisabled(path, m.getMethodName(), feedback);
-                    } else if (allowMethodUpdate) {
-                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
-                    }
-                }
+                convertParameterizedImageMethod(feedback, imageTypes, newReturnType, path, allowClassUpdate, 
+                        generatedMethod, allowMethodUpdate, type);
+            }
+        }
+    }
+
+    private void convertSimpleTypeImageMethod(final UserFeedback feedback, final Map<String, String> imageTypes, 
+                                              final String newReturnType, final Path path, 
+                                              final boolean allowClassUpdate, final EssentialsGeneratedMethod method, 
+                                              final boolean allowMethodUpdate, final SimpleType type) {
+        
+        final String returnType = type.getName().getFullyQualifiedName();
+        // check if image type and different than new return type
+        if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
+            log.info("Found image type: {}", returnType);
+            if (!allowClassUpdate) {
+                logClassModificationDisabled(path, method.getMethodName(), feedback);
+            } else if (allowMethodUpdate) {
+                updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
+            } else {
+                logMethodModificationDisabled(path, method.getMethodName(), feedback);
+            }
+        }
+    }
+
+    private void convertParameterizedImageMethod(final UserFeedback feedback, final Map<String, String> imageTypes, 
+                                                 final String newReturnType, final Path path, 
+                                                 final boolean allowClassUpdate, 
+                                                 final EssentialsGeneratedMethod generatedMethod, 
+                                                 final boolean allowMethodUpdate, final Type type) {
+        
+        final String returnType = JavaSourceUtils.getParameterizedType(type);
+        if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
+            log.info("Found image type: {}", returnType);
+            if (!allowClassUpdate) {
+                logClassModificationDisabled(path, generatedMethod.getMethodName(), feedback);
+            } else if (allowMethodUpdate) {
+                updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType), feedback);
             }
         }
     }
