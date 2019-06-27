@@ -18,11 +18,10 @@
   <md-select aria-label="{{ ::'TOOLBAR_VIEW_ON_LABEL' | translate }}"
              class="md-no-underline"
              ng-disabled="$ctrl.disabled"
-             ng-model="$ctrl.selectedViewport"
-             ng-model-options="{trackBy: '$value.id'}"
-             ng-change="$ctrl.viewportChanged()">
-    <md-option ng-repeat="viewport in $ctrl.viewports track by viewport.id"
-               ng-value="{{::viewport}}">
+             ng-model="$ctrl.value"
+             ng-change="$ctrl.onChange()">
+    <md-option ng-repeat="viewport in $ctrl.values"
+               ng-value="viewport.id">
       <div layout="row"
            layout-align="start center">
         <md-icon md-svg-icon="{{ ::viewport.icon }}"></md-icon>
