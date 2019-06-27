@@ -128,7 +128,7 @@ public class EditorUtils {
             setPropertyFromDefaultValues(node, propertyDefinition);
         } else {
             try {
-                setPropertyFromPrototypeValues(node, propertyDefinition, prototypeNode);
+                setPropertyFromPrototypeValues(propertyDefinition, node, prototypeNode);
             } catch (PathNotFoundException ex) {
                 // Use the defaults values as a fallback
                 final String propertyName = propertyDefinition.getName();
@@ -144,8 +144,11 @@ public class EditorUtils {
         }
     }
 
-    private static void setPropertyFromPrototypeValues(final Node node,
-                                                       final PropertyDefinition propertyDefinition,
+    /**
+     * Parameters {@code node} and {@code prototypeNode} can be the same, so we have to save the property values prior
+     * to removing the property.
+     */
+    private static void setPropertyFromPrototypeValues(final PropertyDefinition propertyDefinition, final Node node,
                                                        final Node prototypeNode) throws RepositoryException {
         final String propertyName = propertyDefinition.getName();
         final Property prototypeNodeProperty = prototypeNode.getProperty(propertyName);
