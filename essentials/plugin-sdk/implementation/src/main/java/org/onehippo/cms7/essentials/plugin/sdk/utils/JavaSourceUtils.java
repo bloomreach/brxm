@@ -31,14 +31,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-
-import org.apache.commons.io.IOUtils;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.ArrayType;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.BooleanLiteral;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
+import org.eclipse.jdt.core.dom.MemberValuePair;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.dom.TextElement;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeLiteral;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
@@ -54,6 +84,10 @@ import org.onehippo.cms7.essentials.plugin.sdk.utils.code.ExistingMethodsVisitor
 import org.onehippo.cms7.essentials.plugin.sdk.utils.code.exc.EssentialsCodeCreationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 /**
  * Utility class for manipulating java source files.
@@ -75,6 +109,8 @@ public final class JavaSourceUtils {
     private static final String GET_BEAN = "getBean";
     private static final String HIPPO_GALLERY_IMAGE_SET = "HippoGalleryImageSet";
     private static final String ANNOTATION_ALREADY_EXISTS = "Annotation already exists: {}";
+    private static final String GET_CHILD_BEANS_BY_NAME = "getChildBeansByName";
+    
     private static Logger log = LoggerFactory.getLogger(JavaSourceUtils.class);
 
     private JavaSourceUtils() {
@@ -188,9 +224,8 @@ public final class JavaSourceUtils {
         if (Strings.isNullOrEmpty(myFileExtension)) {
             myFileExtension = EssentialConst.FILE_EXTENSION_JAVA;
         }
-        FileOutputStream outputStream = null;
-        try {
 
+        try {
             final Path clazzPath = createJavaSourcePath(sourceRootPath, className, packageName, myFileExtension);
             if (clazzPath.toFile().exists()) {
                 log.info("File already exists: {}", clazzPath);
@@ -210,15 +245,13 @@ public final class JavaSourceUtils {
             compilationUnit.types().add(td);
             final String code = compilationUnit.toString();
             final byte[] contentInBytes = code.getBytes();
-            outputStream = new FileOutputStream(file.toFile());
-            outputStream.write(contentInBytes);
-            log.info("Created java file: {}", file);
-            //log.debug("Code written: {}", code);
-            return file;
+            try (FileOutputStream outputStream = new FileOutputStream(file.toFile())) {
+                outputStream.write(contentInBytes);
+                log.info("Created java file: {}", file);
+                return file;
+            }
         } catch (IOException e) {
             log.error("Error creating class: [" + packageName + '.' + className + ']', e);
-        } finally {
-            IOUtils.closeQuietly(outputStream);
         }
 
         return null;
@@ -545,7 +578,7 @@ public final class JavaSourceUtils {
     public static void addBeanMethodHippoHtml(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addImport(path, List.class.getName());
-            addParameterizedMethod(methodName, "List", "HippoHtml", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoHtml", path, GET_CHILD_BEANS_BY_NAME, propertyName);
         } else {
             addSimpleMethod("getHippoHtml", path, methodName, propertyName, "HippoHtml");
         }
@@ -594,7 +627,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_BEAN, "HippoResourceBean", path, methodName, propertyName);
@@ -604,7 +637,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", HIPPO_GALLERY_IMAGE_SET, path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_LINKED_BEAN, HIPPO_GALLERY_IMAGE_SET, path, methodName, propertyName);
@@ -614,7 +647,7 @@ public final class JavaSourceUtils {
 
     public static void addBeanMethodInternalType(final Path path, final String className, final String importPath, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addParameterizedMethod(methodName, "List", className, path, "getChildBeansByName", propertyName);
+            addParameterizedMethod(methodName, "List", className, path, GET_CHILD_BEANS_BY_NAME, propertyName);
             addImport(path, List.class.getName());
         } else {
             addTwoArgumentsMethod(GET_BEAN, className, path, methodName, propertyName);
@@ -869,35 +902,40 @@ public final class JavaSourceUtils {
             }
             
             for (Object value : values) {
-                if (value instanceof MemberValuePair) {
-                    final MemberValuePair pair = (MemberValuePair) value;
-                    final SimpleName name = pair.getName();
-
-                    final String identifier = name.getIdentifier();
-                    if (identifier.equals("jcrType")) {
-                        final Expression literalValue = pair.getValue();
-                        if (literalValue instanceof StringLiteral) {
-                            final StringLiteral ex = (StringLiteral) literalValue;
-                            jcrType = ex.getLiteralValue();
-                        } else {
-                            log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", 
-                                    literalValue);
-                        }
-                    }
-                    if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
-                        final Expression literalValue = pair.getValue();
-                        if (literalValue instanceof StringLiteral) {
-                            final StringLiteral ex = (StringLiteral) literalValue;
-                            jcrType = ex.getLiteralValue();
-                        } else {
-                            log.warn("Couldn't resolve value for internalName: {}", literalValue);
-                        }
-                    }
-                }
+                jcrType = processModifierAnnotation(jcrType, value);
             }
         }
 
         log.debug("Found @Node jcrType={}", jcrType);
+        return jcrType;
+    }
+
+    private static String processModifierAnnotation(String jcrType, final Object value) {
+        if (value instanceof MemberValuePair) {
+            final MemberValuePair pair = (MemberValuePair) value;
+            final SimpleName name = pair.getName();
+
+            final String identifier = name.getIdentifier();
+            if (identifier.equals("jcrType")) {
+                final Expression literalValue = pair.getValue();
+                if (literalValue instanceof StringLiteral) {
+                    final StringLiteral ex = (StringLiteral) literalValue;
+                    jcrType = ex.getLiteralValue();
+                } else {
+                    log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", 
+                            literalValue);
+                }
+            }
+            if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
+                final Expression literalValue = pair.getValue();
+                if (literalValue instanceof StringLiteral) {
+                    final StringLiteral ex = (StringLiteral) literalValue;
+                    jcrType = ex.getLiteralValue();
+                } else {
+                    log.warn("Couldn't resolve value for internalName: {}", literalValue);
+                }
+            }
+        }
         return jcrType;
     }
 
@@ -942,14 +980,11 @@ public final class JavaSourceUtils {
         }
         
         for (Object modifier : modifiers) {
-            if (!(modifier instanceof NormalAnnotation)) {
+            if (skipAnnotation(modifier)) {
                 continue;
             }
+
             final NormalAnnotation annotation = (NormalAnnotation) modifier;
-            if (notAnEssentialsAnnotation(annotation)) {
-                continue;
-            }
-            
             final List<?> values = annotation.values();
             for (Object value : values) {
                 if (value instanceof MemberValuePair) {
@@ -967,6 +1002,14 @@ public final class JavaSourceUtils {
             }
         }
         return null;
+    }
+
+    private static boolean skipAnnotation(final Object modifier) {
+        if (!(modifier instanceof NormalAnnotation)) {
+            return true;
+        }
+        final NormalAnnotation annotation = (NormalAnnotation) modifier;
+        return notAnEssentialsAnnotation(annotation);
     }
 
     private static boolean notAnEssentialsAnnotation(final NormalAnnotation annotation) {

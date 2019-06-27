@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,20 +34,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Visits a java file and returns all methods we can annotate which are not annotated by
- * {@code HippoEssentialsGenerated} annotation,
+ * Visits a java file and returns all methods we can annotate which are not annotated by {@code
+ * HippoEssentialsGenerated} annotation,
  *
- * @version "$Id$"
  * @see HippoEssentialsGenerated
  */
 public class NoAnnotationMethodVisitor extends ASTVisitor {
 
-    private static Logger log = LoggerFactory.getLogger(NoAnnotationMethodVisitor.class);
+    private static final Logger log = LoggerFactory.getLogger(NoAnnotationMethodVisitor.class);
+    
     private final List<EssentialsGeneratedMethod> modifiableMethods = new ArrayList<>();
     private final Set<String> modifiableMethodsInternalNames = new HashSet<>();
 
     @Override
-    public boolean visit(MethodDeclaration node) {
+    public boolean visit(final MethodDeclaration node) {
         final List<?> modifiers = node.modifiers();
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
@@ -67,49 +67,53 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
     }
 
     private void processStatements(final MethodDeclaration node, final Iterable<?> statements) {
-        for (Object o : statements) {
-            if (o instanceof ReturnStatement) {
-                final ReturnStatement statement = (ReturnStatement) o;
-                final Expression e = statement.getExpression();
-                if (e instanceof MethodInvocation) {
-                    final MethodInvocation methodInvocation = (MethodInvocation) e;
+        for (Object statementObject : statements) {
+            if (statementObject instanceof ReturnStatement) {
+                final ReturnStatement statement = (ReturnStatement) statementObject;
+                final Expression expression = statement.getExpression();
+                if (expression instanceof MethodInvocation) {
+                    final MethodInvocation methodInvocation = (MethodInvocation) expression;
                     @SuppressWarnings("rawtypes")
                     final List arguments = methodInvocation.arguments();
                     if (arguments != null) {
-                        for (Object arg : arguments) {
-                            log.debug("arg {}", arg.getClass());
-                            if (arg instanceof StringLiteral) {
-                                final StringLiteral argument = (StringLiteral) arg;
-                                final String value = argument.getLiteralValue();
-                                log.debug("Found string argument {}", value);
-                                // check if namespaces property
-                                if (value.indexOf(':') != -1) {
-                                    modifiableMethods.add(new EssentialsGeneratedMethod(node, node.getName().getIdentifier(), value));
-                                    modifiableMethodsInternalNames.add(value);
-                                }
-                            } else {
-                                log.debug("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", arg.getClass());
-                                /*
-                                else if (arg instanceof SimpleName) {
-                                final SimpleName argument = (SimpleName) arg;
-                                final Object val = argument.resolveConstantExpressionValue();
-                                // TODO always null, upgrade to latest JDT and check if we can resolve this
-                                // @see org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils.getAnnotateMethods()
-                                log.debug("identifier {}", val);
-
-                                } else {
-                                log.warn("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", arg.getClass());
-                                log.debug("e {}", arg);
-                                }
-                            */
-
-                            }
+                        for (Object argumentObject : arguments) {
+                            processMethodInvocationArgument(node, argumentObject);
                         }
                     }
                 } else {
-                    log.debug("#NOT IMPLEMENTED PARSING OF: {}", e.getClass());
+                    log.debug("#NOT IMPLEMENTED PARSING OF: {}", expression.getClass());
                 }
             }
+        }
+    }
+
+    private void processMethodInvocationArgument(final MethodDeclaration node, final Object argumentObject) {
+        log.debug("arg {}", argumentObject.getClass());
+        
+        if (argumentObject instanceof StringLiteral) {
+            final StringLiteral argument = (StringLiteral) argumentObject;
+            final String value = argument.getLiteralValue();
+            log.debug("Found string argument {}", value);
+            // check if namespaces property
+            if (value.indexOf(':') != -1) {
+                modifiableMethods.add(new EssentialsGeneratedMethod(node, node.getName().getIdentifier(), value));
+                modifiableMethodsInternalNames.add(value);
+            }
+        } else {
+            log.debug("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", argumentObject.getClass());
+            /*
+            else if (arg instanceof SimpleName) {
+            final SimpleName argument = (SimpleName) arg;
+            final Object val = argument.resolveConstantExpressionValue();
+            // TODO always null, upgrade to latest JDT and check if we can resolve this
+            // @see org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils.getAnnotateMethods()
+            log.debug("identifier {}", val);
+
+            } else {
+            log.warn("#NOT IMPLEMENTED PARSING OF ARGUMENT: {}", arg.getClass());
+            log.debug("e {}", arg);
+            }
+        */
         }
     }
 
@@ -120,6 +124,4 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
     public List<EssentialsGeneratedMethod> getModifiableMethods() {
         return modifiableMethods;
     }
-
-
 }

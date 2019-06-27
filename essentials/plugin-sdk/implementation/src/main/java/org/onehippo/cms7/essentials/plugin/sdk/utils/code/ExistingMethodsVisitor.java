@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,14 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Method visitor which collects all methods that are annotated by {@code HippoEssentialsGenerated}  annotation
+ * Method visitor which collects all methods that are annotated by {@code HippoEssentialsGenerated} annotation
  *
- * @version "$Id: ExistingMethodsVisitor.java 173285 2013-08-09 10:59:41Z mmilicevic $"
  * @see HippoEssentialsGenerated
  */
 public class ExistingMethodsVisitor extends ASTVisitor {
 
-    private static Logger log = LoggerFactory.getLogger(ExistingMethodsVisitor.class);
     private List<MethodDeclaration> methods = new ArrayList<>();
     private List<String> methodsNames = new ArrayList<>();
     private Set<String> internalNames = new HashSet<>();
@@ -48,10 +44,8 @@ public class ExistingMethodsVisitor extends ASTVisitor {
     private List<EssentialsGeneratedMethod> generatedMethods = new ArrayList<>();
     private List<MethodDeclaration> generatedMethodDeclarations = new ArrayList<>();
 
-
-
     @Override
-    public boolean visit(MethodDeclaration node) {
+    public boolean visit(final MethodDeclaration node) {
         final String identifier = node.getName().getIdentifier();
         methods.add(node);
         methodsNames.add(identifier);
@@ -66,38 +60,43 @@ public class ExistingMethodsVisitor extends ASTVisitor {
                 final String fullyQualifiedName = annotation.getTypeName().getFullyQualifiedName();
                 if (HippoEssentialsGenerated.class.getSimpleName().equals(fullyQualifiedName)) {
                     generatedMethodNames.add(identifier);
-                    String internalName = null;
-                    final List<?> values = annotation.values();
-                    for (Object value : values) {
-                        if (value instanceof MemberValuePair) {
-                            final MemberValuePair mvp = (MemberValuePair) value;
-                            final String n = mvp.getName().getIdentifier();
-                            final Expression myValue = mvp.getValue();
-                            if (myValue instanceof StringLiteral) {
-                                final StringLiteral lit = (StringLiteral) myValue;
-                                final String v = lit.getLiteralValue();
-                                if ("internalName".equals(n)) {
-                                    internalName = v;
-                                }
-                            }
-                        }
-                    }
-                    final EssentialsGeneratedMethod genMethod = new EssentialsGeneratedMethod(node, identifier, internalName);
-                    generatedMethods.add(genMethod);
+                    final String internalName = getInternalName(annotation);
+                    final EssentialsGeneratedMethod generatedMethod = 
+                            new EssentialsGeneratedMethod(node, identifier, internalName);
+                    generatedMethods.add(generatedMethod);
                     generatedMethodDeclarations.add(node);
                     internalNames.add(internalName);
                 }
             }
         }
 
-
         return super.visit(node);
     }
 
+    private String getInternalName(final NormalAnnotation annotation) {
+        String internalName = null;
+        final List<?> values = annotation.values();
+        for (Object value : values) {
+            if (value instanceof MemberValuePair) {
+                final MemberValuePair memberValuePair = (MemberValuePair) value;
+                final String identifier = memberValuePair.getName().getIdentifier();
+                final Expression memberValuePairValue = memberValuePair.getValue();
+                if (memberValuePairValue instanceof StringLiteral) {
+                    final StringLiteral literal = (StringLiteral) memberValuePairValue;
+                    final String literalValue = literal.getLiteralValue();
+                    if ("internalName".equals(identifier)) {
+                        internalName = literalValue;
+                    }
+                }
+            }
+        }
+        return internalName;
+    }
 
     public List<MethodDeclaration> getGeneratedMethodDeclarations() {
         return generatedMethodDeclarations;
     }
+
     public List<String> getGeneratedMethodNames() {
         return generatedMethodNames;
     }
