@@ -153,24 +153,10 @@ public final class AnnotationUtils {
             @SuppressWarnings("rawtypes")
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
-                // it also must not be of type void:
-                final Type returnType2 = getterMethod.getReturnType2();
-                if (returnType2 == null) {
+                if (cannotAddAnnotation(getterMethod)) {
                     continue;
                 }
-                if (returnType2 instanceof PrimitiveType) {
-                    final PrimitiveType myType = (PrimitiveType) returnType2;
-                    if (myType.getPrimitiveTypeCode().equals(PrimitiveType.VOID)) {
-                        log.debug("Cannot annotate void type for method: {} ", getterMethod.getName().getIdentifier());
-                        continue;
-                    }
-                }
-                // check if known type:
-                final String returnName = returnType2.toString();
-                if (!KNOWN_XML_TYPES.contains(returnName)) {
-                    log.warn("Unknown return type [{}], will skip annotating it with @XmlElement", returnName);
-                    continue;
-                }
+
                 // annotate getter:
                 final MarkerAnnotation xmlElementAnnotation = ast.newMarkerAnnotation();
                 xmlElementAnnotation.setTypeName(ast.newSimpleName(XmlElement.class.getSimpleName()));
@@ -183,6 +169,28 @@ public final class AnnotationUtils {
         }
 
         return JavaSourceUtils.rewrite(unit, ast);
+    }
+
+    private static boolean cannotAddAnnotation(final MethodDeclaration getterMethod) {
+        // it also must not be of type void:
+        final Type returnType2 = getterMethod.getReturnType2();
+        if (returnType2 == null) {
+            return true;
+        }
+        if (returnType2 instanceof PrimitiveType) {
+            final PrimitiveType myType = (PrimitiveType) returnType2;
+            if (myType.getPrimitiveTypeCode().equals(PrimitiveType.VOID)) {
+                log.debug("Cannot annotate void type for method: {} ", getterMethod.getName().getIdentifier());
+                return true;
+            }
+        }
+        // check if known type:
+        final String returnName = returnType2.toString();
+        if (!KNOWN_XML_TYPES.contains(returnName)) {
+            log.warn("Unknown return type [{}], will skip annotating it with @XmlElement", returnName);
+            return true;
+        }
+        return false;
     }
 
     /**
