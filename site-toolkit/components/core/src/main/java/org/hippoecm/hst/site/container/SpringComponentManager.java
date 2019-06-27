@@ -324,10 +324,10 @@ public class SpringComponentManager implements ComponentManager {
                                     "the fallback root application context.", requiredType);
                         }
                     } else {
-                        log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                        log.warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
                     }
                 } else {
-                    log.warn("The requested bean '{}' doesn't exist by the required type: '{}'", requiredType);
+                    log.warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
                 }
             }
         } else {

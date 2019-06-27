@@ -1015,7 +1015,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         this.componentRegistry = hstComponentRegistry;
     }
 
-    private void loadBlueprints(final HstNode rootConfigNode) {
+    private void loadBluePrints(final HstNode rootConfigNode) {
         HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
         if (blueprintsNode != null) {
             for (HstNode blueprintNode : blueprintsNode.getNodes()) {
@@ -1031,7 +1031,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private void loadBluePrints(HstNodeLoadingCache hstNodeLoadingCache) {
         final HstNode rootConfigNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
         bluePrintsPrototypeChecked = false;
-        loadBlueprints(rootConfigNode);
+        loadBluePrints(rootConfigNode);
     }
 
     private void setBluePrintsPrototypes() {

@@ -82,7 +82,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
     public <T> T getProperty(String name, ResolvedSiteMapItem resolvedSiteMapItem, Class<T> mappingClass) {
         Object val =  handlerConfig.getProperty(name);
         if(val == null){ 
-            log.debug("value is null for '{}'. Return null");
+            log.debug("value is null for '{}'. Return null", name);
             return null;
         } 
         PropertyParser pp = new PropertyParser(resolvedSiteMapItem.getParameters());
@@ -130,7 +130,7 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
         Object val =  handlerConfig.getProperty(name);
 
         if (val == null) { 
-            log.debug("value is null for '{}'. Return null");
+            log.debug("value is null for '{}'. Return null", name);
             return null;
         } 
 

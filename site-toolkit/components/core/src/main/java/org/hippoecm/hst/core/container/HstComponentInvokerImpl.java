@@ -65,7 +65,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
     public void setDispatchUrlPrefix(String dispatchUrlPrefix) {
         if (dispatchUrlPrefix != null && !dispatchUrlPrefix.startsWith("/")) {
-            log.info("The configured dispatchUrlPrefix '{}' does not start with a '/'. We prepend a '/' as the location should be a context relative path.");
+            log.info("The configured dispatchUrlPrefix '{}' does not start with a '/'. We prepend a '/' as the location should be a context relative path.",
+                    dispatchUrlPrefix);
             this.dispatchUrlPrefix = "/" + dispatchUrlPrefix;
         } else {
             this.dispatchUrlPrefix = dispatchUrlPrefix;

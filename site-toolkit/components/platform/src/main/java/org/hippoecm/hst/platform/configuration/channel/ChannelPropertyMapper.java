@@ -411,40 +411,41 @@ public class ChannelPropertyMapper {
     }
 
     private static Value defaultValueToJcr(ValueFactory vf, HstPropertyDefinition propDef) throws RepositoryException {
+        final String warnMessage = "HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type";
         switch (propDef.getValueType()) {
             case STRING:
                 if (!(propDef.getDefaultValue() instanceof String)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue("");
                 }
                 return vf.createValue((String) propDef.getDefaultValue());
             case BOOLEAN:
                 if (!(propDef.getDefaultValue() instanceof Boolean)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(false);
                 }
                 return vf.createValue((Boolean) propDef.getDefaultValue());
             case DATE:
                 if (!(propDef.getDefaultValue() instanceof Calendar)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(Calendar.getInstance());
                 }
                 return vf.createValue((Calendar) propDef.getDefaultValue());
             case DOUBLE:
                 if (!(propDef.getDefaultValue() instanceof Double)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0D);
                 }
                 return vf.createValue((Double) propDef.getDefaultValue());
             case INTEGER:
                 if (!(propDef.getDefaultValue() instanceof Integer)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
                 return vf.createValue(((Integer) propDef.getDefaultValue()).longValue());
             case LONG:
                 if (!(propDef.getDefaultValue() instanceof Long)) {
-                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    log.warn(warnMessage, propDef.getDefaultValue(), propDef.getValueType());
                     return vf.createValue(0L);
                 }
                 return vf.createValue((Long) propDef.getDefaultValue());

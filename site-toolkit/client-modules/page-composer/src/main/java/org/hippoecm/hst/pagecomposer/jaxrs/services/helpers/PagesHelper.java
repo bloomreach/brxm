@@ -173,7 +173,8 @@ public class PagesHelper extends AbstractHelper {
                     reference, targetSite, sourceSite);
             final HstComponentConfiguration sourceReference = sourceSite.getComponentsConfiguration().getComponentConfiguration(reference);
             if (sourceReference == null) {
-                log.warn("Referenced component '{}' is missing in targetMount '{}' but also missing in sourceMount '{}'. Skip it.");
+                log.warn("Referenced component '{}' is missing in targetMount '{}' but also missing in sourceMount '{}'. Skip it.",
+                        reference, targetSite, sourceSite);
                 return;
             }
             final Node referencedNode = session.getNodeByIdentifier(sourceReference.getCanonicalIdentifier());

@@ -212,10 +212,9 @@ public class ComponentRepresentation {
 
     private boolean hasContainerInPageDefinition(final HstComponentConfiguration config,
                                                  final String canonicalPageDefinitionPath) {
-        if (HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(config.getComponentType())) {
-            if (config.getCanonicalStoredLocation().startsWith(canonicalPageDefinitionPath)) {
-                return true;
-            }
+        if (HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(config.getComponentType())
+                && config.getCanonicalStoredLocation().startsWith(canonicalPageDefinitionPath)) {
+            return true;
         }
         for (HstComponentConfiguration child : config.getChildren().values()) {
             if (hasContainerInPageDefinition(child, canonicalPageDefinitionPath)) {

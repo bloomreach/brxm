@@ -153,7 +153,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             }
 
         } catch (ItemNotFoundException e) {
-            log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e.toString());
+            log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e);
             return setErrorMessageAndReturn(requestContext, request, e.toString());
         } catch (RepositoryException e) {
             log.warn("RepositoryException ", e);

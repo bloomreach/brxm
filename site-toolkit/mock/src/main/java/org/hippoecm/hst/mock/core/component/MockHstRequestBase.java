@@ -321,6 +321,8 @@ public abstract class MockHstRequestBase implements HstRequest {
         return null;
     }
 
+    //It is suppressed because isRequestedSessionIdFromUrl method is deprecated in HttpServletRequest class and could be used.
+    @SuppressWarnings("squid:S1845")
     public void setRequestedSessionIdFromUrl(boolean requestedSessionIdFromUrl) {
         props.put("requestedSessionIdFromUrl", Boolean.valueOf(requestedSessionIdFromUrl));
     }

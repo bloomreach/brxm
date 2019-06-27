@@ -200,8 +200,8 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 
     protected static class PathsAdjustedHttpServletRequestWrapper extends GenericHttpServletRequestWrapper {
 
-        private String requestURI;
-        private String requestURL;
+        private String adjustedRequestURI;
+        private String adjustedRequestURL;
 
         public PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String requestPath) {
             super(request);
@@ -215,21 +215,21 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             if (requestPath != null) {
                 sbTemp.append(requestPath);
             }
-            requestURI = sbTemp.toString();
+            adjustedRequestURI = sbTemp.toString();
 
-            if (requestURI.length() == 0) {
-                requestURI = "/";
+            if (adjustedRequestURI.length() == 0) {
+                adjustedRequestURI = "/";
             }
         }
 
         @Override
         public String getRequestURI() {
-            return requestURI;
+            return adjustedRequestURI;
         }
 
         @Override
         public StringBuffer getRequestURL() {
-            if (requestURL == null) {
+            if (adjustedRequestURL == null) {
                 String scheme = super.getScheme();
                 String serverName = super.getServerName();
                 int serverPort = super.getServerPort();
@@ -239,10 +239,10 @@ public abstract class AbstractJaxrsService implements JAXRSService {
                     sbTemp.append(":").append(serverPort);
                 }
                 sbTemp.append(getRequestURI());
-                requestURL = sbTemp.toString();
+                adjustedRequestURL = sbTemp.toString();
             }
 
-            return new StringBuffer(requestURL);
+            return new StringBuffer(adjustedRequestURL);
         }
     }
 }

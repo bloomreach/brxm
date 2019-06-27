@@ -904,7 +904,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             final List<Mount> mountsForHostGroup = new ArrayList<>(virtualHosts.getMountsByHostGroup(hostGroup));
 
             if (CollectionUtils.isEmpty(mountsForHostGroup)) {
-                log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.");
+                log.debug("Did not find any Mount for hostGroupName '{}'. Return empty list for canonicalLinks.", hostGroup);
                 return Collections.emptyList();
             }
 

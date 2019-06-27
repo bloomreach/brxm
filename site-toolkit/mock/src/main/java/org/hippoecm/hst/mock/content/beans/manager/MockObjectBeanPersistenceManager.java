@@ -180,40 +180,25 @@ public class MockObjectBeanPersistenceManager implements ObjectBeanPersistenceMa
         
         byte [] bytes = null;
         
-        ByteArrayOutputStream baos = null;
-        ObjectOutputStream oos = null;
-        
-        try {
-            baos = new ByteArrayOutputStream(128);
-            oos = new ObjectOutputStream(baos);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
+                ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(object);
             oos.flush();
             bytes = baos.toByteArray();
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
-        } finally {
-            if (oos != null) try { oos.close(); } catch (Exception ce) { }
-            if (baos != null) try { baos.close(); } catch (Exception ce) { }
         }
-        
         return bytes;
     }
     
     protected Object bytesToObject(byte [] bytes) throws ObjectBeanPersistenceException {
         Object object = null;
         
-        ByteArrayInputStream bais = null;
-        ObjectInputStream ois = null;
-        
-        try {
-            bais = new ByteArrayInputStream(bytes);
-            ois = new ObjectInputStream(bais);
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                ObjectInputStream ois = new ObjectInputStream(bais)) {
             object = ois.readObject();
         } catch (Exception e) {
             throw new ObjectBeanPersistenceException(e);
-        } finally {
-            if (ois != null) try { ois.close(); } catch (Exception ce) { }
-            if (bais != null) try { bais.close(); } catch (Exception ce) { }
         }
         
         return object;

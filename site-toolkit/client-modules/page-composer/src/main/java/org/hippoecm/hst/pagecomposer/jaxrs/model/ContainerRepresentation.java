@@ -32,6 +32,7 @@ public class ContainerRepresentation extends ComponentRepresentation {
 
     private List<String> children;
 
+    @Override
     public ContainerRepresentation represent(HstComponentConfiguration componentConfiguration, Mount mount) {
         super.represent(componentConfiguration, mount);
         if (componentConfiguration.getLastModified() == null) {

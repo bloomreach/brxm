@@ -54,6 +54,8 @@ public class HeadContributionTag extends BodyTagSupport {
      */
     protected String category;
 
+    //It is suppressed because try-catch-finally block is not replacable with try-with-resource statement
+    @SuppressWarnings("squid:S2093")
     public int doEndTag() throws JspException {
         try {
             final HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pageContext.getRequest());

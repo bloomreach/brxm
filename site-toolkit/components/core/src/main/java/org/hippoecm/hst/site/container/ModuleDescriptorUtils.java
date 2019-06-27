@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.site.container;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,7 +26,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -93,17 +91,8 @@ public class ModuleDescriptorUtils {
         JAXBContext jc = JAXBContext.newInstance(ModuleDefinition.class);
         Unmarshaller um = jc.createUnmarshaller();
 
-        
-        InputStream is = null;
-        BufferedInputStream bis = null;
-        
-        try {
-            is = url.openStream();
-            bis = new BufferedInputStream(is);
-            moduleDefinition = (ModuleDefinition) um.unmarshal(url.openStream());
-        } finally {
-            IOUtils.closeQuietly(bis);
-            IOUtils.closeQuietly(is);
+        try(InputStream is = url.openStream()) {
+            moduleDefinition = (ModuleDefinition) um.unmarshal(is);
         }
         
         return moduleDefinition;

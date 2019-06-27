@@ -30,7 +30,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
 import org.hippoecm.hst.configuration.hosting.MatchException;
@@ -175,10 +174,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
                                 log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
                             }
 
-                            StringWriter writer = null;
-
-                            try {
-                                writer = new StringWriter(512);
+                            try (StringWriter writer = new StringWriter(512)) {
                                 writeIncludeElementFragment(writer, embeddedElementFragment, propertyParser);
 
                                 if (writer.getBuffer().length() > 0) {
@@ -188,8 +184,6 @@ public class ESIPageRenderer implements ComponentManagerAware {
                                 if (!StringUtils.equals("continue", onerror)) {
                                     //
                                 }
-                            } finally {
-                                IOUtils.closeQuietly(writer);
                             }
                         }
                     }
@@ -202,10 +196,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
                     log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
                 }
 
-                StringWriter writer = null;
-
-                try {
-                    writer = new StringWriter(512);
+                try (StringWriter writer = new StringWriter(512)) {
                     writeIncludeElementFragment(writer, elementFragment, propertyParser);
 
                     if (writer.getBuffer().length() > 0) {
@@ -215,8 +206,6 @@ public class ESIPageRenderer implements ComponentManagerAware {
                     if (!StringUtils.equals("continue", onerror)) {
                         //
                     }
-                } finally {
-                    IOUtils.closeQuietly(writer);
                 }
             }
         }
