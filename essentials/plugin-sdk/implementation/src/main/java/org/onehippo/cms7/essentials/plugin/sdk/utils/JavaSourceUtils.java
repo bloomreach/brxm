@@ -902,35 +902,40 @@ public final class JavaSourceUtils {
             }
             
             for (Object value : values) {
-                if (value instanceof MemberValuePair) {
-                    final MemberValuePair pair = (MemberValuePair) value;
-                    final SimpleName name = pair.getName();
-
-                    final String identifier = name.getIdentifier();
-                    if (identifier.equals("jcrType")) {
-                        final Expression literalValue = pair.getValue();
-                        if (literalValue instanceof StringLiteral) {
-                            final StringLiteral ex = (StringLiteral) literalValue;
-                            jcrType = ex.getLiteralValue();
-                        } else {
-                            log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", 
-                                    literalValue);
-                        }
-                    }
-                    if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
-                        final Expression literalValue = pair.getValue();
-                        if (literalValue instanceof StringLiteral) {
-                            final StringLiteral ex = (StringLiteral) literalValue;
-                            jcrType = ex.getLiteralValue();
-                        } else {
-                            log.warn("Couldn't resolve value for internalName: {}", literalValue);
-                        }
-                    }
-                }
+                jcrType = processModifierAnnotation(jcrType, value);
             }
         }
 
         log.debug("Found @Node jcrType={}", jcrType);
+        return jcrType;
+    }
+
+    private static String processModifierAnnotation(String jcrType, final Object value) {
+        if (value instanceof MemberValuePair) {
+            final MemberValuePair pair = (MemberValuePair) value;
+            final SimpleName name = pair.getName();
+
+            final String identifier = name.getIdentifier();
+            if (identifier.equals("jcrType")) {
+                final Expression literalValue = pair.getValue();
+                if (literalValue instanceof StringLiteral) {
+                    final StringLiteral ex = (StringLiteral) literalValue;
+                    jcrType = ex.getLiteralValue();
+                } else {
+                    log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", 
+                            literalValue);
+                }
+            }
+            if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
+                final Expression literalValue = pair.getValue();
+                if (literalValue instanceof StringLiteral) {
+                    final StringLiteral ex = (StringLiteral) literalValue;
+                    jcrType = ex.getLiteralValue();
+                } else {
+                    log.warn("Couldn't resolve value for internalName: {}", literalValue);
+                }
+            }
+        }
         return jcrType;
     }
 
@@ -975,14 +980,11 @@ public final class JavaSourceUtils {
         }
         
         for (Object modifier : modifiers) {
-            if (!(modifier instanceof NormalAnnotation)) {
+            if (skipAnnotation(modifier)) {
                 continue;
             }
+
             final NormalAnnotation annotation = (NormalAnnotation) modifier;
-            if (notAnEssentialsAnnotation(annotation)) {
-                continue;
-            }
-            
             final List<?> values = annotation.values();
             for (Object value : values) {
                 if (value instanceof MemberValuePair) {
@@ -1000,6 +1002,14 @@ public final class JavaSourceUtils {
             }
         }
         return null;
+    }
+
+    private static boolean skipAnnotation(final Object modifier) {
+        if (!(modifier instanceof NormalAnnotation)) {
+            return true;
+        }
+        final NormalAnnotation annotation = (NormalAnnotation) modifier;
+        return notAnEssentialsAnnotation(annotation);
     }
 
     private static boolean notAnEssentialsAnnotation(final NormalAnnotation annotation) {
