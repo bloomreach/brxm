@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -165,14 +165,14 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
             return state;
         }
         HippoVirtualProvider provider = lookupProvider(state.getNodeTypeName());
-        if (provider != null) {
+        if (provider != null && !(provider instanceof MirrorVirtualProvider)) {
             // the provider might be of a Faceted Navigation or FacetSearch node, or any provider that has a hippo:docbase. But, we only want to proceed
             // when the provider is of MirrorVirtualProvider. Therefore this very important check
-            if (!(provider instanceof MirrorVirtualProvider)) {
-                log.debug("The provider for '{}' is not a mirror kind of provider. '{}' is already mirrored. We skip the derefencing of its docbase!");
-                return state;
-            }
+            log.debug("The provider for '{}' is not a MirrorVirtualProvider. We skip dereferencing its docbase!",
+                    state.getNodeTypeName());
+            return state;
         }
+
         NodeState dereference = null;
         try {
             dereference = getNodeState(new NodeId(UUID.fromString(docbase[0])), context);
@@ -415,5 +415,5 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         }
         return null;
     }
-    
+
 }
