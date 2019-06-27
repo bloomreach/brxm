@@ -204,6 +204,17 @@
         <checksumPolicy>fail</checksumPolicy>
       </releases>
     </repository>
+
+    <repository>
+      <id>codehaus-snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <pluginRepositories>
