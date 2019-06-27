@@ -383,8 +383,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 log.warn("indexing configuration not found: {}/{}", getClass().getName(), configName);
                 return null;
             }
+            return configInputStream;
         }
-        return null;
     }
 
     @Override
