@@ -21,9 +21,13 @@ import ViewportToggleCtrl from './viewportToggle.controller';
 const viewportToggleComponent = {
   bindings: {
     disabled: '<',
+    value: '<ngModel',
   },
   controller: ViewportToggleCtrl,
   template,
+  require: {
+    ngModel: '?ngModel',
+  },
 };
 
 export default viewportToggleComponent;
