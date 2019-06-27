@@ -80,6 +80,6 @@
   },
   "dependencies": {
     "emittery": "^0.4",
-    "penpal": "^3.0"
+    "penpal": "^4.0"
   }
 }
