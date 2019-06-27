@@ -24,8 +24,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
 
-import com.google.common.base.Strings;
-
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -40,6 +38,8 @@ import org.onehippo.forge.poll.contentbean.compound.Option;
 import org.onehippo.forge.poll.contentbean.compound.Poll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Provider that can be instantiated within a component to add poll functionality by composition.
@@ -388,6 +388,7 @@ public class PollProvider {
             String name = getCookieName(request, pollDocumentName);
             Cookie cookie = new Cookie(name, value);
             cookie.setMaxAge(POLL_COOKIE_MAX_AGE);
+            cookie.setHttpOnly(true);
             response.addCookie(cookie);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
