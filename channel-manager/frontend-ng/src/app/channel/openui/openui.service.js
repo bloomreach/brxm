@@ -29,29 +29,27 @@ export default class OpenUiService {
     this.Penpal = Penpal;
   }
 
-  _createIframe({ url, appendTo }) {
+  _createIframe(url) {
     const iframe = this.$document[0].createElement('iframe');
 
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
     iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
-
     iframe.src = url;
-    appendTo.appendChild(iframe);
 
     return iframe;
   }
 
   initialize(extensionId, options) {
     const extension = this.ExtensionService.getExtension(extensionId);
-    const emitter = new this.Emittery();
-    const iframe = this._createIframe({
-      url: this.ExtensionService.getExtensionUrl(extension),
-      ...options,
-    });
+    const extensionUrl = options.url || this.ExtensionService.getExtensionUrl(extension);
+
+    const iframe = this._createIframe(extensionUrl);
+    options.appendTo.appendChild(iframe);
 
     try {
+      const emitter = new this.Emittery();
       const connection = this.Penpal.connectToChild({
         ...options,
         iframe,
