@@ -1,0 +1,9 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:cms/validators:
+      /de:
+        jcr:primaryType: hipposys:resourcebundle
+        required#StaticDropdown: Einen Wert auswählen
+        required#selection-RadioGroup: Eine Option auswählen
+        required#RadioGroup: Eine Option auswählen
+        required#DynamicDropdown: Einen Wert auswählen
