@@ -49,8 +49,8 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -225,19 +225,23 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             final String renderingHost = getRenderingHost(containerRequest);
 
-            final boolean authenticated = CmsSSOAuthenticationHandler.isAuthenticated(containerRequest);
             if (isCmsSessionContextBindingRequest(req)) {
-                if (authenticated) {
+                if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
                     log.info("Already authenticated");
                     ((HttpServletResponse) response).setStatus(SC_NO_CONTENT);
                     return;
                 }
 
-                CmsSSOAuthenticationHandler.authenticate(containerRequest, res);
+                if (CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
+                    res.setStatus(HttpServletResponse.SC_OK);
+                }
                 return;
 
+            } else if (requestComesFromCms(vHosts, renderingHost, req)
+                    && !CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)
+                    && !CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
+                return;
             }
-
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
             if ((containerRequest.getPathSuffix() == null && vHosts.isHstFilterExcludedPath(containerRequest.getPathInfo()))) {
@@ -330,6 +334,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             if (resolvedMount == null) {
                 resolvedMount = resolvedVirtualHost.matchMount(containerRequest.getPathInfo());
+
+                final boolean authenticated = CmsSSOAuthenticationHandler.isAuthenticated(containerRequest);
 
                 if (resolvedMount.getMatchingIgnoredPrefix() != null && !authenticated) {
                     // eg _cmsinternal request but not authenticated, hence should return 404 (just page not found,
