@@ -232,7 +232,8 @@ describe('PrimitiveField', () => {
     beforeEach(() => {
       field = {
         $invalid: false,
-        $setValidity: () => {},
+        $setValidity() {},
+        $setTouched() {},
       };
       $ctrl.form = { 'test-name/field:type': field };
     });
@@ -277,6 +278,16 @@ describe('PrimitiveField', () => {
         .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
       expect(field.$setValidity).toHaveBeenCalledWith('server', true);
       expect($ctrl.firstServerError).toBeUndefined();
+    });
+
+    it('marks the field as touched', () => {
+      FieldService.save.and.returnValue($q.resolve(angular.copy(fieldValues)));
+      spyOn(field, '$setTouched');
+
+      $ctrl.valueChanged();
+      $rootScope.$digest();
+
+      expect(field.$setTouched).toHaveBeenCalled();
     });
   });
 

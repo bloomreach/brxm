@@ -125,6 +125,11 @@ class PrimitiveFieldCtrl {
 
     validatedValues.forEach((validatedValue, index) => {
       const currentValue = this.fieldValues[index];
+      const field = this.form[this.getFieldName(index)];
+
+      if (field) {
+        field.$setTouched();
+      }
 
       if (validatedValue.errorInfo && !currentValue.errorInfo) {
         currentValue.errorInfo = validatedValue.errorInfo;
