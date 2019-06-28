@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.gallery.imageutil;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
@@ -57,8 +59,8 @@ public class ImageUtils {
          */
         AUTO(Scalr.Method.AUTOMATIC),
         /**
-         * Scale as fast as possible. For smaller images (800px in size) this can result in noticeable aliasing but
-         * it can be a few order of magnitudes faster than using the {@link #QUALITY} method.
+         * Scale as fast as possible. For smaller images (800px in size) this can result in noticeable aliasing but it
+         * can be a few order of magnitudes faster than using the {@link #QUALITY} method.
          */
         SPEED(Scalr.Method.SPEED),
         /**
@@ -68,8 +70,8 @@ public class ImageUtils {
         /**
          * Create a nice scaled version of an image at the cost of more processing time. This strategy is most important
          * for smaller pictures (800px or smaller) and less important for larger pictures, as the difference between
-         * this strategy and the {@link #SPEED} strategy become less and less noticeable as the
-         * source-image size increases.
+         * this strategy and the {@link #SPEED} strategy become less and less noticeable as the source-image size
+         * increases.
          */
         QUALITY(Scalr.Method.QUALITY),
         /**
@@ -100,8 +102,8 @@ public class ImageUtils {
      * Returns an image reader for a MIME type.
      *
      * @param aMimeType MIME type
-     * @return an image reader for the given MIME type, or <code>null</code> if no image reader could be created
-     * for the given MIME type.
+     * @return an image reader for the given MIME type, or <code>null</code> if no image reader could be created for the
+     * given MIME type.
      */
     public static ImageReader getImageReader(String aMimeType) {
         String mimeType = MimeTypeHelper.sanitizeMimeType(aMimeType);
@@ -116,8 +118,8 @@ public class ImageUtils {
      * Returns an image writer for a MIME type.
      *
      * @param aMimeType MIME type
-     * @return an image writer for the given MIME type, or <code>null</code> if no image writer could be created
-     * for the given MIME type.
+     * @return an image writer for the given MIME type, or <code>null</code> if no image writer could be created for the
+     * given MIME type.
      */
     public static ImageWriter getImageWriter(String aMimeType) {
         String mimeType = MimeTypeHelper.sanitizeMimeType(aMimeType);
@@ -129,16 +131,14 @@ public class ImageUtils {
     }
 
     /**
-     * Returns the data of a {@link BufferedImage} as a binary output stream. If the image is <code>null</code>,
-     * a stream of zero bytes is returned.
+     * Returns the data of a {@link BufferedImage} as a binary output stream. If the image is <code>null</code>, a
+     * stream of zero bytes is returned.
      *
-     * @param writer the writer to use for writing the image data.
-     * @param image the image to write.
-     * @param compressionQuality a float between 0 and 1 that indicates the desired compression quality. Values lower than
-     *                           0 will be interpreted as 0, values higher than 1 will be interpreted as 1.
-     *
+     * @param writer             the writer to use for writing the image data.
+     * @param image              the image to write.
+     * @param compressionQuality a float between 0 and 1 that indicates the desired compression quality. Values lower
+     *                           than 0 will be interpreted as 0, values higher than 1 will be interpreted as 1.
      * @return an output stream with the data of the given image.
-     *
      * @throws IOException when creating the binary output stream failed.
      */
     public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image, float compressionQuality) throws IOException {
@@ -194,17 +194,12 @@ public class ImageUtils {
     /**
      * Returns a scaled instance of the provided {@link BufferedImage}.
      *
-     * @param img
-     *            the original image to be scaled
-     * @param targetWidth
-     *            the desired width of the scaled instance, in pixels
-     * @param targetHeight
-     *            the desired height of the scaled instance, in pixels
-     * @param strategy
-     *            the strategy to use for scaling the image
-     *
-     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
-     * the target width or target height is 0 or less.
+     * @param img          the original image to be scaled
+     * @param targetWidth  the desired width of the scaled instance, in pixels
+     * @param targetHeight the desired height of the scaled instance, in pixels
+     * @param strategy     the strategy to use for scaling the image
+     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either the target width
+     * or target height is 0 or less.
      */
     public static BufferedImage scaleImage(BufferedImage img, int targetWidth, int targetHeight, ScalingStrategy strategy) {
         if (targetWidth <= 0 || targetHeight <= 0) {
@@ -213,51 +208,36 @@ public class ImageUtils {
 
         return Scalr.resize(img, strategy.getScalrMethod(), Scalr.Mode.FIT_EXACT, targetWidth, targetHeight);
     }
-
+    
     /**
      * Returns a scaled instance of the provided {@link BufferedImage}.
      *
-     * @param img
-     *            the original image to be scaled
-     * @param xOffset
-     *            the X-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
-     * @param yOffset
-     *            the Y-coordinate of the top-left corner in the source image, in pixels, to use for the scaled instance.
-     * @param sourceWidth
-     *            the width of the source image, in pixels relative to xOffset, to use for the scaled instance.
-     * @param sourceHeight
-     *            the height of the source image, in pixels relative to yOffset, to use for the scaled instance.
-     * @param targetWidth
-     *            the desired width of the scaled instance, in pixels
-     * @param targetHeight
-     *            the desired height of the scaled instance, in pixels
-     * @param hint
-     *            one of the rendering hints that corresponds to {@link RenderingHints#KEY_INTERPOLATION}
-     *            (e.g. {@link RenderingHints#VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-     *            {@link RenderingHints#VALUE_INTERPOLATION_BILINEAR},
-     *            {@link RenderingHints#VALUE_INTERPOLATION_BICUBIC})
-     * @param highQuality
-     *            if true, this method will use a multi-step scaling technique that provides higher quality than the
-     *            usual one-step technique (only useful in downscaling cases, where {@code targetWidth} or
-     *            {@code targetHeight} is smaller than the original dimensions, and generally only when the
-     *            {@code BILINEAR} hint is specified)
-     *
-     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
-     * the target width or target height is 0 or less.
+     * @param original     the original image to be scaled
+     * @param rectangle    the rectangle to use for the scaled instance
+     * @param targetDimension  the desirec dimensions of the scaled instance, in pixels
+     * @param hint         one of the rendering hints that corresponds to {@link RenderingHints#KEY_INTERPOLATION} (e.g.
+     *                     {@link RenderingHints#VALUE_INTERPOLATION_NEAREST_NEIGHBOR}, {@link
+     *                     RenderingHints#VALUE_INTERPOLATION_BILINEAR}, {@link RenderingHints#VALUE_INTERPOLATION_BICUBIC})
+     * @param highQuality  if true, this method will use a multi-step scaling technique that provides higher quality
+     *                     than the usual one-step technique (only useful in downscaling cases, where {@code
+     *                     targetWidth} or {@code targetHeight} is smaller than the original dimensions, and generally
+     *                     only when the {@code BILINEAR} hint is specified)
+     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either the target width
+     * or target height is 0 or less.
      */
-    public static BufferedImage scaleImage(BufferedImage img, int xOffset, int yOffset, int sourceWidth, int sourceHeight, int targetWidth, int targetHeight, Object hint,
-                                           boolean highQuality) {
+    public static BufferedImage scaleImage(final BufferedImage original, final Rectangle rectangle,
+                                           final Dimension targetDimension, final Object hint, boolean highQuality) {
 
-        if (sourceWidth <= 0 || sourceHeight <= 0 || targetWidth <= 0 || targetHeight <= 0) {
+        if (invalidSizes(rectangle, targetDimension)) {
             return null;
         }
 
-        int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
+        int type = (original.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
                 : BufferedImage.TYPE_INT_ARGB;
 
-        BufferedImage result = img;
-        if (xOffset != 0 || yOffset != 0 || sourceWidth != img.getWidth() || sourceHeight != img.getHeight()) {
-            result = result.getSubimage(xOffset, yOffset, sourceWidth, sourceHeight);
+        BufferedImage result = original;
+        if (mustMakeSubImage(original, rectangle)) {
+            result = result.getSubimage(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         }
 
         int width, height;
@@ -265,24 +245,24 @@ public class ImageUtils {
         if (highQuality) {
             // Use the multiple step technique: start with original size, then scale down in multiple passes with
             // drawImage() until the target size is reached
-            width = img.getWidth();
-            height = img.getHeight();
+            width = original.getWidth();
+            height = original.getHeight();
         } else {
             // Use one-step technique: scale directly from original size to target size with a single drawImage() call
-            width = targetWidth;
-            height = targetHeight;
+            width = targetDimension.width;
+            height = targetDimension.height;
         }
 
         do {
-            if (highQuality && width > targetWidth) {
+            if (highQuality && width > targetDimension.width) {
                 width /= 2;
             }
-            width = Math.max(width, targetWidth);
+            width = Math.max(width, targetDimension.width);
 
-            if (highQuality && height > targetHeight) {
+            if (highQuality && height > targetDimension.height) {
                 height /= 2;
             }
-            height = Math.max(height, targetHeight);
+            height = Math.max(height, targetDimension.height);
 
             BufferedImage tmp = new BufferedImage(width, height, type);
 
@@ -292,23 +272,69 @@ public class ImageUtils {
             g2.dispose();
 
             result = tmp;
-        } while (width != targetWidth || height != targetHeight);
+        } while (width != targetDimension.width || height != targetDimension.height);
 
         return result;
+
+    }
+
+    private static boolean invalidSizes(final Rectangle rectangle, final Dimension targetDimension) {
+        return rectangle.width <= 0 
+                || rectangle.height <= 0 
+                || targetDimension.width <= 0 
+                || targetDimension.height <= 0;
+    }
+
+    private static boolean mustMakeSubImage(final BufferedImage original, final Rectangle rectangle) {
+        return rectangle.x != 0
+                || rectangle.y != 0
+                || rectangle.width != original.getWidth()
+                || rectangle.height != original.getHeight();
+    }
+
+    /**
+     * Returns a scaled instance of the provided {@link BufferedImage}.
+     *
+     * @param img          the original image to be scaled
+     * @param xOffset      the X-coordinate of the top-left corner in the source image, in pixels, to use for the scaled
+     *                     instance.
+     * @param yOffset      the Y-coordinate of the top-left corner in the source image, in pixels, to use for the scaled
+     *                     instance.
+     * @param sourceWidth  the width of the source image, in pixels relative to xOffset, to use for the scaled
+     *                     instance.
+     * @param sourceHeight the height of the source image, in pixels relative to yOffset, to use for the scaled
+     *                     instance.
+     * @param targetWidth  the desired width of the scaled instance, in pixels
+     * @param targetHeight the desired height of the scaled instance, in pixels
+     * @param hint         one of the rendering hints that corresponds to {@link RenderingHints#KEY_INTERPOLATION} (e.g.
+     *                     {@link RenderingHints#VALUE_INTERPOLATION_NEAREST_NEIGHBOR}, {@link
+     *                     RenderingHints#VALUE_INTERPOLATION_BILINEAR}, {@link RenderingHints#VALUE_INTERPOLATION_BICUBIC})
+     * @param highQuality  if true, this method will use a multi-step scaling technique that provides higher quality
+     *                     than the usual one-step technique (only useful in downscaling cases, where {@code
+     *                     targetWidth} or {@code targetHeight} is smaller than the original dimensions, and generally
+     *                     only when the {@code BILINEAR} hint is specified)
+     * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either the target width
+     * or target height is 0 or less.
+     * @deprecated Use {@link #scaleImage(BufferedImage, Rectangle, Dimension, Object, boolean)} instead.
+     */
+    @Deprecated
+    public static BufferedImage scaleImage(BufferedImage img, int xOffset, int yOffset, int sourceWidth, int sourceHeight, int targetWidth, int targetHeight, Object hint,
+                                           boolean highQuality) {
+
+        return scaleImage(img, new Rectangle(xOffset, yOffset, sourceWidth, sourceHeight), new Dimension(targetWidth, targetHeight), hint, highQuality);
     }
 
     /**
      * Converts image raster data to a JPEG with RGB color space. Only images with color space CMYK and YCCK are
      * converted, other images are left untouched.
-     *
-     * Rationale: Java's ImageIO can't process 4-component images and Java2D can't apply AffineTransformOp either,
-     * so we have to convert raster data to a JPG with RGB color space.
-     *
+     * <p>
+     * Rationale: Java's ImageIO can't process 4-component images and Java2D can't apply AffineTransformOp either, so we
+     * have to convert raster data to a JPG with RGB color space.
+     * <p>
      * The technique used in this method is due to Mark Stephens, and free for any use. See
-     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4799903 or
-     * http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg03247.html
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4799903 or http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg03247.html
      *
-     * @param is the image data
+     * @param is         the image data
      * @param colorModel the color model of the image
      * @return the RGB version of the supplied image
      */
@@ -387,7 +413,7 @@ public class ImageUtils {
                     h,
                     w * 3,
                     3,
-                    new int[]{0, 1, 2 },
+                    new int[]{0, 1, 2},
                     null);
 
             ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
