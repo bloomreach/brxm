@@ -162,6 +162,8 @@
         <targetPath>${basedir}/target/classes/org/hippoecm/frontend/editor/plugins/openui</targetPath>
         <includes>
           <include>penpal.js</include>
+          <include>penpal.min.js</include>
+          <include>penpal.min.js.map</include>
         </includes>
       </resource>
     </resources>
