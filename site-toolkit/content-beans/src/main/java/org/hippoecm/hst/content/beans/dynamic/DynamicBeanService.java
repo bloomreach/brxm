@@ -28,9 +28,10 @@ public interface DynamicBeanService {
      * Creates a bean/class definition for given content type
      * 
      * @param superClazz if the bean is inherited from another bean this parameter is used to describe the parent bean
+     * @param documentType of the document
      * @param contentType of the document type which is read from contentTypeService
      * @return Class definition for a given {@link ContentType}
      */
-    Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final ContentType contentType);
+    Class<? extends HippoBean> createDocumentBeanDef(Class<? extends HippoBean> superClazz, String documentType, ContentType contentType);
 
 }

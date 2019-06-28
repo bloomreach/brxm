@@ -57,7 +57,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         jcrPrimaryNodeTypeBeanPairs.entrySet()
                 .stream()
                 .filter(entry -> shouldGenerateEnhancedBean(entry.getValue()))
-                .forEach(entry -> dynamicBeanService.createDocumentBeanDef(entry.getValue(), contentTypes.getType(entry.getKey())));
+                .forEach(entry -> dynamicBeanService.createDocumentBeanDef(entry.getValue(), entry.getKey(), contentTypes.getType(entry.getKey())));
 
 
     }
@@ -143,7 +143,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             //The object has been already garbage collected, in practice, it should never happen
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
-        return dynamicBeanService.createDocumentBeanDef(superClazz, contentTypes.getType(documentType));
+        return dynamicBeanService.createDocumentBeanDef(superClazz, documentType, contentTypes.getType(documentType));
     }
     
     /**

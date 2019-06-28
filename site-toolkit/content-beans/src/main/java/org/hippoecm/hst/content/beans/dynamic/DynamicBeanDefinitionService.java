@@ -115,7 +115,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final ContentType contentType) {
+    public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final String documentType, final ContentType contentType) {
+        if (contentType == null) {
+            log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", documentType);
+            return null;
+        }
         final BeanInfo generatedBeanDef = createDocumentBeanDef(contentType, superClazz != null ? new BeanInfo(superClazz, false) : null);
         return generatedBeanDef.getBeanClass();
     }
