@@ -47,7 +47,7 @@ class PenpalHeaderItem extends HeaderItem {
             // Use the minified version for performance (smaller file) and to prevent Wicket's internal JavaScript
             // compressor from breaking the file. Wicket's default application settings don't use a JavaScript
             // compressor in "development" mode and a DefaultJavaScriptCompressor in "production" mode. The
-            // DefaultJavaScriptProcessor breaks the Penpal code. But: it won't minify JavaScript when it's name
+            // DefaultJavaScriptProcessor breaks the Penpal code. But: it won't minify JavaScript when its name
             // contains ".min.". So by using penpal.min.js in production everything works fine.
             JavaScriptHeaderItem.forReference(PENPAL_MINIFIED).render(response);
         }
