@@ -75,12 +75,14 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     protected static final String CONFIG_PARAM_WIDTH = "width"
     protected static final String CONFIG_PARAM_HEIGHT = "height"
     protected static final String CONFIG_PARAM_UPSCALING = "upscaling"
+    protected static final String CONFIG_PARAM_CROPPING = "cropping"
     protected static final String CONFIG_PARAM_OPTIMIZE = "optimize"
     protected static final String CONFIG_PARAM_COMPRESSION = "compression"
 
     protected static final Long DEFAULT_WIDTH = 0L
     protected static final Long DEFAULT_HEIGHT = 0L
     protected static final boolean DEFAULT_UPSCALING = false
+    protected static final boolean DEFAULT_CROPPING = false
     protected static final String DEFAULT_OPTIMIZE = "quality"
     protected static final double DEFAULT_COMPRESSION = 1.0
 
@@ -344,6 +346,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
             boolean upscaling = variantNode.hasProperty(CONFIG_PARAM_UPSCALING) ?
                     variantNode.getProperty(CONFIG_PARAM_UPSCALING).boolean : DEFAULT_UPSCALING
+            boolean cropping = variantNode.hasProperty(CONFIG_PARAM_CROPPING) ?
+                    variantNode.getProperty(CONFIG_PARAM_CROPPING).boolean : DEFAULT_CROPPING
             String optimize = variantNode.hasProperty(CONFIG_PARAM_OPTIMIZE) ?
                     variantNode.getProperty(CONFIG_PARAM_OPTIMIZE).string : DEFAULT_OPTIMIZE
             float compression = variantNode.hasProperty(CONFIG_PARAM_COMPRESSION) ?
@@ -358,6 +362,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             }
 
             ScalingParameters parameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling, strategy, compression)
+            parameters.setCropping(cropping)
+      
             log.info "- Read image set variant '${variantName}' from processor with scalingParameters '${parameters}'"
 
             imageVariantParameters.put(variantName, parameters)
