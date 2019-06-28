@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ public class ScalingParameters implements Serializable {
     private final int width;
     private final int height;
     private final boolean upscaling;
+    private boolean cropping;
     private final ImageUtils.ScalingStrategy strategy;
     private final float compressionQuality;
 
@@ -67,9 +68,27 @@ public class ScalingParameters implements Serializable {
      * @param compressionQuality compression quality
      */
     public ScalingParameters(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy, float compressionQuality) {
+        this(width, height, upscaling, false, strategy, compressionQuality);
+    }
+
+    /**
+     * Creates a set of scaling parameters: the width and height of the bounding box, and whether to do upscaling. A
+     * width or height of 0 or less means 'unspecified'.
+     *
+     * @param width     the width of the bounding box
+     * @param height    the height of the bounding box
+     * @param upscaling whether to do upscaling of images that are smaller than the bounding box
+     * @param cropping  whether to do cropping of images to fill the whole bounding box
+     * @param strategy  the scaling strategy to use
+     * @param compressionQuality compression quality
+     */
+    public ScalingParameters(int width, int height, boolean upscaling, boolean cropping, 
+                             ImageUtils.ScalingStrategy strategy, float compressionQuality) {
         this.width = width;
         this.height = height;
         this.upscaling = upscaling;
+        this.cropping = cropping;
+        this.cropping = false;
         this.strategy = strategy;
         this.compressionQuality = compressionQuality;
     }
@@ -102,6 +121,13 @@ public class ScalingParameters implements Serializable {
         return strategy;
     }
 
+    /**
+     * @return whether images should be cropped to fill the bounding box
+     */
+    public boolean isCropping() {
+        return cropping;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -113,7 +139,8 @@ public class ScalingParameters implements Serializable {
 
         final ScalingParameters other = (ScalingParameters) o;
 
-        return width == other.width && height == other.height && upscaling == other.upscaling && strategy == other.strategy;
+        return width == other.width && height == other.height && upscaling == other.upscaling 
+                && cropping == other.cropping && strategy == other.strategy;
     }
 
     public float getCompressionQuality() {
@@ -127,7 +154,8 @@ public class ScalingParameters implements Serializable {
 
     @Override
     public String toString() {
-        return width + "x" + height + ",upscaling=" + upscaling + ",strategy=" + strategy.name() + ",compression=" + compressionQuality;
+        return width + "x" + height + ",upscaling=" + upscaling + ",cropping=" + cropping 
+                + ",strategy=" + strategy.name() + ",compression=" + compressionQuality;
     }
 
 }

@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.gallery.imageutil;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -58,7 +61,9 @@ import org.xml.sax.SAXException;
  * <p> Creates a scaled version of an image. The given scaling parameters define a bounding box with a certain width and
  * height. Images that do not fit in this box (i.e. are too large) are always scaled down such that they do fit. If the
  * aspect ratio of the original image differs from that of the bounding box, either the width or the height of scaled
- * image will be less than that of the box.</p> <p> Smaller images are scaled up in the same way as large images are
+ * image will be less than that of the box.</p>
+ * <p>Unless of course cropping is set to true, then the original images is cropped to fill the bounding box.</p>
+ * <p> Smaller images are scaled up in the same way as large images are
  * scaled down, but only if upscaling is true. When upscaling is false and the image is smaller than the bounding box,
  * the scaled image will be equal to the original.</p> <p> If the width or height of the scaling parameters is 0 or
  * less, that side of the bounding box does not exist (i.e. is unbounded). If both sides of the bounding box are
@@ -72,11 +77,12 @@ public class ScaleImageOperation extends AbstractImageOperation {
     private final int width;
     private final int height;
     private final boolean upscaling;
+    private boolean cropping;
     private final ImageUtils.ScalingStrategy strategy;
     private InputStream scaledData;
     private int scaledWidth;
     private int scaledHeight;
-    private float compressionQuality = 1f;
+    private float compressionQuality;
 
     /**
      * Creates a image scaling operation, defined by the bounding box of a certain width and height. The strategy will
@@ -115,10 +121,29 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param compressionQuality a float between 0 and 1 indicating the compression quality to use for writing the
      *                           scaled image data.
      */
-    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy, float compressionQuality) {
+    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy, 
+                               float compressionQuality) {
+        this(width, height, upscaling, false, strategy, compressionQuality);
+    }
+
+    /**
+     * Creates a image scaling operation, defined by the bounding box of a certain width and height.
+     *
+     * @param width              the width of the bounding box in pixels
+     * @param height             the height of the bounding box in pixels
+     * @param upscaling          whether to enlarge images that are smaller than the bounding box
+     * @param cropping           whether to crop to original to fill the bounding box  
+     * @param strategy           the strategy to use for scaling the image (e.g. optimize for speed, quality, a
+     *                           trade-off between these two, etc.)
+     * @param compressionQuality a float between 0 and 1 indicating the compression quality to use for writing the
+     *                           scaled image data.
+     */
+    public ScaleImageOperation(final int width, final int height, final boolean upscaling, final boolean cropping, 
+                               final ImageUtils.ScalingStrategy strategy, float compressionQuality) {
         this.width = width;
         this.height = height;
         this.upscaling = upscaling;
+        this.cropping = cropping;
         this.strategy = strategy;
         this.compressionQuality = compressionQuality;
     }
@@ -216,8 +241,6 @@ public class ScaleImageOperation extends AbstractImageOperation {
             Result output = new StreamResult(file);
             Source input = new DOMSource(svgDocument);
             transformer.transform(input, output);
-        } catch (TransformerConfigurationException e) {
-            log.info("Writing SVG file " + file.getName() + " failed, using original instead", e);
         } catch (TransformerException e) {
             log.info("Writing SVG file " + file.getName() + " failed, using original instead", e);
         }
@@ -282,7 +305,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
                 scaledHeight = originalHeight;
                 scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
                 deleteTmpFile = false;
-            } else {
+            } else {    
                 BufferedImage scaledImage = getScaledImage(reader, originalWidth, originalHeight);
                 ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage, compressionQuality);
 
@@ -314,30 +337,71 @@ public class ScaleImageOperation extends AbstractImageOperation {
     private BufferedImage getScaledImage(final ImageReader reader, final int originalWidth, final int originalHeight)
             throws IOException {
 
-        final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
-
+        BufferedImage imageToScale;
         int targetWidth;
         int targetHeight;
 
-        if (resizeRatio >= 1.0d && !upscaling) {
-            targetWidth = originalWidth;
-            targetHeight = originalHeight;
+        if (cropping) {
+            final Dimension thumbnailDimension = new Dimension(width, height);
+            final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
+            final Dimension targetDimension = handleZeroValueInDimension(new Dimension(width, height), thumbnailDimension);
+            Object hints;
+            boolean highQuality;
+            if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
+                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+                highQuality = true;
+            } else {
+                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+                highQuality = false;
+            }
+            
+            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension, hints, highQuality);
+
+            targetHeight = targetDimension.height;
+            targetWidth = targetDimension.width;
         } else {
-            // scale the image
-            targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
-            targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Resizing image of {}x{} to {}x{}", originalWidth, originalHeight, targetWidth, targetHeight);
+            imageToScale = reader.read(0);
+
+            final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
+
+            if (resizeRatio >= 1.0d && !upscaling) {
+                targetWidth = originalWidth;
+                targetHeight = originalHeight;
+            } else {
+                // scale the image
+                targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
+                targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Resizing image of {}x{} to {}x{}", originalWidth, originalHeight, targetWidth, targetHeight);
+            }
         }
 
         BufferedImage scaledImage;
 
         synchronized (scalingLock) {
-            BufferedImage originalImage = reader.read(0);
-            scaledImage = ImageUtils.scaleImage(originalImage, targetWidth, targetHeight, strategy);
+            scaledImage = ImageUtils.scaleImage(imageToScale, targetWidth, targetHeight, strategy);
         }
         return scaledImage;
+    }
+
+    private Rectangle calculateCropArea(final double originalWidth, final double originalHeight, 
+                                        final double variantWidth, final double variantHeight) {
+        
+        final double originalAspectRatio = originalWidth / originalHeight;
+        final double variantAspectRatio = variantWidth / variantHeight;
+        
+        if (originalAspectRatio > variantAspectRatio) {
+            // cut off left and right
+            final int adjustedOriginalWidth = (int) ((originalHeight / variantHeight) * variantWidth);
+            final int cutOffWidth = (int) ((originalWidth - adjustedOriginalWidth) / 2);
+            return new Rectangle(cutOffWidth, 0, adjustedOriginalWidth, (int) originalHeight);
+        } else {
+            // cut off top and bottom
+            final int adjustedOriginalHeight = (int) ((originalWidth / variantWidth) * variantHeight);
+            final int cutOffHeight = (int) ((originalHeight - adjustedOriginalHeight) / 2);
+            return new Rectangle(0, cutOffHeight, (int) originalWidth, adjustedOriginalHeight);
+        }
     }
 
     private File writeToTmpFile(InputStream data) throws IOException {
@@ -351,6 +415,19 @@ public class ScaleImageOperation extends AbstractImageOperation {
             IOUtils.closeQuietly(tmpStream);
         }
         return tmpFile;
+    }
+
+    private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
+        Dimension normalized = new Dimension(thumbnailDimension);
+        if (thumbnailDimension.height == 0) {
+            int height = (int)((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
+            normalized.setSize(thumbnailDimension.width, height);
+        }
+        if (thumbnailDimension.width == 0) {
+            int width = (int)((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
+            normalized.setSize(width, thumbnailDimension.height);
+        }
+        return normalized;
     }
 
     protected double calculateResizeRatio(double originalWidth, double originalHeight, int targetWidth,
@@ -406,6 +483,9 @@ public class ScaleImageOperation extends AbstractImageOperation {
         return compressionQuality;
     }
 
+    public void setCropping(final boolean cropping) {
+        this.cropping = cropping;
+    }
 
     private static class AutoDeletingTmpFileInputStream extends FileInputStream {
 

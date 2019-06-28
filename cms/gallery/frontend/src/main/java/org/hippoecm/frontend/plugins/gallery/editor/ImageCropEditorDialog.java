@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.gallery.editor;
 
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -279,10 +280,9 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     protected void onOk() {
         JSONObject jsonObject = JSONObject.fromObject(region);
 
-        int top = jsonObject.getInt("top");
-        int height = jsonObject.getInt("height");
-        int left = jsonObject.getInt("left");
-        int width = jsonObject.getInt("width");
+        final Rectangle cropArea = new Rectangle(jsonObject.getInt("left"), jsonObject.getInt("top"), 
+                jsonObject.getInt("width"), jsonObject.getInt("height"));
+        
         try {
             Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
@@ -300,18 +300,17 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             reader.setInput(imageInputStream);
             BufferedImage original = reader.read(0);
             Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
-            Dimension dimension = handleZeroValueInDimension(new Dimension(width, height), thumbnailDimension);
+            Dimension dimension = handleZeroValueInDimension(new Dimension(cropArea.width, cropArea.height), thumbnailDimension);
             Object hints;
             boolean highQuality;
-            if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
+            if (Math.min(cropArea.width / reader.getWidth(0), cropArea.height / reader.getHeight(0)) < 1.0) {
                 hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
                 highQuality = true;
             } else {
                 hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
                 highQuality = false;
             }
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height,
-                    (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
+            BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension, hints, highQuality);
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
 
             //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
