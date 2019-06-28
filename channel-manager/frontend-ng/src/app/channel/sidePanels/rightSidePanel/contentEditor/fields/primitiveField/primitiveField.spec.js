@@ -253,6 +253,7 @@ describe('PrimitiveField', () => {
         message: 'Second error',
       };
       FieldService.save.and.returnValue($q.resolve(validatedValues));
+      spyOn(field, '$setTouched');
       spyOn(field, '$setValidity');
 
       $ctrl.valueChanged();
@@ -260,6 +261,7 @@ describe('PrimitiveField', () => {
 
       expect(FieldService.save)
         .toHaveBeenCalledWith({ name: 'test-name/field:type', values: fieldValues, throttle: true });
+      expect(field.$setTouched).toHaveBeenCalled();
       expect(field.$setValidity).toHaveBeenCalledWith('server', false);
       expect($ctrl.firstServerError).toBe('First error');
     });
@@ -326,12 +328,14 @@ describe('PrimitiveField', () => {
     beforeEach(() => {
       $ctrl.form = {
         field1: {
+          $setTouched: jasmine.createSpy(),
           $setValidity: jasmine.createSpy(),
           $error: {
             server: false,
           },
         },
         field2: {
+          $setTouched: jasmine.createSpy(),
           $setValidity: jasmine.createSpy(),
           $error: {
             server: true,
@@ -352,6 +356,7 @@ describe('PrimitiveField', () => {
       });
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field1.$setTouched).toHaveBeenCalled();
       expect($ctrl.form.field1.$setValidity).toHaveBeenCalledWith('server', false);
       expect($ctrl.firstServerError).toBe('error message');
     });
@@ -366,6 +371,7 @@ describe('PrimitiveField', () => {
       });
 
       expect($ctrl.getFieldName).toHaveBeenCalled();
+      expect($ctrl.form.field1.$setTouched).not.toHaveBeenCalled();
       expect($ctrl.form.field2.$setValidity).toHaveBeenCalledWith('server', true);
       expect($ctrl.firstServerError).toBeUndefined();
     });

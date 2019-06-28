@@ -40,6 +40,9 @@ class PrimitiveFieldCtrl {
 
       const isValid = !value.errorInfo || !value.errorInfo.message;
       field.$setValidity('server', isValid);
+      if (!isValid) {
+        field.$setTouched();
+      }
 
       if (!isValid && !this.firstServerError) {
         this.firstServerError = value.errorInfo.message;
