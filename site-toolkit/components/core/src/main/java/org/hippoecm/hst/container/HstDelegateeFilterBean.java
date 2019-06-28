@@ -334,50 +334,50 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             if (resolvedMount == null) {
                 resolvedMount = resolvedVirtualHost.matchMount(containerRequest.getPathInfo());
+            }
 
-                final boolean authenticated = CmsSSOAuthenticationHandler.isAuthenticated(containerRequest);
+            if (resolvedMount == null) {
+                throw new MatchException(String.format("No matching Mount for '%s'", containerRequest));
+            }
 
-                if (resolvedMount.getMatchingIgnoredPrefix() != null && !authenticated) {
-                    // eg _cmsinternal request but not authenticated, hence should return 404 (just page not found,
-                    // not even an unauthorized since for example http://www.example.org/_cmsinternal just doesn't exist
-                    // over the host of the site
-                    res.sendError(HttpServletResponse.SC_NOT_FOUND);
-                    return;
-                }
+            final boolean authenticated = CmsSSOAuthenticationHandler.isAuthenticated(containerRequest);
 
-                if (resolvedMount != null) {
-                    request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
-                    requestContext.setResolvedMount(resolvedMount);
-                    if (renderingHost != null) {
-                        requestContext.setRenderHost(renderingHost);
-                        if (requestComesFromCms(vHosts, renderingHost, req)) {
-                            if (!authenticated) {
-                                ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
-                                log.warn("Attempted Channel Manager preview request without being authenticated");
-                                return;
-                            }
-                            requestContext.setChannelManagerPreviewRequest(true);
-                            if (resolvedMount instanceof MutableResolvedMount) {
-                                Mount undecoratedMount = resolvedMount.getMount();
-                                if (!(undecoratedMount instanceof ContextualizableMount)) {
-                                    String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
-                                            "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
-                                    throw new MatchException(msg);
-                                }
-                                Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
-                                if (decoratedMount == undecoratedMount) {
-                                    log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
-                                } else {
-                                    log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
-                                }
-                                ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
-                            } else {
-                                throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
-                            }
-                        }
+            if (resolvedMount.getMatchingIgnoredPrefix() != null && !authenticated) {
+                // eg _cmsinternal request but not authenticated, hence should return 404 (just page not found,
+                // not even an unauthorized since for example http://www.example.org/_cmsinternal just doesn't exist
+                // over the host of the site
+                res.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+
+            request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
+            requestContext.setResolvedMount(resolvedMount);
+            if (renderingHost != null) {
+                requestContext.setRenderHost(renderingHost);
+                if (requestComesFromCms(vHosts, renderingHost, req)) {
+                    if (!authenticated) {
+                        ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
+                        log.warn("Attempted Channel Manager preview request without being authenticated");
+                        return;
                     }
-                } else {
-                    throw new MatchException(String.format("No matching Mount for '%s'", containerRequest));
+                    requestContext.setChannelManagerPreviewRequest(true);
+                    if (resolvedMount instanceof MutableResolvedMount) {
+                        Mount undecoratedMount = resolvedMount.getMount();
+                        if (!(undecoratedMount instanceof ContextualizableMount)) {
+                            String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
+                                    "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
+                            throw new MatchException(msg);
+                        }
+                        Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
+                        if (decoratedMount == undecoratedMount) {
+                            log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
+                        } else {
+                            log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
+                        }
+                        ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
+                    } else {
+                        throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
+                    }
                 }
             }
 
