@@ -17,7 +17,16 @@ package org.onehippo.cms7.services.webfiles.watch;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+
 public class SubDirectoriesWatcherWithFileSystemWatcherIT extends AbstractSubDirectoriesWatcherWithFileSystemObserverIT {
+
+    @BeforeClass
+    public static void noMacs() {
+        Assume.assumeFalse("This test is not expected to pass on macOS", SystemUtils.IS_OS_MAC);
+    }
 
     @Override
     public FileSystemObserver createFileSystemObserver() throws IOException {
