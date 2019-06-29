@@ -18,6 +18,9 @@ package org.onehippo.cms7.services.webfiles.watch;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -25,6 +28,11 @@ import static org.junit.Assert.assertTrue;
 public class FileSystemWatcherIT extends AbstractFileSystemObserverIT {
 
     private FileSystemWatcher fileSystemWatcher;
+
+    @BeforeClass
+    public static void noMacs() {
+        Assume.assumeFalse("This test is not expected to pass on macOS", SystemUtils.IS_OS_MAC);
+    }
 
     @Override
     public FileSystemObserver createFileSystemObserver() throws IOException {
