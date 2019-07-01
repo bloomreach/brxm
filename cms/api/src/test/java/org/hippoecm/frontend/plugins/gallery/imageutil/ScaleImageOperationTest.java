@@ -79,8 +79,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropLandscapeImageInLandscapeBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 100, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 200, 100);
     }
@@ -88,8 +87,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropUpscaleLandscapeImageInLandscapeBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(580, 300, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(580, 300, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 580, 300);
     }
@@ -97,8 +95,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropLandscapeImageInLandscapeBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(500, 100, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(500, 100, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 500, 100);
     }
@@ -106,8 +103,7 @@ public class ScaleImageOperationTest {
 
     public void cropUpscaleLandscapeImageInLandscapeBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(900, 300, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(900, 300, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 900, 300);
     }
@@ -115,7 +111,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropPortraitImageInPortraitBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(100, 200, true, ImageUtils.ScalingStrategy.SPEED);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(100, 200, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.setCropping(true);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 100, 200);
@@ -124,8 +120,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropUpscalePortraitImageInPortraitBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(400, 600, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(400, 600, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 400, 600);
     }
@@ -133,8 +128,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropPortraitImageInPortraitBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 200, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 200, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 200, 200);
     }
@@ -142,8 +136,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropUpscalePortraitImageInPortraitBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(400, 400, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(400, 400, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 400, 400);
     }
@@ -151,8 +144,7 @@ public class ScaleImageOperationTest {
     @Test
     public void cropSquareImageInSquareBoundingBox() throws GalleryException, IOException {
         InputStream data = getClass().getResourceAsStream("/test-50x50.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(50, 50, true, ImageUtils.ScalingStrategy.SPEED);
-        scaleOp.setCropping(true);
+        ScaleImageOperation scaleOp = new ScaleImageOperation(50, 50, true, true, ImageUtils.ScalingStrategy.SPEED, 1f);
         scaleOp.execute(data, "image/jpeg");
         checkImageDimensions(scaleOp, "image/jpeg", 50, 50);
     }
