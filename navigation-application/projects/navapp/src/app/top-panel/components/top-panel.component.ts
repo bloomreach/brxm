@@ -18,8 +18,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
+import { ClientAppService } from '../../client-app/services';
 import { Site } from '../../models/dto';
-import { NavConfigService } from '../../services';
+import { CommunicationsService, NavConfigService } from '../../services';
 import { SiteSelectionSidePanelService } from '../services';
 
 @Component({
@@ -29,11 +30,13 @@ import { SiteSelectionSidePanelService } from '../services';
 })
 export class TopPanelComponent implements OnInit, OnDestroy {
   private site: Site;
-  private unsibscribe = new Subject();
+  private unsubscribe = new Subject();
 
   constructor(
     private navConfigResourcesService: NavConfigService,
     private siteSelectionPanelService: SiteSelectionSidePanelService,
+    private clientAppService: ClientAppService,
+    private communicationsService: CommunicationsService,
   ) {}
 
   get selectedSite(): Site {
@@ -41,8 +44,10 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   }
 
   set selectedSite(site: Site) {
-    this.site = site;
-    this.siteSelectionPanelService.close();
+    this.communicationsService.updateSite(site.id).then(() => {
+      this.site = site;
+      this.siteSelectionPanelService.close();
+    });
   }
 
   get sites$(): Observable<Site[]> {
@@ -53,16 +58,20 @@ export class TopPanelComponent implements OnInit, OnDestroy {
     return this.siteSelectionPanelService.isOpened;
   }
 
+  get isSiteSelectionEnabled(): boolean {
+    return this.clientAppService.doesActiveAppSupportSites;
+  }
+
   ngOnInit(): void {
     this.navConfigResourcesService.sites$.pipe(
       map(sites => sites.length ? sites[0] : undefined),
-      takeUntil(this.unsibscribe),
+      takeUntil(this.unsubscribe),
     ).subscribe(firstNode => this.site = firstNode);
   }
 
   ngOnDestroy(): void {
-    this.unsibscribe.next();
-    this.unsibscribe.complete();
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   onSiteSelectorClicked(): void {

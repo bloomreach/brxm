@@ -16,44 +16,37 @@
 
 import { NavItem, Site } from '@bloomreach/navapp-communication';
 
-const appIframeUrl = 'http://localhost:4201';
-export const navigationConfiguration: NavItem[] = [
+const apps = [
   {
-    id: 'category-ranking',
-    appIframeUrl,
-    appPath: 'category-ranking',
+    url: 'http://localhost:4201',
+    paths: [
+      'category-ranking',
+      'all-category-pages',
+      'seo',
+      'merchandising-audiences',
+      'top-opportunities',
+      'improve-category-navigation',
+    ],
   },
   {
-    id: 'all-category-pages',
-    appIframeUrl,
-    appPath: 'all-category-pages',
-  },
-  {
-    id: 'seo',
-    appIframeUrl,
-    appPath: 'seo',
-  },
-  {
-    id: 'merchandising-audiences',
-    appIframeUrl,
-    appPath: 'merchandising-audiences',
-  },
-  {
-    id: 'top-opportunities',
-    appIframeUrl,
-    appPath: 'top-opportunities',
-  },
-  {
-    id: 'improve-category-navigation',
-    appIframeUrl,
-    appPath: 'improve-category-navigation',
-  },
-  {
-    id: 'product-a-b-testing',
-    appIframeUrl,
-    appPath: 'product-a-b-testing',
+    url: 'http://localhost:4201/brsm',
+    paths: [
+      'product-a-b-testing',
+    ],
   },
 ];
+
+export const navigationConfiguration: NavItem[] = apps.reduce((navItems, app) => {
+  const appNavItems = app.paths.map(path => ({
+    id: path,
+    appIframeUrl: app.url,
+    appPath: path,
+  }));
+
+  navItems = navItems.concat(appNavItems);
+
+  return navItems;
+}, []);
 
 export const mockSites: Site[] = [
   {

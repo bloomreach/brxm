@@ -103,7 +103,7 @@
             "scripts": [],
             "assets": [
               "projects/navapp/src/favicon.ico",
-              "projects/navapp/src/assets"
+              "projects/navapp/src/navapp-assets"
             ]
           }
         },

@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';
@@ -25,26 +25,46 @@ import { ClientApp } from '../models/client-app.model';
 
 @Injectable()
 export class ClientAppService {
+  private apps = new BehaviorSubject<ClientApp[]>([]);
+  private activeAppId = new BehaviorSubject<string>(undefined);
+  private connectionsEstablished = new ReplaySubject<boolean>(1);
+
+  constructor(private navConfigService: NavConfigService) {}
+
   get apps$(): Observable<ClientApp[]> {
     return this.apps.asObservable();
-  }
-
-  get activeAppId$(): Observable<string> {
-    return this.activeAppId.asObservable();
   }
 
   get connectionsEstablished$(): Observable<boolean> {
     return this.connectionsEstablished.asObservable();
   }
 
-  private apps = new BehaviorSubject<ClientApp[]>([]);
-  private activeAppId = new BehaviorSubject<string>(undefined);
-  private connectionsEstablished = new Subject<boolean>();
+  get appsWithSitesSupport(): ClientApp[] {
+    const apps = this.apps.value;
 
-  constructor(private navConfigResourcesService: NavConfigService) {}
+    return apps.filter(x => this.doesAppSupportSites(x));
+  }
+
+  get activeApp(): ClientApp {
+    const activeAppId = this.activeAppId.value;
+
+    if (!activeAppId) {
+      return undefined;
+    }
+
+    try {
+      return this.getApp(activeAppId);
+    } catch {
+      throw new Error(`Unable to find the active app with id = ${activeAppId}`);
+    }
+  }
+
+  get doesActiveAppSupportSites(): boolean {
+    return this.doesAppSupportSites(this.activeApp);
+  }
 
   init(): void {
-    this.navConfigResourcesService.navItems$
+    this.navConfigService.navItems$
       .pipe(
         map(navItems => this.filterUniqueURLs(navItems)),
         map(uniqueURLs => uniqueURLs.map(url => new ClientApp(url))),
@@ -63,7 +83,7 @@ export class ClientAppService {
   }
 
   getApp(appId: string): ClientApp {
-    const apps = this.apps.getValue();
+    const apps = this.apps.value;
     const app = apps.find(a => a.id === appId);
     if (!app) {
       throw new Error(`There is no connection to an ifrane with id = ${appId}`);
@@ -73,14 +93,14 @@ export class ClientAppService {
   }
 
   private updateApp(appId: string, api: ChildPromisedApi): void {
-    const apps = this.apps.getValue();
+    const apps = this.apps.value;
     const appToUpdateIndex = apps.findIndex(app => app.id === appId);
 
     if (appToUpdateIndex === -1) {
       return;
     }
 
-    const updatedApp = { ...apps[appToUpdateIndex] };
+    const updatedApp = new ClientApp(apps[appToUpdateIndex].url);
     updatedApp.api = api;
 
     apps[appToUpdateIndex] = updatedApp;
@@ -89,7 +109,7 @@ export class ClientAppService {
   }
 
   private checkEstablishedConnections(): void {
-    const apps = this.apps.getValue();
+    const apps = this.apps.value;
     const allConnected = apps.every(a => a.api !== undefined);
 
     if (allConnected) {
@@ -105,5 +125,9 @@ export class ClientAppService {
     }, new Set<string>());
 
     return Array.from(uniqueUrlsSet.values());
+  }
+
+  private doesAppSupportSites(app: ClientApp): boolean {
+    return !!(app && app.api && app.api.updateSite);
   }
 }
