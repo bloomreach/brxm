@@ -41,13 +41,13 @@ public class TemplateQueryServiceImpl implements TemplateQueryService {
     private static final String JCR_LANGUAGE = "jcr:language";
     private static final String XPATH = "xpath";
     private static final String JCR_STATEMENT = "jcr:statement";
-    private static final String $_HOLDER = "$holder";
+    private static final String HOLDER = "$holder";
 
     private static final String TEMPLATE_QUERIES_ROOTPATH = "/hippo:configuration/hippo:queries/hippo:templates";
     private static final String[] MODIFY_VALUES_DOCUMENT = {"./_name", "$name", "./hippotranslation:locale",
-            "$inherited", "./hippotranslation:id", "$uuid", "./hippostdpubwf:createdBy", $_HOLDER,
-            "./hippostdpubwf:creationDate", "$now", "./hippostdpubwf:lastModifiedBy", $_HOLDER,
-            "./hippostdpubwf:lastModificationDate", "$now", "./hippostd:holder", $_HOLDER};
+            "$inherited", "./hippotranslation:id", "$uuid", "./hippostdpubwf:createdBy", HOLDER,
+            "./hippostdpubwf:creationDate", "$now", "./hippostdpubwf:lastModifiedBy", HOLDER,
+            "./hippostdpubwf:lastModificationDate", "$now", "./hippostd:holder", HOLDER};
     private static final String[] MODIFY_VALUES_FOLDER = {"./_name", "$name", "./hippotranslation:id", "$uuid",
             "./hippotranslation:locale", "$inherited"};
     private static final String XPATH_QUERY_DOCUMENT = "//element(*,hipposysedit:namespacefolder)" +

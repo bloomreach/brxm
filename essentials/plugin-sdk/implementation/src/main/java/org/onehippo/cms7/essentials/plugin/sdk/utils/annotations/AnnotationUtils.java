@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,6 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * Utility methods for parsing annotations and bean properties (fields/methods)
- *
- * @version $Id$
  */
 public final class AnnotationUtils {
 
@@ -75,10 +73,10 @@ public final class AnnotationUtils {
             .add("HippoHtml")
             .add("HippoGalleryImageSetBean").add("HippoGalleryImageSet")
             .build();
+
     //############################################
     // SOURCE UTILS
     //############################################
-
 
     @SuppressWarnings("unchecked")
     public static String addXmlRootAnnotation(final String source, final String name) {
@@ -101,7 +99,8 @@ public final class AnnotationUtils {
 
     }
 
-    public static String addXmlAdaptorAnnotation(final String source, final String returnType, final AdapterWrapper wrapper) {
+    public static String addXmlAdaptorAnnotation(final String source, final String returnType, 
+                                                 final AdapterWrapper wrapper) {
 
         final CompilationUnit unit = JavaSourceUtils.getCompilationUnit(source);
         final AST ast = unit.getAST();
@@ -139,7 +138,6 @@ public final class AnnotationUtils {
         }
 
         return JavaSourceUtils.rewrite(unit, ast);
-
     }
 
     public static String addXmlElementAnnotation(final String source) {
@@ -155,24 +153,10 @@ public final class AnnotationUtils {
             @SuppressWarnings("rawtypes")
             final List parameters = getterMethod.parameters();
             if (parameters == null || parameters.size() == 0) {
-                // it also must not be of type void:
-                final Type returnType2 = getterMethod.getReturnType2();
-                if(returnType2==null){
+                if (cannotAddAnnotation(getterMethod)) {
                     continue;
                 }
-                if(returnType2 instanceof PrimitiveType){
-                    final PrimitiveType myType = (PrimitiveType) returnType2;
-                    if(myType.getPrimitiveTypeCode().equals(PrimitiveType.VOID)){
-                        log.debug("Cannot annotate void type for method: {} ", getterMethod.getName().getIdentifier());
-                        continue;
-                    }
-                }
-                // check if known type:
-                final String returnName = returnType2.toString();
-                if (!KNOWN_XML_TYPES.contains(returnName)) {
-                    log.warn("Unknown return type [{}], will skip annotating it with @XmlElement", returnName);
-                    continue;
-                }
+
                 // annotate getter:
                 final MarkerAnnotation xmlElementAnnotation = ast.newMarkerAnnotation();
                 xmlElementAnnotation.setTypeName(ast.newSimpleName(XmlElement.class.getSimpleName()));
@@ -185,7 +169,28 @@ public final class AnnotationUtils {
         }
 
         return JavaSourceUtils.rewrite(unit, ast);
+    }
 
+    private static boolean cannotAddAnnotation(final MethodDeclaration getterMethod) {
+        // it also must not be of type void:
+        final Type returnType2 = getterMethod.getReturnType2();
+        if (returnType2 == null) {
+            return true;
+        }
+        if (returnType2 instanceof PrimitiveType) {
+            final PrimitiveType myType = (PrimitiveType) returnType2;
+            if (myType.getPrimitiveTypeCode().equals(PrimitiveType.VOID)) {
+                log.debug("Cannot annotate void type for method: {} ", getterMethod.getName().getIdentifier());
+                return true;
+            }
+        }
+        // check if known type:
+        final String returnName = returnType2.toString();
+        if (!KNOWN_XML_TYPES.contains(returnName)) {
+            log.warn("Unknown return type [{}], will skip annotating it with @XmlElement", returnName);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -220,11 +225,9 @@ public final class AnnotationUtils {
         return JavaSourceUtils.rewrite(unit, ast);
     }
 
-
     //############################################
     // BINARY STUFF
     //############################################
-
 
     /**
      * Return annotation of specific type
@@ -242,14 +245,15 @@ public final class AnnotationUtils {
     }
 
     /**
-     * Get fields of an class which are annotated with specific
-     * annotation and set them accessible (if necessary)
+     * Get fields of an class which are annotated with specific annotation and set them accessible (if necessary)
      *
      * @param clazz           class we are scanning for annotated fields.
      * @param annotationClass annotation we are interested in
      * @return a collection containing (accessible) fields we have found (or an empty collection)
      */
-    public static Collection<Field> getAnnotatedFields(final Class<?> clazz, final Class<? extends Annotation> annotationClass) {
+    public static Collection<Field> getAnnotatedFields(final Class<?> clazz, 
+                                                       final Class<? extends Annotation> annotationClass) {
+        
         Collection<Field> fields = getClassFields(clazz);
         Iterator<Field> iterator = fields.iterator();
         while (iterator.hasNext()) {
@@ -345,7 +349,6 @@ public final class AnnotationUtils {
         return adapterSource;
     }
 
-
     public static class AdapterWrapper {
         private final String importPath;
         private final String className;
@@ -359,4 +362,3 @@ public final class AnnotationUtils {
     private AnnotationUtils() {
     }
 }
-

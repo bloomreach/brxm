@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
  */
 package org.onehippo.cms7.essentials.plugin.sdk.utils;
 
+@SuppressWarnings("squid:S1192")
 public final class SourceCodeTemplates {
 
     public static final String TEMPLATE_DOCBASE_MULTIPLE = "class DocbaseMultiple{ " +
             "  @HippoEssentialsGenerated(internalName = \"$internalName$\")\n" +
             "    public List<HippoBean> $methodName$() {\n" +
             "        final List<HippoBean> beans = new ArrayList<>();\n" +
-            "        final String[] items = getProperty(\"$internalName$\");\n" +
+            "        final String[] items = getMultipleProperty(\"$internalName$\");\n" +
             "        if (items == null) {\n" +
             "            return beans;\n" +
             "        }\n" +
@@ -37,7 +38,7 @@ public final class SourceCodeTemplates {
     public static final String TEMPLATE_DOCBASE = "class Docbase{ " +
             "  @HippoEssentialsGenerated(internalName = \"$internalName$\")\n" +
             "    public HippoBean $methodName$() {\n" +
-            "        final String item = getProperty(\"$internalName$\");\n" +
+            "        final String item = getSingleProperty(\"$internalName$\");\n" +
             "        if (item == null) {\n" +
             "            return null;\n" +
             "        }\n" +

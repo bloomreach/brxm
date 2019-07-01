@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,24 +19,18 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
-/**
- * @version "$Id: VendorDocument.txt 173014 2013-08-07 09:50:50Z mmilicevic $"
- */
 @org.hippoecm.hst.content.beans.Node(jcrType = "hippoplugins:vendor")
 public class VendorDocument extends BaseDocument {
 
     public String getUrl() {
-        return getProperty("hippoplugins:url");
-
+        return getSingleProperty("hippoplugins:url");
     }
 
     public String getVendorName() {
-        return getProperty("hippoplugins:name");
+        return getSingleProperty("hippoplugins:name");
     }
 
     public HippoGalleryImageSetBean getLogo() {
         return getLinkedBean("hippoplugins:logo", HippoGalleryImageSet.class);
     }
-
-
 }

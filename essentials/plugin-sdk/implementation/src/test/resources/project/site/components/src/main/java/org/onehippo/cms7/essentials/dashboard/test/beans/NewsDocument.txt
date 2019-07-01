@@ -1,6 +1,6 @@
 package org.onehippo.cms7.essentials.site.beans;
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,11 @@ public class NewsDocument extends BaseDocument{
     }
 
     public String getSummary() {
-        return getProperty("hippoplugins:summary");
+        return getSingleProperty("hippoplugins:summary");
     }
 
     public Calendar getDate() {
-        return getProperty("hippoplugins:date");
+        return getSingleProperty("hippoplugins:date");
     }
 
     public HippoHtml getHtml(){
@@ -60,6 +60,4 @@ public class NewsDocument extends BaseDocument{
     public HippoGalleryImageSetBean getImage() {
         return getLinkedBean("hippoplugins:image", HippoGalleryImageSetBean.class);
     }
-
-
 }

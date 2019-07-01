@@ -71,6 +71,12 @@ public class GalleryPluginResource {
     private static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
     private static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     private static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
+    private static final String JCR_STATEMENT = "jcr:statement";
+    private static final String HIPPOSTD_FOLDERTYPE = "hippostd:foldertype";
+    private static final String HIPPOSTD_GALLERYTYPE = "hippostd:gallerytype";
+    private static final String HEIGHT = "height";
+    private static final String WIDTH = "width";
+    private static final String UPSCALING = "upscaling";
 
     private final ContentBeansService contentBeansService;
     private final JcrService jcrService;
@@ -189,19 +195,19 @@ public class GalleryPluginResource {
 
             // image
             final Node imageNode = JcrUtils.copy(session, rootDestination + "/new-image", rootDestination + '/' + imageName);
-            final String oldImageQuery = imageNode.getProperty("jcr:statement").getString();
+            final String oldImageQuery = imageNode.getProperty(JCR_STATEMENT).getString();
             final String newImageQuery = oldImageQuery.replaceAll("new\\-image", imageName);
-            imageNode.setProperty("jcr:statement", newImageQuery);
+            imageNode.setProperty(JCR_STATEMENT, newImageQuery);
             copyTemplateTranslations(session, "new-image", imageName);
 
             // folder
             final Node folderNode = JcrUtils.copy(session, rootDestination + "/new-image-folder", rootDestination + '/' + folderName);
-            final String oldFolderQuery = folderNode.getProperty("jcr:statement").getString();
+            final String oldFolderQuery = folderNode.getProperty(JCR_STATEMENT).getString();
             final String newFolderQuery = oldFolderQuery.replaceAll("new\\-image\\-folder", folderName);
-            folderNode.setProperty("jcr:statement", newFolderQuery);
+            folderNode.setProperty(JCR_STATEMENT, newFolderQuery);
             final Node imageGalleryNode = folderNode.getNode("hippostd:templates").getNode("image gallery");
-            imageGalleryNode.setProperty("hippostd:foldertype", new String[]{folderName});
-            imageGalleryNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+            imageGalleryNode.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{folderName});
+            imageGalleryNode.setProperty(HIPPOSTD_GALLERYTYPE, new String[]{newImageNamespace});
             copyTemplateTranslations(session, "new-image-folder", folderName);
 
             if (updateExisting) {
@@ -210,8 +216,8 @@ public class GalleryPluginResource {
                 final NodeIterator nodes = query.execute().getNodes();
                 while (nodes.hasNext()) {
                     final Node imageFolderNode = nodes.nextNode();
-                    imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
-                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+                    imageFolderNode.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{folderName});
+                    imageFolderNode.setProperty(HIPPOSTD_GALLERYTYPE, new String[]{newImageNamespace});
                 }
                 // change primary types:
                 final Query handleQuery = session.getWorkspace().getQueryManager().createQuery("//content/gallery//element(*, hippo:handle)", "xpath");
@@ -235,8 +241,8 @@ public class GalleryPluginResource {
                 if (session.nodeExists(absPath)) {
                     final Node galleryRoot = session.getNode(absPath);
                     final Node imageFolderNode = galleryRoot.addNode(imageSetName, "hippogallery:stdImageGallery");
-                    imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
-                    imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
+                    imageFolderNode.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{folderName});
+                    imageFolderNode.setProperty(HIPPOSTD_GALLERYTYPE, new String[]{newImageNamespace});
                     feedback.addSuccess("Successfully created image folder: " + absPath + '/' + imageSetName);
                 }
                 // update HST beans, create new ones and *do not* update image sets:
@@ -281,19 +287,22 @@ public class GalleryPluginResource {
         }
 
         final ImageModel imageModel = extractBestModel(ourModel);
-        final boolean created = GalleryUtils.createImagesetVariant(jcrService, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
-        if (created) {
-            // add processor node:
-            final Session session = jcrService.createSession();
-            try {
-                createProcessingNode(session, ourModel.getPrefix() + ':' + imageVariantName);
-                session.save();
-            } catch (RepositoryException e) {
-                log.error("Error creating processing node", e);
-            } finally {
-                jcrService.destroySession(session);
+        if (imageModel != null) {
+            boolean created = GalleryUtils.createImagesetVariant(jcrService, ourModel.getPrefix(), 
+                    ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
+            if (created) {
+                // add processor node:
+                final Session session = jcrService.createSession();
+                try {
+                    createProcessingNode(session, ourModel.getPrefix() + ':' + imageVariantName);
+                    session.save();
+                } catch (RepositoryException e) {
+                    log.error("Error creating processing node", e);
+                } finally {
+                    jcrService.destroySession(session);
+                }
+                return new UserFeedback().addSuccess("Image variant:  " + imageVariantName + " successfully created");
             }
-            return new UserFeedback().addSuccess("Image variant:  " + imageVariantName + " successfully created");
         }
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return new UserFeedback().addError("Failed to create image variant: " + imageVariantName);
@@ -371,9 +380,9 @@ public class GalleryPluginResource {
 
     private void updateProcessorNode(final ImageModel payload, final Session session, final String myType) throws RepositoryException {
         final Node processingNode = createProcessingNode(session, myType);
-        processingNode.setProperty("height", payload.getHeight());
-        processingNode.setProperty("width", payload.getWidth());
-        processingNode.setProperty("upscaling", payload.isUpscaling());
+        processingNode.setProperty(HEIGHT, payload.getHeight());
+        processingNode.setProperty(WIDTH, payload.getWidth());
+        processingNode.setProperty(UPSCALING, payload.isUpscaling());
         processingNode.setProperty("cropping", payload.isCropping());
         processingNode.setProperty("optimize", payload.getOptimize());
         processingNode.setProperty("compression", payload.getCompression());
@@ -453,9 +462,9 @@ public class GalleryPluginResource {
                 // Get values from gallery processor variant
                 final Node processorVariant = GalleryUtils.getGalleryProcessorVariant(session, model.getType());
                 if (processorVariant != null) {
-                    model.setHeight(HippoNodeUtils.getLongProperty(processorVariant, "height", 0L).intValue());
-                    model.setWidth(HippoNodeUtils.getLongProperty(processorVariant, "width", 0L).intValue());
-                    model.setUpscaling(HippoNodeUtils.getBooleanProperty(processorVariant, "upscaling"));
+                    model.setHeight(HippoNodeUtils.getLongProperty(processorVariant, HEIGHT, 0L).intValue());
+                    model.setWidth(HippoNodeUtils.getLongProperty(processorVariant, WIDTH, 0L).intValue());
+                    model.setUpscaling(HippoNodeUtils.getBooleanProperty(processorVariant, UPSCALING));
                     model.setCropping(HippoNodeUtils.getBooleanProperty(processorVariant, "cropping"));
                     model.setOptimize(HippoNodeUtils.getStringProperty(processorVariant, "optimize", "quality"));
                     model.setCompression(HippoNodeUtils.getDoubleProperty(processorVariant, "compression", 1D));
@@ -548,9 +557,12 @@ public class GalleryPluginResource {
 
             final Session session = jcrService.createSession();
             try {
-                final Node imageNode = GalleryUtils.createImagesetNamespace(jcrService, settingsService, session, prefix, name, "/hippo:namespaces/hippogallery/imageset");
-                session.save();
-                log.debug("Created node: {}", imageNode.getPath());
+                final Node imageNode = GalleryUtils.createImagesetNamespace(jcrService, settingsService, session, 
+                        prefix, name, "/hippo:namespaces/hippogallery/imageset");
+                if (imageNode != null) {
+                    session.save();
+                    log.debug("Created node: {}", imageNode.getPath());
+                }
             } finally {
                 jcrService.destroySession(session);
             }
@@ -563,7 +575,6 @@ public class GalleryPluginResource {
         return HttpServletResponse.SC_CREATED;
     }
 
-
     private Node createProcessingNode(final Session session, final String nodeType) throws RepositoryException {
         final Node processorNode = session.getNode(PROCESSOR_PATH);
         if (processorNode.hasNode(nodeType)) {
@@ -571,9 +582,9 @@ public class GalleryPluginResource {
             return processorNode.getNode(nodeType);
         }
         final Node myProcessor = processorNode.addNode(nodeType, "frontend:pluginconfig");
-        myProcessor.setProperty("height", 0L);
-        myProcessor.setProperty("width", 0L);
-        myProcessor.setProperty("upscaling", false);
+        myProcessor.setProperty(HEIGHT, 0L);
+        myProcessor.setProperty(WIDTH, 0L);
+        myProcessor.setProperty(UPSCALING, false);
         return processorNode;
     }
 }

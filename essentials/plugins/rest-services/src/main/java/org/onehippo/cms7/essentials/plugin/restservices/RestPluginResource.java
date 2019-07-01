@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,45 +89,13 @@ public class RestPluginResource {
         }
 
         if (isManualApiEnabled) {
-            if (Strings.isNullOrEmpty(manualRestName)) {
-                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-                return feedback.addError("Manual REST resource URL must be specified.");
+            if (!setupManualApi(response, manualRestName, parameters, feedback)) {
+              return feedback;
             }
-
-            final Set<ValidBean> validBeans = annotateBeans((List<String>) parameters.get(RestPluginConst.JAVA_FILES));
-            final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
-
-            for (ValidBean validBean : validBeans) {
-                placeholderData.put("beanName", validBean.getBeanName());
-                placeholderData.put("fullQualifiedName", validBean.getFullQualifiedName());
-                projectService.copyResource("/BeanNameResource.txt",
-                        "{{restFolder}}/{{beanName}}Resource.java", placeholderData, false, false);
-            }
-
-            placeholderData.put("beans", validBeans);
-            if (!projectService.copyResource("/spring-plain-rest-api.xml",
-                    "{{siteOverrideFolder}}/spring-plain-rest-api.xml", placeholderData, true, false)) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return feedback.addError("Failed to set up Spring configuration for 'manual' REST endpoint. See back-end logs for mode details.");
-            }
-
-            if (!setupPlainRestMount(manualRestName, RestPluginConst.MANUAL_PIPELINE_NAME, feedback)) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return feedback;
-            }
-
-            rebuildService.requestRebuild("restServices");
-            feedback.addSuccess("Spring configuration changed, project rebuild needed.");
         }
 
         if (isGenericApiEnabled) {
-            if (Strings.isNullOrEmpty(genericRestName)) {
-                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
-                return feedback.addError("Generic REST resource URL must be specified.");
-            }
-
-            if (!setupPlainRestMount(genericRestName, RestPluginConst.GENERIC_PIPELINE_NAME, feedback)) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            if (!setupGenericApi(response, genericRestName, feedback)) {
                 return feedback;
             }
         }
@@ -135,6 +103,61 @@ public class RestPluginResource {
         return feedback.addSuccess("REST configuration setup was successful.");
     }
 
+    private boolean setupManualApi(final HttpServletResponse response, final String manualRestName, 
+                                   final Map<String, Object> parameters, final UserFeedback feedback) {
+        
+        if (Strings.isNullOrEmpty(manualRestName)) {
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            feedback.addError("Manual REST resource URL must be specified.");
+            return false;
+        }
+
+        final Set<ValidBean> validBeans = annotateBeans((List<String>) parameters.get(RestPluginConst.JAVA_FILES));
+        final Map<String, Object> placeholderData = placeholderService.makePlaceholders();
+
+        for (ValidBean validBean : validBeans) {
+            placeholderData.put("beanName", validBean.getBeanName());
+            placeholderData.put("fullQualifiedName", validBean.getFullQualifiedName());
+            projectService.copyResource("/BeanNameResource.txt",
+                    "{{restFolder}}/{{beanName}}Resource.java", placeholderData, false, false);
+        }
+
+        placeholderData.put("beans", validBeans);
+        if (!projectService.copyResource("/spring-plain-rest-api.xml",
+                "{{siteOverrideFolder}}/spring-plain-rest-api.xml", placeholderData, true, false)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            feedback.addError("Failed to set up Spring configuration for 'manual' REST endpoint. See back-end logs for mode details.");
+            return false;
+        }
+
+        if (!setupPlainRestMount(manualRestName, RestPluginConst.MANUAL_PIPELINE_NAME, feedback)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+
+        rebuildService.requestRebuild("restServices");
+        feedback.addSuccess("Spring configuration changed, project rebuild needed.");
+        
+        return true;
+    }
+    
+    private boolean setupGenericApi(final HttpServletResponse response, final String genericRestName, 
+                                    final UserFeedback feedback) {
+        
+        if (Strings.isNullOrEmpty(genericRestName)) {
+            response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            feedback.addError("Generic REST resource URL must be specified.");
+            return false;
+        }
+
+        if (!setupPlainRestMount(genericRestName, RestPluginConst.GENERIC_PIPELINE_NAME, feedback)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return false;
+        }
+        
+        return true;
+    }
+    
     private boolean setupPlainRestMount(final String mountName, final String pipelineName, final UserFeedback feedback) {
         final Map<String, Object> properties = new HashMap<>();
         properties.put(RestPluginConst.REST_NAME, mountName);
