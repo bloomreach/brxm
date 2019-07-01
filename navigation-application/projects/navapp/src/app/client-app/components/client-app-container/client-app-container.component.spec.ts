@@ -32,7 +32,7 @@ describe('ClientAppContainerComponent', () => {
 
   const clientAppService = {
     apps$: of([testApp, testApp2]),
-    activeAppId$: of('mytesturl'),
+    activeApp$: of(testApp),
   };
 
   beforeEach(async(() => {

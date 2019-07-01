@@ -31,7 +31,6 @@ import { OverlayService } from './overlay.service';
 })
 export class CommunicationsService implements OnDestroy {
   private appIds: string[] = [];
-  private activeAppId: string;
   private unsubscribe = new Subject();
 
   private static async resolveAlways<T>(p: Promise<T>): Promise<any> {
@@ -54,10 +53,6 @@ export class CommunicationsService implements OnDestroy {
       takeUntil(this.unsubscribe),
     ).subscribe(appIds => this.appIds = appIds);
 
-    clientAppService.activeAppId$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(appId => this.activeAppId = appId);
-
     menuStateService.activeMenuItem$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(activeMenuItem => this.navigate(activeMenuItem.appId, activeMenuItem.appPath));
@@ -79,7 +74,10 @@ export class CommunicationsService implements OnDestroy {
         this.menuStateService.activateMenuItem(appId, location.path);
         this.navigate(appId, location.path);
       },
-      updateNavLocation: (location: NavLocation) => this.menuStateService.activateMenuItem(this.activeAppId, location.path),
+      updateNavLocation: (location: NavLocation) => this.menuStateService.activateMenuItem(
+        this.clientAppService.activeApp.id,
+        location.path,
+      ),
     };
   }
 
@@ -95,6 +93,22 @@ export class CommunicationsService implements OnDestroy {
       .then(() => {
         this.clientAppService.activateApplication(clientAppId);
       });
+  }
+
+  updateSite(siteId: number): Promise<void> {
+    return this.clientAppService.activeApp.api.updateSite(siteId).then(() => {
+      const activeApp = this.clientAppService.activeApp;
+
+      const updatePromises = this.clientAppService.appsWithSitesSupport.map(app => {
+        if (app === activeApp) {
+          return;
+        }
+
+        return app.api.updateSite();
+      });
+
+      return Promise.all(updatePromises).then(() => {});
+    });
   }
 
   logout(): Observable<any[]> {

@@ -14,53 +14,81 @@
  * limitations under the License.
  */
 
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   connectToParent,
   NavLocation,
   ParentConnectConfig,
 } from '@bloomreach/navapp-communication';
-import { ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
+import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
 
 import { mockSites, navigationConfiguration } from './mocks';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
+  providers: [
+    Location,
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
+  ],
 })
 export class AppComponent implements OnInit {
   navigateCount = 0;
   navigatedTo: string;
   buttonClicked = 0;
   parent: ParentPromisedApi;
-  overlayed = false;
+  overlaid = false;
+  selectedSiteId: number;
+
+  constructor(
+    private location: Location,
+  ) {}
+
+  get isBrSmMock(): boolean {
+    return this.location.path() === '/brsm';
+  }
+
+  get childApiMethods(): ChildApi {
+    const methods: ChildApi = {
+      navigate: (location: NavLocation) => {
+        this.navigateCount += 1;
+        this.navigatedTo = location.path;
+      },
+      getNavItems: () => {
+        return navigationConfiguration;
+      },
+      logout: () => {
+        if (this.navigateCount % 2) {
+          return Promise.reject(new Error('Whoa!'));
+        } else {
+          return Promise.resolve();
+        }
+      },
+    };
+
+    if (this.isBrSmMock) {
+      methods.getSites = () => {
+        return mockSites;
+      };
+
+      methods.updateSite = (siteId?: number) => {
+        this.selectedSiteId = siteId;
+      };
+    }
+
+    return methods;
+  }
 
   ngOnInit(): void {
     if (window.parent === window) {
       console.log('Iframe app was not loaded inside iframe');
       return;
     }
+
     const config: ParentConnectConfig = {
       parentOrigin: '*',
-      methods: {
-        navigate: (location: NavLocation) => {
-          this.navigateCount += 1;
-          this.navigatedTo = location.path;
-        },
-        getNavItems: () => {
-          return navigationConfiguration;
-        },
-        getSites: () => {
-          return mockSites;
-        },
-        logout: () => {
-          if (this.navigateCount % 2) {
-            return Promise.reject(new Error('Whoa!'));
-          } else {
-            return Promise.resolve();
-          }
-        },
-      },
+      methods: this.childApiMethods,
     };
 
     connectToParent(config).then(parent => (this.parent = parent));
@@ -71,15 +99,15 @@ export class AppComponent implements OnInit {
   }
 
   toggleOverlay(): void {
-    if (this.overlayed) {
+    if (this.overlaid) {
       this.parent.hideMask().then(() => {
         console.log('hiding parent mask');
-        this.overlayed = false;
+        this.overlaid = false;
       });
     } else {
       this.parent.showMask().then(() => {
         console.log('showing parent mask');
-        this.overlayed = true;
+        this.overlaid = true;
       });
     }
   }

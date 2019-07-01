@@ -17,19 +17,21 @@
 @import 'variables';
 
 :host {
-  align-items: stretch;
   background-color: $top-panel-bg;
   border-bottom: 1px solid $top-panel-border-color;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
+  display: flex;
   height: $top-panel-height;
-  justify-items: stretch;
+}
+
+.breadcrumbs {
+  flex: 3;
 }
 
 .site-selector-value {
   align-items: center;
   cursor: pointer;
   display: grid;
+  flex: 1;
   grid-template-columns: 1fr auto;
   justify-items: end;
   padding-right: 20px;
