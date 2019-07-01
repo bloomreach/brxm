@@ -24,8 +24,6 @@ describe('nodeLinkController', () => {
   let config;
   let mdInputContainer;
   let ngModel;
-  let onBlur;
-  let onFocus;
 
   const $element = angular.element('<div></div>');
 
@@ -56,9 +54,6 @@ describe('nodeLinkController', () => {
       linkpicker: 'link-picker-config',
     };
 
-    onBlur = jasmine.createSpy('onBlur');
-    onFocus = jasmine.createSpy('onFocus');
-
     mdInputContainer = jasmine.createSpyObj('mdInputContainer', [
       'setFocused',
       'setInvalid',
@@ -76,8 +71,6 @@ describe('nodeLinkController', () => {
       mdInputContainer,
       name: 'TestField',
       ngModel,
-      onBlur,
-      onFocus,
     });
   });
 
@@ -145,14 +138,14 @@ describe('nodeLinkController', () => {
       expect(preventDefault).toHaveBeenCalled();
     });
 
-    it('opens the linkPicker if model is empty', () => {
-      spyOn($ctrl, 'openLinkPicker');
+    it('opens the picker if model is empty', () => {
+      spyOn($ctrl, 'open');
       ngModel.$modelValue = '';
       init();
 
       $ctrl.onFocusFromParent({ preventDefault });
 
-      expect($ctrl.openLinkPicker).toHaveBeenCalled();
+      expect($ctrl.open).toHaveBeenCalled();
     });
 
     it('puts focus on the "clear" button if model is not empty', () => {
@@ -166,40 +159,54 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on parent container', () => {
-      $ctrl.focus('event');
+      $ctrl.onFocus();
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(true);
     });
 
     it('emits focus event and set hasFocus to true', () => {
+      spyOn($element, 'triggerHandler');
       const event = {};
-      $ctrl.focus(event);
+      $ctrl.onFocus(event);
 
       expect($ctrl.hasFocus).toBe(true);
-      expect(onFocus).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
     });
 
     it('blurs parent container', () => {
-      $ctrl.blur('event');
+      $ctrl.onBlur();
+      $timeout.flush();
+
       expect($ctrl.mdInputContainer.setFocused).toHaveBeenCalledWith(false);
     });
 
     it('emits blur event and set hasFocus to false after timeout', () => {
+      spyOn($element, 'triggerHandler');
       $ctrl.hasFocus = true;
       const event = {};
-      $ctrl.blur(event);
+      $ctrl.onBlur(event);
 
       expect($ctrl.hasFocus).toBe(true);
 
       $timeout.flush();
-      expect(onBlur).toHaveBeenCalledWith(event);
+      expect($element.triggerHandler).toHaveBeenCalledWith(event);
       expect($ctrl.hasFocus).toBe(false);
+    });
+
+    it('prevents blur event if the picker is open', () => {
+      PickerService.pickLink.and.returnValue($q.defer().promise);
+
+      $ctrl.open();
+      $ctrl.onBlur();
+      $timeout.flush();
+
+      expect($ctrl.hasFocus).toBe(true);
     });
 
     it('cancels the timeout if a focus event is fired right after the blur event', () => {
       spyOn($timeout, 'cancel').and.callThrough();
       $ctrl.hasFocus = true;
-      $ctrl.blur();
-      $ctrl.focus();
+      $ctrl.onBlur();
+      $ctrl.onFocus();
       $timeout.flush();
 
       expect($timeout.cancel).toHaveBeenCalled();
@@ -207,7 +214,7 @@ describe('nodeLinkController', () => {
     });
   });
 
-  describe('openLinkPicker', () => {
+  describe('open', () => {
     beforeEach(() => {
       init();
       spyOn($ctrl, '_focusSelectButton');
@@ -215,7 +222,7 @@ describe('nodeLinkController', () => {
 
     it('picks a link', (done) => {
       PickerService.pickLink.and.returnValue($q.resolve());
-      $ctrl.openLinkPicker().then(() => {
+      $ctrl.open().then(() => {
         expect(PickerService.pickLink).toHaveBeenCalledWith('link-picker-config', { uuid: 'model-value' });
         done();
       });
@@ -228,8 +235,8 @@ describe('nodeLinkController', () => {
         uuid: 'new-uuid',
       }));
 
-      $ctrl.openLinkPicker().then(() => {
-        expect($ctrl.linkPicked).toBe(true);
+      $ctrl.open().then(() => {
+        expect($ctrl.isPicked).toBe(true);
         expect($ctrl._focusSelectButton).not.toHaveBeenCalled();
         expect($ctrl.displayName).toEqual('new-display-name');
         expect(ngModel.$setViewValue).toHaveBeenCalledWith('new-uuid');
@@ -239,14 +246,14 @@ describe('nodeLinkController', () => {
     });
 
     it('sets focus on the select-button if a link was previously picked', (done) => {
-      $ctrl.linkPicked = true;
+      $ctrl.isPicked = true;
 
       PickerService.pickLink.and.returnValue($q.resolve({
         displayName: 'new-display-name',
         uuid: 'new-uuid',
       }));
 
-      $ctrl.openLinkPicker().then(() => {
+      $ctrl.open().then(() => {
         expect($ctrl._focusSelectButton).toHaveBeenCalled();
         done();
       });
@@ -256,7 +263,7 @@ describe('nodeLinkController', () => {
     it('sets focus on the select button when the picker is cancelled and a link was previously picked', (done) => {
       PickerService.pickLink.and.returnValue($q.reject());
 
-      $ctrl.openLinkPicker().finally(() => {
+      $ctrl.open().finally(() => {
         expect($ctrl._focusSelectButton).toHaveBeenCalled();
         done();
       });
@@ -267,14 +274,14 @@ describe('nodeLinkController', () => {
       const deferred = $q.defer();
       PickerService.pickLink.and.returnValue(deferred.promise);
 
-      $ctrl.openLinkPicker();
-      $ctrl.openLinkPicker();
+      $ctrl.open();
+      $ctrl.open();
       expect(PickerService.pickLink.calls.count()).toBe(1);
 
       deferred.resolve();
       $scope.$digest();
 
-      $ctrl.openLinkPicker();
+      $ctrl.open();
       expect(PickerService.pickLink.calls.count()).toBe(2);
     });
   });
@@ -285,7 +292,7 @@ describe('nodeLinkController', () => {
       $ctrl.clear();
 
       expect($ctrl.displayName).toEqual('');
-      expect($ctrl.linkPicked).toBe(false);
+      expect($ctrl.isPicked).toBe(false);
       expect(ngModel.$setTouched).toHaveBeenCalled();
       expect(ngModel.$setViewValue).toHaveBeenCalledWith('');
     });

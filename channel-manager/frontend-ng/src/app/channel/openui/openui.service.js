@@ -29,25 +29,30 @@ export default class OpenUiService {
     this.Penpal = Penpal;
   }
 
-  connect(options) {
-    options.iframe = this.$document[0].createElement('iframe');
+  _createIframe(url) {
+    const iframe = this.$document[0].createElement('iframe');
 
     // Don't allow an extension to change the URL of the top-level window: sandbox the iframe and DON'T include:
     // - allow-top-navigation
     // - allow-top-navigation-by-user-activation
-    options.iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
+    iframe.sandbox = 'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts';
+    iframe.src = url;
 
-    return this.Penpal.connectToChild(options);
+    return iframe;
   }
 
   initialize(extensionId, options) {
     const extension = this.ExtensionService.getExtension(extensionId);
-    const emitter = new this.Emittery();
+    const extensionUrl = options.url || this.ExtensionService.getExtensionUrl(extension);
+
+    const iframe = this._createIframe(extensionUrl);
+    options.appendTo.appendChild(iframe);
 
     try {
-      const connection = this.connect({
-        url: options.url || this.ExtensionService.getExtensionUrl(extension),
+      const emitter = new this.Emittery();
+      const connection = this.Penpal.connectToChild({
         ...options,
+        iframe,
         methods: {
           ...options.methods,
           getProperties: this.getProperties.bind(this, extension),
@@ -56,7 +61,7 @@ export default class OpenUiService {
         },
       });
 
-      return Object.assign(connection, { emitter });
+      return Object.assign(connection, { emitter, iframe });
     } catch (error) {
       this.$log.warn(`Extension '${extension.displayName}' failed to connect with the client library.`, error);
 

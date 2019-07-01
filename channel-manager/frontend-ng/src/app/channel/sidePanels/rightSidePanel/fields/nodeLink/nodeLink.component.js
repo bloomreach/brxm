@@ -29,8 +29,6 @@ const nodeLinkComponent = {
     hint: '<',
     index: '<',
     name: '@',
-    onBlur: '&',
-    onFocus: '&',
   },
   require: {
     ngModel: 'ngModel',

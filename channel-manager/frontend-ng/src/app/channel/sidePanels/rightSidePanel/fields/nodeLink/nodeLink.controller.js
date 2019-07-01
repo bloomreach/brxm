@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class nodeLinkController {
+export default class NodeLinkController {
   constructor($element, $scope, $timeout, PickerService) {
     'ngInject';
 
@@ -43,7 +43,7 @@ class nodeLinkController {
     focusEvent.preventDefault();
 
     if (this.ngModel.$modelValue === '') {
-      this.openLinkPicker();
+      this.open();
     } else {
       this._focusClearButton();
     }
@@ -61,56 +61,73 @@ class nodeLinkController {
   // of the link picker to flicker while tabbing; it *can* trigger a blur event, followed by
   // a immediate focus event, in which case the blue bottom border will be removed and added
   // again, resulting in annoying flickering of the UI.
-  blur($event) {
-    if (this.mdInputContainer) {
-      this.mdInputContainer.setFocused(false);
-    }
+  onBlur($event) {
+    this._blurPromise = this.$timeout(() => {
+      if (this._pickerPromise) {
+        return;
+      }
 
-    this.blurPromise = this.$timeout(() => {
+      if (this.mdInputContainer) {
+        this.mdInputContainer.setFocused(false);
+      }
+
       this.hasFocus = false;
-      this.onBlur($event);
+      this.$element.triggerHandler($event || 'blur');
     }, 10);
   }
 
-  focus($event) {
+  onFocus($event) {
     if (this.mdInputContainer) {
       this.mdInputContainer.setFocused(true);
     }
 
-    if (this.blurPromise) {
-      this.$timeout.cancel(this.blurPromise);
+    if (this._blurPromise) {
+      this.$timeout.cancel(this._blurPromise);
     }
+
     this.hasFocus = true;
-    this.onFocus($event);
+    this.$element.triggerHandler($event || 'focus');
   }
 
-  openLinkPicker() {
-    if (!this._linkPickerPromise) {
-      const uuid = this.ngModel.$modelValue;
-      this._linkPickerPromise = this.PickerService.pickLink(this.config.linkpicker, { uuid })
-        .then(link => this._onLinkPicked(link))
-        .catch(() => this._focusSelectButton())
-        .finally(() => delete this._linkPickerPromise);
-    }
-    return this._linkPickerPromise;
+  open() {
+    this.onFocus();
+    this._pickerPromise = this._pickerPromise || (async () => {
+      try {
+        const data = await this._showPicker();
+        await this._onPick(data);
+      } catch (e) {
+        this._focusSelectButton();
+      } finally {
+        delete this._pickerPromise;
+      }
+    })();
+
+    return this._pickerPromise;
   }
 
-  _onLinkPicked(link) {
-    if (this.linkPicked) {
+  async _showPicker() {
+    const { uuid: value, displayName } = await this.PickerService.pickLink(
+      this.config.linkpicker,
+      { uuid: this.ngModel.$modelValue },
+    );
+
+    return { value, displayName };
+  }
+
+  _onPick({ value, displayName }) {
+    if (this.isPicked) {
       this._focusSelectButton();
     }
-    this.linkPicked = true;
-    this.displayName = link.displayName;
-    this.ngModel.$setViewValue(link.uuid);
+    this.isPicked = true;
+    this.displayName = displayName;
+    this.ngModel.$setViewValue(value);
   }
 
   clear() {
-    this.linkPicked = false;
+    this.isPicked = false;
     this.displayName = '';
     this.ngModel.$setTouched();
     this.ngModel.$setViewValue('');
     this._focusSelectButton();
   }
 }
-
-export default nodeLinkController;

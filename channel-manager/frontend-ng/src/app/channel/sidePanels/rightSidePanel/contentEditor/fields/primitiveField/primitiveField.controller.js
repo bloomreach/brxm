@@ -40,6 +40,9 @@ class PrimitiveFieldCtrl {
 
       const isValid = !value.errorInfo || !value.errorInfo.message;
       field.$setValidity('server', isValid);
+      if (!isValid) {
+        field.$setTouched();
+      }
 
       if (!isValid && !this.firstServerError) {
         this.firstServerError = value.errorInfo.message;
@@ -68,7 +71,7 @@ class PrimitiveFieldCtrl {
     return !this.fieldValues.some((fieldValue, index) => {
       const fieldName = this.getFieldName(index);
       const field = this.form[fieldName];
-      return field && field.$invalid;
+      return field && field.$invalid && field.$touched;
     });
   }
 
@@ -125,6 +128,11 @@ class PrimitiveFieldCtrl {
 
     validatedValues.forEach((validatedValue, index) => {
       const currentValue = this.fieldValues[index];
+      const field = this.form[this.getFieldName(index)];
+
+      if (field) {
+        field.$setTouched();
+      }
 
       if (validatedValue.errorInfo && !currentValue.errorInfo) {
         currentValue.errorInfo = validatedValue.errorInfo;

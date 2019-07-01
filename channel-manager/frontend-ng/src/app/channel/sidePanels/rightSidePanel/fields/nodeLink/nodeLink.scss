@@ -21,25 +21,11 @@ $first-button-left-padding: 8px;
   label {
     cursor: pointer;
   }
-
-  &.has-focused-field label {
-    color: $text-disabled !important;
-
-    md-icon {
-      color: $text-dim !important;
-    }
-  }
 }
 
 node-link {
   .md-input:enabled {
     cursor: pointer;
-  }
-
-  .has-focused-field & .md-input.has-focus {
-    border-bottom-color: $blue-500 !important;
-    border-bottom-width: 2px;
-    padding-bottom: 0;
   }
 
   .md-icon-button > md-icon {

@@ -65,71 +65,55 @@ describe('OpenUiService', () => {
     });
   });
 
-  it('connects to the child', () => {
-    const params = {};
-
-    spyOn(Penpal, 'connectToChild');
-
-    OpenUiService.connect(params);
-
-    expect(params.iframe).toHaveAttr(
-      'sandbox',
-      'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
-    );
-    expect(Penpal.connectToChild).toHaveBeenCalledWith(params);
-  });
-
   describe('initialize', () => {
     let element;
     let extension;
     beforeEach(() => {
-      element = {};
+      element = jasmine.createSpyObj('$element', ['appendChild']);
       extension = { displayName: 'test-extension' };
       spyOn(ExtensionService, 'getExtension').and.returnValue(extension);
       spyOn(ExtensionService, 'getExtensionUrl').and.returnValue('test-url');
+      spyOn(Penpal, 'connectToChild').and.returnValue({});
+    });
+
+    it('creates an iframe', () => {
+      const { iframe } = OpenUiService.initialize('test-id', { appendTo: element });
+      expect(iframe).toHaveAttr(
+        'sandbox',
+        'allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts',
+      );
     });
 
     it('connects to the child and gets url from the extension', () => {
-      spyOn(OpenUiService, 'connect').and.returnValue({});
-      OpenUiService.initialize('test-id', { appendTo: element });
+      const { iframe } = OpenUiService.initialize('test-id', { appendTo: element });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
       expect(ExtensionService.getExtensionUrl).toHaveBeenCalledWith(extension);
-      expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
-        url: 'test-url',
-        appendTo: element,
-      }));
+      expect(iframe).toHaveAttr('src', 'test-url');
     });
 
     it('connects to the child and uses provided url', () => {
-      spyOn(OpenUiService, 'connect').and.returnValue({});
-      OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element });
+      const { iframe } = OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element });
 
       expect(ExtensionService.getExtension).toHaveBeenCalledWith('test-id');
-      expect(OpenUiService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
-        url: 'my-url',
-        appendTo: element,
-      }));
+      expect(iframe).toHaveAttr('src', 'my-url');
     });
 
     it('binds event emitter', () => {
-      spyOn(OpenUiService, 'connect').and.returnValue({});
-      expect(OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element })).toEqual({
-        emitter: jasmine.anything(),
-      });
+      const { emitter } = OpenUiService.initialize('test-id', { url: 'my-url', appendTo: element });
 
-      OpenUiService.connect.calls.mostRecent().args[0].methods.emitEvent();
+      emitter.emit();
       expect(emitEvent).toHaveBeenCalled();
     });
 
     it('logs a warning when connecting to the child failed', () => {
       const error = new Error('Connection destroyed');
-      spyOn(OpenUiService, 'connect').and.throwError(error);
+      Penpal.connectToChild.and.throwError(error);
       spyOn($log, 'warn');
 
       expect(() => OpenUiService.initialize('test-id', { appendTo: element })).toThrow(error);
 
-      expect(OpenUiService.connect).toHaveBeenCalled();
+      expect(Penpal.connectToChild).toHaveBeenCalled();
       expect($log.warn).toHaveBeenCalledWith(
         "Extension 'test-extension' failed to connect with the client library.",
         error,

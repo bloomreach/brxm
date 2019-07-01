@@ -30,15 +30,10 @@ class ViewportToggleCtrl {
   }
 
   $onInit() {
-    this.setViewports();
-    this.activate();
-  }
-
-  setViewports() {
     const { viewportMap } = this.ChannelService.getChannel();
-    const viewportWidths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
+    const widths = Object.assign({}, DEFAULT_VIEWPORT_WIDTHS, viewportMap);
 
-    this.viewports = [
+    this.values = [
       {
         id: 'ANY_DEVICE',
         icon: 'any-device',
@@ -47,28 +42,38 @@ class ViewportToggleCtrl {
       {
         id: 'DESKTOP',
         icon: 'desktop',
-        width: viewportWidths.desktop,
+        width: widths.desktop,
       },
       {
         id: 'TABLET',
         icon: 'tablet',
-        width: viewportWidths.tablet,
+        width: widths.tablet,
       },
       {
         id: 'PHONE',
         icon: 'phone',
-        width: viewportWidths.phone,
+        width: widths.phone,
       },
     ];
+
+    if (!this.values.some(item => item.id === this.value)) {
+      this.value = this.values[0].id;
+    }
+
+    this._updateViewport();
   }
 
-  activate() {
-    [this.selectedViewport] = this.viewports;
-    this.viewportChanged();
+  onChange() {
+    this._updateViewport();
+    if (this.ngModel) {
+      this.ngModel.$setViewValue(this.value);
+    }
   }
 
-  viewportChanged() {
-    this.ViewportService.setWidth(this.selectedViewport.width);
+  _updateViewport() {
+    const { width } = this.values.find(item => item.id === this.value);
+
+    this.ViewportService.setWidth(width);
   }
 
   getDisplayName(viewport) {
