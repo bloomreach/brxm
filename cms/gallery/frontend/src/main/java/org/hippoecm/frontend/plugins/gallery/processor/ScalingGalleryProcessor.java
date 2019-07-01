@@ -92,11 +92,10 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
 
         if (MimeTypeHelper.isImageMimeType(mimeType)) {
             final String nodeName = node.getName();
-            final ScalingParameters p = scalingParametersMap.get(nodeName);
-            if (p != null) {
+            final ScalingParameters parameters = scalingParametersMap.get(nodeName);
+            if (parameters != null) {
                 try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(p.getWidth(), p.getHeight(),
-                            p.getUpscaling(), p.isCropping(), p.getStrategy(), p.getCompressionQuality());
+                    final ScaleImageOperation scaleOperation = new ScaleImageOperation.Builder(parameters).build();
 
                     scaleOperation.execute(data, mimeType);
 
