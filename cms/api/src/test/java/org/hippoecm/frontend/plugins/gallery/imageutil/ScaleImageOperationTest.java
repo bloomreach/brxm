@@ -150,11 +150,11 @@ public class ScaleImageOperationTest {
 
     @Test
     public void cropSquareImageInSquareBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-626x626.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation(200, 200, true, ImageUtils.ScalingStrategy.SPEED);
+        InputStream data = getClass().getResourceAsStream("/test-50x50.jpg");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(50, 50, true, ImageUtils.ScalingStrategy.SPEED);
         scaleOp.setCropping(true);
         scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 200, 200);
+        checkImageDimensions(scaleOp, "image/jpeg", 50, 50);
     }
 
     @Test
