@@ -361,8 +361,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
                 strategy = SCALING_STRATEGY_MAP.get(DEFAULT_OPTIMIZE)
             }
 
-            ScalingParameters parameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling, strategy, compression)
-            parameters.setCropping(cropping)
+            ScalingParameters parameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling, cropping, strategy, compression)
       
             log.info "- Read image set variant '${variantName}' from processor with scalingParameters '${parameters}'"
 
