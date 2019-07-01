@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,8 +24,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-
-import com.google.common.collect.ImmutableSet;
 
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
@@ -45,6 +42,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
 
 public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
@@ -127,7 +126,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                         fetchNext();
                     }
                     if (next == null) {
-                        new NoSuchElementException();
+                        throw new NoSuchElementException();
                     }
                     final Object result = next;
                     next = null;
@@ -185,7 +184,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
      * We only display messages for 'top-level' workflow items and we don't display
      * actions of system users.
      */
-    private static class DefaultNodeFilter implements NodeFilter, Serializable {
+    private static class DefaultNodeFilter implements NodeFilter {
 
         private static final Set<String> SKIP_WORKFLOW_METHOD_NAMES = ImmutableSet.of(
                 "publishBranch","depublishBranch", "reintegrateBranch", "checkoutBranch");
@@ -215,11 +214,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         private boolean isWorkflowOrLoginEvent(final Node node) throws RepositoryException {
             final String category = JcrUtils.getStringProperty(node, "hippolog:category", null);
             if (category != null) {
-                switch (category) {
-                    case HippoEventConstants.CATEGORY_WORKFLOW:
-                    case HippoEventConstants.CATEGORY_SECURITY:
-                        return true;
-                }
+                return category.equals(HippoEventConstants.CATEGORY_WORKFLOW)
+                        || category.equals(HippoEventConstants.CATEGORY_SECURITY);
             }
             return false;
         }
@@ -231,10 +227,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
          */
         private boolean filterWorkflowMethodName(final Node node) throws RepositoryException {
             final String methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", null);
-            if (SKIP_WORKFLOW_METHOD_NAMES.contains(methodName)) {
-                return true;
-            }
-            return false;
+            return SKIP_WORKFLOW_METHOD_NAMES.contains(methodName);
         }
 
         private boolean isValidEvent(final Node node) throws RepositoryException {

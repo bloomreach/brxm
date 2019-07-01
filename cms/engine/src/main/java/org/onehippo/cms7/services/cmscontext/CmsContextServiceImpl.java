@@ -154,6 +154,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
     }
 
     @Override
+    @SuppressWarnings("squid:S2441")
     public CmsSessionContext attachSessionContext(final String ctxId, final HttpSession session) {
         CmsSessionContextImpl ctx = contextsMap.get(ctxId);
         if (ctx != null) {
@@ -170,6 +171,7 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
     }
 
     @Override
+    @SuppressWarnings("squid:S2441")
     public synchronized CmsSessionContext create(final HttpSession session) {
         CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
         if (ctx == null) {

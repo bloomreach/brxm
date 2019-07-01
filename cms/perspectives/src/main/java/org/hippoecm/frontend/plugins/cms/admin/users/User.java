@@ -109,7 +109,7 @@ public class User implements Comparable<User>, IClusterable {
     private static final String QUERY_EXTERNAL_MEMBERSHIPS = "//element(*, hipposys:externalgroup)[@hipposys:members='{}']";
     private static final String QUERY_AND_NOT_A_SYSTEM_GROUP = "//element(*, hipposys:group)[@hipposys:members='{}' and (not(@hipposys:system) or @hipposys:system=false)]";
 
-    private static final long ONEDAYMS = 1000 * 3600 * 24;
+    private static final long ONEDAYMS = 1000 * 3600 * 24L;
 
     private boolean external = false;
     private boolean active = true;

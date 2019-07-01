@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(ChangePasswordShortcutPlugin.class);
 
-    private static final long ONE_DAY_MS = 1000 * 3600 * 24;
+    private static final long ONE_DAY_MS = 1000 * 3600 * 24L;
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     private static final Pattern EXPIRATION_PATTERN = Pattern.compile(".*((day|hour|minute|second|millisecond)s?)$");
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ class HstReferenceEditor extends Panel {
                     linkText = "(Reference not found. Might be used in inheriting structure though.)";
                 } catch (RepositoryException e) {
                     linkText = "Repository Exception: " + e.getMessage();
-                    log.error("Error loading target node by reference " + getModelObject());
+                    log.error("Error loading target node by reference {}", getModelObject());
                 }
             }
         }
@@ -167,6 +167,7 @@ class HstReferenceEditor extends Panel {
                     } else if (targetNode.hasProperty(PROPERTY_HST_SCRIPT)) {
                         return "Template contains script";
                     }
+                    return null;
                 case PROPERTY_HST_COMPONENTCONFIGURATIONID:
                 case PROPERTY_HST_REFERENCECOMPONENT:
                     if (targetNode.hasProperty(PROPERTY_HST_COMPONENTCLASSNAME)) {
@@ -174,8 +175,10 @@ class HstReferenceEditor extends Panel {
                     } else if (targetNode.hasProperty(PROPERTY_HST_XTYPE)) {
                         return targetNode.getProperty(PROPERTY_HST_XTYPE).getString();
                     }
+                    return null;
+                default:
+                    return null;
             }
-            return null;
         }
 
         /**
@@ -190,7 +193,7 @@ class HstReferenceEditor extends Panel {
 
             // first try: hst configuration nodes in the current hst:workspace or hst:configuration group
             Node currentHstConfiguration = propertyModel.getProperty().getParent();
-            Node root = currentHstConfiguration.getSession().getRootNode();
+            final Node root = currentHstConfiguration.getSession().getRootNode();
             Node templateNode;
             do {
                 if (currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_WORKSPACE)) {
@@ -241,14 +244,15 @@ class HstReferenceEditor extends Panel {
          * @return the requested node or null
          * @throws javax.jcr.RepositoryException for any unexpected repository problem
          */
-        private Node getConfigurationNode(final Node hstConfiguration, String nodeName) throws RepositoryException {
-            StringBuilder relPath = new StringBuilder();
+        private Node getConfigurationNode(final Node hstConfiguration, final String nodeName) throws RepositoryException {
+            final StringBuilder relPath = new StringBuilder();
             addPathPrefix(relPath);
             relPath.append(nodeName);
-            if (hstConfiguration.hasNode(relPath.toString())) {
-                return hstConfiguration.getNode(relPath.toString());
-            }
-            return null;
+
+            final String hstConfigNodePath = relPath.toString();
+            return hstConfiguration.hasNode(hstConfigNodePath)
+                    ? hstConfiguration.getNode(hstConfigNodePath)
+                    : null;
         }
 
         /**

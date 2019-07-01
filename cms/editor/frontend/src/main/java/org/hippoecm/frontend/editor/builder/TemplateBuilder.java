@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -221,7 +221,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 fieldNames.addAll(subType.getFields().keySet());
             }
 
+            @SuppressWarnings("squid:S2259")
             String name = delegate.getName();
+
             String newName = TypeHelper.getFieldName(path, getTypeDescriptor().getName());
             boolean updateFieldName = false;
             if (!typeDescriptor.getFields().containsKey(newName)

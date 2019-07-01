@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.console.editor;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import javax.jcr.Property;
@@ -45,6 +46,8 @@ public class PasswordHashEditor extends Panel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(PasswordHashEditor.class);
+
+    private static Random rnd = new SecureRandom();
 
     private final int passwordLength;
     private final TextFieldWidget passwordField;
@@ -170,8 +173,7 @@ public class PasswordHashEditor extends Panel {
 
 
     private static String genPassword(final int len) {
-        final Random rnd = new Random();
-        final char password[] = new char[len];
+        final char[] password = new char[len];
         for (int i = 0; i < len; i++) {
             password[i] = CHARACTERS.charAt(rnd.nextInt(CHARACTERS.length()));
         }
