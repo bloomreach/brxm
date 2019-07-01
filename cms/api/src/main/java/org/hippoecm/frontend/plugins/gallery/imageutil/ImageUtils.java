@@ -214,7 +214,7 @@ public class ImageUtils {
      *
      * @param original     the original image to be scaled
      * @param rectangle    the rectangle to use for the scaled instance
-     * @param targetDimension  the desirec dimensions of the scaled instance, in pixels
+     * @param targetDimension  the desired dimensions of the scaled instance, in pixels
      * @param hint         one of the rendering hints that corresponds to {@link RenderingHints#KEY_INTERPOLATION} (e.g.
      *                     {@link RenderingHints#VALUE_INTERPOLATION_NEAREST_NEIGHBOR}, {@link
      *                     RenderingHints#VALUE_INTERPOLATION_BILINEAR}, {@link RenderingHints#VALUE_INTERPOLATION_BICUBIC})
