@@ -178,7 +178,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
                 configuredDimension,
                 thumbnailDimension,
                 isUpscalingEnabled,
-                false,
+                true,
                 thumbnailSize.getMarkupId(true));
 
         if (configuredDimension.width > originalImageDimension.width || configuredDimension.height > originalImageDimension.height) {
