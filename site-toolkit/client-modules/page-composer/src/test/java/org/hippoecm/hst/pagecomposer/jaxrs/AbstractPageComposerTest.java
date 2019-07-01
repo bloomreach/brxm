@@ -303,7 +303,6 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
                 session.removeItem("/hst:hst");
             }
             JcrUtils.copy(session, "/hst-backup", "/hst:hst");
-            session.removeItem("/hst-backup");
             session.save();
         }
     }
