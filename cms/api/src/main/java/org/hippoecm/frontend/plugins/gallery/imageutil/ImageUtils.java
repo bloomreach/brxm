@@ -293,6 +293,41 @@ public class ImageUtils {
     }
 
     /**
+     * If height or width in the thumbnailDimension is equal to 0 it is a special case. The value 0 represents a value
+     * that according to the dimension of the original image.
+     * <p>
+     * With this function a new dimension is created according to the original dimension
+     *
+     * @param original dimension of the original image
+     * @param variant  dimension of the thumbnail image
+     * @return scaled dimension based on width or height value
+     */
+    public static Dimension handleZeroDimension(final Dimension original, final Dimension variant) {
+        final Dimension normalized = new Dimension(variant);
+        if (variant.height == 0) {
+            int height = (int) ((variant.getWidth() / original.getWidth()) * original.getHeight());
+            normalized.setSize(variant.width, height);
+        }
+        if (variant.width == 0) {
+            int width = (int) ((variant.getHeight() / original.getHeight()) * original.getWidth());
+            normalized.setSize(width, variant.height);
+        }
+        return normalized;
+    }
+
+    /**
+     * Determine if high quality scaling can be performed based on the original and crop area dimensions.
+     *
+     * @param cropArea size of the area to keep after cropping
+     * @param reader   the original image
+     * @return true if high quality cropping can be performed
+     * @throws IOException when reading the original's sizes fails
+     */
+    public static boolean isCropHighQuality(final Rectangle cropArea, final ImageReader reader) throws IOException {
+        return Math.min(cropArea.width / reader.getWidth(0), cropArea.height / reader.getHeight(0)) < 1.0;
+    }
+
+    /**
      * Returns a scaled instance of the provided {@link BufferedImage}.
      *
      * @param img          the original image to be scaled

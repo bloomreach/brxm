@@ -42,7 +42,6 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -342,20 +341,11 @@ public class ScaleImageOperation extends AbstractImageOperation {
         int targetHeight;
 
         if (cropping) {
-            final Dimension thumbnailDimension = new Dimension(width, height);
+            final Dimension configuredDimension = new Dimension(width, height);
             final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
-            final Dimension targetDimension = handleZeroValueInDimension(new Dimension(width, height), thumbnailDimension);
-            Object hints;
-            boolean highQuality;
-            if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = true;
-            } else {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = false;
-            }
-            
-            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension, hints, highQuality);
+            final Dimension targetDimension = ImageUtils.handleZeroDimension(cropArea.getSize(), configuredDimension);
+            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension, 
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
 
             targetHeight = targetDimension.height;
             targetWidth = targetDimension.width;
@@ -415,19 +405,6 @@ public class ScaleImageOperation extends AbstractImageOperation {
             IOUtils.closeQuietly(tmpStream);
         }
         return tmpFile;
-    }
-
-    private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
-        Dimension normalized = new Dimension(thumbnailDimension);
-        if (thumbnailDimension.height == 0) {
-            int height = (int)((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
-            normalized.setSize(thumbnailDimension.width, height);
-        }
-        if (thumbnailDimension.width == 0) {
-            int width = (int)((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
-            normalized.setSize(width, thumbnailDimension.height);
-        }
-        return normalized;
     }
 
     protected double calculateResizeRatio(double originalWidth, double originalHeight, int targetWidth,
