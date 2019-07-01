@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -269,7 +269,7 @@ public class PropertiesEditor extends DataView<Property> {
         switch (valueType) {
             case PropertyType.BOOLEAN : return valueFactory.createValue(false);
             case PropertyType.DATE : return valueFactory.createValue(Calendar.getInstance());
-            case PropertyType.DECIMAL : return valueFactory.createValue(new BigDecimal(0d));
+            case PropertyType.DECIMAL : return valueFactory.createValue(BigDecimal.valueOf(0d));
             case PropertyType.DOUBLE : return valueFactory.createValue(0d);
             case PropertyType.LONG : return valueFactory.createValue(0L);
             case PropertyType.NAME : return valueFactory.createValue("jcr:name", PropertyType.NAME);

@@ -158,7 +158,7 @@ public class Main extends PluginApplication {
     /**
      * Default Wicket RequestCycleSettings timeout milliseconds in development mode.
      */
-    public final static long DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+    public final static long DEFAULT_DEVELOPMENT_REQUEST_TIMEOUT_MS = 10 * 60 * 1000L; // 10 minutes
 
     /**
      * Wicket RequestCycleSettings timeout configuration parameter name in deployment mode.

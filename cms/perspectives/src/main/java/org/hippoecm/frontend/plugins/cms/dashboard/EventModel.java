@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ import org.slf4j.LoggerFactory;
 
 public class EventModel implements IComponentAssignedModel<String> {
 
-    private static final long ONE_MINUTE = 60 * 1000;
-    private static final long FIVE_MINUTES = 5 * 60 * 1000;
-    private static final long TEN_MINUTES = 10 * 60 * 1000;
-    private static final long HALF_AN_HOUR = 30 * 60 * 1000;
-    private static final long ONE_HOUR = 60 * 60 * 1000;
-    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
+    private static final long ONE_MINUTE = 60 * 1000L;
+    private static final long FIVE_MINUTES = 5 * 60 * 1000L;
+    private static final long TEN_MINUTES = 10 * 60 * 1000L;
+    private static final long HALF_AN_HOUR = 30 * 60 * 1000L;
+    private static final long ONE_HOUR = 60 * 60 * 1000L;
+    private static final long ONE_DAY = 24 * 60 * 60 * 1000L;
 
     private static final long serialVersionUID = 1L;
 

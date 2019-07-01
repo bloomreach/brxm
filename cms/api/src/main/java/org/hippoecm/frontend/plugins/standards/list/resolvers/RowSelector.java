@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.wicket.Component;
@@ -25,7 +26,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IObservable;
 
-public class RowSelector<T> implements IListCellRenderer<T> {
+public class RowSelector<T extends Serializable> implements IListCellRenderer<T> {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,39 +41,37 @@ public class RowSelector<T> implements IListCellRenderer<T> {
     }
 
     private class CheckBoxWrapper extends Panel {
-        private static final long serialVersionUID = 1L;
-
         public CheckBoxWrapper(String id, IModel<T> model) {
             super(id, model);
-            CheckBox check;
-            add(check = new CheckBox("check", new IModel<Boolean>() {
-                private static final long serialVersionUID = 1L;
 
+            CheckBox check = new CheckBox("check", new IModel<Boolean>() {
+                @SuppressWarnings("unchecked")
                 public Boolean getObject() {
-                    return selectedDocuments.contains(CheckBoxWrapper.this.getDefaultModel());
+                    return selectedDocuments.contains((T) CheckBoxWrapper.this.getDefaultModel());
                 }
 
                 @SuppressWarnings("unchecked")
                 public void setObject(Boolean value) {
-                    if (value.booleanValue()) {
+                    if (value) {
                         selectedDocuments.add((T) CheckBoxWrapper.this.getDefaultModel());
                     } else {
-                        selectedDocuments.remove(CheckBoxWrapper.this.getDefaultModel());
+                        selectedDocuments.remove((T) CheckBoxWrapper.this.getDefaultModel());
                     }
                 }
 
                 public void detach() {
+                    // do nothing
                 }
 
-            }));
+            });
             check.add(new AjaxFormComponentUpdatingBehavior("click") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     target.add(CheckBoxWrapper.this);
                 }
             });
+
+            add(check);
             setOutputMarkupId(true);
         }
 

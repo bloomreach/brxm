@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,12 +28,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class ClusterConfigDecorator extends AbstractClusterDecorator {
 
-    private static final long serialVersionUID = 1L;
-
     private class PluginConfigDecorator extends AbstractPluginDecorator {
-        private static final long serialVersionUID = 1L;
 
-        PluginConfigDecorator(IPluginConfig conf) {
+        PluginConfigDecorator(final IPluginConfig conf) {
             super(conf);
         }
 
@@ -48,7 +45,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             if (value != null) {
                 return value;
             }
-            value = ClusterConfigDecorator.this.values.get(key);
+            value = ClusterConfigDecorator.this.decoratedValues.get(key);
             if (value != null) {
                 return value;
             }
@@ -64,12 +61,12 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             return new AbstractSet<Entry<String, Object>>() {
 
                 final Set<Entry<String, Object>> upstreamSet = PluginConfigDecorator.super.entrySet();
-                
+
                 @Override
                 public Iterator<Entry<String, Object>> iterator() {
                     return new Iterator<Entry<String, Object>>() {
 
-                        final Set<String> done = new TreeSet<String>();
+                        final Set<String> done = new TreeSet<>();
                         final Iterator<Entry<String, Object>> upstreamIter = upstreamSet.iterator();
                         Iterator<Entry<String, Object>> clusterKeyIter;
 
@@ -78,8 +75,8 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
 
                                 private final Iterator<String> clusterKeyIter;
                                 {
-                                    Set<String> clusterKeys = ClusterConfigDecorator.this.getClusterKeys();
-                                    for (String key : done) {
+                                    final Set<String> clusterKeys = getClusterKeys();
+                                    for (final String key : done) {
                                         clusterKeys.remove(key);
                                     }
                                     clusterKeyIter = clusterKeys.iterator();
@@ -118,7 +115,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
                                 }
                             };
                         }
-                        
+
                         @Override
                         public boolean hasNext() {
                             if (upstreamIter.hasNext()) {
@@ -133,7 +130,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
                         @Override
                         public Entry<String, Object> next() {
                             if (upstreamIter.hasNext()) {
-                                Entry<String, Object> entry = upstreamIter.next();
+                                final Entry<String, Object> entry = upstreamIter.next();
                                 done.add(entry.getKey());
                                 return entry;
                             }
@@ -152,11 +149,9 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
 
                 @Override
                 public int size() {
-                    Set<String> keys = ClusterConfigDecorator.this.getClusterKeys();
+                    final Set<String> keys = getClusterKeys();
                     int count = 0;
-                    Iterator<Entry<String, Object>> iter = PluginConfigDecorator.super.entrySet().iterator();
-                    while (iter.hasNext()) {
-                        Entry<String, Object> entry = iter.next();
+                    for (final Entry<String, Object> entry : PluginConfigDecorator.super.entrySet()) {
                         if (!keys.contains(entry.getKey())) {
                             count++;
                         }
@@ -166,56 +161,66 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             };
         }
 
+        private Set<String> getClusterKeys() {
+            final TreeSet<String> properties = new TreeSet<>(decoratedValues.keySet());
+            for (final Entry<String, Object> entry : ClusterConfigDecorator.super.entrySet()) {
+                if (!(entry.getValue() instanceof IPluginConfig)) {
+                    properties.add(entry.getKey());
+                }
+            }
+            return properties;
+        }
+
         @Override
-        protected Object decorate(Object object) {
+        protected Object decorate(final Object object) {
             return ClusterConfigDecorator.this.decorate(object);
         }
     }
 
-    private String clusterId;
-    private Map<String, Object> values;
+    private final String clusterId;
+    private final transient Map<String, Object> decoratedValues;
 
-    public ClusterConfigDecorator(IClusterConfig upstream, final String clusterId) {
+    public ClusterConfigDecorator(final IClusterConfig upstream, final String clusterId) {
         super(upstream);
         this.clusterId = clusterId;
-        this.values = new TreeMap<String, Object>();
+        this.decoratedValues = new TreeMap<>();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object put(String strKey, Object value) {
-        List<String>[] lists = new List[] { 
+    public Object put(final String strKey, final Object value) {
+        final List<String>[] lists = new List[] {
                 ((IClusterConfig) upstream).getProperties(),
                 ((IClusterConfig) upstream).getServices(),
                 ((IClusterConfig) upstream).getReferences()
         };
-        for (List<String> list : lists) {
+        for (final List<String> list : lists) {
             if (list.contains(strKey)) {
-               return values.put(strKey, value); 
+               return decoratedValues.put(strKey, value);
             }
         }
         return super.put(strKey, value);
     }
-    
+
     @Override
-    public Object get(Object key) {
-        if (values.containsKey(key)) {
-            return values.get(key);
+    public Object get(final Object key) {
+        if (decoratedValues.containsKey(key)) {
+            return decoratedValues.get(key);
         }
         return super.get(key);
     }
 
     @Override
-    protected Object decorate(Object object) {
+    protected Object decorate(final Object object) {
         if (object instanceof String) {
-            String value = (String) object;
+            final String value = (String) object;
             if (value.length() > 2 && value.charAt(0) == '$' && value.charAt(1) == '{') {
-                String variable = value.substring(2, value.lastIndexOf('}'));
-                String remainder = value.substring(value.lastIndexOf('}') + 1);
+                final String variable = value.substring(2, value.lastIndexOf('}'));
+                final String remainder = value.substring(value.lastIndexOf('}') + 1);
                 if ("cluster.id".equals(variable)) {
                     return clusterId + remainder;
                 } else {
-                    Object result = ClusterConfigDecorator.this.get(variable);
+                    final Object result = ClusterConfigDecorator.this.get(variable);
                     if (result instanceof String) {
                         return result + remainder;
                     } else {
@@ -229,15 +234,5 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             return new PluginConfigDecorator((IPluginConfig) object);
         }
         return object;
-    }
-
-    private Set<String> getClusterKeys() {
-        TreeSet<String> properties = new TreeSet<String>(values.keySet());
-        for (Entry<String, Object> entry : super.entrySet()) {
-            if (!(entry.getValue() instanceof IPluginConfig)) {
-                properties.add(entry.getKey());
-            }
-        }
-        return properties;
     }
 }
