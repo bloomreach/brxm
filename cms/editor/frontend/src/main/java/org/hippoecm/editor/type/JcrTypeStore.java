@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.session.UserSession;
@@ -29,8 +30,6 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
  * are validated when Wicket is run in development mode.
  */
 public class JcrTypeStore extends AbstractJcrTypeStore implements IDetachable {
-
-    private static final long serialVersionUID = 1L;
 
     @Override
     public void detach() {
@@ -50,12 +49,12 @@ public class JcrTypeStore extends AbstractJcrTypeStore implements IDetachable {
      * Validates the creates types when Wicket is run in development mode.
      * @param typeNode the type node
      * @return the JCR type descriptor
-     * @throws RepositoryException
      */
+    @Override
     protected JcrTypeDescriptor createJcrTypeDescriptor(Node typeNode) throws RepositoryException {
-        JcrTypeDescriptor result = super.createJcrTypeDescriptor(typeNode);
+        final JcrTypeDescriptor result = super.createJcrTypeDescriptor(typeNode);
 
-        if (result != null && WebApplication.get() != null && "development".equals(WebApplication.get().getConfigurationType())) {
+        if (result != null && WebApplication.get().getConfigurationType() == RuntimeConfigurationType.DEVELOPMENT) {
             result.validate();
         }
 

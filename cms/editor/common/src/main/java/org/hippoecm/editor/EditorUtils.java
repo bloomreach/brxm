@@ -41,19 +41,21 @@ public class EditorUtils {
 
     private static final String PATH_DELIMITER = "/";
 
-    private EditorUtils() {}
+    private EditorUtils() {
+    }
 
     /**
-     * Create mandatory properties specified by the given {@link NodeType} and its super-types inclusively on the
-     * given {@link Node}
+     * Create mandatory properties specified by the given {@link NodeType} and its super-types inclusively on the given
+     * {@link Node}
      *
-     * <P>
-     * Inclusively means that the created mandatory properties are the one defined on the super-types of {@link NodeType}
-     * in addition to the {@link NodeType} itself
+     * <p>
+     * Inclusively means that the created mandatory properties are the one defined on the super-types of {@link
+     * NodeType} in addition to the {@link NodeType} itself
      * </P>
      *
-     * @param node The {@link Node} on which to create the mandatory properties
-     * @param nodeType The {@link NodeType} from which to check for which mandatory properties need to be created if any
+     * @param node     The {@link Node} on which to create the mandatory properties
+     * @param nodeType The {@link NodeType} from which to check for which mandatory properties need to be created if
+     *                  any
      * @throws RepositoryException in case of an error
      */
     public static void createMandatoryProperties(final Node node, final NodeType nodeType) throws RepositoryException {
@@ -65,13 +67,16 @@ public class EditorUtils {
             final Node prototypeNode = getPrototypeNode(type.getName(), node.getSession());
 
             for (final PropertyDefinition propertyDefinition : type.getDeclaredPropertyDefinitions()) {
-                if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())){
+                if (propertyDefinition.isMandatory()
+                        && !propertyDefinition.isProtected()
+                        && !"*".equals(propertyDefinition.getName())) {
+
                     log.debug("Add the mandatory property  '{}' of '{}' to the node '{}'",
                             propertyDefinition.getName(), nodeType.getName(), node.getPath());
                     if (node.hasProperty(propertyDefinition.getName())) {
                         // even though the property existed, we need to add it again after addMixin()
                         setProperty(node, propertyDefinition, node);
-                    }else {
+                    } else {
                         setProperty(node, propertyDefinition, prototypeNode);
                     }
                 }
@@ -114,7 +119,8 @@ public class EditorUtils {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Could not find the prototype node for type '{}' in this location '{}'", nodeTypeName, prototypeNodePath);
+            log.debug("Could not find the prototype node for type '{}' in this location '{}'", nodeTypeName,
+                    prototypeNodePath);
         } else {
             log.info("Could not find the prototype node for type '{}'", nodeTypeName);
         }
@@ -128,7 +134,7 @@ public class EditorUtils {
             setPropertyFromDefaultValues(node, propertyDefinition);
         } else {
             try {
-                setPropertyFromPrototypeValues(node, propertyDefinition, prototypeNode);
+                setPropertyFromPrototypeValues(propertyDefinition, node, prototypeNode);
             } catch (PathNotFoundException ex) {
                 // Use the defaults values as a fallback
                 final String propertyName = propertyDefinition.getName();
@@ -144,21 +150,26 @@ public class EditorUtils {
         }
     }
 
-    private static void setPropertyFromPrototypeValues(final Node node,
-                                                       final PropertyDefinition propertyDefinition,
+    /**
+     * Parameters {@code node} and {@code prototypeNode} can be the same, so we have to save the property values prior
+     * to removing the property.
+     */
+    private static void setPropertyFromPrototypeValues(final PropertyDefinition propertyDefinition, final Node node,
                                                        final Node prototypeNode) throws RepositoryException {
         final String propertyName = propertyDefinition.getName();
         final Property prototypeNodeProperty = prototypeNode.getProperty(propertyName);
 
-        if (node.hasProperty(propertyName)){
-            node.getProperty(propertyName).remove();
-        }
-
         if (propertyDefinition.isMultiple()) {
             final Value[] propValues = prototypeNodeProperty.getValues();
+            if (node.hasProperty(propertyName)) {
+                node.getProperty(propertyName).remove();
+            }
             node.setProperty(propertyName, propValues);
         } else {
             final Value propValue = prototypeNodeProperty.getValue();
+            if (node.hasProperty(propertyName)) {
+                node.getProperty(propertyName).remove();
+            }
             node.setProperty(propertyName, propValue);
         }
     }
