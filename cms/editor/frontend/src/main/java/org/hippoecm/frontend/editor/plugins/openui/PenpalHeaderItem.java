@@ -23,12 +23,16 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 class PenpalHeaderItem extends HeaderItem {
 
     // penpal.js is fetched by npm
     private static final String PENPAL_JS = "penpal.js";
     private static final ResourceReference PENPAL = new JavaScriptResourceReference(PenpalHeaderItem.class, PENPAL_JS);
+
+    private static final String PENPAL_MIN_JS = "penpal.min.js";
+    private static final ResourceReference PENPAL_MINIFIED = new JavaScriptResourceReference(PenpalHeaderItem.class, PENPAL_MIN_JS);
 
     @Override
     public Iterable<?> getRenderTokens() {
@@ -37,6 +41,15 @@ class PenpalHeaderItem extends HeaderItem {
 
     @Override
     public void render(final Response response) {
-        JavaScriptHeaderItem.forReference(PENPAL).render(response);
+        if (WebApplicationHelper.isDevelopmentMode()) {
+            JavaScriptHeaderItem.forReference(PENPAL).render(response);
+        } else {
+            // Use the minified version for performance (smaller file) and to prevent Wicket's internal JavaScript
+            // compressor from breaking the file. Wicket's default application settings don't use a JavaScript
+            // compressor in "development" mode and a DefaultJavaScriptCompressor in "production" mode. The
+            // DefaultJavaScriptProcessor breaks the Penpal code. But: it won't minify JavaScript when its name
+            // contains ".min.". So by using penpal.min.js in production everything works fine.
+            JavaScriptHeaderItem.forReference(PENPAL_MINIFIED).render(response);
+        }
     }
 }

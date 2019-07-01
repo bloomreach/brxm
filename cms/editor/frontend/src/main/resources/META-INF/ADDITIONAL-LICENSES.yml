@@ -1,6 +1,6 @@
-- module name: penpal@3.0.3
+- module name: penpal@4.0.0
   name: penpal
-  version: 3.0.3
+  version: 4.0.0
   description: A promise-based library for communicating with iframes via postMessage.
   copyright: 'Copyright (c) 2016, Aaron Hardy'
   licenses: MIT
