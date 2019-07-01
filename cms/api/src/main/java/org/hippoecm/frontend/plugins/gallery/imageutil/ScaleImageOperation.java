@@ -57,10 +57,10 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * <p> Creates a scaled version of an image. The given scaling parameters define a bounding box with a certain width and
- * height. Images that do not fit in this box (i.e. are too large) are always scaled down such that they do fit. If the
- * aspect ratio of the original image differs from that of the bounding box, either the width or the height of scaled
- * image will be less than that of the box.</p>
+ * <p> Creates a scaled version of an image. The given scaling parameters define a bounding box with a certain width
+ * and height. Images that do not fit in this box (i.e. are too large) are always scaled down such that they do fit. If
+ * the aspect ratio of the original image differs from that of the bounding box, either the width or the height of
+ * scaled image will be less than that of the box.</p>
  * <p>Unless of course cropping is set to true, then the original images is cropped to fill the bounding box.</p>
  * <p> Smaller images are scaled up in the same way as large images are
  * scaled down, but only if upscaling is true. When upscaling is false and the image is smaller than the bounding box,
@@ -83,6 +83,88 @@ public class ScaleImageOperation extends AbstractImageOperation {
     private int scaledHeight;
     private float compressionQuality;
 
+    public static class Builder {
+        // required parameters
+        private final int width;
+        private final int height;
+
+        // optional parameters, set to default values
+        private boolean upscaling = false;
+        private boolean cropping = false;
+        private ImageUtils.ScalingStrategy strategy = ImageUtils.ScalingStrategy.QUALITY;
+        private float compressionQuality = 1f;
+
+        /**
+         * Creates a scaled version of an image. The given scaling parameters define a bounding box with a certain width
+         * and height.
+         *
+         * @param width  the width of the bounding box
+         * @param height the height of the bounding box
+         */
+        public Builder(final int width, final int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        /**
+         * Sets upscaling to true. Images that are smaller than the variant configuration are scaled up.  
+         */
+        public Builder upscaling() {
+            this.upscaling = true;
+            return this;
+        }
+
+        /**
+         * Sets cropping to true. The original is cropped to fill the variant dimensions. The upscaling setting is
+         * ignored, since cropping implies upscaling.
+         */
+        public Builder cropping() {
+            this.cropping = true;
+            return this;
+        }
+
+        /**
+         * Sets a scaling strategy. When not set the default {@code ImageUtils.ScalingStrategy.QUALITY} is used. 
+         */
+        public Builder strategy(ImageUtils.ScalingStrategy strategy) {
+            this.strategy = strategy;
+            return this;
+        }
+
+        /**
+         * Sets the compression quality. When not set the default 1 is used.
+         */
+        public Builder compressionQuality(final float compressionQuality) {
+            this.compressionQuality = compressionQuality;
+            return this;
+        }
+
+        /**
+         * To build a {@link ScaleImageOperation} from a {@link ScalingParameters}.
+         */
+        public Builder(final ScalingParameters parameters) {
+            this.width = parameters.getWidth();
+            this.height = parameters.getHeight();
+            this.upscaling = parameters.getUpscaling();
+            this.cropping = parameters.getCropping();
+            this.strategy = parameters.getStrategy();
+            this.compressionQuality = parameters.getCompressionQuality();
+        }
+
+        public ScaleImageOperation build() {
+            return new ScaleImageOperation(this);
+        }
+    }
+
+    private ScaleImageOperation(Builder builder) {
+        this.width = builder.width;
+        this.height = builder.height;
+        this.upscaling = builder.upscaling;
+        this.cropping = builder.cropping;
+        this.strategy = builder.strategy;
+        this.compressionQuality = builder.compressionQuality;
+    }
+    
     /**
      * Creates a image scaling operation, defined by the bounding box of a certain width and height. The strategy will
      * be set to {@link org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy#QUALITY}, and the
@@ -91,7 +173,9 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param width     the width of the bounding box in pixels
      * @param height    the height of the bounding box in pixels
      * @param upscaling whether to enlarge images that are smaller than the bounding box
+     * @deprecated Use {@link ScaleImageOperation.Builder} instead.
      */
+    @Deprecated
     public ScaleImageOperation(int width, int height, boolean upscaling) {
         this(width, height, upscaling, ImageUtils.ScalingStrategy.QUALITY);
     }
@@ -104,7 +188,9 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param upscaling whether to enlarge images that are smaller than the bounding box
      * @param strategy  the strategy to use for scaling the image (e.g. optimize for speed, quality, a trade-off between
      *                  these two, etc.)
+     * @deprecated Use {@link ScaleImageOperation.Builder} instead.
      */
+    @Deprecated
     public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy) {
         this(width, height, upscaling, strategy, 1f);
     }
@@ -119,8 +205,10 @@ public class ScaleImageOperation extends AbstractImageOperation {
      *                           trade-off between these two, etc.)
      * @param compressionQuality a float between 0 and 1 indicating the compression quality to use for writing the
      *                           scaled image data.
+     * @deprecated Use {@link ScaleImageOperation.Builder} instead.
      */
-    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy, 
+    @Deprecated
+    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy,
                                float compressionQuality) {
         this(width, height, upscaling, false, strategy, compressionQuality);
     }
@@ -131,13 +219,15 @@ public class ScaleImageOperation extends AbstractImageOperation {
      * @param width              the width of the bounding box in pixels
      * @param height             the height of the bounding box in pixels
      * @param upscaling          whether to enlarge images that are smaller than the bounding box
-     * @param cropping           whether to crop to original to fill the bounding box  
+     * @param cropping           whether to crop to original to fill the bounding box
      * @param strategy           the strategy to use for scaling the image (e.g. optimize for speed, quality, a
      *                           trade-off between these two, etc.)
      * @param compressionQuality a float between 0 and 1 indicating the compression quality to use for writing the
      *                           scaled image data.
+     * @deprecated Use {@link ScaleImageOperation.Builder} instead.
      */
-    public ScaleImageOperation(final int width, final int height, final boolean upscaling, final boolean cropping, 
+    @Deprecated
+    public ScaleImageOperation(final int width, final int height, final boolean upscaling, final boolean cropping,
                                final ImageUtils.ScalingStrategy strategy, float compressionQuality) {
         this.width = width;
         this.height = height;
@@ -304,7 +394,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
                 scaledHeight = originalHeight;
                 scaledData = new AutoDeletingTmpFileInputStream(tmpFile);
                 deleteTmpFile = false;
-            } else {    
+            } else {
                 BufferedImage scaledImage = getScaledImage(reader, originalWidth, originalHeight);
                 ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage, compressionQuality);
 
@@ -344,7 +434,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
             final Dimension configuredDimension = new Dimension(width, height);
             final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
             final Dimension targetDimension = ImageUtils.handleZeroDimension(cropArea.getSize(), configuredDimension);
-            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension, 
+            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
 
             targetHeight = targetDimension.height;
@@ -375,12 +465,12 @@ public class ScaleImageOperation extends AbstractImageOperation {
         return scaledImage;
     }
 
-    private Rectangle calculateCropArea(final double originalWidth, final double originalHeight, 
+    private Rectangle calculateCropArea(final double originalWidth, final double originalHeight,
                                         final double variantWidth, final double variantHeight) {
-        
+
         final double originalAspectRatio = originalWidth / originalHeight;
         final double variantAspectRatio = variantWidth / variantHeight;
-        
+
         if (originalAspectRatio > variantAspectRatio) {
             // cut off left and right
             final int adjustedOriginalWidth = (int) ((originalHeight / variantHeight) * variantWidth);

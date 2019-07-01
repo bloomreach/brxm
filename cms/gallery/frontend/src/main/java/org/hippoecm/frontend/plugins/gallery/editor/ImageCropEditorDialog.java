@@ -310,8 +310,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             final ScalingParameters parameters = galleryProcessor.getScalingParametersMap().get(getModelObject().getName());
             if (parameters != null) {
                 try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(parameters.getWidth(), parameters.getHeight(),
-                            parameters.getUpscaling(), parameters.getStrategy(), parameters.getCompressionQuality());
+                    final ScaleImageOperation scaleOperation = new ScaleImageOperation.Builder(parameters).build();
                     scaleOperation.execute(stored, mimeType);
                     stored = scaleOperation.getScaledData();
                 } catch (GalleryException e) {

@@ -121,9 +121,9 @@ public class ScalingParameters implements Serializable {
     }
 
     /**
-     * @return whether images should be cropped to fill the bounding box
+     * @return whether cropping should be used to fill the bounding box
      */
-    public boolean isCropping() {
+    public boolean getCropping() {
         return cropping;
     }
 
