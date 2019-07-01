@@ -88,7 +88,6 @@ public class ScalingParameters implements Serializable {
         this.height = height;
         this.upscaling = upscaling;
         this.cropping = cropping;
-        this.cropping = false;
         this.strategy = strategy;
         this.compressionQuality = compressionQuality;
     }
