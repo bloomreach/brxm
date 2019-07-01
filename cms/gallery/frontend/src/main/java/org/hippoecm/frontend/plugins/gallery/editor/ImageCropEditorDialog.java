@@ -146,7 +146,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         imagePreviewContainer.setOutputMarkupId(true);
         try {
             configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
-            thumbnailDimension = handleZeroValueInDimension(originalImageDimension, configuredDimension);
+            thumbnailDimension = ImageUtils.handleZeroDimension(originalImageDimension, configuredDimension);
 
             final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
             final double previewWidth = Math.floor(previewCropFactor * thumbnailDimension.getWidth());
@@ -300,17 +300,9 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             reader.setInput(imageInputStream);
             BufferedImage original = reader.read(0);
             Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
-            Dimension dimension = handleZeroValueInDimension(new Dimension(cropArea.width, cropArea.height), thumbnailDimension);
-            Object hints;
-            boolean highQuality;
-            if (Math.min(cropArea.width / reader.getWidth(0), cropArea.height / reader.getHeight(0)) < 1.0) {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = true;
-            } else {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = false;
-            }
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension, hints, highQuality);
+            Dimension dimension = ImageUtils.handleZeroDimension(cropArea.getSize(), thumbnailDimension);
+            final BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension, 
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
 
             //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
@@ -347,28 +339,5 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     protected boolean isFullscreenEnabled() {
         return true;
 
-    }
-
-    /**
-     * If height or width in the thumbnailDimension is equal to 0 it is a special case.
-     * The value 0 represents a value that according to the dimension of the original image.
-     * <p>
-     * With this function a new dimension is created according to the original dimension
-     *
-     * @param originalDimension  dimension of the original image
-     * @param thumbnailDimension dimension of the thumbnail image
-     * @return scaled dimension based on width or height value
-     */
-    private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
-        Dimension normalized = new Dimension(thumbnailDimension);
-        if (thumbnailDimension.height == 0) {
-            int height = (int)((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
-            normalized.setSize(thumbnailDimension.width, height);
-        }
-        if (thumbnailDimension.width == 0) {
-            int width = (int)((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
-            normalized.setSize(width, thumbnailDimension.height);
-        }
-        return normalized;
     }
 }
