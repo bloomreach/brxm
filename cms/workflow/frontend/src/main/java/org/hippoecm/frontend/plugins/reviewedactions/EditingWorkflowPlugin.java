@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -49,6 +50,11 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("save-hint", this);
+            }
+
+            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -58,7 +64,37 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.save();
+                return null;
+            }
+        });
 
+        add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.TIMES_CIRCLE);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("cancel-hint", this);
+            }
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
+            @Override
+            public String execute(Workflow wf) throws Exception {
+                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.discard();
                 return null;
             }
         });
@@ -73,6 +109,11 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("done-hint", this);
             }
 
             @Override
