@@ -19,7 +19,9 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
 
 import { NavConfigService } from '../../services/nav-config.service';
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
+import { MenuItem } from '../models/menu-item.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 
@@ -41,9 +43,7 @@ export class MenuStateService implements OnDestroy {
       shareReplay(1),
     );
 
-    this.menusStream$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(menu => {
+    this.menusStream$.pipe(takeUntil(this.unsubscribe)).subscribe(menu => {
       if (this.menu && this.menu.length) {
         throw new Error(
           'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.',
@@ -96,7 +96,9 @@ export class MenuStateService implements OnDestroy {
     const navItem = this.navConfigService.findNavItem(appId, path);
 
     if (!navItem) {
-      throw new Error(`There is no nav item with appId=${appId} and path=${path}`);
+      throw new Error(
+        `There is no nav item with appId=${appId} and path=${path}`,
+      );
     }
 
     this.setActiveItem(navItem.id);
@@ -127,10 +129,16 @@ export class MenuStateService implements OnDestroy {
     this.activePath.next(activePath);
   }
 
-  private buildActivePath(menu: MenuItem[], activeMenuItemId: string): MenuItem[] {
+  private buildActivePath(
+    menu: MenuItem[],
+    activeMenuItemId: string,
+  ): MenuItem[] {
     return menu.reduce((activePath, item) => {
       if (item instanceof MenuItemContainer) {
-        const subActivePath = this.buildActivePath(item.children, activeMenuItemId);
+        const subActivePath = this.buildActivePath(
+          item.children,
+          activeMenuItemId,
+        );
 
         if (subActivePath.length > 0) {
           subActivePath.unshift(item);

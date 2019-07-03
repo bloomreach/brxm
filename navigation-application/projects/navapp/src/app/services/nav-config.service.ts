@@ -18,13 +18,16 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import {
-  ChildConnectConfig, ChildPromisedApi,
+  ChildConnectConfig,
+  ChildPromisedApi,
   connectToChild,
 } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-import { ConfigResource, NavItem, Site } from '../models';
+import { ConfigResource } from '../models/dto/config-resource.dto';
+import { NavItem } from '../models/dto/nav-item.dto';
+import { Site } from '../models/dto/site.dto';
 
 import { GlobalSettingsService } from './global-settings.service';
 
@@ -73,23 +76,32 @@ export class NavConfigService {
     );
 
     return Promise.all(configurationPromises).then(configurations => {
-      const { mergedNavItems, mergedSites, selectedSiteId } = configurations.reduce((result, configuration) => {
-        result.mergedNavItems = result.mergedNavItems.concat(configuration.navItems);
-        result.mergedSites = result.mergedSites.concat(configuration.sites);
+      const {
+        mergedNavItems,
+        mergedSites,
+        selectedSiteId,
+      } = configurations.reduce(
+        (result, configuration) => {
+          result.mergedNavItems = result.mergedNavItems.concat(
+            configuration.navItems,
+          );
+          result.mergedSites = result.mergedSites.concat(configuration.sites);
 
-        if (configuration.selectedSiteId) {
-          result.selectedSiteId = configuration.selectedSiteId;
-        }
+          if (configuration.selectedSiteId) {
+            result.selectedSiteId = configuration.selectedSiteId;
+          }
 
-        return result;
-      }, { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined });
+          return result;
+        },
+        { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
+      );
 
       this.navItems.next(mergedNavItems);
       this.sites.next(mergedSites);
 
-      const selectedSite = mergedSites.length ?
-        (this.findSite(mergedSites, selectedSiteId) || mergedSites[0]) :
-        undefined;
+      const selectedSite = mergedSites.length
+        ? this.findSite(mergedSites, selectedSiteId) || mergedSites[0]
+        : undefined;
 
       this.selectedSite.next(selectedSite);
     });
@@ -98,21 +110,27 @@ export class NavConfigService {
   findNavItem(iframeUrl: string, path: string): NavItem {
     const navItems = this.navItems.value;
 
-    return navItems.find(x => x.appIframeUrl === iframeUrl && x.appPath === path);
+    return navItems.find(
+      x => x.appIframeUrl === iframeUrl && x.appPath === path,
+    );
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
     switch (resource.resourceType) {
       case 'IFRAME':
-        return this.fetchFromIframe(resource.url, child => Promise.all([
-          child.getNavItems(),
-          child.getSites ? child.getSites() : Promise.resolve([]),
-          child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(undefined),
-        ]).then(([navItems, sites, selectedSiteId]) => ({
-          navItems,
-          sites,
-          selectedSiteId,
-        })));
+        return this.fetchFromIframe(resource.url, child =>
+          Promise.all([
+            child.getNavItems(),
+            child.getSites ? child.getSites() : Promise.resolve([]),
+            child.getSelectedSite
+              ? child.getSelectedSite()
+              : Promise.resolve(undefined),
+          ]).then(([navItems, sites, selectedSiteId]) => ({
+            navItems,
+            sites,
+            selectedSiteId,
+          })),
+        );
       case 'REST':
         return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({
           navItems,
@@ -126,7 +144,10 @@ export class NavConfigService {
     }
   }
 
-  private fetchFromIframe<T>(url: string, fetcher: (child: ChildPromisedApi) => Promise<T>): Promise<T> {
+  private fetchFromIframe<T>(
+    url: string,
+    fetcher: (child: ChildPromisedApi) => Promise<T>,
+  ): Promise<T> {
     const iframe = document.createElement('iframe');
     iframe.src = url;
     iframe.style.visibility = 'hidden';

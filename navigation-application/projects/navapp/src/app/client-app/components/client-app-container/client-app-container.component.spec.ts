@@ -19,7 +19,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
 import { ClientApp } from '../../models/client-app.model';
-import { ClientAppService } from '../../services';
+import { ClientAppService } from '../../services/client-app.service';
 
 import { ClientAppContainerComponent } from './client-app-container.component';
 

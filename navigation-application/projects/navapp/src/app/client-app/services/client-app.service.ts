@@ -19,7 +19,7 @@ import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { NavItem } from '../../models';
+import { NavItem } from '../../models/dto/nav-item.dto';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 

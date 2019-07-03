@@ -23,9 +23,11 @@ import {
 } from '@angular/animations';
 import { Component, HostBinding, Input, OnChanges } from '@angular/core';
 
-import { QaHelperService } from '../../../services';
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../../models';
-import { MenuStateService } from '../../services';
+import { QaHelperService } from '../../../services/qa-helper.service';
+import { MenuItemContainer } from '../../models/menu-item-container.model';
+import { MenuItemLink } from '../../models/menu-item-link.model';
+import { MenuItem } from '../../models/menu-item.model';
+import { MenuStateService } from '../../services/menu-state.service';
 
 @Component({
   selector: 'brna-expandable-menu-item',
@@ -52,8 +54,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-  ) {
-  }
+  ) {}
 
   get isOpened(): boolean {
     return this.isChildMenuOpened;

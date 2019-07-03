@@ -19,7 +19,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ClientApp } from '../../models/client-app.model';
-import { ClientAppService } from '../../services';
+import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app-container',

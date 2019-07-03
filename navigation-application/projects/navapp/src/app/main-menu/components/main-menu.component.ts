@@ -18,11 +18,14 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { first, switchMap, takeUntil } from 'rxjs/operators';
 
-import { ClientAppService } from '../../client-app/services';
-import { UserSettings } from '../../models/dto';
-import { GlobalSettingsService, QaHelperService } from '../../services';
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
-import { MenuStateService } from '../services';
+import { ClientAppService } from '../../client-app/services/client-app.service';
+import { UserSettings } from '../../models/dto/user-settings.dto';
+import { GlobalSettingsService } from '../../services/global-settings.service';
+import { QaHelperService } from '../../services/qa-helper.service';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
+import { MenuItem } from '../models/menu-item.model';
+import { MenuStateService } from '../services/menu-state.service';
 
 @Component({
   selector: 'brna-main-menu',
@@ -63,18 +66,20 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   // Should be replaced with proper routing later
   ngOnInit(): void {
-    this.menuStateService.menu$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(menuItems => {
-      this.homeMenuItem = menuItems[0] as MenuItemLink;
-      this.menuItems = menuItems.slice(1);
-    });
+    this.menuStateService.menu$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(menuItems => {
+        this.homeMenuItem = menuItems[0] as MenuItemLink;
+        this.menuItems = menuItems.slice(1);
+      });
 
-    this.clientAppService.connectionsEstablished$.pipe(
-      first(),
-      switchMap(() => this.menuStateService.menu$),
-      takeUntil(this.unsubscribe),
-    ).subscribe(() => this.selectMenuItem(this.homeMenuItem));
+    this.clientAppService.connectionsEstablished$
+      .pipe(
+        first(),
+        switchMap(() => this.menuStateService.menu$),
+        takeUntil(this.unsubscribe),
+      )
+      .subscribe(() => this.selectMenuItem(this.homeMenuItem));
 
     this.userSettings = this.settingsService.userSettings;
   }

@@ -17,7 +17,8 @@
 import { async } from '@angular/core/testing';
 
 import { menuStructureMock, navConfig } from '../../test-mocks';
-import { MenuItemContainer, MenuItemLink } from '../models';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';

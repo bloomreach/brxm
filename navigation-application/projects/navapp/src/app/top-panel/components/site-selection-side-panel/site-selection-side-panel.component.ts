@@ -16,10 +16,18 @@
 
 import { animate, style, transition, trigger } from '@angular/animations';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, OnChanges, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
 
-import { Site } from '../../../models';
+import { Site } from '../../../models/dto/site.dto';
 
 interface SiteFlatNode {
   id: number;
@@ -59,7 +67,10 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   animate = true;
 
   searchText = '';
-  treeControl = new FlatTreeControl<SiteFlatNode>(node => node.level, node => node.expandable);
+  treeControl = new FlatTreeControl<SiteFlatNode>(
+    node => node.level,
+    node => node.expandable,
+  );
   treeFlattener = new MatTreeFlattener(
     this.transformer,
     node => node.level,
@@ -69,7 +80,11 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
   get isNotFoundPanelVisible(): boolean {
-    return this.dataSource.data && this.dataSource.data.length === 0 && !!this.searchText;
+    return (
+      this.dataSource.data &&
+      this.dataSource.data.length === 0 &&
+      !!this.searchText
+    );
   }
 
   ngOnChanges(changes): void {
@@ -103,7 +118,9 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
       return;
     }
 
-    const selectedNode = this.treeControl.dataNodes.find(x => x.id === this.selectedSite.id);
+    const selectedNode = this.treeControl.dataNodes.find(
+      x => x.id === this.selectedSite.id,
+    );
 
     if (!selectedNode) {
       this.treeControl.collapseAll();
@@ -167,7 +184,10 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     return parents;
   }
 
-  private getParentNode(nodes: SiteFlatNode[], node: SiteFlatNode): SiteFlatNode {
+  private getParentNode(
+    nodes: SiteFlatNode[],
+    node: SiteFlatNode,
+  ): SiteFlatNode {
     const nodeIndex = nodes.indexOf(node);
 
     for (let i = nodeIndex - 1; i >= 0; i--) {

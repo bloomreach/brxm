@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { AppSettings, UserSettings } from './dto';
+import { AppSettings } from './dto/app-settings.dto';
+import { UserSettings } from './dto/user-settings.dto';
 
 export class GlobalSettings {
   userSettings: UserSettings;

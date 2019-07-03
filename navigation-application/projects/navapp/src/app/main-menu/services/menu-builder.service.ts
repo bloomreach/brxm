@@ -16,22 +16,22 @@
 
 import { Injectable } from '@angular/core';
 
-import { NavItem } from '../../models/dto';
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
+import { NavItem } from '../../models/dto/nav-item.dto';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
+import { MenuItem } from '../models/menu-item.model';
 
 import { MenuStructureService } from './menu-structure.service';
 
 @Injectable()
 export class MenuBuilderService {
-  constructor(
-    private menuStructureService: MenuStructureService,
-  ) {}
+  constructor(private menuStructureService: MenuStructureService) {}
 
   buildMenu(navItems: NavItem[]): MenuItem[] {
-      const menu = this.menuStructureService.getMenuStructure();
+    const menu = this.menuStructureService.getMenuStructure();
 
-      this.applyNavItems(menu, navItems);
-      return this.removeEmptyLeaves(menu);
+    this.applyNavItems(menu, navItems);
+    return this.removeEmptyLeaves(menu);
   }
 
   private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {
@@ -64,13 +64,12 @@ export class MenuBuilderService {
   }
 
   private getMenuItemLinks(menu: MenuItem[]): MenuItemLink[] {
-    return menu.reduce(
-      (leafs, item) => {
-        if (item instanceof MenuItemContainer) {
-          return leafs.concat(this.getMenuItemLinks(item.children));
-        }
-        leafs.push(item);
-        return leafs;
-      }, []);
+    return menu.reduce((leafs, item) => {
+      if (item instanceof MenuItemContainer) {
+        return leafs.concat(this.getMenuItemLinks(item.children));
+      }
+      leafs.push(item);
+      return leafs;
+    }, []);
   }
 }

@@ -20,10 +20,10 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClientAppModule } from './client-app';
-import { MainMenuModule } from './main-menu';
-import { SharedModule } from './shared';
-import { TopPanelModule } from './top-panel';
+import { ClientAppModule } from './client-app/client-app.module';
+import { MainMenuModule } from './main-menu/main-menu.module';
+import { SharedModule } from './shared/shared.module';
+import { TopPanelModule } from './top-panel/top-panel.module';
 
 @NgModule({
   imports: [

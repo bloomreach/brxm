@@ -17,8 +17,9 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ClientAppService } from './client-app/services';
-import { NavConfigService, OverlayService } from './services';
+import { ClientAppService } from './client-app/services/client-app.service';
+import { NavConfigService } from './services/nav-config.service';
+import { OverlayService } from './services/overlay.service';
 
 @Component({
   selector: 'brna-root',

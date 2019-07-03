@@ -18,9 +18,9 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { ClientAppContainerComponent } from './components';
+import { ClientAppContainerComponent } from './components/client-app-container/client-app-container.component';
 import { ClientAppComponent } from './components/client-app/client-app.component';
-import { ClientAppService } from './services';
+import { ClientAppService } from './services/client-app.service';
 
 @NgModule({
   imports: [BrowserModule, CommonModule],

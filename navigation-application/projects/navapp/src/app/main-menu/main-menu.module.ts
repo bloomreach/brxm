@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ClickOutsideModule } from 'ng-click-outside';
 
-import { SharedModule } from '../shared';
+import { SharedModule } from '../shared/shared.module';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { MainMenuComponent } from './components/main-menu.component';
@@ -27,7 +27,9 @@ import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.compon
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
 import { UserToolbarDrawerComponent } from './components/user-toolbar-drawer/user-toolbar-drawer.component';
-import { MenuBuilderService, MenuStateService, MenuStructureService } from './services';
+import { MenuBuilderService } from './services/menu-builder.service';
+import { MenuStateService } from './services/menu-state.service';
+import { MenuStructureService } from './services/menu-structure.service';
 
 @NgModule({
   imports: [

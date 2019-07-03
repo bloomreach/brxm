@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 
-import { MenuItem } from '../main-menu/models';
+import { MenuItem } from '../main-menu/models/menu-item.model';
 
 const prefix = 'qa';
 

@@ -20,8 +20,8 @@ import { Observable, Subject } from 'rxjs';
 import { map, mergeMap, takeUntil } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
-import { ClientAppService } from '../client-app/services';
-import { MenuStateService } from '../main-menu/services';
+import { ClientAppService } from '../client-app/services/client-app.service';
+import { MenuStateService } from '../main-menu/services/menu-state.service';
 
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
@@ -47,15 +47,19 @@ export class CommunicationsService implements OnDestroy {
     private overlay: OverlayService,
     private navConfigService: NavConfigService,
   ) {
-    clientAppService.apps$.pipe(
-      // url === id for client applications
-      map(apps => apps.map(x => x.url)),
-      takeUntil(this.unsubscribe),
-    ).subscribe(appIds => this.appIds = appIds);
+    clientAppService.apps$
+      .pipe(
+        // url === id for client applications
+        map(apps => apps.map(x => x.url)),
+        takeUntil(this.unsubscribe),
+      )
+      .subscribe(appIds => (this.appIds = appIds));
 
-    menuStateService.activeMenuItem$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(activeMenuItem => this.navigate(activeMenuItem.appId, activeMenuItem.appPath));
+    menuStateService.activeMenuItem$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(activeMenuItem =>
+        this.navigate(activeMenuItem.appId, activeMenuItem.appPath),
+      );
   }
 
   get parentApiMethods(): ParentApi {
@@ -68,16 +72,21 @@ export class CommunicationsService implements OnDestroy {
         const appId = this.findAppId(location.path);
 
         if (!appId) {
-          console.error(`Cannot find associated menu item for Navlocation:{${JSON.stringify(location)}}`);
+          console.error(
+            `Cannot find associated menu item for Navlocation:{${JSON.stringify(
+              location,
+            )}}`,
+          );
         }
 
         this.menuStateService.activateMenuItem(appId, location.path);
         this.navigate(appId, location.path);
       },
-      updateNavLocation: (location: NavLocation) => this.menuStateService.activateMenuItem(
-        this.clientAppService.activeApp.id,
-        location.path,
-      ),
+      updateNavLocation: (location: NavLocation) =>
+        this.menuStateService.activateMenuItem(
+          this.clientAppService.activeApp.id,
+          location.path,
+        ),
     };
   }
 
@@ -99,13 +108,15 @@ export class CommunicationsService implements OnDestroy {
     return this.clientAppService.activeApp.api.updateSite(siteId).then(() => {
       const activeApp = this.clientAppService.activeApp;
 
-      const updatePromises = this.clientAppService.appsWithSitesSupport.map(app => {
-        if (app === activeApp) {
-          return;
-        }
+      const updatePromises = this.clientAppService.appsWithSitesSupport.map(
+        app => {
+          if (app === activeApp) {
+            return;
+          }
 
-        return app.api.updateSite();
-      });
+          return app.api.updateSite();
+        },
+      );
 
       return Promise.all(updatePromises).then(() => {});
     });
@@ -124,6 +135,8 @@ export class CommunicationsService implements OnDestroy {
   }
 
   private findAppId(path: string): string {
-    return this.appIds.find(appId => !!this.navConfigService.findNavItem(appId, path));
+    return this.appIds.find(
+      appId => !!this.navConfigService.findNavItem(appId, path),
+    );
   }
 }

@@ -16,8 +16,8 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { MenuItemLink } from '../../models';
-import { MenuStateService } from '../../services';
+import { MenuItemLink } from '../../models/menu-item-link.model';
+import { MenuStateService } from '../../services/menu-state.service';
 
 @Component({
   selector: 'brna-menu-item-link',
@@ -32,13 +32,14 @@ export class MenuItemLinkComponent {
   @HostBinding('class.active')
   active = false;
 
-  constructor(
-    private menuStateService: MenuStateService,
-  ) {}
+  constructor(private menuStateService: MenuStateService) {}
 
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    this.menuStateService.activateMenuItem(this.config.appId, this.config.appPath);
+    this.menuStateService.activateMenuItem(
+      this.config.appId,
+      this.config.appPath,
+    );
   }
 }

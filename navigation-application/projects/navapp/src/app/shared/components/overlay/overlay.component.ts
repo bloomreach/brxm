@@ -19,7 +19,7 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { OverlayService } from '../../../services';
+import { OverlayService } from '../../../services/overlay.service';
 
 @Component({
   selector: 'brna-overlay',
@@ -43,14 +43,12 @@ export class OverlayComponent implements OnInit, OnDestroy {
 
   private unsubscribe = new Subject();
 
-  constructor(
-    private overlay: OverlayService,
-  ) {}
+  constructor(private overlay: OverlayService) {}
 
   ngOnInit(): void {
-    this.overlay.visible$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(visible => this.visible = visible);
+    this.overlay.visible$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(visible => (this.visible = visible));
   }
 
   ngOnDestroy(): void {

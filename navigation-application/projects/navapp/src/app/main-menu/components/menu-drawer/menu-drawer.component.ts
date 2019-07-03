@@ -15,12 +15,19 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { QaHelperService } from '../../../services';
-import { MenuItem, MenuItemContainer } from '../../models';
-import { MenuStateService } from '../../services';
+import { QaHelperService } from '../../../services/qa-helper.service';
+import { MenuItemContainer } from '../../models/menu-item-container.model';
+import { MenuItem } from '../../models/menu-item.model';
+import { MenuStateService } from '../../services/menu-state.service';
 
 @Component({
   selector: 'brna-menu-drawer',

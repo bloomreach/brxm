@@ -20,11 +20,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClientAppModule } from './client-app';
-import { MainMenuModule } from './main-menu';
-import { NavConfigService } from './services';
-import { SharedModule } from './shared';
-import { TopPanelModule } from './top-panel';
+import { ClientAppModule } from './client-app/client-app.module';
+import { MainMenuModule } from './main-menu/main-menu.module';
+import { NavConfigService } from './services/nav-config.service';
+import { SharedModule } from './shared/shared.module';
+import { TopPanelModule } from './top-panel/top-panel.module';
 
 describe('AppComponent', () => {
   let component: AppComponent;

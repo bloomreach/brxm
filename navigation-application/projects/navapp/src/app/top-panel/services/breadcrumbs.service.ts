@@ -18,15 +18,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
-import { MenuStateService } from '../../main-menu/services';
+import { MenuStateService } from '../../main-menu/services/menu-state.service';
 
 @Injectable()
 export class BreadcrumbsService {
   suffix: string;
 
-  constructor(
-    private menuStateService: MenuStateService,
-  ) {}
+  constructor(private menuStateService: MenuStateService) {}
 
   get breadcrumbs$(): Observable<string[]> {
     return this.menuStateService.activePath$.pipe(

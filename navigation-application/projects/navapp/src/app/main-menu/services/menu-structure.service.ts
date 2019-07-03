@@ -16,13 +16,13 @@
 
 import { Injectable } from '@angular/core';
 
-import { MenuItem, MenuItemContainer, MenuItemLink } from '../models';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
+import { MenuItem } from '../models/menu-item.model';
 
 @Injectable()
 export class MenuStructureService {
-  private extensions = new MenuItemContainer(
-    'Extensions', [], 'extensions',
-  );
+  private extensions = new MenuItemContainer('Extensions', [], 'extensions');
 
   addExtension(item: MenuItemLink): void {
     this.extensions.children.push(item);
@@ -86,11 +86,7 @@ export class MenuStructureService {
       'categories',
     );
 
-    const seo = new MenuItemLink(
-      'seo',
-      'SEO',
-      'seo',
-    );
+    const seo = new MenuItemLink('seo', 'SEO', 'seo');
     const insights = new MenuItemContainer(
       'Insights',
       [
@@ -125,7 +121,10 @@ export class MenuStructureService {
     const audiences = new MenuItemContainer(
       'Audiences',
       [
-        new MenuItemLink('hippo-perspective-experienceoptimizerperspective', 'Content audiences'),
+        new MenuItemLink(
+          'hippo-perspective-experienceoptimizerperspective',
+          'Content audiences',
+        ),
         new MenuItemLink('merchandising-audiences', 'Merchandising audiences'),
       ],
       'audiences',

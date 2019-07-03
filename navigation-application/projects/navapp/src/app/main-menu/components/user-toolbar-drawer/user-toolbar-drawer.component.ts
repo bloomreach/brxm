@@ -17,8 +17,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { UserSettings } from '../../../models/dto';
-import { CommunicationsService } from '../../../services';
+import { UserSettings } from '../../../models/dto/user-settings.dto';
+import { CommunicationsService } from '../../../services/communications.service';
 
 @Component({
   selector: 'brna-user-toolbar-drawer',
@@ -43,9 +43,7 @@ export class UserToolbarDrawerComponent {
   @HostBinding('@slideInOut')
   animate = true;
 
-  constructor(
-    private communicationService: CommunicationsService,
-  ) { }
+  constructor(private communicationService: CommunicationsService) {}
 
   get userName(): string {
     return this.config.userName;
@@ -60,14 +58,9 @@ export class UserToolbarDrawerComponent {
   }
 
   logout(): void {
-    this.communicationService
-      .logout()
-      .subscribe(results => {
-        results
-          .filter(e => e instanceof Error)
-          .forEach(e => console.error(e));
-        window.location.reload();
-      });
+    this.communicationService.logout().subscribe(results => {
+      results.filter(e => e instanceof Error).forEach(e => console.error(e));
+      window.location.reload();
+    });
   }
-
 }

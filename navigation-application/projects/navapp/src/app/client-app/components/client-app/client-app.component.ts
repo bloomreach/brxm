@@ -25,9 +25,9 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { connectToChild } from '@bloomreach/navapp-communication';
 
-import { CommunicationsService } from '../../../services';
+import { CommunicationsService } from '../../../services/communications.service';
 import { ClientApp } from '../../models/client-app.model';
-import { ClientAppService } from '../../services';
+import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app',

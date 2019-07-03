@@ -22,7 +22,7 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 
-import { Site } from '../../../models/dto';
+import { Site } from '../../../models/dto/site.dto';
 
 import { SiteSelectionSidePanelComponent } from './site-selection-side-panel.component';
 
@@ -54,7 +54,8 @@ describe('SiteSelectionSidePanelComponent', () => {
     },
     {
       id: 5,
-      name: 'An example company that has a very long name and a subgroup with many items',
+      name:
+        'An example company that has a very long name and a subgroup with many items',
       subGroups: [
         {
           id: 6,
@@ -77,9 +78,7 @@ describe('SiteSelectionSidePanelComponent', () => {
         MatIconModule,
         NoopAnimationsModule,
       ],
-      declarations: [
-        SiteSelectionSidePanelComponent,
-      ],
+      declarations: [SiteSelectionSidePanelComponent],
     }).createComponent(SiteSelectionSidePanelComponent);
 
     component = fixture.componentInstance;
@@ -88,7 +87,9 @@ describe('SiteSelectionSidePanelComponent', () => {
 
   beforeEach(() => {
     component.sites = mockSites;
-    component.ngOnChanges({ sites: new SimpleChange(undefined, mockSites, true) });
+    component.ngOnChanges({
+      sites: new SimpleChange(undefined, mockSites, true),
+    });
     fixture.detectChanges();
   });
 
@@ -97,24 +98,32 @@ describe('SiteSelectionSidePanelComponent', () => {
 
     expect(sites.length).toBe(2);
     expect(sites[0].nativeElement.textContent.trim()).toBe('www.company.com');
-    expect(sites[1].nativeElement.textContent.trim()).toBe('An example company that has a very long name and a subgroup with many items');
+    expect(sites[1].nativeElement.textContent.trim()).toBe(
+      'An example company that has a very long name and a subgroup with many items',
+    );
   });
 
   it('should show filter out sites', () => {
     component.searchText = 'Sub company';
-    component.ngOnChanges({ searchText: new SimpleChange(undefined, component.searchText, true) });
+    component.ngOnChanges({
+      searchText: new SimpleChange(undefined, component.searchText, true),
+    });
     fixture.detectChanges();
 
     const sites = de.queryAll(By.css('.caption'));
 
     expect(sites.length).toBe(1);
-    expect(sites[0].nativeElement.textContent.trim()).toBe('An example company that has a very long name and a subgroup with many items');
+    expect(sites[0].nativeElement.textContent.trim()).toBe(
+      'An example company that has a very long name and a subgroup with many items',
+    );
   });
 
   describe('the active node', () => {
     beforeEach(() => {
       component.selectedSite = { id: 4, name: 'Office DE' };
-      component.ngOnChanges({ selectedSite: new SimpleChange(undefined, component.selectedSite, true) });
+      component.ngOnChanges({
+        selectedSite: new SimpleChange(undefined, component.selectedSite, true),
+      });
       fixture.detectChanges();
     });
 

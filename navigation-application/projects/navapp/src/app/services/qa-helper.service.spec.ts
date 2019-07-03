@@ -16,7 +16,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { MenuItemContainer } from '../main-menu/models';
+import { MenuItemContainer } from '../main-menu/models/menu-item-container.model';
 
 import { QaHelperService } from './qa-helper.service';
 

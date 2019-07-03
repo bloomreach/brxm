@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { MenuItem, MenuItemContainer, MenuItemLink } from './main-menu/models';
-import { NavItem } from './models';
+import { MenuItemContainer } from './main-menu/models/menu-item-container.model';
+import { MenuItemLink } from './main-menu/models/menu-item-link.model';
+import { MenuItem } from './main-menu/models/menu-item.model';
+import { NavItem } from './models/dto/nav-item.dto';
 
 const item1 = new MenuItemLink('item1', 'Item 1');
 

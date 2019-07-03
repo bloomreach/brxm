@@ -18,10 +18,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ClientAppService } from '../../client-app/services';
-import { Site } from '../../models/dto';
-import { CommunicationsService, NavConfigService } from '../../services';
-import { SiteSelectionSidePanelService } from '../services';
+import { ClientAppService } from '../../client-app/services/client-app.service';
+import { Site } from '../../models/dto/site.dto';
+import { CommunicationsService } from '../../services/communications.service';
+import { NavConfigService } from '../../services/nav-config.service';
+import { SiteSelectionSidePanelService } from '../services/site-selection-side-panel.service';
 
 @Component({
   selector: 'brna-top-panel',
@@ -63,9 +64,9 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.navConfigService.selectedSite$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(selectedSite => this.site = selectedSite);
+    this.navConfigService.selectedSite$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(selectedSite => (this.site = selectedSite));
   }
 
   ngOnDestroy(): void {

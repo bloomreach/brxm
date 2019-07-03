@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MenuItem } from './menu-item';
+import { MenuItem } from './menu-item.model';
 
 export class MenuItemContainer {
   constructor(

@@ -17,7 +17,7 @@
 import { of } from 'rxjs';
 
 import { createSpyObj } from '../../../test-utilities';
-import { NavConfigService } from '../../services';
+import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
 import { ClientAppService } from './client-app.service';
@@ -63,7 +63,7 @@ describe('ClientAppService', () => {
     ];
     let actual: ClientApp[];
 
-    service.apps$.subscribe(apps => actual = apps);
+    service.apps$.subscribe(apps => (actual = apps));
     service.init();
 
     expect(actual).toEqual(expected);
@@ -77,7 +77,9 @@ describe('ClientAppService', () => {
     it('should emit connectionsEstablished$', () => {
       let connectionEstablished = false;
 
-      service.connectionsEstablished$.subscribe(() => connectionEstablished = true);
+      service.connectionsEstablished$.subscribe(
+        () => (connectionEstablished = true),
+      );
 
       service.addConnection('http://app1.com', {});
       service.addConnection('http://app2.com', {});
@@ -113,7 +115,7 @@ describe('ClientAppService', () => {
       };
 
       beforeEach(() => {
-        service.addConnection('http://app1.com', { });
+        service.addConnection('http://app1.com', {});
         service.addConnection('http://app2.com', clientApiWithSitesSupport);
 
         service.activateApplication('http://app2.com');
