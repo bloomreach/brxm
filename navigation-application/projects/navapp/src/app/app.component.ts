@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   typography = true;
 
   constructor(
-    private navConfigResourcesService: NavConfigService,
+    private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
     private overlayService: OverlayService,
   ) {}
@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.navConfigResourcesService.init();
+    this.navConfigService.init();
     this.clientAppService.init();
   }
 }

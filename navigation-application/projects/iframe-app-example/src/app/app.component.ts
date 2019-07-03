@@ -21,9 +21,12 @@ import {
   NavLocation,
   ParentConnectConfig,
 } from '@bloomreach/navapp-communication';
+import { CookieService } from 'ngx-cookie-service';
 import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
 
 import { mockSites, navigationConfiguration } from './mocks';
+
+const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
 
 @Component({
   selector: 'app-root',
@@ -39,10 +42,10 @@ export class AppComponent implements OnInit {
   buttonClicked = 0;
   parent: ParentPromisedApi;
   overlaid = false;
-  selectedSiteId: number;
 
   constructor(
     private location: Location,
+    private cookiesService: CookieService,
   ) {}
 
   get isBrSmMock(): boolean {
@@ -72,12 +75,24 @@ export class AppComponent implements OnInit {
         return mockSites;
       };
 
+      methods.getSelectedSite = () => {
+        return this.selectedSiteId;
+      };
+
       methods.updateSite = (siteId?: number) => {
         this.selectedSiteId = siteId;
       };
     }
 
     return methods;
+  }
+
+  get selectedSiteId(): number {
+    return +this.cookiesService.get(SITE_COOKIE_NAME);
+  }
+
+  set selectedSiteId(value: number) {
+    this.cookiesService.set(SITE_COOKIE_NAME, value.toString());
   }
 
   ngOnInit(): void {

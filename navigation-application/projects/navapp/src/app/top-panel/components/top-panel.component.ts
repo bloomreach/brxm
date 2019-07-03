@@ -16,7 +16,7 @@
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services';
 import { Site } from '../../models/dto';
@@ -33,7 +33,7 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private navConfigResourcesService: NavConfigService,
+    private navConfigService: NavConfigService,
     private siteSelectionPanelService: SiteSelectionSidePanelService,
     private clientAppService: ClientAppService,
     private communicationsService: CommunicationsService,
@@ -51,7 +51,7 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   }
 
   get sites$(): Observable<Site[]> {
-    return this.navConfigResourcesService.sites$;
+    return this.navConfigService.sites$;
   }
 
   get isSidePanelOpened(): boolean {
@@ -63,10 +63,9 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.navConfigResourcesService.sites$.pipe(
-      map(sites => sites.length ? sites[0] : undefined),
+    this.navConfigService.selectedSite$.pipe(
       takeUntil(this.unsubscribe),
-    ).subscribe(firstNode => this.site = firstNode);
+    ).subscribe(selectedSite => this.site = selectedSite);
   }
 
   ngOnDestroy(): void {
