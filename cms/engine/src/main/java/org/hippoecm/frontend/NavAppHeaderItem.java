@@ -65,10 +65,9 @@ public class NavAppHeaderItem extends HeaderItem {
         final URI brXmLocation = navAppSettings.getAppSettings().getBrXmLocation();
 
         final HeaderItem navAppSettingsHeaderItem = getNavAppSettingsHeaderItem(navAppSettings);
-        final HeaderItem baseTagHeaderItem = getBaseTagHeaderItem(navAppLocation);
 
         Stream.concat(
-                Stream.of(navAppSettingsHeaderItem, baseTagHeaderItem),
+                Stream.of(navAppSettingsHeaderItem),
                 getScrTagHeaderItems(brXmLocation, navAppLocation)
         ).forEach(item -> item.render(response));
 
@@ -119,10 +118,6 @@ public class NavAppHeaderItem extends HeaderItem {
         } else {
             return Stream.of("styles.css");
         }
-    }
-
-    private HeaderItem getBaseTagHeaderItem(URI navAppLocation) {
-        return StringHeaderItem.forString(String.format("<base href=%s/>", navAppLocation));
     }
 
     private HeaderItem getNavAppSettingsHeaderItem(NavAppSettings navAppSettings) {

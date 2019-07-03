@@ -29,15 +29,18 @@ public class NavAppPanel extends Panel {
     static final String NAVAPP_HEADER_ITEM = "navapp-header-item";
 
     private final HeaderItem navAppHeaderItem;
+    private final HeaderItem navAppBasseTagHeaderItem;
 
     public NavAppPanel(String id, NavAppSettings navAppSettings) {
         super(id);
         this.navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettings), NAVAPP_HEADER_ITEM);
+        this.navAppBasseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppLocation());
         add(new HeaderResponseContainer(NAVAPP_HEADER_ITEM, NAVAPP_HEADER_ITEM));
     }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
+        response.render(navAppBasseTagHeaderItem);
         response.render(navAppHeaderItem);
     }
 }
