@@ -32,6 +32,13 @@
 
   <inceptionYear>2019</inceptionYear>
 
+  <properties>
+    <sonar.sources>.</sonar.sources>
+    <sonar.inclusions>projects/**/*.ts</sonar.inclusions>
+    <sonar.exclusions>projects/**/*.spec.ts</sonar.exclusions>
+    <sonar.typescript.lcov.reportPaths>coverage/navapp-communication/lcov.info,coverage/navapp/lcov.info</sonar.typescript.lcov.reportPaths>
+  </properties>
+
   <scm>
     <connection>scm:git:https://code.onehippo.org/bloomreach-navigation-application.git</connection>
     <developerConnection>scm:git:git@code.onehippo.org:cms-community-dev/bloomreach-navigation-application.git</developerConnection>

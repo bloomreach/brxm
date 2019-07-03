@@ -8,7 +8,7 @@
     "sprites": "svg-sprite --config sprite-config.json src/assets/menu-icons/*.svg",
     "build": "ng build",
     "test": "ng test",
-    "test:single-run": "ng test --no-watch --browsers ChromeHeadless",
+    "test:single-run": "ng test --no-watch --code-coverage --browsers ChromeHeadless",
     "lint": "npm run lint:styles && ng lint",
     "lint:styles": "stylelint \"projects/**/*.scss\"",
     "build:prod": "ng build --prod",
