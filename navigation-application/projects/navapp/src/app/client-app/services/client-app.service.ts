@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { NavItem } from '../../models';

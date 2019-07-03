@@ -33,6 +33,7 @@ const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
 interface Configuration {
   navItems: NavItem[];
   sites: Site[];
+  selectedSiteId: number;
 }
 
 @Injectable({
@@ -43,6 +44,7 @@ export class NavConfigService {
 
   private navItems = new BehaviorSubject<NavItem[]>([]);
   private sites = new BehaviorSubject<Site[]>([]);
+  private selectedSite = new BehaviorSubject(undefined);
 
   constructor(
     private http: HttpClient,
@@ -61,21 +63,35 @@ export class NavConfigService {
     return this.sites.asObservable().pipe(filter(filterOutEmpty));
   }
 
+  get selectedSite$(): Observable<Site> {
+    return this.selectedSite.asObservable();
+  }
+
   init(): Promise<void> {
     const configurationPromises = this.settingsService.appSettings.navConfigResources.map(
       resource => this.fetchConfiguration(resource),
     );
 
     return Promise.all(configurationPromises).then(configurations => {
-      const { mergedNavItems, mergedSites } = configurations.reduce((result, { navItems, sites }) => {
-        result.mergedNavItems = result.mergedNavItems.concat(navItems);
-        result.mergedSites = result.mergedSites.concat(sites);
+      const { mergedNavItems, mergedSites, selectedSiteId } = configurations.reduce((result, configuration) => {
+        result.mergedNavItems = result.mergedNavItems.concat(configuration.navItems);
+        result.mergedSites = result.mergedSites.concat(configuration.sites);
+
+        if (configuration.selectedSiteId) {
+          result.selectedSiteId = configuration.selectedSiteId;
+        }
 
         return result;
-      }, { mergedNavItems: [], mergedSites: [] });
+      }, { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined });
 
       this.navItems.next(mergedNavItems);
       this.sites.next(mergedSites);
+
+      const selectedSite = mergedSites.length ?
+        (this.findSite(mergedSites, selectedSiteId) || mergedSites[0]) :
+        undefined;
+
+      this.selectedSite.next(selectedSite);
     });
   }
 
@@ -91,9 +107,18 @@ export class NavConfigService {
         return this.fetchFromIframe(resource.url, child => Promise.all([
           child.getNavItems(),
           child.getSites ? child.getSites() : Promise.resolve([]),
-        ]).then(([navItems, sites]) => ({ navItems, sites })));
+          child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(undefined),
+        ]).then(([navItems, sites, selectedSiteId]) => ({
+          navItems,
+          sites,
+          selectedSiteId,
+        })));
       case 'REST':
-        return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({ navItems, sites: [] }));
+        return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({
+          navItems,
+          sites: [],
+          selectedSiteId: undefined,
+        }));
       default:
         return Promise.reject(
           new Error(`Resource type ${resource.resourceType} is not supported`),
@@ -119,5 +144,23 @@ export class NavConfigService {
 
   private fetchFromREST<T>(url: string): Promise<T> {
     return this.http.get<T>(url).toPromise();
+  }
+
+  private findSite(sites: Site[], siteId: number): Site {
+    for (const site of sites) {
+      if (site.id === siteId) {
+        return site;
+      }
+
+      let childSite: Site;
+
+      if (site.subGroups) {
+        childSite = this.findSite(site.subGroups, siteId);
+      }
+
+      if (childSite) {
+        return childSite;
+      }
+    }
   }
 }

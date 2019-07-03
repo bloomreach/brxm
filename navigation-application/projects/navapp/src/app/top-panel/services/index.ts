@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
+export * from './breadcrumbs.service';
 export * from './site-selection-side-panel.service';
