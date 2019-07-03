@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -80,7 +81,6 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
-import org.apache.wicket.resource.NoOpTextCompressor;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.settings.ResourceSettings;
@@ -804,7 +804,7 @@ public class Main extends PluginApplication {
 
     private void addHeaderResponseDecorator() {
 
-        final AbstractHeaderResponseFilter navAppFilter = new AbstractHeaderResponseFilter(NavAppPanel.NAVAPP_HEADER_ITEM) {
+        final AbstractHeaderResponseFilter navAppFilter = new AbstractHeaderResponseFilter(NavAppPanel.NAVAPP_JAVASCRIPT_HEADER_ITEM) {
             @Override
             public boolean accepts(final HeaderItem item) {
                 if (item instanceof FilteredHeaderItem) {
@@ -818,31 +818,27 @@ public class Main extends PluginApplication {
         final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
 
         setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
-            final boolean navAppMode = PluginUserSession.get().getApplicationName().equals("cms") && !hasIFrameParameter();
+
+            final Predicate<HeaderItem> shouldRender =
+                    isCmsApplication() && hasNoIFrameParameter()
+                            ? NavAppUtils::isNavAppHeaderItem
+                            : item -> !NavAppUtils.isNavAppHeaderItem(item);
 
             @Override
             public void render(final HeaderItem item) {
-                if (navAppMode) {
-                    if (item instanceof FilteredHeaderItem) {
-                        final FilteredHeaderItem filteredHeaderItem = (FilteredHeaderItem) item;
-                        if (filteredHeaderItem.getFilterName().equals(NavAppPanel.NAVAPP_HEADER_ITEM)) {
-                            super.render(item);
-                        }
-                    }
-                    if (item instanceof NavAppBaseTagHeaderItem) {
-                        super.render(item);
-                    }
-                } else {
-                    if (!(item instanceof NavAppBaseTagHeaderItem)) {
-                        super.render(item);
-                    }
+                if (shouldRender.test(item)) {
+                    super.render(item);
                 }
             }
         });
     }
 
-    private boolean hasIFrameParameter() {
-        return !RequestUtils.getQueryParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
+    private boolean isCmsApplication() {
+        return PluginUserSession.get().getApplicationName().equals("cms");
+    }
+
+    private boolean hasNoIFrameParameter() {
+        return RequestUtils.getQueryParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
     }
 
 }

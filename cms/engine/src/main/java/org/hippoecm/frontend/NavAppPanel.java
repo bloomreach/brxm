@@ -17,30 +17,49 @@
 
 package org.hippoecm.frontend;
 
+import java.util.function.Function;
+
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
 import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.NavAppSettings;
 
 public class NavAppPanel extends Panel {
 
-    static final String NAVAPP_HEADER_ITEM = "navapp-header-item";
+    static final String NAVAPP_JAVASCRIPT_HEADER_ITEM = "navapp-javascript-header-item";
 
-    private final HeaderItem navAppHeaderItem;
     private final HeaderItem navAppBasseTagHeaderItem;
+    private final HeaderItem navAppCssHeaderItem;
+
+    private final HeaderItem navAppJavascriptHeaderItem;
 
     public NavAppPanel(String id, NavAppSettings navAppSettings) {
         super(id);
-        this.navAppHeaderItem = new FilteredHeaderItem(new NavAppHeaderItem(navAppSettings), NAVAPP_HEADER_ITEM);
+
+
+        final Function<String, ResourceReference> mapper = NavAppUtils.getMapper(navAppSettings.getAppSettings());
+        final Function<String, CssHeaderItem> toCssHeaderItem = mapper.andThen(CssHeaderItem::forReference);
+        final Function<String, JavaScriptHeaderItem> toJsHeaderItem = mapper.andThen(JavaScriptHeaderItem::forReference);
+        final NavAppJavascriptHeaderItem javascriptHeaderItem = new NavAppJavascriptHeaderItem(navAppSettings, toJsHeaderItem);
+
         this.navAppBasseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppLocation());
-        add(new HeaderResponseContainer(NAVAPP_HEADER_ITEM, NAVAPP_HEADER_ITEM));
+        this.navAppCssHeaderItem = new NavAppCssHeaderItem(toCssHeaderItem);
+
+        // Put it in a filter header item so that it will render in the body instead of the head
+        // The NavAppPanel.html must contain a wicket:container with the same id as this filtered header item.
+        this.navAppJavascriptHeaderItem = new FilteredHeaderItem(javascriptHeaderItem, NAVAPP_JAVASCRIPT_HEADER_ITEM);
+        add(new HeaderResponseContainer(NAVAPP_JAVASCRIPT_HEADER_ITEM, NAVAPP_JAVASCRIPT_HEADER_ITEM));
     }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
         response.render(navAppBasseTagHeaderItem);
-        response.render(navAppHeaderItem);
+        response.render(navAppCssHeaderItem);
+        response.render(navAppJavascriptHeaderItem);
     }
 }
