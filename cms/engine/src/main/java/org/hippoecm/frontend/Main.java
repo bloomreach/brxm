@@ -829,8 +829,13 @@ public class Main extends PluginApplication {
                             super.render(item);
                         }
                     }
+                    if (item instanceof NavAppBaseTagHeaderItem) {
+                        super.render(item);
+                    }
                 } else {
-                    super.render(item);
+                    if (!(item instanceof NavAppBaseTagHeaderItem)) {
+                        super.render(item);
+                    }
                 }
             }
         });
