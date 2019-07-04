@@ -67,6 +67,37 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
+        
+        add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
+            }
+
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("done-hint", this);
+            }
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
+            @Override
+            public String execute(Workflow wf) throws Exception {
+                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.done();
+                return null;
+            }
+        });
 
         add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
 
@@ -95,37 +126,6 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.discard();
-                return null;
-            }
-        });
-
-        add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return "top";
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
-            }
-
-            @Override
-            protected IModel<String> getTooltip() {
-                return new StringResourceModel("done-hint", this);
-            }
-
-            @Override
-            public boolean isFormSubmitted() {
-                return true;
-            }
-
-            @Override
-            public String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
-                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
-                editor.done();
                 return null;
             }
         });
