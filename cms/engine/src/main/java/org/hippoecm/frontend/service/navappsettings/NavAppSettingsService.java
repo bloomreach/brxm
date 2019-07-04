@@ -33,8 +33,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
-import org.hippoecm.frontend.service.NavConfigResource;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -50,6 +50,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
     static final String NAV_CONFIG_RESOURCES = "navConfigResources";
+    static final String LOGIN_RESOURCES = "loginResources";
+    static final String LOGOUT_RESOURCES = "logoutResources";
     static final String RESOURCE_URL = "resource.url";
     static final String RESOURCE_TYPE = "resource.type";
 
@@ -141,7 +143,9 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final URI brXmLocation = URI.create(cmsLocation);
         final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
-        final List<NavConfigResource> navConfigResources = readNavConfigResources(cmsLocation);
+        final List<NavAppResource> navConfigResources = readNavConfigResources(cmsLocation);
+        final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
+        final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
 
         return new AppSettings() {
 
@@ -161,26 +165,43 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             }
 
             @Override
-            public List<NavConfigResource> getNavConfigResources() {
+            public List<NavAppResource> getNavConfigResources() {
                 return navConfigResources;
+            }
+
+            @Override
+            public List<NavAppResource> getLoginResources() {
+                return loginDomains;
+            }
+
+            @Override
+            public List<NavAppResource> getLogoutResources() {
+                return logoutDomains;
             }
         };
     }
 
-    private List<NavConfigResource> readNavConfigResources(String cmsLocation) {
-        final List<NavConfigResource> resources = new ArrayList<>();
+    private List<NavAppResource> readNavConfigResources(String cmsLocation) {
+        final List<NavAppResource> resources = new ArrayList<>();
         resources.add(createResource(URI.create(cmsLocation + NAVIGATIONITEMS_ENDPOINT), ResourceType.REST));
+        resources.addAll(readResources(NAV_CONFIG_RESOURCES));
+        return resources;
+    }
 
+    private List<NavAppResource> readResources(String resourceKey) {
+        final List<NavAppResource> resources = new ArrayList<>();
         final IPluginConfig pluginConfig = getPluginConfig();
-        final IPluginConfig navConfigResources = pluginConfig.getPluginConfig(NAV_CONFIG_RESOURCES);
-        final Set<IPluginConfig> configSet = navConfigResources.getPluginConfigSet();
-        for (IPluginConfig eachResource : configSet) {
-            resources.add(readResource(eachResource));
+        if (pluginConfig.containsKey(resourceKey)) {
+            final IPluginConfig navConfigResources = pluginConfig.getPluginConfig(resourceKey);
+            final Set<IPluginConfig> configSet = navConfigResources.getPluginConfigSet();
+            for (IPluginConfig eachResource : configSet) {
+                resources.add(readResource(eachResource));
+            }
         }
         return resources;
     }
 
-    private NavConfigResource readResource(IPluginConfig resourceConfig) {
+    private NavAppResource readResource(IPluginConfig resourceConfig) {
         final String resourceUrlString = resourceConfig.getString(RESOURCE_URL).trim();
         if (StringUtils.isBlank(resourceUrlString)) {
             throw new IllegalArgumentException(RESOURCE_URL + " must not be empty or null");
@@ -191,8 +212,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
 
-    private NavConfigResource createResource(URI url, ResourceType resourceType) {
-        return new NavConfigResource() {
+    private NavAppResource createResource(URI url, ResourceType resourceType) {
+        return new NavAppResource() {
             @Override
             public URI getUrl() {
                 return url;

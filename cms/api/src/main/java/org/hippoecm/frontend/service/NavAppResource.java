@@ -20,13 +20,12 @@ package org.hippoecm.frontend.service;
 import java.net.URI;
 
 /**
- * Represents a resource that can be called to get information about menu items.
- * There are two types of resources:
- * A REST resource which is accessible via an XHR call
- * An IFRAME resource which is HTML + javascript that should be rendered in an
- * iframe and once it's loaded and registered provides the menu API methods.
+ * Represents a Navigation Application resource. There are two types of resources:
+ * - A REST resource which is accessible via an XHR call
+ * - An IFRAME resource which is HTML + javascript that should be rendered in an iframe and once
+ * loaded will connect to it's parent via the communication library.
  */
-public interface NavConfigResource {
+public interface NavAppResource {
 
     URI getUrl();
 
