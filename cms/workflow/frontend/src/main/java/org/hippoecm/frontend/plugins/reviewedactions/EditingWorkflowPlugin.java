@@ -16,20 +16,27 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
@@ -67,7 +74,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
-        
+
         add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
 
             @Override
@@ -100,6 +107,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
+            final StdWorkflow cancelAction = this;
 
             @Override
             public String getSubMenu() {
@@ -122,6 +130,44 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
+            protected boolean invokeOnFormError() {
+                return true;
+            }
+
+            @Override
+            protected IDialogService.Dialog createRequestDialog() {
+                try {
+                    final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                    IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+
+                    if (editor.isModified() || !editor.isValid()) {
+                        return new CancelDialog(
+                                new StringResourceModel("cancel-dialog-title", EditingWorkflowPlugin.this),
+                                new StringResourceModel("cancel-dialog-message", EditingWorkflowPlugin.this)
+                                        .setParameters(getDocumentDisplayName()),
+                                new StringResourceModel("cancel-dialog-ok-button", EditingWorkflowPlugin.this),
+                                cancelAction);
+                    }
+
+                } catch (RepositoryException e) {
+                    log.error("Could not retrieve workflow document", e);
+                } catch (EditorException e) {
+                    log.error("Could not retrieve document editor", e);
+                }
+                return null;
+            }
+
+            private String getDocumentDisplayName() {
+                try {
+                    final HippoNode node = (HippoNode) getModel().getNode();
+                    return node.getDisplayName();
+                } catch (RepositoryException e) {
+                    log.error("Could not retrieve workflow document", e);
+                }
+                return StringUtils.EMPTY;
+            }
+
+            @Override
             public String execute(Workflow wf) throws Exception {
                 final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
@@ -133,5 +179,22 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
+    }
+
+    private static class CancelDialog extends ConfirmDialog {
+        private StdWorkflow workflow;
+
+        CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
+                     final StdWorkflow workflow) {
+            super(title, question);
+            setSize(DialogConstants.SMALL_AUTO);
+            setOkLabel(okLabel);
+            this.workflow = workflow;
+        }
+
+        @Override
+        public void invokeWorkflow() throws Exception {
+            workflow.invokeWorkflow();
+        }
     }
 }

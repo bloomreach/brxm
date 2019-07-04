@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,9 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class StdWorkflow<T extends Workflow> extends ActionDescription {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(StdWorkflow.class);
 
     private static final String ICON_ID = "icon";
 
@@ -53,9 +51,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     private IPluginContext pluginContext;
 
     /**
-     * @deprecated Old-style constructor
-     *    Use a constructor with explicit model argument.
-     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     * @deprecated Old-style constructor Use a constructor with explicit model argument. The WorkflowDescriptorModel is
+     * available in workflow plugin constructor.
      */
     @Deprecated
     public StdWorkflow(String id, String name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
@@ -63,9 +60,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     }
 
     /**
-     * @deprecated Old-style constructor
-     *    Use a constructor with explicit model argument.
-     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     * @deprecated Old-style constructor Use a constructor with explicit model argument. The WorkflowDescriptorModel is
+     * available in workflow plugin constructor..
      */
     @Deprecated
     public StdWorkflow(String id, StringResourceModel name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
@@ -73,9 +69,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     }
 
     /**
-     * @deprecated Old-style constructor
-     *    Use a constructor with explicit model argument.
-     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     * @deprecated Old-style constructor Use a constructor with explicit model argument. The WorkflowDescriptorModel is
+     * available in workflow plugin constructor..
      */
     @Deprecated
     public StdWorkflow(String id, StringResourceModel name, ResourceReference iconReference, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
@@ -83,9 +78,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     }
 
     /**
-     * @deprecated Old-style constructor
-     *    Use a constructor with explicit model argument.
-     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     * @deprecated Old-style constructor Use a constructor with explicit model argument. The WorkflowDescriptorModel is
+     * available in workflow plugin constructor..
      */
     @Deprecated
     public StdWorkflow(String id, String name, ResourceReference iconReference, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
@@ -175,7 +169,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     protected IModel<String> getTitle() {
         return new StringResourceModel(getName(), this)
-            .setDefaultValue(getName());
+                .setDefaultValue(getName());
     }
 
     protected IModel<String> getTooltip() {
@@ -210,6 +204,10 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         return new ExceptionDialog(ex);
     }
 
+    protected boolean invokeOnFormError() {
+        return false;
+    }
+
     @Override
     protected void invoke() {
         Dialog dialog = createRequestDialog();
@@ -219,9 +217,6 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             Exception exception = null;
             try {
                 execute();
-            } catch (WorkflowException ex) {
-                log.info("Workflow call failed", ex);
-                exception = ex;
             } catch (Exception ex) {
                 log.info("Workflow call failed", ex);
                 exception = ex;
