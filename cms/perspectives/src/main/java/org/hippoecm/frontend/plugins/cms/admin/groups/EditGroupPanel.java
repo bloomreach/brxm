@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
         form.add(new TextField("description"));
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("save-button", form) {
+        final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -68,7 +68,9 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
                     log.error("Unable to save group '{}' : ", groupname, e);
                 }
             }
-        });
+        };
+        form.add(saveButton);
+        form.setDefaultButton(saveButton);
 
         form.add(new AjaxButton("cancel-button") {
             @Override
