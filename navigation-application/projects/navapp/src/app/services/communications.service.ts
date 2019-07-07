@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavLocation, ParentApi } from '@bloomreach/navapp-communication';
-import { Observable, Subject } from 'rxjs';
-import { map, mergeMap, takeUntil } from 'rxjs/operators';
 
-import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 
@@ -29,43 +26,28 @@ import { OverlayService } from './overlay.service';
 @Injectable({
   providedIn: 'root',
 })
-export class CommunicationsService implements OnDestroy {
+export class CommunicationsService {
   private appIds: string[] = [];
-  private unsubscribe = new Subject();
-
-  private static async resolveAlways<T>(p: Promise<T>): Promise<any> {
-    try {
-      return await p;
-    } catch (err) {
-      return err;
-    }
-  }
 
   constructor(
     private clientAppService: ClientAppService,
     private menuStateService: MenuStateService,
-    private overlay: OverlayService,
+    private overlayService: OverlayService,
     private navConfigService: NavConfigService,
   ) {
-    clientAppService.apps$
-      .pipe(
-        // url === id for client applications
-        map(apps => apps.map(x => x.url)),
-        takeUntil(this.unsubscribe),
-      )
-      .subscribe(appIds => (this.appIds = appIds));
+    clientAppService.apps$.subscribe(apps => {
+      this.appIds = apps.map(app => app.id);
+    });
 
-    menuStateService.activeMenuItem$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(activeMenuItem =>
-        this.navigate(activeMenuItem.appId, activeMenuItem.appPath),
-      );
+    menuStateService.activeMenuItem$.subscribe(activeMenuItem =>
+      this.navigate(activeMenuItem.appId, activeMenuItem.appPath),
+    );
   }
 
   get parentApiMethods(): ParentApi {
     return {
-      showMask: () => this.overlay.enable(),
-      hideMask: () => this.overlay.disable(),
+      showMask: () => this.overlayService.enable(),
+      hideMask: () => this.overlayService.disable(),
       navigate: (location: NavLocation) => {
         // We need to use caller's appId but instead (for first implementation) we just look for the first
         // app's id which contains the specified path
@@ -90,11 +72,6 @@ export class CommunicationsService implements OnDestroy {
     };
   }
 
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   navigate(clientAppId: string, path: string): Promise<void> {
     return this.clientAppService
       .getApp(clientAppId)
@@ -104,7 +81,7 @@ export class CommunicationsService implements OnDestroy {
       });
   }
 
-  updateSite(siteId: number): Promise<void> {
+  updateSite(siteId: number): Promise<void[]> {
     return this.clientAppService.activeApp.api.updateSite(siteId).then(() => {
       const activeApp = this.clientAppService.activeApp;
 
@@ -118,20 +95,14 @@ export class CommunicationsService implements OnDestroy {
         },
       );
 
-      return Promise.all(updatePromises).then(() => {});
+      return Promise.all(updatePromises);
     });
   }
 
-  logout(): Observable<any[]> {
-    return this.clientAppService.apps$.pipe(
-      mergeMap(apps => Promise.all(this.logoutApps(apps))),
-    );
-  }
-
-  private logoutApps(clientApps: ClientApp[]): Promise<any>[] {
-    return clientApps
-      .filter(app => app.api.logout)
-      .map(app => CommunicationsService.resolveAlways(app.api.logout()));
+  logout(): void {
+    this.clientAppService.apps$.subscribe(apps => {
+      apps.filter(app => app.api.logout).forEach(app => app.api.logout());
+    });
   }
 
   private findAppId(path: string): string {

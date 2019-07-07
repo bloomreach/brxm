@@ -67,7 +67,7 @@ export class NavConfigService {
   }
 
   get selectedSite$(): Observable<Site> {
-    return this.selectedSite.asObservable();
+    return this.selectedSite.asObservable().pipe(filter(filterOutEmpty));
   }
 
   init(): Promise<void> {
@@ -99,11 +99,10 @@ export class NavConfigService {
       this.navItems.next(mergedNavItems);
       this.sites.next(mergedSites);
 
-      const selectedSite = mergedSites.length
-        ? this.findSite(mergedSites, selectedSiteId) || mergedSites[0]
-        : undefined;
-
-      this.selectedSite.next(selectedSite);
+      if (selectedSiteId) {
+        const site = this.findSite(mergedSites, selectedSiteId);
+        this.selectedSite.next(site);
+      }
     });
   }
 

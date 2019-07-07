@@ -21,21 +21,17 @@ import { MenuItemContainer } from '../main-menu/models/menu-item-container.model
 import { QaHelperService } from './qa-helper.service';
 
 describe('QaHelperService', () => {
-  function setup(): {
-    qaHelperService: QaHelperService;
-  } {
+  let qaHelperService: QaHelperService;
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [QaHelperService],
     });
 
-    return {
-      qaHelperService: TestBed.get(QaHelperService),
-    };
-  }
+    qaHelperService = TestBed.get(QaHelperService);
+  });
 
   it('should get the menu item class for the item', () => {
-    const { qaHelperService } = setup();
-
     expect(qaHelperService.getMenuItemClass('my-test-class')).toEqual(
       'qa-menu-item-my-test-class',
     );

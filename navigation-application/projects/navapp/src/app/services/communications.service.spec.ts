@@ -14,192 +14,208 @@
  * limitations under the License.
  */
 
-/*import { TestBed } from '@angular/core/testing';
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NavLocation } from '@bloomreach/navapp-communication';
+import { of } from 'rxjs';
 
-import { ClientAppService } from '../client-app/services';
-import { MenuBuilderService, MenuStateService, MenuStructureService } from '../main-menu/services';
+import { ClientApp } from '../client-app/models/client-app.model';
+import { ClientAppService } from '../client-app/services/client-app.service';
+import { MenuStateService } from '../main-menu/services/menu-state.service';
 
 import { CommunicationsService } from './communications.service';
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
 
 describe('CommunicationsService', () => {
-  let clientAppService: jasmine.SpyObj<ClientAppService>;
-  let navConfigService: jasmine.SpyObj<NavConfigService>;
-  let menuStateService: jasmine.SpyObj<MenuStateService>;
-  let overLayService: jasmine.SpyObj<OverlayService>;
-  let service: CommunicationsService;
+  let clientAppService: ClientAppService;
+  let navConfigService: NavConfigService;
+  let menuStateService: MenuStateService;
+  let overlayService: OverlayService;
+  let communicationsService: CommunicationsService;
 
-  const menuItems = [
-    {
-      id: 'hippo-perspective-dashboardperspective',
-      caption: 'Home',
-      appId: 'http://localhost:8080/cms/?iframe',
-      appPath: 'hippo-perspective-dashboardperspective',
-    },
-    {
-      id: 'hippo-perspective-channelmanagerperspective',
-      caption: 'Experience manager',
-      icon: 'experience-manager',
-      appId: 'http://localhost:8080/cms/?iframe',
-      appPath: 'hippo-perspective-channelmanagerperspective',
-    },
-    {
-      id: 'hippo-perspective-browserperspective',
-      caption: 'Content',
-      icon: 'documents',
-      appId: 'http://localhost:8080/cms/?iframe',
-      appPath: 'hippo-perspective-browserperspective',
-    },
-    {
-      id: 'hippo-perspective-reportsperspective',
-      caption: 'Content Reports',
-      appId: 'http://localhost:8080/cms/?iframe',
-      appPath: 'hippo-perspective-reportsperspective',
-    },
-    {
-      id: 'hippo-perspective-adminperspective',
-      caption: 'System',
-      appId: 'http://localhost:8080/cms/?iframe',
-      appPath: 'hippo-perspective-adminperspective',
-    },
-  ];
+  const overlayServiceMock = jasmine.createSpyObj('OverlayService', [
+    'enable',
+    'disable',
+  ]);
 
-  function setup(): {
-    communicationsService: CommunicationsService;
-    overlayService: OverlayService;
-    clientAppService: ClientAppService;
-    api: ChildPromisedApi;
-  } {
-    const overlayService = jasmine.createSpyObj({
-      enable: jasmine.createSpy(),
-      disable: jasmine.createSpy(),
-    });
+  const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
+    'getApp',
+    'activateApplication',
+  ]);
 
-    const api = jasmine.createSpyObj({
-      navigate: Promise.resolve(),
-    });
+  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', [
+    'findNavItem',
+  ]);
 
-    const clientAppService = jasmine.createSpyObj('clientAppService', {
-      getApp: {
-        api,
-      },
-      activateApplication: jasmine.createSpy(),
-    });
-
-    TestBed.configureTestingModule({
-      providers: [
-        CommunicationsService,
-        { provide: OverlayService, useValue: overlayService },
-        { provide: ClientAppService, useValue: clientAppService },
-      ],
-    });
-
-    return {
-      communicationsService: TestBed.get(CommunicationsService),
-      overlayService: TestBed.get(OverlayService),
-      clientAppService: TestBed.get(ClientAppService),
-      api,
-    };
-  }
+  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
+    'setActiveItem',
+    'setActiveItemAndNavigate',
+    'activateMenuItem',
+  ]);
 
   beforeEach(() => {
-    const api = jasmine.createSpyObj({
+    const parentApiMock = jasmine.createSpyObj('parentApi', {
       navigate: Promise.resolve(),
+      updateSite: Promise.resolve(),
+      logout: Promise.resolve(),
     });
 
-    const clientAppServiceSpy = jasmine.createSpyObj('clientAppService', {
-      getApp: {
-        api,
+    const clientApps: ClientApp[] = [
+      new ClientApp('hippo-perspective-adminperspective'),
+      new ClientApp('hippo-perspective-reportsperspective'),
+    ];
+
+    clientApps[0].api = { ...parentApiMock };
+    clientApps[1].api = { ...parentApiMock };
+
+    clientAppServiceMock.getApp.and.returnValue(clientApps[0]);
+    clientAppServiceMock.activeApp = clientApps[0];
+    clientAppServiceMock.apps$ = of(clientApps);
+    clientAppServiceMock.appsWithSitesSupport = [
+      clientApps[0],
+      {
+        id: 'test2',
+        api: jasmine.createSpyObj('parentApi', {
+          navigate: Promise.resolve(),
+          updateSite: Promise.resolve(),
+        }),
       },
-      activateApplication: jasmine.createSpy(),
+    ];
+
+    menuStateServiceMock.activeMenuItem$ = of({
+      appId: 'testMenuItem',
+      appPath: 'testpath',
     });
-    const navConfigServiceSpy = jasmine.createSpyObj('clientAppService', {
-      getApp: {
-        api,
-      },
-      activateApplication: jasmine.createSpy(),
-    });
-    const overLayServiceSpy = jasmine.createSpyObj('OverlayService', ['disable', 'enable']);
-    const menuStateServiceSpy = jasmine.createSpyObj('MenuStateService', ['setActiveItem', 'setActiveItemAndNavigate', '$menu']);
 
     TestBed.configureTestingModule({
       providers: [
         CommunicationsService,
-        { provide: ClientAppService, useValue: clientAppServiceSpy },
-        { provide: NavConfigService, useValue: navConfigServiceSpy },
-        { provide: MenuStateService, useValue: menuStateServiceSpy },
-        { provide: OverlayService, useValue: overLayServiceSpy },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: MenuStateService, useValue: menuStateServiceMock },
+        { provide: OverlayService, useValue: overlayServiceMock },
       ],
     });
 
     clientAppService = TestBed.get(ClientAppService);
     navConfigService = TestBed.get(NavConfigService);
     menuStateService = TestBed.get(MenuStateService);
-    overLayService = TestBed.get(OverlayService);
-
-    service = TestBed.get(CommunicationsService);
+    overlayService = TestBed.get(OverlayService);
+    communicationsService = TestBed.get(CommunicationsService);
   });
 
-  it('should navigate', () => {
-    const { communicationsService, clientAppService, api } = setup();
-    const url = 'url';
-    const path = 'test/test';
+  describe('client api methods', () => {
+    describe('navigate', () => {
+      it('should get the client app and communicate the Location to be navigated to', fakeAsync(() => {
+        communicationsService.navigate('testId', 'testPath');
 
-    expect(communicationsService).toBeTruthy();
+        expect(
+          clientAppService.getApp('testId').api.navigate,
+        ).toHaveBeenCalledWith({ path: 'testPath' });
 
-    communicationsService.navigate(url, path).then(() => {
-      expect(api.navigate).toHaveBeenCalledWith({ path });
-      expect(clientAppService.activateApplication).toHaveBeenCalledWith(url);
+        tick();
+
+        expect(clientAppService.activateApplication).toHaveBeenCalledWith(
+          'testId',
+        );
+      }));
+    });
+
+    describe('updateSite', () => {
+      it('should get the client app and communicate the site id', () => {
+        communicationsService.updateSite(1337);
+        expect(
+          clientAppService.getApp('testId').api.updateSite,
+        ).toHaveBeenCalledWith(1337);
+      });
+
+      it('should trigger to all supporting client apps to update their site', fakeAsync(() => {
+        communicationsService.updateSite(1337);
+
+        tick();
+
+        expect(
+          clientAppService.appsWithSitesSupport[0].api.updateSite,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          clientAppService.appsWithSitesSupport[1].api.updateSite,
+        ).toHaveBeenCalled();
+      }));
+    });
+
+    describe('logout', () => {
+      it('should logout all apps', () => {
+        communicationsService.logout();
+
+        clientAppService.apps$.subscribe(apps => {
+          apps.forEach(app => {
+            expect(app.api.logout).toHaveBeenCalled();
+          });
+        });
+      });
     });
   });
 
-  describe('.getApiMethods()', () => {
+  describe('parent api methods', () => {
     describe('.navigate', () => {
-
       it('should select the associated menu item and navigate when the item is found', () => {
-        appToNavAppService.menu$ = of(menuItems);
-        appToNavAppService.parentApiMethods.navigate({path: 'hippo-perspective-adminperspective'});
-        const findElement = menuItems.filter(item => item.appPath === 'hippo-perspective-adminperspective')[0];
-        expect(menuStateService.setActiveItemAndNavigate).toHaveBeenCalledWith(findElement);
+        const path = 'hippo-perspective-adminperspective';
+        spyOn(communicationsService, 'navigate');
+        navConfigServiceMock.findNavItem.and.returnValue({
+          id: path,
+        });
+
+        communicationsService.parentApiMethods.navigate({
+          path,
+        });
+
+        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
+          path,
+          path,
+        );
+        expect(communicationsService.navigate).toHaveBeenCalledWith(path, path);
       });
 
-      it('should log and error when the item is not found', () => {
-        console.error = jasmine.createSpy('error');
-        appToNavAppService.menu$ = of(menuItems);
-        const location: NavLocation = {path: 'not found'};
-        appToNavAppService.parentApiMethods.navigate(location);
-        expect(console.error).toHaveBeenCalledWith(`Cannot find associated menu item for Navlocation:{${JSON.stringify(location)}}`);
+      it('should log an error if the item is not found', () => {
+        const path = 'hippo-perspective-adminperspective';
+        spyOn(console, 'error');
+        navConfigServiceMock.findNavItem.and.returnValue(undefined);
+        communicationsService.parentApiMethods.navigate({
+          path,
+        });
+
+        expect(console.error).toHaveBeenCalled();
       });
     });
+
     describe('.updateNavLocation', () => {
-      it('should select the associated menu item when the item is found', () => {
-        appToNavAppService.menu$ = of(menuItems);
-        appToNavAppService.parentApiMethods.updateNavLocation({path: 'hippo-perspective-adminperspective'});
-        const findElement = menuItems.filter(item => item.appPath === 'hippo-perspective-adminperspective')[0];
-        expect(menuStateService.setActiveItem).toHaveBeenCalledWith(findElement);
-      });
+      it('should select the associated menu item based on active app id and path', () => {
+        const path = 'test/path';
+        const location: NavLocation = {
+          path,
+        };
 
-      it('should log and error when the item is not found', () => {
-        console.error = jasmine.createSpy('error');
-        appToNavAppService.menu$ = of(menuItems);
-        const location: NavLocation = {path: 'not found'};
-        appToNavAppService.parentApiMethods.navigate(location);
-        expect(console.error).toHaveBeenCalledWith(`Cannot find associated menu item for Navlocation:{${JSON.stringify(location)}}`);
+        communicationsService.parentApiMethods.updateNavLocation(location);
+
+        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
+          clientAppService.activeApp.id,
+          path,
+        );
       });
     });
+
     describe('.showMask', () => {
       it('should enable the overlay', () => {
-        appToNavAppService.parentApiMethods.showMask();
-        expect(overLayService.enable).toHaveBeenCalled();
+        communicationsService.parentApiMethods.showMask();
+        expect(overlayService.enable).toHaveBeenCalled();
       });
     });
+
     describe('.hideMask', () => {
       it('should disable the overlay', () => {
-        appToNavAppService.parentApiMethods.hideMask();
-        expect(overLayService.disable).toHaveBeenCalled();
+        communicationsService.parentApiMethods.hideMask();
+        expect(overlayService.disable).toHaveBeenCalled();
       });
     });
   });
-});*/
+});

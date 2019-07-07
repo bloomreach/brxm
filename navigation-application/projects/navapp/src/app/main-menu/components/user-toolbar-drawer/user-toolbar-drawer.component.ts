@@ -58,9 +58,7 @@ export class UserToolbarDrawerComponent {
   }
 
   logout(): void {
-    this.communicationService.logout().subscribe(results => {
-      results.filter(e => e instanceof Error).forEach(e => console.error(e));
-      window.location.reload();
-    });
+    this.communicationService.logout();
+    window.location.reload();
   }
 }

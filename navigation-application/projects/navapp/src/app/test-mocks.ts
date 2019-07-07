@@ -18,6 +18,7 @@ import { MenuItemContainer } from './main-menu/models/menu-item-container.model'
 import { MenuItemLink } from './main-menu/models/menu-item-link.model';
 import { MenuItem } from './main-menu/models/menu-item.model';
 import { NavItem } from './models/dto/nav-item.dto';
+import { Site } from './models/dto/site.dto';
 
 const item1 = new MenuItemLink('item1', 'Item 1');
 
@@ -42,5 +43,63 @@ export const navConfig: NavItem[] = [
     id: 'subitem2',
     appIframeUrl: 'iframe2-url',
     appPath: 'app-path-for-sub-item2',
+  },
+];
+
+export const globalSettings = {
+  userSettings: {
+    userName: 'Frank Zappa',
+    language: 'en',
+    timeZone: 'Europe/Amsterdam',
+  },
+  appSettings: {
+    navConfigResources: [
+      {
+        resourceType: 'IFRAME',
+        url: 'testIFRAMEurl',
+      },
+      {
+        resourceType: 'REST',
+        url: 'testRESTurl',
+      },
+    ],
+  },
+};
+
+export const mockSites: Site[] = [
+  {
+    id: 1,
+    name: 'www.company.com',
+    subGroups: [
+      {
+        id: 4,
+        name: 'UK & Germany',
+        subGroups: [
+          {
+            id: 0x111,
+            name: 'Office UK',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    name:
+      'An example company that has a very long name and a subgroup with many items',
+    subGroups: [
+      {
+        id: 0x012,
+        name: 'Sub company 001',
+      },
+      {
+        id: 0x022,
+        name: 'Sub company 002',
+      },
+      {
+        id: 0x032,
+        name: 'Sub company 003',
+      },
+    ],
   },
 ];

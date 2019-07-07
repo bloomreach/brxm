@@ -16,48 +16,24 @@
 
 import { TestBed } from '@angular/core/testing';
 
+import { globalSettings } from '../test-mocks';
+
 import { GlobalSettingsService } from './global-settings.service';
 
 describe('GlobalSettingService', () => {
-  function setup(): {
-    navAppSettingsService: GlobalSettingsService;
-    userName: string;
-  } {
-    const userName = 'Frank Zappa';
+  let navAppSettingsService: GlobalSettingsService;
 
-    (window as any).NavAppSettings = {
-      userSettings: {
-        userName,
-        language: 'en',
-        timeZone: 'Europe/Amsterdam',
-      },
-      appSettings: {
-        navConfigResources: [
-          {
-            resourceType: 'IFRAME',
-            url: 'http://localhost:4201',
-          },
-          {
-            resourceType: 'REST',
-            url: 'http://localhost:4201/assets/navitems.json',
-          },
-        ],
-      },
-    };
+  (window as any).NavAppSettings = globalSettings;
 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [GlobalSettingsService],
     });
 
-    return {
-      navAppSettingsService: TestBed.get(GlobalSettingsService),
-      userName,
-    };
-  }
+    navAppSettingsService = TestBed.get(GlobalSettingsService);
+  });
 
   it('should take the settings object from the window', () => {
-    const { userName, navAppSettingsService } = setup();
-
-    expect(navAppSettingsService.userSettings.userName).toEqual(userName);
+    expect(navAppSettingsService.userSettings.userName).toEqual('Frank Zappa');
   });
 });
