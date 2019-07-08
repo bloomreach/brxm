@@ -245,7 +245,7 @@
   "SUBPAGE_PAGE_NEW_TITLE": "New page",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REMOVAL": "The selected template does not have any containers. Container items on this page will be removed when this page is saved with this template",
   "SUBPAGE_PAGE_PROPERTIES_ALERT_CONTENT_REPOSITIONING": "Container items on this page will be repositioned when this page is saved with this template",
-  "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE": "Apply a new template",
+  "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE": "Apply new template",
   "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT": "Primary Document",
   "SUBPAGE_PAGE_PROPERTIES_PRIMARY_DOCUMENT_VALUE_NONE": "None",
   "SUBPAGE_PAGE_PROPERTIES_TITLE": "Properties of '{{pageName}}'",
