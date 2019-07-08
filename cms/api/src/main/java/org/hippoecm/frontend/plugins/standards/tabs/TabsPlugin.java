@@ -73,12 +73,10 @@ import org.slf4j.LoggerFactory;
  * Configuration:
  * <ul>
  * <li><b>title.maxlength</b><br>
- * The maximum length (in characters) of the title.  When exceeded, the title
- * will be shown truncated with ellipses.  The title attribute will contain the
- * full title.
+ * The maximum length (in characters) of the title.  When exceeded, the title will be shown truncated with ellipses.
+ * The title attribute will contain the full title.
  * <li><b>icon.size</b><br>
- * The size of the icon in the tab.  Can be one of the {@link IconSize}
- * sizes. By default, 'm' will be used.
+ * The size of the icon in the tab.  Can be one of the {@link IconSize} sizes. By default, 'm' will be used.
  * </ul>
  */
 public class TabsPlugin extends RenderPlugin {
@@ -98,12 +96,12 @@ public class TabsPlugin extends RenderPlugin {
     private boolean isHidden = false;
     private boolean avoidTabRefocus = false;
 
-    public TabsPlugin(IPluginContext context, IPluginConfig properties) {
+    public TabsPlugin(final IPluginContext context, final IPluginConfig properties) {
         super(context, properties);
 
         setOutputMarkupId(true);
 
-        IPluginConfig panelConfig = new JavaPluginConfig(properties.getName() + "-empty-panel");
+        final IPluginConfig panelConfig = new JavaPluginConfig(properties.getName() + "-empty-panel");
         panelConfig.put("wicket.id", properties.getString(TAB_ID));
         panelConfig.put("wicket.behavior", properties.getString("tabbedpanel.behavior"));
 
@@ -114,7 +112,7 @@ public class TabsPlugin extends RenderPlugin {
         emptyPanel = new RenderService(context, panelConfig);
         context.registerService(emptyPanel, properties.getString(TAB_ID));
 
-        MarkupContainer tabsContainer = new TabsContainer();
+        final MarkupContainer tabsContainer = new TabsContainer();
         tabsContainer.setOutputMarkupId(true);
 
         tabs = new ArrayList<>();
@@ -123,7 +121,7 @@ public class TabsPlugin extends RenderPlugin {
         tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, IconSize.M.name())));
 
         if (properties.containsKey("tabs.container.id")) {
-            JavaPluginConfig containerConfig = new JavaPluginConfig(properties.getName() + "-tabs-container");
+            final JavaPluginConfig containerConfig = new JavaPluginConfig(properties.getName() + "-tabs-container");
             containerConfig.put("wicket.id", properties.getString("tabs.container.id"));
             RenderService containerService = new TabsContainerService(context, containerConfig);
             containerService.add(tabsContainer);
@@ -132,10 +130,10 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         selectionCount = 0;
-        ServiceTracker<IRenderService> tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
+        final ServiceTracker<IRenderService> tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
 
             @Override
-            public void onServiceAdded(IRenderService service, String name) {
+            public void onServiceAdded(final IRenderService service, final String name) {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 if (service != emptyPanel) {
@@ -163,7 +161,7 @@ public class TabsPlugin extends RenderPlugin {
             }
 
             @Override
-            public void onRemoveService(IRenderService service, String name) {
+            public void onRemoveService(final IRenderService service, final String name) {
                 final Tab tab = findTab(service);
                 if (tab != null) {
                     onTabDeactivated(tab);
@@ -183,20 +181,21 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    protected TabbedPanel newTabbedPanel(String id, List<Tab> tabs, MarkupContainer tabsContainer) {
+    protected TabbedPanel newTabbedPanel(final String id, List<Tab> tabs, final MarkupContainer tabsContainer) {
         return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer);
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        JavaScriptResourceReference tabsPluginJs = new JavaScriptResourceReference(TabsPlugin.class, "TabsPlugin.js");
+        final JavaScriptResourceReference tabsPluginJs = new JavaScriptResourceReference(TabsPlugin.class, 
+                "TabsPlugin.js");
         response.render(JavaScriptReferenceHeaderItem.forReference(tabsPluginJs));
     }
 
     @Override
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         super.render(target);
         tabbedPanel.render(target);
         for (Tab tab : tabs) {
@@ -205,8 +204,8 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     @Override
-    public void focus(IRenderService child) {
-        Tab tab = findTab(child);
+    public void focus(final IRenderService child) {
+        final Tab tab = findTab(child);
         if (tab != null) {
             tab.select();
             onSelectTab(tabs.indexOf(tab));
@@ -222,7 +221,7 @@ public class TabsPlugin extends RenderPlugin {
 
     @Override
     public String getVariation() {
-        String variation = super.getVariation();
+        final String variation = super.getVariation();
         if (Strings.isEmpty(variation)) {
             if (getPluginConfig().containsKey("tabs.container.id")) {
                 return "split";
@@ -235,7 +234,7 @@ public class TabsPlugin extends RenderPlugin {
         return !this.tabs.isEmpty();
     }
 
-    void onSelect(Tab tab, AjaxRequestTarget target) {
+    void onSelect(final Tab tab, final AjaxRequestTarget target) {
         tab.renderer.focus(null);
         onSelectTab(tabs.indexOf(tab));
         fireTabSelectionEvent(tab, target);
@@ -252,14 +251,14 @@ public class TabsPlugin extends RenderPlugin {
     /**
      * Get the list of tabs that are modified.
      *
-     * @param ignoreTab - Ignore this tab while getting the list of tabs. Can be null, if all the changed tabs
-     * need to be retrieved.
+     * @param ignoreTab - Ignore this tab while getting the list of tabs. Can be null, if all the changed tabs need to
+     *                  be retrieved.
      * @return List<Tab> of changed tabs, empty list if there are none.
      */
-    private List<Tab> getChangedTabs(Tab ignoreTab) {
-        List<Tab> changedTabs = new ArrayList<>();
+    private List<Tab> getChangedTabs(final Tab ignoreTab) {
+        final List<Tab> changedTabs = new ArrayList<>();
         for (Tab tab : tabs) {
-            if (ignoreTab != null && tab.equals(ignoreTab)) {
+            if (tab.equals(ignoreTab)) {
                 continue;
             }
             final IEditor editor = tab.getEditor();
@@ -276,29 +275,31 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     /**
-     * Template method for subclasses.  Called when a tab is selected, either
-     * explicitly (user clicks tab) or implicitly (tab requests focus).
+     * Template method for subclasses.  Called when a tab is selected, either explicitly (user clicks tab) or implicitly
+     * (tab requests focus).
      *
      * @param index Index of the tab
      */
+    @SuppressWarnings("unused")
     protected void onSelectTab(int index) {
     }
 
     /**
      * Closes all tabs except the ignoredTab tab
      *
-     * @param ignoredTab    the tab to exclude from closing, pass null to close all the tabs.
-     * @param target AjaxRequestTarget
+     * @param ignoredTab the tab to exclude from closing, pass null to close all the tabs.
+     * @param target     AjaxRequestTarget
      */
     void closeAll(final Tab ignoredTab, final AjaxRequestTarget target) {
         final List<Tab> changedTabs = getChangedTabs(ignoredTab);
         if (!changedTabs.isEmpty()) {
-            IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), IDialogService.class);
+            final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), 
+                    IDialogService.class);
             dialogService.show(new CloseAllDialog(changedTabs, ignoredTab));
         } else {
-            List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
+            final List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
             for (TabsPlugin.Tab currentTab : tabsCopy) {
-                if(ignoredTab != null && ignoredTab.equals(currentTab)){
+                if (ignoredTab != null && ignoredTab.equals(currentTab)) {
                     continue;
                 }
                 onClose(currentTab, target);
@@ -312,7 +313,8 @@ public class TabsPlugin extends RenderPlugin {
      * @param tab    The tab to close
      * @param target AjaxRequestTarget
      */
-    void onCloseUnmodified(Tab tab, AjaxRequestTarget target) {
+    @SuppressWarnings("targe")
+    void onCloseUnmodified(final Tab tab, final AjaxRequestTarget target) {
         final IEditor editor = tab.getEditor();
         try {
             if (editor != null && !editor.getMode().equals(IEditor.Mode.EDIT)) {
@@ -332,7 +334,8 @@ public class TabsPlugin extends RenderPlugin {
      * @param tab    the tab to close
      * @param target AjaxRequestTarget (unused)
      */
-    void onClose(Tab tab, AjaxRequestTarget target) {
+    @SuppressWarnings("unused")
+    void onClose(final Tab tab, final AjaxRequestTarget target) {
         final IEditor editor = tab.getEditor();
         if (editor == null) {
             return;
@@ -340,7 +343,7 @@ public class TabsPlugin extends RenderPlugin {
         try {
             if (editor.isModified() || !editor.isValid()) {
 
-                OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
+                final OnCloseDialog onCloseDialog = new OnCloseDialog(new OnCloseDialog.Actions() {
                     public void revert() {
                         try {
                             editor.discard();
@@ -369,7 +372,7 @@ public class TabsPlugin extends RenderPlugin {
                     }
                 }, editor.isValid(), (JcrNodeModel) editor.getModel(), editor.getMode());
 
-                IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
+                final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                         IDialogService.class);
                 dialogService.show(onCloseDialog);
 
@@ -386,7 +389,7 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private Tab findTab(IRenderService service) {
+    private Tab findTab(final IRenderService service) {
         for (Tab tab : tabs) {
             if (tab.renderer == service) {
                 return tab;
@@ -421,7 +424,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public void focusRecentTab() {
-        Tab tab = findMostRecentlySelectedTab();
+        final Tab tab = findMostRecentlySelectedTab();
         if (tab != null) {
             final int tabIndex = tabs.indexOf(tab);
             tabbedPanel.setSelectedTab(tabIndex);
@@ -476,7 +479,7 @@ public class TabsPlugin extends RenderPlugin {
             decoratorTracker = new ServiceTracker<ITitleDecorator>(ITitleDecorator.class) {
 
                 @Override
-                protected void onServiceAdded(ITitleDecorator service, String name) {
+                protected void onServiceAdded(final ITitleDecorator service, final String name) {
                     decorator = service;
                     if (titleModel instanceof IObservable) {
                         getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
@@ -486,7 +489,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
 
                 @Override
-                protected void onRemoveService(ITitleDecorator service, String name) {
+                protected void onRemoveService(final ITitleDecorator service, final String name) {
                     if (decorator == service) {
                         if (titleModel instanceof IObservable) {
                             getPluginContext().unregisterService(Tab.this, IObserver.class.getName());
@@ -531,7 +534,7 @@ public class TabsPlugin extends RenderPlugin {
             if (titleModel == null && decorator != null) {
                 titleModel = decorator.getTitle();
                 if (titleModel instanceof IObservable) {
-                    IPluginContext context = getPluginContext();
+                    final IPluginContext context = getPluginContext();
                     context.registerService(this, IObserver.class.getName());
                 }
             }
@@ -540,31 +543,31 @@ public class TabsPlugin extends RenderPlugin {
 
         public String getDecoratorId() {
             if (decorator instanceof Perspective) {
-                return ((Perspective)decorator).getMarkupId(true);
+                return ((Perspective) decorator).getMarkupId(true);
             }
             return null;
         }
 
         public String getTitleCssClass() {
             if (decorator instanceof Perspective) {
-                return ((Perspective)decorator).getTitleCssClass();
+                return ((Perspective) decorator).getTitleCssClass();
             }
             return null;
         }
 
-        public Component getIcon(String id, IconSize size) {
+        public Component getIcon(final String id, final IconSize size) {
             if (decorator == null) {
                 return null;
             }
-            Component icon = decorator.getIcon(id, size);
+            final Component icon = decorator.getIcon(id, size);
             if (icon != null) {
                 return icon;
             }
-            ResourceReference reference = decorator.getIcon(size);
+            final ResourceReference reference = decorator.getIcon(size);
             return reference != null ? HippoIcon.fromResource(id, reference, size) : null;
         }
 
-        public Panel getPanel(String panelId) {
+        public Panel getPanel(final String panelId) {
             assert (panelId.equals(TabbedPanel.TAB_PANEL_ID));
 
             return (Panel) renderer;
@@ -675,7 +678,7 @@ public class TabsPlugin extends RenderPlugin {
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
                         final IEditor editor = currentTab.getEditor();
-                        if (editor != null){
+                        if (editor != null) {
                             try {
                                 if (editor.isModified() || editor.getMode() == IEditor.Mode.EDIT) {
                                     // (mode=edit means open but unmodified)
@@ -703,8 +706,8 @@ public class TabsPlugin extends RenderPlugin {
             // ServiceTracker#onRemoveService(). This may cause ConcurrentModificationException
             final List<Tab> listTabsClone = new ArrayList<>(TabsPlugin.this.tabs);
             listTabsClone.stream()
-                .filter(t -> t != null && !t.equals(ignoredTab))
-                .forEach(tabAction);
+                    .filter(t -> t != null && !t.equals(ignoredTab))
+                    .forEach(tabAction);
         }
 
         private void updateDialog(final AjaxRequestTarget target) {
@@ -719,7 +722,7 @@ public class TabsPlugin extends RenderPlugin {
             }
         }
 
-        private List<JcrNodeModel> getNodeModelList(List<Tab> changedTabs) {
+        private List<JcrNodeModel> getNodeModelList(final List<Tab> changedTabs) {
             final List<JcrNodeModel> tabModels = new ArrayList<>();
             for (Tab tab : changedTabs) {
                 final IEditor editor = tab.getEditor();
@@ -758,7 +761,9 @@ public class TabsPlugin extends RenderPlugin {
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            ResourceModel discardButtonLabel = isValid ? new ResourceModel("discard", "Discard") : new ResourceModel("discard-invalid");
+            final ResourceModel discardButtonLabel = isValid 
+                    ? new ResourceModel("discard", "Discard") 
+                    : new ResourceModel("discard-invalid");
             addButtonRight(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -799,8 +804,8 @@ public class TabsPlugin extends RenderPlugin {
         @Override
         public IModel<String> getTitle() {
             return new StringResourceModel("close-document", this)
-                .setDefaultValue("Close {0}")
-                .setParameters(new PropertyModel(getModel(), "displayName"));
+                    .setDefaultValue("Close {0}")
+                    .setParameters(new PropertyModel(getModel(), "displayName"));
         }
     }
 }
