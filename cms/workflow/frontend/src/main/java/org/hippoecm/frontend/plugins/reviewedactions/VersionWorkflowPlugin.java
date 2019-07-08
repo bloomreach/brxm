@@ -197,7 +197,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(new StdWorkflow("cancel", new StringResourceModel("cancel", this).setDefaultValue("Cancel"), context, getModel()) {
+        add(new StdWorkflow("cancel", new StringResourceModel("cancel", this), context, getModel()) {
 
             @Override
             public String getSubMenu() {
