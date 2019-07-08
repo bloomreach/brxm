@@ -76,7 +76,7 @@ import wicket.contrib.input.events.key.KeyType;
  */
 public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
 
-    static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
@@ -106,7 +106,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
-    @SuppressWarnings("unchecked")
     private class Container extends Panel implements IMarkupCacheKeyProvider, IMarkupResourceStreamProvider {
 
         public Container(final String id) {
@@ -140,9 +139,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             } catch (final WicketRuntimeException ex) {
                 // throw exception since there is no associated markup
                 throw new MarkupNotFoundException(
-                        exceptionMessage("Markup of type '" + getMarkupType().getExtension() +
-                                "' for component '" + getClass().getName() + "' not found." +
-                                " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
+                        exceptionMessage("Markup of type '" + getMarkupType().getExtension() + "' for component '" +
+                                getClass().getName() + "' not found. Enable debug messages for " +
+                                "org.apache.wicket.util.resource to get a list of all filenames tried"),
                         ex);
             }
         }
@@ -158,8 +157,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
 
         /**
-         * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the
-         * filter are visible.
+         * Create a feedback panel and apply a <code>filter</code> so that only messages accepted by the filter are
+         * visible.
          */
         protected ExceptionFeedbackPanel(final String id, final IFeedbackMessageFilter filter) {
             super(id, filter);
@@ -170,7 +169,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         protected class ExceptionLabel extends Panel {
 
-            protected ExceptionLabel(final String id, final IModel<String> model, final Exception ex, final boolean escape) {
+            protected ExceptionLabel(final String id, final IModel<String> model, final Exception ex,
+                                     final boolean escape) {
                 super(id);
                 setOutputMarkupId(true);
 
@@ -245,8 +245,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             // make sure the feedback filters out messages unrelated to this dialog
             feedback.setFilter(new ContainerFeedbackMessageFilter(this));
         } else if (!(filter instanceof ContainerFeedbackMessageFilter)) {
-            log.warn("The dialog '{}' uses a feedback panel with a filter that does not extend ContainerFeedbackMessageFilter." +
-                    "As a result, this dialog may show unrelated feedback messages.", getClass());
+            log.warn("The dialog '{}' uses a feedback panel with a filter that does not extend " +
+                    "ContainerFeedbackMessageFilter. As a result, this dialog may show unrelated feedback messages.",
+                    getClass());
         }
 
         feedback.setOutputMarkupId(true);
@@ -335,7 +336,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             add(indicator = new AjaxIndicatorAppender() {
                 @Override
                 protected CharSequence getIndicatorUrl() {
-                    return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
+                    return RequestCycle.get()
+                            .urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
                 }
             });
         }
@@ -372,6 +374,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * @param isFullscreen flag indicating the current fullscreen state
      * @return Custom javascript that is executed after the dialog changed fullscreen state
      */
+    @SuppressWarnings("unused")
     protected String getAdditionalFullscreenScript(final boolean isFullscreen) {
         return null;
     }
@@ -638,7 +641,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             for (final ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
-                    target.prependJavaScript("if (window['shortcut']) { shortcut.remove('" + bw.getKeyType() + "'); }\n");
+                    target.prependJavaScript("if (window['shortcut']) { shortcut.remove('" +
+                            bw.getKeyType() +
+                            "'); }\n");
                 }
             }
         }
@@ -672,8 +677,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     public void process(final IFormSubmitter submittingComponent) {
         /*
          * Manually clear old feedback generated by CMS validation prior processing because
-         * {@link org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin(IPluginContext, IPluginConfig)} configures
-         * to keep all feedback messages after each request cycle.
+         * {@link org.hippoecm.frontend.plugins.cms.root.RootPlugin#RootPlugin(IPluginContext, IPluginConfig)}
+         * configures to keep all feedback messages after each request cycle.
          */
         if (hasFeedbackMessage()) {
             getFeedbackMessages().clear();
