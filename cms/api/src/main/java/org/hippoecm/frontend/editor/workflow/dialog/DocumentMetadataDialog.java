@@ -18,16 +18,14 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -41,6 +39,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +49,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
-    static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
 
     private static final FormatStyle DATE_STYLE = FormatStyle.LONG;
     private final Node node;
 
-    public DocumentMetadataDialog(WorkflowDescriptorModel model, Node node) {
+    public DocumentMetadataDialog(final WorkflowDescriptorModel model, final Node node) {
         super(model);
         this.node = node;
 
         setTitleKey("document-info");
-        setSize(DialogConstants.MEDIUM_AUTO);
+        setSize(DialogConstants.LARGE_AUTO);
 
         setOkVisible(false);
         setCancelLabel(new StringResourceModel("close", this));
@@ -94,38 +93,22 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         List<DocumentMetadataEntry> metaDataList = new ArrayList<>();
 
         try {
-
-            // add translation names
-            final Map<String, String> names = getNames(node);
-            String namesLabel;
-            if (names.size() > 1) {
-                namesLabel = getString("document-names");
-            } else {
-                namesLabel = getString("document-name");
+            final Optional<String> displayName = DocumentUtils.getDisplayName(node);
+            if (displayName.isPresent() && !displayName.get().isEmpty()) {
+                metaDataList.add(new DocumentMetadataEntry(getString("document-name"), displayName.get()));
             }
-            for (Map.Entry<String, String> entry : names.entrySet()) {
-                StringBuilder name = new StringBuilder(entry.getValue());
-                if (StringUtils.isNotBlank(entry.getKey())) {
-                    name.append(" (");
-                    name.append(entry.getKey());
-                    name.append(")");
-                }
-                metaDataList.add(new DocumentMetadataEntry(namesLabel, name.toString()));
-                namesLabel = StringUtils.EMPTY;
-            }
-
-            // add url name
             metaDataList.add(new DocumentMetadataEntry(getString("url-name"), node.getName()));
+            metaDataList.add(new DocumentMetadataEntry(getString("document-path"), node.getPath()));
 
         } catch (RepositoryException e) {
             log.warn("No document node present", e);
         }
 
-        return getListView("metadatalist", metaDataList);
+        return getListView(metaDataList);
     }
 
-    private ListView getListView(final String id, final List<DocumentMetadataEntry> metaDataList) {
-        return new ListView<DocumentMetadataEntry>(id, metaDataList) {
+    private ListView getListView(final List<DocumentMetadataEntry> metaDataList) {
+        return new ListView<DocumentMetadataEntry>("metadatalist", metaDataList) {
 
             @Override
             protected void populateItem(ListItem item) {
@@ -191,14 +174,5 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
             }
         }
         return false;
-    }
-
-    private Map<String, String> getNames(final Node node) throws RepositoryException {
-        Map<String, String> names = new HashMap<>();
-        for (Node translationNode : new NodeIterable(node.getNodes(HippoNodeType.HIPPO_TRANSLATION))) {
-            names.put(translationNode.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString(),
-                    translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString());
-        }
-        return names;
     }
 }
