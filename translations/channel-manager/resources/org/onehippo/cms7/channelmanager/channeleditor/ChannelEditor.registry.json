@@ -18,8 +18,14 @@
       "locales" : null
     },
     "properties-window-button-close" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "properties-form-create-new-document-message" : {
       "status" : "CLEAN",
@@ -80,6 +86,16 @@
     "properties-form-no-properties" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "properties-window-button-done" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
