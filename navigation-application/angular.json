@@ -71,7 +71,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "navapp:build",
-            "disableHostCheck": true,
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {
@@ -92,6 +92,7 @@
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.spec.json",
             "karmaConfig": "projects/navapp/karma.conf.js",
+            "codeCoverage": true,
             "stylePreprocessorOptions": {
               "includePaths": [
                 "projects/navapp/src/styles"
@@ -139,7 +140,8 @@
           "options": {
             "main": "projects/navapp-communication/src/test.ts",
             "tsConfig": "projects/navapp-communication/tsconfig.spec.json",
-            "karmaConfig": "projects/navapp-communication/karma.conf.js"
+            "karmaConfig": "projects/navapp-communication/karma.conf.js",
+            "codeCoverage": true
           }
         },
         "lint": {

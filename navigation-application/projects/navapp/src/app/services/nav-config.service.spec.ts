@@ -20,32 +20,77 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import * as navappCommunication from '@bloomreach/navapp-communication';
+
+import { globalSettings, mockSites, navConfig } from '../test-mocks';
 
 import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 
 describe('NavConfigService', () => {
-  function setup(): {
-    http: HttpClient;
-    httpTestingCtrl: HttpTestingController;
-    navConfigService: NavConfigService;
-    navAppSettings: GlobalSettingsService;
-  } {
+  let http: HttpClient;
+  let httpTestingController: HttpTestingController;
+  let navConfigService: NavConfigService;
+  let globalSettingsService: GlobalSettingsService;
+
+  const globalSettingsServiceMock = globalSettings;
+
+  const selectedSiteId = 1;
+
+  const childApiMock = jasmine.createSpyObj('childApi', {
+    getNavItems: Promise.resolve(navConfig),
+    getSites: Promise.resolve(mockSites),
+    getSelectedSite: Promise.resolve(selectedSiteId),
+  });
+
+  const connectionMock = jasmine
+    .createSpy('connectToChild')
+    .and.returnValue(Promise.resolve(childApiMock));
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [GlobalSettingsService, NavConfigService],
+      providers: [
+        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
+        NavConfigService,
+      ],
     });
 
-    return {
-      http: TestBed.get(HttpClient),
-      httpTestingCtrl: TestBed.get(HttpTestingController),
-      navConfigService: TestBed.get(NavConfigService),
-      navAppSettings: TestBed.get(GlobalSettingsService),
-    };
-  }
+    http = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
+    navConfigService = TestBed.get(NavConfigService);
+    globalSettingsService = TestBed.get(GlobalSettingsService);
 
-  it('should exist', () => {
-    const { navConfigService } = setup();
-    expect(navConfigService).toBeDefined();
+    spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
+      connectionMock,
+    );
+  });
+
+  describe('initialization', () => {
+    it('should fetch resources', () => {
+      const RESTNavItem = {
+        id: 'testItem',
+        appIframeUrl: 'testurl',
+        appPath: 'test path',
+      };
+      const totalNavItems = navConfig.concat(RESTNavItem);
+
+      navConfigService.init();
+
+      const req = httpTestingController.expectOne('testRESTurl');
+      req.flush([RESTNavItem]);
+
+      navConfigService.navItems$.subscribe(items => {
+        expect(items).toEqual(totalNavItems);
+      });
+      navConfigService.sites$.subscribe(items => {
+        expect(items).toEqual(mockSites);
+      });
+      navConfigService.selectedSite$.subscribe(site => {
+        expect(site.id).toEqual(selectedSiteId);
+      });
+
+      httpTestingController.verify();
+    });
   });
 });
