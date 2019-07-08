@@ -133,19 +133,17 @@ public class CmsInternalCmsContextServiceTest {
     public void root_session_invalidation_invalidates_secondary_sessions() {
         CmsContextServiceImpl service = new CmsContextServiceImpl();
         MockHttpSession session1 = new MockHttpSession();
+
         CmsSessionContext ctx1 = service.create(session1);
         service.setData(ctx1, "foo", "bar");
 
         MockHttpSession session2 = new MockHttpSession();
-        service.attachSessionContext(ctx1.getId(), session2);
+        CmsSessionContext ctx2 = service.attachSessionContext(ctx1.getId(), session2);
 
         MockHttpSession session3 = new MockHttpSession();
-        service.attachSessionContext(ctx1.getId(), session3);
+        CmsSessionContext ctx3 = service.attachSessionContext(ctx1.getId(), session3);
 
         assertFalse(session2.isInvalid());
-
-        CmsSessionContext ctx2 = service.attachSessionContext(ctx1.getId(), session2);
-        CmsSessionContext ctx3 = service.attachSessionContext(ctx1.getId(), session3);
 
         session1.invalidate();
 
