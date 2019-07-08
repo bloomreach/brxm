@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ abstract class MenuLink extends Link {
 
                     @Override
                     protected void onError(final AjaxRequestTarget target) {
+                        collapseContextMenu(target);
+                        onClick();
                     }
 
                 });
@@ -84,8 +86,8 @@ abstract class MenuLink extends Link {
         if (isEnabledInHierarchy()) {
             final String tagName = tag.getName();
             if (tagName.equalsIgnoreCase("a") ||
-                tagName.equalsIgnoreCase("link") ||
-                tagName.equalsIgnoreCase("area")) {
+                    tagName.equalsIgnoreCase("link") ||
+                    tagName.equalsIgnoreCase("area")) {
 
                 // disable any href attr in markup
                 tag.put("href", "javascript:;");
