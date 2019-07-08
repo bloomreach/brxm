@@ -22,7 +22,7 @@
          name="searchText"
          placeholder="Search"
          autocomplete="off"
-         class="search-input">
+         class="search-input qa-site-selector-search">
 </form>
 <perfect-scrollbar [config]="{ suppressScrollX: true }" class="sites-tree-wrapper">
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
@@ -31,7 +31,7 @@
                    matTreeNodePadding
                    (click)="onNodeClicked(node)"
                    [class.active]="isActive(node)"
-                   class="caption">
+                   class="caption qa-site-selector-site-value">
       <mat-icon svgIcon="remove"></mat-icon>
       {{ node.name }}
     </mat-tree-node>
@@ -40,10 +40,11 @@
                    matTreeNodePadding
                    (click)="onNodeClicked(node)"
                    [class.active]="isActive(node)"
-                   class="caption">
+                   class="caption qa-site-selector-site-value">
       <button mat-icon-button
               matTreeNodeToggle
-              [attr.aria-label]="'toggle ' + node.name">
+              [attr.aria-label]="'toggle ' + node.name"
+              class="qa-site-selector-expand-collapse-button">
         <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'"></mat-icon>
       </button>
       {{ node.name }}
