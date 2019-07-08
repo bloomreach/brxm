@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -647,7 +647,7 @@ public class TabsPlugin extends RenderPlugin {
             setSize(DialogConstants.LARGE_AUTO);
             setTitleKey("title");
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
+            addButtonRight(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> discardAndClose = currentTab -> {
@@ -670,7 +670,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
             });
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
+            addButtonRight(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
@@ -759,7 +759,7 @@ public class TabsPlugin extends RenderPlugin {
             add(exceptionLabel);
 
             ResourceModel discardButtonLabel = isValid ? new ResourceModel("discard", "Discard") : new ResourceModel("discard-invalid");
-            addButton(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
+            addButtonRight(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
@@ -793,7 +793,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
             };
             saveButton.setEnabled(mode == IEditor.Mode.EDIT);
-            addButton(saveButton);
+            addButtonRight(saveButton);
         }
 
         @Override

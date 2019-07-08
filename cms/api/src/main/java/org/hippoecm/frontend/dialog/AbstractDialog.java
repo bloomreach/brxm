@@ -495,11 +495,24 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     /**
-     * Add a {@link Button} to the button bar.  The id of the button must equal "button".
+     * Add a {@link Button} to the button bar. The id of the button must equal "button". The button will be added to the
+     * left of the default buttons.
      */
     protected void addButton(final Button button) {
         if (DialogConstants.BUTTON.equals(button.getId())) {
             buttons.addFirst(new ButtonWrapper(button));
+        } else {
+            log.error("Failed to add button: component id is not '{}'", DialogConstants.BUTTON);
+        }
+    }
+
+    /**
+     * Add a {@link Button} to the button bar. The id of the button must equal "button". The button will be added to the
+     * right of the default buttons.
+     */
+    protected void addButtonRight(final Button button) {
+        if (DialogConstants.BUTTON.equals(button.getId())) {
+            buttons.addLast(new ButtonWrapper(button));
         } else {
             log.error("Failed to add button: component id is not '{}'", DialogConstants.BUTTON);
         }
