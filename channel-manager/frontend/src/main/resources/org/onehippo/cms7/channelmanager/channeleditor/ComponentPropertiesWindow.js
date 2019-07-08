@@ -82,10 +82,10 @@
         handler: this.close
       });
 
-      this.saveCloseButton = new Ext.Button({
+      this.doneButton = new Ext.Button({
         xtype: 'button',
-        cls: 'btn btn-default qa-save-close-button',
-        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save-close'],
+        cls: 'btn btn-default qa-done-button',
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-done'],
         scope: this,
         handler: function () {
           this.componentPropertiesPanel.saveAll(false).then(this.close.bind(this));
@@ -102,7 +102,7 @@
           {xtype: 'tbfill'},
           this.closeButton,
           this.saveButton,
-          this.saveCloseButton
+          this.doneButton
         ]
       }));
     },
