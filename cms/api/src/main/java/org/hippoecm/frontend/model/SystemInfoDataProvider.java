@@ -135,6 +135,7 @@ public class SystemInfoDataProvider implements IDataProvider {
                     return releaseVersion;
                 }
             }
+            return getCMSVersion();
         } catch (IOException iOException) {
             log.debug("Error occurred getting the cms release version from the webapp-manifest.", iOException);
         }
@@ -150,7 +151,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         } catch (IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
-        return "unknown";
+        return System.getProperty("project.version", "unknown");
     }
 
     public String getCMSVersion() {
