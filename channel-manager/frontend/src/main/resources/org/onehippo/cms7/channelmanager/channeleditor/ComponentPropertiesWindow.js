@@ -161,7 +161,6 @@
       }
 
       this.saveButton.setDisabled(disableSaveButton);
-      this.saveCloseButton.setDisabled(disableSaveButton);
     },
 
     showComponent: function (component, container, page) {
