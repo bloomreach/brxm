@@ -143,16 +143,22 @@ definitions:
     : /en:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: In pixels
-        address: Address
-        map.canvas: Map Canvas
         latitude: Latitude
+        mapOverlay.hint: Edit dropdown values in Documents > administration > open
+          street map
+        address.hint: Address prevails over longitude / latitude
+        zoomFactor: Zoom Factor
+        latitude.hint: If left blank default longitude / latitude are used
+        height: Height
+        longitude: Longitude
+        address: Address
+        mapType.hint: Edit dropdown values in Documents > administration > open street
+          map
+        map.canvas: Map Canvas
         markerCustomText: Marker Custom Text
         mapType: Map Type
-        address.hint: Address prevails over longitude / latitude
         map.size: Map Size
-        zoomFactor: Zoom Factor
         map.options: Map options
-        latitude.hint: If left blank default longitude / latitude are used
         height.hint: In pixels. The minimum is 250 pixels.
         showMarker#no: No Marker
         showMarker: Show Marker
@@ -163,5 +169,3 @@ definitions:
         location: Location information
         showMarker#withCustomText: With Custom Text
         showMarker#withAddress: With Address
-        height: Height
-        longitude: Longitude
