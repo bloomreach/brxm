@@ -122,7 +122,9 @@ definitions:
                 map.options: Map options
                 map.size: Map Size
                 mapOverlay: Map Overlay
+                mapOverlay.hint: Edit dropdown values in Documents > administration > open street map
                 mapType: Map Type
+                mapType.hint: Edit dropdown values in Documents > administration > open street map
                 width: Width
                 width.hint: In pixels
                 zoomFactor: Zoom Factor
