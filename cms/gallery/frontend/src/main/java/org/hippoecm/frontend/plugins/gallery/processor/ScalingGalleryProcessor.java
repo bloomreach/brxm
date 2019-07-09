@@ -95,7 +95,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             final ScalingParameters parameters = scalingParametersMap.get(nodeName);
             if (parameters != null) {
                 try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation.Builder(parameters).build();
+                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(parameters);
 
                     scaleOperation.execute(data, mimeType);
 

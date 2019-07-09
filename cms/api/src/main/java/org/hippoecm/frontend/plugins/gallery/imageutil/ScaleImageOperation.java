@@ -139,18 +139,6 @@ public class ScaleImageOperation extends AbstractImageOperation {
             return this;
         }
 
-        /**
-         * To build a {@link ScaleImageOperation} from a {@link ScalingParameters}.
-         */
-        public Builder(final ScalingParameters parameters) {
-            this.width = parameters.getWidth();
-            this.height = parameters.getHeight();
-            this.upscaling = parameters.getUpscaling();
-            this.cropping = parameters.getCropping();
-            this.strategy = parameters.getStrategy();
-            this.compressionQuality = parameters.getCompressionQuality();
-        }
-
         public ScaleImageOperation build() {
             return new ScaleImageOperation(this);
         }
@@ -163,6 +151,20 @@ public class ScaleImageOperation extends AbstractImageOperation {
         this.cropping = builder.cropping;
         this.strategy = builder.strategy;
         this.compressionQuality = builder.compressionQuality;
+    }
+
+    /**
+     * Creates a scaling operation from a complete set of scaling parameters.
+     * 
+     * @param parameters the parameters to use for the scaling
+     */
+    public ScaleImageOperation(final ScalingParameters parameters) {
+        this.width = parameters.getWidth();
+        this.height = parameters.getHeight();
+        this.upscaling = parameters.getUpscaling();
+        this.cropping = parameters.getCropping();
+        this.strategy = parameters.getStrategy();
+        this.compressionQuality = parameters.getCompressionQuality();
     }
     
     /**
