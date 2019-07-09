@@ -876,8 +876,14 @@
       "locales" : null
     },
     "DOCUMENT_NOT_PART_OF_PROJECT" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "ADD_TO_PROJECT" : {
       "status" : "CLEAN",
