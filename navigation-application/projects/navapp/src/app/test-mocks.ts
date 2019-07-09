@@ -19,6 +19,7 @@ import { MenuItemLink } from './main-menu/models/menu-item-link.model';
 import { MenuItem } from './main-menu/models/menu-item.model';
 import { NavItem } from './models/dto/nav-item.dto';
 import { Site } from './models/dto/site.dto';
+import { GlobalSettings } from './models/global-settings.model';
 
 const item1 = new MenuItemLink('item1', 'Item 1');
 
@@ -46,13 +47,16 @@ export const navConfig: NavItem[] = [
   },
 ];
 
-export const globalSettings = {
+export const globalSettings: GlobalSettings = {
+
   userSettings: {
     userName: 'Frank Zappa',
     language: 'en',
     timeZone: 'Europe/Amsterdam',
   },
   appSettings: {
+    navAppLocation: 'http://localhost:4200',
+    contextPath: '/cms',
     navConfigResources: [
       {
         resourceType: 'IFRAME',
@@ -63,6 +67,8 @@ export const globalSettings = {
         url: 'testRESTurl',
       },
     ],
+    loginResources: [],
+    logoutResources: [],
   },
 };
 

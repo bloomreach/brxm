@@ -22,6 +22,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
+import { ConfigResource } from '../models/dto/config-resource.dto';
 import { globalSettings, mockSites, navConfig } from '../test-mocks';
 
 import { GlobalSettingsService } from './global-settings.service';
@@ -32,6 +33,8 @@ describe('NavConfigService', () => {
   let httpTestingController: HttpTestingController;
   let navConfigService: NavConfigService;
   let globalSettingsService: GlobalSettingsService;
+
+  const loginResourcesMock = [];
 
   const globalSettingsServiceMock = globalSettings;
 
@@ -64,6 +67,7 @@ describe('NavConfigService', () => {
     spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
       connectionMock,
     );
+
   });
 
   describe('initialization', () => {
@@ -91,6 +95,15 @@ describe('NavConfigService', () => {
       });
 
       httpTestingController.verify();
+    });
+    it('should throw on REST logins', async() => {
+      globalSettingsService.appSettings.loginResources.push({ resourceType: 'REST', url: 'http://domain.com/login'});
+      try {
+        const result = await navConfigService.init();
+        expect(result).toBeFalsy();
+      } catch (error) {
+        expect(error).toBeTruthy();
+      }
     });
   });
 });
