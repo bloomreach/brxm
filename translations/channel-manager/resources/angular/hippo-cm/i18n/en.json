@@ -255,7 +255,7 @@
   "ERROR_CHANGE_DISCARD_FAILED": "Failed to discard changes",
   "TOOLBAR_MENU_CHANNEL_SUBMIT": "Submit",
   "ERROR_PAGE_MOVE_FAILED": "Failed to move page",
-  "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project to be able to edit it here.",
+  "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project (or switch to 'Core') to be able to edit it.",
   "SEARCH_SINGLE": "{{total}} {{itemName}}",
   "DEFAULT_PROPERTY_GROUP_LABEL": "Property group",
   "ERROR_TOAST_DISMISS": "ok",
