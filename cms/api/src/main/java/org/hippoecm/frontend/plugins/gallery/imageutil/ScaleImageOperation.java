@@ -432,39 +432,36 @@ public class ScaleImageOperation extends AbstractImageOperation {
         int targetWidth;
         int targetHeight;
 
-        if (cropping) {
-            final Dimension configuredDimension = new Dimension(width, height);
-            final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
-            final Dimension targetDimension = ImageUtils.handleZeroDimension(cropArea.getSize(), configuredDimension);
-            imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension,
-                    RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
-
-            targetHeight = targetDimension.height;
-            targetWidth = targetDimension.width;
-        } else {
-            imageToScale = reader.read(0);
-
-            final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
-
-            if (resizeRatio >= 1.0d && !upscaling) {
-                targetWidth = originalWidth;
-                targetHeight = originalHeight;
-            } else {
-                // scale the image
-                targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
-                targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Resizing image of {}x{} to {}x{}", originalWidth, originalHeight, targetWidth, targetHeight);
-            }
-        }
-
-        BufferedImage scaledImage;
-
         synchronized (scalingLock) {
-            scaledImage = ImageUtils.scaleImage(imageToScale, targetWidth, targetHeight, strategy);
+            if (cropping) {
+                final Dimension configuredDimension = new Dimension(width, height);
+                final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
+                final Dimension targetDimension = ImageUtils.handleZeroDimension(cropArea.getSize(), configuredDimension);
+                imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension,
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
+
+                targetHeight = targetDimension.height;
+                targetWidth = targetDimension.width;
+            } else {
+                imageToScale = reader.read(0);
+
+                final double resizeRatio = calculateResizeRatio(originalWidth, originalHeight, width, height);
+
+                if (resizeRatio >= 1.0d && !upscaling) {
+                    targetWidth = originalWidth;
+                    targetHeight = originalHeight;
+                } else {
+                    // scale the image
+                    targetWidth = (int) Math.max(originalWidth * resizeRatio, 1);
+                    targetHeight = (int) Math.max(originalHeight * resizeRatio, 1);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Resizing image of {}x{} to {}x{}", originalWidth, originalHeight, targetWidth, targetHeight);
+                }
+            }
+
+            return ImageUtils.scaleImage(imageToScale, targetWidth, targetHeight, strategy);
         }
-        return scaledImage;
     }
 
     private Rectangle calculateCropArea(final double originalWidth, final double originalHeight,
