@@ -293,13 +293,13 @@ public class ImageUtils {
     }
 
     /**
-     * If height or width in the thumbnailDimension is equal to 0 it is a special case. The value 0 represents a value
+     * If height or width in the variant dimension is equal to 0 it is a special case. The value 0 represents a value
      * that according to the dimension of the original image.
      * <p>
-     * With this function a new dimension is created according to the original dimension
+     * With this function a new dimension is created according to the original dimension.
      *
      * @param original dimension of the original image
-     * @param variant  dimension of the thumbnail image
+     * @param variant  dimension of the variant image
      * @return scaled dimension based on width or height value
      */
     public static Dimension handleZeroDimension(final Dimension original, final Dimension variant) {
