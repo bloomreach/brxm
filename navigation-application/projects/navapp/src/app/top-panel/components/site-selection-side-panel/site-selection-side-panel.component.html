@@ -43,7 +43,8 @@
                    class="caption">
       <button mat-icon-button
               matTreeNodeToggle
-              [attr.aria-label]="'toggle ' + node.name">
+              [attr.aria-label]="'toggle ' + node.name"
+              (mousedown)="$event.stopPropagation()">
         <mat-icon [svgIcon]="treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'"></mat-icon>
       </button>
       {{ node.name }}

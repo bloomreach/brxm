@@ -65,10 +65,18 @@
 
     &:hover {
       background-color: $site-selection-hover-bg;
+
+      .mat-icon-button:hover {
+        background-color: darken($site-selection-hover-bg, 10%);
+      }
     }
 
     &.active {
       background-color: $site-selection-active-bg;
+
+      .mat-icon-button:hover {
+        background-color: darken($site-selection-active-bg, 10%);
+      }
     }
 
     > .mat-icon {
