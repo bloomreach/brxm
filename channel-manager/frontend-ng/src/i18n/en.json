@@ -53,7 +53,7 @@
   "DOCUMENT_CONTAINS_MULTIPLE_ERRORS": "Could not save '{{name}}': document contains {{count}} errors",
   "DOCUMENT_LIVE_TOOLTIP": "Live",
   "DOCUMENT_NEW_TOOLTIP": "Offline",
-  "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project to be able to edit it here.",
+  "DOCUMENT_NOT_PART_OF_PROJECT": "Document is not part of project '{{name}}'. Add it to the project (or switch to 'Core') to be able to edit it.",
   "DONE": "Done",
   "EDIT_CONTENT": "Edit content",
   "EDIT_MENU": "Edit menu",
