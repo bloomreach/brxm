@@ -9,7 +9,7 @@
     "/essentials/feature/images/screenshots/simplecontent02.png",
     "/essentials/feature/images/screenshots/simplecontent03.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/document-component.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/setup/hst-components/document-component.html",
   "packageFile": "/META-INF/simpleContent_instructions.xml",
   "vendor" : {
     "name" : "BloomReach",

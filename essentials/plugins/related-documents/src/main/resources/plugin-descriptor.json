@@ -8,7 +8,7 @@
     "/essentials/feature/images/screenshots/relateddocuments01.png",
     "/essentials/feature/images/screenshots/relateddocuments02.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/related-documents/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/related-documents/about.html",
   "hasConfiguration": true,
   "installWithParameters": false,
   "packageFile": "/META-INF/related_documents_plugin_instructions.xml",

@@ -8,7 +8,7 @@
     "/essentials/feature/images/screenshots/robots01.png",
     "/essentials/feature/images/screenshots/robots02.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/robots.txt/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/robots.txt/about.html",
   "packageFile": "/META-INF/robots_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

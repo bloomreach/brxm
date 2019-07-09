@@ -6,7 +6,7 @@
   "imageUrls": [
     "/essentials/feature/images/screenshots/seo01.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/seo-support/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/seo-support/about.html",
   "packageFile": "/META-INF/seoPlugin_instructions.xml",
   "type": "feature",
   "vendor" : {

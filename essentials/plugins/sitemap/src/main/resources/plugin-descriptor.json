@@ -4,7 +4,7 @@
   "icon": "/essentials/feature/images/sitemap-plugin-icon.svg",
   "introduction": "With the Sitemap feature, you can generate an XML feed based on the sitemap protocol. This protocol is used by search engines for indexing your website.",
   "description": "This feature wraps the 'Sitemap' Standard Plugin.",
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/sitemap/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/sitemap/about.html",
   "installWithParameters": false,
   "packageFile": "/META-INF/sitemap_plugin_instructions.xml",
   "type": "feature",
