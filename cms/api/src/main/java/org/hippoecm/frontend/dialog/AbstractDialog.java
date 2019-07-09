@@ -85,6 +85,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private String buttonCssClass;
     private AjaxChannel ajaxChannel;
 
+    public enum ButtonPosition {
+        FIRST,
+        LAST
+    }
+    
     protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
 
         private List<FeedbackMessage> messages;
@@ -502,20 +507,24 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      * left of the default buttons.
      */
     protected void addButton(final Button button) {
-        if (DialogConstants.BUTTON.equals(button.getId())) {
-            buttons.addFirst(new ButtonWrapper(button));
-        } else {
-            log.error("Failed to add button: component id is not '{}'", DialogConstants.BUTTON);
-        }
+        addButton(button, ButtonPosition.FIRST);
     }
 
     /**
-     * Add a {@link Button} to the button bar. The id of the button must equal "button". The button will be added to the
-     * right of the default buttons.
+     * Add a {@link Button} to the button bar. The id of the button must equal "button".
+     *
+     * @param button         the button to add
+     * @param buttonPosition to position the button left or right of the default buttons
      */
-    protected void addButtonRight(final Button button) {
+    protected void addButton(final Button button, final ButtonPosition buttonPosition) {
         if (DialogConstants.BUTTON.equals(button.getId())) {
-            buttons.addLast(new ButtonWrapper(button));
+            switch (buttonPosition) {
+                case FIRST:
+                    buttons.addFirst(new ButtonWrapper(button));
+                    break;
+                case LAST:
+                    buttons.addLast(new ButtonWrapper(button));
+            }
         } else {
             log.error("Failed to add button: component id is not '{}'", DialogConstants.BUTTON);
         }
