@@ -28,7 +28,7 @@ mvn clean && mvn validate -Ppedantic
 ```
 
 ### Generate a new BloomReach project from the archetype:
-See the [Getting Started](https://www.onehippo.org/trails/getting-started/hippo-essentials-getting-started.html) page.
+See the [Getting Started](https://documentation.bloomreach.com/trails/getting-started/hippo-essentials-getting-started.html) page.
 
 ##Automatic Export
 
