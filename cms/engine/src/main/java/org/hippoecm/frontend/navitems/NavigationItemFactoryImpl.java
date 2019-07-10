@@ -18,38 +18,20 @@
 package org.hippoecm.frontend.navitems;
 
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
-import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.standards.perspective.NavAppPerspective;
 
 public class NavigationItemFactoryImpl implements NavigationItemFactory {
 
     @Override
     public NavigationItem newInstance(String perspectiveClassName, String appIframeUrl, Locale locale) {
+        final NavAppPerspective navAppPerspective = new NavAppPerspective(perspectiveClassName);
         final NavigationItem navigationItem = new NavigationItem();
-        navigationItem.setId(getId(perspectiveClassName));
+        navigationItem.setId(navAppPerspective.getId());
         navigationItem.setAppIframeUrl(appIframeUrl);
-        navigationItem.setAppPath(getId(perspectiveClassName));
-        navigationItem.setDisplayName(getDisplayName(perspectiveClassName, locale));
+        navigationItem.setAppPath(navAppPerspective.getAppPath());
+        navigationItem.setDisplayName(navAppPerspective.getDisplayName(locale));
         return navigationItem;
     }
 
-    private String getId(String perspectiveClassName) {
-        final int lastDotIndex = perspectiveClassName.lastIndexOf('.');
-        final String perspectiveName = perspectiveClassName.substring(1 + lastDotIndex);
-        return String.format("hippo-perspective-%s", perspectiveName.toLowerCase());
-    }
-
-    private String getDisplayName(String perspectiveClassName, Locale locale) {
-        try {
-            final ResourceBundle bundle = ResourceBundle.getBundle(perspectiveClassName, locale);
-            if (bundle != null && bundle.containsKey(Perspective.TITLE_KEY)) {
-                return bundle.getString(Perspective.TITLE_KEY);
-            }
-        } catch (MissingResourceException ignored) {
-            // perspective-title and resource bundle are optional. Ignore if the resource bundle doesn't exist
-        }
-        return null;
-    }
 }

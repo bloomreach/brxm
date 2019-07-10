@@ -56,6 +56,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private static final String EVENT_PARAM_CMS = "CMS";
 
     private static final ArrayList<String> cmsEventNamesList;
+
     static {
         cmsEventNamesList = new ArrayList<>();
         cmsEventNamesList.add("dashboard");
@@ -78,6 +79,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
+    private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         this(context, config, null);
@@ -93,11 +95,14 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
 
         add(CssClass.append("perspective"));
+
+        navAppPerspective = new NavAppPerspective(getClass());
     }
 
     public String getTitleCssClass() {
-        // return a stable CSS class name to be able to identify a perspective's link in automated tests
-        return "hippo-perspective-" + getClass().getSimpleName().toLowerCase();
+        // Stable CSS class name to be able to identify a perspective's link in automated tests
+        // It is also used to be able to navigate via javascript by looking up a perspective via it's class name.
+        return navAppPerspective.getId();
     }
 
     @Override
@@ -209,7 +214,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
             @SuppressWarnings("unused")
             @Override
             public String getPath() {
-                return getTitleCssClass();
+                return navAppPerspective.getAppPath();
             }
 
             @SuppressWarnings("unused")
@@ -276,7 +281,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         @Override
         public void render(final Response response) {
-            if(StringUtils.isNotEmpty(perspectiveId)) {
+            if (StringUtils.isNotEmpty(perspectiveId)) {
                 final UsageEvent perspectiveActivated = new UsageEvent(perspectiveId);
 
                 final String eventJs = perspectiveActivated.getJavaScript();

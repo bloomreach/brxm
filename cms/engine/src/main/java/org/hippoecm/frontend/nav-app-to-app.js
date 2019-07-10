@@ -35,10 +35,10 @@
   Hippo.NavAppToApp = {
 
     navigate: function (location) {
-      const perspectiveClassName = location.path;
-      const perspectives = document.getElementsByClassName(perspectiveClassName);
-      if (perspectives && perspectives[0]) {
-        perspectives[0].click();
+      const perspectiveClassName = `.hippo-perspective-${location.path}perspective`;
+      const perspective = document.querySelector(perspectiveClassName);
+      if (perspective) {
+        perspective.click();
         return Promise.resolve();
       }
       return Promise.reject(new Error(`${perspectiveClassName} not found`));
