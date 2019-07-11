@@ -59,6 +59,7 @@ public class BlogImporterJob implements RepositoryJob {
     private static final String DOCUMENT_TYPE_AUTHOR = "author";
     private static final String DOCUMENT_TYPE_BLOGPOST = "blogpost";
     public static final char SPLITTER = '|';
+    public static final String DELIMITER = "|";
     private static final String USER_ADMIN = "admin";
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package org.onehippo.cms7.essentials.components.cms.modules;
 
-import javax.jcr.*;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.observation.Event;
 
-import com.google.common.base.Joiner;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterConfiguration;
 import org.onehippo.cms7.essentials.components.cms.blog.BlogImporterJob;
@@ -38,17 +39,16 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /**
- * The BlogListenerModule is a daemon module started by the CMS (based on the corresponding hippo:modules
- * repository configuration). It has two main objectives:
- *
- *   1) register the AuthorFieldHandler with the HippoEventBus, such that the saving of blog post documents
- *      triggers the update of the blog post's author field.
- *   2) schedule (and reschedule upon reconfiguration) the blog importer job.
+ * The BlogListenerModule is a daemon module started by the CMS (based on the corresponding hippo:modules repository
+ * configuration). It has two main objectives:
+ * <p>
+ * 1) register the AuthorFieldHandler with the HippoEventBus, such that the saving of blog post documents triggers the
+ * update of the blog post's author field. 2) schedule (and reschedule upon reconfiguration) the blog importer job.
  */
 @RequiresService(types = {RepositoryScheduler.class})
 public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
 
-    public static final Logger log = LoggerFactory.getLogger(BlogListenerModule.class);
+    private static final Logger log = LoggerFactory.getLogger(BlogListenerModule.class);
 
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
@@ -59,7 +59,7 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
     private AuthorFieldHandler listener;
 
     @Override
-    protected void doConfigure(final Node moduleConfigNode) throws RepositoryException {
+    protected void doConfigure(final Node moduleConfigNode) {
         // we read the BlogImporterConfiguration on the fly.
     }
 
@@ -135,8 +135,8 @@ public class BlogListenerModule extends AbstractReconfigurableDaemonModule {
         jobInfo.setAttribute(BlogImporterJob.PROJECT_NAMESPACE, config.getProjectNamespace());
         jobInfo.setAttribute(BlogImporterJob.AUTHORS_BASE_PATH, config.getAuthorsBasePath());
         jobInfo.setAttribute(BlogImporterJob.BLOGS_BASE_PATH, config.getBlogBasePath());
-        jobInfo.setAttribute(BlogImporterJob.AUTHORS, Joiner.on(BlogImporterJob.SPLITTER).join(config.getAuthors()));
-        jobInfo.setAttribute(BlogImporterJob.URLS, Joiner.on(BlogImporterJob.SPLITTER).join(config.getUrls()));
+        jobInfo.setAttribute(BlogImporterJob.AUTHORS, String.join(BlogImporterJob.DELIMITER, config.getAuthors()));
+        jobInfo.setAttribute(BlogImporterJob.URLS, String.join(BlogImporterJob.DELIMITER, config.getUrls()));
     }
 
     private void registerListener(final BlogImporterConfiguration config) {
