@@ -356,7 +356,7 @@ public class BlogImporterJob implements RepositoryJob {
 
     private String processContent(SyndEntry entry) {
         List<?> contents = entry.getContents();
-        if (contents != null && contents.size() > 0) {
+        if (contents != null && !contents.isEmpty()) {
             StringBuilder blogContent = new StringBuilder();
             for (Object contentObject : contents) {
                 SyndContent content = (SyndContent) contentObject;
@@ -385,7 +385,7 @@ public class BlogImporterJob implements RepositoryJob {
             }
         } else {
             List<?> contents = entry.getContents();
-            if (contents != null && contents.size() > 0) {
+            if (contents != null && !contents.isEmpty()) {
                 StringBuilder blogContent = new StringBuilder();
                 for (Object contentObject : contents) {
                     SyndContent content = (SyndContent) contentObject;
