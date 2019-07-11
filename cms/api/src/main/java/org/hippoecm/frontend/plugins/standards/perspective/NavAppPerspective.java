@@ -17,6 +17,7 @@
 
 package org.hippoecm.frontend.plugins.standards.perspective;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -24,7 +25,10 @@ import java.util.ResourceBundle;
 /**
  * Provides utility methods for NavApp related properties of Perspectives
  */
-public class NavAppPerspective {
+public class NavAppPerspective implements Serializable {
+
+
+    private static final long serialVersionUID = 8374034275242281396L;
 
     private final String perspectiveClassName;
     private final String id;
