@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,6 @@ import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 @ParametersInfo(type = EssentialsBlogAuthorPostsComponentInfo.class)
 public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent {
 
@@ -55,7 +52,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
         if (document instanceof Authors) {
             final Authors entry = (Authors) document;
             final List<? extends AuthorEntry> authors = entry.getAuthors();
-            if (authors.size() > 0) {
+            if (!authors.isEmpty()) {
                 // NOTE: most use-cases will only have one author,
                 // so for convenience purposes  also add first author on request
                 request.setAttribute("author", authors.get(0));
@@ -100,7 +97,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
         try {
             final ObjectConverter converter = context.getContentBeansTool().getObjectConverter();
             final String primaryObjectType = converter.getPrimaryObjectType(document.getNode());
-            return converter.getAnnotatedClassFor(primaryObjectType);
+            return converter.getClassFor(primaryObjectType);
 
         } catch (ObjectBeanManagerException e) {
             log.error("Error fetching primary node type", e);
@@ -108,9 +105,7 @@ public class EssentialsBlogAuthorPostsComponent extends EssentialsListComponent 
         return null;
     }
 
-
     private int getSearchDepth() {
         return DEFAULT_SEARCH_DEPTH;
     }
-
 }
