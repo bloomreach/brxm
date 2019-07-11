@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,10 +35,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
-
 /**
- * The BlogUpdater derives the bloggers' names from the linked Author document and stores them in the blog's
- * AuthorNames meta data field. That field is/will be used for faceted navigation.
+ * The BlogUpdater derives the bloggers' names from the linked Author document and stores them in the blog's AuthorNames
+ * meta data field. That field is/will be used for faceted navigation.
  */
 public final class BlogUpdater {
 
@@ -52,18 +51,17 @@ public final class BlogUpdater {
      *
      * @param node JCR node to consider
      * @return true if the node is interesting, false otherwise.
-     * @throws javax.jcr.RepositoryException
      */
     public static boolean wants(final Node node, final String documentType) throws RepositoryException {
         // check if namespace is registered namespace, skip otherwise:
-        if(Strings.isNullOrEmpty(documentType) || documentType.indexOf(':')==-1){
+        if (Strings.isNullOrEmpty(documentType) || documentType.indexOf(':') == -1) {
             return false;
         }
         final Iterable<String> iterable = Splitter.on(':').omitEmptyStrings().trimResults().split(documentType);
         final Iterator<String> iterator = iterable.iterator();
-        if(iterator.hasNext()){
+        if (iterator.hasNext()) {
             final String namespacePrefix = iterator.next();
-            if(!namespacePrefixExists(node.getSession(), namespacePrefix)){
+            if (!namespacePrefixExists(node.getSession(), namespacePrefix)) {
                 return false;
             }
         }
@@ -91,7 +89,6 @@ public final class BlogUpdater {
      *
      * @param blogpost JCR node representing the blogpost
      * @return indication whether or not changes need to be saved.
-     * @throws javax.jcr.RepositoryException
      */
     public static boolean handleSaved(final Node blogpost, final String projectNamespace) throws RepositoryException {
         // Delete the old property
@@ -101,7 +98,7 @@ public final class BlogUpdater {
         }
         // Construct the new property
         final NodeIterator authorMirrors = blogpost.getNodes(projectNamespace + ":authors");
-        final Collection<String> authorNames = new ArrayList<String>();
+        final Collection<String> authorNames = new ArrayList<>();
         // TODO mm check this (was :title???)
         final String authorProperty = projectNamespace + ":fullname";
         while (authorMirrors.hasNext()) {
@@ -121,8 +118,8 @@ public final class BlogUpdater {
             }
         }
 
-        if (authorNames.size() > 0) {
-            blogpost.setProperty(authorNamesProp, authorNames.toArray(new String[authorNames.size()]));
+        if (!authorNames.isEmpty()) {
+            blogpost.setProperty(authorNamesProp, authorNames.toArray(new String[0]));
         }
         return true;
     }
