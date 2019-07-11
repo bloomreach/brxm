@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * @version "$Id$"
- */
 public class BlogImporterJob implements RepositoryJob {
 
     private static final Logger log = LoggerFactory.getLogger(BlogImporterJob.class);
@@ -62,8 +59,7 @@ public class BlogImporterJob implements RepositoryJob {
     private static final String DOCUMENT_TYPE_AUTHOR = "author";
     private static final String DOCUMENT_TYPE_BLOGPOST = "blogpost";
     public static final char SPLITTER = '|';
-
-
+    private static final String USER_ADMIN = "admin";
 
     @Override
     public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
@@ -286,11 +282,11 @@ public class BlogImporterJob implements RepositoryJob {
         documentNode.setProperty(prefixedNamespace + "title", syndEntry.getTitle());
         documentNode.setProperty(prefixedNamespace + "introduction", processDescription(syndEntry, maxDescriptionLength));
         if (authorHandleNode != null) {
-            link(documentNode, prefixedNamespace + "authors", authorHandleNode);
+            link(documentNode, prefixedNamespace + AUTHORS, authorHandleNode);
             final Node authorNode = authorHandleNode.getNode(authorHandleNode.getName());
             final Property nameProperty = authorNode.getProperty(prefixedNamespace + "fullname");
             final String name = nameProperty.getString();
-            documentNode.setProperty(prefixedNamespace + "author", name);
+            documentNode.setProperty(prefixedNamespace + DOCUMENT_TYPE_AUTHOR, name);
             documentNode.setProperty(prefixedNamespace + "authornames", new String[]{name});
         } else {
             final String author = syndEntry.getAuthor();
@@ -317,14 +313,14 @@ public class BlogImporterJob implements RepositoryJob {
 
     private void setDefaultDocumentProperties(final String prefixedNamespace, final Node documentNode, final Calendar calendar) throws RepositoryException {
         documentNode.setProperty(prefixedNamespace + "publicationdate", calendar);
-        documentNode.setProperty("hippostdpubwf:lastModifiedBy", "admin");
-        documentNode.setProperty("hippostdpubwf:createdBy", "admin");
+        documentNode.setProperty("hippostdpubwf:lastModifiedBy", USER_ADMIN);
+        documentNode.setProperty("hippostdpubwf:createdBy", USER_ADMIN);
         calendar.setTime(new Date());
         documentNode.setProperty("hippostdpubwf:lastModificationDate", calendar);
         documentNode.setProperty("hippostdpubwf:creationDate", calendar);
         documentNode.setProperty("hippostd:stateSummary", "preview");
         documentNode.setProperty("hippostd:state", "published");
-        documentNode.setProperty("hippostd:holder", "admin");
+        documentNode.setProperty("hippostd:holder", USER_ADMIN);
         // TODO make locale dynamic
         documentNode.setProperty("hippotranslation:locale", "en");
         documentNode.setProperty("hippotranslation:id", UUID.randomUUID().toString());
