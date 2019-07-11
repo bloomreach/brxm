@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
-/**
- * @version $Id$
- */
 public class RepositoryMenuItem {
 
     private HippoBean bean;
@@ -68,7 +65,7 @@ public class RepositoryMenuItem {
             return bean.getName();
         } else {
             String namespace = bean.getNode().getPrimaryNodeType().getName().split(":")[0];
-            String title = bean.getProperty(namespace + ":title");
+            String title = bean.getSingleProperty(namespace + ":title");
             if (title != null) {
                 return title;
             } else {
