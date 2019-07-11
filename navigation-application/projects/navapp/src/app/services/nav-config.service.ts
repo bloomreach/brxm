@@ -31,7 +31,7 @@ import { Site } from '../models/dto/site.dto';
 
 import { GlobalSettingsService } from './global-settings.service';
 
-const filterOutEmpty = items => !!(Array.isArray(items) && items.length);
+const filterOutEmptyArray = items => !!(Array.isArray(items) && items.length);
 
 interface Configuration {
   navItems: NavItem[];
@@ -59,15 +59,15 @@ export class NavConfigService {
   }
 
   get navItems$(): Observable<NavItem[]> {
-    return this.navItems.asObservable().pipe(filter(filterOutEmpty));
+    return this.navItems.asObservable().pipe(filter(filterOutEmptyArray));
   }
 
   get sites$(): Observable<Site[]> {
-    return this.sites.asObservable().pipe(filter(filterOutEmpty));
+    return this.sites.asObservable().pipe(filter(filterOutEmptyArray));
   }
 
   get selectedSite$(): Observable<Site> {
-    return this.selectedSite.asObservable().pipe(filter(filterOutEmpty));
+    return this.selectedSite.asObservable().pipe(filter(value => !!value));
   }
 
   init(): Promise<void> {
@@ -87,7 +87,7 @@ export class NavConfigService {
           );
           result.mergedSites = result.mergedSites.concat(configuration.sites);
 
-          if (configuration.selectedSiteId) {
+          if (configuration.selectedSiteId !== undefined) {
             result.selectedSiteId = configuration.selectedSiteId;
           }
 
@@ -99,10 +99,15 @@ export class NavConfigService {
       this.navItems.next(mergedNavItems);
       this.sites.next(mergedSites);
 
-      if (selectedSiteId) {
-        const site = this.findSite(mergedSites, selectedSiteId);
-        this.selectedSite.next(site);
+      let site: Site;
+
+      if (selectedSiteId !== undefined) {
+        site = this.findSite(mergedSites, selectedSiteId);
+      } else {
+        site = mergedSites[0];
       }
+
+      this.selectedSite.next(site);
     });
   }
 
