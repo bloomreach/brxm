@@ -96,17 +96,10 @@ export class NavConfigService {
         { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
       );
 
+      const site = this.findSite(mergedSites, selectedSiteId) || mergedSites[0];
+
       this.navItems.next(mergedNavItems);
       this.sites.next(mergedSites);
-
-      let site: Site;
-
-      if (selectedSiteId !== undefined) {
-        site = this.findSite(mergedSites, selectedSiteId);
-      } else {
-        site = mergedSites[0];
-      }
-
       this.selectedSite.next(site);
     });
   }
@@ -122,19 +115,26 @@ export class NavConfigService {
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
     switch (resource.resourceType) {
       case 'IFRAME':
-        return this.fetchFromIframe(resource.url, child =>
-          Promise.all([
-            child.getNavItems(),
-            child.getSites ? child.getSites() : Promise.resolve([]),
-            child.getSelectedSite
-              ? child.getSelectedSite()
-              : Promise.resolve(undefined),
-          ]).then(([navItems, sites, selectedSiteId]) => ({
-            navItems,
-            sites,
-            selectedSiteId,
-          })),
-        );
+        return this.fetchFromIframe(resource.url, child => {
+          const communications: Promise<any>[] = [];
+          communications.push(
+            child.getNavItems ? child.getNavItems() : Promise.resolve(),
+          );
+          communications.push(
+            child.getSites ? child.getSites() : Promise.resolve(),
+          );
+          communications.push(
+            child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(),
+          );
+
+          return Promise.all(communications).then(
+            ([navItems, sites, selectedSiteId]) => ({
+              navItems,
+              sites,
+              selectedSiteId,
+            }),
+          );
+        });
       case 'REST':
         return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({
           navItems,
