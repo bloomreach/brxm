@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
-/**
- * @version "$Id$"
- */
 public final class SiteUtils {
-
 
     private static final Logger log = LoggerFactory.getLogger(SiteUtils.class);
     public static final int DEFAULT_PAGE = 1;
@@ -66,7 +62,7 @@ public final class SiteUtils {
         final String basePath = context.getSiteContentBasePath();
         final String beanPath = bean.getCanonicalPath();
 
-        if (!Strings.isNullOrEmpty(beanPath) && beanPath.substring(1).startsWith(basePath)) {
+        if (!Strings.isNullOrEmpty(beanPath) && beanPath.startsWith(basePath, 1)) {
             return beanPath.substring(1 + basePath.length() + 1); // skip slashes
         }
         return beanPath;
@@ -75,7 +71,7 @@ public final class SiteUtils {
     public static String relativePathFrom(final String absolutePath, final HstRequestContext context) {
         final String basePath = context.getSiteContentBasePath();
 
-        if (!absolutePath.substring(1).startsWith(basePath)) {
+        if (!absolutePath.startsWith(basePath, 1)) {
             log.warn("Absolute path '{}' is outside the scope of the requested site.", absolutePath);
             return absolutePath;
         }
