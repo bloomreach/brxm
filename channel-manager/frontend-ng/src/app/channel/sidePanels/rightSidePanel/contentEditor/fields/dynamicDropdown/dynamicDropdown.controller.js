@@ -35,6 +35,10 @@ class DynamicDropdownFieldController {
     return this.labels[index];
   }
 
+  showNone() {
+    return this.showDefault && !this.isRequired;
+  }
+
   async _loadOptionsList() {
     const document = await this._getValueList();
 

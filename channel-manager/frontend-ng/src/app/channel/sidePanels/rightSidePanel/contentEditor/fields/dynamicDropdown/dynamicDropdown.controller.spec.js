@@ -35,6 +35,20 @@ describe('dynamicDropdown', () => {
     });
   });
 
+  describe('the none option', () => {
+    it('is shown if showDefault is true and the field is not required', () => {
+      $ctrl.showDefault = true;
+      $ctrl.isRequired = false;
+      expect($ctrl.showNone()).toBe(true);
+    });
+
+    it('is not shown if the field is required', () => {
+      $ctrl.showDefault = true;
+      $ctrl.isRequired = true;
+      expect($ctrl.showNone()).toBe(false);
+    });
+  });
+
   describe('load options for dynamic dropdown field', () => {
     it('loads option values correctly', () => {
       const valueList = [{ key: 's', label: 'Ship' }, { key: 'b', label: 'Boat' }];

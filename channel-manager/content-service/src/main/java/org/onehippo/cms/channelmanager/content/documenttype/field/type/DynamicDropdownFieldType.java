@@ -23,6 +23,7 @@ import org.onehippo.forge.selection.frontend.plugin.Config;
 
 public class DynamicDropdownFieldType extends PropertyFieldType {
 
+    private boolean showDefault = true;
     private String source = null;
     private String sortComparator = null;
     private String sortBy = null;
@@ -36,18 +37,16 @@ public class DynamicDropdownFieldType extends PropertyFieldType {
 
     @Override
     public FieldsInformation init(final FieldTypeContext fieldContext) {
+        fieldContext.getStringConfig(Config.SHOW_DEFAULT).ifPresent(this::setShowDefault);
         fieldContext.getStringConfig(Config.SOURCE).ifPresent(this::setSource);
         fieldContext.getStringConfig(Config.SORT_COMPARATOR).ifPresent(this::setSortComparator);
         fieldContext.getStringConfig(Config.SORT_BY).ifPresent(this::setSortBy);
         fieldContext.getStringConfig(Config.SORT_ORDER).ifPresent(this::setSortOrder);
         fieldContext.getStringConfig(Config.VALUELIST_PROVIDER).ifPresent(this::setValueListProvider);
-
-        // TODO: use showDefault?
-        // fieldContext.getStringConfig(Config.SHOW_DEFAULT).ifPresent();
-
+        // configuration properties for field observation:
+        fieldContext.getStringConfig(Config.NAME_PROVIDER).ifPresent(s -> this.setObservation());
         fieldContext.getStringConfig(Config.OBSERVABLE_ID).ifPresent(s -> this.setObservation());
         fieldContext.getStringConfig(Config.OBSERVER_ID).ifPresent(s -> this.setObservation());
-        fieldContext.getStringConfig(Config.NAME_PROVIDER).ifPresent(s -> this.setObservation());
         fieldContext.getStringConfig(Config.SOURCE_BASE_PATH).ifPresent(s -> this.setObservation());
         return super.init(fieldContext);
     }
@@ -73,7 +72,7 @@ public class DynamicDropdownFieldType extends PropertyFieldType {
     }
 
     /**
-     * Call this method to signal that the dropdown is configured to be serve as observer or observed field. This is not
+     * Call this method to signal that the dropdown is configured to serve as observer or observed field. This is not
      * supported yet in the Visual Editor.
      */
     private void setObservation() {
@@ -82,6 +81,14 @@ public class DynamicDropdownFieldType extends PropertyFieldType {
 
     private boolean isObservation() {
         return observation;
+    }
+
+    public boolean isShowDefault() {
+        return showDefault;
+    }
+
+    public void setShowDefault(final String showDefault) {
+        this.showDefault = !StringUtils.equalsIgnoreCase(showDefault, "false");
     }
 
     public String getSource() {

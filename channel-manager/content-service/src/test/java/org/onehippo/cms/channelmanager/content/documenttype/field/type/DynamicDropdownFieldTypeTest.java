@@ -60,6 +60,7 @@ public class DynamicDropdownFieldTypeTest {
         final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(dynamicDropdownFieldType)
                 .jcrName("myproject:dynamicDropdown").build();
 
+        expect(fieldTypeContext.getStringConfig(Config.SHOW_DEFAULT)).andReturn(Optional.of(""));
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
@@ -75,6 +76,7 @@ public class DynamicDropdownFieldTypeTest {
 
         dynamicDropdownFieldType.init(fieldTypeContext);
 
+        assertTrue(dynamicDropdownFieldType.isShowDefault());
         assertThat(dynamicDropdownFieldType.getSource(), equalTo("/source/path"));
         assertThat(dynamicDropdownFieldType.getSortComparator(), equalTo("my.Comparator"));
         assertThat(dynamicDropdownFieldType.getSortBy(), equalTo("key"));
@@ -86,10 +88,38 @@ public class DynamicDropdownFieldTypeTest {
     }
 
     @Test
+    public void testShowDefaultConfig() {
+        final DynamicDropdownFieldType dynamicDropdownFieldType = new DynamicDropdownFieldType();
+        final FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(dynamicDropdownFieldType)
+                .jcrName("myproject:dynamicDropdown").build();
+
+        expect(fieldTypeContext.getStringConfig(Config.SHOW_DEFAULT)).andReturn(Optional.of("false"));
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
+        expect(fieldTypeContext.getStringConfig(Config.SORT_ORDER)).andReturn(Optional.of("descending"));
+        expect(fieldTypeContext.getStringConfig(Config.VALUELIST_PROVIDER))
+                .andReturn(Optional.of("service.valuelist.default"));
+        expect(fieldTypeContext.getStringConfig(Config.OBSERVABLE_ID)).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig(Config.OBSERVER_ID)).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig(Config.NAME_PROVIDER)).andReturn(Optional.empty());
+        expect(fieldTypeContext.getStringConfig(Config.SOURCE_BASE_PATH)).andReturn(Optional.empty());
+
+        replayAll();
+
+        dynamicDropdownFieldType.init(fieldTypeContext);
+
+        assertFalse(dynamicDropdownFieldType.isShowDefault());
+
+        verifyAll();
+    }
+
+    @Test
     public void testUnsupportedWithNonDefaultValueListProvider() {
         final DynamicDropdownFieldType dynamicDropdownFieldType = new DynamicDropdownFieldType();
         FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(dynamicDropdownFieldType)
                 .jcrName("myproject:dynamicDropdown").build();
+        expect(fieldTypeContext.getStringConfig(Config.SHOW_DEFAULT)).andReturn(Optional.of(""));
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));
@@ -115,6 +145,7 @@ public class DynamicDropdownFieldTypeTest {
         final DynamicDropdownFieldType dynamicDropdownFieldType = new DynamicDropdownFieldType();
         FieldTypeContext fieldTypeContext = new MockFieldTypeContext.Builder(dynamicDropdownFieldType)
                 .jcrName("myproject:dynamicDropdown").build();
+        expect(fieldTypeContext.getStringConfig(Config.SHOW_DEFAULT)).andReturn(Optional.of(""));
         expect(fieldTypeContext.getStringConfig(Config.SOURCE)).andReturn(Optional.of("/source/path"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_COMPARATOR)).andReturn(Optional.of("my.Comparator"));
         expect(fieldTypeContext.getStringConfig(Config.SORT_BY)).andReturn(Optional.of("key"));

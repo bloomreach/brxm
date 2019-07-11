@@ -16,6 +16,7 @@
 
 import template from './dynamicDropdown.html';
 import DynamicDropdownFieldCtrl from './dynamicDropdown.controller';
+import './dynamicDropdown.scss';
 
 const dynamicDropdownComponent = {
   bindings: {
@@ -27,6 +28,7 @@ const dynamicDropdownComponent = {
     onFieldBlur: '&',
     onFieldFocus: '&',
     optionsSource: '<',
+    showDefault: '<',
     sortBy: '<',
     sortComparator: '<',
     sortOrder: '<',
