@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@import 'variables';
+
 :host {
   align-items: center;
   display: flex;
@@ -25,7 +27,11 @@
   display: flex;
   height: 100%;
   opacity: .5;
-  padding-left: 8px;
+
+  > span {
+    display: block;
+    padding: 0 8px;
+  }
 
   &.last {
     cursor: pointer;
@@ -33,11 +39,8 @@
   }
 
   &.suffix {
-    opacity: .5;
-
-    &.not-first-level {
-      padding-left: 2px;
-    }
+    font-weight: $font-weight-semibold;
+    opacity: 1;
 
     > span {
       padding-left: 8px;
@@ -47,8 +50,4 @@
       margin-left: 0;
     }
   }
-}
-
-.mat-icon {
-  margin-left: 8px;
 }

@@ -16,7 +16,9 @@
 
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
+import { CommunicationsService } from '../../../services/communications.service';
 import { BreadcrumbsService } from '../../services/breadcrumbs.service';
 
 @Component({
@@ -27,17 +29,22 @@ import { BreadcrumbsService } from '../../services/breadcrumbs.service';
 export class BreadcrumbsComponent {
   constructor(
     private breadcrumbsService: BreadcrumbsService,
+    private communicationService: CommunicationsService,
   ) {}
 
   get breadcrumbs$(): Observable<string[]> {
-    return this.breadcrumbsService.breadcrumbs$;
+    return this.breadcrumbsService.breadcrumbs$.pipe(
+      map(x => x.slice(0, x.length - 1)),
+    );
   }
 
-  get suffix(): string {
-    return this.breadcrumbsService.suffix;
+  get suffix$(): Observable<string> {
+    return this.breadcrumbsService.breadcrumbs$.pipe(
+      map(x => x[x.length - 1]),
+    );
   }
 
   onLastBreadcrumbClicked(): void {
-    console.log('onLastBreadcrumbClicked');
+    this.communicationService.navigateToDefaultPage();
   }
 }

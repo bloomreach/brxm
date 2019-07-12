@@ -107,9 +107,7 @@ export class NavConfigService {
   findNavItem(iframeUrl: string, path: string): NavItem {
     const navItems = this.navItems.value;
 
-    return navItems.find(
-      x => x.appIframeUrl === iframeUrl && x.appPath === path,
-    );
+    return navItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
