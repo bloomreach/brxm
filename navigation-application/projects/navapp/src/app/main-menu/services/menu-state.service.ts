@@ -96,9 +96,7 @@ export class MenuStateService implements OnDestroy {
     const navItem = this.navConfigService.findNavItem(appId, path);
 
     if (!navItem) {
-      throw new Error(
-        `There is no nav item with appId=${appId} and path=${path}`,
-      );
+      throw new Error(`It's impossible to find an appropriate menu element for appId=${appId} and path=${path}`);
     }
 
     this.setActiveItem(navItem.id);
@@ -125,8 +123,16 @@ export class MenuStateService implements OnDestroy {
   private setActiveItem(activeItemId: string): void {
     this.closeDrawer();
 
+    const prevActivePath = this.activePath.value;
     const activePath = this.buildActivePath(this.menu, activeItemId);
-    this.activePath.next(activePath);
+
+    const arePathsEqual = prevActivePath &&
+      prevActivePath.length === activePath.length &&
+      prevActivePath.every((x, i) => x === activePath[i]);
+
+    if (!arePathsEqual) {
+      this.activePath.next(activePath);
+    }
   }
 
   private buildActivePath(

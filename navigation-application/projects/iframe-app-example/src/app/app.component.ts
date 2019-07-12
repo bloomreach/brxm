@@ -127,9 +127,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  navigateToSeo(): void {
-    this.parent.navigate({ path: 'seo' }).then(() => {
-      console.log('Successfully navigated to SEO page.');
+  navigateTo(path: string, breadcrumbLabel?: string): void {
+    let onNavigatedPromise: Promise<void>;
+
+    if (path.startsWith(this.navigatedTo)) {
+      this.navigatedTo = path;
+      onNavigatedPromise = this.parent.updateNavLocation({ path: this.navigatedTo, breadcrumbLabel });
+    } else {
+      onNavigatedPromise = this.parent.navigate({ path, breadcrumbLabel });
+    }
+
+    onNavigatedPromise.then(() => {
+      console.log(`Successfully navigated to ${path} page.`);
     });
   }
 }

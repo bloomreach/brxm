@@ -16,11 +16,12 @@
 
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavLocation } from '@bloomreach/navapp-communication';
-import { of } from 'rxjs';
+import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { CommunicationsService } from './communications.service';
 import { NavConfigService } from './nav-config.service';
@@ -30,8 +31,13 @@ describe('CommunicationsService', () => {
   let clientAppService: ClientAppService;
   let navConfigService: NavConfigService;
   let menuStateService: MenuStateService;
+  let breadcrumbsService: BreadcrumbsService;
   let overlayService: OverlayService;
   let communicationsService: CommunicationsService;
+
+  let clientApps: ClientApp[];
+
+  const activeMenuItem$ = new ReplaySubject(1);
 
   const overlayServiceMock = jasmine.createSpyObj('OverlayService', [
     'enable',
@@ -53,6 +59,11 @@ describe('CommunicationsService', () => {
     'activateMenuItem',
   ]);
 
+  const breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
+    'setSuffix',
+    'clearSuffix',
+  ]);
+
   beforeEach(() => {
     const parentApiMock = jasmine.createSpyObj('parentApi', {
       navigate: Promise.resolve(),
@@ -60,9 +71,9 @@ describe('CommunicationsService', () => {
       logout: Promise.resolve(),
     });
 
-    const clientApps: ClientApp[] = [
-      new ClientApp('hippo-perspective-adminperspective'),
-      new ClientApp('hippo-perspective-reportsperspective'),
+    clientApps = [
+      new ClientApp('some-perspective'),
+      new ClientApp('another-perspective'),
     ];
 
     clientApps[0].api = { ...parentApiMock };
@@ -82,7 +93,8 @@ describe('CommunicationsService', () => {
       },
     ];
 
-    menuStateServiceMock.activeMenuItem$ = of({
+    menuStateServiceMock.activeMenuItem$ = activeMenuItem$;
+    activeMenuItem$.next({
       appId: 'testMenuItem',
       appPath: 'testpath',
     });
@@ -93,6 +105,7 @@ describe('CommunicationsService', () => {
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: NavConfigService, useValue: navConfigServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
+        { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
       ],
     });
@@ -100,6 +113,7 @@ describe('CommunicationsService', () => {
     clientAppService = TestBed.get(ClientAppService);
     navConfigService = TestBed.get(NavConfigService);
     menuStateService = TestBed.get(MenuStateService);
+    breadcrumbsService = TestBed.get(BreadcrumbsService);
     overlayService = TestBed.get(OverlayService);
     communicationsService = TestBed.get(CommunicationsService);
   });
@@ -158,9 +172,9 @@ describe('CommunicationsService', () => {
 
   describe('parent api methods', () => {
     describe('.navigate', () => {
-      it('should select the associated menu item and navigate when the item is found', () => {
-        const path = 'hippo-perspective-adminperspective';
-        spyOn(communicationsService, 'navigate');
+      it('should select the associated menu item when the item is found', () => {
+        const path = 'some-perspective';
+
         navConfigServiceMock.findNavItem.and.returnValue({
           id: path,
         });
@@ -173,11 +187,28 @@ describe('CommunicationsService', () => {
           path,
           path,
         );
-        expect(communicationsService.navigate).toHaveBeenCalledWith(path, path);
+      });
+
+      it('should select the associated menu item and navigate when the item is found', () => {
+        const path = 'some-perspective';
+        clientAppServiceMock.activeApp = clientApps[1];
+
+        navConfigServiceMock.findNavItem.and.returnValue({
+          id: path,
+        });
+
+        communicationsService.parentApiMethods.navigate({
+          path,
+        });
+
+        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
+          path,
+          path,
+        );
       });
 
       it('should log an error if the item is not found', () => {
-        const path = 'hippo-perspective-adminperspective';
+        const path = 'some-perspective';
         spyOn(console, 'error');
         navConfigServiceMock.findNavItem.and.returnValue(undefined);
         communicationsService.parentApiMethods.navigate({
@@ -216,6 +247,57 @@ describe('CommunicationsService', () => {
         communicationsService.parentApiMethods.hideMask();
         expect(overlayService.disable).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('breadcrumbs', () => {
+    beforeEach(() => {
+      (breadcrumbsService.clearSuffix as jasmine.Spy).calls.reset();
+    });
+
+    it('should be set from parent API navigate', () => {
+      const path = 'some-perspective';
+      const breadcrumbLabel = 'some breadcrumb label';
+      spyOn(communicationsService, 'navigate');
+      navConfigServiceMock.findNavItem.and.returnValue({
+        id: path,
+      });
+
+      communicationsService.parentApiMethods.navigate({
+        path,
+        breadcrumbLabel,
+      });
+
+      expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith(breadcrumbLabel);
+    });
+
+    it('should be set from parent API updateNavLocation', () => {
+      const path = 'some-perspective';
+      const breadcrumbLabel = 'some breadcrumb label';
+
+      communicationsService.parentApiMethods.updateNavLocation({
+        path,
+        breadcrumbLabel,
+      });
+
+      expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith(breadcrumbLabel);
+    });
+
+    it('should be cleared when a new active menu item is selected', () => {
+      (breadcrumbsService.clearSuffix as jasmine.Spy).calls.reset();
+
+      activeMenuItem$.next({
+        appId: 'testMenuItem',
+        appPath: 'testpath',
+      });
+
+      expect(breadcrumbsService.clearSuffix).toHaveBeenCalled();
+    });
+
+    it('should be cleared when navigated to the default page', () => {
+      communicationsService.navigateToDefaultPage();
+
+      expect(breadcrumbsService.clearSuffix).toHaveBeenCalled();
     });
   });
 });

@@ -15,21 +15,39 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { distinctUntilChanged, filter, map, shareReplay, switchMap } from 'rxjs/operators';
 
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
 
 @Injectable()
 export class BreadcrumbsService {
-  suffix: string;
+  private suffix = new BehaviorSubject<string>('');
 
-  constructor(private menuStateService: MenuStateService) {}
+  constructor(
+    private menuStateService: MenuStateService,
+  ) {}
 
   get breadcrumbs$(): Observable<string[]> {
-    return this.menuStateService.activePath$.pipe(
-      map(breadcrumbs => breadcrumbs.map(x => x.caption)),
-      filter(breadcrumbs => !!breadcrumbs.length),
+    const suffix$: Observable<string> = this.suffix.pipe(
+      distinctUntilChanged(),
     );
+
+    return this.menuStateService.activePath$.pipe(
+      map(path => path.map(x => x.caption)),
+      filter(path => !!path.length),
+      switchMap(path => suffix$.pipe(
+        map(x => path.concat(x)),
+      )),
+      shareReplay(1),
+    );
+  }
+
+  setSuffix(value: string): void {
+    this.suffix.next(value || '');
+  }
+
+  clearSuffix(): void {
+    this.suffix.next('');
   }
 }

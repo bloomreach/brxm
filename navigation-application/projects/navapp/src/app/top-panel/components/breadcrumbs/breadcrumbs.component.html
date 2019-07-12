@@ -21,12 +21,10 @@
   </div>
   <div *ngIf="last" (click)="onLastBreadcrumbClicked()" matRipple class="entry last">
     <span>{{ breadcrumb }}</span>
-    <mat-icon *ngIf="!first" svgIcon="arrow_drop_down"></mat-icon>
   </div>
 </ng-template>
 
-<div *ngIf="(breadcrumbs$ | async) && suffix as breadcrumbs"
-     [class.not-first-level]="breadcrumbs.length > 1"
+<div *ngIf="suffix$ | async as suffix"
      class="entry suffix">
   <mat-icon svgIcon="chevron_right"></mat-icon>
   <span>{{ suffix }}</span>
