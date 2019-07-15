@@ -132,7 +132,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.menuStateService.menu$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(menuItems => {
-      console.log(menuItems);
       this.homeMenuItem = menuItems[0] as MenuItemLink;
       this.menuItems = menuItems.slice(1);
     });

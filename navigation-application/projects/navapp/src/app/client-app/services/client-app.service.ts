@@ -93,7 +93,7 @@ export class ClientAppService {
     const apps = this.apps.value;
     const app = apps.find(a => a.id === appId);
     if (!app) {
-      throw new Error(`There is no connection to an ifrane with id = ${appId}`);
+      throw new Error(`There is no connection to an iframe with id = ${appId}`);
     }
 
     return app;
