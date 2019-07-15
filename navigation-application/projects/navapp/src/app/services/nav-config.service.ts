@@ -71,43 +71,64 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
-    const configurationPromises = this.settingsService.appSettings.navConfigResources.map(
-      resource => this.fetchConfiguration(resource),
+
+    const loginPromises = this.settingsService.appSettings.loginResources.map(
+      resource => this.loginSilently(resource),
     );
 
-    return Promise.all(configurationPromises).then(configurations => {
-      const {
-        mergedNavItems,
-        mergedSites,
-        selectedSiteId,
-      } = configurations.reduce(
-        (result, configuration) => {
-          result.mergedNavItems = result.mergedNavItems.concat(
-            configuration.navItems,
-          );
-          result.mergedSites = result.mergedSites.concat(configuration.sites);
+    return Promise.all(loginPromises).then(results => {
 
-          if (configuration.selectedSiteId !== undefined) {
-            result.selectedSiteId = configuration.selectedSiteId;
-          }
+      if (results.includes(false)) {
+        // At least one iframe failed to login
+        // For now just throw an error, will be handled properly when we implement error handling and timeouts
+        throw new Error('failed to login');
+      }
 
-          return result;
-        },
-        { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
+      const configurationPromises = this.settingsService.appSettings.navConfigResources.map(
+        resource => this.fetchConfiguration(resource),
       );
 
-      const site = this.findSite(mergedSites, selectedSiteId) || mergedSites[0];
+      return Promise.all(configurationPromises).then(configurations => {
+        const {
+          mergedNavItems,
+          mergedSites,
+          selectedSiteId,
+        } = configurations.reduce(
+          (result, configuration) => {
+            result.mergedNavItems = result.mergedNavItems.concat(
+              configuration.navItems,
+            );
+            result.mergedSites = result.mergedSites.concat(configuration.sites);
 
-      this.navItems.next(mergedNavItems);
-      this.sites.next(mergedSites);
-      this.selectedSite.next(site);
+            if (configuration.selectedSiteId) {
+              result.selectedSiteId = configuration.selectedSiteId;
+            }
+
+            return result;
+          },
+          { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
+        );
+
+        this.navItems.next(mergedNavItems);
+        this.sites.next(mergedSites);
+
+        if (selectedSiteId) {
+          const site = this.findSite(mergedSites, selectedSiteId);
+          this.selectedSite.next(site);
+        }
+      });
     });
+
   }
 
   findNavItem(iframeUrl: string, path: string): NavItem {
     const navItems = this.navItems.value;
 
     return navItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
+  }
+
+  private loginSilently(resource: string): Promise<boolean> {
+    return this.fetchFromIframe(resource, api => Promise.resolve(api)).then(api => !!api);
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {

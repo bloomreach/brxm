@@ -19,7 +19,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
 import { globalSettings, mockSites, navConfig } from '../test-mocks';
@@ -32,6 +32,8 @@ describe('NavConfigService', () => {
   let httpTestingController: HttpTestingController;
   let navConfigService: NavConfigService;
   let globalSettingsService: GlobalSettingsService;
+
+  const loginResourcesMock = [];
 
   const globalSettingsServiceMock = globalSettings;
 
@@ -64,10 +66,11 @@ describe('NavConfigService', () => {
     spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
       connectionMock,
     );
+
   });
 
   describe('initialization', () => {
-    it('should fetch resources', () => {
+    it('should fetch resources', fakeAsync(() => {
       const RESTNavItem = {
         id: 'testItem',
         appIframeUrl: 'testurl',
@@ -76,6 +79,7 @@ describe('NavConfigService', () => {
       const totalNavItems = navConfig.concat(RESTNavItem);
 
       navConfigService.init();
+      tick();
 
       const req = httpTestingController.expectOne('testRESTurl');
       req.flush([RESTNavItem]);
@@ -91,6 +95,6 @@ describe('NavConfigService', () => {
       });
 
       httpTestingController.verify();
-    });
+    }));
   });
 });
