@@ -74,10 +74,23 @@ describe('ClientAppService', () => {
       service.init();
     });
 
-    it('should emit connectionsEstablished$', () => {
+    it('should emit connectionEstablished$ when a connection to one app is established', () => {
+      const expected = new ClientApp('http://app1.com');
+      expected.api = {};
+
+      let actual: ClientApp;
+
+      service.connectionEstablished$.subscribe(app => actual = app);
+
+      service.addConnection('http://app1.com', {});
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should emit allConnectionsEstablished$', () => {
       let connectionEstablished = false;
 
-      service.connectionsEstablished$.subscribe(
+      service.allConnectionsEstablished$.subscribe(
         () => (connectionEstablished = true),
       );
 

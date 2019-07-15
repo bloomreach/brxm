@@ -15,8 +15,8 @@
  */
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { first, switchMap, takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { filter, first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
@@ -66,22 +66,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   // Should be replaced with proper routing later
   ngOnInit(): void {
-    this.menuStateService.menu$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(menuItems => {
-        this.homeMenuItem = menuItems[0] as MenuItemLink;
-        this.menuItems = menuItems.slice(1);
-      });
-
-    this.clientAppService.connectionsEstablished$
-      .pipe(
-        first(),
-        switchMap(() => this.menuStateService.menu$),
-        takeUntil(this.unsubscribe),
-      )
-      .subscribe(() => this.selectMenuItem(this.homeMenuItem));
-
     this.userSettings = this.settingsService.userSettings;
+
+    this.extractMenuItems();
+    this.activateHomeMenuItem();
   }
 
   ngOnDestroy(): void {
@@ -138,5 +126,26 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   getQaClass(item: MenuItem | string): string {
     return this.qaHelperService.getMenuItemClass(item);
+  }
+
+  private extractMenuItems(): void {
+    this.menuStateService.menu$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(menuItems => {
+      console.log(menuItems);
+      this.homeMenuItem = menuItems[0] as MenuItemLink;
+      this.menuItems = menuItems.slice(1);
+    });
+  }
+
+  private activateHomeMenuItem(): void {
+    this.menuStateService.menu$.pipe(
+      takeUntil(this.unsubscribe),
+      switchMap(() => this.clientAppService.connectionEstablished$),
+      filter(app => app.id === this.homeMenuItem.appId),
+      first(),
+    ).subscribe(() => {
+      this.selectMenuItem(this.homeMenuItem);
+    });
   }
 }
