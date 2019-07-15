@@ -175,6 +175,8 @@ export class NavConfigService {
     iframe.src = url;
     iframe.style.visibility = 'hidden';
     iframe.style.position = 'absolute';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
     this.renderer.appendChild(this.document.body, iframe);
 
     const config: ChildConnectConfig = {

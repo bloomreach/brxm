@@ -92,13 +92,20 @@ export class CommunicationsService {
     };
   }
 
-  navigate(clientAppId: string, path: string): Promise<void> {
-    return this.clientAppService
-      .getApp(clientAppId)
-      .api.navigate({ path })
-      .then(() => {
-        this.clientAppService.activateApplication(clientAppId);
-      });
+  navigate(appId: string, path: string): Promise<void> {
+    const app = this.clientAppService.getApp(appId);
+
+    if (!app) {
+      throw new Error(`There is no app with id="${appId}"`);
+    }
+
+    if (!app.api) {
+      throw new Error(`The app with id="${appId}" is not connected to the nav app`);
+    }
+
+    return app.api.navigate({ path }).then(() => {
+      this.clientAppService.activateApplication(appId);
+    });
   }
 
   navigateToDefaultPage(): Promise<void> {

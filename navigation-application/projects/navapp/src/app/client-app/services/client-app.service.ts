@@ -27,7 +27,8 @@ import { ClientApp } from '../models/client-app.model';
 export class ClientAppService {
   private apps = new BehaviorSubject<ClientApp[]>([]);
   private activeAppId = new BehaviorSubject<string>(undefined);
-  private connectionsEstablished = new ReplaySubject<boolean>(1);
+  private connectionEstablished = new ReplaySubject<ClientApp>(1);
+  private allConnectionsEstablished = new ReplaySubject<void>(1);
 
   constructor(private navConfigService: NavConfigService) {}
 
@@ -35,8 +36,12 @@ export class ClientAppService {
     return this.apps.asObservable();
   }
 
-  get connectionsEstablished$(): Observable<boolean> {
-    return this.connectionsEstablished.asObservable();
+  get connectionEstablished$(): Observable<ClientApp> {
+    return this.connectionEstablished.asObservable();
+  }
+
+  get allConnectionsEstablished$(): Observable<void> {
+    return this.allConnectionsEstablished.asObservable();
   }
 
   get appsWithSitesSupport(): ClientApp[] {
@@ -79,6 +84,8 @@ export class ClientAppService {
   addConnection(appId: string, api: ChildPromisedApi): void {
     this.updateApp(appId, api);
 
+    this.connectionEstablished.next(this.getApp(appId));
+
     this.checkEstablishedConnections();
   }
 
@@ -113,8 +120,8 @@ export class ClientAppService {
     const allConnected = apps.every(a => a.api !== undefined);
 
     if (allConnected) {
-      this.connectionsEstablished.next(true);
-      this.connectionsEstablished.complete();
+      this.allConnectionsEstablished.next();
+      this.allConnectionsEstablished.complete();
     }
   }
 
