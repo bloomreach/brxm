@@ -20,6 +20,6 @@ export interface AppSettings {
   navAppLocation: string;
   contextPath: string;
   navConfigResources: ConfigResource[];
-  loginResources: ConfigResource[];
-  logoutResources: ConfigResource[];
+  loginResources: string[];
+  logoutResources: string[];
 }

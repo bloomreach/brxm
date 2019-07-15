@@ -129,13 +129,8 @@ export class NavConfigService {
     );
   }
 
-  private loginSilently(resource: ConfigResource): Promise<boolean> {
-    switch (resource.resourceType) {
-      case 'IFRAME':
-        return this.fetchFromIframe(resource.url, api => Promise.resolve(api)).then(api => !!api);
-      case 'REST':
-        throw new Error(`Silent login for ${resource.url} of type REST is not supported, only IFRAME is currently supported`);
-    }
+  private loginSilently(resource: string): Promise<boolean> {
+    return this.fetchFromIframe(resource, api => Promise.resolve(api)).then(api => !!api);
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {

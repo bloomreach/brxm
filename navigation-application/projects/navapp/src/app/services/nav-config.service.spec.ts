@@ -19,7 +19,7 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
 import { ConfigResource } from '../models/dto/config-resource.dto';
@@ -71,7 +71,7 @@ describe('NavConfigService', () => {
   });
 
   describe('initialization', () => {
-    it('should fetch resources', () => {
+    it('should fetch resources', fakeAsync(() => {
       const RESTNavItem = {
         id: 'testItem',
         appIframeUrl: 'testurl',
@@ -80,6 +80,7 @@ describe('NavConfigService', () => {
       const totalNavItems = navConfig.concat(RESTNavItem);
 
       navConfigService.init();
+      tick();
 
       const req = httpTestingController.expectOne('testRESTurl');
       req.flush([RESTNavItem]);
@@ -95,15 +96,6 @@ describe('NavConfigService', () => {
       });
 
       httpTestingController.verify();
-    });
-    it('should throw on REST logins', async() => {
-      globalSettingsService.appSettings.loginResources.push({ resourceType: 'REST', url: 'http://domain.com/login'});
-      try {
-        const result = await navConfigService.init();
-        expect(result).toBeFalsy();
-      } catch (error) {
-        expect(error).toBeTruthy();
-      }
-    });
+    }));
   });
 });
