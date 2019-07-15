@@ -77,6 +77,39 @@
       this.fireEvent('locationchanged');
     },
 
+    _connectToChild: function () {
+      window.Hippo.subApp = {};
+      window.Hippo.Cms = {};
+
+      window.Hippo.Cms.showMask = function() {
+        window.Hippo.AppToNavApp.showMask();
+      };
+
+      window.Hippo.Cms.hideMask = function() {
+        window.Hippo.AppToNavApp.hideMask();
+      };
+
+      window.Hippo.Cms.updateNavLocation = function(location){
+        window.Hippo.AppToNavApp.updateNavLocation(location);
+      };
+
+      if (window.parent === window) { // cms is top window
+        return;
+      }
+      var iFrameElement, subAppConnectConfig, promise;
+      iFrameElement = this._getFrame(); // get iframe element of perspective
+      // Config object sent to subapp when connecting.
+      subAppConnectConfig = {
+        iframe: iFrameElement,
+        methods: window.Hippo.Cms
+      };
+      promise = window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig);
+      promise.then( function(childApi){Object.assign(Hippo.subApp, childApi);
+      }, function(error){
+        console.error(error);
+      });
+    },
+
     _getFrameLocation: function () {
       var frameDocument, href;
 
@@ -123,6 +156,7 @@
     setLocation: function (url) {
       this.previousLocation = this.currentLocation;
       this._getFrameDom().src = url;
+      this._connectToChild();
     },
 
     _detachFrame: function () {
