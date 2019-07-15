@@ -19,10 +19,9 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
-import { ConfigResource } from '../models/dto/config-resource.dto';
 import { globalSettings, mockSites, navConfig } from '../test-mocks';
 
 import { GlobalSettingsService } from './global-settings.service';
