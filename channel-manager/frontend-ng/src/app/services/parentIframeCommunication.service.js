@@ -20,39 +20,42 @@ class ParentIframeCommunicationService {
     'ngInject';
   }
 
-  get parentIFrameConnection(){
+  get _parentIFrameConnection () {
     return this.cms;
   }
 
-  set parentIFrameConnection(cms){
+  set _parentIFrameConnection (cms) {
     this.cms = cms;
   }
 
-  connect (callBack) {
-    const methods = {
-      navigate () {
-      },
-    };
-    // TODO(mrop) Supply parentOrigin with SSO mechanism
-
-    if (!this.parentIFrameConnection){
-      const parentOrigin = '*';
-      const parentConnectConfig = {parentOrigin, methods};
-      connectToParent(parentConnectConfig)
+  _callParent (callBack) {
+    if (!this._parentIFrameConnection) {
+      this._connectToParent()
         .then(parentApi => {
-          this.parentIFrameConnection = parentApi;
+          this._parentIFrameConnection = parentApi;
           callBack.call();
         })
         .catch(error => console.log(error));
     }
-    else{
+    else {
       callBack.call();
     }
+  }
+
+  _connectToParent () {
+    // TODO(mrop) Supply parentOrigin with SSO mechanism
+    const parentOrigin = '*';
+    const methods = {
+      navigate () {
+      },
+    };
+    const parentConnectConfig = {parentOrigin, methods};
+    return connectToParent(parentConnectConfig)
 
   }
 
   updateNavLocation (location) {
-    this.connect(() => this.parentIFrameConnection.updateNavLocation(location).catch(err => console.error(err)));
+    this._callParent(() => this._parentIFrameConnection.updateNavLocation(location).catch(err => console.error(err)));
   }
 }
 
