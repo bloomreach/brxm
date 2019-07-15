@@ -58,7 +58,8 @@ export class UserToolbarDrawerComponent {
   }
 
   logout(): void {
-    this.communicationService.logout();
-    window.location.reload();
+    this.communicationService.logout().then(
+      () => window.location.reload(),
+    );
   }
 }

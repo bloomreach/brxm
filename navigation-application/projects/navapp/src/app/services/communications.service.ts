@@ -136,10 +136,10 @@ export class CommunicationsService {
     });
   }
 
-  logout(): void {
-    this.clientAppService.apps$.subscribe(apps => {
-      apps.filter(app => app.api.logout).forEach(app => app.api.logout());
-    });
+  logout(): Promise<void[]> {
+    return this.clientAppService.logoutApps().then(
+      () => this.navConfigService.logout(),
+    );
   }
 
   private findAppId(path: string): string {

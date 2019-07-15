@@ -99,6 +99,13 @@ export class ClientAppService {
     return app;
   }
 
+  logoutApps(): Promise<void[]> {
+    const apps = this.apps.value;
+    return Promise.all(apps.map(
+      app => app.api.logout(),
+    ));
+  }
+
   private updateApp(appId: string, api: ChildPromisedApi): void {
     const apps = this.apps.value;
     const appToUpdateIndex = apps.findIndex(app => app.id === appId);

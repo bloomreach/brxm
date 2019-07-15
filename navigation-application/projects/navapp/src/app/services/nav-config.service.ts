@@ -119,6 +119,11 @@ export class NavConfigService {
 
   }
 
+  logout(): Promise<void[]> {
+    const logoutPromises = this.settingsService.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
+    return Promise.all(logoutPromises);
+  }
+
   findNavItem(iframeUrl: string, path: string): NavItem {
     const navItems = this.navItems.value;
 
@@ -127,6 +132,10 @@ export class NavConfigService {
 
   private loginSilently(resource: string): Promise<boolean> {
     return this.fetchFromIframe(resource, api => Promise.resolve(api)).then(api => !!api);
+  }
+
+  private logoutSilently(resource: string): Promise<void> {
+    return this.fetchFromIframe(resource, api => Promise.resolve());
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
