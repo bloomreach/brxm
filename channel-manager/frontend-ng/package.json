@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
+    "@bloomreach/navapp-communication": "^1.0.0-6",
     "@mdi/font": "2.2.43",
     "@uirouter/angularjs": "1.0.15",
     "@uirouter/sticky-states": "1.5.0",
@@ -67,6 +68,7 @@
     "angular-ui-tree": "2.22.6",
     "emittery": "0.4.1",
     "es6-shim": "0.35.3",
+    "gulp": "^4.0.2",
     "jquery": "3.4.1",
     "moment-timezone": "0.5.14",
     "mutation-summary": "0.1.1",
