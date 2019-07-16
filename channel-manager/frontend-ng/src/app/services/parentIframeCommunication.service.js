@@ -12,49 +12,46 @@
  * limitations under the License.
  *
  */
-import {connectToParent} from '@bloomreach/navapp-communication';
+import { connectToParent } from '@bloomreach/navapp-communication';
 
 class ParentIframeCommunicationService {
-
-  constructor () {
+  constructor() {
     'ngInject';
   }
 
-  get _parentIFrameConnection () {
+  get _parentIFrameConnection() {
     return this.cms;
   }
 
-  set _parentIFrameConnection (cms) {
+  set _parentIFrameConnection(cms) {
     this.cms = cms;
   }
 
-  _callParent (callBack) {
+  _callParent(callBack) {
     if (!this._parentIFrameConnection) {
       this._connectToParent()
-        .then(parentApi => {
+        .then((parentApi) => {
           this._parentIFrameConnection = parentApi;
           callBack.call();
         })
         .catch(error => console.log(error));
-    }
-    else {
+    } else {
       callBack.call();
     }
   }
 
-  _connectToParent () {
+  _connectToParent() {
     // TODO(mrop) Supply parentOrigin with SSO mechanism
     const parentOrigin = '*';
     const methods = {
-      navigate () {
+      navigate() {
       },
     };
-    const parentConnectConfig = {parentOrigin, methods};
-    return connectToParent(parentConnectConfig)
-
+    const parentConnectConfig = { parentOrigin, methods };
+    return connectToParent(parentConnectConfig);
   }
 
-  updateNavLocation (location) {
+  updateNavLocation(location) {
     this._callParent(() => this._parentIFrameConnection.updateNavLocation(location).catch(err => console.error(err)));
   }
 }
