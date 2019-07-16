@@ -127,7 +127,6 @@ class ChannelService {
 
     this.CmsService.publish('set-breadcrumb', this.channel.name);
     const location = {
-      appPath: `hippo-perspective-channelmanagerperspective/${channel.id}`,
       breadcrumbLabel: channel.name,
       path: 'channelmanager',
     };
